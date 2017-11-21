@@ -60,6 +60,10 @@ public class ObjectBoxWidget extends SelectableNodeWidget {
         setBackground(originalColor);
     }
     
+    public LabelWidget getLabelWidget() {
+        return labelWidget;
+    }
+    
     public void addBox(Widget child){
         childrenWidget.addChild(child);
     }

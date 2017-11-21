@@ -38,6 +38,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.actions.CustomMoveControlPointAction;
 import org.inventory.core.visual.menu.ObjectWidgetMenu;
@@ -187,31 +188,31 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
             XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
             XMLEventFactory xmlef = XMLEventFactory.newInstance();
             
-            QName qnameView = new QName("view");
+            QName qnameView = new QName("view"); //NOI18N
             xmlew.add(xmlef.createStartElement(qnameView, null, null));
-            xmlew.add(xmlef.createAttribute(new QName("version"), Constants.VIEW_FORMAT_VERSION));
+            xmlew.add(xmlef.createAttribute(new QName("version"), Constants.VIEW_FORMAT_VERSION)); //NOI18N
             
-            QName qnameClass = new QName("class");
+            QName qnameClass = new QName("class"); //NOI18N
             xmlew.add(xmlef.createStartElement(qnameClass, null, null));
-            xmlew.add(xmlef.createCharacters("DefaultView"));
+            xmlew.add(xmlef.createCharacters("DefaultView")); //NOI18N
             xmlew.add(xmlef.createEndElement(qnameClass, null));
             
-            QName qnameNodes = new QName("nodes");
+            QName qnameNodes = new QName("nodes"); //NOI18N
             xmlew.add(xmlef.createStartElement(qnameNodes, null, null));
             
             for (Widget nodeWidget : nodeLayer.getChildren()) {
-                QName qnameNode = new QName("node");
+                QName qnameNode = new QName("node"); //NOI18N
                 xmlew.add(xmlef.createStartElement(qnameNode, null, null));
-                xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString(nodeWidget.getPreferredLocation().x)));
-                xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(nodeWidget.getPreferredLocation().y)));
+                xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString(nodeWidget.getPreferredLocation().x))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(nodeWidget.getPreferredLocation().y))); //NOI18N
                 LocalObjectLight lolNode = (LocalObjectLight) findObject(nodeWidget);
-                xmlew.add(xmlef.createAttribute(new QName("class"), lolNode.getClassName()));
+                xmlew.add(xmlef.createAttribute(new QName("class"), lolNode.getClassName())); //NOI18N
                 xmlew.add(xmlef.createCharacters(Long.toString(lolNode.getOid())));
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
             }
             xmlew.add(xmlef.createEndElement(qnameNodes, null));
             
-            QName qnameEdges = new QName("edges");
+            QName qnameEdges = new QName("edges"); //NOI18N
             xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
             
             for (Widget edgeWidget : edgeLayer.getChildren()) {
@@ -220,21 +221,21 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                 if (acwEdge.getSourceAnchor() == null || acwEdge.getTargetAnchor() == null) //This connection is malformed because one of the endpoints does not exist
                     continue;                                                               //probably, it was moved to another parent
                 
-                QName qnameEdge = new QName("edge");
+                QName qnameEdge = new QName("edge"); //NOI18N
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
                 
                 LocalObjectLight lolEdge = (LocalObjectLight) findObject(acwEdge);
-                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getOid())));
-                xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName()));
+                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getOid()))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName())); //NOI18N
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getSourceAnchor().getRelatedWidget())).getOid())));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getTargetAnchor().getRelatedWidget())).getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getSourceAnchor().getRelatedWidget())).getOid()))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getTargetAnchor().getRelatedWidget())).getOid()))); //NOI18N
                 
                 for (Point point : acwEdge.getControlPoints()) {
-                    QName qnameControlpoint = new QName("controlpoint");
+                    QName qnameControlpoint = new QName("controlpoint"); //NOI18N
                     xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
-                    xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString(point.x)));
-                    xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(point.y)));
+                    xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString(point.x))); //NOI18N
+                    xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(point.y))); //NOI18N
                     xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
                 }
                 xmlew.add(xmlef.createEndElement(qnameEdge, null));
@@ -254,8 +255,8 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
     public void render(byte[] structure) throws IllegalArgumentException {
         CommunicationsStub com = CommunicationsStub.getInstance();
         
-        LocalObjectLight object = (LocalObjectLight) configObject.getProperty("currentObject");
-        LocalObjectView currentView = (LocalObjectView) configObject.getProperty("currentView");
+        LocalObjectLight object = (LocalObjectLight) configObject.getProperty("currentObject"); //NOI18N
+        LocalObjectView currentView = (LocalObjectView) configObject.getProperty("currentView"); //NOI18N
         
        //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
 //        try {
@@ -293,16 +294,16 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                     int event = reader.next();
                     if (event == XMLStreamConstants.START_ELEMENT) {
                         if (reader.getName().equals(qNode)) {
-                            String objectClass = reader.getAttributeValue(null, "class");
+                            String objectClass = reader.getAttributeValue(null, "class"); //NOI18N
 
-                            int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
-                            int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
+                            int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue(); //NOI18N
+                            int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue(); //NOI18N
                             long objectId = Long.valueOf(reader.getElementText());
 
                             LocalObjectLight lol = CommunicationsStub.getInstance().getObjectInfoLight(objectClass, objectId);
                             if (lol != null) {
                                 if (getNodes().contains(lol))
-                                    NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
+                                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
                                 else {
                                     Widget widget = addNode(lol);
                                     widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
@@ -327,51 +328,56 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                                 LocalObjectLight endpointA = null;
                                 LocalObjectLight endpointB = null;
                                 
-                                if (container != null) { // if the connection exist
-                                    HashMap<String, LocalObjectLight[]> specialAttributes = com.getSpecialAttributes(className, objectId);
-
-                                    if (specialAttributes.containsKey("endpointA")) 
-                                        endpointA = specialAttributes.get("endpointA")[0];
-                                    
-                                    if (specialAttributes.containsKey("endpointB")) 
-                                        endpointB = specialAttributes.get("endpointB")[0];
-                                }
+                                LocalObjectLight parent = com.getParent(className, objectId);
                                 
-                                if (endpointA != null && endpointB != null) {
-                                    myConnections.remove(container);
+                                if (object.getOid() == parent.getOid()) {
+                                    
+                                    if (container != null) { // if the connection exist
+                                        HashMap<String, LocalObjectLight[]> specialAttributes = com.getSpecialAttributes(className, objectId);
 
-                                    LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
-                                    ObjectNodeWidget aSideWidget = (ObjectNodeWidget) findWidget(aSideObject);
+                                        if (specialAttributes.containsKey("endpointA")) //NOI18N
+                                            endpointA = specialAttributes.get("endpointA")[0]; //NOI18N
 
-                                    LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
-                                    ObjectNodeWidget bSideWidget = (ObjectNodeWidget) findWidget(bSideObject);
-
-                                    if (aSideWidget == null || bSideWidget == null)
-                                        currentView.setDirty(true);
-                                    else {
-                                        if (getEdges().contains(container))
-                                            NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
-                                        else {
-                                            ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
-                                            newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget.getNodeWidget()));
-                                            newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget.getNodeWidget()));
-                                            List<Point> localControlPoints = new ArrayList<>();
-                                            while(true) {
-                                                reader.nextTag();
-
-                                                if (reader.getName().equals(qControlPoint)) {
-                                                    if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                                                        localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
-                                                } else {
-                                                    newEdge.setControlPoints(localControlPoints,false);
-                                                    break;
-                                                }
-                                            }
-                                            validate();
-                                        }
+                                        if (specialAttributes.containsKey("endpointB")) //NOI18N
+                                            endpointB = specialAttributes.get("endpointB")[0]; //NOI18N
                                     }
-                                } else
-                                    currentView.setDirty(true);
+
+                                    if (endpointA != null && endpointB != null) {
+                                        myConnections.remove(container);
+
+                                        LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
+                                        ObjectNodeWidget aSideWidget = (ObjectNodeWidget) findWidget(aSideObject);
+
+                                        LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
+                                        ObjectNodeWidget bSideWidget = (ObjectNodeWidget) findWidget(bSideObject);
+
+                                        if (aSideWidget == null || bSideWidget == null)
+                                            currentView.setDirty(true);
+                                        else {
+                                            if (getEdges().contains(container))
+                                                NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
+                                            else {
+                                                ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
+                                                newEdge.setSourceAnchor(AnchorFactory.createCenterAnchor(aSideWidget.getNodeWidget()));
+                                                newEdge.setTargetAnchor(AnchorFactory.createCenterAnchor(bSideWidget.getNodeWidget()));
+                                                List<Point> localControlPoints = new ArrayList<>();
+                                                while(true) {
+                                                    reader.nextTag();
+
+                                                    if (reader.getName().equals(qControlPoint)) {
+                                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                                            localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
+                                                    } else {
+                                                        newEdge.setControlPoints(localControlPoints,false);
+                                                        break;
+                                                    }
+                                                }
+                                                validate();
+                                            }
+                                        }
+                                    } else
+                                        currentView.setDirty(true);
+                                }
                             } else {
                                 if (reader.getName().equals(qLabel)) {
                                     //Unavailable for now
@@ -380,8 +386,8 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                                         currentView.setZoom(Integer.valueOf(reader.getText()));
                                     else {
                                         if (reader.getName().equals(qCenter)) {
-                                            double x = Double.valueOf(reader.getAttributeValue(null, "x"));
-                                            double y = Double.valueOf(reader.getAttributeValue(null, "y"));
+                                            double x = Double.valueOf(reader.getAttributeValue(null, "x")); //NOI18N
+                                            double y = Double.valueOf(reader.getAttributeValue(null, "y")); //NOI18N
                                             currentView.setCenter(new double[]{ x, y });
                                         } else {
                                             //Place more tags
@@ -403,7 +409,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                 setBackgroundImage(currentView.getBackground());
                 if (currentView.isDirty()) {
                     fireChangeEvent(new ActionEvent(this, ChildrenViewScene.SCENE_CHANGEANDSAVE, "Removing old objects"));
-                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.WARNING_MESSAGE, "Some changes has been detected since the last time the view was saved. The view was updated accordingly");
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.WARNING_MESSAGE, "Some changes has been detected since the last time the view was saved. The view was updated accordingly");
                     currentView.setDirty(false);
                 }
             } catch (XMLStreamException ex) {
@@ -431,27 +437,27 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         //TODO: This algorithm to find the endpoints for a connection could be improved in many ways
         for (LocalObject container : connections) {            
             List<LocalObjectLight> aSide = CommunicationsStub.getInstance()
-                .getSpecialAttribute(container.getClassName(), container.getOid(), "endpointA");
+                .getSpecialAttribute(container.getClassName(), container.getOid(), "endpointA"); //NOI18N
             if (aSide == null) {
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 continue;
             }
             
             if (aSide.isEmpty()) {
-                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, String.format("Connection %s has a loose endpoint and won't be displayed", container));
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, String.format("Connection %s has a loose endpoint and won't be displayed", container));
                 continue;
             }
             
             List<LocalObjectLight> bSide = CommunicationsStub.getInstance()
-                .getSpecialAttribute(container.getClassName(), container.getOid(), "endpointB");
+                .getSpecialAttribute(container.getClassName(), container.getOid(), "endpointB"); //NOI18N
             
             if (bSide == null) {
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 continue;
             }
             
             if (bSide.isEmpty()) {
-                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, String.format("Connection %s has a loose endpoint and won't be displayed", container));
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, String.format("Connection %s has a loose endpoint and won't be displayed", container));
                 continue;
             }
 

@@ -18,6 +18,7 @@ package org.inventory.models.physicalconnections.windows;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -25,12 +26,16 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.services.api.behaviors.Refreshable;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.ExplorablePanel;
 import org.inventory.navigation.special.children.nodes.ActionlessSpecialOnlyContainersRootNode;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.util.Lookup;
 import org.openide.util.LookupEvent;
 import org.openide.util.LookupListener;
+import org.openide.windows.TopComponent;
+import org.openide.windows.WindowManager;
 
 /**
  * Shows an editor to move a selected physical link into an existing wire container
@@ -44,7 +49,7 @@ public class MovePhysicalLinkToContainerFrame  extends JFrame {
 
     private LocalObjectLight selectedContainer;
     private List<LocalObjectLight> linksToMove;
-    private CommunicationsStub com = CommunicationsStub.getInstance();
+    private final CommunicationsStub com = CommunicationsStub.getInstance();
     
     public MovePhysicalLinkToContainerFrame(List<LocalObjectLight> linksToMove, List<LocalObjectLight> existintWireContainersList) {
         this.linksToMove = linksToMove;
@@ -73,7 +78,7 @@ public class MovePhysicalLinkToContainerFrame  extends JFrame {
         init();
     }
     
-    private void init(){
+    private void init() {
         pnlexistingWireContainers.getLookup().lookupResult(LocalObjectLight.class).addLookupListener(new LookupListener() {
 
             @Override
@@ -92,12 +97,27 @@ public class MovePhysicalLinkToContainerFrame  extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            List<Refreshable> topComponents = new ArrayList();
+            
+            for (LocalObjectLight link : linksToMove) {
+                LocalObjectLight parent = com.getParent(link.getClassName(), link.getOid());
+                TopComponent topComponent = WindowManager.getDefault().findTopComponent("ObjectViewTopComponent_" + parent.getOid());
+                
+                if (topComponent instanceof Refreshable)
+                    topComponents.add((Refreshable) topComponent);
+            }
+            
             if(com.moveSpecialObjects(selectedContainer.getClassName(),
                     selectedContainer.getOid(), 
-                    linksToMove.toArray(new LocalObjectLight[linksToMove.size()])))
-                JOptionPane.showMessageDialog(null, "The link(s) was moved sucessfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-            else
-                JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
+                    linksToMove.toArray(new LocalObjectLight[linksToMove.size()]))) {
+                
+                for (Refreshable topComponent : topComponents)
+                    topComponent.refresh();
+                
+                JOptionPane.showMessageDialog(null, "The link(s) was moved sucessfully", I18N.gm("success"), JOptionPane.INFORMATION_MESSAGE);
+                dispose();
+            } else
+                JOptionPane.showMessageDialog(null, com.getError(), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
         }
     
     }

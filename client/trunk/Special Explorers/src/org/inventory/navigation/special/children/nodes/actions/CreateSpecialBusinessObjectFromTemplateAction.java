@@ -14,27 +14,22 @@
  */
 package org.inventory.navigation.special.children.nodes.actions;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.api.windows.SelectValueFrame;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
@@ -47,7 +42,7 @@ import org.openide.util.actions.Presenter.Popup;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class CreateSpecialBusinessObjectFromTemplateAction extends GenericObjectNodeAction 
-    implements Popup {
+    implements Popup, ComposedAction {
     
     private static CreateSpecialBusinessObjectFromTemplateAction instance;
     
@@ -69,14 +64,15 @@ public class CreateSpecialBusinessObjectFromTemplateAction extends GenericObject
         List<LocalObjectLight> templates = CommunicationsStub.getInstance().getTemplatesForClass(className, false);
         
         if (templates == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         
         else {
             if (templates.isEmpty())
-                JOptionPane.showMessageDialog(null, "No templates were defined for this class", "Error", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "No templates were defined for this class", I18N.gm("error"), JOptionPane.INFORMATION_MESSAGE);
             else {
                 Collections.sort(templates);
-                TemplateListFrame templatesFrame = new TemplateListFrame(className, templates);
+                SelectValueFrame templatesFrame = new SelectValueFrame(String.format("Available Templates for %s", className), I18N.gm("search"), "Create Special Object", templates);
+                templatesFrame.addListener(this);
                 templatesFrame.setVisible(true);
             }
         }
@@ -95,7 +91,7 @@ public class CreateSpecialBusinessObjectFromTemplateAction extends GenericObject
             items = CommunicationsStub.getInstance().getPossibleSpecialChildren(selectedObject.getClassName(), false);
         
         if (items == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE,
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.INFO_MESSAGE,
                 CommunicationsStub.getInstance().getError());
             mnuPossibleSpecialChildren.setEnabled(false);
         }
@@ -119,62 +115,36 @@ public class CreateSpecialBusinessObjectFromTemplateAction extends GenericObject
     public String getValidator() {
         return null;
     }
-    
-    private class TemplateListFrame extends JFrame {
 
+    @Override
+    public void finalActionPerformed(ActionEvent e) {
         HashMap<String, Object> attributes = new HashMap<>();
         
-        public TemplateListFrame(String className, List<LocalObjectLight> availableTemplates) {
-        
-            final JList<LocalObjectLight> lstAvailableTemplates = new JList<>(availableTemplates.toArray(new LocalObjectLight[0]));
-            JScrollPane pnlScrollMain = new JScrollPane(lstAvailableTemplates);
-            setTitle(String.format("Available Templates for %s", className));
-            setLayout(new BorderLayout());
-            setSize(400, 650);
-            setLocationRelativeTo(null);
-            add(pnlScrollMain);
+        if (e.getSource() instanceof SelectValueFrame) {
+            SelectValueFrame frame = (SelectValueFrame) e.getSource();
+            Object selectedTemplate = frame.getSelectedValue();
             
-            JPanel pnlButtons = new JPanel();
-            pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
-            JButton btnCreate = new JButton("Create Special Object");
-            pnlButtons.add(btnCreate);
-            btnCreate.addActionListener(new ActionListener() {
+            if (selectedTemplate == null)
+                JOptionPane.showMessageDialog(null, "Select a template", "Create Special Object", JOptionPane.INFORMATION_MESSAGE);
+            else {
+                LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
 
-                @Override
-                public void actionPerformed(ActionEvent ae) {
-                    LocalObjectLight selectedTemplate = lstAvailableTemplates.getSelectedValue();
-                    if (selectedTemplate == null)
-                        JOptionPane.showMessageDialog(null, "Select a template", "Create Special Object", JOptionPane.INFORMATION_MESSAGE);
-                    else {
-                        LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
-                        
-                        LocalObjectLight newObject = CommunicationsStub.getInstance().createSpecialObject(selectedTemplate.getClassName(), 
-                            selectedObject.getClassName(), selectedObject.getOid(), attributes, selectedTemplate.getOid());
-                        
-                        if (newObject == null) {
-                            NotificationUtil.getInstance().showSimplePopup("Error", 
-                                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                        } else {
-                            ObjectNode selectedNode = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
-                            if (selectedNode.getChildren() instanceof AbstractChildren) //Some nodes are created on the fly and does not have children. For those cases, let's avoid refreshing their children lists
-                                ((AbstractChildren)selectedNode.getChildren()).addNotify();
+                LocalObjectLight newObject = CommunicationsStub.getInstance().createSpecialObject(((LocalObjectLight) selectedTemplate).getClassName(), 
+                    selectedObject.getClassName(), selectedObject.getOid(), attributes, ((LocalObjectLight) selectedTemplate).getOid());
 
-                            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE,
-                            "Special Element created successfully");
-                        } 
-                    }
+                if (newObject == null) {
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                } else {
+                    ObjectNode selectedNode = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
+                    if (selectedNode.getChildren() instanceof AbstractChildren) //Some nodes are created on the fly and does not have children. For those cases, let's avoid refreshing their children lists
+                        ((AbstractChildren)selectedNode.getChildren()).addNotify();
+                    
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, 
+                        "Special Element created successfully");
+                    frame.dispose();
                 }
-            });
-            JButton btnClose = new JButton("Close");
-            btnClose.addActionListener(new ActionListener() {
-
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    dispose();
-                }
-            });
-            pnlButtons.add(btnClose);
-            add(pnlButtons, BorderLayout.SOUTH);
+            }
         }
     }
 }

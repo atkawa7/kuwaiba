@@ -15,7 +15,6 @@
  */
 package com.neotropic.inventory.modules.contracts.nodes.actions;
 
-import com.neotropic.inventory.modules.contracts.windows.ContractFrame;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -23,7 +22,9 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.api.windows.SelectValueFrame;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
@@ -33,7 +34,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateToContractAction extends GenericObjectNodeAction {
+public class RelateToContractAction extends GenericObjectNodeAction implements ComposedAction {
 
     public RelateToContractAction() {
         putValue(NAME, I18N.gm("relate_to_contract"));
@@ -50,7 +51,8 @@ public class RelateToContractAction extends GenericObjectNodeAction {
                 JOptionPane.showMessageDialog(null, I18N.gm("no_contracts_created"), 
                     I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
-                ContractFrame frame = new ContractFrame(selectedObjects, contracts);
+                SelectValueFrame frame = new SelectValueFrame(I18N.gm("available_contracts"), I18N.gm("select_contract_from_list"), I18N.gm("create_relationship"), contracts);
+                frame.addListener(this);
                 frame.setVisible(true);
             }
         }
@@ -64,5 +66,36 @@ public class RelateToContractAction extends GenericObjectNodeAction {
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_CONTRACT_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+
+    @Override
+    public void finalActionPerformed(ActionEvent e) {
+        if (e.getSource() instanceof SelectValueFrame) {
+            SelectValueFrame frame = (SelectValueFrame) e.getSource();
+            Object selectedValue = frame.getSelectedValue();
+            
+            if (selectedValue == null)
+                JOptionPane.showMessageDialog(null, I18N.gm("select_contract_from_list"));
+            else {
+                String [] objectsClassName = new String[selectedObjects.size()];
+                Long [] objectsId = new Long[selectedObjects.size()];
+                
+                for (int i = 0; i < selectedObjects.size(); i += 1) {
+                    objectsClassName[i] = selectedObjects.get(i).getClassName();
+                    objectsId[i] = selectedObjects.get(i).getOid();
+                }
+                
+                if (CommunicationsStub.getInstance().associateObjectsToContract(
+                    objectsClassName, objectsId, 
+                    ((LocalObjectLight) selectedValue).getClassName(), 
+                    ((LocalObjectLight) selectedValue).getOid())) {
+                    
+                    JOptionPane.showMessageDialog(null, String.format(I18N.gm("selected_devices_were_related_to"), selectedValue));
+                    frame.dispose();
+                } else
+                    JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), 
+                        I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 }

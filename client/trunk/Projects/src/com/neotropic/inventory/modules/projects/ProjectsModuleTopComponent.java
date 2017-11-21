@@ -19,6 +19,7 @@ import com.neotropic.inventory.modules.projects.nodes.ProjectRootNode;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.behaviors.Refreshable;
+import org.inventory.core.services.i18n.I18N;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -97,7 +98,7 @@ public final class ProjectsModuleTopComponent extends TopComponent implements Ex
         
         if (service.isDataBaseUpdated()) {
             close();
-            JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to run the Projects module", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to run the Projects module", I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             return;
         }
         

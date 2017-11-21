@@ -24,15 +24,19 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
+import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.netbeans.api.visual.widget.Widget;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.awt.ActionID;
@@ -121,6 +125,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         btnShowConnectionLabels = new javax.swing.JToggleButton();
         btnSelect = new javax.swing.JToggleButton();
         btnConnect = new javax.swing.JToggleButton();
+        btnRefresh = new javax.swing.JButton();
         sepConnections = new javax.swing.JToolBar.Separator();
         btnTransportLink = new javax.swing.JToggleButton();
         btnContainerLink = new javax.swing.JToggleButton();
@@ -230,6 +235,19 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
             }
         });
         barTools.add(btnConnect);
+
+        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/refresh.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnRefresh.text")); // NOI18N
+        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnRefresh.toolTipText")); // NOI18N
+        btnRefresh.setFocusable(false);
+        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
+        barTools.add(btnRefresh);
         barTools.add(sepConnections);
 
         btnGrpConnections.add(btnTransportLink);
@@ -279,7 +297,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         if (!(boolean)configObject.getProperty("saved")) {
             switch (JOptionPane.showConfirmDialog(this, "This topology has not been saved, do you want to save it?",
-                "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION)){
+                I18N.gm("confirmation"), JOptionPane.YES_NO_CANCEL_OPTION)){
                 case JOptionPane.YES_OPTION:
                     btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
                     return;
@@ -298,7 +316,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
         if (!(boolean)configObject.getProperty("saved")) {
             switch (JOptionPane.showConfirmDialog(this, "This topology has not been saved, do you want to save it?",
-                "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION)){
+                I18N.gm("confirmation"), JOptionPane.YES_NO_CANCEL_OPTION)){
                 case JOptionPane.YES_OPTION:
                     btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
                     break;
@@ -411,6 +429,19 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         scene.toggleConnectionLabels(!btnShowConnectionLabels.isSelected());
     }//GEN-LAST:event_btnShowConnectionLabelsActionPerformed
 
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        for (LocalObjectLight node : scene.getNodes()) {
+            Widget widget = scene.findWidget(node);
+            
+            if (widget instanceof ObjectNodeWidget) {
+                ((ObjectNodeWidget) widget).getLabelWidget().setLabel(node.toString());
+                
+                widget.revalidate();
+                widget.repaint();
+            }            
+        }
+    }//GEN-LAST:event_btnRefreshActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barTools;
     private javax.swing.JToggleButton btnConnect;
@@ -421,6 +452,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     private javax.swing.ButtonGroup btnGrpTools;
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnOpen;
+    private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnSave;
     private javax.swing.JToggleButton btnSelect;
     private javax.swing.JToggleButton btnShowConnectionLabels;
@@ -439,7 +471,7 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         scene.removeAllListeners();
         if (!(boolean)configObject.getProperty("saved")) {
             switch (JOptionPane.showConfirmDialog(this, "This topology has not been saved, do you want to save it?",
-                "Confirmation", JOptionPane.YES_NO_OPTION)){
+                I18N.gm("confirmation"), JOptionPane.YES_NO_OPTION)){
                 case JOptionPane.YES_OPTION:
                     btnSaveActionPerformed(new ActionEvent(this, 0, "close"));
             }

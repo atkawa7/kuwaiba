@@ -71,10 +71,37 @@ public final class CustomShapesTopComponent extends TopComponent implements Expl
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        toolbarMain = new javax.swing.JToolBar();
+        btnRefresh = new javax.swing.JButton();
+
         setLayout(new java.awt.BorderLayout());
+
+        toolbarMain.setRollover(true);
+
+        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/layout/res/refresh.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(CustomShapesTopComponent.class, "CustomShapesTopComponent.btnRefresh.text")); // NOI18N
+        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(CustomShapesTopComponent.class, "CustomShapesTopComponent.btnRefresh.toolTipText")); // NOI18N
+        btnRefresh.setFocusable(false);
+        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
+        toolbarMain.add(btnRefresh);
+
+        add(toolbarMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        em.setRootContext(Node.EMPTY);
+        componentOpened();
+    }//GEN-LAST:event_btnRefreshActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnRefresh;
+    private javax.swing.JToolBar toolbarMain;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {

@@ -22,6 +22,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.views.objectview.scene.ChildrenViewScene;
 
 /**
@@ -38,27 +39,27 @@ public class ObjectViewService {
         
     public void renderView() {
         ObjectViewConfigurationObject configObject = scene.getConfigObject();
-        LocalObjectLight object = (LocalObjectLight) configObject.getProperty("currentObject");
+        LocalObjectLight object = (LocalObjectLight) configObject.getProperty("currentObject"); //NOI18N
         
         List<LocalObjectViewLight> views = CommunicationsStub.getInstance().getObjectRelatedViews(object.getOid(), object.getClassName());
         
         if (views != null) {
             if (views.isEmpty()) {
                 currentView = null;
-                configObject.setProperty("currentView", currentView);
+                configObject.setProperty("currentView", currentView); //NOI18N
                 scene.render((byte[]) null);
             } else {
                 currentView = CommunicationsStub.getInstance().getObjectRelatedView(object.getOid(), object.getClassName(), views.get(0).getId());
-                configObject.setProperty("currentView", currentView);
+                configObject.setProperty("currentView", currentView); //NOI18N
                 scene.render(currentView.getStructure());
             }
         } else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
     }
     
     public void saveView() {
         ObjectViewConfigurationObject configObject = scene.getConfigObject();
-        LocalObjectLight currentObject = (LocalObjectLight) configObject.getProperty("currentObject");
+        LocalObjectLight currentObject = (LocalObjectLight) configObject.getProperty("currentObject"); //NOI18N
         
         if (currentObject != null) {
             
@@ -67,20 +68,20 @@ public class ObjectViewService {
                 long viewId = CommunicationsStub.getInstance().createObjectRelatedView(currentObject.getOid(), currentObject.getClassName(), null, null, "PlainChildrenView", viewStructure, scene.getBackgroundImage()); //NOI18N
                 
                 if (viewId != -1) { //Success
-                    currentView = new LocalObjectView(viewId, "ObjectViewModule", null, null, viewStructure, scene.getBackgroundImage());
-                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
+                    currentView = new LocalObjectView(viewId, "ObjectViewModule", null, null, viewStructure, scene.getBackgroundImage()); //NOI18N
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
                     configObject.setProperty("saved", true);
                 } else {
-                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 }
             } else {
                 if (!CommunicationsStub.getInstance().updateObjectRelatedView(currentObject.getOid(),
                          currentObject.getClassName(), currentView.getId(),
                         null, null,viewStructure, scene.getBackgroundImage()))
                     
-                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 else {
-                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
                     configObject.setProperty("saved", true);
                 }
             }

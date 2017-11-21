@@ -23,6 +23,7 @@ import javax.swing.JComponent;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.DialogDisplayer;
 import org.openide.WizardDescriptor;
@@ -92,9 +93,9 @@ public final class NewLinkWizard {
                     panel1.getComponent().dontUseTemplate() || panel1.getComponent().getLinkTemplate() == null ? - 1 : panel1.getComponent().getLinkTemplate().getOid());
             
             if (newConnection == null)
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The link was created successfully");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, "The link was created successfully");
         }
     } 
     

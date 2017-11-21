@@ -28,6 +28,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
@@ -36,8 +37,10 @@ import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
+import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.inventory.design.topology.scene.TopologyViewScene;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.netbeans.api.visual.widget.Widget;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.awt.ActionID;
@@ -120,12 +123,12 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
         btnFrame = new javax.swing.JButton();
         btnAddBackgroundImage = new javax.swing.JButton();
         btnRemoveBackground = new javax.swing.JButton();
+        btnRefresh = new javax.swing.JButton();
         pnlMainScrollPanel = new javax.swing.JScrollPane();
 
         setLayout(new java.awt.BorderLayout());
 
         jToolBar1.setRollover(true);
-        jToolBar1.setAlignmentY(0.5F);
         jToolBar1.setMaximumSize(new java.awt.Dimension(392, 38));
         jToolBar1.setMinimumSize(new java.awt.Dimension(392, 38));
         jToolBar1.setPreferredSize(new java.awt.Dimension(392, 38));
@@ -286,6 +289,19 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
         });
         jToolBar1.add(btnRemoveBackground);
 
+        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/design/topology/res/refresh.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(TopologyDesignTopComponent.class, "TopologyDesignTopComponent.btnRefresh.text")); // NOI18N
+        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(TopologyDesignTopComponent.class, "TopologyDesignTopComponent.btnRefresh.toolTipText")); // NOI18N
+        btnRefresh.setFocusable(false);
+        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnRefresh);
+
         add(jToolBar1, java.awt.BorderLayout.PAGE_START);
         add(pnlMainScrollPanel, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
@@ -444,6 +460,19 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
         btnRemoveBackground.setEnabled(false);
         scene.fireChangeEvent(new ActionEvent(scene, TopologyViewScene.SCENE_CHANGE, "Remove Background"));
     }//GEN-LAST:event_btnRemoveBackgroundActionPerformed
+
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        for (LocalObjectLight node : scene.getNodes()) {
+            Widget widget = scene.findWidget(node);
+            
+            if (widget instanceof ObjectNodeWidget) {
+                ((ObjectNodeWidget) widget).getLabelWidget().setLabel(node.toString());
+                
+                widget.revalidate();
+                widget.repaint();
+            }
+        }
+    }//GEN-LAST:event_btnRefreshActionPerformed
  
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddBackgroundImage;
@@ -454,6 +483,7 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
     private javax.swing.JButton btnFrame;
     private javax.swing.JButton btnNewTopology;
     private javax.swing.JButton btnOpen;
+    private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnRemoveBackground;
     private javax.swing.JButton btnSave;
     private javax.swing.JToggleButton btnSelect;

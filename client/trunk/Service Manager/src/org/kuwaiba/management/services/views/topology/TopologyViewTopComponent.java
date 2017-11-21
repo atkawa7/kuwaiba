@@ -29,6 +29,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
@@ -58,7 +59,7 @@ public class TopologyViewTopComponent extends TopComponent implements
         List<LocalObjectViewLight> serviceViews = com.getObjectRelatedViews(this.currentService.getOid(), this.currentService.getClassName());
         
         if (serviceViews == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
             setEnabled(false);
         } else {
             
@@ -66,7 +67,7 @@ public class TopologyViewTopComponent extends TopComponent implements
                 if (TopologyViewScene.VIEW_CLASS.equals(serviceView.getClassName())) {
                     currentView = com.getObjectRelatedView(currentService.getOid(), currentService.getClassName(), serviceView.getId());
                     if (currentView == null) {
-                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
                         setEnabled(false);
                         return;
                     }  
@@ -133,7 +134,7 @@ public class TopologyViewTopComponent extends TopComponent implements
         if (saved)
             return getDisplayName();
         else
-            return String.format("<html><b>%s [Modified]</b></html>", getDisplayName());
+            return String.format("<html><b>%s [" + I18N.gm("modified") + "]</b></html>", getDisplayName());
     }
     
     @Override
@@ -173,23 +174,23 @@ public class TopologyViewTopComponent extends TopComponent implements
                 currentView = new LocalObjectView(newViewId, TopologyViewScene.VIEW_CLASS, null, null, scene.getAsXML(), scene.getBackgroundImage());
                 saved = true;
                 setHtmlDisplayName(getHtmlDisplayName());
-                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
             } else
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
         } else { //Update the existing view
             if (com.updateObjectRelatedView(currentService.getOid(), currentService.getClassName(), 
                     currentView.getId(), null, null, scene.getAsXML(), scene.getBackgroundImage())) {
                 saved = true;
                 setHtmlDisplayName(getHtmlDisplayName());
             } else
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
         }        
     }
     
     public boolean checkForUnsavedView(boolean showCancel) {
         if (!saved){
-            switch (JOptionPane.showConfirmDialog(null, "This view has not been saved, do you want to save it?",
-                    "Confirmation", showCancel ? JOptionPane.YES_NO_CANCEL_OPTION : JOptionPane.YES_NO_OPTION)){
+            switch (JOptionPane.showConfirmDialog(null, "This view has not been saved, do you want to save it?", 
+                I18N.gm("confirmation"), showCancel ? JOptionPane.YES_NO_CANCEL_OPTION : JOptionPane.YES_NO_OPTION)){
                 case JOptionPane.YES_OPTION:
                     saveView();
                     return true;
@@ -214,8 +215,8 @@ public class TopologyViewTopComponent extends TopComponent implements
                 break;
             case AbstractScene.SCENE_CHANGEANDSAVE:
                 saveView();
-                NotificationUtil.getInstance().showSimplePopup("Information", 
-                        NotificationUtil.INFO_MESSAGE, "An external change was detected. The view has been saved automatically");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
+                    NotificationUtil.INFO_MESSAGE, "An external change was detected. The view has been saved automatically");
         }
     }
 }

@@ -24,6 +24,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.models.physicalconnections.windows.MovePhysicalLinkToContainerFrame;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
@@ -44,7 +45,7 @@ public class MoveLinkToContainerAction  extends GenericObjectNodeAction{
         
         for (LocalObjectLight object : selectedObjects) {
             if(!CommunicationsStub.getInstance().isSubclassOf(object.getClassName(), Constants.CLASS_GENERICPHYSICALLINK)){
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, "Please select only physical links");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, "Please select only physical links");
                 return;
             }
         }
@@ -52,18 +53,18 @@ public class MoveLinkToContainerAction  extends GenericObjectNodeAction{
         HashMap<String, LocalObjectLight[]> specialAttributes = CommunicationsStub.getInstance().getSpecialAttributes(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
 
         if (specialAttributes == null ) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
         }
         
         LocalObjectLight endpointA = null;
         LocalObjectLight endpointB = null;
             
-        if (specialAttributes.containsKey("endpointA"))
-            endpointA = specialAttributes.get("endpointA")[0];
+        if (specialAttributes.containsKey("endpointA")) //NOI18N
+            endpointA = specialAttributes.get("endpointA")[0]; //NOI18N
             
-        if (specialAttributes.containsKey("endpointB"))
-            endpointB = specialAttributes.get("endpointB")[0];
+        if (specialAttributes.containsKey("endpointB")) //NOI18N
+            endpointB = specialAttributes.get("endpointB")[0]; //NOI18N
         
         LocalObjectLight parent = null;
         
@@ -71,7 +72,7 @@ public class MoveLinkToContainerAction  extends GenericObjectNodeAction{
             parent = CommunicationsStub.getInstance().getCommonParent(endpointA.getClassName(), endpointA.getOid(), endpointB.getClassName(), endpointB.getOid());
         
             if (parent == null) {
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return;
             }
 

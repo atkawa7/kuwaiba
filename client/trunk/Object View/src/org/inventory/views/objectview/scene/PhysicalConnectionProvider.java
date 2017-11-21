@@ -18,12 +18,12 @@ package org.inventory.views.objectview.scene;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.ObjectNodeWidget;
 import org.inventory.models.physicalconnections.wizards.NewContainerWizard;
@@ -79,7 +79,7 @@ public class PhysicalConnectionProvider implements ConnectProvider {
         
         if ((boolean)configObject.getProperty("connectContainer")) {
             NewContainerWizard newContainerWizard = new NewContainerWizard(sourceWidget.getLookup().lookup(ObjectNode.class), 
-                    targetWidget.getLookup().lookup(ObjectNode.class), (LocalObjectLight)configObject.getProperty("currentObject"));
+                    targetWidget.getLookup().lookup(ObjectNode.class), (LocalObjectLight)configObject.getProperty("currentObject")); //NOI18N
             newContainerWizard.show();
             newConnection = newContainerWizard.getNewConnection();
         } else {
@@ -93,26 +93,31 @@ public class PhysicalConnectionProvider implements ConnectProvider {
                     Constants.CLASS_WIRECONTAINER);
             
             if (existintWireContainersList == null) {
-                NotificationUtil.getInstance().showSimplePopup("Error", 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return;
             } 
             NewLinkWizard newLinkWizard = new NewLinkWizard(sourceWidget.getLookup().lookup(ObjectNode.class), 
                     targetWidget.getLookup().lookup(ObjectNode.class), 
-                    (LocalObjectLight)configObject.getProperty("currentObject"), 
+                    (LocalObjectLight)configObject.getProperty("currentObject"), //NOI18N
                     existintWireContainersList);
             newLinkWizard.show();
             newConnection = newLinkWizard.getNewConnection();
         }
         
-        if (newConnection != null){
-            ConnectionWidget line = (ConnectionWidget)scene.addEdge(newConnection);
-
-            line.setTargetAnchor(AnchorFactory.createCenterAnchor(targetWidget));
-            line.setSourceAnchor(AnchorFactory.createCenterAnchor(sourceWidget));
+        if (newConnection != null) {
+            LocalObjectLight parent = CommunicationsStub.getInstance().getParent(newConnection.getClassName(), newConnection.getOid());
+            LocalObjectLight currentObject = (LocalObjectLight) configObject.getProperty("currentObject"); //NOI18N
             
-            scene.validate();
-            scene.fireChangeEvent(new ActionEvent(this, AbstractScene.SCENE_CHANGE, "New Connection"));
+            if (parent.getOid() == currentObject.getOid()) {
+                ConnectionWidget line = (ConnectionWidget)scene.addEdge(newConnection);
+
+                line.setTargetAnchor(AnchorFactory.createCenterAnchor(targetWidget));
+                line.setSourceAnchor(AnchorFactory.createCenterAnchor(sourceWidget));
+
+                scene.validate();
+                scene.fireChangeEvent(new ActionEvent(this, AbstractScene.SCENE_CHANGE, "New Connection"));
+            }
         }
     }
 }

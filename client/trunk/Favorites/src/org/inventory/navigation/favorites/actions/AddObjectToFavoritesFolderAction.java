@@ -16,13 +16,16 @@
 package org.inventory.navigation.favorites.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.navigation.favorites.windows.ChooseFavoritesFolderFrame;
 import org.inventory.communications.core.LocalFavoritesFolder;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.ComposedAction;
+import org.inventory.core.services.api.windows.SelectValueFrame;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
@@ -32,7 +35,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class AddObjectToFavoritesFolderAction extends GenericObjectNodeAction {
+public class AddObjectToFavoritesFolderAction extends GenericObjectNodeAction implements ComposedAction {
         
     public AddObjectToFavoritesFolderAction() {
         putValue(NAME, I18N.gm("add_to_favorite_folder"));
@@ -55,7 +58,8 @@ public class AddObjectToFavoritesFolderAction extends GenericObjectNodeAction {
                 JOptionPane.showMessageDialog(null, I18N.gm("no_favorite_folders_created_create_one_to_use_favorites_module"), 
                     I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
-                ChooseFavoritesFolderFrame frame = new ChooseFavoritesFolderFrame(selectedObjects, favoritesFolders);
+                SelectValueFrame frame = new SelectValueFrame(I18N.gm("favorites_folder"), I18N.gm("search"), I18N.gm("create_relationship"), favoritesFolders);
+                frame.addListener(this);
                 frame.setVisible(true);
             }
         }
@@ -64,5 +68,36 @@ public class AddObjectToFavoritesFolderAction extends GenericObjectNodeAction {
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_FAVORITES, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+
+    @Override
+    public void finalActionPerformed(ActionEvent e) {
+        if (e.getSource() instanceof SelectValueFrame) {
+            SelectValueFrame frame = (SelectValueFrame) e.getSource();
+            Object selectedValue = frame.getSelectedValue();
+            
+            if (selectedValue == null)
+                JOptionPane.showMessageDialog(null, I18N.gm("select_a_favorites_folder"));
+            else {
+                List<String> objectsClassName = new ArrayList();
+                List<Long> objectsId = new ArrayList();
+                
+                for (LocalObjectLight selectedObject : selectedObjects) {
+                    objectsClassName.add(selectedObject.getClassName());
+                    objectsId.add(selectedObject.getOid());
+                    
+                    if (CommunicationsStub.getInstance()
+                        .addObjectsToFavoritesFolder(objectsClassName, objectsId, ((LocalFavoritesFolder) selectedValue).getId())) {
+                        
+                        JOptionPane.showMessageDialog(null, String.format("%s " + I18N.gm("added_to_favorites_folder") + " %s", selectedObject, selectedValue));
+                        frame.dispose();
+                    } else
+                        JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+                    
+                    objectsClassName.clear();
+                    objectsId.clear();
+                }
+            }
+        }
     }
 }

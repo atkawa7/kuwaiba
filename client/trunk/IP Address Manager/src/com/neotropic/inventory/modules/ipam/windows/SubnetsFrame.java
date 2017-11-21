@@ -16,7 +16,6 @@
 package com.neotropic.inventory.modules.ipam.windows;
 
 import com.neotropic.inventory.modules.ipam.nodes.ActionlessIPAMRootNode;
-import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolChildren;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -33,6 +32,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.ExplorablePanel;
 import org.openide.explorer.view.BeanTreeView;
 
@@ -102,7 +102,7 @@ public class SubnetsFrame extends JFrame {
                         location += parents.get(i).toString() + " | ";
                     
                     JOptionPane.showMessageDialog(null, String.format("The IP %s is already related to port %s located in %s", selectedIPAddress.getName(), relatedPortsToIPAddresses.toString(), location), 
-                                "Error", JOptionPane.ERROR_MESSAGE);
+                        I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
                 }
                 
                 else if (CommunicationsStub.getInstance().relateIPtoPort(selectedIPAddress.getOid(), 
@@ -113,7 +113,7 @@ public class SubnetsFrame extends JFrame {
                         dispose();
                 }else 
                     JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), 
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                        I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             }
         }
     }
