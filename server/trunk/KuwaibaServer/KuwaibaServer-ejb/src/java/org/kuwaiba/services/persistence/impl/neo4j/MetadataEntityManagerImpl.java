@@ -1083,6 +1083,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             else
                 parentNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
             
+            tx.success();
             return refreshPossibleChildren(parentNode);
         }
     }
@@ -1108,6 +1109,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             else
                 parentNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
             
+            tx.success();
             return refreshPossibleSpecialChildren(parentNode);
         }
     }

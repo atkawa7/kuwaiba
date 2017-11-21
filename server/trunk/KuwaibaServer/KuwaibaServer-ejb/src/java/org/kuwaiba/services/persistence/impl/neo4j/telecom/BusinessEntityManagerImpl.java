@@ -998,16 +998,16 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", myClass));
                 for (long oid : objects.get(myClass)){
                     Node instance = getInstanceOfClass(instanceClassNode, oid);
-                    String oldValue = null;
+////                    String oldValue = null;
                     if (instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().hasNext()){
                         Relationship rel = instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().next();
-                        oldValue = String.valueOf(rel.getEndNode().getId());
+////                        oldValue = String.valueOf(rel.getEndNode().getId());
                         rel.delete();
                     }
                     //If the object was specialChild of a pool
                     if (instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().hasNext()){
                         Relationship rel = instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().next();
-                        oldValue = String.valueOf(rel.getEndNode().getId());
+////                        oldValue = String.valueOf(rel.getEndNode().getId());
                         rel.delete();
                     }
                     
@@ -1037,10 +1037,16 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", myClass));
                 for (long oid : objects.get(myClass)){
                     Node instance = getInstanceOfClass(instanceClassNode, oid);
-                    String oldValue = null;
+////                    String oldValue = null;
+                    if (instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().hasNext()){
+                        Relationship rel = instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().next();
+////                        oldValue = String.valueOf(rel.getEndNode().getId());
+                        rel.delete();
+                    }
+                    
                     if (instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().hasNext()){
                         Relationship rel = instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().next();
-                        oldValue = String.valueOf(rel.getEndNode().getId());
+////                        oldValue = String.valueOf(rel.getEndNode().getId());
                         rel.delete();
                     }
                     instance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF_SPECIAL);
