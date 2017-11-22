@@ -1636,6 +1636,23 @@ public class CommunicationsStub {
             return false;
         }
     }
+    
+    /**
+     * Move a pool item from a pool to another pool
+     * @param poolId The id of the pool node
+     * @param poolItemClassName The class name for the pool item
+     * @param poolItemId The id for the pool item
+     * @return True if the pool item was moved
+     */
+    public boolean movePoolItem(long poolId, String poolItemClassName, long poolItemId) {
+        try {
+            service.movePoolItemToPool(poolId, poolItemClassName, poolItemId, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return false;
+        }
+    }
 
     public LocalObjectLight[] copyObjects(String targetClass, long targetOid, LocalObjectLight[] objects){
         try{
@@ -1686,6 +1703,24 @@ public class CommunicationsStub {
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
+        }
+    }
+    
+    /**
+     * Copy a pool item from a pool to another pool
+     * @param poolId The id of the pool node
+     * @param poolItemClassName The class name for the pool item
+     * @param poolItemId The id for the pool item
+     * @param recursive If this operation should also copy the children objects recursively
+     * @return True if the pool item was moved
+     */
+    public boolean copyPoolItem(long poolId, String poolItemClassName, long poolItemId, boolean recursive) {
+        try {
+            service.copyPoolItemToPool(poolId, poolItemClassName, poolItemId, recursive, session.getSessionId());
+            return true ;
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return false;
         }
     }
     

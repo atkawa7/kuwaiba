@@ -21,16 +21,19 @@ import java.awt.dnd.DnDConstants;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.inventory.navigation.pools.nodes.actions.DeletePoolAction;
 import org.inventory.navigation.pools.nodes.actions.NewPoolItemAction;
 import org.inventory.navigation.pools.nodes.properties.PoolNativeTypeProperty;
+import org.openide.actions.PasteAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.PropertySupport;
@@ -38,6 +41,7 @@ import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
 import org.openide.util.ImageUtilities;
 import org.openide.util.WeakListeners;
+import org.openide.util.actions.SystemAction;
 import org.openide.util.datatransfer.PasteType;
 /**
  * Represents a pool (a set of objects of a certain kind)
@@ -64,7 +68,7 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
                 setSheet(createSheet());
         }
         else
-            NotificationUtil.getInstance().showSimplePopup("Error", 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, 
                     CommunicationsStub.getInstance().getError());
             
@@ -92,6 +96,8 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
             deletePoolAction = new DeletePoolAction(this);
         }
         return new Action[]{ 
+            SystemAction.get(PasteAction.class), 
+            null, 
             newPoolItemAction, 
             deletePoolAction, 
             ShowMoreInformationAction.getInstance(pool.getOid(), pool.getClassName())};
@@ -113,7 +119,7 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
         Set generalPropertySet = Sheet.createPropertiesSet(); // General attributes category
         LocalPool lp = CommunicationsStub.getInstance().getPoolInfo(pool.getOid());
         if (lp == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return sheet;
         }
         pool.setName(lp.getName());
@@ -145,6 +151,19 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
     }
     
     @Override
+    protected void createPasteTypes(Transferable t, List s) {
+        super.createPasteTypes(t, s);
+        //From the transferable we figure out if it comes from a copy or a cut operation
+        PasteType paste = getDropType(t, NodeTransfer.node(t, NodeTransfer.CLIPBOARD_COPY) != null
+                ? DnDConstants.ACTION_COPY : DnDConstants.ACTION_MOVE, -1);
+        //It's also possible to define many paste types (like "normal paste" and "special paste")
+        //by adding more entries to the list. Those will appear as options in the context menu
+        if (paste != null) {
+            s.add(paste);
+        }
+    }
+    
+    @Override
     public PasteType getDropType(Transferable obj, final int action, int index) {
         final ObjectNode dropNode = (ObjectNode) NodeTransfer.node(obj,
                 NodeTransfer.CLIPBOARD_CUT + NodeTransfer.CLIPBOARD_COPY);
@@ -165,11 +184,34 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
         return new PasteType() {
 
                 @Override
-                public Transferable paste() throws IOException {
+                public Transferable paste() throws IOException {                    
                     switch (action) {
                         case DnDConstants.ACTION_COPY:
+                            if (dropNode instanceof ObjectNode) {
+                                ObjectNode objNode = (ObjectNode) dropNode;                        
+
+                                if (objNode.getParentNode() instanceof PoolNode) {
+                                    if (CommunicationsStub.getInstance().copyPoolItem(getPool().getOid(), objNode.getObject().getClassName(), objNode.getObject().getOid(), true))
+                                        ((PoolChildren) getChildren()).addNotify();
+                                    else
+                                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                                                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                                }
+                            }
                             break;
                         case DnDConstants.ACTION_MOVE:
+                            if (dropNode instanceof ObjectNode) {
+                                ObjectNode objectNode = (ObjectNode) dropNode;
+                                if (objectNode.getParentNode() instanceof PoolNode) {
+                                    if (CommunicationsStub.getInstance().movePoolItem(getPool().getOid(), objectNode.getObject().getClassName(), objectNode.getObject().getOid())) {
+                                        
+                                        ((PoolChildren) objectNode.getParentNode().getChildren()).addNotify();
+                                        ((PoolChildren) getChildren()).addNotify();
+                                    } else
+                                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                                            NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                                }
+                            }
                             break;    
                     }
                     return  null;

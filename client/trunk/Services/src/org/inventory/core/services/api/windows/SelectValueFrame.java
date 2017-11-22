@@ -183,10 +183,4 @@ public class SelectValueFrame extends JFrame {
         }
         lstFilteredObjects.setListData(filteredObjects.toArray(new Object[0]));
     }
-    
-    @Override
-    public void dispose() {
-        super.dispose();
-        removeAllListener();
-    }
 }

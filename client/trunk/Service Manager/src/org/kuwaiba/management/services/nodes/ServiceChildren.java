@@ -20,6 +20,7 @@ import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.nodes.Node;
@@ -38,7 +39,7 @@ public class ServiceChildren extends AbstractChildren {
         List<LocalObjectLight> resources = CommunicationsStub.getInstance().
                 getServiceResources(service.getClassName(), service.getOid());
         if (resources == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {
             Collections.sort(resources);
             setKeys(resources);

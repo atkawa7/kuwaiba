@@ -27,6 +27,7 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.SubMenuDialog;
 import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
@@ -66,10 +67,10 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
                 SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);
             } else {
                 JOptionPane.showMessageDialog(null, "There are not services related to the selected object", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
+                    I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             }
         } else {
-            NotificationUtil.getInstance().showSimplePopup("Error", 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
     }
@@ -78,7 +79,7 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
     public void finalActionPerformed(ActionEvent e) {
         if (e != null && e.getSource() instanceof SubMenuDialog) {
             if (JOptionPane.showConfirmDialog(null, 
-                    "Are you sure you want to release this service?", "Warning", 
+                    "Are you sure you want to release this service?", I18N.gm("warning"), 
                     JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
 
                 Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
@@ -95,12 +96,12 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
                             ((ServiceChildren)selectedNode.getParentNode().getChildren()).addNotify();
                     } else {
                         success = false;
-                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                     }
                 }
 
                 if (success)
-                    NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The selected resources were released from the service");
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, "The selected resources were released from the service");
             }
         }
     }
