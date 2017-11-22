@@ -2603,6 +2603,36 @@ public class KuwaibaService {
             }
         }
     }
+    
+    /**
+     * Move a pool item from a pool to another pool
+     * @param poolId The id of the pool node
+     * @param poolItemClassName The class name for the pool item
+     * @param poolItemId The id for the pool item
+     * @param sessionId Session token
+     * @throws ServerSideException If the pool node can not be found
+     *                             If the pool item can not be move to the selected pool
+     *                             If the pool item can not be found
+     *                             If the pool item class name can no be found
+     */
+    @WebMethod(operationName = "movePoolItemToPool")
+    public void movePoolItemToPool(
+        @WebParam(name = "poolId") long poolId, 
+        @WebParam(name = "poolItemClassName") String poolItemClassName, 
+        @WebParam(name = "poolItemId") long poolItemId, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try{
+            wsBean.movePoolItem(poolId, poolItemClassName, poolItemId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in movePoolItemToPool: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }        
+    }
 
      /**
      * Copy objects from its current parent to a target. This is <b>not</b> a deep copy. Only the selected object will be copied, not the children
@@ -2669,6 +2699,38 @@ public class KuwaibaService {
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
+    }
+    
+    /**
+     * Copy a pool item from a pool to another pool
+     * @param poolId The id of the pool node
+     * @param poolItemClassName The class name for the pool item
+     * @param poolItemId The id for the pool item
+     * @param recursive If this operation should also copy the children objects recursively
+     * @param sessionId Session token
+     * @throws ServerSideException If the pool node can not be found
+     *                             If the pool item can not be move to the selected pool
+     *                             If the pool item can not be found
+     *                             If the pool item class name can no be found
+     */
+    @WebMethod(operationName = "copyPoolItemToPool")
+    public void copyPoolItemToPool(
+        @WebParam(name = "poolId") long poolId, 
+        @WebParam(name = "poolItemClassName") String poolItemClassName, 
+        @WebParam(name = "poolItemId") long poolItemId, 
+        @WebParam(name = "recursive") boolean recursive,
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try{
+            wsBean.copyPoolItem(poolId, poolItemClassName, poolItemId, recursive, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in copyPoolItemToPool: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }        
     }
     
     /**

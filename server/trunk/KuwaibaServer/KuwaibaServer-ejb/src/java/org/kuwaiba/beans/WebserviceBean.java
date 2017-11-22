@@ -1327,6 +1327,21 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    
+    @Override
+    public void movePoolItem(long poolId, String poolItemClassName, long poolItemId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("movePoolItem", ipAddress, sessionId);
+            bem.movePoolItem(poolId, poolItemClassName, poolItemId);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
+                String.format("%s moved to pool with id %s", poolItemId, poolId));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
 
     @Override
     public long[] copyObjects(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, boolean recursive, String ipAddress, String sessionId) throws ServerSideException {
@@ -1370,6 +1385,22 @@ public class WebserviceBean implements WebserviceBeanRemote {
                     String.format("%s moved to (Special)object with id %s of class %s", Arrays.toString(newObjects), targetOid, targetClass));
             return newObjects;
         }catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public long copyPoolItem(long poolId, String poolItemClassName, long poolItemId, boolean recursive, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("movePoolItem", ipAddress, sessionId);
+            long id = bem.copyPoolItem(poolId, poolItemClassName, poolItemId, recursive);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
+                String.format("%s moved to pool with id %s", poolItemId, poolId));
+            return id;
+        } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }

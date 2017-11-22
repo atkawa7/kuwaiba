@@ -380,6 +380,19 @@ public interface BusinessEntityManager {
     public void moveSpecialObjects(String targetClassName, long targetOid, HashMap<String,long[]> objects)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
     /**
+     * Move a pool item from a pool to another pool
+     * @param poolId The id of the pool node
+     * @param poolItemClassName The class name for the pool item
+     * @param poolItemId The id for the pool item
+     * @throws ApplicationObjectNotFoundException If the pool node can not be found
+     * @throws InvalidArgumentException If the pool item can not be move to the selected pool
+     * @throws ObjectNotFoundException If the pool item can not be found
+     * @throws MetadataObjectNotFoundException If the pool item class name can no be found
+     */
+    public void movePoolItem(long poolId, String poolItemClassName, long poolItemId) throws 
+        ApplicationObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, 
+        MetadataObjectNotFoundException;
+    /**
      * Copy a set of objects
      * @param objects Hashmap with the objects class names as keys and their oids as values
      * @param targetClassName Target parent's class name
@@ -407,6 +420,21 @@ public interface BusinessEntityManager {
      */
     public long[] copySpecialObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive)
             throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException;
+    /**
+     * Copy a pool item from a pool to another pool
+     * @param poolId The id of the pool node
+     * @param poolItemClassName The class name for the pool item
+     * @param poolItemId The id for the pool item
+     * @param recursive If this operation should also copy the children objects recursively
+     * @return The newly created object id
+     * @throws ApplicationObjectNotFoundException If the pool node can not be found
+     * @throws InvalidArgumentException If the pool item can not be move to the selected pool
+     * @throws ObjectNotFoundException If the pool item can not be found
+     * @throws MetadataObjectNotFoundException If the pool item class name can no be found
+     */
+    public long copyPoolItem(long poolId, String poolItemClassName, long poolItemId, boolean recursive) throws 
+        ApplicationObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, 
+        MetadataObjectNotFoundException;
     /**
      * Gets the children of a given object
      * @param className Object's class name

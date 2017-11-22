@@ -669,7 +669,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if (parentNode.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)) {
                     return Util.createRemoteObjectLightFromNode(parentNode);
                 } else {
-                    // Use the dummy root like parent to services, contracts, projects pool...
+                    // Use the dummy root like parent to services, contracts, projects poolNode...
                     return new RemoteBusinessObject(-1L, Constants.NODE_DUMMYROOT, Constants.NODE_DUMMYROOT);
                 }
             }
@@ -701,7 +701,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 }
                 if(node.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING))
                     parents.add(Util.createRemoteObjectLightFromNode(node));
-                else //the node has a pool as a parent
+                else //the node has a poolNode as a parent
                     parents.add(Util.createRemoteObjectLightFromPoolNode(node));
             }
         }
@@ -962,11 +962,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", myClass));
                 for (long oid : objects.get(myClass)){
                     Node instance = getInstanceOfClass(instanceClassNode, oid);
-                    String oldValue = null;
-                    //If the object was specialChild of a pool
+                    //If the object was specialChild of a poolNode
                     if (instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().hasNext()){
                         Relationship rel = instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().next();
-                        oldValue = String.valueOf(rel.getEndNode().getId());
                         rel.delete();
                     }
                     if(isPool)
@@ -998,16 +996,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", myClass));
                 for (long oid : objects.get(myClass)){
                     Node instance = getInstanceOfClass(instanceClassNode, oid);
-////                    String oldValue = null;
                     if (instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().hasNext()){
                         Relationship rel = instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().next();
-////                        oldValue = String.valueOf(rel.getEndNode().getId());
                         rel.delete();
                     }
-                    //If the object was specialChild of a pool
+                    //If the object was specialChild of a poolNode
                     if (instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().hasNext()){
                         Relationship rel = instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().next();
-////                        oldValue = String.valueOf(rel.getEndNode().getId());
                         rel.delete();
                     }
                     
@@ -1037,16 +1032,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", myClass));
                 for (long oid : objects.get(myClass)){
                     Node instance = getInstanceOfClass(instanceClassNode, oid);
-////                    String oldValue = null;
+                    
                     if (instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().hasNext()){
                         Relationship rel = instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().next();
-////                        oldValue = String.valueOf(rel.getEndNode().getId());
                         rel.delete();
                     }
                     
                     if (instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().hasNext()){
                         Relationship rel = instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).iterator().next();
-////                        oldValue = String.valueOf(rel.getEndNode().getId());
                         rel.delete();
                     }
                     instance.createRelationshipTo(newParentNode, RelTypes.CHILD_OF_SPECIAL);
@@ -1055,7 +1048,41 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             tx.success();
         }
     }
-
+    
+    @Override
+    public void movePoolItem(long poolId, String poolItemClassName, long poolItemId) throws 
+        ApplicationObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, 
+        MetadataObjectNotFoundException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
+            
+            if (poolNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Pool with id %s can not be found", poolId));
+            
+            if (!poolNode.hasProperty(Constants.PROPERTY_CLASS_NAME))
+                throw new InvalidArgumentException("This pool has not set his class name attribute");
+            
+            Node poolItemClassNode = classIndex.get(Constants.PROPERTY_NAME, poolItemClassName).getSingle();
+            if (poolItemClassNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", poolItemClassName));
+            
+            if (!mem.isSubClass((String) poolNode.getProperty(Constants.PROPERTY_CLASS_NAME), poolItemClassName))
+                throw new InvalidArgumentException(String.format("Class %s is not subclass of %s", poolItemClassName, (String) poolNode.getProperty(Constants.PROPERTY_CLASS_NAME)));
+                                    
+            Node instance = getInstanceOfClass(poolItemClassNode, poolItemId);
+            
+            for (Relationship relationship : instance.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING)) {
+                if (relationship.hasProperty(Constants.PROPERTY_NAME)) {
+                    if (Constants.REL_PROPERTY_POOL.equals((String) relationship.getProperty(Constants.PROPERTY_NAME)))
+                        relationship.delete();
+                }
+            }
+            instance.createRelationshipTo(poolNode, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
+            tx.success();
+        }
+    }
+    
     @Override
     public long[] copyObjects(String targetClassName, long targetOid, HashMap<String, long[]> objects, boolean recursive)
             throws ObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
@@ -1118,6 +1145,36 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             tx.success();
             return res;
         }        
+    }
+    
+    @Override
+    public long copyPoolItem(long poolId, String poolItemClassName, long poolItemId, boolean recursive) throws 
+        ApplicationObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException, 
+        MetadataObjectNotFoundException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node poolNode = poolsIndex.get(Constants.PROPERTY_ID, poolId).getSingle();
+            
+            if (poolNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Pool with id %s can not be found", poolId));
+            
+            if (!poolNode.hasProperty(Constants.PROPERTY_CLASS_NAME))
+                throw new InvalidArgumentException("This pool has not set his class name attribute");
+            
+            Node poolItemClassNode = classIndex.get(Constants.PROPERTY_NAME, poolItemClassName).getSingle();
+            if (poolItemClassNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", poolItemClassName));
+            
+            if (!mem.isSubClass((String) poolNode.getProperty(Constants.PROPERTY_CLASS_NAME), poolItemClassName))
+                throw new InvalidArgumentException(String.format("Class %s is not subclass of %s", poolItemClassName, (String) poolNode.getProperty(Constants.PROPERTY_CLASS_NAME)));
+                                    
+            Node instance = getInstanceOfClass(poolItemClassNode, poolItemId);
+            
+            Node newInstance = copyObject(instance, recursive);
+            newInstance.createRelationshipTo(poolNode, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);
+            tx.success();
+            return newInstance.getId();
+        }
     }
 
     @Override
