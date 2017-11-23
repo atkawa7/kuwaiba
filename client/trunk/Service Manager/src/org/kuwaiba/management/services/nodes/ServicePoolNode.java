@@ -24,10 +24,10 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPool;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.inventory.navigation.pools.nodes.PoolNode;
 import org.kuwaiba.management.services.nodes.actions.ServiceManagerActionFactory;
-import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.ImageUtilities;
 
@@ -68,7 +68,7 @@ public class ServicePoolNode extends PoolNode {
         return getIcon(i);
     }
     
-    public static class ServicePoolChildren extends Children.Keys<LocalObjectLight> {
+    public static class ServicePoolChildren extends AbstractChildren {
 
         @Override
         public void addNotify() {
@@ -82,11 +82,6 @@ public class ServicePoolNode extends PoolNode {
                 Collections.sort(services);
                 setKeys(services);
             }
-        }
-
-        @Override
-        public void removeNotify() {
-            setKeys(Collections.EMPTY_SET);
         }
 
         @Override

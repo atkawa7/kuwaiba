@@ -28,6 +28,7 @@ import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.inventory.navigation.pools.nodes.actions.DeletePoolAction;
@@ -192,7 +193,7 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
 
                                 if (objNode.getParentNode() instanceof PoolNode) {
                                     if (CommunicationsStub.getInstance().copyPoolItem(getPool().getOid(), objNode.getObject().getClassName(), objNode.getObject().getOid(), true))
-                                        ((PoolChildren) getChildren()).addNotify();
+                                        ((AbstractChildren) getChildren()).addNotify();
                                     else
                                         NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                                                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
@@ -205,8 +206,8 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
                                 if (objectNode.getParentNode() instanceof PoolNode) {
                                     if (CommunicationsStub.getInstance().movePoolItem(getPool().getOid(), objectNode.getObject().getClassName(), objectNode.getObject().getOid())) {
                                         
-                                        ((PoolChildren) objectNode.getParentNode().getChildren()).addNotify();
-                                        ((PoolChildren) getChildren()).addNotify();
+                                        ((AbstractChildren) objectNode.getParentNode().getChildren()).addNotify();
+                                        ((AbstractChildren) getChildren()).addNotify();
                                     } else
                                         NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                                             NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

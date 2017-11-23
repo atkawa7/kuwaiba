@@ -29,7 +29,7 @@ import org.openide.windows.TopComponent;
  * the logical circuits directly associated to the selected instance
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@ServiceProvider(service = GenericObjectNodeAction.class)
+//@ServiceProvider(service = GenericObjectNodeAction.class)
 public class ShowEndToEndViewAction extends GenericObjectNodeAction {
 
     public ShowEndToEndViewAction() {

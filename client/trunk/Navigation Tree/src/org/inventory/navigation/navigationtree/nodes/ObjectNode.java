@@ -84,7 +84,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         if (lol.getClassName() != null) {
             lol.addPropertyChangeListener(WeakListeners.propertyChange(this, lol));
             icon = com.getMetaForClass(lol.getClassName(), false).getSmallIcon();
-            explorerAction.putValue(OpenLocalExplorerAction.NAME, "Open a Explorer from Here");
+            explorerAction.putValue(OpenLocalExplorerAction.NAME, "Open an Explorer from Here");
         }
     }
 
@@ -92,7 +92,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         super(Children.LEAF, Lookups.singleton(lol));
         lol.addPropertyChangeListener(WeakListeners.propertyChange(this, lol));
         icon = com.getMetaForClass(lol.getClassName(), false).getSmallIcon();
-        explorerAction.putValue(OpenLocalExplorerAction.NAME, "Open a Explorer from Here");
+        explorerAction.putValue(OpenLocalExplorerAction.NAME, "Open an Explorer from Here");
     }
 
     /**
