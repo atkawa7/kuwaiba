@@ -45,6 +45,8 @@ import org.kuwaiba.ws.toserialize.application.PrivilegeInfo;
 import org.kuwaiba.ws.toserialize.application.RemoteBusinessRule;
 import org.kuwaiba.ws.toserialize.application.RemoteFavoritesFolder;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
+import org.kuwaiba.ws.toserialize.application.RemoteSynchronizationConfiguration;
+import org.kuwaiba.ws.toserialize.application.RemoteSynchronizationGroup;
 import org.kuwaiba.ws.toserialize.application.RemoteTask;
 import org.kuwaiba.ws.toserialize.application.RemoteTaskResult;
 import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
@@ -6710,20 +6712,107 @@ public class KuwaibaService {
         //</editor-fold>
     
         //<editor-fold desc="Inventory Synchronization" defaultstate="collapsed">
-        /**
-         * Creates a Synchronization Group. A Sync Group is a set of Synchronization Configurations that will be processed by the same
-         * Synchronization Provider
-         * @param name
-         * @param syncProviderId
-         * @param sessionId
-         * @return
-         * @throws ServerSideException 
-         */
-//        @WebMethod(operationName = "createSynchronizationGroup")
-//        public long createSynchronizationGroup(@WebParam(name="name")String name, 
-//                @WebParam(name="syncProviderId")String syncProviderId, 
-//                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
-//        }
+////        /**
+////         * Creates a Synchronization Group. A Sync Group is a set of Synchronization Configurations that will be processed by the same
+////         * Synchronization Provider. Take into account that the schedule for the SG to be executed is not configured here, but in Task Manager's task
+////         * @param name The name of the new sync group
+////         * @param syncProviderId The id of the provider that will process the configurations. 
+////         * All sync providers have a method called <code>getId</code>. This is the value that should be used here
+////         * @param sessionId Session token
+////         * @return The id of the newly created sync group
+////         * @throws ServerSideException If the name or the sync provider are invalid 
+////         */
+////        @WebMethod(operationName = "createSynchronizationGroup")
+////        public long createSynchronizationGroup(@WebParam(name="name")String name, 
+////                @WebParam(name="syncProviderId")String syncProviderId, 
+////                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+////            return 0;
+////        }
+////        
+////        /**
+////         * Deletes a synchronization group and all the sync configurations associated to it
+////         * @param syncGroupId The id of the group
+////         * @param sessionId Session token
+////         * @throws ServerSideException If the group could not be found
+////         */
+////        @WebMethod(operationName = "deleteSynchronizationGroup")
+////        public void deleteSynchronizationGroup(@WebParam(name="syncGroupId")String syncGroupId, 
+////                @WebParam(name="sessionId")String sessionId) throws ServerSideException {}
+////        
+////        /**
+////         * Gets the available sync groups
+////         * @param sessionId Session token
+////         * @return The list of available sync groups
+////         * @throws ServerSideException If something unexpected goes wrong
+////         */
+////        @WebMethod(operationName = "getSynchronizationGroups")
+////        public List<RemoteSynchronizationGroup> getSynchronizationGroups(
+////                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+////            return null;
+////        }
+////        
+////        /**
+////         * Creates a Synchronization Data Source Configuration. A Sync data source configuration is a set of parameters 
+////         * used to connect to a sync data source (usually IPs, paths, etc)
+////         * @param name The name of the new sync data source configuration
+////         * @param parameters The list of parameters to be stored as pairs name/value. 
+////         * Note that the Sync provider provides metadata definition to check if the number 
+////         * and format of the parameters correct, so it can be checked at server side
+////         * @param syncGroupId Id of the sync group this configuration is attached to
+////         * @param sessionId Session token
+////         * @return The id of the newly created sync config
+////         * @throws ServerSideException If the sync group could not be found or if 
+////         * the any of the parameters does not comply with the expected format
+////         */
+////        @WebMethod(operationName = "createSynchronizationDataSourceConfig")
+////        public long createSynchronizationDataSourceConfig(@WebParam(name="name")String name, 
+////                @WebParam(name="parameters")List<StringPair> parameters, 
+////                @WebParam(name="syncGroupId")String syncGroupId, 
+////                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+////            return 0;
+////        }
+////        
+////        /**
+////         * Deletes a sync data source configuration.
+////         * @param syncDataSourceConfigId The id of the configuration
+////         * @param sessionId Session token
+////         * @throws ServerSideException If the config could not be found
+////         */
+////        @WebMethod(operationName = "deleteSynchronizationDataSourceConfig")
+////        public void deleteSynchronizationDataSourceConfig(@WebParam(name="syncDataSourceConfigId")String syncDataSourceConfigId, 
+////                @WebParam(name="sessionId")String sessionId) throws ServerSideException {}
+////        
+////        /**
+////         * Gets the available sync groups
+////         * @param syncDataSourceConfigId
+////         * @param sessionId Session token
+////         * @return The list of available sync groups
+////         * @throws ServerSideException If something unexpected goes wrong
+////         */
+////        @WebMethod(operationName = "getSyncDataSourceConfigurations")
+////        public List<RemoteSynchronizationConfiguration> getSyncDataSourceConfigurations(
+////                @WebParam(name="syncDataSourceConfigId")String syncDataSourceConfigId, 
+////                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+////            return null;
+////        }
+////        
+////        /**
+////         * 
+////         * @param syncDataSourceConfigId
+////         * @param parameters
+////         * @param sessionId
+////         * @return
+////         * @throws ServerSideException 
+////         */
+////        @WebMethod(operationName = "updateSyncDataSourceConfiguration")
+////        public List<RemoteSynchronizationConfiguration> getSyncDataSourceConfigurations(
+////                @WebParam(name="syncDataSourceConfigId")String syncDataSourceConfigId, 
+////                @WebParam(name="parameters")String parameters, 
+////                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+////            return null;
+////        }
+        
+        
         //</editor-fold>
     // </editor-fold>
         

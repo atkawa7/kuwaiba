@@ -76,7 +76,7 @@ public class StartupBean {
             try {
                 persistenceServiceProperties.put("enableSecurityManager", context.lookup("java:comp/env/enableSecurityManager")); //NOI18N
             }catch (NamingException ne) {
-                persistenceServiceProperties.put("enableSecurityManager", false); //NOI18N
+                persistenceServiceProperties.put("enableSecurityManager", false);
                 System.out.println("[KUWAIBA] Error reading the enableSecurityManager configuration variable. Using the default value instead: " + ne.getMessage());
             }
             

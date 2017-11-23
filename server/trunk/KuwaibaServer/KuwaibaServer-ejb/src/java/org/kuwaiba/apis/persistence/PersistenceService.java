@@ -65,8 +65,8 @@ public class PersistenceService {
             throw new IllegalStateException("Persistence Service can not be started because is already running");
         
         if (System.getSecurityManager() == null && (boolean)configuration.get("enableSecurityManager")) {
-            System.out.println(String.format("[KUWAIBA] [%s] Enabling Security Manager", Calendar.getInstance().getTime()));
             System.setSecurityManager(new SecurityManager());
+            System.out.println(String.format("[KUWAIBA] [%s] Security Manager enabled", Calendar.getInstance().getTime()));
         }
         try {
             System.out.println(String.format("[KUWAIBA] [%s] Starting Persistence Service version %s", Calendar.getInstance().getTime(), Constants.PERSISTENCE_SERVICE_VERSION));

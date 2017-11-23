@@ -16,9 +16,10 @@
 
 package com.neotropic.kuwaiba.sync.connectors.snmp;
 
-import com.neotropic.kuwaiba.sync.connectors.snmp.model.ManagedObjectConfiguration;
+import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import javax.batch.api.chunk.ItemReader;
@@ -38,7 +39,7 @@ public class DefaultSnmpSyncReader implements ItemReader {
     /**
      * The list of agents to be polled
      */
-    private List<ManagedObjectConfiguration> managedObjects;
+    private List<SyncDataSourceConfiguration> managedObjects;
     /**
      * The index of the managed object that's being processed currently
      */
@@ -63,9 +64,9 @@ public class DefaultSnmpSyncReader implements ItemReader {
             try {
                 port = Integer.getInteger(configParameters[1]);
             } catch (NumberFormatException ex) {
-                System.out.println(String.format("Port is not a number. Ignoring configuration %s with value %s", 
+                System.out.println(String.format("Port is not a number. Using default port (161)", 
                         manageObjectLabel, jobParameters.get(manageObjectLabel)));
-                continue;
+                port = 161; //Default SNMP port
             }
             
             if (port > 65535 || port < 1) {
@@ -74,7 +75,8 @@ public class DefaultSnmpSyncReader implements ItemReader {
                 continue;
             }
 
-            managedObjects.add(new ManagedObjectConfiguration(configParameters[0], port, configParameters[2]));
+//            managedObjects.add(new SyncDataSourceConfiguration(Arrays.asList("deviceAddress", "agentPort", "agentCommunity"), 
+//                                   Arrays.asList(configParameters[0], port, configParameters[2]))); //NOI18N
         }
     }
 

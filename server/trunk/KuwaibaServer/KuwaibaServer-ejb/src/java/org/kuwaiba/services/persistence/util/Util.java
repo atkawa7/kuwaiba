@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -808,41 +807,6 @@ public class Util {
         return "";
     }
     
-    /**
-     * Evaluates attribute type
-     * @param attributeType
-     * @param attributeValue
-     * @return
-     */
-    public static Object evalAttributeType(String attributeType, String attributeValue){
-
-        if(attributeType.equals("String"))//NOI18N
-            return "(?i)".concat(attributeValue);
-
-        if(attributeType.equals("Date")){//NOI18N
-            //the date you are looking for into long
-            Long attrbtDate = (long)0;
-            SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.DATE_FORMAT);//NOI18N
-            try {
-                attrbtDate = dateFormat.parse(attributeValue).getTime();
-            } catch (ParseException ex) {
-                System.out.println("Wrong date format. It should be " + Constants.DATE_FORMAT);//NOI18N
-            }
-            return attrbtDate;
-        }//end if is date
-        else if(attributeType.equals("Float")){//NOI18N
-            Float attribute = Float.valueOf(attributeValue);
-            return attribute;
-        }else if(attributeType.equals("Integer")){
-            Integer attribute = Integer.valueOf(attributeValue);
-            return attribute;
-        }else if(attributeType.equals("Boolean")){
-            Boolean attribute = Boolean.valueOf(attributeValue);
-            return attribute;
-        }
-        return null;
-    }
-
     /**
      * Gets the class name of a given object given its respective node
      * @param instance the node to be tested

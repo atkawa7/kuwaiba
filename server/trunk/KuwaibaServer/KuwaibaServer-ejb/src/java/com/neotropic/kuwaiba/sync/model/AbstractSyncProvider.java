@@ -14,7 +14,7 @@
  * 
  */
 
-package com.neotropic.kuwaiba.sync.jobs;
+package com.neotropic.kuwaiba.sync.model;
 
 import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
@@ -45,6 +45,11 @@ public abstract class AbstractSyncProvider {
      * @return The configured name/description (typically a hard-coded string)
      */
     public abstract String getName();
+    /**
+     * A string that uniquely identifies the current sync provider
+     * @return 
+     */
+    public abstract String getId();
     /**
      * Should the actions defined after finding the differences between the information 
      * retrieved from the sync data sources and the objects in the inventory be performed automatically 
