@@ -36,12 +36,18 @@ import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupActions;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupActionsFactory;
 import org.inventory.navigation.navigationtree.nodes.actions.CreateBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.CreateBusinessObjectFromTemplateAction;
 import org.inventory.navigation.navigationtree.nodes.actions.CreateMultipleBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.EditObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ExecuteClassLevelReportAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericActionsGroupActions;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericOpenViewAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericRelateToAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericReleaseFromAction;
 import org.inventory.navigation.navigationtree.nodes.actions.RefreshObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.inventory.navigation.navigationtree.nodes.properties.DateTypeProperty;
@@ -267,14 +273,20 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         actions.add(ExecuteClassLevelReportAction.getInstance());
         
         for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)) {
+            if (action instanceof GenericActionsGroupActions)
+                continue;
+            
             if (action.getValidator() == null) {
                 actions.add(action);
             } else {
-                if (com.getMetaForClass(object.getClassName(), false).getValidator(action.getValidator()) == 1) {
+                if (com.getMetaForClass(object.getClassName(), false).getValidator(action.getValidator()) == 1)
                     actions.add(action);
-                }
             }
-        }        
+        }
+        actions.add(ActionsGroupActionsFactory.getInstanceOfOpenViewGroupActions());
+        actions.add(ActionsGroupActionsFactory.getInstanceOfRelateToGroupActions());
+        actions.add(ActionsGroupActionsFactory.getInstanceOfReleaseFromGroupActions());
+                                
         actions.add(null); //Separator
         actions.add(explorerAction);
         actions.add(ShowMoreInformationAction.getInstance(getObject().getOid(), getObject().getClassName()));
@@ -442,5 +454,4 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
     public int hashCode() {
         return super.hashCode();
     }
-
 }

@@ -152,3 +152,6 @@
 * Added a manager for layouts related to equipment models
 * Added patch to create the GenericApplicationListType class and the CustomShape class to manage the custom shapes
 * Updated the Binary data type to manage the custom shape icon, this data types is will remain hidden for this release
+* Added refresh button to all views
+* Created the SelectValueFrame class to select a value given a list of possible values, and was removed the old classes which has same functions
+* Was enabled actions: copy, paste and move, in the Service Manager Module, Contract Manager Module and Pool Manager Module

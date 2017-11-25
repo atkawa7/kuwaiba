@@ -25,7 +25,9 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericRelateToAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -33,7 +35,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateVFRToVlanAction extends GenericObjectNodeAction {
+public class RelateVFRToVlanAction extends GenericObjectNodeAction implements GenericRelateToAction {
     
     public RelateVFRToVlanAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_VLAN"));
@@ -44,13 +46,13 @@ public class RelateVFRToVlanAction extends GenericObjectNodeAction {
         List<LocalObjectLight> vlans = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_VLAN);
         
         if (vlans ==  null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         
         else {
             
             if (vlans.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "There are no VLANs created. Create at least one using the Pools module", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
+                    I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
                 VlansFrame frame = new VlansFrame(selectedObjects, vlans);
                 frame.setVisible(true);

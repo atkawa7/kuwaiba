@@ -27,6 +27,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.AttributesForm;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
@@ -85,7 +86,7 @@ public final class CreateBusinessObjectAction extends GenericObjectNodeAction im
             items = com.getPossibleChildren(((ObjectNode)node).getObject().getClassName(), false);
 
         if (items == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE,
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.INFO_MESSAGE,
                 com.getError());
             mnuPossibleChildren.setEnabled(false);
         }
@@ -117,12 +118,12 @@ public final class CreateBusinessObjectAction extends GenericObjectNodeAction im
                         node instanceof RootObjectNode? -1 : ((ObjectNode)node).getObject().getOid(), attributes, -1);
 
         if (myLol == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
             if (node.getChildren() instanceof AbstractChildren) //Some nodes are created on the fly and does not have children. For those cases, let's avoid refreshing their children lists
                 ((AbstractChildren)node.getChildren()).addNotify();
 
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Element created successfully");
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, "Element created successfully");
         }
     }
 

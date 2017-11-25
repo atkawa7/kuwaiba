@@ -24,7 +24,9 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericRelateToAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -32,7 +34,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateEndPointToInterfaceAction extends GenericObjectNodeAction {
+public class RelateEndPointToInterfaceAction extends GenericObjectNodeAction implements GenericRelateToAction {
 
     public RelateEndPointToInterfaceAction(){
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_INTERFACE"));
@@ -64,7 +66,7 @@ public class RelateEndPointToInterfaceAction extends GenericObjectNodeAction {
         
         if (interfaces.isEmpty()) {
             JOptionPane.showMessageDialog(null, "There are no interfaces created. Create at least one using the Navigation Tree", 
-                "Information", JOptionPane.INFORMATION_MESSAGE);
+                I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
         } else {
             InterfaceFrame frame = new InterfaceFrame(selectedObjects, interfaces);
             frame.setVisible(true);

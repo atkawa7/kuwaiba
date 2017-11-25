@@ -19,7 +19,9 @@ package org.inventory.views.objectview.actions;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericOpenViewAction;
 import org.inventory.views.objectview.ObjectViewTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.WindowManager;
@@ -32,16 +34,16 @@ import org.openide.windows.WindowManager;
 //@ActionReferences(value = { @ActionReference(path = "Menu/Tools/Views"),
 //    @ActionReference(path = "Toolbars/02_Views", position = 1 )})
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ShowObjectViewAction extends GenericObjectNodeAction {
+public class ShowObjectViewAction extends GenericObjectNodeAction implements GenericOpenViewAction {
 
     public ShowObjectViewAction() {
-        putValue(NAME, "Show Object View");
+        putValue(NAME, "Object View");
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
         if (selectedObjects.size() != 1)
-            JOptionPane.showMessageDialog(null, "Select only one object.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Select only one object.", I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
         else {
             ObjectViewTopComponent objectViewTC = ((ObjectViewTopComponent)WindowManager.getDefault().
                 findTopComponent("ObjectViewTopComponent_" + selectedObjects.get(0).getOid()));

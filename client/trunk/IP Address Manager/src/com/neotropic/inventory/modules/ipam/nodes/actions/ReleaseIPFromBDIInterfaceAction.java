@@ -27,9 +27,11 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.SubMenuDialog;
 import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericReleaseFromAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -37,7 +39,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseIPFromBDIInterfaceAction extends GenericObjectNodeAction implements ComposedAction {
+public class ReleaseIPFromBDIInterfaceAction extends GenericObjectNodeAction implements GenericReleaseFromAction, ComposedAction {
     
     public ReleaseIPFromBDIInterfaceAction() {
         putValue(NAME, ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_INTERFACE"));
@@ -52,7 +54,7 @@ public class ReleaseIPFromBDIInterfaceAction extends GenericObjectNodeAction imp
         if (bdis != null) {
             if (bdis.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "There are no Bridge Domain Interfaces related to the selected IP", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
+                    I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
                 List<SubMenuItem> subMenuItems = new ArrayList();
                 for (LocalObjectLight bdi : bdis) {
@@ -65,7 +67,7 @@ public class ReleaseIPFromBDIInterfaceAction extends GenericObjectNodeAction imp
                 SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);
             }
         } else {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
     }
     
@@ -89,10 +91,10 @@ public class ReleaseIPFromBDIInterfaceAction extends GenericObjectNodeAction imp
                     (long) selectedItem.getProperty("portId"), //NOI18N
                     (long) selectedItem.getProperty("bdiId")) //NOI18N 
                     )
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, 
                         java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
             else
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
     }
     

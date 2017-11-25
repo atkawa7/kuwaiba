@@ -54,6 +54,10 @@ public abstract class GenericObjectNodeAction extends GenericInventoryAction {
         return !selectedObjects.isEmpty();
     }
     
+    public void setSelectedObjects(List<LocalObjectLight> selectedObjects) {
+        this.selectedObjects = selectedObjects;
+    }
+    
     /**
      * What instances support this action
      * @return A validator. See class Constants (in Application Nodes) for possible values so far.

@@ -19,7 +19,9 @@ package org.kuwaiba.management.services.nodes.actions;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericOpenViewAction;
 import org.kuwaiba.management.services.views.endtoend.EndToEndViewSimpleScene;
 import org.kuwaiba.management.services.views.endtoend.EndToEndViewTopComponent;
 import org.openide.util.lookup.ServiceProvider;
@@ -31,16 +33,16 @@ import org.openide.windows.TopComponent;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service = GenericObjectNodeAction.class)
-public class ShowEndToEndSimpleViewAction extends GenericObjectNodeAction {
+public class ShowEndToEndSimpleViewAction extends GenericObjectNodeAction implements GenericOpenViewAction {
 
     public ShowEndToEndSimpleViewAction() {
-        putValue(NAME, "Show End-to-End View");
+        putValue(NAME, "Show  End-to-End View");
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (selectedObjects.size() != 1)
-            JOptionPane.showMessageDialog(null, "Select only one node service.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Select only one node service.", I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
         else{
             //TopComponent endToEndTC = ((EndToEndViewTopComponent)WindowManager.getDefault().
             //  findTopComponent("ObjectViewTopComponent_" + selectedObjects.get(0).getOid()));

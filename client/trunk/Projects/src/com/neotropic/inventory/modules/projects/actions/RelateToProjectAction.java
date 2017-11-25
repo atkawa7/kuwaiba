@@ -26,6 +26,7 @@ import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.windows.SelectValueFrame;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericRelateToAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -33,7 +34,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateToProjectAction extends GenericObjectNodeAction implements ComposedAction {
+public class RelateToProjectAction extends GenericObjectNodeAction implements GenericRelateToAction, ComposedAction {
     private final ResourceBundle bundle;
     
     public RelateToProjectAction() {

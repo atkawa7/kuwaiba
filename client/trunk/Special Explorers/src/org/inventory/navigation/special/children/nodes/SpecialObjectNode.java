@@ -19,9 +19,11 @@ import java.util.ArrayList;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupActionsFactory;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.navigation.special.children.nodes.actions.CreateSpecialBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.EditObjectAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericActionsGroupActions;
 import org.inventory.navigation.navigationtree.nodes.actions.RefreshObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.inventory.navigation.special.children.nodes.actions.CreateMultipleSpecialBusinessObjectAction;
@@ -52,6 +54,9 @@ public class SpecialObjectNode extends ObjectNode {
         actions.add(explorerAction);
         actions.add(null); //Separator
         for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)){
+            if (action instanceof GenericActionsGroupActions)
+                continue;
+            
             if (action.getValidator() == null){
                 actions.add(action);
             }else{
@@ -59,6 +64,10 @@ public class SpecialObjectNode extends ObjectNode {
                     actions.add(action);
             }
         }
+        actions.add(ActionsGroupActionsFactory.getInstanceOfOpenViewGroupActions());
+        actions.add(ActionsGroupActionsFactory.getInstanceOfRelateToGroupActions());
+        actions.add(ActionsGroupActionsFactory.getInstanceOfReleaseFromGroupActions());
+        
         actions.add(null); //Separator
         actions.add(ShowMoreInformationAction.getInstance(getObject().getOid(), getObject().getClassName()));
         

@@ -24,6 +24,7 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.layout.ShowDeviceLayoutTopComponent;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericOpenViewAction;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.WindowManager;
 
@@ -32,10 +33,10 @@ import org.openide.windows.WindowManager;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ShowDeviceLayoutView extends GenericObjectNodeAction {
+public class ShowDeviceLayoutView extends GenericObjectNodeAction implements GenericOpenViewAction {
     
     public ShowDeviceLayoutView() {
-        putValue(NAME, "Show Device Layout");
+        putValue(NAME, "Device Layout");
     }
 
     @Override

@@ -32,6 +32,7 @@ import org.inventory.core.services.utils.SubMenuDialog;
 import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericReleaseFromAction;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -40,7 +41,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseFromContractAction extends GenericObjectNodeAction implements ComposedAction {
+public class ReleaseFromContractAction extends GenericObjectNodeAction implements GenericReleaseFromAction, ComposedAction {
     
     public ReleaseFromContractAction() {
         putValue(NAME, I18N.gm("release_from_contract"));

@@ -24,7 +24,9 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericRelateToAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -32,7 +34,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateIPToBDIInterfaceAction extends GenericObjectNodeAction {
+public class RelateIPToBDIInterfaceAction extends GenericObjectNodeAction implements GenericRelateToAction {
 
     public RelateIPToBDIInterfaceAction(){
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_TO_BDIS"));
@@ -45,13 +47,13 @@ public class RelateIPToBDIInterfaceAction extends GenericObjectNodeAction {
         if (bdis != null) {
             if (bdis.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "There are no Bridge Domain Interfaces created. Create at least one using the Navigation Tree or the Pools module", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
+                    I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
                 BDIsInterfaceFrame frame = new BDIsInterfaceFrame(selectedObjects, bdis);
                 frame.setVisible(true);
             }
         } else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
     }
     
     @Override

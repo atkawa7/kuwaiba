@@ -27,7 +27,9 @@ import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericRelateToAction;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
@@ -37,7 +39,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateEndPointToIPAddressAction extends GenericObjectNodeAction {
+public class RelateEndPointToIPAddressAction extends GenericObjectNodeAction implements GenericRelateToAction {
 
     public RelateEndPointToIPAddressAction(){
         putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_IP"));
@@ -49,7 +51,7 @@ public class RelateEndPointToIPAddressAction extends GenericObjectNodeAction {
         Lookup.Result<LocalObjectLight> selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
         
         if(subnets == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
             Collection<? extends LocalObjectLight> lookupResult = selectedNodes.allInstances();
             List<LocalObjectLight> selectedPorts = new ArrayList<>();

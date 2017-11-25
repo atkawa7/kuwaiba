@@ -27,9 +27,11 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.SubMenuDialog;
 import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericReleaseFromAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -37,7 +39,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseFromProject extends GenericObjectNodeAction implements ComposedAction {
+public class ReleaseFromProject extends GenericObjectNodeAction implements GenericReleaseFromAction, ComposedAction {
     private final ResourceBundle bundle;
     
     public ReleaseFromProject() {
@@ -64,10 +66,10 @@ public class ReleaseFromProject extends GenericObjectNodeAction implements Compo
                 SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);
             } else {
                 JOptionPane.showMessageDialog(null, "There are no projects related to the selected object", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
+                    I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             }
         } else {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 
                 CommunicationsStub.getInstance().getError());
         }
     }

@@ -34,6 +34,7 @@ import org.inventory.core.services.utils.SubMenuDialog;
 import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericReleaseFromAction;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -42,7 +43,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RemoveObjectFromFavoritesFolder extends GenericObjectNodeAction implements ComposedAction {
+public class RemoveObjectFromFavoritesFolder extends GenericObjectNodeAction implements GenericReleaseFromAction, ComposedAction {
     
     public RemoveObjectFromFavoritesFolder() {
         putValue(NAME, I18N.gm("remove_from_favorites_folder"));

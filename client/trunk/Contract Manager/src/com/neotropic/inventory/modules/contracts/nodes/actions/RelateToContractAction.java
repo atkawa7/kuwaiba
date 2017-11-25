@@ -27,6 +27,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.api.windows.SelectValueFrame;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericRelateToAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -34,7 +35,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateToContractAction extends GenericObjectNodeAction implements ComposedAction {
+public class RelateToContractAction extends GenericObjectNodeAction implements GenericRelateToAction, ComposedAction {
 
     public RelateToContractAction() {
         putValue(NAME, I18N.gm("relate_to_contract"));

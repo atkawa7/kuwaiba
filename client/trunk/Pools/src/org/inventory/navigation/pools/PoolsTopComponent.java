@@ -15,12 +15,17 @@
  */
 package org.inventory.navigation.pools;
 
+import java.awt.event.KeyEvent;
 import java.util.List;
 import javax.swing.ActionMap;
+import javax.swing.InputMap;
+import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
+import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
 import org.inventory.communications.core.LocalPool;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.navigation.navigationtree.nodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.pools.nodes.PoolRootNode;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -31,6 +36,7 @@ import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.Node;
 import org.openide.util.NbBundle;
+import org.openide.util.actions.SystemAction;
 import org.openide.windows.TopComponent;
 
 /**
@@ -70,6 +76,15 @@ public final class PoolsTopComponent extends TopComponent implements ExplorerMan
         map.put(DefaultEditorKit.copyAction, ExplorerUtils.actionCopy(em));
         map.put(DefaultEditorKit.cutAction, ExplorerUtils.actionCut(em));
         map.put(DefaultEditorKit.pasteAction, ExplorerUtils.actionPaste(em));
+        map.put(DeleteBusinessObjectAction.ACTION_MAP_KEY, SystemAction.get(DeleteBusinessObjectAction.class));
+
+        //Now the keystrokes
+        InputMap keys = getInputMap(WHEN_IN_FOCUSED_WINDOW);
+        keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.copyAction);
+        keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.cutAction);
+        keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.pasteAction);
+        keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), DeleteBusinessObjectAction.ACTION_MAP_KEY);
+        
         associateLookup(ExplorerUtils.createLookup(em, map));
         treeView = new BeanTreeView();
         treeView.setWheelScrollingEnabled(true);

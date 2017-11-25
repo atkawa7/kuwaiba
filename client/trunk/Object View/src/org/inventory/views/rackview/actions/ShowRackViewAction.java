@@ -20,6 +20,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericOpenViewAction;
 import org.inventory.views.rackview.RackViewTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.WindowManager;
@@ -29,14 +30,14 @@ import org.openide.windows.WindowManager;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ShowRackViewAction extends GenericObjectNodeAction {
+public class ShowRackViewAction extends GenericObjectNodeAction implements GenericOpenViewAction {
     
     public ShowRackViewAction() {
         putValue(NAME, ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_SHOW_RACK_VIEW"));
     }
     
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(ActionEvent e) {        
         for (LocalObjectLight rack : selectedObjects) {
             RackViewTopComponent rackView = ((RackViewTopComponent) WindowManager.
                 getDefault().findTopComponent("RackViewTopComponent_" + rack.getOid()));
