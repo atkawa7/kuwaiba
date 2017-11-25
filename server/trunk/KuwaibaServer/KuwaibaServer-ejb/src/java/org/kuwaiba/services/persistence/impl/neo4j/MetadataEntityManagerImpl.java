@@ -1619,6 +1619,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
         if (cm.getPossibleChildren(className) != null)
             cm.getPossibleChildren(className).clear();
+        else
+            cm.putPossibleChildren(className, new ArrayList());
 
         List<ClassMetadataLight> possibleChildren = new ArrayList();
 
@@ -1644,6 +1646,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         
         if (cm.getPossibleSpecialChildren(className) != null)
             cm.getPossibleSpecialChildren(className).clear();
+        else
+            cm.putPossibleSpecialChildren(className, new ArrayList());
         
         List<ClassMetadataLight> possibleSpecialChildren = new ArrayList();
         
@@ -1653,7 +1657,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 Iterable<Node> allSubclasses = Util.getAllSubclasses(relationship.getEndNode());
                 for (Node childNode : allSubclasses) {
                     if (!(Boolean) childNode.getProperty(Constants.PROPERTY_ABSTRACT)) {
-                        cm.putPossibleChild(className, (String) childNode.getProperty(Constants.PROPERTY_NAME));
+                        cm.putPossibleSpecialChild(className, (String) childNode.getProperty(Constants.PROPERTY_NAME));
                         possibleSpecialChildren.add(Util.createClassMetadataLightFromNode(childNode));
                     }
                 }

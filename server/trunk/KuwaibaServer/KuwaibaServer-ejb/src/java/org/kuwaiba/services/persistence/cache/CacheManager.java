@@ -116,23 +116,23 @@ public class CacheManager {
         classIndex.remove(className);
     }
 
-//    /**
-//     * Adds an entry to the possible children index
-//     * @param parent
-//     * @param children
-//     */
-//    public void putPossibleChildren(String parent, List<String>children){
-//        possibleChildrenIndex.put(parent, children);
-//    }
-//    
-//    /**
-//     * Adds an entry to the possible special children index
-//     * @param parent The parent class
-//     * @param children the list of possible special children classes
-//     */
-//    public void putPossibleSpecialChildren(String parent, List<String>children){
-//        possibleSpecialChildrenIndex.put(parent, children);
-//    }
+    /**
+     * Adds an entry to the possible children index
+     * @param parent
+     * @param children
+     */
+    public void putPossibleChildren(String parent, List<String>children){
+        possibleChildrenIndex.put(parent, children);
+    }
+    
+    /**
+     * Adds an entry to the possible special children index
+     * @param parent The parent class
+     * @param children the list of possible special children classes
+     */
+    public void putPossibleSpecialChildren(String parent, List<String>children){
+        possibleSpecialChildrenIndex.put(parent, children);
+    }
 
     public void putSubClassNoRecursive(String parent, ClassMetadataLight newSubClass){
         List<ClassMetadataLight> children = subClassesNoRecursiveIndex.get(parent);

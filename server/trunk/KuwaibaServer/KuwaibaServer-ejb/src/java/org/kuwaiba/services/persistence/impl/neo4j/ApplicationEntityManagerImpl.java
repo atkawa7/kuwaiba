@@ -2538,7 +2538,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public long createTemplateElement(String templateElementClass, String templateElementParentClassName, long templateElementParentId, String templateElementName) throws 
         MetadataObjectNotFoundException, ApplicationObjectNotFoundException, OperationNotPermittedException {
         
-        if (!cm.getPossibleChildren(templateElementParentClassName).contains(templateElementClass)) 
+        boolean isPossibleChildren = false;
+        for (ClassMetadataLight possibleChildren : mem.getPossibleChildren(templateElementParentClassName)) {
+            if (possibleChildren.getName().equals(templateElementClass)) {
+                isPossibleChildren = true;
+                break;
+            }
+        }
+        if (!isPossibleChildren) 
             throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as child of %s", templateElementClass, templateElementParentClassName == null ? Constants.NODE_DUMMYROOT : templateElementParentClassName));
         
         try (Transaction tx = graphDb.beginTx()) {
@@ -2582,7 +2589,15 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override    
     public long createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, long tsElementParentId, String tsElementName) 
         throws OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException {
-        if (!cm.getPossibleSpecialChildren(tsElementParentClassName).contains(tsElementClass))
+        
+        boolean isPossibleSpecialChildren = false;
+        for (ClassMetadataLight  possibleSpecialChildren : mem.getPossibleSpecialChildren(tsElementParentClassName)) {
+            if (possibleSpecialChildren.getName().equals(tsElementClass)) {
+                isPossibleSpecialChildren = true;
+                break;
+            }
+        }
+        if (!isPossibleSpecialChildren)
             throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as special child of %s", tsElementClass, tsElementParentClassName == null ? Constants.NODE_DUMMYROOT : tsElementParentClassName));
             
         try (Transaction tx = graphDb.beginTx()) {
