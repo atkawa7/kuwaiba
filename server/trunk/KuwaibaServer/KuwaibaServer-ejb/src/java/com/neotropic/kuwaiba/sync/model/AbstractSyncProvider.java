@@ -16,8 +16,6 @@
 
 package com.neotropic.kuwaiba.sync.model;
 
-import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
-import com.neotropic.kuwaiba.sync.model.SyncResult;
 import java.util.List;
 
 /**
@@ -58,6 +56,8 @@ public abstract class AbstractSyncProvider {
      */
     public abstract boolean isAutomatic();
     
+    public abstract List<AbstractDataEntity> initialize (SynchronizationGroup syncGroup);
+    
     /**
      * Implement this method if the synchronization process will be associated to an object in the inventory, for example, 
      * you will retrieve the hardware information about a network element and find what has changed overnight.
@@ -76,4 +76,10 @@ public abstract class AbstractSyncProvider {
      * @return A set of results (circuit YYY has a new route zzzz)
      */
     public abstract List<SyncResult> sync(List<AbstractDataEntity> originalData);
+    /**
+     * Performs the actual actions 
+     * @param actions
+     * @return 
+     */
+    public abstract List<String> finalize (List<SyncAction> actions);
 }
