@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import static javax.swing.Action.NAME;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
@@ -36,17 +37,20 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.SubMenuDialog;
 import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.openide.util.ImageUtilities;
 import org.openide.util.Utilities;
+import org.openide.util.actions.Presenter;
 
 /**
  * Shows the class reports available for the selected node (if any) and run any of them
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ExecuteClassLevelReportAction extends GenericInventoryAction implements ComposedAction {
+public class ExecuteClassLevelReportAction extends GenericInventoryAction implements ComposedAction, Presenter.Popup {
     private static ExecuteClassLevelReportAction instance;
     
     private ExecuteClassLevelReportAction() {
         putValue(NAME, "Reports...");
+        putValue(SMALL_ICON, ImageUtilities.loadImageIcon("org/inventory/navigation/navigationtree/res/show_reports.png", false));
     }
     
     public static ExecuteClassLevelReportAction getInstance() {
@@ -129,5 +133,10 @@ public class ExecuteClassLevelReportAction extends GenericInventoryAction implem
 
             actionPerformed(theObject, reportId);
         }
+    }
+
+    @Override
+    public JMenuItem getPopupPresenter() {
+        return new JMenuItem(this);
     }
 }

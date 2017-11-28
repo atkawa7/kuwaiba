@@ -36,8 +36,7 @@ import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupActions;
-import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupActionsFactory;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionGroupActionsFactory;
 import org.inventory.navigation.navigationtree.nodes.actions.CreateBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.CreateBusinessObjectFromTemplateAction;
 import org.inventory.navigation.navigationtree.nodes.actions.CreateMultipleBusinessObjectAction;
@@ -45,10 +44,7 @@ import org.inventory.navigation.navigationtree.nodes.actions.DeleteBusinessObjec
 import org.inventory.navigation.navigationtree.nodes.actions.EditObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ExecuteClassLevelReportAction;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericActionsGroupActions;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericOpenViewAction;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericRelateToAction;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericReleaseFromAction;
-import org.inventory.navigation.navigationtree.nodes.actions.RefreshObjectAction;
+import org.inventory.navigation.navigationtree.nodes.actions.UpdateNodeAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.inventory.navigation.navigationtree.nodes.properties.DateTypeProperty;
 import org.inventory.navigation.navigationtree.nodes.properties.ListTypeProperty;
@@ -152,8 +148,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                                 lam.getDescription(), this);
                         break;
                     case Constants.MAPPING_PRIMITIVE:
-                    //Those attributes that are not multiple, but reference another object
-                    //like endpointX in physicalConnections should be ignored, at least by now
                         if (!lam.getType().equals(LocalObjectLight.class)) {
                             property = new NativeTypeProperty(
                                     lam.getName(),
@@ -260,7 +254,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             actions.add(SystemAction.get(CutAction.class));
             actions.add(SystemAction.get(PasteAction.class));
         }        
-        actions.add(RefreshObjectAction.getInstance(this));
+        actions.add(UpdateNodeAction.getInstance(this));
         actions.add(EditObjectAction.getInstance(this));
         
         actions.add(null); //Separator
@@ -283,9 +277,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                     actions.add(action);
             }
         }
-        actions.add(ActionsGroupActionsFactory.getInstanceOfOpenViewGroupActions());
-        actions.add(ActionsGroupActionsFactory.getInstanceOfRelateToGroupActions());
-        actions.add(ActionsGroupActionsFactory.getInstanceOfReleaseFromGroupActions());
+        actions.add(ActionGroupActionsFactory.getInstanceOfOpenViewGroupActions());
+        actions.add(ActionGroupActionsFactory.getInstanceOfRelateToGroupActions());
+        actions.add(ActionGroupActionsFactory.getInstanceOfReleaseFromGroupActions());
                                 
         actions.add(null); //Separator
         actions.add(explorerAction);

@@ -35,11 +35,11 @@ import org.openide.util.actions.Presenter;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ActionsGroupActions extends GenericObjectNodeAction implements Presenter.Popup {
+public class ActionsGroup extends GenericObjectNodeAction implements Presenter.Popup {
     public final Class<?> actionsGroupClass;
     public final String iconPath;
     
-    public ActionsGroupActions(String lblAction, String iconPath, Class<?> actionsGroupClass) {
+    public ActionsGroup(String lblAction, String iconPath, Class<?> actionsGroupClass) {
         putValue(NAME, lblAction != null ? lblAction : "");        
         this.actionsGroupClass = actionsGroupClass;
         this.iconPath = iconPath;

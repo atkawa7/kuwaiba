@@ -15,6 +15,8 @@
  */
 package org.inventory.reports.nodes.actions;
 
+import org.inventory.core.services.api.actions.GenericInventoryAction;
+
 /**
  * Actions factory for this module
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
@@ -27,37 +29,37 @@ public class ReportActionsFactory {
     private static RemoveParameterFromReportAction removeParameterFromReportAction;
     private static ExecuteInventoryLevelReportAction executeInventoryLevelReportAction;
     
-    public static DeleteReportAction getDeleteClassLevelReportAction() {
+    public static GenericInventoryAction getDeleteClassLevelReportAction() {
         if (deleteClassLevelReportAction == null)
             deleteClassLevelReportAction = new DeleteReportAction();
         return deleteClassLevelReportAction;
     }
     
-    public static CreateClassLevelReportAction getCreateClassLevelReportAction() {
+    public static GenericInventoryAction getCreateClassLevelReportAction() {
         if (createClassLevelReportAction == null)
             createClassLevelReportAction = new CreateClassLevelReportAction();
         return createClassLevelReportAction;
     }
     
-    public static CreateInventoryLevelReportAction getCreateInventoryLevelReportAction() {
+    public static GenericInventoryAction getCreateInventoryLevelReportAction() {
         if (createInventoryLevelReportAction == null)
             createInventoryLevelReportAction = new CreateInventoryLevelReportAction();
         return createInventoryLevelReportAction;
     }
     
-    public static AddParameterToReportAction getAddParameterToReportAction() {
+    public static GenericInventoryAction getAddParameterToReportAction() {
         if (addParameterToReportAction == null)
             addParameterToReportAction = new AddParameterToReportAction();
         return addParameterToReportAction;
     }
     
-    public static RemoveParameterFromReportAction getRemoveParameterFromReportAction() {
+    public static GenericInventoryAction getRemoveParameterFromReportAction() {
         if (removeParameterFromReportAction == null)
             removeParameterFromReportAction = new RemoveParameterFromReportAction();
         return removeParameterFromReportAction;
     }
     
-    public static ExecuteInventoryLevelReportAction getExecuteInventoryLevelReportAction() {
+    public static GenericInventoryAction getExecuteInventoryLevelReportAction() {
         if (executeInventoryLevelReportAction == null)
             executeInventoryLevelReportAction = new ExecuteInventoryLevelReportAction();
         return executeInventoryLevelReportAction;

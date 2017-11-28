@@ -16,33 +16,33 @@
 package org.inventory.navigation.navigationtree.nodes.actions;
 
 /**
- * Class used to manage the popup menu in grouped actions
+ * Class as factory to the actions that belong to the same group
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ActionsGroupActionsFactory {
-    private static ActionsGroupActions openViewGroupActions;
-    private static ActionsGroupActions relateToGroupActions;
-    private static ActionsGroupActions releaseFromGroupActions;
+public class ActionGroupActionsFactory {
+    private static ActionsGroup openViewGroupActions;
+    private static ActionsGroup relateToGroupActions;
+    private static ActionsGroup releaseFromGroupActions;
     
-    public static ActionsGroupActions getInstanceOfOpenViewGroupActions() {
+    public static ActionsGroup getInstanceOfOpenViewGroupActions() {
         if (openViewGroupActions == null)
-            openViewGroupActions = new ActionsGroupActions("Show", 
+            openViewGroupActions = new ActionsGroup("Show", 
                 "/org/inventory/navigation/navigationtree/res/show_view_actions_group.png", 
                 GenericOpenViewAction.class);
         return openViewGroupActions;                    
     }
     
-    public static ActionsGroupActions getInstanceOfRelateToGroupActions() {
+    public static ActionsGroup getInstanceOfRelateToGroupActions() {
         if (relateToGroupActions == null)
-            relateToGroupActions = new ActionsGroupActions("Relate to", 
+            relateToGroupActions = new ActionsGroup("Relate To", 
                 "/org/inventory/navigation/navigationtree/res/relate_to_actions_group.png",
                 GenericRelateToAction.class);
         return relateToGroupActions;                    
     }
 
-    public static ActionsGroupActions getInstanceOfReleaseFromGroupActions() {
+    public static ActionsGroup getInstanceOfReleaseFromGroupActions() {
         if (releaseFromGroupActions == null)
-            releaseFromGroupActions = new ActionsGroupActions("Release from", 
+            releaseFromGroupActions = new ActionsGroup("Release From", 
                 "/org/inventory/navigation/navigationtree/res/release_from_actions_group.png",
                 GenericReleaseFromAction.class);
         return releaseFromGroupActions;                    

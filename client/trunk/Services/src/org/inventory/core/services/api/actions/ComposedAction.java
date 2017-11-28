@@ -18,8 +18,11 @@ package org.inventory.core.services.api.actions;
 import java.awt.event.ActionEvent;
 
 /**
- * A composed action is an action used to show subMenus or an set of instructions
- * to do after an actionPerformed call
+ * A composed action is an action used to show sub-menus or to perform a set of instructions
+ * to after the main actionPerformed is called. Most of these actions are used so the sub-menu is created lazily 
+ * as an external JFrame/JDialog instead of an actual sub-menu as in JMenu. When node actions show sub-menus using
+ * JMenus, the options are not loaded lazily and if they involve calls to the server to be generated, that might imply
+ * extra, unnecessary requests to the server.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public interface ComposedAction {

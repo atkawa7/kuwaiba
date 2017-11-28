@@ -19,12 +19,12 @@ import java.util.ArrayList;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
-import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupActionsFactory;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionGroupActionsFactory;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.navigation.special.children.nodes.actions.CreateSpecialBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.EditObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericActionsGroupActions;
-import org.inventory.navigation.navigationtree.nodes.actions.RefreshObjectAction;
+import org.inventory.navigation.navigationtree.nodes.actions.UpdateNodeAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.inventory.navigation.special.children.nodes.actions.CreateMultipleSpecialBusinessObjectAction;
 import org.inventory.navigation.special.children.nodes.actions.CreateSpecialBusinessObjectFromTemplateAction;
@@ -49,7 +49,7 @@ public class SpecialObjectNode extends ObjectNode {
         actions.add(CreateSpecialBusinessObjectAction.getInstance()); //This changes from ObjectNode       
         actions.add(CreateMultipleSpecialBusinessObjectAction.getInstance()); //This changes from ObjectNode
         actions.add(CreateSpecialBusinessObjectFromTemplateAction.getInstance()); //This changes from ObjectNode
-        actions.add(RefreshObjectAction.getInstance(this));
+        actions.add(UpdateNodeAction.getInstance(this));
         actions.add(EditObjectAction.getInstance(this));
         actions.add(explorerAction);
         actions.add(null); //Separator
@@ -64,9 +64,9 @@ public class SpecialObjectNode extends ObjectNode {
                     actions.add(action);
             }
         }
-        actions.add(ActionsGroupActionsFactory.getInstanceOfOpenViewGroupActions());
-        actions.add(ActionsGroupActionsFactory.getInstanceOfRelateToGroupActions());
-        actions.add(ActionsGroupActionsFactory.getInstanceOfReleaseFromGroupActions());
+        actions.add(ActionGroupActionsFactory.getInstanceOfOpenViewGroupActions());
+        actions.add(ActionGroupActionsFactory.getInstanceOfRelateToGroupActions());
+        actions.add(ActionGroupActionsFactory.getInstanceOfReleaseFromGroupActions());
         
         actions.add(null); //Separator
         actions.add(ShowMoreInformationAction.getInstance(getObject().getOid(), getObject().getClassName()));

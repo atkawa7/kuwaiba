@@ -17,24 +17,29 @@
 package org.inventory.navigation.navigationtree.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import static javax.swing.Action.SMALL_ICON;
+import javax.swing.JMenuItem;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.openide.util.ImageUtilities;
+import org.openide.util.actions.Presenter;
 
 /**
- * Refreshes the node
+ * Refreshes the node's domain object related info and its children
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public final class RefreshObjectAction extends GenericObjectNodeAction {
-    private static RefreshObjectAction instance;
+public final class UpdateNodeAction extends GenericObjectNodeAction implements Presenter.Popup {
+    private static UpdateNodeAction instance;
     private ObjectNode node;
 
-    public RefreshObjectAction() {
+    public UpdateNodeAction() {
         putValue(NAME, "Update");
+        putValue(SMALL_ICON, ImageUtilities.loadImageIcon("org/inventory/navigation/navigationtree/res/update_node.png", false));
     }
     
-    public static RefreshObjectAction getInstance(ObjectNode node) {
+    public static UpdateNodeAction getInstance(ObjectNode node) {
         if (instance == null)
-            instance = new RefreshObjectAction();
+            instance = new UpdateNodeAction();
         instance.setNode(node);
         return instance;
     }
@@ -56,5 +61,10 @@ public final class RefreshObjectAction extends GenericObjectNodeAction {
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_NAVIGATION_TREE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+
+    @Override
+    public JMenuItem getPopupPresenter() {
+        return new JMenuItem(this);
     }
 }
