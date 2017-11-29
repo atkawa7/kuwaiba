@@ -55,11 +55,11 @@ public class MovePhysicalLinkToContainerFrame  extends JFrame {
         this.linksToMove = linksToMove;
         
         setLayout(new BorderLayout());
-        setTitle(java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_MOVE_LINKS"));
+        setTitle(I18N.gm("move_links"));
         setSize(450, 550);
         
-        JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_INSTRUCTIONS_MOVE_LINKS_INTO_CONTAINER"));
-        btnMoveLinks = new JButton("Move Links");
+        JLabel lblInstructions = new JLabel(I18N.gm("instructions_to_move_links_into_conatiner"));
+        btnMoveLinks = new JButton(I18N.gm("move_links"));
         btnMoveLinks.setEnabled(false);
         btnMoveLinks.addActionListener(new MovePhysicalLinkToContainerFrame.BtnMoveLinksActionListener());
    

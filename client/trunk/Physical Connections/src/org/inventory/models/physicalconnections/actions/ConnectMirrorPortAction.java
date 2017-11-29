@@ -16,16 +16,16 @@
 package org.inventory.models.physicalconnections.actions;
 
 import java.awt.event.ActionEvent;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
+import org.inventory.communications.util.Utils;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.services.utils.JComplexDialogPanel;
+import org.inventory.core.services.i18n.I18N;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -36,39 +36,92 @@ import org.openide.util.lookup.ServiceProvider;
 public class ConnectMirrorPortAction extends GenericObjectNodeAction {
 
     public ConnectMirrorPortAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_CONNECT_MIRROR_PORT"));
+        putValue(NAME, I18N.gm("connect_mirror_ports"));
     } 
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalObjectLight[] siblings = CommunicationsStub.getInstance().getSiblings(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
-        if (siblings == null){
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            return;
+
+        List<LocalObjectLight> children = CommunicationsStub.getInstance().getObjectChildren(selectedObjects.get(0).getOid(), selectedObjects.get(0).getClassName());
+        List<LocalObjectLight> endPoints =  new ArrayList<>();
+        
+        List<LocalObjectLight> endPointsA = new ArrayList();
+        List<LocalObjectLight> endPointsB = new ArrayList();
+        
+        List<String> aObjectsClasses = new ArrayList<>();
+        List<String> bObjectsClasses = new ArrayList<>();
+        List<Long> aObjectsIds = new ArrayList<>();
+        List<Long> bObjectsIds = new ArrayList<>();
+        
+        for (LocalObjectLight child : children) {
+            if(child.getClassName().equals("OpticalPort") || child.getClassName().equals("ElectricalPort")) 
+                endPoints.add(child);
         }
-        JComboBox cmbSiblings = new JComboBox(siblings);
-        cmbSiblings.setName("cmbSiblings"); //NOI18N
-        JComplexDialogPanel dialog = new JComplexDialogPanel(new String[]{"The other ports in the parent device are"},
-                new JComponent[]{cmbSiblings});
-        if (JOptionPane.showConfirmDialog(null, dialog, "Mirror Port Connection", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
-            LocalObjectLight selectedObject = (LocalObjectLight)((JComboBox)dialog.getComponent("cmbSiblings")).getSelectedItem();
-            if (selectedObject != null){
-                if (CommunicationsStub.getInstance().connectMirrorPort(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid(),
-                        selectedObject.getClassName(), selectedObject.getOid()))
-                    NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Port mirrored successfully");
+        
+        if(!endPoints.isEmpty() && endPoints.size() % 2 ==0){
+            for (int i=0; i < endPoints.size(); i++) {
+                LocalObjectLight endPointA = endPoints.get(i);
+                if(endPointA != null){
+                    for (int j=i+1; j < endPoints.size(); j++) {
+                        LocalObjectLight endPointB = endPoints.get(j);
+                        if(endPointB != null && endPointB.getOid() != endPointA.getOid()){
+                            if(endPointA.getClassName().equals(endPointB.getClassName()) && matchMirrorPortsNames(endPointA.getName(), endPointB.getName())){
+                                endPointsA.add(endPointA);
+                                endPointsB.add(endPoints.get(j));
+                                endPoints.set(j, null);
+                                endPoints.set(i, null);
+                                break;
+                            }
+                        }
+                    }//end for
+                }
+            }//end for
+            if(endPointsA.size() != endPointsB.size())
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE,  I18N.gm("not_same_number_back_front_ports"));
+            else{
+                for (int i = 0; i < endPointsA.size(); i++) {
+                    aObjectsClasses.add(endPointsA.get(i).getClassName());
+                    aObjectsIds.add(endPointsA.get(i).getOid());
+
+                    bObjectsClasses.add(endPointsB.get(i).getClassName());
+                    bObjectsIds.add(endPointsB.get(i).getOid());
+                }
+
+                if (CommunicationsStub.getInstance().connectMirrorPort(aObjectsClasses, aObjectsIds, bObjectsClasses, bObjectsIds))
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, aObjectsIds.size() + I18N.gm("port_mirrored_successfully"));
                 else
-                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE,CommunicationsStub.getInstance().getError());
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE,CommunicationsStub.getInstance().getError());
             }
         }
+        else
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE,  I18N.gm("not_same_number_back_front_ports"));
     }
-
+   
     @Override
     public String getValidator() {
-        return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
+        return Constants.VALIDATOR_GENERIC_DISTRIBUTION_FRAME;
     }  
 
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_PHYSICAL_VIEW, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+      
+    private boolean matchMirrorPortsNames(String back, String front){
+        back = back.toLowerCase();
+        front = front.toLowerCase();
+        String frontNumericPart = "";
+        for (int i=1; i < front.length(); i++){
+            if(Utils.isNumeric(front.substring(i-1, i)))
+                frontNumericPart += front.substring(i-1,i);
+        }
+        String backNumericPart = "";
+        
+        for (int i=1; i < back.length(); i++){
+            if(Utils.isNumeric(back.substring(i-1, i)))
+                backNumericPart += back.substring(i-1, i);
+        }
+
+        return backNumericPart.equals(frontNumericPart);
     }
 }

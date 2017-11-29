@@ -17,7 +17,6 @@ package org.inventory.models.physicalconnections.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -29,6 +28,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.models.physicalconnections.wizards.NewContainerWizard;
 import org.inventory.models.physicalconnections.wizards.NewLinkWizard;
@@ -45,7 +45,7 @@ import org.openide.util.lookup.ServiceProvider;
 public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
     
     public CreatePhysicalConnectionAction() {
-        putValue(NAME, ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_CREATE_PHYSICAL_CONNECTION"));
+        putValue(NAME, I18N.gm("create_physical_connection"));
     }
 
     @Override
@@ -80,21 +80,21 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
                              endpointB.getClassName(), endpointB.getOid());
         
         if (commonParent == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
         }
             
         if (commonParent.getOid() == -1L) {
-            JOptionPane.showMessageDialog(null, "Can not create a connection between two nodes whose common parent is the root of the hierarchy", 
-                "Information", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, I18N.gm("can_not_create_connection_whose_common_parent_is_root_of_hierarchy"), 
+                I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         //if there are wirecontainers in both of the two selected nodes 
         existintWireContainersList = CommunicationsStub.getInstance().getContainersBetweenObjects(endpointA.getClassName(), endpointA.getOid(), 
                 endpointB.getClassName(), endpointB.getOid(), Constants.CLASS_WIRECONTAINER);
                             
-        JComboBox cmbConnectionType = new JComboBox(new String[] {"Container", "Link"});
+        JComboBox<String> cmbConnectionType = new JComboBox(new String[] {"Container", "Link"});
             
         JComplexDialogPanel connTypeDialog = new JComplexDialogPanel(new String[] {"Connection Type: "}, new JComponent [] {cmbConnectionType});
             
