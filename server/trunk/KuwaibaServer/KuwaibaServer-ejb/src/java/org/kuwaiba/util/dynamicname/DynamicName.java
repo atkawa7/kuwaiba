@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.ws.todeserialize.StringPair;
 
 /**
  * Class to get a set of dynamic names given a expression to build a name
@@ -42,11 +43,17 @@ public class DynamicName {
      * List of names, generated from the given expression
      */
     private List<String> dynamicNames;
+    /**
+     * if is true it means that the created sequence are mirror ports and they 
+     * shall be connected
+     */
+    private boolean mirrorPortsSequence;
             
     public DynamicName(String expressionForTheName) throws InvalidArgumentException {
         staticSections = new ArrayList();
         dynamicSections = new ArrayList();
         functions = new HashMap();
+        mirrorPortsSequence = false;
         
         String section = "";
         boolean squareBracketOpen = false;
@@ -80,7 +87,11 @@ public class DynamicName {
         
         setFunctions();
     }
-    
+
+    public boolean isMirrorPortsSequence() {
+        return mirrorPortsSequence;
+    }
+
     public void recursiveName(String values, int idxNextDynamicSection) {
         if (idxNextDynamicSection == -1) {
             String [] arrayOfValues = values.split(",");
@@ -93,17 +104,34 @@ public class DynamicName {
     }
     
     public List<String> getDynamicNames() {
+        
         if (dynamicNames == null) {
             dynamicNames = new ArrayList();
 
             if (dynamicSections.size() > 0) {
-
-                for (String value : functions.get(dynamicSections.get(0)).getPossibleValues())
-                    recursiveName(value + ",", 1 < dynamicSections.size() ? 1 : -1);
-
-            } else 
+                if(dynamicSections.get(0).contains("mirror")){
+                    for (String func : functions.keySet()){
+                        staticSections.clear();
+                        staticSections.add("");
+                        if(func.contains("front"))
+                            staticSections.add("-front");
+                        else if(func.contains("back"))
+                            staticSections.add("-back");
+                        DynamicSectionFunction get = functions.get(func);
+                        for(String value : get.getPossibleValues())
+                            recursiveName(value + ",", -1);
+                    }
+                    mirrorPortsSequence = true;
+                }
+                else{
+                    for (String value : functions.get(dynamicSections.get(0)).getPossibleValues())
+                        recursiveName(value + ",", 1 < dynamicSections.size() ? 1 : -1);
+                }
+            } 
+            else 
                 recursiveName(",", -1);
         }
+       
         return dynamicNames;
     }
     
@@ -132,21 +160,33 @@ public class DynamicName {
         for (String dynamicSection : dynamicSections) {
             DynamicSectionFunction function;
             
-            if ((function = DynamicSectionFunctionFactory.getAlphabeticLowercaseSequence(dynamicSection)) != null) {
-                
+            if ((function = DynamicSectionFunctionFactory.getAlphabeticLowercaseSequence(dynamicSection)) != null)
                 functions.put(dynamicSection, function);
-            } else if ((function = DynamicSectionFunctionFactory.getAlphabeticUppercaseSequence(dynamicSection)) != null) {
-                
+            
+            else if ((function = DynamicSectionFunctionFactory.getAlphabeticUppercaseSequence(dynamicSection)) != null)
                 functions.put(dynamicSection, function);
-            } else if ((function = DynamicSectionFunctionFactory.getNumericSequence(dynamicSection)) != null) {
-                
+            
+            else if ((function = DynamicSectionFunctionFactory.getNumericSequence(dynamicSection)) != null)
                 functions.put(dynamicSection, function);
-            } else if ((function = DynamicSectionFunctionFactory.getFunctionValue(dynamicSection)) != null) {
-                
+            
+            else if ((function = DynamicSectionFunctionFactory.getFunctionValue(dynamicSection)) != null)
                 functions.put(dynamicSection, function);
-            } else {
-                throw new InvalidArgumentException(String.format("Function %s not defined", dynamicSection));
+            
+            else if ((function = DynamicSectionFunctionFactory.getMirrorPortsPairing(dynamicSection)) != null){
+                functions.put("back", 
+                        DynamicSectionFunctionFactory.getNumericSequence(
+                                "[sequence("+ function.getPossibleValues().get(0) +","+ function.getPossibleValues().get(1) +")]"));
+                functions.put("front", DynamicSectionFunctionFactory.getNumericSequence(
+                        "[sequence("+ function.getPossibleValues().get(0) +","+ function.getPossibleValues().get(1) +")]"));
             }
+                
+            else
+                throw new InvalidArgumentException(String.format("Function %s not defined", dynamicSection));
         }
+    }
+    
+    public void createMirrorRelationships(List <StringPair> ports, String className) throws InvalidArgumentException{
+        MirrorPortsPairingUtil x = new MirrorPortsPairingUtil(ports, className);
+        x.mirrorProts();
     }
 }

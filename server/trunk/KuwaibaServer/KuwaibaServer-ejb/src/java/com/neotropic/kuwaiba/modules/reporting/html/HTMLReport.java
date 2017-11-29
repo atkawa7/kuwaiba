@@ -170,6 +170,7 @@ public class HTMLReport extends InventoryReport {
                     "   }\n" +
                     "   div {\n" +
                     "            padding: 5px 5px 5px 5px;\n" +
+                    "            float: left;\n             " +
                     "   }\n" +
                     "   div.warning {\n" +
                     "            background-color: #FFF3A2;\n" +

@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
@@ -33,7 +33,8 @@ import java.util.List;
  * from the sync data source and the corresponding info in Kuwaiba. The sync provider will return the differences</li>
  * <li>The Sync Job either forward the differences to the user requesting for authorization to perform actions 
  * (create/delete elements, update properties, etc) or will perform them automatically</li>
- * <li>The sync job performs the actions with external intervention (e.g. human approval) or automatically, depending on how the sync provider is configured</li>
+ * <li>The sync job performs the actions with external intervention (e.g. human approval) 
+ * or automatically, depending on how the sync provider is configured</li>
  * </ul>
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */

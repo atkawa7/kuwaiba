@@ -448,6 +448,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         + "less possibilities that the number of objects to be created");
             }
             long res[] = new long[numberOfObjects];
+            
+            List<StringPair> createdMirrorPorts = new ArrayList<>();
+            
             for (int i = 0; i < numberOfObjects; i += 1) {
                 Node newObject = createObject(classNode, myClass, null);
                 newObject.setProperty(Constants.PROPERTY_NAME, dynamicName.getDynamicNames().get(i));
@@ -456,7 +459,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 
                 objectIndex.putIfAbsent(newObject, Constants.PROPERTY_ID, newObject.getId());
                 res[i] = newObject.getId();
+                
+                if(dynamicName.isMirrorPortsSequence())
+                    createdMirrorPorts.add(new StringPair(Long.toString(newObject.getId()), dynamicName.getDynamicNames().get(i)));
             }
+            
+            if(dynamicName.isMirrorPortsSequence())
+                dynamicName.createMirrorRelationships(createdMirrorPorts, className);
+            
             tx.success();
             return res;
         }

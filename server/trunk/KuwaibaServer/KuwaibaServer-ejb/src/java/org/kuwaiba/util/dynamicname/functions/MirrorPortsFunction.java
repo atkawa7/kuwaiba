@@ -12,6 +12,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
+
 package org.kuwaiba.util.dynamicname.functions;
 
 import java.util.ArrayList;
@@ -21,37 +22,39 @@ import java.util.regex.Pattern;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
- * Class to get an ascending alphabetic lowercase sequence, given the start and end of the sequence
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * Class to get the two possible names to represent the front port and the back 
+ * port when a pair of ports are created to be mirrored.
+ * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class AlphabeticLowercaseSequence extends DynamicSectionFunction {
-    public static final String FUNCTION_PATTERN = "sequence\\([a-z],[a-z]\\)";
-    protected char parameter1;
-    protected char parameter2;
+public class MirrorPortsFunction extends DynamicSectionFunction {
+    public static final String FUNCTION_PATTERN = "mirror\\([0-9]+,[0-9]+\\)";
+    protected int parameter1;
+    protected int parameter2;
     
-    protected AlphabeticLowercaseSequence(String dynamicSectionPattern, String dynamicSectionFunction) throws InvalidArgumentException {
-        super(dynamicSectionPattern, dynamicSectionFunction);
+    protected MirrorPortsFunction(String functionPattern, String dynamicSection) throws InvalidArgumentException {
+        super(functionPattern, dynamicSection);
     }
-        
-    public AlphabeticLowercaseSequence(String dynamicSectionFunction) throws InvalidArgumentException {
+
+    public MirrorPortsFunction(String dynamicSectionFunction) throws InvalidArgumentException {
         this(FUNCTION_PATTERN, dynamicSectionFunction);
         
-        Pattern pattern = Pattern.compile("[a-z],[a-z]");
+        Pattern pattern = Pattern.compile("[0-9]+,[0-9]+");
         Matcher matcher = pattern.matcher(dynamicSectionFunction);
         if (matcher.find()) {
-            parameter1 = matcher.group().split(",")[0].charAt(0);
-            parameter2 = matcher.group().split(",")[1].charAt(0);
-                
+            parameter1 = Integer.parseInt(matcher.group().split(",")[0]);
+            parameter2 = Integer.parseInt(matcher.group().split(",")[1]);
+            
             if (parameter1 >= parameter2)
                 throw new InvalidArgumentException("Dynamic section function malformed \"" + dynamicSectionFunction + "\" the parameter " + parameter1 + " greater than or equal to " + parameter2);
         }
     }
-        
+
     @Override
     public List<String> getPossibleValues() {
         List<String> dynamicSections = new ArrayList();
-        for (char c = parameter1; c <= parameter2; c++)
-            dynamicSections.add("" + c);
+        dynamicSections.add(Integer.toString(parameter1));
+        dynamicSections.add(Integer.toString(parameter2));
+
         return dynamicSections;
     }
 }

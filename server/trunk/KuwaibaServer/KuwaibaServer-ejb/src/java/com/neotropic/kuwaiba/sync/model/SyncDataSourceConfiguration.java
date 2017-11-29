@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -21,7 +21,7 @@ import java.util.List;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
- * Basically a hashmap that stores a set of configuration parameters that will be used by the sync provider
+ * Basically a hash-map that stores a set of configuration parameters that will be used by the sync provider
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class SyncDataSourceConfiguration {
@@ -45,10 +45,8 @@ public class SyncDataSourceConfiguration {
         this.name = name;
         this.parameters = new HashMap<>();
         
-        
         for (int i = 0; i < paramNames.size(); i++)
             parameters.put(paramNames.get(i), paramValues.get(i));
-            
     }
 
     public long getId() {

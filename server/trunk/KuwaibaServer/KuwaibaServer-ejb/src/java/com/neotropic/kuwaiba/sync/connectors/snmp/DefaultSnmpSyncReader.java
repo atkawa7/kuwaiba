@@ -19,7 +19,6 @@ package com.neotropic.kuwaiba.sync.connectors.snmp;
 import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import javax.batch.api.chunk.ItemReader;
@@ -29,7 +28,9 @@ import javax.batch.runtime.context.JobContext;
 import javax.inject.Inject;
 
 /**
- * This reader will poll one by one the queued sync groups and retrieve the information declared in the polling definition and map it to a generic structure in memory 
+ * This reader will poll one by one the queued sync groups and retrieve the 
+ * information declared in the polling definition and map it to a generic 
+ * structure in memory 
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class DefaultSnmpSyncReader implements ItemReader {

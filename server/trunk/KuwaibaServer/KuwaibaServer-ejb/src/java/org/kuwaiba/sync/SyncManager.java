@@ -20,6 +20,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 
 /**
  * Synchronization manager 
@@ -32,12 +37,19 @@ public class SyncManager{
     public String bulkUploadFromFile(byte [] uploadData, int commitSize, int dataType, 
             String IPAddress, String sessionId) {
          
-        LoadDataFromFile ldf = new LoadDataFromFile(uploadData, commitSize, dataType, IPAddress, sessionId);
+//        LoadDataFromFile ldf = new LoadDataFromFile(uploadData, commitSize, dataType, IPAddress, sessionId);
+//        try {
+//            return ldf.uploadFile();
+//        } catch (Exception ex) {
+//            Logger.getLogger(SyncManager.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//         return null;
+          LoadDataFromSNMP loadSNMPFile = new LoadDataFromSNMP("MPLSRouter", 33030, "ASR1006-LSB2-01.csv");
         try {
-            return ldf.uploadFile();
-        } catch (Exception ex) {
+            return loadSNMPFile.load();
+        } catch (MetadataObjectNotFoundException | ObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
             Logger.getLogger(SyncManager.class.getName()).log(Level.SEVERE, null, ex);
-        } 
+        }
         return null;
     }
 
@@ -45,5 +57,4 @@ public class SyncManager{
         File file = new File(PATH_DATA_LOAD_LOGS + fileName);
         return LoadDataFromFile.getByteArrayFromFile(file);
     }
-
 }

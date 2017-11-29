@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -19,8 +19,8 @@ package com.neotropic.kuwaiba.sync.model;
 import java.util.List;
 
 /**
- * Creates a Synchronization Group. A Sync Group is a set of Synchronization Configurations that will be processed by the same
-   Synchronization Provider
+ * Creates a Synchronization Group. A Sync Group is a set of Synchronization 
+ * Configurations that will be processed by the same Synchronization Provider
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class SynchronizationGroup {

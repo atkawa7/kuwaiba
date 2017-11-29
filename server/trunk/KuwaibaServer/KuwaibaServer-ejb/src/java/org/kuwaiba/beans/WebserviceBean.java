@@ -84,6 +84,8 @@ import org.kuwaiba.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.ws.toserialize.application.RemoteResultMessage;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.ws.toserialize.application.RemoteSynchronizationConfiguration;
+import org.kuwaiba.ws.toserialize.application.RemoteSynchronizationGroup;
 import org.kuwaiba.ws.toserialize.application.RemoteTask;
 import org.kuwaiba.ws.toserialize.application.RemoteTaskResult;
 import org.kuwaiba.ws.toserialize.application.ResultRecord;
@@ -1486,7 +1488,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     
     //Physical connections
     @Override
-    public void connectMirrorPort(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String ipAddress, String sessionId) throws ServerSideException {
+    public void connectMirrorPort(String[] aObjectClass, long[] aObjectId, String[] bObjectClass, long[] bObjectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         
@@ -1496,22 +1498,29 @@ public class WebserviceBean implements WebserviceBeanRemote {
         try {
             aem.validateWebServiceCall("connectMirrorPort", ipAddress, sessionId);
             
-            if (!mem.isSubClass("GenericPort", aObjectClass)) //NOI18N
-                throw new ServerSideException(String.format("Object %s is not a port", bem.getObjectLight(aObjectClass, aObjectId)));
-            if (!mem.isSubClass("GenericPort", bObjectClass)) //NOI18N
-                throw new ServerSideException(String.format("Object %s is not a port", bem.getObjectLight(bObjectClass, bObjectId)));
+            if(aObjectClass.length != bObjectClass.length || bObjectId.length != aObjectId.length){
+                throw new ServerSideException(String.format("Not the same number of front = %s and back ports = %s", aObjectId.length, bObjectId.length));
+            }
             
-            if (bem.hasSpecialRelationship(aObjectClass, aObjectId, "mirror", 1)) //NOI18N
-                throw new ServerSideException(String.format("Object %s already has a mirror port", bem.getObjectLight(aObjectClass, aObjectId)));
+            for (int i=0; i < aObjectClass.length; i++) {
+                if (!mem.isSubClass("GenericPort", aObjectClass[i])) //NOI18N
+                    throw new ServerSideException(String.format("Object %s is not a port", bem.getObjectLight(aObjectClass[i], aObjectId[i])));
             
-            if (bem.hasSpecialRelationship(bObjectClass, bObjectId, "mirror", 1)) //NOI18N
-                throw new ServerSideException(String.format("Object %s already has a mirror port", bem.getObjectLight(bObjectClass, bObjectId)));
+                if (!mem.isSubClass("GenericPort", bObjectClass[i])) //NOI18N
+                    throw new ServerSideException(String.format("Object %s is not a port", bem.getObjectLight(bObjectClass[i], bObjectId[i])));
+
+                if (bem.hasSpecialRelationship(aObjectClass[i], aObjectId[i], "mirror", 1)) //NOI18N
+                    throw new ServerSideException(String.format("Object %s already has a mirror port", bem.getObjectLight(aObjectClass[i], aObjectId[i])));
+
+                if (bem.hasSpecialRelationship(bObjectClass[i], bObjectId[i], "mirror", 1)) //NOI18N
+                    throw new ServerSideException(String.format("Object %s already has a mirror port", bem.getObjectLight(bObjectClass[i], bObjectId[i])));
+                
+                bem.createSpecialRelationship(aObjectClass[i], aObjectId[i], bObjectClass[i], bObjectId[i], "mirror", true); //NOI18N
             
-            bem.createSpecialRelationship(aObjectClass, aObjectId, bObjectClass, bObjectId, "mirror", true); //NOI18N
-            
-            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), aObjectClass, aObjectId, 
-                ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
-                "mirror", "", Long.toString(bObjectId), ""); //NOI18N            
+                aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), aObjectClass[i], aObjectId[i], 
+                    ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                    "mirror", "", Long.toString(aObjectId[i]) + ", " + Long.toString(bObjectId[i]), ""); //NOI18N          
+            }
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3130,10 +3139,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
-
-    
-    
-    
     // </editor-fold>
     
     //<editor-fold desc="Templates" defaultstate="collapsed">
@@ -4262,6 +4267,101 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
         // </editor-fold>    
+        //<editor-fold desc="Inventory Synchronization" defaultstate="collapsed">
+        @Override
+        public long createSynchronizationDataSourceConfig(String name, List<StringPair> parameters, String syncGroupId, String ipAddress, String sessionId) throws ServerSideException{
+            if (aem == null)
+                throw new ServerSideException("Can't reach the backend. Contact your administrator");
+            try {
+                aem.validateWebServiceCall("createSynchronizationDataSourceConfig", ipAddress, sessionId);
+                
+                return 0;
+            } catch (InventoryException ex) {
+                throw new ServerSideException(ex.getMessage());
+            }
+        }
+        
+        @Override
+        public long createSynchronizationGroup(String name,String syncProviderId, String ipAddress, String sessionId)throws ServerSideException{
+            if (aem == null)
+                throw new ServerSideException("Can't reach the backend. Contact your administrator");
+            try {
+                aem.validateWebServiceCall("createSynchronizationGroup", ipAddress, sessionId);
+                
+                return 0;
+            } catch (InventoryException ex) {
+                throw new ServerSideException(ex.getMessage());
+            }
+        }
+        
+        @Override
+        public void updateSyncDataSourceConfiguration(String syncDataSourceConfigId, List<StringPair> parameters, String ipAddress, String sessionId)throws ServerSideException{
+            if (aem == null)
+                throw new ServerSideException("Can't reach the backend. Contact your administrator");
+            try {
+                aem.validateWebServiceCall("updateSyncDataSourceConfiguration", ipAddress, sessionId);
+                
+                
+            } catch (InventoryException ex) {
+                throw new ServerSideException(ex.getMessage());
+            }
+        
+        }
+        
+        @Override
+        public List<RemoteSynchronizationGroup> getSynchronizationGroups(String ipAddress, String sessionId)throws ServerSideException{
+            if (aem == null)
+                throw new ServerSideException("Can't reach the backend. Contact your administrator");
+            try {
+                aem.validateWebServiceCall("getSynchronizationGroups", ipAddress, sessionId);
+                
+                return null;
+            } catch (InventoryException ex) {
+                throw new ServerSideException(ex.getMessage());
+            }
+        }
+        
+        @Override
+        public List<RemoteSynchronizationConfiguration> getSyncDataSourceConfigurations(String syncDataSourceConfigId, String ipAddress, String sessionId)throws ServerSideException{
+            if (aem == null)
+                throw new ServerSideException("Can't reach the backend. Contact your administrator");
+            try {
+                aem.validateWebServiceCall("getSyncDataSourceConfigurations", ipAddress, sessionId);
+                
+                return null;
+            } catch (InventoryException ex) {
+                throw new ServerSideException(ex.getMessage());
+            }
+        }
+        //@Override
+        //public (, String ipAddress, String sessionId)throws ServerSideException{}
+        
+        @Override
+        public void deleteSynchronizationGroup(String syncGroupId, String ipAddress, String sessionId)throws ServerSideException{
+            if (aem == null)
+                throw new ServerSideException("Can't reach the backend. Contact your administrator");
+            try {
+                aem.validateWebServiceCall("deleteSynchronizationGroup", ipAddress, sessionId);
+                
+                
+            } catch (InventoryException ex) {
+                throw new ServerSideException(ex.getMessage());
+            }
+        }
+        
+        @Override
+        public void deleteSynchronizationDataSourceConfig(String syncDataSourceConfigId, String ipAddress, String sessionId)throws ServerSideException{
+            if (aem == null)
+                throw new ServerSideException("Can't reach the backend. Contact your administrator");
+            try {
+                aem.validateWebServiceCall("deleteSynchronizationDataSourceConfig", ipAddress, sessionId);
+                
+                
+            } catch (InventoryException ex) {
+                throw new ServerSideException(ex.getMessage());
+            }
+        }
+        //</editor-fold>
         // <editor-fold defaultstate="collapsed" desc="Fault Management Integration">
 
     @Override
@@ -4288,7 +4388,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
                         
                         if (matchedCommunicationsElements.size() > 1)
                             throw new ServerSideException(String.format("More than one communications equipment with name %s was found", resourceDefinitionTokens[0]));
-                        
                         
                         List<RemoteBusinessObjectLight> deviceChildren = bem.getObjectChildren(matchedCommunicationsElements.get(0).getClassName(), 
                                                                             matchedCommunicationsElements.get(0).getId(), -1);
@@ -4384,7 +4483,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
-        
         // </editor-fold>
     // </editor-fold>
     

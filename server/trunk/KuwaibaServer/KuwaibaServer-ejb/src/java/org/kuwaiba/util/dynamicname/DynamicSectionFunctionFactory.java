@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
@@ -21,6 +21,7 @@ import org.kuwaiba.util.dynamicname.functions.AlphabeticLowercaseSequence;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.util.dynamicname.functions.MirrorPortsFunction;
 
 /**
  * Factory to dynamic name functions
@@ -64,6 +65,14 @@ public class DynamicSectionFunctionFactory {
         
         if (isDynamicSectionFunction(FunctionValue.FUNCTION_PATTERN, dynamicSection))
             return new FunctionValue(dynamicSection);
+        return null;
+    }
+    
+    public static MirrorPortsFunction getMirrorPortsPairing(String dynamicSection)
+            throws InvalidArgumentException {
+        
+        if (isDynamicSectionFunction(MirrorPortsFunction.FUNCTION_PATTERN, dynamicSection))
+            return new MirrorPortsFunction(dynamicSection);
         return null;
     }
 }

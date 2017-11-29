@@ -23,7 +23,8 @@ import javax.batch.runtime.context.JobContext;
 import javax.inject.Inject;
 
 /**
- * Executes the actions after having analyzed the differences between the information in the SNMP agents and the information in Kuwaiba. These actions 
+ * Executes the actions after having analyzed the differences between the
+ * information in the SNMP agents and the information in Kuwaiba. These actions 
  * were defined in the ItemProcessor
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */

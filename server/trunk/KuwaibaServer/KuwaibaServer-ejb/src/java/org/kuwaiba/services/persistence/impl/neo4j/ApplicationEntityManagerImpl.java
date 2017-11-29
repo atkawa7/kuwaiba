@@ -40,6 +40,7 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import org.codehaus.groovy.control.CompilationFailedException;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -2493,7 +2494,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             environmentParameters.setVariable("Direction", Direction.class); //NOI18N
             environmentParameters.setVariable("RelTypes", RelTypes.class); //NOI18N
             environmentParameters.setVariable("scriptParameters", scriptParameters); //NOI18N
-        
+        }
+        try{
             GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
             Object theResult = shell.evaluate(script);
 
@@ -2504,7 +2506,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
            
             return (TaskResult)theResult;
 
-        } catch(Exception ex) {
+        } catch(CompilationFailedException | InvalidArgumentException ex) {
             return TaskResult.createErrorResult(ex.getMessage());
         }
        

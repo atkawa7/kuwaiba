@@ -61,6 +61,7 @@ public class TempBusinessRulesEngine {
         subClassOfValidators.put("ELANService", "elanservice");
         subClassOfValidators.put("ELINEService", "elineservice");
         subClassOfValidators.put("ETREEService", "etreeservice");
+        subClassOfValidators.put("GenericDistributionFrame", "genericDistributionFrame");
         //Beware! The line below may potentially be creating conflicts with the three lines above, however 
         //the one below seems to cover the most important the use cases, so we will leave it like this while we
         //fine a suitable solution for this temporal rule engine

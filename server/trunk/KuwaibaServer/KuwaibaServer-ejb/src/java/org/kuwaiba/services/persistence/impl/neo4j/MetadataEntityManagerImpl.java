@@ -1610,7 +1610,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
              refreshPossibleChildren(classNode);
              refreshPossibleSpecialChildren(classNode);
         }
-        loadUniqueAttirbutesCache();
+        loadUniqueAttributesCache();
         //Only the DummyRoot is not cached. It will be cached on demand later
    }
    
@@ -1806,7 +1806,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
      * instances of the classes also saves the values of the unique attributes
      * @throws InvalidArgumentException if the attribute name doesn't exists
      */
-    private void loadUniqueAttirbutesCache() throws InvalidArgumentException{
+    private void loadUniqueAttributesCache() throws InvalidArgumentException{
         
         Node inventoryObject = classIndex.get(Constants.PROPERTY_NAME, Constants.CLASS_INVENTORYOBJECT).getSingle();
         
