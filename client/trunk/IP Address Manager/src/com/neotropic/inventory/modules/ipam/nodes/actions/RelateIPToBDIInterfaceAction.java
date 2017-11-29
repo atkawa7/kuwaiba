@@ -37,7 +37,7 @@ import org.openide.util.lookup.ServiceProvider;
 public class RelateIPToBDIInterfaceAction extends GenericObjectNodeAction implements GenericRelateToAction {
 
     public RelateIPToBDIInterfaceAction(){
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_TO_BDIS"));
+        putValue(NAME, I18N.gm("relate_to_bdi"));
     }
     
     @Override
@@ -46,7 +46,7 @@ public class RelateIPToBDIInterfaceAction extends GenericObjectNodeAction implem
         
         if (bdis != null) {
             if (bdis.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are no Bridge Domain Interfaces created. Create at least one using the Navigation Tree or the Pools module", 
+                JOptionPane.showMessageDialog(null, I18N.gm("no_interfaces_created_create_at_least_one"), 
                     I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
                 BDIsInterfaceFrame frame = new BDIsInterfaceFrame(selectedObjects, bdis);

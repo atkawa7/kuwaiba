@@ -23,6 +23,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.openide.util.Utilities;
 
 /**
@@ -37,7 +38,7 @@ public class DeleteSubnetPoolAction extends GenericInventoryAction {
     private static DeleteSubnetPoolAction instance;
     
     private DeleteSubnetPoolAction(){
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DELETE"));
+        putValue(NAME, I18N.gm("delete"));
         com = CommunicationsStub.getInstance();
     }
     
@@ -49,30 +50,29 @@ public class DeleteSubnetPoolAction extends GenericInventoryAction {
     public void actionPerformed(ActionEvent e) {
         Iterator selectedNodes = Utilities.actionsGlobalContext().lookupResult(SubnetPoolNode.class).allInstances().iterator();
         SubnetPoolNode selectedNode = null;
-        SubnetPoolNode parentNode = null;
         
         if (!selectedNodes.hasNext())
             return;
 
-        while (selectedNodes.hasNext()) {
+        while (selectedNodes.hasNext())
             selectedNode = (SubnetPoolNode)selectedNodes.next();
-            parentNode = (SubnetPoolNode)selectedNode.getParentNode();
-        }
         
-        if (com.deleteSubnetPool(selectedNode.getSubnetPool().getOid())){
-            
-            ((SubnetPoolChildren)parentNode.getChildren()).addNotify();
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
-                    java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DELETION_TEXT_OK"));
+        if(selectedNode != null){
+            SubnetPoolNode parentNode = (SubnetPoolNode)selectedNode.getParentNode();
+
+            if (com.deleteSubnetPool(selectedNode.getSubnetPool().getOid())){
+
+                ((SubnetPoolChildren)parentNode.getChildren()).addNotify();
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, 
+                        I18N.gm("subnet_pool_deleted"));
+            }
+            else
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
         }
-        else
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
     }
 
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
-    
-    
 }

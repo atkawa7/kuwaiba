@@ -28,6 +28,7 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 
@@ -40,7 +41,7 @@ public class RelateSubnetToVFRAction extends GenericInventoryAction {
     private static RelateSubnetToVFRAction instance;
     
     private RelateSubnetToVFRAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_VRF"));
+        putValue(NAME, I18N.gm("relate_to_vfr"));
     }
     
     public static RelateSubnetToVFRAction getInstance() {
@@ -52,7 +53,7 @@ public class RelateSubnetToVFRAction extends GenericInventoryAction {
         List<LocalObjectLight> vfrInstances = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_VRFINSTANCE);
         
         if (vfrInstances ==  null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         
         else {
             Lookup.Result<LocalObjectLight> selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
@@ -64,8 +65,8 @@ public class RelateSubnetToVFRAction extends GenericInventoryAction {
                 selectedObjects.add((LocalObjectLight)iterator.next());
             
             if (vfrInstances.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are no VRF instances created. Create at least one using the Navigation Tree or the Pools module", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, I18N.gm("no_vfrs_created_create_at_least_one"), 
+                    I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
                 VFRsFrame frame = new VFRsFrame(selectedObjects, vfrInstances);
                 frame.setVisible(true);

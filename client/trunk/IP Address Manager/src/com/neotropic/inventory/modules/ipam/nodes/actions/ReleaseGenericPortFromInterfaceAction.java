@@ -55,7 +55,7 @@ public class ReleaseGenericPortFromInterfaceAction extends GenericObjectNodeActi
                 JOptionPane.showMessageDialog(null, "There are no interfaces related to the selected port", 
                     I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
-                List<SubMenuItem> subMenuItems = new ArrayList();
+                List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight _interface : interfaces) {
                     SubMenuItem subMenuItem = new SubMenuItem(_interface.toString());
                     subMenuItem.addProperty("serviceInstanceId", _interface.getOid()); //NOI18N

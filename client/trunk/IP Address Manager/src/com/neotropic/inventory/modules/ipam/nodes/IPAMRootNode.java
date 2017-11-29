@@ -54,7 +54,7 @@ public class IPAMRootNode extends AbstractNode {
 
         @Override
         protected Node[] createNodes(LocalPool key) {
-            return new Node[] { new SubnetPoolNode((LocalPool)key) };
+            return new Node[] { new SubnetPoolNode(key) };
         }
     }
 }

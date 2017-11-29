@@ -37,6 +37,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.services.i18n.I18N;
 
 /**
  * Show the existing bridge domains interfaces that can be associated to 
@@ -98,7 +99,7 @@ public class InterfaceFrame extends JFrame{
         JButton btnRelate = new JButton("Create Relationship");
         pnlButtons.add(btnRelate);
         btnRelate.addActionListener(new InterfaceFrame.BtnConnectActionListener());
-        JButton btnClose = new JButton("Close");
+        JButton btnClose = new JButton(I18N.gm("close"));
         btnClose.addActionListener(new ActionListener() {
 
             @Override
@@ -120,12 +121,12 @@ public class InterfaceFrame extends JFrame{
                         selectedObjects.get(0).getClassName(), 
                         lstAvailableDevices.getSelectedValue().getClassName(),
                         lstAvailableDevices.getSelectedValue().getOid())){
-                    JOptionPane.showMessageDialog(null, String.format("The %s  was related to %s", 
+                    JOptionPane.showMessageDialog(null, String.format(I18N.gm("was_S_releated_to_S"), 
                             selectedObjects.get(0).toString(), lstAvailableDevices.getSelectedValue().getName()));
                         dispose();
                 }else 
                     JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), 
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                        I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             }
         }
     }

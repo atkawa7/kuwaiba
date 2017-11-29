@@ -18,6 +18,7 @@ package com.neotropic.inventory.modules.ipam;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import com.neotropic.inventory.modules.ipam.nodes.IPAMRootNode;
+import org.inventory.core.services.i18n.I18N;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -27,7 +28,6 @@ import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.Node;
 import org.openide.windows.TopComponent;
-import org.openide.util.NbBundle.Messages;
 
 /**
  * Top component for the IP address manager module.
@@ -47,29 +47,23 @@ import org.openide.util.NbBundle.Messages;
 @ActionReferences(value = {@ActionReference(path = "Menu/Tools/Advanced"),
     @ActionReference(path = "Toolbars/10_Advanced", position = 3)})
 @TopComponent.OpenActionRegistration(
-        displayName = "IP Address Manager",
+        displayName = "#IPAM.module.displayname",
         preferredID = "IPAMModuleTopComponent"
 )
-@Messages({
-    "CTL_IPAMModuleTopComponentAction=IP Address Manager",
-    "CTL_IPAMModuleTopComponentTopComponent=IP Address Manager",
-    "HINT_IPAMModuleTopComponentTopComponent=IP Address Manager"
-})
+
 public final class IPAMModuleTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable {
     
     private static final ExplorerManager em = new ExplorerManager();
-    private IPAMModuleService ipams;
     private BeanTreeView treeView;
     
     public IPAMModuleTopComponent() {
         initComponents();
-        setName(Bundle.CTL_IPAMModuleTopComponentTopComponent());
-        setToolTipText(Bundle.HINT_IPAMModuleTopComponentTopComponent());
+        setName(I18N.gm("IPAM.module.name"));
+        setToolTipText(I18N.gm("IPAM.module.tooltiptext"));
         initCustomComponents();
     }
 
     public void initCustomComponents(){
-        ipams = new IPAMModuleService(this);
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
         treeView = new BeanTreeView();
         treeView.setRootVisible(false);
@@ -121,9 +115,7 @@ public final class IPAMModuleTopComponent extends TopComponent implements Explor
     }
 
     @Override
-    public void refresh() {
-        
-    }
+    public void refresh() {}
 
     public NotificationUtil getNotifier(){
          return NotificationUtil.getInstance();

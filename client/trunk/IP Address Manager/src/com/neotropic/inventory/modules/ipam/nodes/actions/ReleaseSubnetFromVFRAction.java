@@ -66,7 +66,7 @@ public class ReleaseSubnetFromVFRAction extends GenericInventoryAction implement
                 JOptionPane.showMessageDialog(null, "There are no VFRs related to the selected Subnet", 
                     "Information", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                List<SubMenuItem> subMenuItems = new ArrayList();
+                List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight vfr : vfrs) {
                     SubMenuItem subMenuItem = new SubMenuItem(vfr.toString());
                     subMenuItem.addProperty("subnetId", selectedNode.getObject().getOid()); //NOI18N

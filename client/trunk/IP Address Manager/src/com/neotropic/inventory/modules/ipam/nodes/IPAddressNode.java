@@ -25,6 +25,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.nodes.Sheet;
 
@@ -47,21 +48,19 @@ public class IPAddressNode extends ObjectNode {
         Sheet.Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
         
         generalPropertySet.put(new NotEditableProperty(Constants.CLASS_SUBNET, String.class, 
-                java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUBNET"),
-                "",sp.getName()));
+                I18N.gm("subnet"), "", sp.getName()));
         
         generalPropertySet.put(new GeneralProperty(Constants.PROPERTY_DESCRIPTION, String.class, 
-                java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DESCRIPTION"),
-                "",this, sp.getAttribute(Constants.PROPERTY_DESCRIPTION)));
+                I18N.gm("description"), "", this, sp.getAttribute(Constants.PROPERTY_DESCRIPTION)));
         
         generalPropertySet.put(new NotEditableProperty(Constants.PROPERTY_CREATIONDATE, String.class, 
-                java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CREATION_DATE"),
+                I18N.gm("creation_date"),
                 "",sp.getAttribute(Constants.PROPERTY_CREATIONDATE)));
         
         //List Type State
         List<LocalObjectListItem> list = com.getList(Constants.LIST_TYPE_OPERATIONAL_STATE, true, false);
         if (list == null) {
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
                 return sheet;
         }
         LocalObjectListItem val = null;
@@ -80,7 +79,7 @@ public class IPAddressNode extends ObjectNode {
                 Constants.PROPERTY_STATE,
                 Constants.PROPERTY_STATE,list, this, val)); 
         
-        generalPropertySet.setDisplayName(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_GENERAL_ATTRIBUTES"));
+        generalPropertySet.setDisplayName(I18N.gm("general_attributes"));
         sheet.put(generalPropertySet);
         return sheet;
     }

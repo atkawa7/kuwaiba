@@ -29,6 +29,7 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 
@@ -41,7 +42,7 @@ public class RelateSubnetToVlanAction extends GenericInventoryAction {
     private static RelateSubnetToVlanAction instance;
     
     private RelateSubnetToVlanAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_VLAN"));
+        putValue(NAME, I18N.gm("relate_to_vlan"));
     }
     
     public static RelateSubnetToVlanAction getInstance() {
@@ -54,7 +55,7 @@ public class RelateSubnetToVlanAction extends GenericInventoryAction {
         Lookup.Result<LocalObjectLight> selectedNodes = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
         
         if (vlans ==  null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         
         else {
             Collection<? extends LocalObjectLight> lookupResult = selectedNodes.allInstances();
@@ -66,8 +67,8 @@ public class RelateSubnetToVlanAction extends GenericInventoryAction {
                 selectedObjects.add((LocalObjectLight)iterator.next());
             
             if (vlans.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are no VLANs created. Create at least one using the Navigation Tree or the Pools module", 
-                    "Information", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, I18N.gm("no_vlans_created_create_at_least_one"), 
+                    I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
                 VlansFrame frame = new VlansFrame(selectedObjects, vlans);
                 frame.setVisible(true);

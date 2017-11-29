@@ -57,7 +57,7 @@ public class ReleaseVFRFromVlanAction  extends GenericObjectNodeAction implement
                 JOptionPane.showMessageDialog(null, "There are no VLANs related to the selected VFR Instance", 
                     I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
-                List<SubMenuItem> subMenuItems = new ArrayList();
+                List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight vlan : vlans) {
                     SubMenuItem subMenuItem = new SubMenuItem(vlan.toString());
                     subMenuItem.addProperty("subnetId", vlan.getOid()); //NOI18N

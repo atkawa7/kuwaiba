@@ -23,6 +23,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.openide.util.Utilities;
 
@@ -38,7 +39,7 @@ public class DeleteSubnetAction extends GenericInventoryAction {
     private static DeleteSubnetAction instance;
     
     private DeleteSubnetAction(){
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DELETE"));
+        putValue(NAME, I18N.gm("delete"));
         com = CommunicationsStub.getInstance();
     }
     
@@ -59,11 +60,11 @@ public class DeleteSubnetAction extends GenericInventoryAction {
             if (com.deleteSubnet(selectedNode.getObject().getClassName(), selectedNode.getObject().getOid())){
                 ((AbstractChildren)selectedNode.getParentNode().getChildren()).addNotify();
                 
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
-                        java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DELETION_TEXT_OK"));
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, 
+                        I18N.gm("subnet_deleted"));
             }
             else
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());            
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());            
         }
     }
 

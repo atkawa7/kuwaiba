@@ -67,7 +67,7 @@ public class ReleaseSubnetFromVlanAction  extends GenericInventoryAction impleme
                 JOptionPane.showMessageDialog(null, "There are no VLANs related to the selected Subnet", 
                     "Information", JOptionPane.INFORMATION_MESSAGE);
             else {
-                List<SubMenuItem> subMenuItems = new ArrayList();
+                List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight vlan : vlans){
                     SubMenuItem subMenuItem = new SubMenuItem(vlan.toString());
                     subMenuItem.addProperty("subnetId", selectedNode.getObject().getOid()); //NOI18N

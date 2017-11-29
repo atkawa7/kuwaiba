@@ -37,7 +37,7 @@ import org.openide.util.lookup.ServiceProvider;
 public class RelateEndPointToInterfaceAction extends GenericObjectNodeAction implements GenericRelateToAction {
 
     public RelateEndPointToInterfaceAction(){
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_INTERFACE"));
+        putValue(NAME, I18N.gm("relate_to_interface"));
     }
     
     @Override
@@ -65,7 +65,7 @@ public class RelateEndPointToInterfaceAction extends GenericObjectNodeAction imp
         }        
         
         if (interfaces.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "There are no interfaces created. Create at least one using the Navigation Tree", 
+            JOptionPane.showMessageDialog(null, I18N.gm("no_interfaces_created_create_at_least_one"), 
                 I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
         } else {
             InterfaceFrame frame = new InterfaceFrame(selectedObjects, interfaces);

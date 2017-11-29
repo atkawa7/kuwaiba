@@ -18,7 +18,6 @@ package com.neotropic.inventory.modules.ipam.nodes.actions;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 import static javax.swing.Action.NAME;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
@@ -42,7 +41,7 @@ import org.openide.util.lookup.ServiceProvider;
 public class ReleaseEndPointFromInterface extends GenericObjectNodeAction implements GenericReleaseFromAction, ComposedAction {
     
     public ReleaseEndPointFromInterface() {
-        putValue(NAME, ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_INTERFACE"));
+        putValue(NAME, I18N.gm("release_from_interface"));
     }
     
     @Override
@@ -56,7 +55,7 @@ public class ReleaseEndPointFromInterface extends GenericObjectNodeAction implem
                 JOptionPane.showMessageDialog(null, "There are no interfaces related to the selected port", 
                     I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
-                List<SubMenuItem> subMenuItems = new ArrayList();
+                List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight serviceInstance : serviceInstances) {
                     SubMenuItem subMenuItem = new SubMenuItem(serviceInstance.toString());
                     subMenuItem.addProperty("serviceInstanceId", serviceInstance.getOid()); //NOI18N

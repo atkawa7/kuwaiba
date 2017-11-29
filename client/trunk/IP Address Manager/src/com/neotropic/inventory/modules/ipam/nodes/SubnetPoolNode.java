@@ -33,6 +33,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Node;
@@ -100,16 +101,13 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
         Sheet.Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
         
         generalPropertySet.put(new PoolNativeTypeProperty(
-                Constants.PROPERTY_NAME, String.class, 
-                java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NAME"),
-                "",this, sp.getName()));
+                Constants.PROPERTY_NAME, String.class, I18N.gm("name"), "", this, sp.getName()));
         
         generalPropertySet.put(new PoolNativeTypeProperty(Constants.PROPERTY_DESCRIPTION, String.class, 
-                java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DESCRIPTION"),
-                "", this, sp.getDescription()));
+                I18N.gm("description"), "", this, sp.getDescription()));
 
         generalPropertySet.setName("1");
-        generalPropertySet.setDisplayName(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_GENERAL_ATTRIBUTES"));
+        generalPropertySet.setDisplayName(I18N.gm("general_attributes"));
         sheet.put(generalPropertySet);
         return sheet;
     }
@@ -159,11 +157,11 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
                                 if (getChildren() instanceof AbstractChildren)
                                     ((AbstractChildren)getChildren()).addNotify();
                             }else
-                                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
                         }
                     }
                 } catch (Exception ex) {
-                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, ex.getMessage());
                 }
                 return null;
             }

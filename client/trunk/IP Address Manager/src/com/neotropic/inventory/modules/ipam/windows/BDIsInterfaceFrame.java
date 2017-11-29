@@ -37,6 +37,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.services.i18n.I18N;
 
 /**
  * Show the existing bridge domains interfaces that can be associated to 
@@ -95,10 +96,10 @@ public class BDIsInterfaceFrame extends JFrame{
         
         JPanel pnlButtons = new JPanel();
         pnlButtons.setLayout(new FlowLayout(FlowLayout.CENTER));
-        JButton btnRelate = new JButton("Create Relationship");
+        JButton btnRelate = new JButton(I18N.gm("create_relationship"));
         pnlButtons.add(btnRelate);
         btnRelate.addActionListener(new BDIsInterfaceFrame.BtnConnectActionListener());
-        JButton btnClose = new JButton("Close");
+        JButton btnClose = new JButton(I18N.gm("close"));
         btnClose.addActionListener(new ActionListener() {
 
             @Override
@@ -114,18 +115,18 @@ public class BDIsInterfaceFrame extends JFrame{
         @Override
         public void actionPerformed(ActionEvent e) {
             if (lstAvailableDevices.getSelectedValue() == null)
-                JOptionPane.showMessageDialog(null, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_INSTRUCTIONS_SELECT_BDI"));
+                JOptionPane.showMessageDialog(null, I18N.gm("select_a_bdi"));
             else {                
                 if (CommunicationsStub.getInstance().relatePortToInterface(selectedObjects.get(0).getOid(), 
                         selectedObjects.get(0).getClassName(), 
                         lstAvailableDevices.getSelectedValue().getClassName(),
                         lstAvailableDevices.getSelectedValue().getOid())){
-                    JOptionPane.showMessageDialog(null, String.format("The %s  was related to %s", 
+                    JOptionPane.showMessageDialog(null, String.format(I18N.gm("was_S_releated_to_S"), 
                             selectedObjects.get(0).toString(), lstAvailableDevices.getSelectedValue().getName()));
                         dispose();
                 }else 
                     JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), 
-                        "Error", JOptionPane.ERROR_MESSAGE);
+                        I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             }
         }
     }

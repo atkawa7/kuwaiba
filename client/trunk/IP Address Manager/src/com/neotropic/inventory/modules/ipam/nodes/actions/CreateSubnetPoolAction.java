@@ -26,6 +26,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.openide.util.Utilities;
@@ -43,7 +44,7 @@ public class CreateSubnetPoolAction extends GenericInventoryAction {
     private static CreateSubnetPoolAction instance;
     
     public CreateSubnetPoolAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NEW_FOLDER"));
+        putValue(NAME, I18N.gm("create_folder"));
         com = CommunicationsStub.getInstance();
     }
     
@@ -65,12 +66,11 @@ public class CreateSubnetPoolAction extends GenericInventoryAction {
         
         JComplexDialogPanel pnlMyDialog = new JComplexDialogPanel(
                 
-                new String[]{java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NAME"), 
-                    java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DESCRIPTION")},
+                new String[]{I18N.gm("name"), I18N.gm("description")},
                 new JComponent []{txtName, txtDescription});
         
         if (JOptionPane.showConfirmDialog(null, pnlMyDialog,
-                java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NEW_FOLDER"),
+                I18N.gm("create_folder"),
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
             
             LocalObjectLight newPool = com.createSubnetPool(selectedNode.getSubnetPool().getOid(), 
@@ -79,10 +79,10 @@ public class CreateSubnetPoolAction extends GenericInventoryAction {
                     ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), 3); //Type of pool module component. These pools are used in models and are in the lower levels of the pool containment hierarchy
             
             if (newPool ==  null)
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
             else{
                 ((AbstractChildren)selectedNode.getChildren()).addNotify();
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CREATED"));
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CREATED"));
             }
         }
     }

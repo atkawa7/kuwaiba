@@ -56,7 +56,7 @@ public class ReleaseIPFromBDIInterfaceAction extends GenericObjectNodeAction imp
                 JOptionPane.showMessageDialog(null, "There are no Bridge Domain Interfaces related to the selected IP", 
                     I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
-                List<SubMenuItem> subMenuItems = new ArrayList();
+                List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight bdi : bdis) {
                     SubMenuItem subMenuItem = new SubMenuItem(bdi.toString());
                     subMenuItem.addProperty("bdiId", bdi.getOid()); //NOI18N

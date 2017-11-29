@@ -38,7 +38,7 @@ import org.openide.util.lookup.ServiceProvider;
 public class RelateVFRToVlanAction extends GenericObjectNodeAction implements GenericRelateToAction {
     
     public RelateVFRToVlanAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_VLAN"));
+        putValue(NAME, I18N.gm("relate_to_vlan"));
     }
     
     @Override
@@ -51,7 +51,7 @@ public class RelateVFRToVlanAction extends GenericObjectNodeAction implements Ge
         else {
             
             if (vlans.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are no VLANs created. Create at least one using the Pools module", 
+                JOptionPane.showMessageDialog(null, I18N.gm("no_vlans_created_create_at_least_one"), 
                     I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
                 VlansFrame frame = new VlansFrame(selectedObjects, vlans);

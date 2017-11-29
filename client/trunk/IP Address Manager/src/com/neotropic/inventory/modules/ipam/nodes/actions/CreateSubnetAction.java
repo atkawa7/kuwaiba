@@ -33,6 +33,7 @@ import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.openide.nodes.AbstractNode;
 import org.openide.util.Utilities;
@@ -49,7 +50,7 @@ public class CreateSubnetAction extends GenericInventoryAction {
     private static CreateSubnetAction instance;
     
     private CreateSubnetAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NEW_SUBNET"));
+        putValue(NAME, I18N.gm("create_subnet"));
         com = CommunicationsStub.getInstance();
     }
     
@@ -125,7 +126,7 @@ public class CreateSubnetAction extends GenericInventoryAction {
         // <editor-fold defaultstate="collapsed" desc="Generated Code">  
         public final void initComponents(){
             setLayout(new BorderLayout());
-            setTitle(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_ADD_SUBNET"));
+            setTitle(I18N.gm("create_subnet"));
             setPreferredSize(new java.awt.Dimension(470, 200));
             setLocationRelativeTo(null);
             pnl = new javax.swing.JPanel();
@@ -138,7 +139,7 @@ public class CreateSubnetAction extends GenericInventoryAction {
                     dispose();
                 }
             });
-            txtIpAddress = new PTextField(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_USE_CIDR"));
+            txtIpAddress = new PTextField(I18N.gm("use_cdir_format"));
             //txtIpAddress.setForeground(Color.lightGray);
             txtDescription = new javax.swing.JTextField();
             lblIpAddress = new javax.swing.JLabel();
@@ -154,18 +155,18 @@ public class CreateSubnetAction extends GenericInventoryAction {
                 }
             });
 
-            btnClose.setText(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CLOSE"));
+            btnClose.setText(I18N.gm("close"));
 
             lblIpAddress.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-            lblIpAddress.setText(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUBNET"));
+            lblIpAddress.setText(I18N.gm("subnet"));
 
             lblDescription.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-            lblDescription.setText(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DESCRIPTION"));
+            lblDescription.setText(I18N.gm("description"));
 
             lblError.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
             lblError.setForeground(new java.awt.Color(255, 51, 51));
-            lblError.setText(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_INVALID_CIDR"));
-            cbxCreateAllIps.setText("Create all possible IPs");
+            lblError.setText(I18N.gm("invalid_cidr_format"));
+            cbxCreateAllIps.setText(I18N.gm("create_all_subnet_IPs"));
             
             javax.swing.GroupLayout pnlLayout = new javax.swing.GroupLayout(pnl);
         pnl.setLayout(pnlLayout);
@@ -258,14 +259,15 @@ public class CreateSubnetAction extends GenericInventoryAction {
                 }
                 
                 if(subnetParent != null && !isSubnet){
-                    lblError.setText("This is not a subnet of "+ subnetParent);
+                    lblError.setText(I18N.gm("this_is_not_subnet_of")+ subnetParent);
                     lblError.setVisible(true);
                     return;
                 }
                 
                 if(cbxCreateAllIps.isSelected()){
                     int dialogResult = JOptionPane.showConfirmDialog (null, 
-                                    "Are you sure you want to create all the possible address space? This could be a long process depending the number of IP addresses","Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+                                    I18N.gm("want_to_create_all_ips"), 
+                                    I18N.gm("warning"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
                     if (dialogResult == JOptionPane.YES_OPTION)
                             createIps = true;
                 }
@@ -277,10 +279,11 @@ public class CreateSubnetAction extends GenericInventoryAction {
                     createIps(ipCIDR, attributeValues, className, newSubnet);
                 
                 if (newSubnet == null)
-                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
                 else {
                     ((AbstractChildren)selectedNode.getChildren()).addNotify();
-                    NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CREATED"));
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), 
+                            NotificationUtil.INFO_MESSAGE, I18N.gm("subnet_created_successfully"));
                 }
                 dispose();
             }

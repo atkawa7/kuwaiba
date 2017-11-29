@@ -38,7 +38,7 @@ import org.openide.util.lookup.ServiceProvider;
 public class RelateGenericNetworkElementToInterface extends GenericObjectNodeAction implements GenericRelateToAction {
 
     public RelateGenericNetworkElementToInterface() {
-        putValue(NAME, "BDI...");
+        putValue(NAME, I18N.gm("relate_to_bdi"));
     }
     
     @Override
@@ -65,7 +65,7 @@ public class RelateGenericNetworkElementToInterface extends GenericObjectNodeAct
                 interfaces.add(o);
         }
         if (interfaces.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "There are no interfaces created. Create at least one using the Navigation Tree", 
+            JOptionPane.showMessageDialog(null, I18N.gm("no_interfaces_created_create_at_least_one"), 
                 I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
         } else {
             InterfaceFrame frame = new InterfaceFrame(selectedObjects, interfaces);

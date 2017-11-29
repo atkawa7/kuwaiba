@@ -18,7 +18,6 @@ package com.neotropic.inventory.modules.ipam.nodes.actions;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
@@ -41,8 +40,7 @@ import org.openide.util.lookup.ServiceProvider;
 public class ReleaseEndPointFromIPAddresAction extends GenericObjectNodeAction implements GenericReleaseFromAction,ComposedAction {
     
     public ReleaseEndPointFromIPAddresAction() {
-        putValue(NAME, ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle")
-            .getString("LBL_RELEASE_IP"));
+        putValue(NAME, I18N.gm("release_from_ip_address"));
     }
     
     @Override
@@ -53,10 +51,10 @@ public class ReleaseEndPointFromIPAddresAction extends GenericObjectNodeAction i
         
         if (ipAddresses != null) {
             if (ipAddresses.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are no interfaces related to the selected object", 
+                JOptionPane.showMessageDialog(null, I18N.gm("no_interfaces_related_to_this_object"), 
                     I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
-                List<SubMenuItem> subMenuItems = new ArrayList();
+                List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight ipAddress : ipAddresses) {
                     SubMenuItem subMenuItem = new SubMenuItem(ipAddress.toString());
                     subMenuItem.addProperty("portClassName", selectedObject.getClassName()); //NOI18N
@@ -83,7 +81,7 @@ public class ReleaseEndPointFromIPAddresAction extends GenericObjectNodeAction i
     @Override
     public void finalActionPerformed(ActionEvent e) {
         if (e != null && e.getSource() instanceof SubMenuDialog) {
-            if(JOptionPane.showConfirmDialog(null, "Are you sure you want to release this IP address?", 
+            if(JOptionPane.showConfirmDialog(null, I18N.gm("want_to_release_ip_address"), 
                    I18N.gm("warning"),JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
                 if (CommunicationsStub.getInstance().releasePortFromIPAddress(
                     (String) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty("portClassName"), //NOI18N
@@ -91,7 +89,7 @@ public class ReleaseEndPointFromIPAddresAction extends GenericObjectNodeAction i
                     (long) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty("ipAddressId")) //NOI18N
                    ) {
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, 
-                        java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_SUCCESS"));
+                        I18N.gm("element_release_successfully"));
                 } else
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
            }

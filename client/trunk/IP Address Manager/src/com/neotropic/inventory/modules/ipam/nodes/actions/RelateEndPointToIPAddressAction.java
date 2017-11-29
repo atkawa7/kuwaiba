@@ -42,7 +42,7 @@ import org.openide.util.lookup.ServiceProvider;
 public class RelateEndPointToIPAddressAction extends GenericObjectNodeAction implements GenericRelateToAction {
 
     public RelateEndPointToIPAddressAction(){
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELATE_IP"));
+        putValue(NAME, I18N.gm("relate_to_ip"));
     }
     
     @Override

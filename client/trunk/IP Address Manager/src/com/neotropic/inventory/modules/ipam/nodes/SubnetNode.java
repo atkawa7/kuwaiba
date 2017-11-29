@@ -34,6 +34,7 @@ import java.io.IOException;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.ExecuteClassLevelReportAction;
@@ -100,27 +101,22 @@ public class SubnetNode extends ObjectNode {
         
         
         generalPropertySet.put(new NotEditableProperty(Constants.PROPERTY_NAME, String.class, 
-                java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NAME"),
-                "",sp.getName()));
+                I18N.gm("name"), "", sp.getName()));
         
         generalPropertySet.put(new GeneralProperty(Constants.PROPERTY_DESCRIPTION, String.class, 
-                java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DESCRIPTION"),
-                "",this, sp.getAttribute(Constants.PROPERTY_DESCRIPTION)));
+                I18N.gm("description"), "",this, sp.getAttribute(Constants.PROPERTY_DESCRIPTION)));
         
         generalPropertySet.put(new NotEditableProperty(Constants.PROPERTY_NETWORKIP, String.class, 
-                java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_NETWORK_IP"),
-                "",sp.getAttribute(Constants.PROPERTY_NETWORKIP)));
+                I18N.gm("network_ip_address"), "", sp.getAttribute(Constants.PROPERTY_NETWORKIP)));
         
         generalPropertySet.put(new NotEditableProperty(Constants.PROPERTY_BROADCASTIP, String.class, 
-                java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_BROADCAST_IP"),
-                "",sp.getAttribute(Constants.PROPERTY_BROADCASTIP)));
+                I18N.gm("broadcast_ip_address"), "", sp.getAttribute(Constants.PROPERTY_BROADCASTIP)));
         
         generalPropertySet.put(new NotEditableProperty(Constants.PROPERTY_HOSTS, String.class, 
-                java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_HOSTS"),
-                "",sp.getAttribute(Constants.PROPERTY_HOSTS)));
+                I18N.gm("number_of_hosts"), "", sp.getAttribute(Constants.PROPERTY_HOSTS)));
         
         generalPropertySet.setName("1");
-        generalPropertySet.setDisplayName(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_GENERAL_ATTRIBUTES"));
+        generalPropertySet.setDisplayName(I18N.gm("general_attributes"));
         sheet.put(generalPropertySet);
         return sheet;
     }
@@ -159,12 +155,10 @@ public class SubnetNode extends ObjectNode {
                         String[] parentSplit = parentSubnet.getName().split("/");
                         LocalObject childNode = null;
                         
-                        String parentNetworkIp = (String)parentSubnet.getAttribute("networkIp");
-                        String parentBroadcastIp = (String)parentSubnet.getAttribute("broadcastIp");
+                        String parentNetworkIp = (String)parentSubnet.getAttribute("networkIp"); //NOI18N
+                        String parentBroadcastIp = (String)parentSubnet.getAttribute("broadcastIp"); //NOI18N
                         
                         if(obj.getClassName().equals(Constants.CLASS_IP_ADDRESS)){
-                            
-                            childNode = com.getObjectInfo(obj.getClassName(), obj.getOid());
                             
                             if(className.equals(Constants.CLASS_SUBNET_IPV4))
                                 networkIpBelongsTo = SubnetEngine.belongsTo(parentNetworkIp, obj.getName(), Integer.valueOf(parentSplit[1]));
@@ -182,10 +176,10 @@ public class SubnetNode extends ObjectNode {
                                     if (getChildren() instanceof AbstractChildren)
                                         ((AbstractChildren)getChildren()).addNotify();
                                 }else
-                                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
                             }
                             else
-                                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, String.format("The IP: %s does not belong to %s", obj.getName(), getObject().getName()));
+                                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, String.format(I18N.gm("ip_does_not_belong_to"), obj.getName(), getObject().getName()));
                         }
                         
                         else{ 
@@ -216,14 +210,14 @@ public class SubnetNode extends ObjectNode {
                                     if (getChildren() instanceof AbstractChildren)
                                         ((AbstractChildren)getChildren()).addNotify();
                                 }else
-                                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
                             }
                             else
-                                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, String.format("The subnet: %s is not subnet of %s", obj.getName(), getObject().getName()));
+                                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, String.format(I18N.gm("subnet_is_not_subnet_of"), obj.getName(), getObject().getName()));
                         }
                     }
                 } catch (Exception ex) {
-                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, ex.getMessage());
                 }
                 return null;
             }

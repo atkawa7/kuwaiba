@@ -31,6 +31,7 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.openide.util.Utilities;
 
@@ -50,7 +51,7 @@ public class AddIPAddressAction extends GenericInventoryAction {
     private static AddIPAddressAction instance;
     
     private AddIPAddressAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_ADD_IP_ADDRESS"));
+        putValue(NAME, I18N.gm("add_ip_address"));
         com = CommunicationsStub.getInstance();
         maskBits = 32;
         subnetUsedIps = new ArrayList<>();
@@ -142,7 +143,7 @@ public class AddIPAddressAction extends GenericInventoryAction {
         // <editor-fold defaultstate="collapsed" desc="Generated Code">  
         public final void initComponents(){
             setLayout(new BorderLayout());
-            setTitle(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_ADD_IP_ADDRESS"));
+            setTitle(I18N.gm("add_ip_address"));
             setPreferredSize(new java.awt.Dimension(470, 170));
             setLocationRelativeTo(null);
             pnl = new javax.swing.JPanel();
@@ -162,7 +163,7 @@ public class AddIPAddressAction extends GenericInventoryAction {
             lblDescription = new javax.swing.JLabel();
             lblError = new javax.swing.JLabel();
             lblError.setVisible(false);
-            btnAddIPAddress.setText(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_ADD_IP_ADDRESS"));
+            btnAddIPAddress.setText(I18N.gm("add_ip_address"));
             btnAddIPAddress.addActionListener(new java.awt.event.ActionListener() {
                 @Override
                 public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -170,17 +171,17 @@ public class AddIPAddressAction extends GenericInventoryAction {
                 }
             });
 
-            btnClose.setText(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_CLOSE"));
+            btnClose.setText(I18N.gm("close"));
 
             lblIpAddress.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-            lblIpAddress.setText(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_IP_ADDRESS"));
+            lblIpAddress.setText(I18N.gm("ip_address"));
 
             lblDescription.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
-            lblDescription.setText(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_DESCRIPTION"));
+            lblDescription.setText(I18N.gm("description"));
 
             lblError.setFont(new java.awt.Font("Dialog", 0, 12)); // NOI18N
             lblError.setForeground(new java.awt.Color(255, 51, 51));
-            lblError.setText(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_INVALID_CIDR"));
+            lblError.setText(I18N.gm("invalid_cidr_format"));
 
             javax.swing.GroupLayout pnlLayout = new javax.swing.GroupLayout(pnl);
             pnl.setLayout(pnlLayout);
@@ -258,7 +259,7 @@ public class AddIPAddressAction extends GenericInventoryAction {
                     }
                 }
                 else{
-                    lblError.setText("One or both IP addresses are misspelled or are out of the subnet range, please check");
+                    lblError.setText(I18N.gm("ip_misspelled_or_out_of_subnet"));
                     lblError.setVisible(true);  
                 }
             }// end if IPs came in a range
@@ -268,7 +269,7 @@ public class AddIPAddressAction extends GenericInventoryAction {
                     if(belongToSubnet(ipAddress) && !ipIsInUse(ipAddress))
                         ips.add(ipAddress);
                     else{
-                        lblError.setText("This IP is outside of the subnet o is already in use");
+                        lblError.setText(I18N.gm("ip_outside_of_subnet_or_in_use"));
                         lblError.setVisible(true);
                     }
                 }
@@ -289,10 +290,10 @@ public class AddIPAddressAction extends GenericInventoryAction {
                             new LocalObject(className, 0, attributeNames, attributeValues));
 
                     if (addedIP == null)
-                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
                     else {
                         ((AbstractChildren)subnetNode.getChildren()).addNotify();
-                        NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, ip + " " + java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_IP_CREATED"));
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, ip + " " + I18N.gm("ip_create_successfully"));
                     }
                     dispose();
                 }//end for creating IPs 
