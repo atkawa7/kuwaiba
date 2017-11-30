@@ -380,4 +380,14 @@ public class Utils {
         outputString += objectList.get(i);
         return outputString;
     }
+    
+    
+    /**
+     * Checks if a given string text is a number or not
+     * @param s String text
+     * @return true if is number
+     */
+    public static boolean isNumeric(String s) {  
+        return s != null && s.matches("[-+]?\\d*\\.?\\d+");  
+    }  
 }

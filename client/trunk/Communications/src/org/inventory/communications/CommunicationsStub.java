@@ -1796,7 +1796,8 @@ public class CommunicationsStub {
         }
     }
         
-    public boolean connectMirrorPort (String aObjectClass, long aObjectId, String bObjectClass, long bObjectId) {
+    public boolean connectMirrorPort (List<String> aObjectClass, 
+            List<Long> aObjectId, List<String> bObjectClass, List<Long> bObjectId) {
         try{
             service.connectMirrorPort(aObjectClass, aObjectId, bObjectClass, bObjectId, session.getSessionId());
             return true;

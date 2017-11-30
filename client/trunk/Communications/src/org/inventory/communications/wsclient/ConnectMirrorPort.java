@@ -1,8 +1,11 @@
 
 package org.inventory.communications.wsclient;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -16,10 +19,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="aObjectClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="aObjectId" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="bObjectClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="bObjectId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="aObjectClass" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="aObjectId" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="bObjectClass" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="bObjectId" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -39,90 +42,130 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ConnectMirrorPort {
 
-    protected String aObjectClass;
-    protected long aObjectId;
-    protected String bObjectClass;
-    protected long bObjectId;
+    @XmlElement(nillable = true)
+    protected List<String> aObjectClass;
+    @XmlElement(nillable = true)
+    protected List<Long> aObjectId;
+    @XmlElement(nillable = true)
+    protected List<String> bObjectClass;
+    @XmlElement(nillable = true)
+    protected List<Long> bObjectId;
     protected String sessionId;
 
     /**
      * Gets the value of the aObjectClass property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getAObjectClass() {
-        return aObjectClass;
-    }
-
-    /**
-     * Sets the value of the aObjectClass property.
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the aObjectClass property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getAObjectClass().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link String }
+     * 
+     * 
      */
-    public void setAObjectClass(String value) {
-        this.aObjectClass = value;
+    public List<String> getAObjectClass() {
+        if (aObjectClass == null) {
+            aObjectClass = new ArrayList<String>();
+        }
+        return this.aObjectClass;
     }
 
     /**
      * Gets the value of the aObjectId property.
      * 
-     */
-    public long getAObjectId() {
-        return aObjectId;
-    }
-
-    /**
-     * Sets the value of the aObjectId property.
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the aObjectId property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getAObjectId().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Long }
+     * 
      * 
      */
-    public void setAObjectId(long value) {
-        this.aObjectId = value;
+    public List<Long> getAObjectId() {
+        if (aObjectId == null) {
+            aObjectId = new ArrayList<Long>();
+        }
+        return this.aObjectId;
     }
 
     /**
      * Gets the value of the bObjectClass property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getBObjectClass() {
-        return bObjectClass;
-    }
-
-    /**
-     * Sets the value of the bObjectClass property.
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the bObjectClass property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getBObjectClass().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link String }
+     * 
+     * 
      */
-    public void setBObjectClass(String value) {
-        this.bObjectClass = value;
+    public List<String> getBObjectClass() {
+        if (bObjectClass == null) {
+            bObjectClass = new ArrayList<String>();
+        }
+        return this.bObjectClass;
     }
 
     /**
      * Gets the value of the bObjectId property.
      * 
-     */
-    public long getBObjectId() {
-        return bObjectId;
-    }
-
-    /**
-     * Sets the value of the bObjectId property.
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the bObjectId property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getBObjectId().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Long }
+     * 
      * 
      */
-    public void setBObjectId(long value) {
-        this.bObjectId = value;
+    public List<Long> getBObjectId() {
+        if (bObjectId == null) {
+            bObjectId = new ArrayList<Long>();
+        }
+        return this.bObjectId;
     }
 
     /**

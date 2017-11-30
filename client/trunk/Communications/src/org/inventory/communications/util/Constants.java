@@ -54,6 +54,10 @@ public class Constants {
      */
     public static final String VALIDATOR_PHYSICAL_NODE = "physicalNode";
     /**
+     * Name of the validator to indicate if a given class is a distribution frame
+     */
+    public static final String VALIDATOR_GENERIC_DISTRIBUTION_FRAME = "genericDistributionFrame";
+    /**
      * Name of the validator to indicate if a given class is the endpoint to a link
      */
     public static final String VALIDATOR_PHYSICAL_ENDPOINT = "physicalEndpoint";
