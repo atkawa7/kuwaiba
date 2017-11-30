@@ -36,7 +36,8 @@ import org.snmp4j.util.TableEvent;
 import org.snmp4j.util.TableUtils;
 
 /**
- *
+ * A SNMP Manager is a client of an SNMP agent which consume the information given 
+ * by the agent, and transform the data to be manage like java objects
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class SnmpManager {
@@ -44,7 +45,7 @@ public class SnmpManager {
     private String community;
     private String address;
     private Snmp snmp;
-    TransportMapping transportMapping;
+    private TransportMapping transportMapping;
     
     public SnmpManager() {
         this.address = null;        
@@ -107,7 +108,7 @@ public class SnmpManager {
     private Target getTarget() {
         Address targetAddress = GenericAddress.parse(address);
         CommunityTarget target = new CommunityTarget();
-        target.setCommunity(new OctetString(community == null ? "public" : community));
+        target.setCommunity(new OctetString(community == null ? "public" : community)); //NOI18N
         target.setAddress(targetAddress);
         target.setRetries(2);
         target.setTimeout(1500);
@@ -126,8 +127,12 @@ public class SnmpManager {
                 throw new RuntimeException(event.getErrorMessage());
             List<String> strList = new ArrayList<>();
             list.add(strList);
-            for (VariableBinding vb : event.getColumns())
+            
+            for (VariableBinding vb : event.getColumns()) {                
                 strList.add(vb != null ?  vb.getVariable().toString() : "");
+            }
+            String strIndex = event.getIndex().toString();
+            strList.add(strIndex);
         }
         return list;
     }

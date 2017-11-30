@@ -33,7 +33,9 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.snmp4j.smi.OID;
 
 /**
- *
+ * Synchronization provider to SNMP agents
+ * This class implement the logic to connect with a group of SNMP agents to 
+ * retrieve the data and compare the differences with the management objects
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class SnmpSyncProvider extends AbstractSyncProvider {
@@ -48,8 +50,6 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
         return SnmpSyncProvider.class.getName();
     }
     
-    // How work if an sync provider is automatic a same sync provider can no be automatic and be actomatic
-    // depend in the context
     @Override
     public boolean isAutomatic() {
         return false;
@@ -72,7 +72,7 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
             agent1ParamValues.add("Test1"); //NOI18N
             agent1ParamValues.add("127.0.0.1"); //NOI18N
             agent1ParamValues.add("1161"); //NOI18N
-            agent1ParamValues.add("wapopafrix1/ASR1002-X"); //NOI18N
+            agent1ParamValues.add("community2"); //NOI18N
 
             List<String> agent2ParamValues = new ArrayList();
             agent2ParamValues.add("999"); //NOI18N
@@ -80,7 +80,7 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
             agent2ParamValues.add("Test2"); //NOI18N
             agent2ParamValues.add("127.0.0.1"); //NOI18N
             agent2ParamValues.add("1161"); //NOI18N
-            agent2ParamValues.add("wapopafrix1/ASR1006"); //NOI18N
+            agent2ParamValues.add("community1"); //NOI18N
         
             SyncDataSourceConfiguration agent1 = new SyncDataSourceConfiguration(1, "agent1", agentsParamNames, agent1ParamValues); //NOI18N
             SyncDataSourceConfiguration agent2 = new SyncDataSourceConfiguration(2, "agent2", agentsParamNames, agent2ParamValues); //NOI18N
@@ -139,7 +139,7 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
                     snmpMananger.setAddress("udp:" + address + "/" + port); //NOI18N
                     snmpMananger.setCommunity(readCommunity);
                 
-                    HashMap<String, String> oids = SnmpTableData.EntPhysicalEntry.getInstance().getOids();
+                    HashMap<String, String> oids = SnmpEntPhysicalTable.EntPhysicalEntry.getInstance().getOids();
                     
                     List<OID> onlyNumberOids = new ArrayList();
                     for (String oid : oids.values())
@@ -158,8 +158,13 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
                         value.put(mibTreeNodeName, currentColumn);
                         i += 1;                            
                     }
-
-                    result.put(new RemoteBusinessObjectLight(id, name, className), new SnmpDataEntry("", value));
+                    int size = oids.keySet().size();
+                    List<String> instances = new ArrayList();
+                    for (List<String> cell : tableAsString)
+                        instances.add(cell.get(size));
+                    value.put("instance", instances); //NOI18N
+                    
+                    result.put(new RemoteBusinessObjectLight(id, name, className), new SnmpEntPhysicalTable(value));
                 }
             }
             return result;
@@ -181,7 +186,5 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
     @Override
     public List<String> finalize(List<SyncAction> actions) {
         throw new UnsupportedOperationException("Not supported yet.");
-    }    
-
-
+    }
 }
