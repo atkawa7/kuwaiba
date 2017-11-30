@@ -16,7 +16,9 @@
 
 package com.neotropic.kuwaiba.sync.model;
 
+import java.util.HashMap;
 import java.util.List;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 
 /**
  * This class describes the generic behavior of all the synchronization providers. 
@@ -56,9 +58,10 @@ public abstract class AbstractSyncProvider {
      * @return True if it doesn't require approval, False otherwise
      */
     public abstract boolean isAutomatic();
-    
-    public abstract List<AbstractDataEntity> initialize (SynchronizationGroup syncGroup);
-    
+        
+    public abstract List<AbstractDataEntity> unmappedPoll(SynchronizationGroup syncGroup);
+            
+    public abstract HashMap<RemoteBusinessObjectLight, AbstractDataEntity> mappedPoll(SynchronizationGroup syncGroup);
     /**
      * Implement this method if the synchronization process will be associated to an object in the inventory, for example, 
      * you will retrieve the hardware information about a network element and find what has changed overnight.

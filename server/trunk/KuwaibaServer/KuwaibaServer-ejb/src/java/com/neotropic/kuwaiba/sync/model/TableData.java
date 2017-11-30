@@ -21,5 +21,9 @@ package com.neotropic.kuwaiba.sync.model;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class TableData extends AbstractDataEntity {
-
+    public TableData(String name, Object value) {
+        this.name = name;
+        this.type = DATA_TYPE.TABLE;
+        this.value = value;
+    }
 }

@@ -40,7 +40,13 @@ public class SynchronizationGroup {
      * The configurations to be processed
      */
     private List<SyncDataSourceConfiguration> syncDataSourceConfigurations;
-
+    
+    public SynchronizationGroup(long id, String name, AbstractSyncProvider provider, List<SyncDataSourceConfiguration> syncDataSourceConfigurations) {
+        this.id = id;
+        this.provider = provider;
+        this.syncDataSourceConfigurations = syncDataSourceConfigurations;
+    }
+        
     public long getId() {
         return id;
     }
