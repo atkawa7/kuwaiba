@@ -23,6 +23,7 @@ public class ActionGroupActionsFactory {
     private static ActionsGroup openViewGroupActions;
     private static ActionsGroup relateToGroupActions;
     private static ActionsGroup releaseFromGroupActions;
+    private static ActionsGroup mirrorPortActions;
     
     public static ActionsGroup getInstanceOfOpenViewGroupActions() {
         if (openViewGroupActions == null)
@@ -46,5 +47,11 @@ public class ActionGroupActionsFactory {
                 "/org/inventory/navigation/navigationtree/res/release_from_actions_group.png",
                 GenericReleaseFromAction.class);
         return releaseFromGroupActions;                    
+    }
+    
+    public static ActionsGroup getInstanceMirrorPortActions() {
+        return mirrorPortActions == null ? mirrorPortActions = new ActionsGroup("Mirror Ports", 
+            "/org/inventory/navigation/navigationtree/res/mirror_ports_actions_group.png", 
+            GenericMirrorPortAction.class) : mirrorPortActions;
     }
 }

@@ -22,6 +22,8 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericMirrorPortAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -29,7 +31,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseMirrorPortAction extends GenericObjectNodeAction {
+public class ReleaseMirrorPortAction extends GenericObjectNodeAction implements GenericMirrorPortAction {
 
     public ReleaseMirrorPortAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_RELEASE_MIRROR_PORT"));
@@ -39,13 +41,13 @@ public class ReleaseMirrorPortAction extends GenericObjectNodeAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (JOptionPane.showConfirmDialog(null, 
-                "Are you sure you want to release this mirror port?", "Warning", 
+                "Are you sure you want to release this mirror port?", I18N.gm("warning"), 
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
         
             if (CommunicationsStub.getInstance().releaseMirrorPort(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid()))
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Miror port released successfully");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, "Miror port released successfully");
             else
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());        
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());        
         }
     }
 

@@ -250,9 +250,18 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         actions.add(CreateMultipleBusinessObjectAction.getInstance());
         actions.add(CreateBusinessObjectFromTemplateAction.getInstance());
         if (getParentNode() != null) {
-            actions.add(SystemAction.get(CopyAction.class));
-            actions.add(SystemAction.get(CutAction.class));
-            actions.add(SystemAction.get(PasteAction.class));
+            Action copyAction = SystemAction.get(CopyAction.class);
+            copyAction.putValue(Action.NAME, I18N.gm("lbl_copy_action"));
+                        
+            Action cutAction = SystemAction.get(CutAction.class);
+            cutAction.putValue(Action.NAME, I18N.gm("lbl_cut_action"));
+                                    
+            Action pasteAction = SystemAction.get(PasteAction.class);
+            pasteAction.putValue(Action.NAME, I18N.gm("lbl_paste_action"));
+            
+            actions.add(copyAction);
+            actions.add(cutAction);
+            actions.add(pasteAction);
         }        
         actions.add(UpdateNodeAction.getInstance(this));
         actions.add(EditObjectAction.getInstance(this));
@@ -265,7 +274,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         }
         
         actions.add(ExecuteClassLevelReportAction.getInstance());
-        
+                        
         for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)) {
             if (action instanceof GenericActionsGroupActions)
                 continue;
@@ -280,6 +289,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         actions.add(ActionGroupActionsFactory.getInstanceOfOpenViewGroupActions());
         actions.add(ActionGroupActionsFactory.getInstanceOfRelateToGroupActions());
         actions.add(ActionGroupActionsFactory.getInstanceOfReleaseFromGroupActions());
+        actions.add(ActionGroupActionsFactory.getInstanceMirrorPortActions());
                                 
         actions.add(null); //Separator
         actions.add(explorerAction);

@@ -18,14 +18,24 @@ package org.inventory.views.rackview;
 import org.inventory.views.rackview.scene.RackViewScene;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import javax.swing.JComponent;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
+import org.inventory.core.services.event.CurrentKeyEventDispatcher;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.windows.TopComponent;
@@ -40,6 +50,8 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
     private LocalObjectLight rack;
     private RackViewService service;
     private JComponent satelliteView;
+    
+    KeyEventDispatcher keyEventDispatcher;
     
     public RackViewTopComponent(LocalObjectLight rack) {
         this();
@@ -74,9 +86,42 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
         associateLookup(scene.getLookup());
         pnlMainScrollPanel.setViewportView(scene.createView());
                         
-        service = new RackViewService(scene, rack);                 
-    }
+        service = new RackViewService(scene, rack);
+        
+        keyEventDispatcher = new KeyEventDispatcher() {
 
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_F5 && e.getModifiers() == 0) {
+                    btnRefreshActionPerformed(new ActionEvent(e.getSource(), e.getID(), ""));
+                    return true;
+                }
+                return false;
+            }
+        };
+        CurrentKeyEventDispatcher.getInstance().addKeyEventDispatcher(this, keyEventDispatcher);
+        
+        addComponentListener(new ComponentListener() {
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+            }
+
+            @Override
+            public void componentShown(ComponentEvent e) {
+                CurrentKeyEventDispatcher.getInstance().updateKeyEventDispatcher(RackViewTopComponent.this);
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+            }
+        });
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -184,16 +229,18 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                 btnRefreshMouseClicked(evt);
             }
         });
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
         toolBarMain.add(btnRefresh);
 
         add(toolBarMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRefreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRefreshMouseClicked
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        scene.clear();
-        service.shownRack();
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        
     }//GEN-LAST:event_btnRefreshMouseClicked
 
     private void btnExportMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExportMouseClicked
@@ -276,6 +323,13 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
         btnConnect.setSelected(false);
         scene.setActiveTool(RackViewScene.ACTION_SELECT);
     }//GEN-LAST:event_btnSelectMouseClicked
+
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        scene.clear();
+        service.shownRack();
+        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    }//GEN-LAST:event_btnRefreshActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton btnConnect;

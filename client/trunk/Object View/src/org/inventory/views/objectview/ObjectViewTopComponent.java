@@ -15,9 +15,14 @@
  */
 package org.inventory.views.objectview;
 
+import org.inventory.core.services.event.CurrentKeyEventDispatcher;
 import java.awt.Image;
+import java.awt.KeyEventDispatcher;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -59,6 +64,8 @@ public final class ObjectViewTopComponent extends TopComponent
     private ObjectViewConfigurationObject configObject;
     private LocalObjectLight currentObject;
     
+    KeyEventDispatcher keyEventDispatcher;
+    
     /**
      * Default constructor
      * @param aBusinessObject The business object whose view will be rendered 
@@ -97,9 +104,40 @@ public final class ObjectViewTopComponent extends TopComponent
         buttonGroupTools.add(btnContainer);
         buttonGroupTools.add(btnLink);
         
-        btnSelect.setSelected(true);
-    }
+        keyEventDispatcher = new KeyEventDispatcher() {
 
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_F5 && e.getModifiers() == 0) {
+                    btnRefreshActionPerformed(new ActionEvent(e.getSource(), e.getID(), ""));
+                    return true;
+                }
+                return false;
+            }
+        };
+        CurrentKeyEventDispatcher.getInstance().addKeyEventDispatcher(this, keyEventDispatcher);
+
+        addComponentListener(new ComponentListener() {
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+            }
+
+            @Override
+            public void componentShown(ComponentEvent e) {
+                CurrentKeyEventDispatcher.getInstance().updateKeyEventDispatcher(ObjectViewTopComponent.this);
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+            }
+        });
+    }
+    
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is

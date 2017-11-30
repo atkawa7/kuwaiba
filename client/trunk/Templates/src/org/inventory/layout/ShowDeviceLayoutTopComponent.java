@@ -16,8 +16,14 @@
  */
 package org.inventory.layout;
 
+import java.awt.KeyEventDispatcher;
+import java.awt.event.ActionEvent;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.KeyEvent;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.event.CurrentKeyEventDispatcher;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
@@ -39,6 +45,8 @@ import org.openide.windows.TopComponent;
 public final class ShowDeviceLayoutTopComponent extends TopComponent {
     private LayoutViewScene scene;
     private LocalObjectLight objectLight;
+    
+    KeyEventDispatcher keyEventDispatcher;
         
     private ShowDeviceLayoutTopComponent() {
         initComponents();        
@@ -54,6 +62,39 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
         associateLookup(scene.getLookup());
         scene.setLayout(LayoutFactory.createAbsoluteLayout());
         pnlScrollPane.setViewportView(scene.createView());
+        
+        keyEventDispatcher = new KeyEventDispatcher() {
+
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_F5 && e.getModifiers() == 0) {
+                    btnRefreshActionPerformed(new ActionEvent(e.getSource(), e.getID(), ""));
+                    return true;
+                }
+                return false;
+            }
+        };
+        CurrentKeyEventDispatcher.getInstance().addKeyEventDispatcher(this, keyEventDispatcher);
+        
+        addComponentListener(new ComponentListener() {
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+            }
+
+            @Override
+            public void componentMoved(ComponentEvent e) {
+            }
+
+            @Override
+            public void componentShown(ComponentEvent e) {
+                CurrentKeyEventDispatcher.getInstance().updateKeyEventDispatcher(ShowDeviceLayoutTopComponent.this);
+            }
+
+            @Override
+            public void componentHidden(ComponentEvent e) {
+            }
+        });
     }
     
     @Override
@@ -95,6 +136,11 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
                 btnRefreshMouseClicked(evt);
             }
         });
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
         barMain.add(btnRefresh);
 
         btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/layout/res/export.png"))); // NOI18N
@@ -114,8 +160,7 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnRefreshMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRefreshMouseClicked
-        componentClosed();
-        componentOpened();
+        
     }//GEN-LAST:event_btnRefreshMouseClicked
 
     private void btnExportMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExportMouseClicked
@@ -126,6 +171,11 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
         DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
     }//GEN-LAST:event_btnExportMouseClicked
+
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        componentClosed();
+        componentOpened();
+    }//GEN-LAST:event_btnRefreshActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;

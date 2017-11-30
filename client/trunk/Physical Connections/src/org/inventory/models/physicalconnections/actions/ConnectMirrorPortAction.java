@@ -26,6 +26,7 @@ import org.inventory.communications.util.Utils;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.navigation.navigationtree.nodes.actions.GenericMirrorPortAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -33,7 +34,7 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ConnectMirrorPortAction extends GenericObjectNodeAction {
+public class ConnectMirrorPortAction extends GenericObjectNodeAction implements GenericMirrorPortAction {
 
     public ConnectMirrorPortAction() {
         putValue(NAME, I18N.gm("connect_mirror_ports"));

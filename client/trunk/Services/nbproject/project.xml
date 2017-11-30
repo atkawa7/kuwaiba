@@ -91,6 +91,7 @@
                 <package>org.inventory.core.services.api.visual</package>
                 <package>org.inventory.core.services.api.windows</package>
                 <package>org.inventory.core.services.api.xml</package>
+                <package>org.inventory.core.services.event</package>
                 <package>org.inventory.core.services.i18n</package>
                 <package>org.inventory.core.services.utils</package>
             </public-packages>

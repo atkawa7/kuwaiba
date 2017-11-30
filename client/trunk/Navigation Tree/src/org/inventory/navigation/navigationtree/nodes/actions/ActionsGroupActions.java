@@ -18,8 +18,6 @@ package org.inventory.navigation.navigationtree.nodes.actions;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.Action;
-import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
@@ -35,11 +33,11 @@ import org.openide.util.actions.Presenter;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ActionsGroup extends GenericObjectNodeAction implements Presenter.Popup {
+public class ActionsGroupActions extends GenericObjectNodeAction implements Presenter.Popup {
     public final Class<?> actionsGroupClass;
     public final String iconPath;
     
-    public ActionsGroup(String lblAction, String iconPath, Class<?> actionsGroupClass) {
+    public ActionsGroupActions(String lblAction, String iconPath, Class<?> actionsGroupClass) {
         putValue(NAME, lblAction != null ? lblAction : "");        
         this.actionsGroupClass = actionsGroupClass;
         this.iconPath = iconPath;
@@ -75,8 +73,7 @@ public class ActionsGroup extends GenericObjectNodeAction implements Presenter.P
     @Override
     public JMenuItem getPopupPresenter() {
         JMenu mnuActionsGroup = new JMenu((String) getValue(NAME));
-        if (iconPath != null)
-            mnuActionsGroup.setIcon(ImageUtilities.loadImageIcon(iconPath, false));
+        mnuActionsGroup.setIcon(ImageUtilities.loadImageIcon(iconPath, false));
         
         ObjectNode objectNode = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
         if (objectNode == null) {
@@ -96,16 +93,14 @@ public class ActionsGroup extends GenericObjectNodeAction implements Presenter.P
                 }
             }
         }
-        if (actions.isEmpty())
-            mnuActionsGroup.setVisible(false);            
-        else {
+        if (actions.isEmpty()) {
+            mnuActionsGroup.setEnabled(false);            
+        } else {
             for (GenericObjectNodeAction action : actions) {
                 JMenuItem mnuiAction = new JMenuItem((String) action.getValue(NAME));
                 mnuiAction.setName((String) action.getValue(NAME));
                 putValue(mnuiAction.getName(), action);
-                mnuiAction.addActionListener(this);
-                
-                mnuActionsGroup.add(mnuiAction);
+                mnuiAction.addActionListener(this);                
             }
             MenuScroller.setScrollerFor(mnuActionsGroup, 20, 100);
         }

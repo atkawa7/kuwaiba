@@ -17,23 +17,37 @@
 package org.inventory.layout.scene.widgets.actions;
 
 import java.awt.event.ActionEvent;
+import static javax.swing.Action.NAME;
+import static javax.swing.Action.SMALL_ICON;
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.utils.ImageIconResource;
 import org.inventory.layout.lookup.SharedContentLookup;
 import org.inventory.layout.model.Shape;
 import org.inventory.layout.scene.ModelLayoutScene;
 import org.netbeans.api.visual.widget.Widget;
+import org.openide.util.actions.Presenter;
 
 /**
  * Action used to delete a widget in the scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class DeleteShapeAction extends GenericInventoryAction {
+public class DeleteShapeAction extends GenericInventoryAction implements Presenter.Popup {
     private static DeleteShapeAction instance;
     private Widget selectedWidget;
+    private final JMenuItem popupPresenter;
     
     private DeleteShapeAction() {
         putValue(NAME, "Delete");
+        putValue(SMALL_ICON, ImageIconResource.WARNING_ICON);
+                
+        popupPresenter = new JMenuItem();
+        popupPresenter.setName((String) getValue(NAME));
+        popupPresenter.setText((String) getValue(NAME));
+        popupPresenter.setIcon((ImageIcon) getValue(SMALL_ICON));
+        popupPresenter.addActionListener(this);
     }
     
     public static DeleteShapeAction getInstance() {
@@ -76,6 +90,11 @@ public class DeleteShapeAction extends GenericInventoryAction {
                 scene.fireChangeEvent(new ActionEvent(this, ModelLayoutScene.SCENE_CHANGE, "Shape deleted"));
             }
         }
+    }
+
+    @Override
+    public JMenuItem getPopupPresenter() {
+        return popupPresenter;
     }
     
 }

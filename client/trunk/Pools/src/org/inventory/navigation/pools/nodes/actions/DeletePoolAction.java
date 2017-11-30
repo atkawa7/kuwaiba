@@ -16,19 +16,26 @@
 package org.inventory.navigation.pools.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import static javax.swing.Action.NAME;
+import static javax.swing.Action.SMALL_ICON;
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
+import org.inventory.core.services.utils.ImageIconResource;
 import org.inventory.navigation.pools.nodes.PoolNode;
 import org.openide.nodes.Node;
+import org.openide.util.actions.Presenter;
 
 /**
  * Deletes a pool
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class DeletePoolAction extends GenericInventoryAction {
+public class DeletePoolAction extends GenericInventoryAction implements Presenter.Popup {
     /**
      * Reference to the communications stub singleton
      */
@@ -37,31 +44,45 @@ public class DeletePoolAction extends GenericInventoryAction {
      * Reference to the root node;
      */
     private PoolNode node;
+    private final JMenuItem popupPresenter;
 
     public DeletePoolAction(PoolNode pn){
         putValue(NAME, "Delete Pool");
         com = CommunicationsStub.getInstance();
         this.node = pn;
+        
+        putValue(SMALL_ICON, ImageIconResource.WARNING_ICON);
+                
+        popupPresenter = new JMenuItem();
+        popupPresenter.setName((String) getValue(NAME));
+        popupPresenter.setText((String) getValue(NAME));
+        popupPresenter.setIcon((ImageIcon) getValue(SMALL_ICON));
+        popupPresenter.addActionListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent ev) {
         
         if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this pool? All contained elements will be deleted as well", 
-                "Warning", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                I18N.gm("warning"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
         
             if (com.deletePool(node.getPool().getOid())){
                 node.getParentNode().getChildren().remove(new Node[]{node});
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, 
                         "Pool deleted successfully");
             }
             else
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
         }
     }
 
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_POOLS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+
+    @Override
+    public JMenuItem getPopupPresenter() {
+        return popupPresenter;
     }
 }

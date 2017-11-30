@@ -20,24 +20,38 @@ import com.neotropic.inventory.modules.projects.nodes.ProjectRootChildren;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 import static javax.swing.Action.NAME;
+import static javax.swing.Action.SMALL_ICON;
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
+import org.inventory.core.services.utils.ImageIconResource;
 import org.openide.util.Utilities;
+import org.openide.util.actions.Presenter;
 
 /**
  * Action to delete a Project Pool
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class DeleteProjectPoolAction extends GenericInventoryAction {
+public class DeleteProjectPoolAction extends GenericInventoryAction implements Presenter.Popup {
     private final ResourceBundle bundle;
     private static DeleteProjectPoolAction instance;
+    private final JMenuItem popupPresenter;
     
     private DeleteProjectPoolAction() {           
         bundle = ProjectsModuleService.bundle;
         putValue(NAME, bundle.getString("ACTION_NAME_DELETE_PROJECT_POOL"));
+        putValue(SMALL_ICON, ImageIconResource.WARNING_ICON);
+                
+        popupPresenter = new JMenuItem();
+        popupPresenter.setName((String) getValue(NAME));
+        popupPresenter.setText((String) getValue(NAME));
+        popupPresenter.setIcon((ImageIcon) getValue(SMALL_ICON));
+        popupPresenter.addActionListener(this);
     }
     
     public static DeleteProjectPoolAction getIntance() {
@@ -53,21 +67,26 @@ public class DeleteProjectPoolAction extends GenericInventoryAction {
     public void actionPerformed(ActionEvent e) {
         if (JOptionPane.showConfirmDialog(
             null, bundle.getString("LBL_WARNING_DELETE_PROJECT_POOL"), 
-            bundle.getString("LBL_WARNING"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            I18N.gm("warning"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
             ProjectPoolNode selectedNode = Utilities.actionsGlobalContext().lookup(ProjectPoolNode.class);
             if (selectedNode == null)
                 return;
             if (CommunicationsStub.getInstance().deletePool(selectedNode.getPool().getOid())) {
-                NotificationUtil.getInstance().showSimplePopup(bundle.getString("LBL_INFORMATION"), 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), 
                     NotificationUtil.INFO_MESSAGE, bundle.getString("LBL_CONFIRMATION_DELETE_PROJECT_POOL"));
                 
                 ((ProjectRootChildren) selectedNode.getParentNode().getChildren()).addNotify();
             } else {
-                NotificationUtil.getInstance().showSimplePopup(bundle.getString("LBL_ERROR"), 
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }
         }
+    }
+
+    @Override
+    public JMenuItem getPopupPresenter() {
+        return popupPresenter;
     }
     
 }

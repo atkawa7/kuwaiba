@@ -23,6 +23,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -31,10 +32,18 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service = GenericObjectNodeAction.class)
-public class DeleteMPLSConnectionAction extends GenericObjectNodeAction {
+public class DeleteMPLSConnectionAction extends GenericObjectNodeAction /*implements Presenter.Popup*/ {
+//    private final JMenuItem popupPresenter;
 
     public DeleteMPLSConnectionAction() {
         this.putValue(NAME, "Delete MPLS Link"); 
+//        putValue(SMALL_ICON, ImageIconResource.WARNING_ICON);
+//                
+//        popupPresenter = new JMenuItem();
+//        popupPresenter.setName((String) getValue(NAME));
+//        popupPresenter.setText((String) getValue(NAME));
+//        popupPresenter.setIcon((ImageIcon) getValue(SMALL_ICON));
+//        popupPresenter.addActionListener(this);
     }  
 
     @Override
@@ -44,9 +53,9 @@ public class DeleteMPLSConnectionAction extends GenericObjectNodeAction {
                 "Delete MPLS Link", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
             for (LocalObjectLight selectedObject : selectedObjects) {
                 if (CommunicationsStub.getInstance().deleteMPLSLink(selectedObject.getClassName(), selectedObject.getOid())) 
-                    NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, String.format("%s deleted sucessfully", selectedObject));
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, String.format("%s deleted sucessfully", selectedObject));
                 else 
-                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }
         }
     }
@@ -60,4 +69,9 @@ public class DeleteMPLSConnectionAction extends GenericObjectNodeAction {
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_MPLS_MODULE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
+
+//    @Override
+//    public JMenuItem getPopupPresenter() {
+//        return popupPresenter;
+//    }
 }

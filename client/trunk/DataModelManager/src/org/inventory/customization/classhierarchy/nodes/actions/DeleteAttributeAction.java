@@ -18,6 +18,10 @@ package org.inventory.customization.classhierarchy.nodes.actions;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
+import static javax.swing.Action.NAME;
+import static javax.swing.Action.SMALL_ICON;
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalAttributeMetadata;
@@ -28,22 +32,33 @@ import org.inventory.communications.core.caching.Cache;
 import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.core.services.utils.ImageIconResource;
 import org.inventory.core.services.utils.SubMenuDialog;
 import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.customization.classhierarchy.nodes.ClassMetadataNode;
+import org.openide.util.actions.Presenter;
 
 /**
  * Deletes an attribute
  * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
  */
-public class DeleteAttributeAction extends GenericInventoryAction implements ComposedAction {
+public class DeleteAttributeAction extends GenericInventoryAction implements ComposedAction, Presenter.Popup {
 
     private ClassMetadataNode classNode;
     private CommunicationsStub com;
+    private final JMenuItem popupPresenter;
 
     public DeleteAttributeAction() {
         putValue(NAME, I18N.gm("delete_attribute"));
         com = CommunicationsStub.getInstance();
+        
+        putValue(SMALL_ICON, ImageIconResource.WARNING_ICON);
+                
+        popupPresenter = new JMenuItem();
+        popupPresenter.setName((String) getValue(NAME));
+        popupPresenter.setText((String) getValue(NAME));
+        popupPresenter.setIcon((ImageIcon) getValue(SMALL_ICON));
+        popupPresenter.addActionListener(this);
     }
 
     public DeleteAttributeAction(ClassMetadataNode classNode) {
@@ -85,5 +100,10 @@ public class DeleteAttributeAction extends GenericInventoryAction implements Com
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
             }
         }
+    }
+
+    @Override
+    public JMenuItem getPopupPresenter() {
+        return popupPresenter;
     }
 }

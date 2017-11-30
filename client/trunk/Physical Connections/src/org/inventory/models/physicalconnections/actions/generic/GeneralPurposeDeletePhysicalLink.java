@@ -17,14 +17,21 @@
 package org.inventory.models.physicalconnections.actions.generic;
 
 import java.awt.event.ActionEvent;
+import static javax.swing.Action.NAME;
+import static javax.swing.Action.SMALL_ICON;
+import javax.swing.ImageIcon;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
+import org.inventory.core.services.utils.ImageIconResource;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.util.Utilities;
+import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -32,10 +39,18 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class GeneralPurposeDeletePhysicalLink extends GenericObjectNodeAction {
+public class GeneralPurposeDeletePhysicalLink extends GenericObjectNodeAction implements Presenter.Popup {
+    private final JMenuItem popupPresenter;
 
     public GeneralPurposeDeletePhysicalLink() {
         putValue(NAME, "Delete Physical Link");
+        putValue(SMALL_ICON, ImageIconResource.WARNING_ICON);
+                
+        popupPresenter = new JMenuItem();
+        popupPresenter.setName((String) getValue(NAME));
+        popupPresenter.setText((String) getValue(NAME));
+        popupPresenter.setIcon((ImageIcon) getValue(SMALL_ICON));
+        popupPresenter.addActionListener(this);
     }
        
     @Override
@@ -60,10 +75,10 @@ public class GeneralPurposeDeletePhysicalLink extends GenericObjectNodeAction {
                     if (selectedNode.getParentNode() != null && AbstractChildren.class.isInstance(selectedNode.getParentNode().getChildren()))
                         ((AbstractChildren)selectedNode.getParentNode().getChildren()).addNotify();
                     
-                    NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Link deleted successfully");
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "Link deleted successfully");
                 }
                 else
-                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }
         }
     }
@@ -71,5 +86,10 @@ public class GeneralPurposeDeletePhysicalLink extends GenericObjectNodeAction {
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_PHYSICAL_VIEW, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+    
+    @Override
+    public JMenuItem getPopupPresenter() {
+        return popupPresenter;
     }
 }
