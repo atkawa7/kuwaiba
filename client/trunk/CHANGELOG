@@ -145,13 +145,12 @@
 * Multiple bugfixes and improvements
 
 1.6
-* Many objects can now be dragged and dropped at the same time to a view
-* It's possible to create sdh links that use concatenated containers. This way, the user can create sdh connections with arbitrary capacities to support services such as Ethernet/IP over SDH
-* Was set a unique rack view which integrating the actions: Show rack view and Show connections in Rack
-* Added patch to create the EquipmentModel class and add the attribute model with type EquipmentModel to GenericCommunicationElement class
-* Added a manager for layouts related to equipment models
-* Added patch to create the GenericApplicationListType class and the CustomShape class to manage the custom shapes
-* Updated the Binary data type to manage the custom shape icon, this data types is will remain hidden for this release
-* Added refresh button to all views
-* Created the SelectValueFrame class to select a value given a list of possible values, and was removed the old classes which has same functions
-* Was enabled actions: copy, paste and move, in the Service Manager Module, Contract Manager Module and Pool Manager Module
+* Multiple objects can now be dragged and dropped at the same time to a view
+* It's possible to create SDH links that use concatenated containers. This way, the user can create SDH connections with arbitrary capacities to support services such as Ethernet/IP over SDH
+* "Show Rack View" and "Show Connections in Rack" actions were merged
+* It is possible to create layouts for certain equipment brands/models. With this, the users will be able to see how the device actually looks like and how their children are arranged inside.
+* Re-added the "Binary" data type to manage the custom shape icon. This data type will remain hidden for this release in conventional inventory types, and will be enabled in coming versions
+* Added a refresh button to all views
+* All the frames that are used to select a value from a list (like those used in "Relate to..." actions) share a common code base and behave the same way. Double click now automatically accepts the selction.
+* Copy/cut and paste actions enabled in the Service Manager Module, Contract Manager Module and Pool Manager Module
+* Common context-aware actions has icons and similar actions were grouped to simplify the node's menu 

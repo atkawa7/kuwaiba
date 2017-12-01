@@ -19,16 +19,11 @@ import org.inventory.views.rackview.scene.RackViewScene;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.KeyEventDispatcher;
-import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import javax.swing.JComponent;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.behaviors.Refreshable;
@@ -133,14 +128,14 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
         pnlMainScrollPanel = new javax.swing.JScrollPane();
         toolBarMain = new javax.swing.JToolBar();
         btnExport = new javax.swing.JButton();
-        jSeparator1 = new javax.swing.JToolBar.Separator();
-        btnShowConnections = new javax.swing.JToggleButton();
+        btnRefresh = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         btnSelect = new javax.swing.JToggleButton();
         btnConnect = new javax.swing.JToggleButton();
+        jSeparator1 = new javax.swing.JToolBar.Separator();
         btnRackTableView = new javax.swing.JButton();
+        btnShowConnections = new javax.swing.JToggleButton();
         jSeparator3 = new javax.swing.JToolBar.Separator();
-        btnRefresh = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
         add(pnlMainScrollPanel, java.awt.BorderLayout.CENTER);
@@ -162,20 +157,24 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
             }
         });
         toolBarMain.add(btnExport);
-        toolBarMain.add(jSeparator1);
 
-        btnShowConnections.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/show_connection.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnShowConnections, org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnShowConnections.text")); // NOI18N
-        btnShowConnections.setToolTipText(org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnShowConnections.toolTipText")); // NOI18N
-        btnShowConnections.setFocusable(false);
-        btnShowConnections.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnShowConnections.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnShowConnections.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/refresh.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnRefresh.text")); // NOI18N
+        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnRefresh.toolTipText")); // NOI18N
+        btnRefresh.setFocusable(false);
+        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRefresh.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnShowConnectionsMouseClicked(evt);
+                btnRefreshMouseClicked(evt);
             }
         });
-        toolBarMain.add(btnShowConnections);
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
+        toolBarMain.add(btnRefresh);
         toolBarMain.add(jSeparator2);
 
         btnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/select.png"))); // NOI18N
@@ -203,6 +202,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
             }
         });
         toolBarMain.add(btnConnect);
+        toolBarMain.add(jSeparator1);
 
         btnRackTableView.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/show_table.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnRackTableView, org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnRackTableView.text")); // NOI18N
@@ -216,25 +216,20 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
             }
         });
         toolBarMain.add(btnRackTableView);
-        toolBarMain.add(jSeparator3);
 
-        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/refresh.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnRefresh.text")); // NOI18N
-        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnRefresh.toolTipText")); // NOI18N
-        btnRefresh.setFocusable(false);
-        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnRefresh.addMouseListener(new java.awt.event.MouseAdapter() {
+        btnShowConnections.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/show_connection.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnShowConnections, org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnShowConnections.text")); // NOI18N
+        btnShowConnections.setToolTipText(org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.btnShowConnections.toolTipText")); // NOI18N
+        btnShowConnections.setFocusable(false);
+        btnShowConnections.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnShowConnections.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnShowConnections.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnRefreshMouseClicked(evt);
+                btnShowConnectionsMouseClicked(evt);
             }
         });
-        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRefreshActionPerformed(evt);
-            }
-        });
-        toolBarMain.add(btnRefresh);
+        toolBarMain.add(btnShowConnections);
+        toolBarMain.add(jSeparator3);
 
         add(toolBarMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
@@ -298,7 +293,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
             scene.clear();
             service.shownRack(); 
             
-            btnShowConnections.setToolTipText("Hide Connections in Rack");
+            btnShowConnections.setToolTipText("Show/Hide Connections");
             btnSelect.setEnabled(true);
             btnConnect.setEnabled(true);
             btnRackTableView.setEnabled(true);

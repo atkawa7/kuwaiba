@@ -16,6 +16,8 @@
 package org.inventory.models.physicalconnections.actions;
 
 import java.awt.event.ActionEvent;
+import static javax.swing.Action.SMALL_ICON;
+import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
@@ -23,6 +25,8 @@ import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.models.physicalconnections.windows.PhysicalPathTopComponent;
+import org.openide.util.ImageUtilities;
+import org.openide.util.actions.Presenter;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
@@ -30,10 +34,11 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ShowPhysicalPathAction extends GenericObjectNodeAction {
+public class ShowPhysicalPathAction extends GenericObjectNodeAction implements Presenter.Popup {
     
     public ShowPhysicalPathAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_SHOW_PHYSICAL_PATH"));
+        putValue(SMALL_ICON, ImageUtilities.loadImageIcon("org/inventory/models/physicalconnections/res/p_path.png", false));
     }
 
     @Override
@@ -56,5 +61,10 @@ public class ShowPhysicalPathAction extends GenericObjectNodeAction {
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_PHYSICAL_VIEW, LocalPrivilege.ACCESS_LEVEL_READ);
+    }
+
+    @Override
+    public JMenuItem getPopupPresenter() {
+        return new JMenuItem(this);
     }
 }

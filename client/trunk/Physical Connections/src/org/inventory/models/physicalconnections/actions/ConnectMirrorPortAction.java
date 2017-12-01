@@ -59,7 +59,7 @@ public class ConnectMirrorPortAction extends GenericObjectNodeAction implements 
                 endPoints.add(child);
         }
         
-        if(!endPoints.isEmpty() && endPoints.size() % 2 ==0){
+        if(!endPoints.isEmpty() && endPoints.size() % 2 == 0){
             for (int i=0; i < endPoints.size(); i++) {
                 LocalObjectLight endPointA = endPoints.get(i);
                 if(endPointA != null){
@@ -112,15 +112,15 @@ public class ConnectMirrorPortAction extends GenericObjectNodeAction implements 
         back = back.toLowerCase();
         front = front.toLowerCase();
         String frontNumericPart = "";
-        for (int i=1; i < front.length(); i++){
+        for (int i = 1; i < front.length(); i++){
             if(Utils.isNumeric(front.substring(i-1, i)))
                 frontNumericPart += front.substring(i-1,i);
         }
         String backNumericPart = "";
         
-        for (int i=1; i < back.length(); i++){
-            if(Utils.isNumeric(back.substring(i-1, i)))
-                backNumericPart += back.substring(i-1, i);
+        for (int i = 1; i < back.length(); i++){
+            if(Utils.isNumeric(back.substring(i - 1, i)))
+                backNumericPart += back.substring(i - 1, i);
         }
 
         return backNumericPart.equals(frontNumericPart);

@@ -46,7 +46,7 @@ import org.openide.windows.WindowManager;
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "org.inventory.customization.listmanager.ListTypeManagerTopComponent")
-@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administrative"),
+@ActionReferences(value = {@ActionReference(path = "Menu/Tools/Administration"),
     @ActionReference(path = "Toolbars/04_Customization", position = 3)})
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_ListTypeManagerAction",
