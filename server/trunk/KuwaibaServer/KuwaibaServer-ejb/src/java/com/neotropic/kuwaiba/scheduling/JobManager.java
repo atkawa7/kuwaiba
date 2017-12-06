@@ -17,7 +17,11 @@
 package com.neotropic.kuwaiba.scheduling;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import javax.batch.operations.JobExecutionNotRunningException;
+import javax.batch.operations.JobSecurityException;
+import javax.batch.operations.NoSuchJobException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 
@@ -45,7 +49,7 @@ public class JobManager {
 
     private JobManager() { 
         currentJobs = new ArrayList<>();
-    }
+    } 
     
     public void launch(BackgroundJob job) throws InvalidArgumentException, OperationNotPermittedException {
         
@@ -73,8 +77,15 @@ public class JobManager {
     }
     
     public void kill(long jobId) throws InvalidArgumentException {
-        for (BackgroundJob currentJob : currentJobs)
-            if (currentJob.getId() == jobId)
-                throw new InvalidArgumentException(String.format("A job with id %s could not be found", jobId));
+        for (BackgroundJob currentJob : currentJobs) {
+            if (currentJob.getId() == jobId) {
+                try {
+                    currentJob.kill();
+                }catch (JobSecurityException | NoSuchJobException | JobExecutionNotRunningException ex) {
+                    System.out.println(String.format("[KUWAIBA] [%s] Unexpected error: %s", Calendar.getInstance().getTime(), ex.getMessage()));
+                }
+            }
+        }
+        throw new InvalidArgumentException(String.format("A job with id %s could not be found", jobId));
     }
 }

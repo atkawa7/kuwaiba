@@ -16,7 +16,6 @@
 package com.neotropic.kuwaiba.sync.connectors.snmp.model;
 
 import com.neotropic.kuwaiba.sync.connectors.snmp.SnmpManager;
-import com.neotropic.kuwaiba.sync.connectors.snmp.model.SnmpEntPhysicalTable;
 import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
 import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
 import com.neotropic.kuwaiba.sync.model.SyncAction;

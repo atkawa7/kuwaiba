@@ -17,6 +17,7 @@
 package com.neotropic.kuwaiba.scheduling;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Properties;
 import javax.batch.operations.JobSecurityException;
@@ -25,7 +26,8 @@ import javax.batch.runtime.BatchRuntime;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
- * This class represents an actual job to be run in background by the JobManager
+ * This class represents an actual job to be run in background by the JobManager. 
+ * It is a wrapper that abstracts the threading provider (Java batch jobs, Spring threads, etc)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class BackgroundJob implements Runnable {
@@ -106,6 +108,14 @@ public class BackgroundJob implements Runnable {
         this.status = status;
     }
     
+    public Date getStartTime(){
+        return BatchRuntime.getJobOperator().getJobExecution(id).getStartTime();
+    }
+    
+    public Date getEndTime(){
+        return BatchRuntime.getJobOperator().getJobExecution(id).getEndTime();
+    }
+    
     @Override
     public void run() {
         try {
@@ -121,6 +131,11 @@ public class BackgroundJob implements Runnable {
             System.out.println(String.format("[KUWAIBA] [%s] %s", ex.getMessage(), Calendar.getInstance().getTime()));
             this.status = JOB_STATUS.ABORTED;
         }
+    }
+    
+    public void kill() {
+        BatchRuntime.getJobOperator().stop(id);
+        this.status = JOB_STATUS.ABORTED;
     }
     
     @Override
