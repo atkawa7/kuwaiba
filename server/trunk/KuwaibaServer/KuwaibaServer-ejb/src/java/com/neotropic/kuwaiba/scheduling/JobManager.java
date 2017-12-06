@@ -16,10 +16,65 @@
 
 package com.neotropic.kuwaiba.scheduling;
 
+import java.util.ArrayList;
+import java.util.List;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+
 /**
- * This class handles the jobs that are being executed within the server, and provides methods to manage their lifecyles
+ * This class handles the jobs that are being executed within the server, and provides methods to manage their life cycles
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class JobManager {
+    /**
+     * Max number of jobs to be managed (running + finished + aborted)
+     */
+    public static int MAX_QUEUE_SIZE = 10;
+    /**
+     * The list of managed jobs
+     */
+    private List<BackgroundJob> currentJobs;
+    /**
+     * Singleton implementation
+     */
+    private static JobManager instance;
+    
+    public static JobManager getInstance() {
+        return instance == null ? instance = new JobManager() : instance;
+    }
 
+    private JobManager() { 
+        currentJobs = new ArrayList<>();
+    }
+    
+    public void launch(BackgroundJob job) throws InvalidArgumentException, OperationNotPermittedException {
+        
+        if (currentJobs.size() == MAX_QUEUE_SIZE) {
+            //We will see first of there's some finished jobs we can purge, if not an exception will be rised
+            boolean maxExceeded = true;
+            for (BackgroundJob currentJob : currentJobs) {
+                if (currentJob.getStatus() == BackgroundJob.JOB_STATUS.FINISHED || currentJob.getStatus() == BackgroundJob.JOB_STATUS.ABORTED) {
+                    currentJobs.remove(currentJob); //Concurrent access problem here?
+                    maxExceeded = false;
+                    break;
+                }
+            }
+            
+            if (maxExceeded)
+                throw new OperationNotPermittedException(String.format("The number of running jobs has exceeded the maximum permitted (%s)", MAX_QUEUE_SIZE));
+        }
+        
+        for (BackgroundJob currentJob : currentJobs)
+            if (currentJob.getJobTag().equals(job.getJobTag()) && !job.allowConcurrence())
+                throw new InvalidArgumentException(String.format("A job with tag id %s is already running", job.getJobTag()));
+        
+        currentJobs.add(job);
+        job.run();
+    }
+    
+    public void kill(long jobId) throws InvalidArgumentException {
+        for (BackgroundJob currentJob : currentJobs)
+            if (currentJob.getId() == jobId)
+                throw new InvalidArgumentException(String.format("A job with id %s could not be found", jobId));
+    }
 }

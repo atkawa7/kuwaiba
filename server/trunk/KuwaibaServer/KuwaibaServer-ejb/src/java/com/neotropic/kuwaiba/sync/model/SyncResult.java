@@ -15,54 +15,46 @@
 
 package com.neotropic.kuwaiba.sync.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
 /**
- * This class represents a single result from comparing the info from a sync data 
- * source and the corresponding information in the inventory database
+ * Instances of this class are intended to inform about the results of a synchronization process. 
+ * In principle a simple list of strings would suffice, however this class could be extended in
+ * the future to provide mechanisms to retry a sync action
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
+@XmlAccessorType(XmlAccessType.FIELD)
 public class SyncResult {
     /**
-     * The type of difference found. See EVENT enumeration for possible values
+     * The description of the action that was performed
      */
-    private EVENT type;
+    private String actionDescription;
     /**
-     * Textual description of the difference
+     * The textual description of the result of that action
      */
-    private String description;
-    /**
-     * Relevant information that can be used to . Although its format depends on every 
-     * particular implementation, a JSON/YML format is suggested
-     */
-    private String extraInformation;
+    private String result;
 
-    public EVENT getType() {
-        return type;
+    public SyncResult() { }
+
+    public SyncResult(String actionDescription, String result) {
+        this.actionDescription = actionDescription;
+        this.result = result;
     }
 
-    public void setType(EVENT type) {
-        this.type = type;
+    public String getActionDescription() {
+        return actionDescription;
     }
 
-    public String getDescription() {
-        return description;
+    public void setActionDescription(String actionDescription) {
+        this.actionDescription = actionDescription;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public String getResult() {
+        return result;
     }
 
-    public String getExtraInformation() {
-        return extraInformation;
-    }
-
-    public void setExtraInformation(String extraInformation) {
-        this.extraInformation = extraInformation;
-    }
-    
-    public enum EVENT {
-        NEW,
-        DELETED,
-        UPDATED,
-        PARTIALLY_UPDATED
+    public void setResult(String result) {
+        this.result = result;
     }
 }

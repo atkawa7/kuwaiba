@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.sync.connectors.snmp;
+package com.neotropic.kuwaiba.scheduling.sync;
 
 import java.io.Serializable;
 import java.util.List;
@@ -28,7 +28,7 @@ import javax.inject.Inject;
  * were defined in the ItemProcessor
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class DefaultSnmpSyncWriter implements ItemWriter {
+public class DefaultSyncWriter implements ItemWriter {
     @Inject
     private JobContext jobContext;
 

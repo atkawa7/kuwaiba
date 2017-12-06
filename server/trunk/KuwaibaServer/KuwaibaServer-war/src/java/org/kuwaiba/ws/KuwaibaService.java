@@ -20,6 +20,8 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
+import com.neotropic.kuwaiba.sync.model.SyncFinding;
+import com.neotropic.kuwaiba.sync.model.SyncResult;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -5320,6 +5322,59 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in getBusinessRules: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    //</editor-fold>
+    
+    //<editor-fold desc="Synchronization API methods" defaultstate="collapsed">
+    /**
+     * Executes an synchronization job, which consist on connecting to the sync data source 
+     * using the configuration attached to the given sync group and finding the differences 
+     * between the information currently in the inventory platform and what's in the sync data source. 
+     * A supervised sync job needs a human to review the differences and decide what to do,
+     * while an automated sync job automatically decides what to do based on built-in business rules
+     * @param syncGroupId The sync group id
+     * @param sessionId The session token
+     * @return A list of differences that require the authorization of a user to be reconciliated
+     * @throws ServerSideException If the sync group could not be found or if
+     */
+    @WebMethod(operationName = "launchSupervisedSynchronizationTask")
+    public List<SyncFinding> launchSupervisedSynchronizationTask(@WebParam(name = "syncGroupId") long syncGroupId, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.launchSupervisedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in launchSupervisedSynchronizationTask: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    /**
+     * Executes an synchronization job, which consist on connecting to the sync data source 
+     * using the configuration attached to the given sync group and finding the differences 
+     * between the information currently in the inventory platform and what's in the sync data source. 
+     * An automated sync job does not need human intervention it automatically decides what to do based 
+     * on built-in business rules
+     * @param syncGroupId The sync group id
+     * @param sessionId The session token
+     * @return The set of results 
+     * @throws ServerSideException If the sync group could not be found
+     */
+    @WebMethod(operationName = "launchAutomatedSynchronizationTask")
+    public List<SyncResult> launchAutomatedSynchronizationTask(@WebParam(name = "syncGroupId") long syncGroupId, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.launchAutomatedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in launchAutomatedSynchronizationTask: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }

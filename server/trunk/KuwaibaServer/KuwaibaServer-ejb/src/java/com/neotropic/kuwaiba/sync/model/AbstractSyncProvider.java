@@ -57,7 +57,7 @@ public abstract class AbstractSyncProvider {
      * or wait for approval
      * @return True if it doesn't require approval, False otherwise
      */
-    public abstract boolean isAutomatic();
+    public abstract boolean isAutomated();
         
     public abstract List<AbstractDataEntity> unmappedPoll(SynchronizationGroup syncGroup);
             
@@ -71,7 +71,7 @@ public abstract class AbstractSyncProvider {
      * (for example, a Java matrix representing an SNMP table)
      * @return A set of results (e.g. new board on slot xxx, different serial number found for router yyyy)
      */
-    public abstract List<SyncResult> sync(String className, long objectId, List<AbstractDataEntity> originalData);
+    public abstract List<SyncFinding> sync(String className, long objectId, List<AbstractDataEntity> originalData);
     /**
      * Implement this method if the synchronization process won't be associated to a single object in the inventory, for example, 
      * if you want to see what virtual circuits were re-routed after switching to a backup link during a network failure 
@@ -79,7 +79,7 @@ public abstract class AbstractSyncProvider {
      * (for example, a Java list representing the hops of a virtual circuits)
      * @return A set of results (circuit YYY has a new route zzzz)
      */
-    public abstract List<SyncResult> sync(List<AbstractDataEntity> originalData);
+    public abstract List<SyncFinding> sync(List<AbstractDataEntity> originalData);
     /**
      * Performs the actual actions 
      * @param actions

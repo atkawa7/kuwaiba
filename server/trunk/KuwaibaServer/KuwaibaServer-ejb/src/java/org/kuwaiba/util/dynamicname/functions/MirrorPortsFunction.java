@@ -22,8 +22,8 @@ import java.util.regex.Pattern;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
- * Class to get the two possible names to represent the front port and the back 
- * port when a pair of ports are created to be mirrored.
+ * Implements the <code>mirror(a, b)</code> function, that generates pairs of ports numbered from <code>a</code> to <code>b</code>.
+ * <code>a</code> and <code>b</code> must be integers greater or equal to 0
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class MirrorPortsFunction extends DynamicSectionFunction {

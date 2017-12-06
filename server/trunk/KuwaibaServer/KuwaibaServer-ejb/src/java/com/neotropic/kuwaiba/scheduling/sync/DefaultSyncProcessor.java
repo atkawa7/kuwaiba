@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package com.neotropic.kuwaiba.sync.connectors.snmp;
+package com.neotropic.kuwaiba.scheduling.sync;
 
 import javax.batch.api.chunk.ItemProcessor;
 import javax.batch.runtime.context.JobContext;
@@ -24,7 +24,7 @@ import javax.inject.Inject;
  * Contains the logic that finds the differences between the polled device and the element in the inventory
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class DefaultSnmpSyncProcessor implements ItemProcessor {
+public class DefaultSyncProcessor implements ItemProcessor {
     @Inject
     private JobContext jobContext;
     

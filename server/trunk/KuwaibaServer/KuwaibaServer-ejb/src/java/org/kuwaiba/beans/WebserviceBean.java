@@ -26,6 +26,10 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
+import com.neotropic.kuwaiba.scheduling.BackgroundJob;
+import com.neotropic.kuwaiba.scheduling.JobManager;
+import com.neotropic.kuwaiba.sync.model.SyncFinding;
+import com.neotropic.kuwaiba.sync.model.SyncResult;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +37,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Properties;
 import javax.ejb.Singleton;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
@@ -4267,7 +4272,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
         }
     }
         // </editor-fold>    
-        //<editor-fold desc="Inventory Synchronization" defaultstate="collapsed">
+        //<editor-fold desc="Synchronization API" defaultstate="collapsed">
         @Override
         public long createSynchronizationDataSourceConfig(String name, List<StringPair> parameters, String syncGroupId, String ipAddress, String sessionId) throws ServerSideException{
             if (aem == null)
@@ -4333,8 +4338,6 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 throw new ServerSideException(ex.getMessage());
             }
         }
-        //@Override
-        //public (, String ipAddress, String sessionId)throws ServerSideException{}
         
         @Override
         public void deleteSynchronizationGroup(String syncGroupId, String ipAddress, String sessionId)throws ServerSideException{
@@ -4361,6 +4364,42 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 throw new ServerSideException(ex.getMessage());
             }
         }
+
+    @Override
+    public List<SyncResult> launchAutomatedSynchronizationTask(long syncGroupId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null || bem == null || mem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("launchAutomatedSynchronizationTask", ipAddress, sessionId);
+            return null; //To be implemented
+
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<SyncFinding> launchSupervisedSynchronizationTask(long syncGroupId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null || bem == null || mem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("launchSupervisedSynchronizationTask", ipAddress, sessionId);
+            //SyncGroup syncGroup = bem.getSyncgroup(syncGroupId)
+            Properties parameters = new Properties();
+            parameters.put("aem", aem);
+            parameters.put("bem", bem);
+            parameters.put("mem", mem);
+            //parameters.put("syncGroup", syncGroup);
+            
+            JobManager.getInstance().launch(new BackgroundJob("DefaultSyncJob", false, parameters));
+            return null; //To be implemented
+
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+        
+        
         //</editor-fold>
         // <editor-fold defaultstate="collapsed" desc="Fault Management Integration">
 
