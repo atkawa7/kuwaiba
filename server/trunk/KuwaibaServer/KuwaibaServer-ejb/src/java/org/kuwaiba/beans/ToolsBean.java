@@ -838,31 +838,46 @@ public class ToolsBean implements ToolsBeanRemote {
                     }
                     if (classesToRemoveModelAttr.isEmpty()) {
                         ClassMetadata genericComElementClass;
+                        ClassMetadata genericDistributionFrame;
                         try {
-                            genericComElementClass = mem.getClass("GenericCommunicationsElement");
+                            genericComElementClass = mem.getClass("GenericCommunicationsElement"); //NOI18N
+                            genericDistributionFrame = mem.getClass("GenericDistributionFrame"); //NOI18N
                         } catch (MetadataObjectNotFoundException ex) {
                             results[i] += " * " + ex.getMessage();
                             return results;
                         }
+                        attributeModel = new AttributeMetadata();
+                        attributeModel.setDescription("");
+                        attributeModel.setReadOnly(false);                    
+                        attributeModel.setUnique(false);
+                        attributeModel.setVisible(true);
+                        attributeModel.setNoCopy(false);
+                        attributeModel.setName("model"); //NOI18N
+                        attributeModel.setDisplayName("model"); //NOI18N
+                        attributeModel.setType(equipmentModelClassName);
+                        
                         if (!genericComElementClass.hasAttribute("model")) { //NOI18N
-                            attributeModel = new AttributeMetadata();
-                            attributeModel.setDescription("");
-                            attributeModel.setReadOnly(false);                    
-                            attributeModel.setUnique(false);
-                            attributeModel.setVisible(true);
-                            attributeModel.setNoCopy(false);
-                            attributeModel.setName("model"); //NOI18N
-                            attributeModel.setDisplayName("model"); //NOI18N
-                            attributeModel.setType(equipmentModelClassName);
+
                             try {
                                 mem.createAttribute("GenericCommunicationsElement", attributeModel); //NOI18N
-                            aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                                aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
                                 ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
                                 String.format("Added attributes to class %s", "GenericCommunicationsElement")); //NOI18N
                             } catch (MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
                                 results[i] += " * Fail reason: 1 " + ex.getMessage() + " see the patch description";
                                 return results;
                             }
+                        }
+                        if (!genericDistributionFrame.hasAttribute("model")) { //NOI18N
+                            try {
+                                mem.createAttribute("GenericDistributionFrame", attributeModel); //NOI18N
+                                aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
+                                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
+                                String.format("Added attributes to class %s", "GenericDistributionFrame")); //NOI18N
+                            } catch (MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                                results[i] += " * Fail reason: 1 " + ex.getMessage() + " see the patch description";
+                                return results;
+                            }                                                
                         }
                     }                                        
                     ClassMetadata classMetadata = new ClassMetadata();

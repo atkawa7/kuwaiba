@@ -48,34 +48,18 @@ public class TempBusinessRulesEngine {
         
         subClassOfValidators = new HashMap<>();
         subClassOfValidators.put("GenericPhysicalNode", "physicalNode");
-        subClassOfValidators.put("GenericPort", "physicalEndpoint");
-        subClassOfValidators.put("GenericNetworkElement", "logicalEndpoint");
-        subClassOfValidators.put("IPAddress", "logicalSet");
-        subClassOfValidators.put("GenericPhysicalContainer", "physicalContainer");
-        subClassOfValidators.put("GenericPhysicalLink", "physicalLink");
-        subClassOfValidators.put("GenericApplicationElement", "genericApplicationElement");
-        subClassOfValidators.put("VRFInstance", "vlanrule");
-        subClassOfValidators.put("BridgeDomainInterface", "vlanrule");
         subClassOfValidators.put("ServiceInstance", "serviceInstance");
         subClassOfValidators.put("Subnet", "subnet");
         subClassOfValidators.put("ELANService", "elanservice");
         subClassOfValidators.put("ELINEService", "elineservice");
         subClassOfValidators.put("ETREEService", "etreeservice");
-        subClassOfValidators.put("GenericDistributionFrame", "genericDistributionFrame");
         //Beware! The line below may potentially be creating conflicts with the three lines above, however 
         //the one below seems to cover the most important the use cases, so we will leave it like this while we
         //fine a suitable solution for this temporal rule engine
-        subClassOfValidators.put("GenericService", "service");
-        subClassOfValidators.put("Rack", "rack");
         subClassOfValidators.put("GenericCommunicationsElement", "communicationsElement");
         //TODO: These validators will be used to enable special actions for certain type of objects
         //Perhaps we should use some other type of solution for this in the future
         subClassOfValidators.put("GenericSDHTransportLink", "sdhTransportLink");
-        subClassOfValidators.put("GenericSDHContainerLink", "sdhContainerLink");
-        subClassOfValidators.put("GenericSDHTributaryLink", "sdhTributaryLink");
-        subClassOfValidators.put("MPLSLink", "mplsLink");
-        subClassOfValidators.put("GenericContract", "contract");
-        subClassOfValidators.put("GenericCustomer", "customer");
     }
 
     public HashMap<String, List<String[]>> getMappings(){       
