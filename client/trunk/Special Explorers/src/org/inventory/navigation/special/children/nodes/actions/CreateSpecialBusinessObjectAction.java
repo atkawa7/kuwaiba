@@ -26,6 +26,7 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.AttributesForm;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
@@ -97,22 +98,27 @@ public final class CreateSpecialBusinessObjectAction extends GenericObjectNodeAc
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SPECIAL_EXPLORERS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
-
-    @Override
-    public String getValidator() {
-        return null;
-    }
-    
+        
     private void createSpecialObject(String objectClass, ObjectNode node, HashMap<String, Object> attributes) {
         LocalObjectLight myLol = com.createSpecialObject(
                 objectClass, node.getObject().getClassName(), 
                 node.getObject().getOid(), attributes, -1);
         if (myLol == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
             ((AbstractChildren)node.getChildren()).addNotify();
                 
-            NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "The special object was created successfully");
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, "The special object was created successfully");
         }
+    }
+
+    @Override
+    public String[] getValidators() {
+        return null; //Enable this action for any object
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return null; //Enable this action for any object
     }
 }

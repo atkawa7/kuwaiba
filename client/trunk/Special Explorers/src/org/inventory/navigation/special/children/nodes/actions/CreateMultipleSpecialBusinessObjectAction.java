@@ -28,6 +28,7 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
@@ -82,7 +83,7 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericObjectNode
             if (spinnerValue instanceof Integer) {
                 numberOfSpecialObjects = (Integer) spinnerValue;
                 if (numberOfSpecialObjects <= 0) {
-                    JOptionPane.showMessageDialog(null, "The number of objects to create must be greater than 0", "Error", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(null, "The number of objects to create must be greater than 0", I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
                     return;
                 }
             }
@@ -90,10 +91,10 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericObjectNode
             List<LocalObjectLight> newSpecialObjects = com.createBulkSpecialObjects(((JMenuItem)e.getSource()).getName(), node.getObject().getClassName(), node.getObject().getOid(), numberOfSpecialObjects, namePattern);
                 
             if (newSpecialObjects == null)
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
             else {
                 ((AbstractChildren)node.getChildren()).addNotify();
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Special objects created successfully");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, "Special objects created successfully");
             }
         }
     }
@@ -124,9 +125,14 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericObjectNode
         
         return mnuPossibleChildren;
     }
+    
+    @Override
+    public String[] getValidators() {
+        return null; //Enable this action for any object
+    }
 
     @Override
-    public String getValidator() {
-        return null;
+    public String[] appliesTo() {
+        return null; //Enable this action for any object
     }
 }

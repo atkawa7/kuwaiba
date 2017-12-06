@@ -106,7 +106,8 @@ public class RenderModelLayout {
         if (CommunicationsStub.getInstance().isSubclassOf(objectLight.getClassName(), Constants.CLASS_CUSTOMSHAPE))
             return (LocalObjectListItem) objectLight;
         
-        if (!CommunicationsStub.getInstance().isSubclassOf(objectLight.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT))
+        if (!CommunicationsStub.getInstance().isSubclassOf(objectLight.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT) &&
+            !CommunicationsStub.getInstance().isSubclassOf(objectLight.getClassName(), Constants.CLASS_GENERICDISTRIBUTIONFRAME))
             return null;
         
         LocalObject localObject = CommunicationsStub.getInstance().getObjectInfo(objectLight.getClassName(), objectLight.getOid());

@@ -50,7 +50,7 @@ public class RemoveObjectFromFavoritesFolder extends GenericObjectNodeAction imp
     }
     
     @Override
-    public String getValidator() {
+    public String[] getValidators() {
         return null; //Enable this action for any object
     }
 
@@ -120,5 +120,10 @@ public class RemoveObjectFromFavoritesFolder extends GenericObjectNodeAction imp
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, I18N.gm("removed_from_favorites_folder"));
             }
         }
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return null; //Enable this action for any object
     }
 }

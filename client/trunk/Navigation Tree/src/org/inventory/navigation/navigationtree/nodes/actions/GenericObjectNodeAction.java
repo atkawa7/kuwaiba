@@ -63,5 +63,10 @@ public abstract class GenericObjectNodeAction extends GenericInventoryAction {
      * @return A validator. See class Constants (in Application Nodes) for possible values so far.
      * You can add your own if the server supports them
      */
-    public abstract String getValidator();
+    public abstract String[] getValidators();
+    /**
+     * Gets the classes that can apply this action
+     * @return The class names
+     */
+    public abstract String[] appliesTo();
 }

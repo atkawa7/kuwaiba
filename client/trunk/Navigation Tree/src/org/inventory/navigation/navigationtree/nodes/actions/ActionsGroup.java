@@ -18,8 +18,6 @@ package org.inventory.navigation.navigationtree.nodes.actions;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.Action;
-import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
@@ -50,8 +48,8 @@ public class ActionsGroup extends GenericObjectNodeAction implements Presenter.P
     }
     
     @Override
-    public String getValidator() {
-        return null;
+    public String[] getValidators() {
+        return null; //Enable this action for any object
     }
 
     @Override
@@ -88,11 +86,25 @@ public class ActionsGroup extends GenericObjectNodeAction implements Presenter.P
         for (Object object : Lookup.getDefault().lookupAll(actionsGroupClass)) {
             if (object instanceof GenericObjectNodeAction) {
                 GenericObjectNodeAction action = (GenericObjectNodeAction) object;
-                if (action.getValidator() == null)
-                    actions.add(action);
-                else {
-                    if (CommunicationsStub.getInstance().getMetaForClass(objectNode.getObject().getClassName(), false).getValidator(action.getValidator()) == 1)
+                
+                if (action.appliesTo() != null) {
+                    for (String className : action.appliesTo()) {
+                        if (CommunicationsStub.getInstance().isSubclassOf(objectNode.getObject().getClassName(), className)) {
+                            actions.add(action);
+                            break;
+                        }
+                    }
+                } else {
+                    if (action.getValidators() != null) {
+                        for (String validator : action.getValidators()) {
+                            if (CommunicationsStub.getInstance().getMetaForClass(objectNode.getObject().getClassName(), false).getValidator(validator) == 1) {
+                                actions.add(action);
+                                break;
+                            }
+                        }                                                
+                    } else {
                         actions.add(action);
+                    }                
                 }
             }
         }
@@ -110,5 +122,10 @@ public class ActionsGroup extends GenericObjectNodeAction implements Presenter.P
             MenuScroller.setScrollerFor(mnuActionsGroup, 20, 100);
         }
         return mnuActionsGroup;
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return null; //Enable this action for any object
     }
 }

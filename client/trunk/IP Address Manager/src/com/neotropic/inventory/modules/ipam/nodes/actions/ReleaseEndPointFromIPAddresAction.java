@@ -69,8 +69,8 @@ public class ReleaseEndPointFromIPAddresAction extends GenericObjectNodeAction i
     }
 
     @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
+    public String[] getValidators() {
+        return null;
     }
     
     @Override
@@ -94,5 +94,10 @@ public class ReleaseEndPointFromIPAddresAction extends GenericObjectNodeAction i
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
            }
         }
+    }
+    
+    @Override
+    public String[] appliesTo() {
+        return new String [] {Constants.CLASS_GENERICPORT};
     }
 }

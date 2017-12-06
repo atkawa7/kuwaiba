@@ -72,8 +72,8 @@ public class ReleaseVFRFromVlanAction  extends GenericObjectNodeAction implement
     }
 
     @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_VLAN;
+    public String[] getValidators() {
+        return null;
     }
     
     @Override
@@ -100,5 +100,10 @@ public class ReleaseVFRFromVlanAction  extends GenericObjectNodeAction implement
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }
         }
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return new String[] {Constants.CLASS_VRFINSTANCE, Constants.CLASS_BRIDGEDOMAININTERFACE};
     }
 }

@@ -72,8 +72,8 @@ public class ReleaseIPFromBDIInterfaceAction extends GenericObjectNodeAction imp
     }
     
     @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_LOGICAL_SET;
+    public String[] getValidators() {
+        return null;
     }
     
     @Override
@@ -96,6 +96,11 @@ public class ReleaseIPFromBDIInterfaceAction extends GenericObjectNodeAction imp
             else
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return new String[] {Constants.CLASS_IP_ADDRESS};
     }
     
 }

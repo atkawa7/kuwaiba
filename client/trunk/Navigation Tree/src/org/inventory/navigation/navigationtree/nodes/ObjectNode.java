@@ -279,11 +279,24 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             if (action instanceof GenericActionsGroupActions)
                 continue;
             
-            if (action.getValidator() == null) {
-                actions.add(action);
+            if (action.appliesTo() != null) {
+                for (String className : action.appliesTo()) {
+                    if (CommunicationsStub.getInstance().isSubclassOf(object.getClassName(), className)) {
+                        actions.add(action);
+                        break;
+                    }
+                }
             } else {
-                if (com.getMetaForClass(object.getClassName(), false).getValidator(action.getValidator()) == 1)
+                if (action.getValidators() != null) {
+                    for (String validator : action.getValidators()) {
+                        if (CommunicationsStub.getInstance().getMetaForClass(object.getClassName(), false).getValidator(validator) == 1) {
+                            actions.add(action);
+                            break;
+                        }
+                    }                                                
+                } else {
                     actions.add(action);
+                }                
             }
         }
         actions.add(ActionGroupActionsFactory.getInstanceOfOpenViewGroupActions());

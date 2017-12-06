@@ -60,7 +60,7 @@ public class RelateToProjectAction extends GenericObjectNodeAction implements Ge
     }
 
     @Override
-    public String getValidator() {
+    public String[] getValidators() {
         return null; //Enable this action for any object
     }
 
@@ -94,5 +94,10 @@ public class RelateToProjectAction extends GenericObjectNodeAction implements Ge
                 }
             }
         }
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return null; //Enable this action for any object
     }
 }

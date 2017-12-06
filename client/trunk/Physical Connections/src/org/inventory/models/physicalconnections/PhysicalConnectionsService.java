@@ -37,8 +37,7 @@ public class PhysicalConnectionsService {
         ObjectBoxWidget lastPortWidget = null;
         SimpleConnectionWidget lastConnectionWidget = null;
         for (LocalObjectLight element : trace){
-            if (com.getMetaForClass(element.getClassName(), false).
-                    getValidator(Constants.VALIDATOR_PHYSICAL_LINK) != 1) { //It's a port
+            if (!com.isSubclassOf(element.getClassName(), Constants.CLASS_GENERICPHYSICALLINK)) { //It's a port
                 List<LocalObjectLight> ancestors = com.getParents(element.getClassName(), element.getOid());
                 
                 lastPortWidget = (ObjectBoxWidget)scene.addNode(element);

@@ -54,8 +54,8 @@ public final class UpdateNodeAction extends GenericObjectNodeAction implements P
     }
 
     @Override
-    public String getValidator() {
-        return null;
+    public String[] getValidators() {
+        return null; //Enable this action for any object
     }
 
     @Override
@@ -66,5 +66,10 @@ public final class UpdateNodeAction extends GenericObjectNodeAction implements P
     @Override
     public JMenuItem getPopupPresenter() {
         return new JMenuItem(this);
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return null; //Enable this action for any object
     }
 }

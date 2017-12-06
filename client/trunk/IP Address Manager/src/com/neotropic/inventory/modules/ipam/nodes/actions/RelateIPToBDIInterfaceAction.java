@@ -57,12 +57,17 @@ public class RelateIPToBDIInterfaceAction extends GenericObjectNodeAction implem
     }
     
     @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_LOGICAL_SET;
+    public String[] getValidators() {
+        return null;
     }
     
     @Override
-    public LocalPrivilege getPrivilege() {
+    public LocalPrivilege getPrivilege() {        
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return new String [] {Constants.CLASS_IP_ADDRESS};
     }
 }

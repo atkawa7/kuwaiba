@@ -60,7 +60,7 @@ public class RelateToContractAction extends GenericObjectNodeAction implements G
     }
 
     @Override
-    public String getValidator() {
+    public String[] getValidators() {
         return null; //Enable this action for any object
     }
     
@@ -98,5 +98,10 @@ public class RelateToContractAction extends GenericObjectNodeAction implements G
                         I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             }
         }
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return null; //Enable this action for any object
     }
 }

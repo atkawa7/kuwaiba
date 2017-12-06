@@ -40,55 +40,19 @@ public class Constants {
     /**
      * Name of the validator to indicate if a given class is a container
      */
-    public static final String VALIDATOR_CONTRACT = "contract";
-    /**
-     * Name of the validator to indicate if a given class is a container
-     */
     public static final String VALIDATOR_PHYSICAL_CONTAINER = "physicalContainer";
-    /**
-     * Name of the validator to indicate if a given class is a link
-     */
-    public static final String VALIDATOR_PHYSICAL_LINK = "physicalLink";
     /**
      * Name of the validator to indicate if a given class is the endpoint to a connection
      */
     public static final String VALIDATOR_PHYSICAL_NODE = "physicalNode";
     /**
-     * Name of the validator to indicate if a given class is a distribution frame
-     */
-    public static final String VALIDATOR_GENERIC_DISTRIBUTION_FRAME = "genericDistributionFrame";
-    /**
-     * Name of the validator to indicate if a given class is the endpoint to a link
-     */
-    public static final String VALIDATOR_PHYSICAL_ENDPOINT = "physicalEndpoint";
-    /**
-     * Name of the validator to indicate if a given class is the logical endpoint to a link
-     */
-    public static final String VALIDATOR_LOGICAL_ENDPOINT = "logicalEndpoint";
-    /**
-     * Name of the validator to indicate if a given class is the logical endpoint to a link
-     */
-    public static final String VALIDATOR_LOGICAL_SET = "logicalSet";
-    /**
      * Name of the validator to indicate if a given class is the endpoint to a link
      */
     public static final String VALIDATOR_SERVICE_INSTANCE = "serviceInstance";
     /**
-     * All instances of classes tagged with this validator may be related to a software asset
-     */
-    public static final String VALIDATOR_APPLICATION_ELEMENT = "genericApplicationElement";
-    /**
      * All instances of classes tagged with this validator may be related to a subnet
      */
     public static final String VALIDATOR_SUBNET = "subnet";
-    /**
-     * All instances of classes tagged with this validator may be related to VLANs
-     */
-    public static final String VALIDATOR_VLAN = "vlanrule";
-    /**
-     * The validator to indicate if a given class is a Rack
-     */
-    public static final String VALIDATOR_RACK = "rack";
     /**
      * The validator to indicate if a given class is a GenericCommunicationsElement
      */
@@ -137,6 +101,14 @@ public class Constants {
      * Root class of all communications equipment (GenericDataLinkLayerElement, GenericNetworkElement, etc)
      */
     public static final String CLASS_GENERICCOMMUNICATIONSELEMENT = "GenericCommunicationsElement";    
+    /**
+     * Root class of all network element
+     */
+    public static final String CLASS_GENERICNETWORKELEMENT = "GenericNetworkElement";
+    /**
+     * Root class of all generic distribution frame (DDF, ODF, etc)
+     */
+    public static final String CLASS_GENERICDISTRIBUTIONFRAME = "GenericDistributionFrame";
     /**
      * Class EquipmentModel
      */
@@ -195,7 +167,20 @@ public class Constants {
      * Name for class GenericActivity
      */
     public static final String CLASS_GENERICACTIVITY = "GenericActivity";
+    /**
+     * Name for class GenericSDHTransportLink
+     */
+    public static final String CLASS_GENERICSDHTRANSPORTLINK = "GenericSDHTransportLink";
+    /**
+     * Name for class GenericSDHContainerLink
+     */
+    public static final String CLASS_GENERICSDHCONTAINERLINK = "GenericSDHContainerLink";
+    /**
+     * Name for class GenericSDHTributaryLink
+     */
+    public static final String CLASS_GENERICSDHTRIBUTARYLINK = "GenericSDHTributaryLink";
     
+    public static final String CLASS_GENERICAPPLICATIONELEMENT = "GenericApplicationElement";
     /**
      * Not an actual class, but yet used by the service manager to identify a pool mapped to a LocalObjectLight
      */
@@ -220,6 +205,10 @@ public class Constants {
      * Class WireContainer
      */
     public static final String CLASS_WIRECONTAINER = "WireContainer";
+    /**
+     * Class MPLSLink
+     */
+    public static final String CLASS_MPLSLINK = "MPLSLink";
     /**
      * Default type for a new attribute
      */

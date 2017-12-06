@@ -32,7 +32,7 @@ import org.inventory.navigation.navigationtree.nodes.actions.GenericRelateToActi
 import org.openide.util.lookup.ServiceProvider;
 
 /**
- * Action to add object to bookmark
+ * Action to add object to a favorite folder
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
@@ -43,7 +43,7 @@ public class AddObjectToFavoritesFolderAction extends GenericObjectNodeAction im
     }
             
     @Override
-    public String getValidator() {
+    public String[] getValidators() {
         return null; //Enable this action for any object
     }
     
@@ -100,5 +100,10 @@ public class AddObjectToFavoritesFolderAction extends GenericObjectNodeAction im
                 }
             }
         }
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return null; //Enable this action for any object
     }
 }

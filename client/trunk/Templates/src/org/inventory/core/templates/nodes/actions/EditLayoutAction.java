@@ -51,7 +51,8 @@ public class EditLayoutAction extends GenericInventoryAction {
         TemplateElementNode selectedNode = Utilities.actionsGlobalContext().lookup(TemplateElementNode.class);
         LocalObjectLight selectedObject = selectedNode.getLookup().lookup(LocalObjectLight.class);
         
-        return CommunicationsStub.getInstance().isSubclassOf(selectedObject.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+        return CommunicationsStub.getInstance().isSubclassOf(selectedObject.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT) || 
+               CommunicationsStub.getInstance().isSubclassOf(selectedObject.getClassName(), Constants.CLASS_GENERICDISTRIBUTIONFRAME);
     }
     
     @Override

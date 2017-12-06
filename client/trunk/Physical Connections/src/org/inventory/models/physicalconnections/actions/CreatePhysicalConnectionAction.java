@@ -19,7 +19,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
@@ -49,8 +48,8 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
     }
 
     @Override
-    public String getValidator() {
-        return null;
+    public String[] getValidators() {
+        return null; //Enable this action for any object
     }
 
     @Override
@@ -105,5 +104,10 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
             else 
                 new NewLinkWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent, existintWireContainersList).show();
         }
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return null; //Enable this action for any object
     }
 }

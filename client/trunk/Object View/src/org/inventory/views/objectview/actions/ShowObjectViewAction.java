@@ -63,13 +63,18 @@ public class ShowObjectViewAction extends GenericObjectNodeAction implements Gen
     }
 
     @Override
-    public String getValidator() {
+    public String[] getValidators() {
         return null; //Available for any object
     }
 
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_PHYSICAL_VIEW, LocalPrivilege.ACCESS_LEVEL_READ);
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return null; //Enable this action for any object
     }
 
 }

@@ -28,6 +28,7 @@ import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
@@ -80,7 +81,7 @@ public final class CreateMultipleBusinessObjectAction extends GenericObjectNodeA
             if (spinnerValue instanceof Integer) {
                 numberOfObjects = (Integer) spinnerValue;
                 if (numberOfObjects <= 0) {
-                    NotificationUtil.getInstance().showSimplePopup("Error", 
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE, "The number of objects must be greater than 0");
                     return;
                 }
@@ -98,12 +99,12 @@ public final class CreateMultipleBusinessObjectAction extends GenericObjectNodeA
                 namePattern);
             
             if (newObjects == null)
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
             else {
                 if (node.getChildren() instanceof AbstractChildren) //Some nodes are created on the fly and do not have children. For those cases, let's avoid refreshing their children lists
                     ((AbstractChildren) node.getChildren()).addNotify();
                 
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Elements created successfully");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, "Elements created successfully");
             }
         }
     }
@@ -120,7 +121,7 @@ public final class CreateMultipleBusinessObjectAction extends GenericObjectNodeA
             List<LocalClassMetadataLight> items = com.getPossibleChildren(selectedObject.getClassName(), false);
 
             if (items == null) {
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE,
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.INFO_MESSAGE,
                     com.getError());
                 mnuPossibleChildren.setEnabled(false);
             }
@@ -142,7 +143,12 @@ public final class CreateMultipleBusinessObjectAction extends GenericObjectNodeA
     }
 
     @Override
-    public String getValidator() {
-        return null;
+    public String[] getValidators() {
+        return null; //Enable this action for any object
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return null; //Enable this action for any object
     }
 }

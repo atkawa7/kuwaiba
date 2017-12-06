@@ -44,12 +44,17 @@ public class GeneralPurposeDeleteContractAction extends GenericObjectNodeAction 
     }
 
     @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_CONTRACT;
+    public String[] getValidators() {
+        return null;
     }
     
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_CONTRACT_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+    
+    @Override
+    public String[] appliesTo() {
+        return new String [] {Constants.CLASS_GENERICCONTRACT};
     }
 }

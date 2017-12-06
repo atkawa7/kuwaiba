@@ -74,12 +74,17 @@ public class RelateEndPointToInterfaceAction extends GenericObjectNodeAction imp
     }
     
     @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
+    public String[] getValidators() {
+        return null;
     }
 
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return new String [] {Constants.CLASS_GENERICPORT};
     }
 }

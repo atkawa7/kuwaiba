@@ -22,6 +22,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.navigation.special.children.SpecialChildrenTopComponent;
 import org.openide.util.lookup.ServiceProvider;
@@ -43,7 +44,7 @@ public class CreateSoftwareAssetAction extends GenericObjectNodeAction {
         LocalObjectLight newLicense = CommunicationsStub.getInstance().createSpecialObject("SoftwareLicense", selectedObjects.get(0).getClassName(), 
                 selectedObjects.get(0).getOid(), attributes, -1);
         if (newLicense == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
             SpecialChildrenTopComponent explorer = SpecialChildrenTopComponent.getInstance();
             if (!explorer.isOpen())
@@ -55,12 +56,17 @@ public class CreateSoftwareAssetAction extends GenericObjectNodeAction {
     }
 
     @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_APPLICATION_ELEMENT;
-    }   
+    public String[] getValidators() {
+        return null;
+    }
 
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SOFTWARE_ASSETS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return new String[] {Constants.CLASS_GENERICAPPLICATIONELEMENT};
     }
 }

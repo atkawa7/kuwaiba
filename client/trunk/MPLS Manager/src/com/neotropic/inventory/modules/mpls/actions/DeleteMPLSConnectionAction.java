@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
@@ -61,8 +62,8 @@ public class DeleteMPLSConnectionAction extends GenericObjectNodeAction /*implem
     }
 
     @Override
-    public String getValidator() {
-        return "mplsLink";
+    public String[] getValidators() {
+        return null;
     }
 
     @Override
@@ -74,4 +75,9 @@ public class DeleteMPLSConnectionAction extends GenericObjectNodeAction /*implem
 //    public JMenuItem getPopupPresenter() {
 //        return popupPresenter;
 //    }
+
+    @Override
+    public String[] appliesTo() {
+        return new String[] {Constants.CLASS_MPLSLINK};
+    }
 }

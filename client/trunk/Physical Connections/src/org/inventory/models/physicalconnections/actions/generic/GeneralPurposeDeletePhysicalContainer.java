@@ -24,6 +24,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
@@ -54,8 +55,8 @@ public class GeneralPurposeDeletePhysicalContainer extends GenericObjectNodeActi
     }
        
     @Override
-    public String getValidator() {
-        return "physicalContainer";
+    public String[] getValidators() {
+        return null;
     }
 
     @Override
@@ -92,5 +93,10 @@ public class GeneralPurposeDeletePhysicalContainer extends GenericObjectNodeActi
     @Override
     public JMenuItem getPopupPresenter() {
         return popupPresenter;
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return new String[] {Constants.CLASS_GENERICPHYSICALCONTAINER};
     }
 }

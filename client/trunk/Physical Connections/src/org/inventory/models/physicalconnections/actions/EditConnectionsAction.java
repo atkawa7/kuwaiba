@@ -24,6 +24,7 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.models.physicalconnections.windows.EditConnectionsFrame;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -43,22 +44,22 @@ public class EditConnectionsAction extends GenericObjectNodeAction {
         LocalObjectLight selectedObject = selectedObjects.get(0);
         
         HashMap<String, LocalObjectLight[]> specialAttributes = CommunicationsStub.getInstance().getSpecialAttributes(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
-        List<LocalObjectLight> parents = CommunicationsStub.getInstance().getParentsUntilFirstOfClass(selectedObject.getClassName(), selectedObject.getOid(), "GenericLocation");
+        List<LocalObjectLight> parents = CommunicationsStub.getInstance().getParentsUntilFirstOfClass(selectedObject.getClassName(), selectedObject.getOid(), "GenericLocation"); //NOI18N
         LocalObjectLight parent = parents.get(parents.size() - 1);
         
         if (specialAttributes == null || parent == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
         }
         
         LocalObjectLight endpointA = null;
         LocalObjectLight endpointB = null;
             
-        if (specialAttributes.containsKey("endpointA"))
-            endpointA = specialAttributes.get("endpointA")[0];
+        if (specialAttributes.containsKey("endpointA")) //NOI18N
+            endpointA = specialAttributes.get("endpointA")[0]; //NOI18N
             
-        if (specialAttributes.containsKey("endpointB"))
-            endpointB = specialAttributes.get("endpointB")[0];
+        if (specialAttributes.containsKey("endpointB")) //NOI18N
+            endpointB = specialAttributes.get("endpointB")[0]; //NOI18N
             
             
         EditConnectionsFrame frame = new EditConnectionsFrame(selectedObjects.get(0), endpointA != null ? endpointA : parent, endpointB != null ? endpointB : parent);
@@ -67,12 +68,17 @@ public class EditConnectionsAction extends GenericObjectNodeAction {
     }
 
     @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_PHYSICAL_CONTAINER;
+    public String[] getValidators() {
+        return null;
     }
 
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_PHYSICAL_VIEW, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return new String[] {Constants.CLASS_GENERICPHYSICALCONTAINER};
     }
 }

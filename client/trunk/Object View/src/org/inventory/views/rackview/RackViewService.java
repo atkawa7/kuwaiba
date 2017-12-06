@@ -61,13 +61,6 @@ public class RackViewService {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), //NOI18N
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         } else {
-            Integer rackUnits = (Integer) rack.getAttribute(Constants.PROPERTY_RACK_UNITS);
-            if (rackUnits == null || rackUnits == 0) {
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), //NOI18N
-                    NotificationUtil.ERROR_MESSAGE, 
-                    String.format("Attribute %s in rack %s does not exist or is not set correctly", Constants.PROPERTY_RACK_UNITS, rack));
-                return;
-            }
             Boolean ascending = (Boolean) rack.getAttribute(Constants.PROPERTY_RACK_UNITS_NUMBERING);
             if (ascending == null) {
                 ascending = true;

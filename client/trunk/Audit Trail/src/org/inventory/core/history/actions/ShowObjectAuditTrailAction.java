@@ -67,12 +67,17 @@ public final class ShowObjectAuditTrailAction extends GenericObjectNodeAction {
     }
 
     @Override
-    public String getValidator() {
+    public String[] getValidators() {
         return null; //Enable this action for any object
     }
 
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_AUDIT_TRAIL, LocalPrivilege.ACCESS_LEVEL_READ);
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return null; //Enable this action for any object
     }
 }

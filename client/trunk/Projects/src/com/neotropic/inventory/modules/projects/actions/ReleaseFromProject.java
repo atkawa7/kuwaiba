@@ -75,7 +75,7 @@ public class ReleaseFromProject extends GenericObjectNodeAction implements Gener
     }
     
     @Override
-    public String getValidator() {
+    public String[] getValidators() {
         return null; //Enable this action for any object
     }
 
@@ -105,5 +105,10 @@ public class ReleaseFromProject extends GenericObjectNodeAction implements Gener
                     CommunicationsStub.getInstance().getError());
             }
         }
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return null; //Enable this action for any object
     }
 }

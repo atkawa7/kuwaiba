@@ -57,11 +57,24 @@ public class SpecialObjectNode extends ObjectNode {
             if (action instanceof GenericActionsGroupActions)
                 continue;
             
-            if (action.getValidator() == null){
-                actions.add(action);
-            }else{
-                if (com.getMetaForClass(getObject().getClassName(), false).getValidator(action.getValidator()) == 1)
+            if (action.appliesTo() != null) {
+                for (String className : action.appliesTo()) {
+                    if (com.isSubclassOf(getObject().getClassName(), className)) {
+                        actions.add(action);
+                        break;
+                    }
+                }
+            } else {
+                if (action.getValidators() != null) {
+                    for (String validator : action.getValidators()) {
+                        if (com.getMetaForClass(getObject().getClassName(), false).getValidator(validator) == 1) {
+                            actions.add(action);
+                            break;
+                        }
+                    }                                                
+                } else {
                     actions.add(action);
+                }                
             }
         }
         actions.add(ActionGroupActionsFactory.getInstanceOfOpenViewGroupActions());

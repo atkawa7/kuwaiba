@@ -112,8 +112,8 @@ public class CreateSpecialBusinessObjectFromTemplateAction extends GenericObject
     }
 
     @Override
-    public String getValidator() {
-        return null;
+    public String[] getValidators() {
+        return null; //Enable this action for any object
     }
 
     @Override
@@ -146,5 +146,10 @@ public class CreateSpecialBusinessObjectFromTemplateAction extends GenericObject
                 }
             }
         }
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return null; //Enable this action for any object
     }
 }

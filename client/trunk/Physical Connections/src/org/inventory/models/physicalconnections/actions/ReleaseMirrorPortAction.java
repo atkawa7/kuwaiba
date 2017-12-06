@@ -36,7 +36,6 @@ public class ReleaseMirrorPortAction extends GenericObjectNodeAction implements 
     public ReleaseMirrorPortAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_RELEASE_MIRROR_PORT"));
     }
-
     
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -52,12 +51,17 @@ public class ReleaseMirrorPortAction extends GenericObjectNodeAction implements 
     }
 
     @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
+    public String[] getValidators() {
+        return null;
     }
 
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_PHYSICAL_VIEW, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return new String [] {Constants.CLASS_GENERICPORT};
     }
 }

@@ -24,6 +24,7 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.models.physicalconnections.windows.PhysicalPathTopComponent;
 import org.openide.util.ImageUtilities;
 import org.openide.util.actions.Presenter;
@@ -45,7 +46,7 @@ public class ShowPhysicalPathAction extends GenericObjectNodeAction implements P
     public void actionPerformed(ActionEvent e) {
         LocalObjectLight[] trace = CommunicationsStub.getInstance().getPhysicalPath(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
         if (trace == null)
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{
             PhysicalPathTopComponent tc = new PhysicalPathTopComponent(selectedObjects.get(0), trace);
             tc.open();
@@ -54,8 +55,8 @@ public class ShowPhysicalPathAction extends GenericObjectNodeAction implements P
     }
 
     @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
+    public String[] getValidators() {
+        return null;
     }
 
     @Override
@@ -66,5 +67,10 @@ public class ShowPhysicalPathAction extends GenericObjectNodeAction implements P
     @Override
     public JMenuItem getPopupPresenter() {
         return new JMenuItem(this);
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return new String [] {Constants.CLASS_GENERICPORT};
     }
 }

@@ -40,8 +40,8 @@ public class ShowDeviceLayoutView extends GenericObjectNodeAction implements Gen
     }
 
     @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_GENERIC_COMMUNICATIONS_ELEMENT;
+    public String[] getValidators() {
+        return null;
     }
 
     @Override
@@ -75,5 +75,9 @@ public class ShowDeviceLayoutView extends GenericObjectNodeAction implements Gen
             modelLayoutView.requestActive();
         }
     }
-    
+
+    @Override
+    public String[] appliesTo() {
+        return new String[] {Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, Constants.CLASS_GENERICDISTRIBUTIONFRAME};
+    }
 }

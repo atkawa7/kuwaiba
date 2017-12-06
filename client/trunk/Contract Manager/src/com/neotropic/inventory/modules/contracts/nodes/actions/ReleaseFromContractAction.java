@@ -51,7 +51,7 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
     public void actionPerformed(ActionEvent e) {
         LocalObjectLight selectedObj = selectedObjects.get(0); //Uses the last selected only
         List<LocalObjectLight> contracts = CommunicationsStub.getInstance()
-            .getSpecialAttribute(selectedObj.getClassName(), selectedObj.getOid(), "contractHas");
+            .getSpecialAttribute(selectedObj.getClassName(), selectedObj.getOid(), "contractHas"); //NOI18N
         
         if (contracts == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.INFO_MESSAGE, 
@@ -73,8 +73,8 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
     }
 
     @Override
-    public String getValidator() {
-        return null;
+    public String[] getValidators() {
+        return null; //Enable this action for any object
     }
     
     @Override
@@ -108,5 +108,10 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, I18N.gm("objects_released_from_cotract"));
             }
         }
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return null; //Enable this action for any object
     }
 }

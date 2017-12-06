@@ -74,12 +74,17 @@ public class RelateGenericNetworkElementToInterface extends GenericObjectNodeAct
     }
     
     @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_LOGICAL_ENDPOINT;
+    public String[] getValidators() {
+        return null;
     }
 
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_IP_ADDRESS_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+
+    @Override
+    public String[] appliesTo() {        
+        return new String [] {Constants.CLASS_GENERICNETWORKELEMENT};
     }
 }

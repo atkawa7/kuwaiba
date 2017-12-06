@@ -59,13 +59,18 @@ public class ShowRackViewAction extends GenericObjectNodeAction implements Gener
     }
     
     @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_RACK;
+    public String[] getValidators() {
+        return null;
     }
 
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_PHYSICAL_VIEW, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return new String[] {Constants.CLASS_RACK};
     }
     
 }

@@ -18,6 +18,7 @@ package org.kuwaiba.management.services.nodes.actions;
 
 import java.awt.event.ActionEvent;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericOpenViewAction;
 import org.kuwaiba.management.services.views.endtoend.EndToEndViewScene;
@@ -44,13 +45,18 @@ public class ShowEndToEndViewAction extends GenericObjectNodeAction implements G
     }
     
     @Override
-    public String getValidator() {
-        return "service"; //NOI18N
+    public String[] getValidators() {
+        return null;
     }
 
     @Override
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SERVICE_MANAGER, LocalPrivilege.ACCESS_LEVEL_READ);
+    }
+    
+    @Override
+    public String[] appliesTo() {
+        return new String[] {Constants.CLASS_GENERICSERVICE};
     }
 
 }

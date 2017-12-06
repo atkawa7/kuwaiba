@@ -71,8 +71,8 @@ public class ReleaseGenericPortFromInterfaceAction extends GenericObjectNodeActi
     }
 
     @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_PHYSICAL_ENDPOINT;
+    public String[] getValidators() {
+        return null;
     }
     
     @Override
@@ -100,5 +100,10 @@ public class ReleaseGenericPortFromInterfaceAction extends GenericObjectNodeActi
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }
         }
+    }
+    
+    @Override
+    public String[] appliesTo() {
+        return new String [] {Constants.CLASS_GENERICPORT};
     }
 }
