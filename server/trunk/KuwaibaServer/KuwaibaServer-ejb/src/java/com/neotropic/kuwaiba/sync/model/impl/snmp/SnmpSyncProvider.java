@@ -50,11 +50,11 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
         return SnmpSyncProvider.class.getName();
     }
     
-    public boolean isAutomatic() {
-        return false;
+    public boolean isAutomated() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
       
-    private SynchronizationGroup testSynGroup() {        
+    public static SynchronizationGroup testSynGroup() {        
         try {
             List<SyncDataSourceConfiguration> agents = new ArrayList();
             List<String> agentsParamNames = new ArrayList();
@@ -66,12 +66,12 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
             agentsParamNames.add("readCommunity"); //NOI18N
 
             List<String> agent1ParamValues = new ArrayList();
-            agent1ParamValues.add("39635"); //NOI18N
-            agent1ParamValues.add("ASR1006-LSB02-01"); //NOI18N
+            agent1ParamValues.add("01"); //NOI18N
+            agent1ParamValues.add("AMPLSRouter"); //NOI18N
             agent1ParamValues.add("MPLSRouter"); //NOI18N
             agent1ParamValues.add("127.0.0.1"); //NOI18N
             agent1ParamValues.add("1161"); //NOI18N
-            agent1ParamValues.add("wapopafrix2/ASR1006-LSB02-01"); //NOI18N
+            agent1ParamValues.add("comunity"); //NOI18N
 
 //            List<String> agent2ParamValues = new ArrayList();
 //            agent2ParamValues.add("999"); //NOI18N
@@ -86,7 +86,7 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
             
             agents.add(agent1);
             //agents.add(agent2);
-            SynchronizationGroup testSyncGroup = new SynchronizationGroup(0, "SNMPAgents", this, agents); //NOI18N
+            SynchronizationGroup testSyncGroup = new SynchronizationGroup(0, "SNMPAgents", new SnmpSyncProvider(), agents); //NOI18N
             
             return testSyncGroup;
         } catch (InvalidArgumentException ex) {
@@ -176,12 +176,7 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
     public List<String> finalize(List<SyncAction> actions) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-
-    @Override
-    public boolean isAutomated() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+    
     @Override
     public List<SyncFinding> sync(String className, long objectId, List<AbstractDataEntity> originalData) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

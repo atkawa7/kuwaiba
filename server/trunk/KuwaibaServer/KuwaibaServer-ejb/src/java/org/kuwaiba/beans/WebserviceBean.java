@@ -40,6 +40,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import javax.batch.runtime.BatchRuntime;
+import javax.batch.runtime.BatchStatus;
 import javax.ejb.Singleton;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
@@ -4416,14 +4418,23 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("launchSupervisedSynchronizationTask", ipAddress, sessionId);
-            //SyncGroup syncGroup = bem.getSyncgroup(syncGroupId);
+//            SyncGroup syncGroup = bem.getSyncgroup(syncGroupId);
             Properties parameters = new Properties();
-            parameters.put("aem", aem);
-            parameters.put("bem", bem);
-            parameters.put("mem", mem);
+            //parameters.put("aem", aem);
+            //parameters.put("bem", bem);
+            //parameters.put("mem", mem);
             //parameters.put("syncGroup", syncGroup);
+            parameters.put("syncGroupId", Long.toString(syncGroupId));                        
             
-            JobManager.getInstance().launch(new BackgroundJob("DefaultSyncJob", false, parameters));
+            BackgroundJob backgroundJob = new BackgroundJob("DefaultSyncJob", false, parameters);
+            JobManager.getInstance().launch(backgroundJob);
+            //TODO: mapped the BatchStatus enum in BackgroundJob.JOB_STATUS
+            /** TODO: review because this code make a infinity loop.
+            String batchStatus = BatchRuntime.getJobOperator().getJobExecution(backgroundJob.getId()).getBatchStatus().name();
+            while (!BatchStatus.COMPLETED.name().equals(batchStatus) && 
+               !BatchStatus.FAILED.name().equals(batchStatus)) // loop while the job is not ending
+                batchStatus = BatchRuntime.getJobOperator().getJobExecution(backgroundJob.getId()).getBatchStatus().name();
+            */                  
             return null; //To be implemented
 
         } catch (InventoryException ex) {

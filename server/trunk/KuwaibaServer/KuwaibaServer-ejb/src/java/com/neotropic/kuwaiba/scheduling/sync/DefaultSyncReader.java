@@ -20,11 +20,12 @@ import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.io.Serializable;
 import java.util.Properties;
-import javax.batch.api.chunk.ItemReader;
+import javax.batch.api.chunk.AbstractItemReader;
 import javax.batch.operations.JobOperator;
 import javax.batch.runtime.BatchRuntime;
 import javax.batch.runtime.context.JobContext;
 import javax.inject.Inject;
+import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
@@ -33,7 +34,7 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
  * structure in memory 
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class DefaultSyncReader implements ItemReader {
+public class DefaultSyncReader extends AbstractItemReader {
     @Inject
     private JobContext jobContext;
     private AbstractSyncProvider syncProvider;
@@ -43,23 +44,15 @@ public class DefaultSyncReader implements ItemReader {
     public void open(Serializable checkpoint) throws Exception {
         JobOperator jobOperator = BatchRuntime.getJobOperator();
         Properties jobParameters = jobOperator.getParameters(jobContext.getExecutionId());
-        if (!jobParameters.contains("syncGroup"))
+        if (!jobParameters.containsKey("syncGroupId"))
             throw new InvalidArgumentException("No synchronization group was provided as parameter for the current sync job");
-        syncGroup = (SynchronizationGroup)jobParameters.get("syncGroup");
+        Long syncGroupId = Long.valueOf((String) jobParameters.get("syncGroupId"));
+        syncGroup = PersistenceService.getInstance().getBusinessEntityManager().getSyncgroup(syncGroupId);
         syncProvider = syncGroup.getProvider();
     }
-
-    @Override
-    public void close() throws Exception { }
-
+    
     @Override
     public Object readItem() throws Exception {
         return syncProvider.mappedPoll(syncGroup);
-    }
-
-    @Override
-    public Serializable checkpointInfo() throws Exception {
-        //??
-        return null;
     }
 }

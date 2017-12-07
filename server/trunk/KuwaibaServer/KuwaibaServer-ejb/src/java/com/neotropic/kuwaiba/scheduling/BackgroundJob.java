@@ -124,7 +124,9 @@ public class BackgroundJob implements Runnable {
             if (parameters.containsKey("jobInstance"))
                 throw new InvalidArgumentException("The parameter jobInstance is a reserved word. The job will be aborted");
             
-            parameters.put("jobInstance", this); //NOI18N
+            //parameters.put("jobInstance", this); //NOI18N
+            parameters.put("jobInstance", ""); //NOI18N
+            
             this.status = JOB_STATUS.RUNNNING;
             id = BatchRuntime.getJobOperator().start(jobTag, parameters);
         }catch (JobStartException | JobSecurityException | InvalidArgumentException ex) {
