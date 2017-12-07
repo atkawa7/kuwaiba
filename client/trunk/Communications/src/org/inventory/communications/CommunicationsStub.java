@@ -45,6 +45,8 @@ import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalReport;
 import org.inventory.communications.core.LocalReportLight;
+import org.inventory.communications.core.LocalSyncDataSourceConfiguration;
+import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.core.LocalTaskResultMessage;
 import org.inventory.communications.core.LocalTask;
 import org.inventory.communications.core.LocalTaskNotificationDescriptor;
@@ -81,6 +83,8 @@ import org.inventory.communications.wsclient.RemoteQueryLight;
 import org.inventory.communications.wsclient.RemoteReport;
 import org.inventory.communications.wsclient.RemoteReportLight;
 import org.inventory.communications.wsclient.RemoteResultMessage;
+import org.inventory.communications.wsclient.RemoteSynchronizationConfiguration;
+import org.inventory.communications.wsclient.RemoteSynchronizationGroup;
 import org.inventory.communications.wsclient.RemoteTask;
 import org.inventory.communications.wsclient.RemoteTaskResult;
 import org.inventory.communications.wsclient.ResultRecord;
@@ -4540,6 +4544,109 @@ public class CommunicationsStub {
         }
     }
     //</editor-fold>
+    
+    /**
+     * Create a Sync Group
+     * @param syncGroupName The name of the Sync group
+     * @param providerName the name of the provider that will e use i.e. SNMPProvider
+     * @return The local representation of the Favorites folder
+     */        
+    public LocalSyncGroup createSyncGroup(String syncGroupName, String providerName) {
+        try {
+            long id = service.createSynchronizationGroup(syncGroupName, providerName, session.getSessionId());
+            return new LocalSyncGroup(id, syncGroupName, providerName);
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+     /**
+     * Create a Sync Group
+     * @param syncGroupId The id of the Sync group
+     * @param SyncDataSourceConfigIds the ids of the data sources configurations  
+     * @return The local representation of the Favorites folder
+     */        
+    public boolean updateSyncGroup(long syncGroupId, List<Long> SyncDataSourceConfigIds) {
+        try {
+            service.updateSynchronizationGroup(syncGroupId, SyncDataSourceConfigIds, error);
+            //return new LocalSyncGroup(id, syncGroupName, providerName);
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Create a Sync Data Source Configuration
+     * @param syncGroupId The name of the sync group id
+     * @param syncDataSourceConfigName name of the data source configuration
+     * @param parameters the parameters need it to make the sync id, name, className, IP address, port, community
+     * @return The local representation of the Favorites folder
+     */        
+    public LocalSyncGroup createSyncDataSourceConfiguration(long syncGroupId, String syncDataSourceConfigName, List<StringPair> parameters) {
+        try {
+            long id = service.createSynchronizationDataSourceConfig(syncDataSourceConfigName, parameters, syncGroupId, session.getSessionId());
+            //return new LocalSyncGroup(id, syncGroupName, providerName);
+            return null;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Create a Sync Data Source Configuration
+     * @param syncDataSourceConfigId The id of the sync data source configuration
+     * @param parameters the parameters need it to make the sync id, name, className, IP address, port, community
+     * @return The local representation of the Favorites folder
+     */        
+    public boolean updateSyncDataSourceConfiguration(long syncDataSourceConfigId, HashMap<String, String> parameters) {
+        try {
+            //long id = service.createSyncGroup(name, provider session.getUserId(), session.getSessionId());
+            //return new LocalSyncGroup(id, syncGroupName, providerName);
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    
+    public List<LocalSyncGroup> getSyncGroups(){
+        try {
+            List<LocalSyncGroup> localSyncGroup = new ArrayList<>();
+                    
+            List<RemoteSynchronizationGroup> synchronizationGroups = service.getSynchronizationGroups(session.getSessionId());
+            for (RemoteSynchronizationGroup synchronizationGroup : synchronizationGroups) {
+                localSyncGroup.add(new LocalSyncGroup(synchronizationGroup.getId(), 
+                        synchronizationGroup.getName(),
+                        synchronizationGroup.getName()));
+            }
+            return localSyncGroup;
+            
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Returns the list of data source configurations that belongs to a sync group
+     * @param syncGroupId the synchronization group id
+     * @return a list of the data source configurations
+     */
+    public List<LocalSyncDataSourceConfiguration> getSyncDataSourceConfiguration(long syncGroupId){
+        try {
+            List<RemoteSynchronizationConfiguration> syncDataSourceConfigurations = service.getSyncDataSourceConfigurations(syncGroupId, session.getSessionId());
+            //return new LocalSyncGroup(id, syncGroupName, providerName);
+            return null;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
     
     //<editor-fold desc="Business Rules" defaultstate="collapsed">
     /**

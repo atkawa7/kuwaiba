@@ -92,6 +92,7 @@ public class ObjectFactory {
     private final static QName _UnsubscribeUserFromTask_QNAME = new QName("http://ws.kuwaiba.org/", "unsubscribeUserFromTask");
     private final static QName _UpdateTaskNotificationType_QNAME = new QName("http://ws.kuwaiba.org/", "updateTaskNotificationType");
     private final static QName _UnsubscribeUserFromTaskResponse_QNAME = new QName("http://ws.kuwaiba.org/", "unsubscribeUserFromTaskResponse");
+    private final static QName _GetSynchronizationGroups_QNAME = new QName("http://ws.kuwaiba.org/", "getSynchronizationGroups");
     private final static QName _AddProjectResponse_QNAME = new QName("http://ws.kuwaiba.org/", "addProjectResponse");
     private final static QName _SaveQueryResponse_QNAME = new QName("http://ws.kuwaiba.org/", "saveQueryResponse");
     private final static QName _DeleteBusinessRuleResponse_QNAME = new QName("http://ws.kuwaiba.org/", "deleteBusinessRuleResponse");
@@ -110,6 +111,7 @@ public class ObjectFactory {
     private final static QName _CopyObjectsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "copyObjectsResponse");
     private final static QName _CreateSubnetPool_QNAME = new QName("http://ws.kuwaiba.org/", "createSubnetPool");
     private final static QName _DeleteFavoritesFolders_QNAME = new QName("http://ws.kuwaiba.org/", "deleteFavoritesFolders");
+    private final static QName _GetSyncDataSourceConfigurations_QNAME = new QName("http://ws.kuwaiba.org/", "getSyncDataSourceConfigurations");
     private final static QName _DeleteObjects_QNAME = new QName("http://ws.kuwaiba.org/", "deleteObjects");
     private final static QName _SetUserProperties_QNAME = new QName("http://ws.kuwaiba.org/", "setUserProperties");
     private final static QName _CreateRootPool_QNAME = new QName("http://ws.kuwaiba.org/", "createRootPool");
@@ -140,7 +142,9 @@ public class ObjectFactory {
     private final static QName _AddProject_QNAME = new QName("http://ws.kuwaiba.org/", "addProject");
     private final static QName _RelateSubnetToVlan_QNAME = new QName("http://ws.kuwaiba.org/", "relateSubnetToVlan");
     private final static QName _CreateAttribute_QNAME = new QName("http://ws.kuwaiba.org/", "createAttribute");
+    private final static QName _CreateSynchronizationGroup_QNAME = new QName("http://ws.kuwaiba.org/", "createSynchronizationGroup");
     private final static QName _DeleteTemplateElementResponse_QNAME = new QName("http://ws.kuwaiba.org/", "deleteTemplateElementResponse");
+    private final static QName _GetSyncDataSourceConfigurationsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getSyncDataSourceConfigurationsResponse");
     private final static QName _CopySpecialObjectsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "copySpecialObjectsResponse");
     private final static QName _SetClassPropertiesResponse_QNAME = new QName("http://ws.kuwaiba.org/", "setClassPropertiesResponse");
     private final static QName _GetSubnetPool_QNAME = new QName("http://ws.kuwaiba.org/", "getSubnetPool");
@@ -177,6 +181,7 @@ public class ObjectFactory {
     private final static QName _GetClassWithId_QNAME = new QName("http://ws.kuwaiba.org/", "getClassWithId");
     private final static QName _UpdateTaskNotificationTypeResponse_QNAME = new QName("http://ws.kuwaiba.org/", "updateTaskNotificationTypeResponse");
     private final static QName _GetObjectsOfClassLight_QNAME = new QName("http://ws.kuwaiba.org/", "getObjectsOfClassLight");
+    private final static QName _DeleteSynchronizationGroup_QNAME = new QName("http://ws.kuwaiba.org/", "deleteSynchronizationGroup");
     private final static QName _SubscribeUserToTaskResponse_QNAME = new QName("http://ws.kuwaiba.org/", "subscribeUserToTaskResponse");
     private final static QName _CreateListTypeItemRelateViewResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createListTypeItemRelateViewResponse");
     private final static QName _AddActivity_QNAME = new QName("http://ws.kuwaiba.org/", "addActivity");
@@ -204,6 +209,7 @@ public class ObjectFactory {
     private final static QName _CreatePoolInPool_QNAME = new QName("http://ws.kuwaiba.org/", "createPoolInPool");
     private final static QName _CreatePoolInPoolResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createPoolInPoolResponse");
     private final static QName _GetListTypeItemRelatedViewsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getListTypeItemRelatedViewsResponse");
+    private final static QName _CreateSynchronizationDataSourceConfigResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createSynchronizationDataSourceConfigResponse");
     private final static QName _GetContainersBetweenObjects_QNAME = new QName("http://ws.kuwaiba.org/", "getContainersBetweenObjects");
     private final static QName _DeleteClass_QNAME = new QName("http://ws.kuwaiba.org/", "deleteClass");
     private final static QName _AddObjectsToFavoritesFolderResponse_QNAME = new QName("http://ws.kuwaiba.org/", "addObjectsToFavoritesFolderResponse");
@@ -255,6 +261,7 @@ public class ObjectFactory {
     private final static QName _ServerSideException_QNAME = new QName("http://ws.kuwaiba.org/", "ServerSideException");
     private final static QName _MoveObjectsToPoolResponse_QNAME = new QName("http://ws.kuwaiba.org/", "moveObjectsToPoolResponse");
     private final static QName _AssociateObjectsToServiceResponse_QNAME = new QName("http://ws.kuwaiba.org/", "associateObjectsToServiceResponse");
+    private final static QName _DeleteSynchronizationGroupResponse_QNAME = new QName("http://ws.kuwaiba.org/", "deleteSynchronizationGroupResponse");
     private final static QName _GetBusinessObjectAuditTrailResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getBusinessObjectAuditTrailResponse");
     private final static QName _GetFavoritesFolderResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getFavoritesFolderResponse");
     private final static QName _GetProjectPoolsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getProjectPoolsResponse");
@@ -273,6 +280,7 @@ public class ObjectFactory {
     private final static QName _AddPossibleChildrenResponse_QNAME = new QName("http://ws.kuwaiba.org/", "addPossibleChildrenResponse");
     private final static QName _GetUsersInGroupResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getUsersInGroupResponse");
     private final static QName _GetSDHContainerLinkStructure_QNAME = new QName("http://ws.kuwaiba.org/", "getSDHContainerLinkStructure");
+    private final static QName _LaunchAutomatedSynchronizationTask_QNAME = new QName("http://ws.kuwaiba.org/", "launchAutomatedSynchronizationTask");
     private final static QName _CopyPoolItemToPool_QNAME = new QName("http://ws.kuwaiba.org/", "copyPoolItemToPool");
     private final static QName _DeleteReport_QNAME = new QName("http://ws.kuwaiba.org/", "deleteReport");
     private final static QName _ConnectPhysicalContainers_QNAME = new QName("http://ws.kuwaiba.org/", "connectPhysicalContainers");
@@ -290,6 +298,7 @@ public class ObjectFactory {
     private final static QName _GetObjectRelatedViewsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getObjectRelatedViewsResponse");
     private final static QName _CreateAttributeResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createAttributeResponse");
     private final static QName _RemoveIPResponse_QNAME = new QName("http://ws.kuwaiba.org/", "removeIPResponse");
+    private final static QName _UpdateSynchronizationGroupResponse_QNAME = new QName("http://ws.kuwaiba.org/", "updateSynchronizationGroupResponse");
     private final static QName _GetUpstreamContainmentHierarchy_QNAME = new QName("http://ws.kuwaiba.org/", "getUpstreamContainmentHierarchy");
     private final static QName _UpdateListTypeItemRelatedView_QNAME = new QName("http://ws.kuwaiba.org/", "updateListTypeItemRelatedView");
     private final static QName _GetChildrenOfClassLightRecursive_QNAME = new QName("http://ws.kuwaiba.org/", "getChildrenOfClassLightRecursive");
@@ -309,6 +318,7 @@ public class ObjectFactory {
     private final static QName _AddUserToGroupResponse_QNAME = new QName("http://ws.kuwaiba.org/", "addUserToGroupResponse");
     private final static QName _DeleteMPLSLink_QNAME = new QName("http://ws.kuwaiba.org/", "deleteMPLSLink");
     private final static QName _GetChildrenOfClassLightRecursiveResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getChildrenOfClassLightRecursiveResponse");
+    private final static QName _DeleteSynchronizationDataSourceConfigResponse_QNAME = new QName("http://ws.kuwaiba.org/", "deleteSynchronizationDataSourceConfigResponse");
     private final static QName _SetAttributePropertiesForClassWithIdResponse_QNAME = new QName("http://ws.kuwaiba.org/", "setAttributePropertiesForClassWithIdResponse");
     private final static QName _DeleteSDHTransportLink_QNAME = new QName("http://ws.kuwaiba.org/", "deleteSDHTransportLink");
     private final static QName _GetAttributeForClassWithIdResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getAttributeForClassWithIdResponse");
@@ -327,6 +337,7 @@ public class ObjectFactory {
     private final static QName _CreateSDHTransportLink_QNAME = new QName("http://ws.kuwaiba.org/", "createSDHTransportLink");
     private final static QName _GetListTypeItemRelatedViewResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getListTypeItemRelatedViewResponse");
     private final static QName _GetSubClassesLight_QNAME = new QName("http://ws.kuwaiba.org/", "getSubClassesLight");
+    private final static QName _UpdateSynchronizationGroup_QNAME = new QName("http://ws.kuwaiba.org/", "updateSynchronizationGroup");
     private final static QName _GetSubnetUsedIpsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getSubnetUsedIpsResponse");
     private final static QName _CreatePhysicalConnection_QNAME = new QName("http://ws.kuwaiba.org/", "createPhysicalConnection");
     private final static QName _GetObject_QNAME = new QName("http://ws.kuwaiba.org/", "getObject");
@@ -334,7 +345,9 @@ public class ObjectFactory {
     private final static QName _GetLogicalLinkDetails_QNAME = new QName("http://ws.kuwaiba.org/", "getLogicalLinkDetails");
     private final static QName _GetPoolsInObject_QNAME = new QName("http://ws.kuwaiba.org/", "getPoolsInObject");
     private final static QName _ConnectMirrorPort_QNAME = new QName("http://ws.kuwaiba.org/", "connectMirrorPort");
+    private final static QName _CreateSynchronizationDataSourceConfig_QNAME = new QName("http://ws.kuwaiba.org/", "createSynchronizationDataSourceConfig");
     private final static QName _GetSubnetPoolsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getSubnetPoolsResponse");
+    private final static QName _UpdateSyncDataSourceConfiguration_QNAME = new QName("http://ws.kuwaiba.org/", "updateSyncDataSourceConfiguration");
     private final static QName _UpdateReport_QNAME = new QName("http://ws.kuwaiba.org/", "updateReport");
     private final static QName _DeleteAttributeForClassWithId_QNAME = new QName("http://ws.kuwaiba.org/", "deleteAttributeForClassWithId");
     private final static QName _CreateListTypeItemResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createListTypeItemResponse");
@@ -364,6 +377,7 @@ public class ObjectFactory {
     private final static QName _UpdateTaskScheduleResponse_QNAME = new QName("http://ws.kuwaiba.org/", "updateTaskScheduleResponse");
     private final static QName _GetSubnetsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getSubnetsResponse");
     private final static QName _GetTask_QNAME = new QName("http://ws.kuwaiba.org/", "getTask");
+    private final static QName _UpdateSyncDataSourceConfigurationResponse_QNAME = new QName("http://ws.kuwaiba.org/", "updateSyncDataSourceConfigurationResponse");
     private final static QName _GetObjectsInFavoritesFolderResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getObjectsInFavoritesFolderResponse");
     private final static QName _CreateSpecialObject_QNAME = new QName("http://ws.kuwaiba.org/", "createSpecialObject");
     private final static QName _GetChildrenOfClassLightResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getChildrenOfClassLightResponse");
@@ -401,8 +415,10 @@ public class ObjectFactory {
     private final static QName _CreatePoolItemResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createPoolItemResponse");
     private final static QName _DeleteSubnetsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "deleteSubnetsResponse");
     private final static QName _GetSpecialAttributesResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getSpecialAttributesResponse");
+    private final static QName _CreateSynchronizationGroupResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createSynchronizationGroupResponse");
     private final static QName _GetClassLevelReportsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getClassLevelReportsResponse");
     private final static QName _ItOverlaps_QNAME = new QName("http://ws.kuwaiba.org/", "itOverlaps");
+    private final static QName _LaunchAutomatedSynchronizationTaskResponse_QNAME = new QName("http://ws.kuwaiba.org/", "launchAutomatedSynchronizationTaskResponse");
     private final static QName _MoveObjectsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "moveObjectsResponse");
     private final static QName _GetLogicalLinkDetailsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getLogicalLinkDetailsResponse");
     private final static QName _CreateObjectResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createObjectResponse");
@@ -416,6 +432,7 @@ public class ObjectFactory {
     private final static QName _GetInstanceableListTypes_QNAME = new QName("http://ws.kuwaiba.org/", "getInstanceableListTypes");
     private final static QName _GetQueriesResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getQueriesResponse");
     private final static QName _GetCommonParentResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getCommonParentResponse");
+    private final static QName _DeleteSynchronizationDataSourceConfig_QNAME = new QName("http://ws.kuwaiba.org/", "deleteSynchronizationDataSourceConfig");
     private final static QName _GetQueries_QNAME = new QName("http://ws.kuwaiba.org/", "getQueries");
     private final static QName _GetObjectRelatedViews_QNAME = new QName("http://ws.kuwaiba.org/", "getObjectRelatedViews");
     private final static QName _GetProjectsInProjectPool_QNAME = new QName("http://ws.kuwaiba.org/", "getProjectsInProjectPool");
@@ -431,6 +448,7 @@ public class ObjectFactory {
     private final static QName _CreateTaskResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createTaskResponse");
     private final static QName _GetProjectResurces_QNAME = new QName("http://ws.kuwaiba.org/", "getProjectResurces");
     private final static QName _GetSpecialAttributes_QNAME = new QName("http://ws.kuwaiba.org/", "getSpecialAttributes");
+    private final static QName _LaunchSupervisedSynchronizationTask_QNAME = new QName("http://ws.kuwaiba.org/", "launchSupervisedSynchronizationTask");
     private final static QName _UpdateTaskParameters_QNAME = new QName("http://ws.kuwaiba.org/", "updateTaskParameters");
     private final static QName _CreateTemplateElement_QNAME = new QName("http://ws.kuwaiba.org/", "createTemplateElement");
     private final static QName _GetTemplateElementChildrenResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getTemplateElementChildrenResponse");
@@ -440,7 +458,9 @@ public class ObjectFactory {
     private final static QName _GetSubnetsInSubentResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getSubnetsInSubentResponse");
     private final static QName _GetProjectsAssociateToObjectResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getProjectsAssociateToObjectResponse");
     private final static QName _GetPool_QNAME = new QName("http://ws.kuwaiba.org/", "getPool");
+    private final static QName _GetSynchronizationGroupsResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getSynchronizationGroupsResponse");
     private final static QName _GetPossibleSpecialChildren_QNAME = new QName("http://ws.kuwaiba.org/", "getPossibleSpecialChildren");
+    private final static QName _LaunchSupervisedSynchronizationTaskResponse_QNAME = new QName("http://ws.kuwaiba.org/", "launchSupervisedSynchronizationTaskResponse");
     private final static QName _DeleteObjectResponse_QNAME = new QName("http://ws.kuwaiba.org/", "deleteObjectResponse");
     private final static QName _GetProjectActivitiesResponse_QNAME = new QName("http://ws.kuwaiba.org/", "getProjectActivitiesResponse");
     private final static QName _GetClassLevelReports_QNAME = new QName("http://ws.kuwaiba.org/", "getClassLevelReports");
@@ -491,13 +511,13 @@ public class ObjectFactory {
     private final static QName _RelateIPtoPortResponse_QNAME = new QName("http://ws.kuwaiba.org/", "relateIPtoPortResponse");
     private final static QName _CreateSessionResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createSessionResponse");
     private final static QName _CreateSubnetResponse_QNAME = new QName("http://ws.kuwaiba.org/", "createSubnetResponse");
-    private final static QName _ExecuteClassLevelReportResponseReturn_QNAME = new QName("", "return");
     private final static QName _BulkUploadFile_QNAME = new QName("", "file");
-    private final static QName _SetClassPropertiesIcon_QNAME = new QName("", "icon");
-    private final static QName _SetClassPropertiesSmallIcon_QNAME = new QName("", "smallIcon");
+    private final static QName _DownloadBulkLoadLogResponseReturn_QNAME = new QName("", "return");
     private final static QName _UpdateGeneralViewBackground_QNAME = new QName("", "background");
     private final static QName _UpdateGeneralViewStructure_QNAME = new QName("", "structure");
-    private final static QName _SaveQueryQueryStructure_QNAME = new QName("", "queryStructure");
+    private final static QName _CreateQueryQueryStructure_QNAME = new QName("", "queryStructure");
+    private final static QName _CreateClassIcon_QNAME = new QName("", "icon");
+    private final static QName _CreateClassSmallIcon_QNAME = new QName("", "smallIcon");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.inventory.communications.wsclient
@@ -592,6 +612,14 @@ public class ObjectFactory {
      */
     public AddProjectResponse createAddProjectResponse() {
         return new AddProjectResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetSynchronizationGroups }
+     * 
+     */
+    public GetSynchronizationGroups createGetSynchronizationGroups() {
+        return new GetSynchronizationGroups();
     }
 
     /**
@@ -731,6 +759,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link GetSyncDataSourceConfigurations }
+     * 
+     */
+    public GetSyncDataSourceConfigurations createGetSyncDataSourceConfigurations() {
+        return new GetSyncDataSourceConfigurations();
+    }
+
+    /**
      * Create an instance of {@link GetListTypeItems }
      * 
      */
@@ -864,6 +900,14 @@ public class ObjectFactory {
      */
     public DeleteTemplateElementResponse createDeleteTemplateElementResponse() {
         return new DeleteTemplateElementResponse();
+    }
+
+    /**
+     * Create an instance of {@link CreateSynchronizationGroup }
+     * 
+     */
+    public CreateSynchronizationGroup createCreateSynchronizationGroup() {
+        return new CreateSynchronizationGroup();
     }
 
     /**
@@ -1595,6 +1639,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link CreateSynchronizationDataSourceConfigResponse }
+     * 
+     */
+    public CreateSynchronizationDataSourceConfigResponse createCreateSynchronizationDataSourceConfigResponse() {
+        return new CreateSynchronizationDataSourceConfigResponse();
+    }
+
+    /**
      * Create an instance of {@link CreatePoolInPoolResponse }
      * 
      */
@@ -1955,6 +2007,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DeleteSynchronizationGroupResponse }
+     * 
+     */
+    public DeleteSynchronizationGroupResponse createDeleteSynchronizationGroupResponse() {
+        return new DeleteSynchronizationGroupResponse();
+    }
+
+    /**
      * Create an instance of {@link GetBusinessObjectAuditTrailResponse }
      * 
      */
@@ -2040,6 +2100,14 @@ public class ObjectFactory {
      */
     public SetClassPropertiesResponse createSetClassPropertiesResponse() {
         return new SetClassPropertiesResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetSyncDataSourceConfigurationsResponse }
+     * 
+     */
+    public GetSyncDataSourceConfigurationsResponse createGetSyncDataSourceConfigurationsResponse() {
+        return new GetSyncDataSourceConfigurationsResponse();
     }
 
     /**
@@ -2248,6 +2316,14 @@ public class ObjectFactory {
      */
     public SubscribeUserToTaskResponse createSubscribeUserToTaskResponse() {
         return new SubscribeUserToTaskResponse();
+    }
+
+    /**
+     * Create an instance of {@link DeleteSynchronizationGroup }
+     * 
+     */
+    public DeleteSynchronizationGroup createDeleteSynchronizationGroup() {
+        return new DeleteSynchronizationGroup();
     }
 
     /**
@@ -2547,6 +2623,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link UpdateSynchronizationGroup }
+     * 
+     */
+    public UpdateSynchronizationGroup createUpdateSynchronizationGroup() {
+        return new UpdateSynchronizationGroup();
+    }
+
+    /**
      * Create an instance of {@link GetSubClassesLight }
      * 
      */
@@ -2608,6 +2692,22 @@ public class ObjectFactory {
      */
     public UpdateReport createUpdateReport() {
         return new UpdateReport();
+    }
+
+    /**
+     * Create an instance of {@link UpdateSyncDataSourceConfiguration }
+     * 
+     */
+    public UpdateSyncDataSourceConfiguration createUpdateSyncDataSourceConfiguration() {
+        return new UpdateSyncDataSourceConfiguration();
+    }
+
+    /**
+     * Create an instance of {@link CreateSynchronizationDataSourceConfig }
+     * 
+     */
+    public CreateSynchronizationDataSourceConfig createCreateSynchronizationDataSourceConfig() {
+        return new CreateSynchronizationDataSourceConfig();
     }
 
     /**
@@ -2827,6 +2927,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link UpdateSyncDataSourceConfigurationResponse }
+     * 
+     */
+    public UpdateSyncDataSourceConfigurationResponse createUpdateSyncDataSourceConfigurationResponse() {
+        return new UpdateSyncDataSourceConfigurationResponse();
+    }
+
+    /**
      * Create an instance of {@link GetTask }
      * 
      */
@@ -2952,6 +3060,14 @@ public class ObjectFactory {
      */
     public CopyPoolItemToPool createCopyPoolItemToPool() {
         return new CopyPoolItemToPool();
+    }
+
+    /**
+     * Create an instance of {@link LaunchAutomatedSynchronizationTask }
+     * 
+     */
+    public LaunchAutomatedSynchronizationTask createLaunchAutomatedSynchronizationTask() {
+        return new LaunchAutomatedSynchronizationTask();
     }
 
     /**
@@ -3099,6 +3215,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link UpdateSynchronizationGroupResponse }
+     * 
+     */
+    public UpdateSynchronizationGroupResponse createUpdateSynchronizationGroupResponse() {
+        return new UpdateSynchronizationGroupResponse();
+    }
+
+    /**
      * Create an instance of {@link RemoveIPResponse }
      * 
      */
@@ -3168,6 +3292,14 @@ public class ObjectFactory {
      */
     public SetAttributePropertiesForClassWithIdResponse createSetAttributePropertiesForClassWithIdResponse() {
         return new SetAttributePropertiesForClassWithIdResponse();
+    }
+
+    /**
+     * Create an instance of {@link DeleteSynchronizationDataSourceConfigResponse }
+     * 
+     */
+    public DeleteSynchronizationDataSourceConfigResponse createDeleteSynchronizationDataSourceConfigResponse() {
+        return new DeleteSynchronizationDataSourceConfigResponse();
     }
 
     /**
@@ -3267,6 +3399,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link LaunchSupervisedSynchronizationTask }
+     * 
+     */
+    public LaunchSupervisedSynchronizationTask createLaunchSupervisedSynchronizationTask() {
+        return new LaunchSupervisedSynchronizationTask();
+    }
+
+    /**
      * Create an instance of {@link GetProjectResurces }
      * 
      */
@@ -3312,6 +3452,14 @@ public class ObjectFactory {
      */
     public DeleteActivityResponse createDeleteActivityResponse() {
         return new DeleteActivityResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetSynchronizationGroupsResponse }
+     * 
+     */
+    public GetSynchronizationGroupsResponse createGetSynchronizationGroupsResponse() {
+        return new GetSynchronizationGroupsResponse();
     }
 
     /**
@@ -3392,6 +3540,14 @@ public class ObjectFactory {
      */
     public GetPossibleSpecialChildren createGetPossibleSpecialChildren() {
         return new GetPossibleSpecialChildren();
+    }
+
+    /**
+     * Create an instance of {@link LaunchSupervisedSynchronizationTaskResponse }
+     * 
+     */
+    public LaunchSupervisedSynchronizationTaskResponse createLaunchSupervisedSynchronizationTaskResponse() {
+        return new LaunchSupervisedSynchronizationTaskResponse();
     }
 
     /**
@@ -4051,6 +4207,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link LaunchAutomatedSynchronizationTaskResponse }
+     * 
+     */
+    public LaunchAutomatedSynchronizationTaskResponse createLaunchAutomatedSynchronizationTaskResponse() {
+        return new LaunchAutomatedSynchronizationTaskResponse();
+    }
+
+    /**
      * Create an instance of {@link MoveObjectsResponse }
      * 
      */
@@ -4072,6 +4236,14 @@ public class ObjectFactory {
      */
     public GetClassLevelReportsResponse createGetClassLevelReportsResponse() {
         return new GetClassLevelReportsResponse();
+    }
+
+    /**
+     * Create an instance of {@link CreateSynchronizationGroupResponse }
+     * 
+     */
+    public CreateSynchronizationGroupResponse createCreateSynchronizationGroupResponse() {
+        return new CreateSynchronizationGroupResponse();
     }
 
     /**
@@ -4160,6 +4332,14 @@ public class ObjectFactory {
      */
     public GetObjectRelatedViews createGetObjectRelatedViews() {
         return new GetObjectRelatedViews();
+    }
+
+    /**
+     * Create an instance of {@link DeleteSynchronizationDataSourceConfig }
+     * 
+     */
+    public DeleteSynchronizationDataSourceConfig createDeleteSynchronizationDataSourceConfig() {
+        return new DeleteSynchronizationDataSourceConfig();
     }
 
     /**
@@ -4267,6 +4447,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link SyncResult }
+     * 
+     */
+    public SyncResult createSyncResult() {
+        return new SyncResult();
+    }
+
+    /**
      * Create an instance of {@link GroupInfo }
      * 
      */
@@ -4371,6 +4559,30 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link RemoteSynchronizationProvider }
+     * 
+     */
+    public RemoteSynchronizationProvider createRemoteSynchronizationProvider() {
+        return new RemoteSynchronizationProvider();
+    }
+
+    /**
+     * Create an instance of {@link RemoteSynchronizationGroup }
+     * 
+     */
+    public RemoteSynchronizationGroup createRemoteSynchronizationGroup() {
+        return new RemoteSynchronizationGroup();
+    }
+
+    /**
+     * Create an instance of {@link RemoteSynchronizationConfiguration }
+     * 
+     */
+    public RemoteSynchronizationConfiguration createRemoteSynchronizationConfiguration() {
+        return new RemoteSynchronizationConfiguration();
+    }
+
+    /**
      * Create an instance of {@link ResultRecord }
      * 
      */
@@ -4464,6 +4676,14 @@ public class ObjectFactory {
      */
     public TaskNotificationDescriptor createTaskNotificationDescriptor() {
         return new TaskNotificationDescriptor();
+    }
+
+    /**
+     * Create an instance of {@link SyncFinding }
+     * 
+     */
+    public SyncFinding createSyncFinding() {
+        return new SyncFinding();
     }
 
     /**
@@ -5183,6 +5403,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetSynchronizationGroups }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getSynchronizationGroups")
+    public JAXBElement<GetSynchronizationGroups> createGetSynchronizationGroups(GetSynchronizationGroups value) {
+        return new JAXBElement<GetSynchronizationGroups>(_GetSynchronizationGroups_QNAME, GetSynchronizationGroups.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AddProjectResponse }{@code >}}
      * 
      */
@@ -5342,6 +5571,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "deleteFavoritesFolders")
     public JAXBElement<DeleteFavoritesFolders> createDeleteFavoritesFolders(DeleteFavoritesFolders value) {
         return new JAXBElement<DeleteFavoritesFolders>(_DeleteFavoritesFolders_QNAME, DeleteFavoritesFolders.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetSyncDataSourceConfigurations }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getSyncDataSourceConfigurations")
+    public JAXBElement<GetSyncDataSourceConfigurations> createGetSyncDataSourceConfigurations(GetSyncDataSourceConfigurations value) {
+        return new JAXBElement<GetSyncDataSourceConfigurations>(_GetSyncDataSourceConfigurations_QNAME, GetSyncDataSourceConfigurations.class, null, value);
     }
 
     /**
@@ -5615,12 +5853,30 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CreateSynchronizationGroup }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "createSynchronizationGroup")
+    public JAXBElement<CreateSynchronizationGroup> createCreateSynchronizationGroup(CreateSynchronizationGroup value) {
+        return new JAXBElement<CreateSynchronizationGroup>(_CreateSynchronizationGroup_QNAME, CreateSynchronizationGroup.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DeleteTemplateElementResponse }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "deleteTemplateElementResponse")
     public JAXBElement<DeleteTemplateElementResponse> createDeleteTemplateElementResponse(DeleteTemplateElementResponse value) {
         return new JAXBElement<DeleteTemplateElementResponse>(_DeleteTemplateElementResponse_QNAME, DeleteTemplateElementResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetSyncDataSourceConfigurationsResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getSyncDataSourceConfigurationsResponse")
+    public JAXBElement<GetSyncDataSourceConfigurationsResponse> createGetSyncDataSourceConfigurationsResponse(GetSyncDataSourceConfigurationsResponse value) {
+        return new JAXBElement<GetSyncDataSourceConfigurationsResponse>(_GetSyncDataSourceConfigurationsResponse_QNAME, GetSyncDataSourceConfigurationsResponse.class, null, value);
     }
 
     /**
@@ -5948,6 +6204,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteSynchronizationGroup }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "deleteSynchronizationGroup")
+    public JAXBElement<DeleteSynchronizationGroup> createDeleteSynchronizationGroup(DeleteSynchronizationGroup value) {
+        return new JAXBElement<DeleteSynchronizationGroup>(_DeleteSynchronizationGroup_QNAME, DeleteSynchronizationGroup.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SubscribeUserToTaskResponse }{@code >}}
      * 
      */
@@ -6188,6 +6453,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getListTypeItemRelatedViewsResponse")
     public JAXBElement<GetListTypeItemRelatedViewsResponse> createGetListTypeItemRelatedViewsResponse(GetListTypeItemRelatedViewsResponse value) {
         return new JAXBElement<GetListTypeItemRelatedViewsResponse>(_GetListTypeItemRelatedViewsResponse_QNAME, GetListTypeItemRelatedViewsResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CreateSynchronizationDataSourceConfigResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "createSynchronizationDataSourceConfigResponse")
+    public JAXBElement<CreateSynchronizationDataSourceConfigResponse> createCreateSynchronizationDataSourceConfigResponse(CreateSynchronizationDataSourceConfigResponse value) {
+        return new JAXBElement<CreateSynchronizationDataSourceConfigResponse>(_CreateSynchronizationDataSourceConfigResponse_QNAME, CreateSynchronizationDataSourceConfigResponse.class, null, value);
     }
 
     /**
@@ -6650,6 +6924,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteSynchronizationGroupResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "deleteSynchronizationGroupResponse")
+    public JAXBElement<DeleteSynchronizationGroupResponse> createDeleteSynchronizationGroupResponse(DeleteSynchronizationGroupResponse value) {
+        return new JAXBElement<DeleteSynchronizationGroupResponse>(_DeleteSynchronizationGroupResponse_QNAME, DeleteSynchronizationGroupResponse.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetBusinessObjectAuditTrailResponse }{@code >}}
      * 
      */
@@ -6812,6 +7095,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link LaunchAutomatedSynchronizationTask }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "launchAutomatedSynchronizationTask")
+    public JAXBElement<LaunchAutomatedSynchronizationTask> createLaunchAutomatedSynchronizationTask(LaunchAutomatedSynchronizationTask value) {
+        return new JAXBElement<LaunchAutomatedSynchronizationTask>(_LaunchAutomatedSynchronizationTask_QNAME, LaunchAutomatedSynchronizationTask.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link CopyPoolItemToPool }{@code >}}
      * 
      */
@@ -6962,6 +7254,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "removeIPResponse")
     public JAXBElement<RemoveIPResponse> createRemoveIPResponse(RemoveIPResponse value) {
         return new JAXBElement<RemoveIPResponse>(_RemoveIPResponse_QNAME, RemoveIPResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link UpdateSynchronizationGroupResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "updateSynchronizationGroupResponse")
+    public JAXBElement<UpdateSynchronizationGroupResponse> createUpdateSynchronizationGroupResponse(UpdateSynchronizationGroupResponse value) {
+        return new JAXBElement<UpdateSynchronizationGroupResponse>(_UpdateSynchronizationGroupResponse_QNAME, UpdateSynchronizationGroupResponse.class, null, value);
     }
 
     /**
@@ -7136,6 +7437,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteSynchronizationDataSourceConfigResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "deleteSynchronizationDataSourceConfigResponse")
+    public JAXBElement<DeleteSynchronizationDataSourceConfigResponse> createDeleteSynchronizationDataSourceConfigResponse(DeleteSynchronizationDataSourceConfigResponse value) {
+        return new JAXBElement<DeleteSynchronizationDataSourceConfigResponse>(_DeleteSynchronizationDataSourceConfigResponse_QNAME, DeleteSynchronizationDataSourceConfigResponse.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SetAttributePropertiesForClassWithIdResponse }{@code >}}
      * 
      */
@@ -7298,6 +7608,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link UpdateSynchronizationGroup }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "updateSynchronizationGroup")
+    public JAXBElement<UpdateSynchronizationGroup> createUpdateSynchronizationGroup(UpdateSynchronizationGroup value) {
+        return new JAXBElement<UpdateSynchronizationGroup>(_UpdateSynchronizationGroup_QNAME, UpdateSynchronizationGroup.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSubnetUsedIpsResponse }{@code >}}
      * 
      */
@@ -7361,12 +7680,30 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CreateSynchronizationDataSourceConfig }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "createSynchronizationDataSourceConfig")
+    public JAXBElement<CreateSynchronizationDataSourceConfig> createCreateSynchronizationDataSourceConfig(CreateSynchronizationDataSourceConfig value) {
+        return new JAXBElement<CreateSynchronizationDataSourceConfig>(_CreateSynchronizationDataSourceConfig_QNAME, CreateSynchronizationDataSourceConfig.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetSubnetPoolsResponse }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getSubnetPoolsResponse")
     public JAXBElement<GetSubnetPoolsResponse> createGetSubnetPoolsResponse(GetSubnetPoolsResponse value) {
         return new JAXBElement<GetSubnetPoolsResponse>(_GetSubnetPoolsResponse_QNAME, GetSubnetPoolsResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link UpdateSyncDataSourceConfiguration }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "updateSyncDataSourceConfiguration")
+    public JAXBElement<UpdateSyncDataSourceConfiguration> createUpdateSyncDataSourceConfiguration(UpdateSyncDataSourceConfiguration value) {
+        return new JAXBElement<UpdateSyncDataSourceConfiguration>(_UpdateSyncDataSourceConfiguration_QNAME, UpdateSyncDataSourceConfiguration.class, null, value);
     }
 
     /**
@@ -7628,6 +7965,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getTask")
     public JAXBElement<GetTask> createGetTask(GetTask value) {
         return new JAXBElement<GetTask>(_GetTask_QNAME, GetTask.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link UpdateSyncDataSourceConfigurationResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "updateSyncDataSourceConfigurationResponse")
+    public JAXBElement<UpdateSyncDataSourceConfigurationResponse> createUpdateSyncDataSourceConfigurationResponse(UpdateSyncDataSourceConfigurationResponse value) {
+        return new JAXBElement<UpdateSyncDataSourceConfigurationResponse>(_UpdateSyncDataSourceConfigurationResponse_QNAME, UpdateSyncDataSourceConfigurationResponse.class, null, value);
     }
 
     /**
@@ -7964,6 +8310,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CreateSynchronizationGroupResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "createSynchronizationGroupResponse")
+    public JAXBElement<CreateSynchronizationGroupResponse> createCreateSynchronizationGroupResponse(CreateSynchronizationGroupResponse value) {
+        return new JAXBElement<CreateSynchronizationGroupResponse>(_CreateSynchronizationGroupResponse_QNAME, CreateSynchronizationGroupResponse.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetClassLevelReportsResponse }{@code >}}
      * 
      */
@@ -7979,6 +8334,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "itOverlaps")
     public JAXBElement<ItOverlaps> createItOverlaps(ItOverlaps value) {
         return new JAXBElement<ItOverlaps>(_ItOverlaps_QNAME, ItOverlaps.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link LaunchAutomatedSynchronizationTaskResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "launchAutomatedSynchronizationTaskResponse")
+    public JAXBElement<LaunchAutomatedSynchronizationTaskResponse> createLaunchAutomatedSynchronizationTaskResponse(LaunchAutomatedSynchronizationTaskResponse value) {
+        return new JAXBElement<LaunchAutomatedSynchronizationTaskResponse>(_LaunchAutomatedSynchronizationTaskResponse_QNAME, LaunchAutomatedSynchronizationTaskResponse.class, null, value);
     }
 
     /**
@@ -8096,6 +8460,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getCommonParentResponse")
     public JAXBElement<GetCommonParentResponse> createGetCommonParentResponse(GetCommonParentResponse value) {
         return new JAXBElement<GetCommonParentResponse>(_GetCommonParentResponse_QNAME, GetCommonParentResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link DeleteSynchronizationDataSourceConfig }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "deleteSynchronizationDataSourceConfig")
+    public JAXBElement<DeleteSynchronizationDataSourceConfig> createDeleteSynchronizationDataSourceConfig(DeleteSynchronizationDataSourceConfig value) {
+        return new JAXBElement<DeleteSynchronizationDataSourceConfig>(_DeleteSynchronizationDataSourceConfig_QNAME, DeleteSynchronizationDataSourceConfig.class, null, value);
     }
 
     /**
@@ -8234,6 +8607,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link LaunchSupervisedSynchronizationTask }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "launchSupervisedSynchronizationTask")
+    public JAXBElement<LaunchSupervisedSynchronizationTask> createLaunchSupervisedSynchronizationTask(LaunchSupervisedSynchronizationTask value) {
+        return new JAXBElement<LaunchSupervisedSynchronizationTask>(_LaunchSupervisedSynchronizationTask_QNAME, LaunchSupervisedSynchronizationTask.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link UpdateTaskParameters }{@code >}}
      * 
      */
@@ -8315,12 +8697,30 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link GetSynchronizationGroupsResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getSynchronizationGroupsResponse")
+    public JAXBElement<GetSynchronizationGroupsResponse> createGetSynchronizationGroupsResponse(GetSynchronizationGroupsResponse value) {
+        return new JAXBElement<GetSynchronizationGroupsResponse>(_GetSynchronizationGroupsResponse_QNAME, GetSynchronizationGroupsResponse.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetPossibleSpecialChildren }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "getPossibleSpecialChildren")
     public JAXBElement<GetPossibleSpecialChildren> createGetPossibleSpecialChildren(GetPossibleSpecialChildren value) {
         return new JAXBElement<GetPossibleSpecialChildren>(_GetPossibleSpecialChildren_QNAME, GetPossibleSpecialChildren.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link LaunchSupervisedSynchronizationTaskResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.kuwaiba.org/", name = "launchSupervisedSynchronizationTaskResponse")
+    public JAXBElement<LaunchSupervisedSynchronizationTaskResponse> createLaunchSupervisedSynchronizationTaskResponse(LaunchSupervisedSynchronizationTaskResponse value) {
+        return new JAXBElement<LaunchSupervisedSynchronizationTaskResponse>(_LaunchSupervisedSynchronizationTaskResponse_QNAME, LaunchSupervisedSynchronizationTaskResponse.class, null, value);
     }
 
     /**
@@ -8777,15 +9177,6 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "return", scope = ExecuteClassLevelReportResponse.class)
-    public JAXBElement<byte[]> createExecuteClassLevelReportResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, ExecuteClassLevelReportResponse.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
     @XmlElementDecl(namespace = "", name = "file", scope = BulkUpload.class)
     public JAXBElement<byte[]> createBulkUploadFile(byte[] value) {
         return new JAXBElement<byte[]>(_BulkUploadFile_QNAME, byte[].class, BulkUpload.class, ((byte[]) value));
@@ -8797,25 +9188,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "", name = "return", scope = DownloadBulkLoadLogResponse.class)
     public JAXBElement<byte[]> createDownloadBulkLoadLogResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, DownloadBulkLoadLogResponse.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "icon", scope = SetClassProperties.class)
-    public JAXBElement<byte[]> createSetClassPropertiesIcon(byte[] value) {
-        return new JAXBElement<byte[]>(_SetClassPropertiesIcon_QNAME, byte[].class, SetClassProperties.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "smallIcon", scope = SetClassProperties.class)
-    public JAXBElement<byte[]> createSetClassPropertiesSmallIcon(byte[] value) {
-        return new JAXBElement<byte[]>(_SetClassPropertiesSmallIcon_QNAME, byte[].class, SetClassProperties.class, ((byte[]) value));
+        return new JAXBElement<byte[]>(_DownloadBulkLoadLogResponseReturn_QNAME, byte[].class, DownloadBulkLoadLogResponse.class, ((byte[]) value));
     }
 
     /**
@@ -8840,27 +9213,18 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "queryStructure", scope = SaveQuery.class)
-    public JAXBElement<byte[]> createSaveQueryQueryStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_SaveQueryQueryStructure_QNAME, byte[].class, SaveQuery.class, ((byte[]) value));
+    @XmlElementDecl(namespace = "", name = "background", scope = UpdateObjectRelatedView.class)
+    public JAXBElement<byte[]> createUpdateObjectRelatedViewBackground(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateGeneralViewBackground_QNAME, byte[].class, UpdateObjectRelatedView.class, ((byte[]) value));
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "background", scope = CreateListTypeItemRelateView.class)
-    public JAXBElement<byte[]> createCreateListTypeItemRelateViewBackground(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateGeneralViewBackground_QNAME, byte[].class, CreateListTypeItemRelateView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "structure", scope = CreateListTypeItemRelateView.class)
-    public JAXBElement<byte[]> createCreateListTypeItemRelateViewStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateGeneralViewStructure_QNAME, byte[].class, CreateListTypeItemRelateView.class, ((byte[]) value));
+    @XmlElementDecl(namespace = "", name = "structure", scope = UpdateObjectRelatedView.class)
+    public JAXBElement<byte[]> createUpdateObjectRelatedViewStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateGeneralViewStructure_QNAME, byte[].class, UpdateObjectRelatedView.class, ((byte[]) value));
     }
 
     /**
@@ -8885,9 +9249,27 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
+    @XmlElementDecl(namespace = "", name = "background", scope = CreateListTypeItemRelateView.class)
+    public JAXBElement<byte[]> createCreateListTypeItemRelateViewBackground(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateGeneralViewBackground_QNAME, byte[].class, CreateListTypeItemRelateView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "structure", scope = CreateListTypeItemRelateView.class)
+    public JAXBElement<byte[]> createCreateListTypeItemRelateViewStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateGeneralViewStructure_QNAME, byte[].class, CreateListTypeItemRelateView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
     @XmlElementDecl(namespace = "", name = "queryStructure", scope = CreateQuery.class)
     public JAXBElement<byte[]> createCreateQueryQueryStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_SaveQueryQueryStructure_QNAME, byte[].class, CreateQuery.class, ((byte[]) value));
+        return new JAXBElement<byte[]>(_CreateQueryQueryStructure_QNAME, byte[].class, CreateQuery.class, ((byte[]) value));
     }
 
     /**
@@ -8912,36 +9294,9 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "return", scope = GetClassHierarchyResponse.class)
-    public JAXBElement<byte[]> createGetClassHierarchyResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, GetClassHierarchyResponse.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "return", scope = ExecuteInventoryLevelReportResponse.class)
-    public JAXBElement<byte[]> createExecuteInventoryLevelReportResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, ExecuteInventoryLevelReportResponse.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "background", scope = UpdateObjectRelatedView.class)
-    public JAXBElement<byte[]> createUpdateObjectRelatedViewBackground(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateGeneralViewBackground_QNAME, byte[].class, UpdateObjectRelatedView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "structure", scope = UpdateObjectRelatedView.class)
-    public JAXBElement<byte[]> createUpdateObjectRelatedViewStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateGeneralViewStructure_QNAME, byte[].class, UpdateObjectRelatedView.class, ((byte[]) value));
+    @XmlElementDecl(namespace = "", name = "return", scope = ExecuteClassLevelReportResponse.class)
+    public JAXBElement<byte[]> createExecuteClassLevelReportResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_DownloadBulkLoadLogResponseReturn_QNAME, byte[].class, ExecuteClassLevelReportResponse.class, ((byte[]) value));
     }
 
     /**
@@ -8966,9 +9321,27 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
+    @XmlElementDecl(namespace = "", name = "queryStructure", scope = SaveQuery.class)
+    public JAXBElement<byte[]> createSaveQueryQueryStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_CreateQueryQueryStructure_QNAME, byte[].class, SaveQuery.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "return", scope = GetClassHierarchyResponse.class)
+    public JAXBElement<byte[]> createGetClassHierarchyResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_DownloadBulkLoadLogResponseReturn_QNAME, byte[].class, GetClassHierarchyResponse.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
     @XmlElementDecl(namespace = "", name = "icon", scope = CreateClass.class)
     public JAXBElement<byte[]> createCreateClassIcon(byte[] value) {
-        return new JAXBElement<byte[]>(_SetClassPropertiesIcon_QNAME, byte[].class, CreateClass.class, ((byte[]) value));
+        return new JAXBElement<byte[]>(_CreateClassIcon_QNAME, byte[].class, CreateClass.class, ((byte[]) value));
     }
 
     /**
@@ -8977,7 +9350,34 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "", name = "smallIcon", scope = CreateClass.class)
     public JAXBElement<byte[]> createCreateClassSmallIcon(byte[] value) {
-        return new JAXBElement<byte[]>(_SetClassPropertiesSmallIcon_QNAME, byte[].class, CreateClass.class, ((byte[]) value));
+        return new JAXBElement<byte[]>(_CreateClassSmallIcon_QNAME, byte[].class, CreateClass.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "return", scope = ExecuteInventoryLevelReportResponse.class)
+    public JAXBElement<byte[]> createExecuteInventoryLevelReportResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_DownloadBulkLoadLogResponseReturn_QNAME, byte[].class, ExecuteInventoryLevelReportResponse.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "icon", scope = SetClassProperties.class)
+    public JAXBElement<byte[]> createSetClassPropertiesIcon(byte[] value) {
+        return new JAXBElement<byte[]>(_CreateClassIcon_QNAME, byte[].class, SetClassProperties.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "smallIcon", scope = SetClassProperties.class)
+    public JAXBElement<byte[]> createSetClassPropertiesSmallIcon(byte[] value) {
+        return new JAXBElement<byte[]>(_CreateClassSmallIcon_QNAME, byte[].class, SetClassProperties.class, ((byte[]) value));
     }
 
 }
