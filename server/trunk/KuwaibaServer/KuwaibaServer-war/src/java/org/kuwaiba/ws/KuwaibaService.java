@@ -22,6 +22,7 @@ import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
+import com.neotropic.kuwaiba.sync.model.impl.snmp.SnmpSyncProvider;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -4029,6 +4030,11 @@ public class KuwaibaService {
                     String sessionId) throws ServerSideException {
 
         try {
+            SnmpSyncProvider x = new SnmpSyncProvider();
+            x.mappedPoll(null);
+//            List<SyncResult> sync = x.sync("MPLSRouter", 39635L, null);
+//            SyncAction syncAction = new SyncAction(null, sync);
+//            syncAction.executeResults();
             return wsBean.getPossibleChildren(parentClassName, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
@@ -4854,8 +4860,10 @@ public class KuwaibaService {
      *                             If the any of the parameters has an invalid name
      */
     @WebMethod(operationName = "updateReportParameters")
-    public void updateReportParameters(@WebParam(name = "reportId")long reportId, @WebParam(name = "parameters")List<StringPair> parameters, 
-            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+    public void updateReportParameters(@WebParam(name = "reportId")long reportId, 
+            @WebParam(name = "parameters")List<StringPair> parameters, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException 
+    {
         try {
             wsBean.updateReportParameters(reportId, parameters, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -4880,7 +4888,10 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "getClassLevelReports")
     public List<RemoteReportLight> getClassLevelReports(@WebParam(name = "className")String className, 
-            @WebParam(name = "recursive")boolean recursive, @WebParam(name = "includeDisabled")boolean includeDisabled, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+            @WebParam(name = "recursive") boolean recursive, 
+            @WebParam(name = "includeDisabled") boolean includeDisabled, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException
+    {
         try {
             return wsBean.getClassLevelReports(className, recursive, includeDisabled, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -6783,10 +6794,10 @@ public class KuwaibaService {
         @WebMethod(operationName = "createSynchronizationDataSourceConfig")
         public long createSynchronizationDataSourceConfig(@WebParam(name="name")String name, 
                 @WebParam(name="parameters")List<StringPair> parameters, 
-                @WebParam(name="syncGroupId")String syncGroupId, 
+                @WebParam(name="syncGroupId")long syncGroupId, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
             try {
-                return wsBean.createSynchronizationDataSourceConfig(name, parameters, syncGroupId, getIPAddress(), sessionId);
+                return wsBean.createSynchronizationDataSourceConfig(syncGroupId, name, parameters, getIPAddress(), sessionId);
             } catch (Exception ex) {
                 if (ex instanceof ServerSideException)
                     throw ex;
@@ -6823,6 +6834,30 @@ public class KuwaibaService {
             } 
         }
         
+         /**
+         * Creates a Synchronization Group. A Sync Group is a set of Synchronization Configurations that will be processed by the same
+         * Synchronization Provider. Take into account that the schedule for the SG to be executed is not configured here, but in Task Manager's task
+         * @param syncGroupId The name of the new sync group
+         * @param syncDataSourceConfigurationIds The id of the syncDataSourceConfigurations for the group
+         * @param sessionId Session token
+         * @throws ServerSideException If the name or the sync provider are invalid 
+         */
+        @WebMethod(operationName = "updateSynchronizationGroup")
+        public void updateSynchronizationGroup(@WebParam(name="syncGroupId") long syncGroupId,
+                @WebParam(name="syncDataSourceConfigurationIds")List<Long> syncDataSourceConfigurationIds, 
+                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+            try {
+                wsBean.updateSynchronizationGroup(syncGroupId, syncDataSourceConfigurationIds, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in createSynchronizationGroup: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            } 
+        }
+        
         /**
          * Gets the available sync groups
          * @param sessionId Session token
@@ -6845,18 +6880,18 @@ public class KuwaibaService {
         }
         
         /**
-         * Gets the available sync groups
-         * @param syncDataSourceConfigId
+         * Gets the synchronization data source configurations for a sync group
+         * @param syncGroupId the syncGroupId
          * @param sessionId Session token
          * @return The list of available sync groups
          * @throws ServerSideException If something unexpected goes wrong
          */
         @WebMethod(operationName = "getSyncDataSourceConfigurations")
         public List<RemoteSynchronizationConfiguration> getSyncDataSourceConfigurations(
-                @WebParam(name="syncDataSourceConfigId")String syncDataSourceConfigId, 
+                @WebParam(name="syncGroupId")long syncGroupId, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
             try {
-                return wsBean.getSyncDataSourceConfigurations(syncDataSourceConfigId, getIPAddress(), sessionId);
+                return wsBean.getSyncDataSourceConfigurations(syncGroupId, getIPAddress(), sessionId);
             } catch (Exception ex) {
                 if (ex instanceof ServerSideException)
                     throw ex;
@@ -6877,7 +6912,7 @@ public class KuwaibaService {
          */
         @WebMethod(operationName = "updateSyncDataSourceConfiguration")
         public void updateSyncDataSourceConfiguration(
-                @WebParam(name="syncDataSourceConfigId")String syncDataSourceConfigId, 
+                @WebParam(name="syncDataSourceConfigId")long syncDataSourceConfigId, 
                 @WebParam(name="parameters")List<StringPair> parameters, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
             try {
