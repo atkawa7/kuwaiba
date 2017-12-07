@@ -4030,11 +4030,6 @@ public class KuwaibaService {
                     String sessionId) throws ServerSideException {
 
         try {
-            SnmpSyncProvider x = new SnmpSyncProvider();
-            x.mappedPoll(null);
-//            List<SyncResult> sync = x.sync("MPLSRouter", 39635L, null);
-//            SyncAction syncAction = new SyncAction(null, sync);
-//            syncAction.executeResults();
             return wsBean.getPossibleChildren(parentClassName, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
@@ -6853,6 +6848,29 @@ public class KuwaibaService {
                     throw ex;
                 else {
                     System.out.println("[KUWAIBA] An unexpected error occurred in createSynchronizationGroup: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            } 
+        }
+        
+        /**
+         * Gets the available sync group
+         * @param syncGroupId
+         * @param sessionId Session token
+         * @return The list of available sync groups
+         * @throws ServerSideException If something unexpected goes wrong
+         */
+        @WebMethod(operationName = "getSynchronizationGroup")
+        public RemoteSynchronizationGroup getSynchronizationGroup(
+                @WebParam(name="syncGroupId")long syncGroupId, 
+                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+            try {
+                return wsBean.getSynchronizationGroup(syncGroupId, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in getSynchronizationGroups: " + ex.getMessage());
                     throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
                 }
             } 
