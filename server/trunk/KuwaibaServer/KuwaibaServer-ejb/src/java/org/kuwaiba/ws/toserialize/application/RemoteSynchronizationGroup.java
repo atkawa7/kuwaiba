@@ -15,6 +15,7 @@
  */
 package org.kuwaiba.ws.toserialize.application;
 
+import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +42,14 @@ public final class RemoteSynchronizationGroup implements Serializable {
      */
     private RemoteSynchronizationProvider provider;
 
+    public RemoteSynchronizationGroup() { }
+    
+    public RemoteSynchronizationGroup(SynchronizationGroup syncGroup) {
+        this.id = syncGroup.getId();
+        this.name = syncGroup.getName();
+        this.provider = new RemoteSynchronizationProvider(syncGroup.getProvider().getId(), syncGroup.getProvider().getName());
+    }
+    
     public RemoteSynchronizationGroup(long id, String name, RemoteSynchronizationProvider provider) {
         this.id = id;
         this.name = name;
@@ -71,12 +80,13 @@ public final class RemoteSynchronizationGroup implements Serializable {
         this.provider = provider;
     }
     
-//    public static List<RemoteSynchronizationGroup> toArray(List<SynchronizationGroup> syncGroups) {
-//        List<RemoteSynchronizationGroup> res = new ArrayList<>();
-//        for (SynchronizationGroup syncGroup : syncGroups)
-//            res.add(new RemoteSynchronizationGroup(syncGroup.));
-//        
-//        return res;
-//    }
+    public static List<RemoteSynchronizationGroup> toArray(List<SynchronizationGroup> syncGroups) {
+        List<RemoteSynchronizationGroup> res = new ArrayList<>();
+        for (SynchronizationGroup syncGroup : syncGroups)
+            res.add(new RemoteSynchronizationGroup(syncGroup.getId(), syncGroup.getName(), 
+                    new RemoteSynchronizationProvider(syncGroup.getProvider().getId(), syncGroup.getProvider().getName())));
+        
+        return res;
+    }
     
 }

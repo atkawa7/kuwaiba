@@ -16,17 +16,15 @@
 
 package org.kuwaiba.services.persistence.util;
 
+import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
 import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
-import com.neotropic.kuwaiba.sync.model.impl.snmp.SnmpSyncProvider;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -39,14 +37,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonReader;
-import javax.json.JsonValue;
-import org.kuwaiba.apis.persistence.ConnectionManager;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.GroupProfileLight;
 import org.kuwaiba.apis.persistence.application.Pool;
@@ -65,7 +56,6 @@ import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
-import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.services.persistence.cache.CacheManager;
 import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import org.kuwaiba.ws.todeserialize.StringPair;
@@ -729,75 +719,55 @@ public class Util {
      * Converts a node representing a Node into a SynchronizationGroup object
      * @param syncGroupNode The source node
      * @return A SynchronizationGroup object built from the source node information
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
      * @throws InvalidArgumentException if some element of the list of 
      * syncDataSourceConfiguration has more paramNames than paramValues
      */
     public static SynchronizationGroup createSyncGroupFromNode(Node syncGroupNode)  
-            throws InstantiationException, IllegalAccessException, 
-            NoSuchMethodException, IllegalArgumentException, InvocationTargetException, InvalidArgumentException
-    {    
-        String providerName = (String)syncGroupNode.getProperty(Constants.SYNC_SNMPPROVIDER);
-       // try{
-//            Class myClass = (Class) Class.forName(
-//                        "com.neotropic.kuwaiba.sync.model.impl.snmp." + providerName);
-//
-//            Constructor cmProvider = myClass.getConstructor();
-//            SnmpSyncProvider snmpSyncProvider = (SnmpSyncProvider)cmProvider.newInstance();
-            
+            throws InvalidArgumentException {    
+        
+        if (!syncGroupNode.hasProperty(Constants.PROPERTY_NAME) || !syncGroupNode.hasProperty(Constants.PROPERTY_SYNCPROVIDER))
+            throw new InvalidArgumentException(String.format("The sync group with id %s is malformed. Check its properties", syncGroupNode.getId()));
+        
+        String providerName = (String)syncGroupNode.getProperty(Constants.PROPERTY_SYNCPROVIDER);
+        
+        try {
+            Class providerClass = Class.forName(providerName);
+            AbstractSyncProvider syncProvider = (AbstractSyncProvider)providerClass.getConstructor().newInstance();
             List<SyncDataSourceConfiguration> syncDataSourceConfiguration = new ArrayList<>();
             
             for(Relationship rel : syncGroupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP))
                 syncDataSourceConfiguration.add(createSyncDataSourceConfigFromNode(rel.getEndNode()));
             
-            System.out.println((String)syncGroupNode.getProperty(Constants.PROPERTY_NAME));
-            String ss = (String)syncGroupNode.getProperty(Constants.PROPERTY_NAME);
             return  new SynchronizationGroup(syncGroupNode.getId(),
                     (String)syncGroupNode.getProperty(Constants.PROPERTY_NAME),
-                    null, syncDataSourceConfiguration);
-        //}
-//        catch (InvalidArgumentException | ClassNotFoundException cnfe) {
-//            throw new IllegalArgumentException ("MetadataEntityManager implementation not found: " + cnfe.getMessage());
-//        }
+                    syncProvider, syncDataSourceConfiguration);
+        }catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+            throw new InvalidArgumentException(String.format("Provider %s could not be instanciated: %s", providerName, ex.getMessage()));
+        }
     }
 
     /**
-     * Converts a node representing a Node into a SyncDataSourceConfiguration object
+     * Converts a node to a SyncDataSourceConfiguration object
      * @param syncDataSourceConfigNode The source node
      * @return A SyncDataSourceConfiguration object built from the source node information
      * @throws InvalidArgumentException if the size of the list of paramNames and paramValues are not the same 
      */
     public static SyncDataSourceConfiguration createSyncDataSourceConfigFromNode(Node syncDataSourceConfigNode) throws InvalidArgumentException{   
-        String dataSourceConfig = (String)syncDataSourceConfigNode.getProperty(Constants.SYNC_SNMPDATACONFIG);
-        JsonReader jsonReader = Json.createReader(new StringReader(dataSourceConfig));
-        JsonObject jsonObj = jsonReader.readObject();
-                
-        List<String> paramNames = new ArrayList<>();
-        List<String> paramValues = new ArrayList<>();
         
-        paramNames.add(Constants.PROPERTY_ID);
-        paramValues.add(jsonObj.getString(Constants.PROPERTY_ID));
+        if (!syncDataSourceConfigNode.hasProperty(Constants.PROPERTY_NAME))
+            throw new InvalidArgumentException(String.format("The sync configuration with id %s is malformed. Check its properties", syncDataSourceConfigNode.getId()));
         
-        paramNames.add(Constants.PROPERTY_NAME);
-        paramValues.add(jsonObj.getString(Constants.PROPERTY_NAME));
+        HashMap<String, String> parameters = new HashMap<>();
+        String configName = "";
         
-        paramNames.add(Constants.PROPERTY_CLASS_NAME);
-        paramValues.add(jsonObj.getString(Constants.PROPERTY_CLASS_NAME));
-        
-        paramNames.add(Constants.SYNC_SNMPPORT);
-        paramValues.add(jsonObj.getString(Constants.SYNC_SNMPPORT));
-        
-        paramNames.add(Constants.SYNC_SNMPIPADDRESS);
-        paramValues.add(jsonObj.getString(Constants.SYNC_SNMPIPADDRESS));
-        
-        paramNames.add(Constants.SYNC_SNMPCOMMUNITY);
-        paramValues.add(jsonObj.getString(Constants.SYNC_SNMPCOMMUNITY));
-        
-        return  new SyncDataSourceConfiguration(syncDataSourceConfigNode.getId(), 
-                (String)syncDataSourceConfigNode.getProperty(Constants.PROPERTY_NAME), paramNames, paramValues);
+        for (String property : syncDataSourceConfigNode.getPropertyKeys()) {
+            if (property.equals(Constants.PROPERTY_NAME))
+                configName = (String)syncDataSourceConfigNode.getProperty(property);
+            else
+                parameters.put(property, (String)syncDataSourceConfigNode.getProperty(property));
+        }
+            
+        return  new SyncDataSourceConfiguration(syncDataSourceConfigNode.getId(), configName, parameters);
     }
     
     /**
@@ -1179,20 +1149,5 @@ public class Util {
         if (!objectList.get(i).getName().equals(Constants.NODE_DUMMYROOT))
             outputString += objectList.get(i);
         return outputString;
-    }
-    
-    /**
-     * Due to JSON objects supposed to be immutable this method is need it to 
-     * edit or add new values to the JSON Object
-     * @param jo the original JSON object
-     * @return the edited JSON object
-     */
-    public static JsonObjectBuilder jsonObjectToBuilder(JsonObject jo) {
-        JsonObjectBuilder job = Json.createObjectBuilder();
-
-        for (Map.Entry<String, JsonValue> entry : jo.entrySet()) {
-            job.add(entry.getKey(), entry.getValue());
-        }
-        return job;
     }
 }

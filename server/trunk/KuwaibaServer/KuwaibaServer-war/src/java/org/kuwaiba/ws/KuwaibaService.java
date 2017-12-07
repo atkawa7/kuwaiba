@@ -22,7 +22,6 @@ import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
-import com.neotropic.kuwaiba.sync.model.impl.snmp.SnmpSyncProvider;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -6854,11 +6853,11 @@ public class KuwaibaService {
         }
         
         /**
-         * Gets the available sync group
-         * @param syncGroupId
+         * Gets a given sync group
+         * @param syncGroupId The sync group id
          * @param sessionId Session token
-         * @return The list of available sync groups
-         * @throws ServerSideException If something unexpected goes wrong
+         * @return The requested sync group
+         * @throws ServerSideException If the sync group could not be found
          */
         @WebMethod(operationName = "getSynchronizationGroup")
         public RemoteSynchronizationGroup getSynchronizationGroup(
@@ -6870,7 +6869,7 @@ public class KuwaibaService {
                 if (ex instanceof ServerSideException)
                     throw ex;
                 else {
-                    System.out.println("[KUWAIBA] An unexpected error occurred in getSynchronizationGroups: " + ex.getMessage());
+                    System.out.println("[KUWAIBA] An unexpected error occurred in getSynchronizationGroup: " + ex.getMessage());
                     throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
                 }
             } 

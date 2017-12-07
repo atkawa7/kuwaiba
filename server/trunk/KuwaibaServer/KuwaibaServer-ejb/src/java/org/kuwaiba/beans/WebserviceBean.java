@@ -40,8 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
-import javax.batch.runtime.BatchRuntime;
-import javax.batch.runtime.BatchStatus;
 import javax.ejb.Singleton;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
@@ -95,7 +93,6 @@ import org.kuwaiba.ws.toserialize.application.RemoteResultMessage;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.application.RemoteSynchronizationConfiguration;
 import org.kuwaiba.ws.toserialize.application.RemoteSynchronizationGroup;
-import org.kuwaiba.ws.toserialize.application.RemoteSynchronizationProvider;
 import org.kuwaiba.ws.toserialize.application.RemoteTask;
 import org.kuwaiba.ws.toserialize.application.RemoteTaskResult;
 import org.kuwaiba.ws.toserialize.application.ResultRecord;
@@ -4278,126 +4275,132 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
         // </editor-fold>    
         //<editor-fold desc="Synchronization API" defaultstate="collapsed">
-        @Override
-        public long createSynchronizationDataSourceConfig(long syngGroupId, String name, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException{
-            if (aem == null)
-                throw new ServerSideException("Can't reach the backend. Contact your administrator");
-            try {
-                aem.validateWebServiceCall("createSynchronizationDataSourceConfig", ipAddress, sessionId);
-                return bem.createSyncDataSourceConfig(syngGroupId, name, parameters);
-            } catch (InventoryException ex) {
-                throw new ServerSideException(ex.getMessage());
-            }
+    @Override
+    public long createSynchronizationDataSourceConfig(long syngGroupId, String name, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("createSynchronizationDataSourceConfig", ipAddress, sessionId);
+            return aem.createSyncDataSourceConfig(syngGroupId, name, parameters);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
         }
-        
-        @Override
-        public long createSynchronizationGroup(String name,String syncProviderId, String ipAddress, String sessionId)throws ServerSideException{
-            if (aem == null)
-                throw new ServerSideException("Can't reach the backend. Contact your administrator");
-            try {
-                aem.validateWebServiceCall("createSynchronizationGroup", ipAddress, sessionId);
-                return bem.createSyncgroup(name, syncProviderId);
-            } catch (InventoryException ex) {
-                throw new ServerSideException(ex.getMessage());
-            }
-        }
-        
-        @Override
-        public void updateSynchronizationGroup(long syncGroupId, List<Long> SyncDataSourceConfigIds, String ipAddress, String sessionId)throws ServerSideException{
-            if (aem == null)
-                throw new ServerSideException("Can't reach the backend. Contact your administrator");
-            try {
-                aem.validateWebServiceCall("updateSyncDataSourceConfiguration", ipAddress, sessionId);
-                
-                
-            } catch (InventoryException ex) {
-                throw new ServerSideException(ex.getMessage());
-            }
-        }
-        
-        @Override
-        public void updateSyncDataSourceConfiguration(long syncDataSourceConfigId, List<StringPair> parameters, String ipAddress, String sessionId)throws ServerSideException{
-            if (aem == null)
-                throw new ServerSideException("Can't reach the backend. Contact your administrator");
-            try {
-                aem.validateWebServiceCall("updateSyncDataSourceConfiguration", ipAddress, sessionId);
-                
-                
-            } catch (InventoryException ex) {
-                throw new ServerSideException(ex.getMessage());
-            }
-        }
-        
-        @Override
-        public List<RemoteSynchronizationGroup> getSynchronizationGroups(String ipAddress, String sessionId)throws ServerSideException{
-            if (aem == null)
-                throw new ServerSideException("Can't reach the backend. Contact your administrator");
-            try {
-                aem.validateWebServiceCall("getSynchronizationGroups", ipAddress, sessionId);
+    }
 
-                List<RemoteSynchronizationGroup> remoteSyncgroups = new ArrayList<>();
-                List<SynchronizationGroup> syncgroups = bem.getSyncgroups();
-                //new RemoteSynchronizationProvider(syncgroup.getProvider().getId(), syncgroup.getProvider().getName())
-                for (SynchronizationGroup syncgroup : syncgroups)
-                    remoteSyncgroups.add(new RemoteSynchronizationGroup(
-                            syncgroup.getId(), syncgroup.getName(), new RemoteSynchronizationProvider("com.neotropic.kuwaiba.sync.model.impl.snmp.SnmpSyncProvider", "com.neotropic.kuwaiba.sync.model.impl.snmp.SnmpSyncProvider")));
-               
-                return remoteSyncgroups;
-            } catch (InventoryException ex) {
-                throw new ServerSideException(ex.getMessage());
-            }
+    @Override
+    public long createSynchronizationGroup(String name,String syncProviderId, String ipAddress, String sessionId)throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("createSynchronizationGroup", ipAddress, sessionId);
+            return aem.createSyncGroup(name, syncProviderId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
         }
-        
-        @Override
-        public List<RemoteSynchronizationConfiguration> getSyncDataSourceConfigurations(long syncGroupId, String ipAddress, String sessionId)throws ServerSideException{
-            if (aem == null)
-                throw new ServerSideException("Can't reach the backend. Contact your administrator");
-            try {
-                aem.validateWebServiceCall("getSyncDataSourceConfigurations", ipAddress, sessionId);
-                
-                List<RemoteSynchronizationConfiguration> RemoteSynchronizationConfigurations = new ArrayList<>();
-                
-                List<SyncDataSourceConfiguration> syncDataSourceConfigurations = bem.getSyncDataSourceConfigurations(syncGroupId);
-                
-                for (SyncDataSourceConfiguration syncDataSourceConfiguration : syncDataSourceConfigurations) {
-                    List<StringPair> params = new ArrayList<>();
-                    for(String key : syncDataSourceConfiguration.getParameters().keySet())
-                        params.add(new StringPair(key, syncDataSourceConfiguration.getParameters().get(key)));
-                    
-                    RemoteSynchronizationConfigurations.add(new RemoteSynchronizationConfiguration(params));
-                }
-                
-                return RemoteSynchronizationConfigurations;
-            } catch (InventoryException ex) {
-                throw new ServerSideException(ex.getMessage());
-            }
+    }
+
+    @Override
+    public void updateSynchronizationGroup(long syncGroupId, List<Long> SyncDataSourceConfigIds, String ipAddress, String sessionId)throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("updateSyncDataSourceConfiguration", ipAddress, sessionId);
+
+
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
         }
-        
-        @Override
-        public void deleteSynchronizationGroup(String syncGroupId, String ipAddress, String sessionId)throws ServerSideException{
-            if (aem == null)
-                throw new ServerSideException("Can't reach the backend. Contact your administrator");
-            try {
-                aem.validateWebServiceCall("deleteSynchronizationGroup", ipAddress, sessionId);
-                
-                
-            } catch (InventoryException ex) {
-                throw new ServerSideException(ex.getMessage());
-            }
+    }
+
+    @Override
+    public void updateSyncDataSourceConfiguration(long syncDataSourceConfigId, List<StringPair> parameters, String ipAddress, String sessionId)throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("updateSyncDataSourceConfiguration", ipAddress, sessionId);
+
+
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
         }
-        
-        @Override
-        public void deleteSynchronizationDataSourceConfig(String syncDataSourceConfigId, String ipAddress, String sessionId)throws ServerSideException{
-            if (aem == null)
-                throw new ServerSideException("Can't reach the backend. Contact your administrator");
-            try {
-                aem.validateWebServiceCall("deleteSynchronizationDataSourceConfig", ipAddress, sessionId);
-                
-                
-            } catch (InventoryException ex) {
-                throw new ServerSideException(ex.getMessage());
-            }
+    }
+
+    @Override
+    public List<RemoteSynchronizationGroup> getSynchronizationGroups(String ipAddress, String sessionId)throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("getSynchronizationGroups", ipAddress, sessionId);
+
+            List<SynchronizationGroup> syncGroups = aem.getSyncGroups();
+            return RemoteSynchronizationGroup.toArray(syncGroups);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
         }
+    }
+    
+    @Override
+    public RemoteSynchronizationGroup getSynchronizationGroup(long syncGroupId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("getSynchronizationGroup", ipAddress, sessionId);
+            return new RemoteSynchronizationGroup(aem.getSyncGroup(syncGroupId));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<RemoteSynchronizationConfiguration> getSyncDataSourceConfigurations(long syncGroupId, String ipAddress, String sessionId)throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("getSyncDataSourceConfigurations", ipAddress, sessionId);
+
+            List<RemoteSynchronizationConfiguration> RemoteSynchronizationConfigurations = new ArrayList<>();
+
+            List<SyncDataSourceConfiguration> syncDataSourceConfigurations = aem.getSyncDataSourceConfigurations(syncGroupId);
+
+            for (SyncDataSourceConfiguration syncDataSourceConfiguration : syncDataSourceConfigurations) {
+                List<StringPair> params = new ArrayList<>();
+                for(String key : syncDataSourceConfiguration.getParameters().keySet())
+                    params.add(new StringPair(key, syncDataSourceConfiguration.getParameters().get(key)));
+
+                RemoteSynchronizationConfigurations.add(new RemoteSynchronizationConfiguration(params));
+            }
+
+            return RemoteSynchronizationConfigurations;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteSynchronizationGroup(String syncGroupId, String ipAddress, String sessionId)throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("deleteSynchronizationGroup", ipAddress, sessionId);
+
+
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteSynchronizationDataSourceConfig(String syncDataSourceConfigId, String ipAddress, String sessionId)throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("deleteSynchronizationDataSourceConfig", ipAddress, sessionId);
+
+
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
 
     @Override
     public List<SyncResult> launchAutomatedSynchronizationTask(long syncGroupId, String ipAddress, String sessionId) throws ServerSideException {
@@ -4418,12 +4421,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("launchSupervisedSynchronizationTask", ipAddress, sessionId);
-//            SyncGroup syncGroup = bem.getSyncgroup(syncGroupId);
             Properties parameters = new Properties();
-            //parameters.put("aem", aem);
-            //parameters.put("bem", bem);
-            //parameters.put("mem", mem);
-            //parameters.put("syncGroup", syncGroup);
             parameters.put("syncGroupId", Long.toString(syncGroupId));                        
             
             BackgroundJob backgroundJob = new BackgroundJob("DefaultSyncJob", false, parameters);

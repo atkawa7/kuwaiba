@@ -47,8 +47,9 @@ public class DefaultSyncReader extends AbstractItemReader {
         if (!jobParameters.containsKey("syncGroupId"))
             throw new InvalidArgumentException("No synchronization group was provided as parameter for the current sync job");
         Long syncGroupId = Long.valueOf((String) jobParameters.get("syncGroupId"));
-        syncGroup = PersistenceService.getInstance().getBusinessEntityManager().getSyncgroup(syncGroupId);
+        syncGroup = PersistenceService.getInstance().getApplicationEntityManager().getSyncGroup(syncGroupId);
         syncProvider = syncGroup.getProvider();
+        
     }
     
     @Override

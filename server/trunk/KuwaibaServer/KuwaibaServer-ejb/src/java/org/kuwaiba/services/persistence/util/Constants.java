@@ -185,13 +185,9 @@ public class Constants {
     public static final String PROPERTY_PRIVILEGES = "privileges"; //NOI18N
     public static final String PROPERTY_NAME = "name"; //NOI18N
     /**
-     * the name of the providerSNMP
+     * the name of the synchronization provider
      */
-    public static final String SYNC_SNMPPROVIDER = "SnmpSyncProvider"; //NOI18N
-    public static final String SYNC_SNMPDATACONFIG = "dataSourceConfig"; //NOI18N
-    public static final String SYNC_SNMPPORT = "port"; //NOI18N
-    public static final String SYNC_SNMPIPADDRESS = "ip"; //NOI18N
-    public static final String SYNC_SNMPCOMMUNITY = "community"; //NOI18N
+    public static final String PROPERTY_SYNCPROVIDER = "syncProvider"; //NOI18N
     /** 
      * Defines if the attribute of a class is mandatory or not
      */

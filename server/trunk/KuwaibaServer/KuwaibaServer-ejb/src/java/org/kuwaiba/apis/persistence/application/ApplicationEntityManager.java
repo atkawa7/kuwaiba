@@ -17,6 +17,8 @@
 package org.kuwaiba.apis.persistence.application;
 
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
+import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
+import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +34,6 @@ import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
-import org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.util.ChangeDescriptor;
 import org.kuwaiba.ws.todeserialize.StringPair;
@@ -1179,4 +1180,54 @@ public interface ApplicationEntityManager {
      */
     public void checkRelationshipByAttributeValueBusinessRules(String sourceObjectClassName, long sourceObjectId ,
             String targetObjectClassName, long targetObjectId) throws BusinessRuleException, InvalidArgumentException;
+    
+    /**
+     * Fetches a synchronization group. From the conceptual point of view, a sync group is a set of Synchronization Data Sources.
+     * @param syncGroupId The id of the sync group
+     * @return The sync group
+     * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException If the sync group could not be found
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the sync data group information is somehow malformed in the database
+     */
+    public SynchronizationGroup getSyncGroup(long syncGroupId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Gets the list of available sync groups 
+     * @return The list of available sync groups
+     * @throws InvalidArgumentException If any of the sync groups is malformed in the database
+     */
+    public List<SynchronizationGroup> getSyncGroups() throws InvalidArgumentException;
+    /**
+     * Gets the data source configurations associated to a sync group. A data source configuration is a set of parameters to access a sync data source
+     * @param syncGroupId The sync group the requested configurations belong to
+     * @return A list of data source configurations
+     * @throws ApplicationObjectNotFoundException If the sync group could not be found
+     * @throws InvalidArgumentException If any of the configurations is malformed in the database
+     */
+    public List<SyncDataSourceConfiguration> getSyncDataSourceConfigurations(long syncGroupId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Creates a synchronization group
+     * @param name The name of the new group
+     * @param syncProvider The FQN of the synchronization provider (that is, the name of the class and the package)
+     * @return The id of the newly created group
+     * @throws InvalidArgumentException If any of the parameters is invalid
+     * @throws ApplicationObjectNotFoundException If the sync provider could not be found
+     */
+    public long createSyncGroup(String name, String syncProvider) throws InvalidArgumentException, ApplicationObjectNotFoundException;
+    /**
+     * Updates the data source configurations associated to a given sync group
+     * @param syncGroupId The Id of the sync group to be updated
+     * @param dataSourceConfigurations The list of data source configurations
+     * @throws ApplicationObjectNotFoundException If the sync group could not be found
+     * @throws InvalidArgumentException If any of the provided data source configurations is invalid
+     */
+    public void updateSyncGroup(long syncGroupId, List<SyncDataSourceConfiguration> dataSourceConfigurations)throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Creates a data source configuration and associates it to a sync group
+     * @param syncGroupId The id of the sync group the data source configuration will be related to
+     * @param name The name of the configuration
+     * @param parameters The list of parameters that will be part of the new configuration. A sync data source configuration is a set of parameters that allow the synchronization provider to access a sync data source
+     * @return The id of the newly created data source
+     * @throws ApplicationObjectNotFoundException If the sync group could not be found
+     * @throws InvalidArgumentException  If any of the parameters is not valid
+     */
+    public long createSyncDataSourceConfig(long syncGroupId, String name, List<StringPair> parameters)throws ApplicationObjectNotFoundException, InvalidArgumentException;
 }

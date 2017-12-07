@@ -17,7 +17,6 @@
 package com.neotropic.kuwaiba.sync.model;
 
 import java.util.HashMap;
-import java.util.List;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
@@ -38,15 +37,10 @@ public class SyncDataSourceConfiguration {
      */
     private HashMap<String, String> parameters;
 
-    public SyncDataSourceConfiguration(long id, String name, List<String> paramNames, List<String> paramValues) throws InvalidArgumentException {
-        if (paramNames.size() != paramValues.size())
-            throw new InvalidArgumentException("The size of the arrays to create the sync data source configuration does not match");
+    public SyncDataSourceConfiguration(long id, String name, HashMap<String, String> parameters) throws InvalidArgumentException {
         this.id = id;
         this.name = name;
-        this.parameters = new HashMap<>();
-        
-        for (int i = 0; i < paramNames.size(); i++)
-            parameters.put(paramNames.get(i), paramValues.get(i));
+        this.parameters = parameters;
     }
 
     public long getId() {

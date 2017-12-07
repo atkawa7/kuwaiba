@@ -701,13 +701,6 @@ public interface BusinessEntityManager {
      */
     public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId);
     
-    public SynchronizationGroup getSyncgroup(long syncGroupId);
-    public List<SynchronizationGroup> getSyncgroups();
-    public List<SyncDataSourceConfiguration> getSyncDataSourceConfigurations(long syncGroupId)throws InvalidArgumentException;
-    public long createSyncgroup(String name, String syncProvider) throws InvalidArgumentException, ApplicationObjectNotFoundException;
-    public void updateSyncgroup(long syncGroupId, List<SyncDataSourceConfiguration> dataSourceConfigurations)throws InvalidArgumentException;
-    public long createSyncDataSourceConfig(long syncGroupId, String name, List<StringPair> parameters)throws ApplicationObjectNotFoundException;
-    
     /**
      * Reporting API. Reports are actually Application Objects, however, the BEM has many utility methods that can be used in the scripts to query for inventory objects
      */

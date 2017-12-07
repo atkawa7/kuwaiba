@@ -58,32 +58,24 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
     private SynchronizationGroup testSynGroup() {        
         try {
             List<SyncDataSourceConfiguration> agents = new ArrayList();
-            List<String> agentsParamNames = new ArrayList();
-            agentsParamNames.add("id"); //NOI18N
-            agentsParamNames.add("name"); //NOI18N
-            agentsParamNames.add("class"); //NOI18N
-            agentsParamNames.add("address"); //NOI18N
-            agentsParamNames.add("port"); //NOI18N
-            agentsParamNames.add("readCommunity"); //NOI18N
+            HashMap<String, String> config1Params = new HashMap<>();
+            config1Params.put("id", "888"); //NOI18N
+            config1Params.put("name", "test1"); //NOI18N
+            config1Params.put("class", "Test1"); //NOI18N
+            config1Params.put("address", "127.0.0.1"); //NOI18N
+            config1Params.put("port", "1161"); //NOI18N
+            config1Params.put("community", "community1"); //NOI18N
 
-            List<String> agent1ParamValues = new ArrayList();
-            agent1ParamValues.add("888"); //NOI18N
-            agent1ParamValues.add("test1"); //NOI18N
-            agent1ParamValues.add("Test1"); //NOI18N
-            agent1ParamValues.add("127.0.0.1"); //NOI18N
-            agent1ParamValues.add("1161"); //NOI18N
-            agent1ParamValues.add("community2"); //NOI18N
-
-            List<String> agent2ParamValues = new ArrayList();
-            agent2ParamValues.add("999"); //NOI18N
-            agent2ParamValues.add("test2"); //NOI18N
-            agent2ParamValues.add("Test2"); //NOI18N
-            agent2ParamValues.add("127.0.0.1"); //NOI18N
-            agent2ParamValues.add("1161"); //NOI18N
-            agent2ParamValues.add("community1"); //NOI18N
-        
-            SyncDataSourceConfiguration agent1 = new SyncDataSourceConfiguration(1, "agent1", agentsParamNames, agent1ParamValues); //NOI18N
-            SyncDataSourceConfiguration agent2 = new SyncDataSourceConfiguration(2, "agent2", agentsParamNames, agent2ParamValues); //NOI18N
+            HashMap<String, String> config2Params = new HashMap<>();
+            config1Params.put("id", "999"); //NOI18N
+            config1Params.put("name", "test2"); //NOI18N
+            config1Params.put("class", "Test2"); //NOI18N
+            config1Params.put("address", "127.0.0.1"); //NOI18N
+            config1Params.put("port", "1161"); //NOI18N
+            config1Params.put("community", "community2"); //NOI18N
+            
+            SyncDataSourceConfiguration agent1 = new SyncDataSourceConfiguration(1, "agent1", config1Params); //NOI18N
+            SyncDataSourceConfiguration agent2 = new SyncDataSourceConfiguration(2, "agent2", config2Params); //NOI18N
             
             agents.add(agent1);
             agents.add(agent2);
