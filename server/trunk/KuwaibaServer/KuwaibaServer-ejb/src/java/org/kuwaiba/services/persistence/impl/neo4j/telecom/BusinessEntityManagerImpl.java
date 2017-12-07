@@ -20,9 +20,12 @@ import com.neotropic.kuwaiba.modules.reporting.defaults.DefaultReports;
 import com.neotropic.kuwaiba.modules.reporting.InventoryReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
+import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
+import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -30,8 +33,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.json.Json;
+import javax.json.JsonObject;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -65,6 +73,7 @@ import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.helpers.collection.IteratorUtil;
 
@@ -98,6 +107,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      */
     private Index<Node> poolsIndex;
     /**
+     * SyncGroup index
+     */
+    private Index<Node> syncGroupsIndex;
+    /**
      * Special nodes index
      */
     private Index<Node> specialNodesIndex;
@@ -128,6 +141,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             this.poolsIndex = graphDb.index().forNodes(Constants.INDEX_POOLS);
             this.reportsIndex = graphDb.index().forNodes(Constants.INDEX_REPORTS);
             this.specialNodesIndex = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
+            this.syncGroupsIndex = graphDb.index().forNodes(Constants.INDEX_SYNCGROUPS);
         }catch(Exception ex) {
             System.out.println(String.format("[KUWAIBA] [%s] An error was found while creating the BEM instance: %s", 
                     Calendar.getInstance().getTime(), ex.getMessage()));
@@ -1697,6 +1711,112 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         return mandatoryAttributes;
     }
     
+    
+    
+    //<editor-fold desc="SNMP synchronization" defaultstate="collapsed">
+    @Override
+    public SynchronizationGroup getSyncgroup(long syncGroupId){
+        try (Transaction tx = graphDb.beginTx()) {
+        
+            Node syncGroupNode = syncGroupsIndex.get(Constants.PROPERTY_ID, syncGroupId).getSingle();
+            return Util.createSyncGroupFromNode(syncGroupNode);
+
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | IllegalArgumentException | InvocationTargetException | InvalidArgumentException ex) {
+            Logger.getLogger(BusinessEntityManagerImpl.class.getName()).log(
+                    Level.SEVERE, "The provider name doesn't exists or the paramaters in the one SyncDataSourceConfiguration could be malformed", ex);
+        }
+        return null;
+    }
+    
+    @Override
+    public List<SynchronizationGroup> getSyncgroups(){
+        
+        List<SynchronizationGroup> synchronizationGroups = new ArrayList<>();
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            IndexHits<Node> syncGroupsNodes = syncGroupsIndex.query(Constants.PROPERTY_ID, "*");
+            
+            for (Node syncGroup : syncGroupsNodes)
+                synchronizationGroups.add(Util.createSyncGroupFromNode(syncGroup));
+                  
+            return synchronizationGroups;
+            
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | IllegalArgumentException | InvocationTargetException | InvalidArgumentException ex) {
+            Logger.getLogger(BusinessEntityManagerImpl.class.getName()).log(
+                    Level.SEVERE, "The provider name doesn't exists or the paramaters in the one SyncDataSourceConfiguration could be malformed", ex);
+        }
+        return null;
+    }
+    
+    @Override
+    public  List<SyncDataSourceConfiguration> getSyncDataSourceConfigurations(long syncGroupId) throws InvalidArgumentException{
+        List<SyncDataSourceConfiguration> syncDataSourcesConfigurations = new ArrayList<>();
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node syncGroupNode = syncGroupsIndex.get(Constants.PROPERTY_ID, syncGroupId).getSingle();
+            
+            for(Relationship rel : syncGroupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP))
+                syncDataSourcesConfigurations.add(Util.createSyncDataSourceConfigFromNode(rel.getEndNode()));
+        }
+        return syncDataSourcesConfigurations;
+    }
+    
+    @Override
+    public long createSyncgroup(String name, String syncProvider) throws InvalidArgumentException, ApplicationObjectNotFoundException{
+        if (name == null || name.trim().isEmpty())
+                throw new InvalidArgumentException("The name of the sync group can not be empty");
+        
+        if (syncProvider == null || syncProvider.trim().isEmpty())
+                throw new InvalidArgumentException("The syncProvider of the sync group can not be empty");
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node syncGroup = graphDb.createNode();
+            syncGroup.setProperty(Constants.PROPERTY_NAME, name);
+            syncGroup.setProperty(Constants.SYNC_SNMPPROVIDER, syncProvider);
+            
+            syncGroupsIndex.putIfAbsent(syncGroup, Constants.PROPERTY_ID, syncGroup.getId());
+            tx.success();
+
+            return syncGroup.getId();
+        }
+    }
+    
+    @Override
+    public void updateSyncgroup(long syncGroupId, List<SyncDataSourceConfiguration> dataSourceConfigurations)throws InvalidArgumentException{
+        if (dataSourceConfigurations == null)
+            throw new InvalidArgumentException("The dataSourceConfigurations of the sync group can not be null");
+        try (Transaction tx = graphDb.beginTx()) {
+            Node syncGroupNode = syncGroupsIndex.get(Constants.PROPERTY_ID, syncGroupId).getSingle();
+            
+            tx.success();
+        }
+    }
+    
+    @Override
+    public long createSyncDataSourceConfig(long syncGroupId, String name, List<StringPair> parameters) throws ApplicationObjectNotFoundException{
+        
+        JsonObject joParameters = Json.createObjectBuilder().build();
+        for (StringPair parameter : parameters)
+            joParameters = Util.jsonObjectToBuilder(joParameters).add(parameter.getKey(), parameter.getValue()).build();
+        
+        Node syncDataSourceConfigNode =  graphDb.createNode();
+        syncDataSourceConfigNode.setProperty(Constants.PROPERTY_NAME, name);
+        syncDataSourceConfigNode.setProperty("parameters", joParameters.toString());
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            Node syncGroupNode = syncGroupsIndex.get(Constants.PROPERTY_ID, syncGroupId).getSingle();
+            
+            if(syncGroupNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The sync group with id %s could not be find", syncGroupId));
+            
+            syncDataSourceConfigNode.createRelationshipTo(syncGroupNode, RelTypes.BELONGS_TO_GROUP);
+            tx.success();
+            return syncDataSourceConfigNode.getId();
+        }           
+    }
+    //</editor-fold>
+    
     //<editor-fold desc="Reporting API implementation" defaultstate="collapsed">
         @Override
     public long createClassLevelReport(String className, String reportName, String reportDescription, 
@@ -2354,8 +2474,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         return true;
     }
     //</editor-fold>
-    
-    
     
     private List<RemoteBusinessObjectLight> getObjectsWithFilterLight (Node classNode, 
             String filterName, String filterValue) {

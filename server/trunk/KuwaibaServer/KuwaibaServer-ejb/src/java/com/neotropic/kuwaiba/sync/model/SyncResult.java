@@ -34,7 +34,7 @@ public class SyncResult {
      * The textual description of the result of that action
      */
     private String result;
-
+   
     public SyncResult() { }
 
     public SyncResult(String actionDescription, String result) {

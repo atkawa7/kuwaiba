@@ -41,8 +41,11 @@ public class SynchronizationGroup {
      */
     private List<SyncDataSourceConfiguration> syncDataSourceConfigurations;
     
-    public SynchronizationGroup(long id, String name, AbstractSyncProvider provider, List<SyncDataSourceConfiguration> syncDataSourceConfigurations) {
+    public SynchronizationGroup(long id, String name, 
+            AbstractSyncProvider provider, 
+            List<SyncDataSourceConfiguration> syncDataSourceConfigurations) {
         this.id = id;
+        this.name = name;
         this.provider = provider;
         this.syncDataSourceConfigurations = syncDataSourceConfigurations;
     }

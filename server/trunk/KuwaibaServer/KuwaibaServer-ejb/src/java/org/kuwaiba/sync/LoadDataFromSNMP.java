@@ -527,7 +527,7 @@ public class LoadDataFromSNMP {
     }  
     
     /**
-    * Creates the has map of classes to create the hierarchy containmet
+    * Creates the has map of classes to create the hierarchy containment
     */
     private void createMapOfClasses(){
         mapOfClasses = new HashMap<>();

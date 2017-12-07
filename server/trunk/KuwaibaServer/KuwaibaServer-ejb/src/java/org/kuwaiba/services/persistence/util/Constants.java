@@ -130,6 +130,10 @@ public class Constants {
      */
     public static final String INDEX_TASKS = "tasks"; //NOI18N
     /**
+     * Name of the index for tasks
+     */
+    public static final String INDEX_SYNCGROUPS = "syncGroups"; //NOI18N
+    /**
      * Name of the index for reports
      */
     public static final String INDEX_REPORTS = "reports"; //NOI18N
@@ -180,6 +184,14 @@ public class Constants {
     public static final String PROPERTY_BACKGROUND = "background"; //NOI18N
     public static final String PROPERTY_PRIVILEGES = "privileges"; //NOI18N
     public static final String PROPERTY_NAME = "name"; //NOI18N
+    /**
+     * the name of the providerSNMP
+     */
+    public static final String SYNC_SNMPPROVIDER = "SnmpSyncProvider"; //NOI18N
+    public static final String SYNC_SNMPDATACONFIG = "dataSourceConfig"; //NOI18N
+    public static final String SYNC_SNMPPORT = "port"; //NOI18N
+    public static final String SYNC_SNMPIPADDRESS = "ip"; //NOI18N
+    public static final String SYNC_SNMPCOMMUNITY = "community"; //NOI18N
     /** 
      * Defines if the attribute of a class is mandatory or not
      */
@@ -344,6 +356,10 @@ public class Constants {
      * Privileges root node name
      */
     public static final String NODE_PRIVILEGES = "Privilges";
+    /**
+     * Sync root node name
+     */
+    public static final String NODE_SYNCGROUPSROOT = "SyncGroupsRoot"; //NOI18N
     /**
      * Date format for queries
      */

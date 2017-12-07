@@ -538,11 +538,17 @@ public interface WebserviceBeanRemote {
         // </editor-fold>
         
         //<editor-fold desc="Inventory Synchronization" defaultstate="collapsed">
-        public long createSynchronizationDataSourceConfig(String name, List<StringPair> parameters, String syncGroupId, String ipAddress, String sessionId) throws ServerSideException;
-        public long createSynchronizationGroup(String name,String syncProviderId, String ipAddress, String sessionId)throws ServerSideException;
-        public void updateSyncDataSourceConfiguration(String syncDataSourceConfigId, List<StringPair> parameters, String ipAddress, String sessionId)throws ServerSideException;
+        public long createSynchronizationGroup(String name, String syncProviderId, String ipAddress, String sessionId)throws ServerSideException;
+        public void updateSynchronizationGroup(long syncGroupId, List<Long> SyncDataSourceConfigIds, String ipAddress, String sessionId)throws ServerSideException;
+        
+        
+        public long createSynchronizationDataSourceConfig(long syncGroupId, String name, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
+        public void updateSyncDataSourceConfiguration(long syncDataSourceConfigId, List<StringPair> parameters, String ipAddress, String sessionId)throws ServerSideException;
+        
+      
+        
         public List<RemoteSynchronizationGroup> getSynchronizationGroups(String ipAddress, String sessionId)throws ServerSideException;
-        public List<RemoteSynchronizationConfiguration> getSyncDataSourceConfigurations(String syncDataSourceConfigId, String ipAddress, String sessionId)throws ServerSideException;
+        public List<RemoteSynchronizationConfiguration> getSyncDataSourceConfigurations(long syncGroupId, String ipAddress, String sessionId)throws ServerSideException;
         public void deleteSynchronizationGroup(String syncGroupId, String ipAddress, String sessionId)throws ServerSideException;
         public void deleteSynchronizationDataSourceConfig(String syncDataSourceConfigId, String ipAddress, String sessionId)throws ServerSideException;
         //</editor-fold>

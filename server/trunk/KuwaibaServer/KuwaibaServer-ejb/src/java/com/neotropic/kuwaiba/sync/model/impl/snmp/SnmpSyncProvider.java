@@ -50,7 +50,6 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
         return SnmpSyncProvider.class.getName();
     }
     
-    @Override
     public boolean isAutomatic() {
         return false;
     }
@@ -105,7 +104,7 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
     public HashMap<RemoteBusinessObjectLight, AbstractDataEntity> mappedPoll(SynchronizationGroup syncGroup) {
         syncGroup = testSynGroup();
         try {
-            result  = new HashMap();
+            HashMap<RemoteBusinessObjectLight, AbstractDataEntity> result  = new HashMap();
                         
             SnmpManager snmpMananger = SnmpManager.getInstance();
             

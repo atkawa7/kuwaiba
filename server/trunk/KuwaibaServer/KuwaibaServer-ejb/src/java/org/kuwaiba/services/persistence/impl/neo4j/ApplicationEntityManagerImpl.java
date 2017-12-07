@@ -152,7 +152,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      * Index for general views (those not related to a particular object)
      */
     private Index<Node> generalViewsIndex;
-    /**
+    /**    /**
+
      * Index for special nodes(like group root node)
      */
     private Index<Node> specialNodesIndex;

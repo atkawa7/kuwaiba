@@ -18,8 +18,12 @@ package org.kuwaiba.apis.persistence.business;
 
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
+import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
+import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
+import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.util.HashMap;
 import java.util.List;
+import javax.sql.rowset.spi.SyncProvider;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -696,6 +700,13 @@ public interface BusinessEntityManager {
      * @deprecated This method shouldn't be here since it's context dependant. Don't use it, will be removed in the future
      */
     public List<RemoteBusinessObjectLight> getPhysicalPath(String objectClass, long objectId);
+    
+    public SynchronizationGroup getSyncgroup(long syncGroupId);
+    public List<SynchronizationGroup> getSyncgroups();
+    public List<SyncDataSourceConfiguration> getSyncDataSourceConfigurations(long syncGroupId)throws InvalidArgumentException;
+    public long createSyncgroup(String name, String syncProvider) throws InvalidArgumentException, ApplicationObjectNotFoundException;
+    public void updateSyncgroup(long syncGroupId, List<SyncDataSourceConfiguration> dataSourceConfigurations)throws InvalidArgumentException;
+    public long createSyncDataSourceConfig(long syncGroupId, String name, List<StringPair> parameters)throws ApplicationObjectNotFoundException;
     
     /**
      * Reporting API. Reports are actually Application Objects, however, the BEM has many utility methods that can be used in the scripts to query for inventory objects

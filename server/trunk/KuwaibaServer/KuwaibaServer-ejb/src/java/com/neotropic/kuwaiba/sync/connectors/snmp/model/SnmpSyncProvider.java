@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
@@ -103,7 +103,8 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
 
     @Override
     public HashMap<RemoteBusinessObjectLight, AbstractDataEntity> mappedPoll(SynchronizationGroup syncGroup) {
-        syncGroup = testSynGroup();
+        //syncGroup = testSynGroup();
+        //syncGroup.ge
         try {
             HashMap<RemoteBusinessObjectLight, AbstractDataEntity> result  = new HashMap();
                         

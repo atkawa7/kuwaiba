@@ -28,8 +28,10 @@ import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import com.neotropic.kuwaiba.scheduling.BackgroundJob;
 import com.neotropic.kuwaiba.scheduling.JobManager;
+import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
+import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -91,6 +93,7 @@ import org.kuwaiba.ws.toserialize.application.RemoteResultMessage;
 import org.kuwaiba.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.ws.toserialize.application.RemoteSynchronizationConfiguration;
 import org.kuwaiba.ws.toserialize.application.RemoteSynchronizationGroup;
+import org.kuwaiba.ws.toserialize.application.RemoteSynchronizationProvider;
 import org.kuwaiba.ws.toserialize.application.RemoteTask;
 import org.kuwaiba.ws.toserialize.application.RemoteTaskResult;
 import org.kuwaiba.ws.toserialize.application.ResultRecord;
@@ -4274,13 +4277,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
         // </editor-fold>    
         //<editor-fold desc="Synchronization API" defaultstate="collapsed">
         @Override
-        public long createSynchronizationDataSourceConfig(String name, List<StringPair> parameters, String syncGroupId, String ipAddress, String sessionId) throws ServerSideException{
+        public long createSynchronizationDataSourceConfig(long syngGroupId, String name, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException{
             if (aem == null)
                 throw new ServerSideException("Can't reach the backend. Contact your administrator");
             try {
                 aem.validateWebServiceCall("createSynchronizationDataSourceConfig", ipAddress, sessionId);
-                
-                return 0;
+                return bem.createSyncDataSourceConfig(syngGroupId, name, parameters);
             } catch (InventoryException ex) {
                 throw new ServerSideException(ex.getMessage());
             }
@@ -4292,15 +4294,14 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 throw new ServerSideException("Can't reach the backend. Contact your administrator");
             try {
                 aem.validateWebServiceCall("createSynchronizationGroup", ipAddress, sessionId);
-                
-                return 0;
+                return bem.createSyncgroup(name, syncProviderId);
             } catch (InventoryException ex) {
                 throw new ServerSideException(ex.getMessage());
             }
         }
         
         @Override
-        public void updateSyncDataSourceConfiguration(String syncDataSourceConfigId, List<StringPair> parameters, String ipAddress, String sessionId)throws ServerSideException{
+        public void updateSynchronizationGroup(long syncGroupId, List<Long> SyncDataSourceConfigIds, String ipAddress, String sessionId)throws ServerSideException{
             if (aem == null)
                 throw new ServerSideException("Can't reach the backend. Contact your administrator");
             try {
@@ -4310,7 +4311,19 @@ public class WebserviceBean implements WebserviceBeanRemote {
             } catch (InventoryException ex) {
                 throw new ServerSideException(ex.getMessage());
             }
+        }
         
+        @Override
+        public void updateSyncDataSourceConfiguration(long syncDataSourceConfigId, List<StringPair> parameters, String ipAddress, String sessionId)throws ServerSideException{
+            if (aem == null)
+                throw new ServerSideException("Can't reach the backend. Contact your administrator");
+            try {
+                aem.validateWebServiceCall("updateSyncDataSourceConfiguration", ipAddress, sessionId);
+                
+                
+            } catch (InventoryException ex) {
+                throw new ServerSideException(ex.getMessage());
+            }
         }
         
         @Override
@@ -4319,21 +4332,40 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 throw new ServerSideException("Can't reach the backend. Contact your administrator");
             try {
                 aem.validateWebServiceCall("getSynchronizationGroups", ipAddress, sessionId);
-                
-                return null;
+
+                List<RemoteSynchronizationGroup> remoteSyncgroups = new ArrayList<>();
+                List<SynchronizationGroup> syncgroups = bem.getSyncgroups();
+                //new RemoteSynchronizationProvider(syncgroup.getProvider().getId(), syncgroup.getProvider().getName())
+                for (SynchronizationGroup syncgroup : syncgroups)
+                    remoteSyncgroups.add(new RemoteSynchronizationGroup(
+                            syncgroup.getId(), syncgroup.getName(), new RemoteSynchronizationProvider("com.neotropic.kuwaiba.sync.model.impl.snmp.SnmpSyncProvider", "com.neotropic.kuwaiba.sync.model.impl.snmp.SnmpSyncProvider")));
+               
+                return remoteSyncgroups;
             } catch (InventoryException ex) {
                 throw new ServerSideException(ex.getMessage());
             }
         }
         
         @Override
-        public List<RemoteSynchronizationConfiguration> getSyncDataSourceConfigurations(String syncDataSourceConfigId, String ipAddress, String sessionId)throws ServerSideException{
+        public List<RemoteSynchronizationConfiguration> getSyncDataSourceConfigurations(long syncGroupId, String ipAddress, String sessionId)throws ServerSideException{
             if (aem == null)
                 throw new ServerSideException("Can't reach the backend. Contact your administrator");
             try {
                 aem.validateWebServiceCall("getSyncDataSourceConfigurations", ipAddress, sessionId);
                 
-                return null;
+                List<RemoteSynchronizationConfiguration> RemoteSynchronizationConfigurations = new ArrayList<>();
+                
+                List<SyncDataSourceConfiguration> syncDataSourceConfigurations = bem.getSyncDataSourceConfigurations(syncGroupId);
+                
+                for (SyncDataSourceConfiguration syncDataSourceConfiguration : syncDataSourceConfigurations) {
+                    List<StringPair> params = new ArrayList<>();
+                    for(String key : syncDataSourceConfiguration.getParameters().keySet())
+                        params.add(new StringPair(key, syncDataSourceConfiguration.getParameters().get(key)));
+                    
+                    RemoteSynchronizationConfigurations.add(new RemoteSynchronizationConfiguration(params));
+                }
+                
+                return RemoteSynchronizationConfigurations;
             } catch (InventoryException ex) {
                 throw new ServerSideException(ex.getMessage());
             }
@@ -4384,7 +4416,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("launchSupervisedSynchronizationTask", ipAddress, sessionId);
-            //SyncGroup syncGroup = bem.getSyncgroup(syncGroupId)
+            //SyncGroup syncGroup = bem.getSyncgroup(syncGroupId);
             Properties parameters = new Properties();
             parameters.put("aem", aem);
             parameters.put("bem", bem);
