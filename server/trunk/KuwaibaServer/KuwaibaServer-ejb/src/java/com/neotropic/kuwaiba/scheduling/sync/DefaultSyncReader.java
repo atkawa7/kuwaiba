@@ -16,11 +16,12 @@
 
 package com.neotropic.kuwaiba.scheduling.sync;
 
+import com.neotropic.kuwaiba.sync.connectors.snmp.model.SnmpSyncProvider;
 import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.io.Serializable;
 import java.util.Properties;
-import javax.batch.api.chunk.AbstractItemReader;
+import javax.batch.api.chunk.ItemReader;
 import javax.batch.operations.JobOperator;
 import javax.batch.runtime.BatchRuntime;
 import javax.batch.runtime.context.JobContext;
@@ -34,9 +35,13 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
  * structure in memory 
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class DefaultSyncReader extends AbstractItemReader {
+public class DefaultSyncReader implements ItemReader {
     @Inject
     private JobContext jobContext;
+    /**
+     * The job execution id is used to prevent the multiple execution of the read item method
+     */
+    private long jobExecutionId = -1;
     private AbstractSyncProvider syncProvider;
     private SynchronizationGroup syncGroup;
     
@@ -54,6 +59,25 @@ public class DefaultSyncReader extends AbstractItemReader {
     
     @Override
     public Object readItem() throws Exception {
+        if (jobExecutionId == jobContext.getExecutionId())
+            return null; // Preventing the multiple execution of the read item method
+        else
+            jobExecutionId = jobContext.getExecutionId(); 
+        
+        //TOREMOVE: only for test propourse
+        syncGroup = SnmpSyncProvider.testSynGroup();
+        syncProvider = syncGroup.getProvider();
+        //TOREMOVE: only for test propourse
+        
+        jobContext.setTransientUserData(syncProvider);
         return syncProvider.mappedPoll(syncGroup);
+    }
+
+    @Override
+    public void close() throws Exception {}
+
+    @Override
+    public Serializable checkpointInfo() throws Exception {
+        return null;
     }
 }

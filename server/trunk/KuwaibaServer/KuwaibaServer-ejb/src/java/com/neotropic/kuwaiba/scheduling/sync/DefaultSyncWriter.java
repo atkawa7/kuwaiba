@@ -18,10 +18,7 @@ package com.neotropic.kuwaiba.scheduling.sync;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.batch.api.chunk.AbstractItemWriter;
 import javax.batch.api.chunk.ItemWriter;
-import javax.batch.runtime.context.JobContext;
-import javax.inject.Inject;
 
 /**
  * Executes the actions after having analyzed the differences between the
@@ -29,12 +26,22 @@ import javax.inject.Inject;
  * were defined in the ItemProcessor
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class DefaultSyncWriter extends AbstractItemWriter {
-    @Inject
-    private JobContext jobContext;
-    
+public class DefaultSyncWriter implements ItemWriter {
+        
     @Override
     public void writeItems(List<Object> items) throws Exception {
-        //TODO: logic to manage the snmp agent result java mapping
+    }
+
+    @Override
+    public void open(Serializable checkpoint) throws Exception {
+    }
+
+    @Override
+    public void close() throws Exception {
+    }
+
+    @Override
+    public Serializable checkpointInfo() throws Exception {
+        return null;
     }
 }

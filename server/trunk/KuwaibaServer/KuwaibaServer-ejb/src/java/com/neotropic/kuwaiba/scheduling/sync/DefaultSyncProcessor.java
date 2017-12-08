@@ -16,9 +16,13 @@
 
 package com.neotropic.kuwaiba.scheduling.sync;
 
+import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
+import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
+import java.util.HashMap;
 import javax.batch.api.chunk.ItemProcessor;
 import javax.batch.runtime.context.JobContext;
 import javax.inject.Inject;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 
 /**
  * Contains the logic that finds the differences between the polled device and the element in the inventory
@@ -30,7 +34,23 @@ public class DefaultSyncProcessor implements ItemProcessor {
     
     @Override
     public Object processItem(Object item) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //TODO: process item implementation to unmapped polls
+        AbstractSyncProvider syncProvider = null;
+        HashMap<RemoteBusinessObjectLight, AbstractDataEntity> mappedPollResult = null;
+        
+        if (jobContext.getTransientUserData() instanceof AbstractSyncProvider)
+            syncProvider = ((AbstractSyncProvider) jobContext.getTransientUserData());            
+        else
+            throw new Exception("Synchronization provider cannot be found");
+        
+        if (item instanceof HashMap)
+            mappedPollResult = (HashMap<RemoteBusinessObjectLight,AbstractDataEntity>) item;
+        else
+            throw new Exception("Mapped poll result can no be found");
+        for (RemoteBusinessObjectLight object : mappedPollResult.keySet())
+            syncProvider.sync(object.getClassName(), object.getId(), mappedPollResult.get(object));
+        return null; // If return null value, the job don't execute the writer 
+                     // and the job end with status COMPLETED
     }
 
 }

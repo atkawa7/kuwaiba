@@ -4427,12 +4427,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
             BackgroundJob backgroundJob = new BackgroundJob("DefaultSyncJob", false, parameters);
             JobManager.getInstance().launch(backgroundJob);
             //TODO: mapped the BatchStatus enum in BackgroundJob.JOB_STATUS
-            /** TODO: review because this code make a infinity loop.
-            String batchStatus = BatchRuntime.getJobOperator().getJobExecution(backgroundJob.getId()).getBatchStatus().name();
-            while (!BatchStatus.COMPLETED.name().equals(batchStatus) && 
-               !BatchStatus.FAILED.name().equals(batchStatus)) // loop while the job is not ending
-                batchStatus = BatchRuntime.getJobOperator().getJobExecution(backgroundJob.getId()).getBatchStatus().name();
-            */                  
+            // TODO: review because this code make a infinity loop.
+            //String batchStatus = BatchRuntime.getJobOperator().getJobExecution(backgroundJob.getId()).getBatchStatus().name();
+            //while (!BatchStatus.COMPLETED.name().equals(batchStatus) && 
+            //   !BatchStatus.FAILED.name().equals(batchStatus)) // loop while the job is not ending
+            //    batchStatus = BatchRuntime.getJobOperator().getJobExecution(backgroundJob.getId()).getBatchStatus().name();
+                              
             return null; //To be implemented
 
         } catch (InventoryException ex) {

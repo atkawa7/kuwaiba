@@ -55,7 +55,7 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
         return false;
     }
     
-    private SynchronizationGroup testSynGroup() {        
+    public static SynchronizationGroup testSynGroup() {        
         try {
             List<SyncDataSourceConfiguration> agents = new ArrayList();
             HashMap<String, String> config1Params = new HashMap<>();
@@ -79,7 +79,7 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
             
             agents.add(agent1);
             agents.add(agent2);
-            SynchronizationGroup testSyncGroup = new SynchronizationGroup(0, "SNMPAgents", this, agents); //NOI18N
+            SynchronizationGroup testSyncGroup = new SynchronizationGroup(2126, "SNMPAgents", new SnmpSyncProvider(), agents); //NOI18N
             
             return testSyncGroup;
         } catch (InvalidArgumentException ex) {
@@ -157,6 +157,7 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
                         instances.add(cell.get(size));
                     value.put("instance", instances); //NOI18N
                     
+                    //TODO: check if the object with id and class name exist
                     result.put(new RemoteBusinessObjectLight(id, name, className), new SnmpEntPhysicalTable(value));
                 }
             }
@@ -167,8 +168,9 @@ public class SnmpSyncProvider extends AbstractSyncProvider {
     }
     
     @Override
-    public List<SyncFinding> sync(String className, long objectId, List<AbstractDataEntity> originalData) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public List<SyncFinding> sync(String className, long objectId, AbstractDataEntity originalData) {
+        //throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override
