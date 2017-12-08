@@ -48,7 +48,7 @@ public class DefaultSyncProcessor implements ItemProcessor {
         else
             throw new Exception("Mapped poll result can no be found");
         for (RemoteBusinessObjectLight object : mappedPollResult.keySet())
-            syncProvider.sync(object.getClassName(), object.getId(), mappedPollResult.get(object));
+            syncProvider.sync(object.getClassName(), object.getId(), null); //<--NOT null change!! 
         return null; // If return null value, the job don't execute the writer 
                      // and the job end with status COMPLETED
     }

@@ -1136,10 +1136,10 @@ public interface ApplicationEntityManager {
      * @param userId User Id
      * @param favoritesFolderName favorites folder name
      * @throws ApplicationObjectNotFoundException If the favorites folder can not be found
-     * @throws IllegalArgumentException If the name of the favorites folder is null or empty
+     * @throws InvalidArgumentException If the name of the favorites folder is null or empty
      */
     public void updateFavoritesFolder(long favoritesFolderId, long userId, String favoritesFolderName) 
-        throws ApplicationObjectNotFoundException, IllegalArgumentException;
+        throws ApplicationObjectNotFoundException, InvalidArgumentException;
     
     /**
      * Creates a business rule given a set of constraints

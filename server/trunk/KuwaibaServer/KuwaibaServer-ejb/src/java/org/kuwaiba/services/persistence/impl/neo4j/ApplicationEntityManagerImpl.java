@@ -3325,7 +3325,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public void updateFavoritesFolder(long favoritesFolderId, long userId, String favoritesFolderName) 
-        throws ApplicationObjectNotFoundException, IllegalArgumentException {
+        throws ApplicationObjectNotFoundException, InvalidArgumentException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node favoritesFolderNode = getFavoritesFolderForUser(favoritesFolderId, userId);
@@ -3337,7 +3337,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 favoritesFolderNode.setProperty(Constants.PROPERTY_NAME, favoritesFolderName);
                 tx.success();
             } else 
-                throw new IllegalArgumentException("Favorites folder name can not be empty");
+                throw new InvalidArgumentException("Favorites folder name can not be empty");
         }
     }
     

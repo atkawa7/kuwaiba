@@ -736,7 +736,7 @@ public class Util {
             List<SyncDataSourceConfiguration> syncDataSourceConfiguration = new ArrayList<>();
             
             for(Relationship rel : syncGroupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP))
-                syncDataSourceConfiguration.add(createSyncDataSourceConfigFromNode(rel.getEndNode()));
+                syncDataSourceConfiguration.add(createSyncDataSourceConfigFromNode(rel.getStartNode()));
             
             return  new SynchronizationGroup(syncGroupNode.getId(),
                     (String)syncGroupNode.getProperty(Constants.PROPERTY_NAME),

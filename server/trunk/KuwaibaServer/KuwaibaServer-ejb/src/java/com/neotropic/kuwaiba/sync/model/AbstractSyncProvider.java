@@ -71,7 +71,7 @@ public abstract class AbstractSyncProvider {
      * (for example, a Java matrix representing an SNMP table)
      * @return A set of results (e.g. new board on slot xxx, different serial number found for router yyyy)
      */
-    public abstract List<SyncFinding> sync(String className, long objectId, AbstractDataEntity originalData);
+    public abstract List<SyncFinding> sync(String className, long objectId, List<AbstractDataEntity> originalData);
     /**
      * Implement this method if the synchronization process won't be associated to a single object in the inventory, for example, 
      * if you want to see what virtual circuits were re-routed after switching to a backup link during a network failure 

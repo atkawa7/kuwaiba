@@ -16,7 +16,6 @@
 
 package com.neotropic.kuwaiba.scheduling.sync;
 
-import com.neotropic.kuwaiba.sync.connectors.snmp.model.SnmpSyncProvider;
 import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.io.Serializable;
@@ -65,8 +64,8 @@ public class DefaultSyncReader implements ItemReader {
             jobExecutionId = jobContext.getExecutionId(); 
         
         //TOREMOVE: only for test propourse
-        syncGroup = SnmpSyncProvider.testSynGroup();
-        syncProvider = syncGroup.getProvider();
+        //syncGroup = ReferenceSnmpSyncProvider.testSyncGroup();
+        //syncProvider = syncGroup.getProvider();
         //TOREMOVE: only for test propourse
         
         jobContext.setTransientUserData(syncProvider);
