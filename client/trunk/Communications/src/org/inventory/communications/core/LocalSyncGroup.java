@@ -81,10 +81,7 @@ public class LocalSyncGroup implements Comparable<LocalSyncGroup> {
         if (obj == null)
             return false;
         
-        if (!(obj instanceof LocalSyncGroup))
-            return false;
-        
-        return this.getId() == ((LocalSyncGroup) obj).getId();
+        return obj instanceof LocalSyncGroup && this.getId() == ((LocalSyncGroup) obj).getId();
     }
 
     @Override

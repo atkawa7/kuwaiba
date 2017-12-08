@@ -21,7 +21,7 @@ import java.util.HashMap;
  * This class represent Sync data source configuration
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class LocalSyncDataSourceConfiguration {
+public class LocalSyncDataSourceConfiguration implements Comparable<LocalSyncDataSourceConfiguration>{
      /**
      * Configuration id
      */
@@ -63,5 +63,15 @@ public class LocalSyncDataSourceConfiguration {
 
     public void setParameters(HashMap<String, String> parameters) {
         this.parameters = parameters;
+    }
+
+    @Override
+    public int compareTo(LocalSyncDataSourceConfiguration o) {
+        return getName().compareTo(o.getName());
+    }
+    
+    @Override
+    public String toString() {
+        return this.name;
     }
 }

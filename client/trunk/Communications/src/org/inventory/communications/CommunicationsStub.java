@@ -4582,14 +4582,22 @@ public class CommunicationsStub {
      * Create a Sync Data Source Configuration
      * @param syncGroupId The name of the sync group id
      * @param syncDataSourceConfigName name of the data source configuration
-     * @param parameters the parameters need it to make the sync id, name, className, IP address, port, community
-     * @return The local representation of the Favorites folder
+     * @param parameters the parameters associated to the configuration
+     * @return The local representation of the sync configuration
      */        
-    public LocalSyncGroup createSyncDataSourceConfiguration(long syncGroupId, String syncDataSourceConfigName, List<StringPair> parameters) {
+    public LocalSyncDataSourceConfiguration createSyncDataSourceConfiguration(long syncGroupId, String syncDataSourceConfigName, HashMap<String, String> parameters) {
         try {
-            long id = service.createSynchronizationDataSourceConfig(syncDataSourceConfigName, parameters, syncGroupId, session.getSessionId());
-            //return new LocalSyncGroup(id, syncGroupName, providerName);
-            return null;
+            List<StringPair> remoteParameters = new ArrayList<>();
+            
+            for (String paramName : parameters.keySet()) {
+                StringPair remoteParameter = new StringPair();
+                remoteParameter.setKey(paramName);
+                remoteParameter.setValue(parameters.get(paramName));
+                remoteParameters.add(remoteParameter);
+            }
+            
+            long id = service.createSynchronizationDataSourceConfig(syncDataSourceConfigName, remoteParameters, syncGroupId, session.getSessionId());
+            return new LocalSyncDataSourceConfiguration(id, syncDataSourceConfigName, parameters);
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -4637,11 +4645,21 @@ public class CommunicationsStub {
      * @param syncGroupId the synchronization group id
      * @return a list of the data source configurations
      */
-    public List<LocalSyncDataSourceConfiguration> getSyncDataSourceConfiguration(long syncGroupId){
+    public List<LocalSyncDataSourceConfiguration> getSyncDataSourceConfigurations(long syncGroupId){
         try {
-            List<RemoteSynchronizationConfiguration> syncDataSourceConfigurations = service.getSyncDataSourceConfigurations(syncGroupId, session.getSessionId());
-            //return new LocalSyncGroup(id, syncGroupName, providerName);
-            return null;
+            List<LocalSyncDataSourceConfiguration> res = new ArrayList<>();
+            List<RemoteSynchronizationConfiguration> syncDataSourceConfigurations = 
+                    service.getSyncDataSourceConfigurations(syncGroupId, session.getSessionId());
+            
+            for (RemoteSynchronizationConfiguration remoteConfiguration : syncDataSourceConfigurations) {
+                HashMap<String, String> parameters = new HashMap<>();
+                for (StringPair parameter : remoteConfiguration.getParameters())
+                    parameters.put(parameter.getKey(), parameter.getValue());
+                
+                res.add(new LocalSyncDataSourceConfiguration(remoteConfiguration.getId(), remoteConfiguration.getName(), parameters));
+            }
+                        
+            return res;
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;

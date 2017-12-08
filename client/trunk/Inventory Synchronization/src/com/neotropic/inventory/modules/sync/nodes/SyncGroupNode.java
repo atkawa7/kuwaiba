@@ -25,12 +25,11 @@ import java.util.List;
 import java.util.Objects;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalSyncDataSourceConfiguration;
 import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -38,19 +37,16 @@ import org.openide.nodes.Sheet;
 import org.openide.util.lookup.Lookups;
 
 /**
- * Represents a Sync Group
+ * Node representing a sync group
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class SyncGroupNode extends AbstractNode implements PropertyChangeListener {
-    public static final String ICON_PATH = "com/neotropic/inventory/modules/sync/res/icon.png";
-    private static final Image icon = ImageUtilities.loadImage(ICON_PATH);
+    private static final Image icon = ImageUtilities.loadImage("com/neotropic/inventory/modules/sync/res/sync_group.png");
     
-    private LocalSyncGroup localSyncGroup;
     protected Sheet sheet;
     
     public SyncGroupNode(LocalSyncGroup localSyncGroup) {
-        super(new SyncGroupChildren(), Lookups.singleton(localSyncGroup));
-        this.localSyncGroup = localSyncGroup;
+        super(new SyncGroupNodeChildren(), Lookups.singleton(localSyncGroup));
 //TODO HERE!               
 //        if (localSyncGroup.getName() != null)
 //            localSyncGroup.addPropertyChangeListener(WeakListeners.propertyChange(this, localSyncGroup));
@@ -59,8 +55,8 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
     @Override
     public void setName(String newName) {
         if (newName != null) {
-            if (CommunicationsStub.getInstance().updateFavoritesFolder(localSyncGroup.getId(), newName)) {
-                localSyncGroup.setName(newName);
+            if (CommunicationsStub.getInstance().updateFavoritesFolder(getLookup().lookup(LocalSyncGroup.class).getId(), newName)) {
+                getLookup().lookup(LocalSyncGroup.class).setName(newName);
                 if (getSheet() != null)
                     setSheet(createSheet());
             } else {
@@ -72,21 +68,17 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
     
     @Override
     public String getName(){
-        return localSyncGroup.getName();
+        return getLookup().lookup(LocalSyncGroup.class).getName();
     }
     
     @Override
     public String getDisplayName() {
-        return localSyncGroup.toString();
+        return getLookup().lookup(LocalSyncGroup.class).toString();
     }
     
     @Override
     public Action[] getActions(boolean context) {
-        return new Action[] {NewSyncDataSourceConfigurationAction.getInstance()};
-    }
-    
-    public LocalSyncGroup getLocalSyncGroup() {
-        return localSyncGroup;
+        return new Action[] { NewSyncDataSourceConfigurationAction.getInstance() };
     }
         
     @Override
@@ -123,17 +115,15 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
     
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof SyncGroupNode) {
-            return ((SyncGroupNode) obj).getLocalSyncGroup().equals(getLocalSyncGroup());
-        } else {
-            return false;
-        }
+        return obj instanceof SyncGroupNode && 
+                ((SyncGroupNode) obj).getLookup().lookup(LocalSyncGroup.class).equals(getLookup().lookup(LocalSyncGroup.class));
+        
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 79 * hash + Objects.hashCode(this.localSyncGroup);
+        hash = 79 * hash + Objects.hashCode(getLookup().lookup(LocalSyncGroup.class));
         return hash;
     }
     
@@ -144,30 +134,29 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getSource().equals(localSyncGroup)) {
-            localSyncGroup = (LocalSyncGroup) evt.getSource();
+        if (evt.getSource().equals(getLookup().lookup(LocalSyncGroup.class))) {
             if (evt.getPropertyName().equals(Constants.PROPERTY_NAME)) {                
                 setDisplayName(getDisplayName());
-                fireNameChange(null, localSyncGroup.getName());
+                fireNameChange(null, getLookup().lookup(LocalSyncGroup.class).getName());
             }
         }
     }
     
-    public static class SyncGroupChildren extends Children.Keys<LocalObjectLight> {
+    public static class SyncGroupNodeChildren extends Children.Keys<LocalSyncDataSourceConfiguration> {
         
         @Override
         public void addNotify() {
-            SyncGroupNode selectedNode = (SyncGroupNode) getNode();
+            LocalSyncGroup selectedSyncGroup = ((SyncGroupNode) getNode()).getLookup().lookup(LocalSyncGroup.class);
+            List<LocalSyncDataSourceConfiguration> dataSourceConfigurations = CommunicationsStub.getInstance().
+                    getSyncDataSourceConfigurations(selectedSyncGroup.getId());
             
-            List<LocalObjectLight> commDevices = CommunicationsStub.getInstance().getObjectsInFavoritesFolder(selectedNode.getLocalSyncGroup().getId(), -1);
-            
-            if (commDevices == null) {
+            if (dataSourceConfigurations == null) {
                 setKeys(Collections.EMPTY_LIST);
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 
                     CommunicationsStub.getInstance().getError());
             } else {
-                Collections.sort(commDevices);
-                setKeys(commDevices);
+                Collections.sort(dataSourceConfigurations);
+                setKeys(dataSourceConfigurations);
             }
         }
         
@@ -177,8 +166,8 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
         }
         
         @Override
-        protected Node[] createNodes(LocalObjectLight key) {
-            return new Node [] { new ObjectNode(key) };
+        protected Node[] createNodes(LocalSyncDataSourceConfiguration key) {
+            return new Node [] { new SyncConfigurationNode(key) };
         }
     }
 }
