@@ -29,9 +29,8 @@ import org.openide.awt.ActionRegistration;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @ActionID(id = "org.inventory.core.services.api.actions.RefreshLocalCacheAction", category = "View")
-@ActionRegistration(iconBase = "org/inventory/core/services/res/refresh-cache.png", displayName = "org.inventory.core.services.Bundle#CTL_Refresh", iconInMenu = true)
+@ActionRegistration(iconBase = "org/inventory/core/services/res/refresh-cache.png", displayName = "org.inventory.core.services.Bundle#CTL_RefreshLocalCache", iconInMenu = true)
 @ActionReferences(value = {
-    @ActionReference(path = "Shortcuts", name = "F5"),
     @ActionReference(path = "Menu/View", name = "org-inventory-core-services-api-actions-RefreshLocalCacheAction", position = 105),
     @ActionReference(path = "Toolbars/00_General", name = "org-inventory-core-services-api-actions-RefreshLocalCacheAction", position = 3)})
 public final class RefreshLocalCacheAction implements ActionListener {

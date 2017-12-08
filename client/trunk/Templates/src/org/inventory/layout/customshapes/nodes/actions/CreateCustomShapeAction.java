@@ -39,7 +39,7 @@ public class CreateCustomShapeAction extends GenericInventoryAction {
 
     @Override
     public LocalPrivilege getPrivilege() {
-        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_MODELS_LAYOUTS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_TEMPLATES, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 
     @Override

@@ -40,11 +40,11 @@ public class ReleaseMirrorPortAction extends GenericObjectNodeAction implements 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (JOptionPane.showConfirmDialog(null, 
-                "Are you sure you want to release this mirror port?", I18N.gm("warning"), 
+                "Are you sure you want to disconnect this mirror port?", I18N.gm("warning"), 
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
         
             if (CommunicationsStub.getInstance().releaseMirrorPort(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid()))
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, "Miror port released successfully");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, "Miror port disconnected successfully");
             else
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());        
         }

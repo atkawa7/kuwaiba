@@ -46,7 +46,7 @@ public class ShowDeviceLayoutView extends GenericObjectNodeAction implements Gen
 
     @Override
     public LocalPrivilege getPrivilege() {
-        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_MODELS_LAYOUTS, LocalPrivilege.ACCESS_LEVEL_READ);
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SYNC, LocalPrivilege.ACCESS_LEVEL_READ);
     }
 
     @Override

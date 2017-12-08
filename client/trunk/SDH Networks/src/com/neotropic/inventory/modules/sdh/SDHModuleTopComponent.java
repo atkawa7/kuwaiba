@@ -122,11 +122,12 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         btnSave = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnExport = new javax.swing.JButton();
-        btnShowConnectionLabels = new javax.swing.JToggleButton();
+        btnRefresh = new javax.swing.JButton();
+        sep1 = new javax.swing.JToolBar.Separator();
         btnSelect = new javax.swing.JToggleButton();
         btnConnect = new javax.swing.JToggleButton();
-        btnRefresh = new javax.swing.JButton();
-        sepConnections = new javax.swing.JToolBar.Separator();
+        btnShowConnectionLabels = new javax.swing.JToggleButton();
+        sep2 = new javax.swing.JToolBar.Separator();
         btnTransportLink = new javax.swing.JToggleButton();
         btnContainerLink = new javax.swing.JToggleButton();
         btnTributaryLink = new javax.swing.JToggleButton();
@@ -196,18 +197,19 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         });
         barTools.add(btnExport);
 
-        btnShowConnectionLabels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/hide_conn_labels.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnShowConnectionLabels, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnShowConnectionLabels.text")); // NOI18N
-        btnShowConnectionLabels.setToolTipText(org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnShowConnectionLabels.toolTipText")); // NOI18N
-        btnShowConnectionLabels.setFocusable(false);
-        btnShowConnectionLabels.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnShowConnectionLabels.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnShowConnectionLabels.addActionListener(new java.awt.event.ActionListener() {
+        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/refresh.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnRefresh.text")); // NOI18N
+        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnRefresh.toolTipText")); // NOI18N
+        btnRefresh.setFocusable(false);
+        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnShowConnectionLabelsActionPerformed(evt);
+                btnRefreshActionPerformed(evt);
             }
         });
-        barTools.add(btnShowConnectionLabels);
+        barTools.add(btnRefresh);
+        barTools.add(sep1);
 
         btnGrpTools.add(btnSelect);
         btnSelect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/select.png"))); // NOI18N
@@ -236,19 +238,19 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         });
         barTools.add(btnConnect);
 
-        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/refresh.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnRefresh.text")); // NOI18N
-        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnRefresh.toolTipText")); // NOI18N
-        btnRefresh.setFocusable(false);
-        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+        btnShowConnectionLabels.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/hide_conn_labels.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnShowConnectionLabels, org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnShowConnectionLabels.text")); // NOI18N
+        btnShowConnectionLabels.setToolTipText(org.openide.util.NbBundle.getMessage(SDHModuleTopComponent.class, "SDHModuleTopComponent.btnShowConnectionLabels.toolTipText")); // NOI18N
+        btnShowConnectionLabels.setFocusable(false);
+        btnShowConnectionLabels.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnShowConnectionLabels.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnShowConnectionLabels.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRefreshActionPerformed(evt);
+                btnShowConnectionLabelsActionPerformed(evt);
             }
         });
-        barTools.add(btnRefresh);
-        barTools.add(sepConnections);
+        barTools.add(btnShowConnectionLabels);
+        barTools.add(sep2);
 
         btnGrpConnections.add(btnTransportLink);
         btnTransportLink.setIcon(new javax.swing.ImageIcon(getClass().getResource("/com/neotropic/inventory/modules/sdh/res/btnTransportLink.png"))); // NOI18N
@@ -459,7 +461,8 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
     private javax.swing.JToggleButton btnTransportLink;
     private javax.swing.JToggleButton btnTributaryLink;
     private javax.swing.JScrollPane pnlScrollMain;
-    private javax.swing.JToolBar.Separator sepConnections;
+    private javax.swing.JToolBar.Separator sep1;
+    private javax.swing.JToolBar.Separator sep2;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
