@@ -1303,6 +1303,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     instances.add(Util.createRemoteObjectLightFromNode(rel.getStartNode()));
                 }
             }
+            
+            Collections.sort(instances);
             return instances;
         }
     }

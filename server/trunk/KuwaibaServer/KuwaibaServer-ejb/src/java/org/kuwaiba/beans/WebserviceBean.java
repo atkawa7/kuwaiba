@@ -4367,7 +4367,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 for(String key : syncDataSourceConfiguration.getParameters().keySet())
                     params.add(new StringPair(key, syncDataSourceConfiguration.getParameters().get(key)));
 
-                RemoteSynchronizationConfigurations.add(new RemoteSynchronizationConfiguration(params));
+                RemoteSynchronizationConfigurations.add(new RemoteSynchronizationConfiguration(
+                        syncDataSourceConfiguration.getId(), syncDataSourceConfiguration.getName(), params));
             }
 
             return RemoteSynchronizationConfigurations;

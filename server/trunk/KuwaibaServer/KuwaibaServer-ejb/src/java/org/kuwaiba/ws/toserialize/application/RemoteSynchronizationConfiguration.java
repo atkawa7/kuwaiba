@@ -22,23 +22,50 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.ws.todeserialize.StringPair;
 
 /**
- * Wrapper of SynchronizationGroup
+ * Wrapper of SynchronizationDataSourceConfiguration
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class RemoteSynchronizationConfiguration implements Serializable {
     /**
+     * Sync config id
+     */
+    private long id;
+    /**
      * The list of configuration parameters
      */ 
     private List<StringPair> parameters;
+    /**
+     * Sync config name
+     */
+    private String name;
+    
 
     public RemoteSynchronizationConfiguration() { }
 
-    public RemoteSynchronizationConfiguration(List<StringPair> parameters) {
+    public RemoteSynchronizationConfiguration(long id, String name, List<StringPair> parameters) {
+        this.id = id;
+        this.name = name;
         this.parameters = parameters;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     public List<StringPair> getParameters() {
         return parameters;
     }
