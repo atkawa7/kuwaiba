@@ -15,7 +15,7 @@
  */
 package com.neotropic.inventory.modules.sync.nodes;
 
-import com.neotropic.inventory.modules.sync.actions.NewSyncGroupAction;
+import com.neotropic.inventory.modules.sync.nodes.actions.SyncManagerActionFactory;
 import java.awt.Image;
 import java.util.Collections;
 import java.util.List;
@@ -44,7 +44,7 @@ public class SyncGroupRootNode extends AbstractNode {
     
     @Override
     public Action[] getActions(boolean context){
-        return new Action[]{ NewSyncGroupAction.getInstance() };
+        return new Action[] { SyncManagerActionFactory.getNewSyncGroupAction() };
     }
     
     @Override

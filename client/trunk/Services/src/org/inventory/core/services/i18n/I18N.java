@@ -17,7 +17,7 @@ package org.inventory.core.services.i18n;
 import java.util.Locale;
 
 /**
- * a wrapper to get the internationalization bundles with a short syntax 
+ * A wrapper to fetch the internationalization keys using a short syntax 
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class I18N {

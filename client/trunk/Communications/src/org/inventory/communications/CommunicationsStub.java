@@ -4621,7 +4621,10 @@ public class CommunicationsStub {
         }
     }
     
-    
+    /**
+     * Gets the available sync groups
+     * @return The list of available sync groups. Null otherwise
+     */
     public List<LocalSyncGroup> getSyncGroups(){
         try {
             List<LocalSyncGroup> localSyncGroup = new ArrayList<>();
@@ -4663,6 +4666,23 @@ public class CommunicationsStub {
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
+        }
+    }
+    
+    /**
+     * Launches a synchronization that requires a user to review the actions to be taken upon finding differences 
+     * between what's on he sync data sources and the inventory system
+     * @param syncGroupId The id of the sync group associated to the requested task
+     * @return The list of differences
+     */
+    public boolean launchSupervisedSynchronizationTask(long syncGroupId) {
+        try {
+            service.launchSupervisedSynchronizationTask(syncGroupId, session.getSessionId());
+            
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
         }
     }
     

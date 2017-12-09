@@ -15,7 +15,7 @@
  */
 package com.neotropic.inventory.modules.sync.nodes;
 
-import com.neotropic.inventory.modules.sync.actions.NewSyncDataSourceConfigurationAction;
+import com.neotropic.inventory.modules.sync.nodes.actions.SyncManagerActionFactory;
 import java.util.Collections;
 import org.openide.util.ImageUtilities;
 import java.awt.Image;
@@ -78,7 +78,8 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
     
     @Override
     public Action[] getActions(boolean context) {
-        return new Action[] { NewSyncDataSourceConfigurationAction.getInstance() };
+        return new Action[] { SyncManagerActionFactory.getNewSyncDataSourceConfigurationAction(), null,
+                                SyncManagerActionFactory.getNewRunSynchronizationProcessAction() };
     }
         
     @Override
