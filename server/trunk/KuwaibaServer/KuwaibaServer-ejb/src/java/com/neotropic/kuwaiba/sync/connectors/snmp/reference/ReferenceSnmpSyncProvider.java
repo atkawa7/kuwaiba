@@ -27,13 +27,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
-import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.services.persistence.util.Util;
 import org.snmp4j.smi.OID;
 
 /**
@@ -59,42 +57,9 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
         return false;
     }
     
-    public SynchronizationGroup testSyncGroup() {        
-        try {
-            List<SyncDataSourceConfiguration> agents = new ArrayList();
-            HashMap<String, String> config1Params = new HashMap<>();
-            config1Params.put("id", "888"); //NOI18N
-            config1Params.put("name", "test1"); //NOI18N
-            config1Params.put("class", "Test1"); //NOI18N
-            config1Params.put("address", "127.0.0.1"); //NOI18N
-            config1Params.put("port", "1161"); //NOI18N
-            config1Params.put("community", "community1"); //NOI18N
-
-            HashMap<String, String> config2Params = new HashMap<>();
-            config1Params.put("id", "999"); //NOI18N
-            config1Params.put("name", "test2"); //NOI18N
-            config1Params.put("class", "Test2"); //NOI18N
-            config1Params.put("address", "127.0.0.1"); //NOI18N
-            config1Params.put("port", "1161"); //NOI18N
-            config1Params.put("community", "community2"); //NOI18N
-            
-            SyncDataSourceConfiguration agent1 = new SyncDataSourceConfiguration(1, "agent1", config1Params); //NOI18N
-            SyncDataSourceConfiguration agent2 = new SyncDataSourceConfiguration(2, "agent2", config2Params); //NOI18N
-            
-            agents.add(agent1);
-            agents.add(agent2);
-            SynchronizationGroup testSyncGroup = new SynchronizationGroup(0, "SNMPAgents", this, agents); //NOI18N
-            
-            return testSyncGroup;
-        } catch (InvalidArgumentException ex) {
-            Logger.getLogger(ReferenceSnmpSyncProvider.class.getName()).log(Level.SEVERE, null, ex);
-            return null;
-        }
-    }
-    
     @Override
     public List<AbstractDataEntity> unmappedPoll(SynchronizationGroup syncGroup) {
-        throw new UnsupportedOperationException("This provider only supports mapped polling");
+        throw new UnsupportedOperationException("This provider does not support unmapped polling");
     }
 
     @Override
@@ -105,7 +70,6 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
             
             for (SyncDataSourceConfiguration agent : syncGroup.getSyncDataSourceConfigurations()) {
                 long id = -1L;
-                String name = null;
                 String className = null;                
                 String address = null;
                 String port = null;
@@ -180,12 +144,12 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
     
     @Override
     public List<SyncFinding> sync(HashMap<RemoteBusinessObjectLight, AbstractDataEntity> originalData) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new ArrayList<>();
     }
 
     @Override
     public List<SyncFinding> sync(List<AbstractDataEntity> originalData) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        throw new UnsupportedOperationException("This provider does not support unmapped polling");
     }
 
     @Override

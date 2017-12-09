@@ -16,7 +16,6 @@
 
 package com.neotropic.kuwaiba.scheduling.sync;
 
-import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.io.Serializable;
 import java.util.Properties;
@@ -45,6 +44,7 @@ public class DefaultSyncReader implements ItemReader {
     
     @Override
     public void open(Serializable checkpoint) throws Exception {
+        System.out.println("Stage 2 finished");
         JobOperator jobOperator = BatchRuntime.getJobOperator();
         Properties jobParameters = jobOperator.getParameters(jobContext.getExecutionId());
         if (!jobParameters.containsKey("syncGroupId"))
@@ -59,9 +59,10 @@ public class DefaultSyncReader implements ItemReader {
             return null; // Preventing the multiple execution of the read item method
         else
             jobExecutionId = jobContext.getExecutionId(); 
-        
+        System.out.println("Stage 1 started");
         jobContext.setTransientUserData(syncGroup);
         return syncGroup.getProvider().mappedPoll(syncGroup);
+        
     }
 
     @Override

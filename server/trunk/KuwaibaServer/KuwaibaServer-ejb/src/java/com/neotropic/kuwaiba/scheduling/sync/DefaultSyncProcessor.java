@@ -35,7 +35,7 @@ public class DefaultSyncProcessor implements ItemProcessor {
     
     @Override
     public Object processItem(Object item) throws Exception {
-        
+        System.out.println("Initiating stage 2");
         if (jobContext.getTransientUserData() == null)
             throw new InvalidArgumentException("Syncronization group not found. Impossible to perform second stage");
         
@@ -45,7 +45,7 @@ public class DefaultSyncProcessor implements ItemProcessor {
             throw new InvalidArgumentException("The result from the first stage of the synchronization process failed. Check the logs for details");
         
         syncGroup.getProvider().sync((HashMap<RemoteBusinessObjectLight, AbstractDataEntity>) item);
-        
+        System.out.println("Stage 2 finished");
         return null; // When null, the writer is never execute, which is what we need here, since supervised sync jobs 
     }
 
