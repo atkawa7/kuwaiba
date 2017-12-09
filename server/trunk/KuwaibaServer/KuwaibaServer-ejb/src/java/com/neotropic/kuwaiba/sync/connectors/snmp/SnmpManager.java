@@ -77,13 +77,9 @@ public class SnmpManager {
     }
     
     private void start() throws IOException {
-        try {
-            transportMapping = new DefaultUdpTransportMapping();
-            snmp = new Snmp(transportMapping);
-            transportMapping.listen();
-        } catch (IOException ex) {
-            throw ex;
-        }
+        transportMapping = new DefaultUdpTransportMapping();
+        snmp = new Snmp(transportMapping);
+        transportMapping.listen();
     }
     
     public String getAsString(OID oid) throws IOException {

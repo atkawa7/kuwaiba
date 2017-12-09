@@ -41,7 +41,6 @@ public class DefaultSyncReader implements ItemReader {
      * The job execution id is used to prevent the multiple execution of the read item method
      */
     private long jobExecutionId = -1;
-    private AbstractSyncProvider syncProvider;
     private SynchronizationGroup syncGroup;
     
     @Override
@@ -52,8 +51,6 @@ public class DefaultSyncReader implements ItemReader {
             throw new InvalidArgumentException("No synchronization group was provided as parameter for the current sync job");
         Long syncGroupId = Long.valueOf((String) jobParameters.get("syncGroupId"));
         syncGroup = PersistenceService.getInstance().getApplicationEntityManager().getSyncGroup(syncGroupId);
-        syncProvider = syncGroup.getProvider();
-        
     }
     
     @Override
@@ -63,13 +60,8 @@ public class DefaultSyncReader implements ItemReader {
         else
             jobExecutionId = jobContext.getExecutionId(); 
         
-        //TOREMOVE: only for test propourse
-        //syncGroup = ReferenceSnmpSyncProvider.testSyncGroup();
-        //syncProvider = syncGroup.getProvider();
-        //TOREMOVE: only for test propourse
-        
-        jobContext.setTransientUserData(syncProvider);
-        return syncProvider.mappedPoll(syncGroup);
+        jobContext.setTransientUserData(syncGroup);
+        return syncGroup.getProvider().mappedPoll(syncGroup);
     }
 
     @Override
@@ -77,6 +69,6 @@ public class DefaultSyncReader implements ItemReader {
 
     @Override
     public Serializable checkpointInfo() throws Exception {
-        return null;
+        return null; //Nothing to do 
     }
 }

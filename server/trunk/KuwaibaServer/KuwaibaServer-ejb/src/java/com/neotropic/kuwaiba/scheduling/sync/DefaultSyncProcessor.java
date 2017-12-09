@@ -17,12 +17,13 @@
 package com.neotropic.kuwaiba.scheduling.sync;
 
 import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
-import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
+import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.util.HashMap;
 import javax.batch.api.chunk.ItemProcessor;
 import javax.batch.runtime.context.JobContext;
 import javax.inject.Inject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
  * Contains the logic that finds the differences between the polled device and the element in the inventory
@@ -34,23 +35,18 @@ public class DefaultSyncProcessor implements ItemProcessor {
     
     @Override
     public Object processItem(Object item) throws Exception {
-        //TODO: process item implementation to unmapped polls
-        AbstractSyncProvider syncProvider = null;
-        HashMap<RemoteBusinessObjectLight, AbstractDataEntity> mappedPollResult = null;
         
-        if (jobContext.getTransientUserData() instanceof AbstractSyncProvider)
-            syncProvider = ((AbstractSyncProvider) jobContext.getTransientUserData());            
-        else
-            throw new Exception("Synchronization provider cannot be found");
+        if (jobContext.getTransientUserData() == null)
+            throw new InvalidArgumentException("Syncronization group not found. Impossible to perform second stage");
         
-        if (item instanceof HashMap)
-            mappedPollResult = (HashMap<RemoteBusinessObjectLight,AbstractDataEntity>) item;
-        else
-            throw new Exception("Mapped poll result can no be found");
-        for (RemoteBusinessObjectLight object : mappedPollResult.keySet())
-            syncProvider.sync(object.getClassName(), object.getId(), null); //<--NOT null change!! 
-        return null; // If return null value, the job don't execute the writer 
-                     // and the job end with status COMPLETED
+        SynchronizationGroup syncGroup = (SynchronizationGroup)jobContext.getTransientUserData();
+        
+        if (item == null)
+            throw new InvalidArgumentException("The result from the first stage of the synchronization process failed. Check the logs for details");
+        
+        syncGroup.getProvider().sync((HashMap<RemoteBusinessObjectLight, AbstractDataEntity>) item);
+        
+        return null; // When null, the writer is never execute, which is what we need here, since supervised sync jobs 
     }
 
 }
