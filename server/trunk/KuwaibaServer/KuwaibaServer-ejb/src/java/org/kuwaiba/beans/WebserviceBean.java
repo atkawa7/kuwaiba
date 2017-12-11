@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import javax.ejb.Singleton;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
@@ -4417,7 +4418,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public BackgroundJob launchSupervisedSynchronizationTask(long syncGroupId, String ipAddress, String sessionId) throws ServerSideException {
+    public List<SyncFinding> launchSupervisedSynchronizationTask(long syncGroupId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null || bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
@@ -4425,11 +4426,20 @@ public class WebserviceBean implements WebserviceBeanRemote {
             Properties parameters = new Properties();
             parameters.put("syncGroupId", Long.toString(syncGroupId));                        
             
-            BackgroundJob backgroundJob = new BackgroundJob("DefaultSyncJob", false, parameters);
-            JobManager.getInstance().launch(backgroundJob);
-            return backgroundJob;
+            BackgroundJob managedJob = new BackgroundJob("DefaultSyncJob", false, parameters);
+            JobManager.getInstance().launch(managedJob);
+            
+            int retries = 0;
+            while (!managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.FINISHED) && retries < 10) {
+                TimeUnit.SECONDS.sleep(2);
+                retries ++;
+            }
+            
+            return (List<SyncFinding>)managedJob.getJobResult();
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
+        } catch (InterruptedException ex) {
+            throw new RuntimeException(ex.getMessage());
         }
     }
         

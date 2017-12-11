@@ -20,12 +20,9 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
-import com.neotropic.kuwaiba.scheduling.BackgroundJob;
-import com.neotropic.kuwaiba.scheduling.JobManager;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.jws.WebMethod;
@@ -5345,24 +5342,14 @@ public class KuwaibaService {
      * while an automated sync job automatically decides what to do based on built-in business rules
      * @param syncGroupId The sync group id
      * @param sessionId The session token
-     * @return A list of differences that require the authorization of a user to be reconciliated
+     * @return A list of differences that require the authorization of a user to be reconciliated. Null in case the job could be finished in a proper way
      * @throws ServerSideException If the sync group could not be found or if
      */
     @WebMethod(operationName = "launchSupervisedSynchronizationTask")
     public List<SyncFinding> launchSupervisedSynchronizationTask(@WebParam(name = "syncGroupId") long syncGroupId, 
-            @WebParam(name = "sessionId") String sessionId) throws ServerSideException, InterruptedException, Exception {
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            
-            BackgroundJob job = wsBean.launchSupervisedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);
-            BackgroundJob managedJob = JobManager.getInstance().getJob(job.getId());
-
-            while (managedJob.getJobResult() == null && !managedJob.getStatus().name().equals(BackgroundJob.JOB_STATUS.FINISHED.name())) {
-                  managedJob = JobManager.getInstance().getJob(job.getId());  
-                  TimeUnit.SECONDS.sleep(2);
-            }
-            
-            Object jobResult = managedJob.getJobResult();
-            return (List<SyncFinding>)jobResult;
+            return wsBean.launchSupervisedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

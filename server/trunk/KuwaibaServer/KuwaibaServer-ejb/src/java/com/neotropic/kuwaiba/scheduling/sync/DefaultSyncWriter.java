@@ -37,13 +37,13 @@ public class DefaultSyncWriter implements ItemWriter {
     
     @Override
     public void writeItems(List<Object> items) throws Exception {
-        if (items.size() != 1)
-            throw new InvalidArgumentException(String.format("Only one output is expected from the synchronization process is expected, but %s found", items.size()));
+        if (items.size() != 1) //The processor should return only a list of SyncFindings
+            throw new InvalidArgumentException(String.format("Only one output is expected from the synchronization process, but %s found", items.size()));
         try {
             BackgroundJob managedJob = JobManager.getInstance().getJob(jobContext.getExecutionId());
-            System.out.println("Setting result for job " + managedJob.getId() + " : " + items.get(0));
             managedJob.setJobResult(items.get(0));
             managedJob.setStatus(BackgroundJob.JOB_STATUS.FINISHED);
+            managedJob.setProgress(100);
         }catch (InvalidArgumentException ex) {
             System.out.println(ex.getMessage());
         }
