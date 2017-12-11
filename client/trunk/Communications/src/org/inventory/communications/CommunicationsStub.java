@@ -4692,7 +4692,10 @@ public class CommunicationsStub {
                 @Override
                 public void handleResponse(Response<LaunchSupervisedSynchronizationTaskResponse> res) {
                     try {
-                        JOptionPane.showMessageDialog(null, res.get(), "Info", JOptionPane.INFORMATION_MESSAGE);
+                        //JOptionPane.showMessageDialog(null, res.get().getReturn(), "Info", JOptionPane.INFORMATION_MESSAGE);
+                        LaunchSupervisedSynchronizationTaskResponse get = res.get();
+                        List<SyncFinding> aReturn = get.getReturn();
+                        System.out.println("algo");
                     } catch (InterruptedException ex) {
                         Logger.getLogger(CommunicationsStub.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ExecutionException ex) {
