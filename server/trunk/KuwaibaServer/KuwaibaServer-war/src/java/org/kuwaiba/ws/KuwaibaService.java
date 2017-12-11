@@ -21,9 +21,11 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import com.neotropic.kuwaiba.scheduling.BackgroundJob;
+import com.neotropic.kuwaiba.scheduling.JobManager;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.jws.WebMethod;
@@ -5348,19 +5350,19 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "launchSupervisedSynchronizationTask")
     public List<SyncFinding> launchSupervisedSynchronizationTask(@WebParam(name = "syncGroupId") long syncGroupId, 
-            @WebParam(name = "sessionId") String sessionId) throws ServerSideException, InterruptedException {
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException, InterruptedException, Exception {
         try {
             
             BackgroundJob job = wsBean.launchSupervisedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);
-            int retries = 0;
-            while (job.getJobResult() == null && retries < 20) {
-                System.out.println("Result for job " + job.getId() + " is " + job.getJobResult());
-                System.out.println("Retries: " + retries);
-                //Thread.sleep(5000);
-                retries ++;
+            BackgroundJob managedJob = JobManager.getInstance().getJob(job.getId());
+
+            while (managedJob.getJobResult() == null && !managedJob.getStatus().name().equals(BackgroundJob.JOB_STATUS.FINISHED.name())) {
+                  managedJob = JobManager.getInstance().getJob(job.getId());  
+                  TimeUnit.SECONDS.sleep(2);
             }
             
-            return (List<SyncFinding>)job.getJobResult();
+            Object jobResult = managedJob.getJobResult();
+            return (List<SyncFinding>)jobResult;
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
