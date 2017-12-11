@@ -20,6 +20,7 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
+import com.neotropic.kuwaiba.scheduling.BackgroundJob;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
 import java.util.List;
@@ -5347,9 +5348,19 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "launchSupervisedSynchronizationTask")
     public List<SyncFinding> launchSupervisedSynchronizationTask(@WebParam(name = "syncGroupId") long syncGroupId, 
-            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException, InterruptedException {
         try {
-            return wsBean.launchSupervisedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);
+            
+            BackgroundJob job = wsBean.launchSupervisedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);
+            int retries = 0;
+            while (job.getJobResult() == null && retries < 10) {
+                System.out.println("Result for job " + job.getId() + " is " + job.getJobResult());
+                System.out.println("Retries: " + retries);
+                Thread.sleep(5000);
+                retries ++;
+            }
+            
+            return (List<SyncFinding>)job.getJobResult();
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

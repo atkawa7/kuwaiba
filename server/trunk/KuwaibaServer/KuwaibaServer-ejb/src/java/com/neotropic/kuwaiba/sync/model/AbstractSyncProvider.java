@@ -16,11 +16,11 @@
 
 package com.neotropic.kuwaiba.sync.model;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
-import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * This class describes the generic behavior of all the synchronization providers. 
@@ -42,7 +42,7 @@ import org.kuwaiba.ws.toserialize.business.RemoteObjectLight;
  * </ul>
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public abstract class AbstractSyncProvider {
+public abstract class AbstractSyncProvider implements Serializable{
     /**
      * Display name/description of what the providers does
      * @return The configured name/description (typically a hard-coded string)

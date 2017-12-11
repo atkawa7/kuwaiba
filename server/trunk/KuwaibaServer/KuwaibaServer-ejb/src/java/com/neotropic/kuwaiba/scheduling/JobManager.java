@@ -51,6 +51,12 @@ public class JobManager {
         currentJobs = new ArrayList<>();
     } 
     
+    /**
+     * Launches a job, previously configure with a set of parameters
+     * @param job The job to be executed
+     * @throws InvalidArgumentException If the requested job is already running and does not support concurrence
+     * @throws OperationNotPermittedException If the max number of running jobs has been already reached
+     */
     public void launch(BackgroundJob job) throws InvalidArgumentException, OperationNotPermittedException {
         
         if (currentJobs.size() == MAX_QUEUE_SIZE) {
@@ -76,6 +82,26 @@ public class JobManager {
         job.run();
     }
     
+    /**
+     * Gets a managed job
+     * @param jobId The id of the job
+     * @return The job object
+     * @throws InvalidArgumentException If the job can not be found
+     */
+    public BackgroundJob getJob(long jobId) throws InvalidArgumentException {
+        for (BackgroundJob managedJob : currentJobs) {
+            if (managedJob.getId() == jobId)
+                return managedJob;
+        }
+        throw new InvalidArgumentException(String.format("The job with id %s does not exist or was removed from the job pool", jobId));
+    }
+    
+    /**
+     * Kills a job
+     * @param jobId The id of the job
+     * @throws InvalidArgumentException If there was a low level problem that avoided to kill the job 
+     * (the job could not be found, there is a security restriction) 
+     */
     public void kill(long jobId) throws InvalidArgumentException {
         for (BackgroundJob currentJob : currentJobs) {
             if (currentJob.getId() == jobId) {

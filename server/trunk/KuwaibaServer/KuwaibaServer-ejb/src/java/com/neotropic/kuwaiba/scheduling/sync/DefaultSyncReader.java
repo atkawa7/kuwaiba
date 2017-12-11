@@ -40,11 +40,17 @@ public class DefaultSyncReader implements ItemReader {
      * The job execution id is used to prevent the multiple execution of the read item method
      */
     private long jobExecutionId = -1;
+    /**
+     * Reference to the sync group associated to this sync process
+     */
     private SynchronizationGroup syncGroup;
+    /**
+     * Flag that will be used to run the process only one time
+     */
+    private boolean stop = false;
     
     @Override
     public void open(Serializable checkpoint) throws Exception {
-        System.out.println("Stage 2 finished");
         JobOperator jobOperator = BatchRuntime.getJobOperator();
         Properties jobParameters = jobOperator.getParameters(jobContext.getExecutionId());
         if (!jobParameters.containsKey("syncGroupId"))
@@ -55,13 +61,13 @@ public class DefaultSyncReader implements ItemReader {
     
     @Override
     public Object readItem() throws Exception {
-        if (jobExecutionId == jobContext.getExecutionId())
-            return null; // Preventing the multiple execution of the read item method
-        else
-            jobExecutionId = jobContext.getExecutionId(); 
-        System.out.println("Stage 1 started");
-        jobContext.setTransientUserData(syncGroup);
-        return syncGroup.getProvider().mappedPoll(syncGroup);
+        if (!stop) {
+            stop = true;
+            jobContext.setTransientUserData(syncGroup);
+            return syncGroup.getProvider().mappedPoll(syncGroup);
+        }
+        
+        return null; //when this method returns null, no more iterations of the process are expected
         
     }
 
@@ -70,6 +76,6 @@ public class DefaultSyncReader implements ItemReader {
 
     @Override
     public Serializable checkpointInfo() throws Exception {
-        return null; //Nothing to do 
+        return syncGroup; //Nothing to do 
     }
 }

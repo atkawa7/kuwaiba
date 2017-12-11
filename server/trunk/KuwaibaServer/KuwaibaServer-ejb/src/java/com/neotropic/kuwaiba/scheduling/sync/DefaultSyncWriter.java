@@ -16,20 +16,37 @@
 
 package com.neotropic.kuwaiba.scheduling.sync;
 
+import com.neotropic.kuwaiba.scheduling.BackgroundJob;
+import com.neotropic.kuwaiba.scheduling.JobManager;
 import java.io.Serializable;
 import java.util.List;
 import javax.batch.api.chunk.ItemWriter;
+import javax.batch.runtime.context.JobContext;
+import javax.inject.Inject;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
  * Executes the actions after having analyzed the differences between the
  * information in the SNMP agents and the information in Kuwaiba. These actions 
- * were defined in the ItemProcessor
+ * were defined in the ItemProcessor. In practical terms, what this does is to call the finalize() method in the sync provider
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class DefaultSyncWriter implements ItemWriter {
-        
+    @Inject
+    private JobContext jobContext;
+    
     @Override
     public void writeItems(List<Object> items) throws Exception {
+        if (items.size() != 1)
+            throw new InvalidArgumentException(String.format("Only one output is expected from the synchronization process is expected, but %s found", items.size()));
+        try {
+            BackgroundJob managedJob = JobManager.getInstance().getJob(jobContext.getExecutionId());
+            System.out.println("Setting result for job " + managedJob.getId() + " : " + items.get(0));
+            managedJob.setJobResult(items.get(0));
+            System.out.println("Checking job result value after set: " + managedJob.getJobResult());
+        }catch (InvalidArgumentException ex) {
+            System.out.println(ex.getMessage());
+        }
     }
 
     @Override
@@ -38,10 +55,9 @@ public class DefaultSyncWriter implements ItemWriter {
 
     @Override
     public void close() throws Exception {
+        //The last step is to update the job progress and set the result
     }
 
     @Override
-    public Serializable checkpointInfo() throws Exception {
-        return null;
-    }
+    public Serializable checkpointInfo() throws Exception { return null; }
 }

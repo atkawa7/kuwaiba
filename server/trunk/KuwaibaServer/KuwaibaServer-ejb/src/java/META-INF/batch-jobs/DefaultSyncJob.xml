@@ -24,9 +24,9 @@ The processor finds the differences, and the writer commits the actions or sends
     
     <step id="process">
         <chunk item-count="1">
-            <reader ref="com.neotropic.kuwaiba.scheduling.sync.DefaultSyncReader"></reader>
-            <processor ref="com.neotropic.kuwaiba.scheduling.sync.DefaultSyncProcessor"></processor>
-            <writer ref="com.neotropic.kuwaiba.scheduling.sync.DefaultSyncWriter"></writer>
+            <reader ref="com.neotropic.kuwaiba.scheduling.sync.DefaultSyncReader"/>
+            <processor ref="com.neotropic.kuwaiba.scheduling.sync.DefaultSyncProcessor"/>
+            <writer ref="com.neotropic.kuwaiba.scheduling.sync.DefaultSyncWriter"/>
         </chunk>
     </step>        
 </job>

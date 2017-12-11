@@ -16,6 +16,7 @@
 
 package com.neotropic.kuwaiba.sync.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -23,7 +24,7 @@ import java.util.List;
  * Configurations that will be processed by the same Synchronization Provider
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class SynchronizationGroup {
+public class SynchronizationGroup implements Serializable {
     /**
      * Group id
      */

@@ -23,7 +23,6 @@ import java.util.Properties;
 import javax.batch.operations.JobSecurityException;
 import javax.batch.operations.JobStartException;
 import javax.batch.runtime.BatchRuntime;
-import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
  * This class represents an actual job to be run in background by the JobManager. 
@@ -55,6 +54,10 @@ public class BackgroundJob implements Runnable {
      * What's the current status of the job
      */
     private JOB_STATUS status;
+    /**
+     * The job result. This field will be set once the job is finished
+     */
+    private Object jobResult;
 
     public BackgroundJob(String jobTag, boolean allowConcurrence, Properties parameters) {
         this.jobTag = jobTag;
@@ -119,17 +122,9 @@ public class BackgroundJob implements Runnable {
     @Override
     public void run() {
         try {
-            //The job itself is added to the list of parameters so the progress 
-            //and other events can be notified back instead of using a listener
-            if (parameters.containsKey("jobInstance"))
-                throw new InvalidArgumentException("The parameter jobInstance is a reserved word. The job will be aborted");
-            
-            //parameters.put("jobInstance", this); //NOI18N
-            parameters.put("jobInstance", ""); //NOI18N
-            
             this.status = JOB_STATUS.RUNNNING;
             id = BatchRuntime.getJobOperator().start(jobTag, parameters);
-        }catch (JobStartException | JobSecurityException | InvalidArgumentException ex) {
+        }catch (JobStartException | JobSecurityException ex) {
             System.out.println(String.format("[KUWAIBA] [%s] %s", ex.getMessage(), Calendar.getInstance().getTime()));
             this.status = JOB_STATUS.ABORTED;
         }
@@ -138,6 +133,16 @@ public class BackgroundJob implements Runnable {
     public void kill() {
         BatchRuntime.getJobOperator().stop(id);
         this.status = JOB_STATUS.ABORTED;
+    }
+    
+    public synchronized void  setJobResult(Object jobResult) {
+        this.jobResult = jobResult;
+        System.out.println("The job result was set " + this.jobResult + "(" + toString() + ")");
+    }
+    
+    public synchronized Object getJobResult() {
+        System.out.println("The job result was requested " + this.jobResult + "(" + toString() + ")");
+        return this.jobResult;
     }
     
     @Override

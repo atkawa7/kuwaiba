@@ -4417,7 +4417,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public List<SyncFinding> launchSupervisedSynchronizationTask(long syncGroupId, String ipAddress, String sessionId) throws ServerSideException {
+    public BackgroundJob launchSupervisedSynchronizationTask(long syncGroupId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null || bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
@@ -4427,15 +4427,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             
             BackgroundJob backgroundJob = new BackgroundJob("DefaultSyncJob", false, parameters);
             JobManager.getInstance().launch(backgroundJob);
-            //TODO: mapped the BatchStatus enum in BackgroundJob.JOB_STATUS
-            // TODO: review because this code make a infinity loop.
-            //String batchStatus = BatchRuntime.getJobOperator().getJobExecution(backgroundJob.getId()).getBatchStatus().name();
-            //while (!BatchStatus.COMPLETED.name().equals(batchStatus) && 
-            //   !BatchStatus.FAILED.name().equals(batchStatus)) // loop while the job is not ending
-            //    batchStatus = BatchRuntime.getJobOperator().getJobExecution(backgroundJob.getId()).getBatchStatus().name();
-                              
-            return null; //To be implemented
-
+            return backgroundJob;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
