@@ -28,7 +28,7 @@ public class ReferenceSnmpResourceDefinition extends HashMap<String, OID>{
     public ReferenceSnmpResourceDefinition() {
         put("entPhysicalDescr", new OID("1.3.6.1.2.1.47.1.1.1.1.2"));
         put("entPhysicalClass", new OID("1.3.6.1.2.1.47.1.1.1.1.5"));
-        put("entPhysicalParentRelPos", new OID("1.3.6.1.2.1.47.1.1.1.1.6"));
+        put("entPhysicalContainedIn", new OID("1.3.6.1.2.1.47.1.1.1.1.4"));
         put("entPhysicalName", new OID("1.3.6.1.2.1.47.1.1.1.1.7"));
         put("entPhysicalHardwareRev", new OID("1.3.6.1.2.1.47.1.1.1.1.8"));
         put("entPhysicalFirmwareRev", new OID("1.3.6.1.2.1.47.1.1.1.1.9"));
