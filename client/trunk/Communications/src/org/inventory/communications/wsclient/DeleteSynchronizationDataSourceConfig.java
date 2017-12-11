@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="syncDataSourceConfigId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="syncDataSourceConfigId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -33,30 +33,22 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class DeleteSynchronizationDataSourceConfig {
 
-    protected String syncDataSourceConfigId;
+    protected long syncDataSourceConfigId;
     protected String sessionId;
 
     /**
      * Gets the value of the syncDataSourceConfigId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
-    public String getSyncDataSourceConfigId() {
+    public long getSyncDataSourceConfigId() {
         return syncDataSourceConfigId;
     }
 
     /**
      * Sets the value of the syncDataSourceConfigId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
      */
-    public void setSyncDataSourceConfigId(String value) {
+    public void setSyncDataSourceConfigId(long value) {
         this.syncDataSourceConfigId = value;
     }
 

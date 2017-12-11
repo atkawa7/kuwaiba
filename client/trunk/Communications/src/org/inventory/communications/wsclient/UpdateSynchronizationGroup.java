@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -20,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="syncGroupId" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="syncDataSourceConfigurationIds" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="syncGroupProperties" type="{http://ws.kuwaiba.org/}stringPair" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -33,14 +32,13 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "updateSynchronizationGroup", propOrder = {
     "syncGroupId",
-    "syncDataSourceConfigurationIds",
+    "syncGroupProperties",
     "sessionId"
 })
 public class UpdateSynchronizationGroup {
 
     protected long syncGroupId;
-    @XmlElement(type = Long.class)
-    protected List<Long> syncDataSourceConfigurationIds;
+    protected List<StringPair> syncGroupProperties;
     protected String sessionId;
 
     /**
@@ -60,32 +58,32 @@ public class UpdateSynchronizationGroup {
     }
 
     /**
-     * Gets the value of the syncDataSourceConfigurationIds property.
+     * Gets the value of the syncGroupProperties property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the syncDataSourceConfigurationIds property.
+     * This is why there is not a <CODE>set</CODE> method for the syncGroupProperties property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getSyncDataSourceConfigurationIds().add(newItem);
+     *    getSyncGroupProperties().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Long }
+     * {@link StringPair }
      * 
      * 
      */
-    public List<Long> getSyncDataSourceConfigurationIds() {
-        if (syncDataSourceConfigurationIds == null) {
-            syncDataSourceConfigurationIds = new ArrayList<Long>();
+    public List<StringPair> getSyncGroupProperties() {
+        if (syncGroupProperties == null) {
+            syncGroupProperties = new ArrayList<StringPair>();
         }
-        return this.syncDataSourceConfigurationIds;
+        return this.syncGroupProperties;
     }
 
     /**

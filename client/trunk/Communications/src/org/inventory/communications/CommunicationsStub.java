@@ -639,6 +639,9 @@ public class CommunicationsStub {
      */
     public List<LocalClassMetadataLight> getPossibleChildren(String className, boolean ignoreCache) {
         try{
+            ////TOREMOVE:
+            service.launchSupervisedSynchronizationTask(2126, session.getSessionId());
+            
             List<LocalClassMetadataLight> resAsLocal = null;
             if (!ignoreCache)
                 resAsLocal = cache.getPossibleChildrenCached(className);
@@ -4571,18 +4574,39 @@ public class CommunicationsStub {
     }
     
      /**
-     * Create a Sync Group
+     * Updates a Sync Group
      * @param syncGroupId The id of the Sync group
-     * @param SyncDataSourceConfigIds the ids of the data sources configurations  
+     * @param syncGroupProperties The properties of the Sync group
      * @return The local representation of the Favorites folder
      */        
-    public boolean updateSyncGroup(long syncGroupId, List<Long> SyncDataSourceConfigIds) {
+    public boolean updateSyncGroup(long syncGroupId, HashMap<String, String> syncGroupProperties) {
         try {
-            service.updateSynchronizationGroup(syncGroupId, SyncDataSourceConfigIds, error);
-            //return new LocalSyncGroup(id, syncGroupName, providerName);
+            List<StringPair> remoteProperties = new ArrayList<>();
+            
+            for (String paramName : syncGroupProperties.keySet()) {
+                StringPair remoteParameter = new StringPair();
+                remoteParameter.setKey(paramName);
+                remoteParameter.setValue(syncGroupProperties.get(paramName));
+                remoteProperties.add(remoteParameter);
+            }
+            service.updateSynchronizationGroup(syncGroupId, remoteProperties, session.getSessionId());
             return true;
         } catch (Exception ex) {
             this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Deletes a Sync Group
+     * @param syncGroupId the synchronization group id
+     * @return True if was deleted successfully
+     */
+    public boolean deleteSyncGroup(long syncGroupId) {
+        try {
+            service.deleteSynchronizationGroup(syncGroupId, session.getSessionId());
+            return true;        
+        } catch (Exception ex) {
             return false;
         }
     }
@@ -4621,8 +4645,32 @@ public class CommunicationsStub {
      */        
     public boolean updateSyncDataSourceConfiguration(long syncDataSourceConfigId, HashMap<String, String> parameters) {
         try {
-            //long id = service.createSyncGroup(name, provider session.getUserId(), session.getSessionId());
-            //return new LocalSyncGroup(id, syncGroupName, providerName);
+            List<StringPair> remoteParameters = new ArrayList();
+            
+            for (String parameterName : parameters.keySet()) {
+                StringPair remoteParameter = new StringPair();
+                remoteParameter.setKey(parameterName);
+                remoteParameter.setValue(parameters.get(parameterName));
+                
+                remoteParameters.add(remoteParameter);
+            }
+            service.updateSyncDataSourceConfiguration(syncDataSourceConfigId, remoteParameters, session.getSessionId());
+            
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Deletes a Synchronization data source configuration
+     * @param syncDataSourceConfigId sync data source id
+     * @return True if was deleted successfully
+     */
+    public boolean deleteSyncDataSourceConfiguration(long syncDataSourceConfigId) {
+        try {
+            service.deleteSynchronizationDataSourceConfig(syncDataSourceConfigId, session.getSessionId());
             return true;
         } catch (Exception ex) {
             this.error = ex.getMessage();

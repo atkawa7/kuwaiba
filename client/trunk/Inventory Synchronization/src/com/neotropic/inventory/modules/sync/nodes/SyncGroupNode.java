@@ -16,11 +16,13 @@
 package com.neotropic.inventory.modules.sync.nodes;
 
 import com.neotropic.inventory.modules.sync.nodes.actions.SyncManagerActionFactory;
+import com.neotropic.inventory.modules.sync.nodes.properties.SyncGroupNativeTypeProperty;
 import java.util.Collections;
 import org.openide.util.ImageUtilities;
 import java.awt.Image;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import javax.swing.Action;
@@ -33,7 +35,9 @@ import org.inventory.core.services.i18n.I18N;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
+import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
+import org.openide.nodes.Sheet.Set;
 import org.openide.util.lookup.Lookups;
 
 /**
@@ -42,14 +46,9 @@ import org.openide.util.lookup.Lookups;
  */
 public class SyncGroupNode extends AbstractNode implements PropertyChangeListener {
     private static final Image icon = ImageUtilities.loadImage("com/neotropic/inventory/modules/sync/res/sync_group.png");
-    
-    protected Sheet sheet;
-    
+        
     public SyncGroupNode(LocalSyncGroup localSyncGroup) {
         super(new SyncGroupNodeChildren(), Lookups.singleton(localSyncGroup));
-//TODO HERE!               
-//        if (localSyncGroup.getName() != null)
-//            localSyncGroup.addPropertyChangeListener(WeakListeners.propertyChange(this, localSyncGroup));
     }
     
     @Override
@@ -78,8 +77,9 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
     
     @Override
     public Action[] getActions(boolean context) {
-        return new Action[] { SyncManagerActionFactory.getNewSyncDataSourceConfigurationAction(), null,
-                                SyncManagerActionFactory.getNewRunSynchronizationProcessAction() };
+        return new Action[] { SyncManagerActionFactory.getNewSyncDataSourceConfigurationAction(), null, 
+                                SyncManagerActionFactory.getNewRunSynchronizationProcessAction(), null, 
+                                SyncManagerActionFactory.getDeleteSyncGroupAction()};
     }
         
     @Override
@@ -94,24 +94,22 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
     
     @Override
     protected Sheet createSheet () {
-        sheet = Sheet.createDefault();
-//        Set generalPropertySet = Sheet.createPropertiesSet(); // General attributes category
-//        LocalFavoritesFolder lb = CommunicationsStub.getInstance().getFavoritesFolder(localFavoritesFolder.getId());
-//        if (lb == null) {
-//            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-//            return sheet;
-//        }
-//        localFavoritesFolder.setName(lb.getName());
-//                
-//        PropertySupport.ReadWrite propertyName = new FavoritesFolderNativeTypeProperty(
-//                Constants.PROPERTY_NAME, String.class, Constants.PROPERTY_NAME, 
-//                Constants.PROPERTY_NAME, this, lb.getName());
-//        generalPropertySet.put(propertyName);
-//        
-//        generalPropertySet.setName(I18N.gm("general_information"));
-//        generalPropertySet.setDisplayName(I18N.gm("general_attributes"));
-//        sheet.put(generalPropertySet);
-        return sheet;
+        Sheet sheet = Sheet.createDefault();
+        Set generalPropertySet = Sheet.createPropertiesSet(); // General attributes category
+        
+        LocalSyncGroup localSyncGroup = getLookup().lookup(LocalSyncGroup.class);                
+        
+        PropertySupport.ReadWrite propertyName = new SyncGroupNativeTypeProperty(Constants.PROPERTY_NAME, String.class, Constants.PROPERTY_NAME, Constants.PROPERTY_NAME, this, localSyncGroup.getName());
+        PropertySupport.ReadWrite propertySyncProvider = new SyncGroupNativeTypeProperty("syncProvider", String.class, I18N.gm("sync_provider"), "", this, localSyncGroup.getProvider());
+                
+        generalPropertySet.put(propertyName);
+        generalPropertySet.put(propertySyncProvider);
+        
+        generalPropertySet.setName(I18N.gm("general_information"));
+        generalPropertySet.setDisplayName(I18N.gm("general_attributes"));
+        
+        sheet.put(generalPropertySet);
+        return sheet;    
     }
     
     @Override
