@@ -28,7 +28,7 @@ then
     rm -rf "${destination}/org/inventory/communications/wsclient"
 fi
 
-wsimport -d $destination -encoding UTF-8 -p org.inventory.communications.wsclient -Xnocompile $url  
+wsimport -d $destination -encoding UTF-8 -p org.inventory.communications.wsclient -Xnocompile $url -b kuwaibaAsync.xml 
 
 if [ $? -eq 0 ]
 then

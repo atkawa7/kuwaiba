@@ -25,9 +25,15 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
+import javax.swing.JOptionPane;
+import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.BindingProvider;
+import javax.xml.ws.Response;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.inventory.communications.core.LocalApplicationLogEntry;
@@ -69,6 +75,7 @@ import org.inventory.communications.wsclient.ClassInfoLight;
 import org.inventory.communications.wsclient.GroupInfo;
 import org.inventory.communications.wsclient.KuwaibaService;
 import org.inventory.communications.wsclient.KuwaibaService_Service;
+import org.inventory.communications.wsclient.LaunchSupervisedSynchronizationTaskResponse;
 import org.inventory.communications.wsclient.PrivilegeInfo;
 import org.inventory.communications.wsclient.RemoteFavoritesFolder;
 import org.inventory.communications.wsclient.RemoteBusinessObjectLight;
@@ -92,6 +99,7 @@ import org.inventory.communications.wsclient.SdhContainerLinkDefinition;
 import org.inventory.communications.wsclient.SdhPosition;
 import org.inventory.communications.wsclient.StringArray;
 import org.inventory.communications.wsclient.StringPair;
+import org.inventory.communications.wsclient.SyncFinding;
 import org.inventory.communications.wsclient.TaskNotificationDescriptor;
 import org.inventory.communications.wsclient.TaskScheduleDescriptor;
 import org.inventory.communications.wsclient.TransientQuery;
@@ -4545,6 +4553,7 @@ public class CommunicationsStub {
     }
     //</editor-fold>
     
+    // <editor-fold defaultstate="collapsed" desc="Synchronization methods. Click on the + sign on the left to edit the code.">
     /**
      * Create a Sync Group
      * @param syncGroupName The name of the Sync group
@@ -4633,7 +4642,7 @@ public class CommunicationsStub {
             for (RemoteSynchronizationGroup synchronizationGroup : synchronizationGroups) {
                 localSyncGroup.add(new LocalSyncGroup(synchronizationGroup.getId(), 
                         synchronizationGroup.getName(),
-                        synchronizationGroup.getName()));
+                        synchronizationGroup.getProvider().getName()));
             }
             return localSyncGroup;
             
@@ -4670,15 +4679,28 @@ public class CommunicationsStub {
     }
     
     /**
-     * Launches a synchronization that requires a user to review the actions to be taken upon finding differences 
-     * between what's on he sync data sources and the inventory system
+     * Launches a synchronization that requires a user to review the actions to 
+     * be taken upon finding differences  between what's on he sync data sources 
+     * and the inventory system.
      * @param syncGroupId The id of the sync group associated to the requested task
      * @return The list of differences
      */
     public boolean launchSupervisedSynchronizationTask(long syncGroupId) {
         try {
-            service.launchSupervisedSynchronizationTask(syncGroupId, session.getSessionId());
-            
+            service.launchSupervisedSynchronizationTaskAsync(syncGroupId, session.getSessionId(), new AsyncHandler<LaunchSupervisedSynchronizationTaskResponse>() {
+
+                @Override
+                public void handleResponse(Response<LaunchSupervisedSynchronizationTaskResponse> res) {
+                    try {
+                        JOptionPane.showMessageDialog(null, res.get(), "Info", JOptionPane.INFORMATION_MESSAGE);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(CommunicationsStub.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (ExecutionException ex) {
+                        System.out.println("Time out");
+
+                    }
+                }
+            });
             return true;
         } catch (Exception ex) {
             this.error = ex.getMessage();
