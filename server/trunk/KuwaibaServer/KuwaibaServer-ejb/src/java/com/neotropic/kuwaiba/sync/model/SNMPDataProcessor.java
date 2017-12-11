@@ -755,7 +755,7 @@ public class SNMPDataProcessor {
             jnewPort = jsonObjectToBuilder(jnewPort).add("type", "object_port_no_match").build();
             
             findings.add(new SyncFinding(SyncFinding.EVENT_ERROR, 
-                String.format("There was no match with this old port, check the name %s  ", jnewPort.getString("name")),
+                String.format("There was no match with this old port, check the name %s  ", jnewPort.toString()),
                 jnewPort.toString()));
         }
     }

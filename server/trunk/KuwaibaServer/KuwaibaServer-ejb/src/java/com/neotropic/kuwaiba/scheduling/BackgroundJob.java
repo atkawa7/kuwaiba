@@ -162,5 +162,5 @@ public class BackgroundJob implements Runnable {
         PAUSED,
         FINISHED,
         ABORTED
-    }
-}
+    }     
+} 

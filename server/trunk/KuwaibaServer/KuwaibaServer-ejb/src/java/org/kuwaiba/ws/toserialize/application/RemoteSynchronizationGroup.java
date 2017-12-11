@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -41,7 +41,7 @@ public final class RemoteSynchronizationGroup implements Serializable {
      * Group provider
      */
     private RemoteSynchronizationProvider provider;
-
+    
     public RemoteSynchronizationGroup() { }
     
     public RemoteSynchronizationGroup(SynchronizationGroup syncGroup) {

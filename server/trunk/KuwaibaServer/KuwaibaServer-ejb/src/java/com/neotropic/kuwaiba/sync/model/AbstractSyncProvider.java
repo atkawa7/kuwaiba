@@ -70,6 +70,7 @@ public abstract class AbstractSyncProvider implements Serializable{
      * @param originalData A set of high-level representations of the info coming from the sync data source and the corresponding inventory object it should be mapped against
      * (for example, a Java matrix representing an SNMP table)
      * @return A set of results (e.g. new board on slot xxx, different serial number found for router yyyy)
+     * @throws InvalidArgumentException
      */
     public abstract List<SyncFinding> sync(HashMap<RemoteBusinessObjectLight, AbstractDataEntity> originalData) throws InvalidArgumentException;
     /**

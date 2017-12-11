@@ -18,6 +18,7 @@ package com.neotropic.kuwaiba.sync.connectors.snmp.reference;
 import com.neotropic.kuwaiba.sync.connectors.snmp.SnmpManager;
 import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
 import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
+import com.neotropic.kuwaiba.sync.model.SNMPDataProcessor;
 import com.neotropic.kuwaiba.sync.model.SyncAction;
 import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
@@ -27,11 +28,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
-import org.kuwaiba.services.persistence.util.Util;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.snmp4j.smi.OID;
 
 /**
@@ -144,7 +151,18 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
     
     @Override
     public List<SyncFinding> sync(HashMap<RemoteBusinessObjectLight, AbstractDataEntity> originalData) {
-        return new ArrayList<>();
+        List<SyncFinding> findings = new ArrayList<>();
+        for (Map.Entry<RemoteBusinessObjectLight, AbstractDataEntity> entrySet : originalData.entrySet()) {
+            RemoteBusinessObjectLight obj = entrySet.getKey();
+            TableData table = (TableData)entrySet.getValue();
+            SNMPDataProcessor x = new SNMPDataProcessor(obj.getClassName(), obj.getId(), (HashMap<String, List<String>>)table.getValue());
+            try {
+                findings.addAll(x.load());
+            } catch (MetadataObjectNotFoundException | ObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
+                Logger.getLogger(ReferenceSnmpSyncProvider.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return findings;
     }
 
     @Override
