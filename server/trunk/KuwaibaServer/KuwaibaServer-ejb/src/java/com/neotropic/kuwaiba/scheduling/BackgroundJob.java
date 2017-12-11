@@ -135,13 +135,11 @@ public class BackgroundJob implements Runnable {
         this.status = JOB_STATUS.ABORTED;
     }
     
-    public synchronized void  setJobResult(Object jobResult) {
+    public void  setJobResult(Object jobResult) {
         this.jobResult = jobResult;
-        System.out.println("The job result was set " + this.jobResult + "(" + toString() + ")");
     }
     
-    public synchronized Object getJobResult() {
-        System.out.println("The job result was requested " + this.jobResult + "(" + toString() + ")");
+    public Object getJobResult() {
         return this.jobResult;
     }
     

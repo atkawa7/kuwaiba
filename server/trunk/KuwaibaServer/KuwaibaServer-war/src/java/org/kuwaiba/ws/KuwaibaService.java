@@ -5353,10 +5353,10 @@ public class KuwaibaService {
             
             BackgroundJob job = wsBean.launchSupervisedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);
             int retries = 0;
-            while (job.getJobResult() == null && retries < 10) {
+            while (job.getJobResult() == null && retries < 20) {
                 System.out.println("Result for job " + job.getId() + " is " + job.getJobResult());
                 System.out.println("Retries: " + retries);
-                Thread.sleep(5000);
+                //Thread.sleep(5000);
                 retries ++;
             }
             
