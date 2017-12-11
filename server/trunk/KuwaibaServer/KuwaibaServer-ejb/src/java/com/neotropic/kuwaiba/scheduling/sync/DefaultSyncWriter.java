@@ -43,6 +43,7 @@ public class DefaultSyncWriter implements ItemWriter {
             BackgroundJob managedJob = JobManager.getInstance().getJob(jobContext.getExecutionId());
             System.out.println("Setting result for job " + managedJob.getId() + " : " + items.get(0));
             managedJob.setJobResult(items.get(0));
+            managedJob.setStatus(BackgroundJob.JOB_STATUS.FINISHED);
         }catch (InvalidArgumentException ex) {
             System.out.println(ex.getMessage());
         }
