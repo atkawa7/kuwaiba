@@ -58,7 +58,7 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
         
         if (services != null) {
             if (!services.isEmpty()) {
-                List<SubMenuItem> subMenuItems = new ArrayList();
+                List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight service : services) {
                     SubMenuItem subMenuItem = new SubMenuItem(service.toString());                    
                     subMenuItem.addProperty(Constants.PROPERTY_ID, service.getOid());
