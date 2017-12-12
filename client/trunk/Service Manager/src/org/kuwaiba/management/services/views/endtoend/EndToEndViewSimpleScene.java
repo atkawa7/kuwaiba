@@ -23,7 +23,6 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -286,21 +285,21 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
 
                             LocalObjectLight container = com.getObjectInfoLight(className, objectId);
 
-                            if (container != null) { // if the connection exist
+                            if (container != null) { // if the connection exists
                                 LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
                                 ObjectNodeWidget aSideWidget = (ObjectNodeWidget) findWidget(aSideObject);
 
                                 LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
                                 ObjectNodeWidget bSideWidget = (ObjectNodeWidget) findWidget(bSideObject);
 
-                                if (aSideWidget != null || bSideWidget != null) {//If one of the endpoints is missing, don't render the connection
+                                if (aSideWidget != null && bSideWidget != null) {//If one of the endpoints is missing, don't render the connection
 
                                     if (getEdges().contains(container))
                                         NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
                                     else {
                                         ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
-                                        setEdgeSource(container, aSideObject);
-                                        setEdgeTarget(container, bSideObject);
+                                        setEdgeSource(container, aSideWidget.getLookup().lookup(LocalObjectLight.class));
+                                        setEdgeTarget(container, bSideWidget.getLookup().lookup(LocalObjectLight.class));
                                         
                                         List<Point> localControlPoints = new ArrayList<>();
                                         while(true) {

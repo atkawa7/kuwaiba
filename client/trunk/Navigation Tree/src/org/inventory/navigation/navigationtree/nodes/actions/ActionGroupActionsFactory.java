@@ -28,7 +28,7 @@ public class ActionGroupActionsFactory {
     public static ActionsGroup getInstanceOfOpenViewGroupActions() {
         if (openViewGroupActions == null)
             openViewGroupActions = new ActionsGroup("Show", 
-                "/org/inventory/navigation/navigationtree/res/show_view_actions_group.png", 
+                "org/inventory/navigation/navigationtree/res/show_view_actions_group.png", 
                 GenericOpenViewAction.class);
         return openViewGroupActions;                    
     }
@@ -36,7 +36,7 @@ public class ActionGroupActionsFactory {
     public static ActionsGroup getInstanceOfRelateToGroupActions() {
         if (relateToGroupActions == null)
             relateToGroupActions = new ActionsGroup("Relate To", 
-                "/org/inventory/navigation/navigationtree/res/relate_to_actions_group.png",
+                "org/inventory/navigation/navigationtree/res/relate_to_actions_group.png",
                 GenericRelateToAction.class);
         return relateToGroupActions;                    
     }
@@ -44,14 +44,14 @@ public class ActionGroupActionsFactory {
     public static ActionsGroup getInstanceOfReleaseFromGroupActions() {
         if (releaseFromGroupActions == null)
             releaseFromGroupActions = new ActionsGroup("Release From", 
-                "/org/inventory/navigation/navigationtree/res/release_from_actions_group.png",
+                "org/inventory/navigation/navigationtree/res/release_from_actions_group.png",
                 GenericReleaseFromAction.class);
         return releaseFromGroupActions;                    
     }
     
     public static ActionsGroup getInstanceMirrorPortActions() {
         return mirrorPortActions == null ? mirrorPortActions = new ActionsGroup("Mirror Ports", 
-            "/org/inventory/navigation/navigationtree/res/mirror_ports_actions_group.png", 
+            "org/inventory/navigation/navigationtree/res/mirror_ports_actions_group.png", 
             GenericMirrorPortAction.class) : mirrorPortActions;
     }
 }
