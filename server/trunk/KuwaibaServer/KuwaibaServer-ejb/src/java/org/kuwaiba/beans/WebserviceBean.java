@@ -28,7 +28,9 @@ import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import com.neotropic.kuwaiba.scheduling.BackgroundJob;
 import com.neotropic.kuwaiba.scheduling.JobManager;
+import com.neotropic.kuwaiba.sync.model.SyncAction;
 import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
+import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.io.IOException;
@@ -4433,6 +4435,19 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }        
+    
+    @Override
+    public List<SyncResult> executeSyncActions(List<Integer> actions, List<SyncFinding> findings, String ipAddress, String sessionId)throws ServerSideException{
+        if (aem == null || bem == null || mem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateWebServiceCall("executeSyncActions", ipAddress, sessionId);
+            SyncAction syncActions = new SyncAction(actions, findings);
+            return  syncActions.execute();
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
         //</editor-fold>
         // <editor-fold defaultstate="collapsed" desc="Fault Management Integration">
 

@@ -21,6 +21,8 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import com.neotropic.kuwaiba.scheduling.BackgroundJob;
+import com.neotropic.kuwaiba.sync.model.SyncFinding;
+import com.neotropic.kuwaiba.sync.model.SyncResult;
 import java.util.List;
 import javax.ejb.Remote;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
@@ -550,6 +552,7 @@ public interface WebserviceBeanRemote {
         public List<RemoteSynchronizationConfiguration> getSyncDataSourceConfigurations(long syncGroupId, String ipAddress, String sessionId)throws ServerSideException;
         public void deleteSynchronizationGroup(long syncGroupId, String ipAddress, String sessionId)throws ServerSideException;
         public void deleteSynchronizationDataSourceConfig(long syncDataSourceConfigId, String ipAddress, String sessionId)throws ServerSideException;
+        public List<SyncResult> executeSyncActions(List<Integer> actions, List<SyncFinding> findings, String ipAddress, String sessionId)throws ServerSideException;
         //</editor-fold>
     
     // Bookmarks
