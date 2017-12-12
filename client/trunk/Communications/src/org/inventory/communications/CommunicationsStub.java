@@ -30,7 +30,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
-import javax.swing.JOptionPane;
 import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Response;
@@ -52,6 +51,7 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalReport;
 import org.inventory.communications.core.LocalReportLight;
 import org.inventory.communications.core.LocalSyncDataSourceConfiguration;
+import org.inventory.communications.core.LocalSyncFinding;
 import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.core.LocalTaskResultMessage;
 import org.inventory.communications.core.LocalTask;
@@ -68,6 +68,7 @@ import org.inventory.communications.core.queries.LocalResultRecord;
 import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
+import org.inventory.communications.runnable.AbstractSyncRunnable;
 import org.inventory.communications.wsclient.ApplicationLogEntry;
 import org.inventory.communications.wsclient.AttributeInfo;
 import org.inventory.communications.wsclient.ClassInfo;
@@ -97,9 +98,11 @@ import org.inventory.communications.wsclient.RemoteTaskResult;
 import org.inventory.communications.wsclient.ResultRecord;
 import org.inventory.communications.wsclient.SdhContainerLinkDefinition;
 import org.inventory.communications.wsclient.SdhPosition;
+import org.inventory.communications.wsclient.ServerSideException_Exception;
 import org.inventory.communications.wsclient.StringArray;
 import org.inventory.communications.wsclient.StringPair;
 import org.inventory.communications.wsclient.SyncFinding;
+import org.inventory.communications.wsclient.SyncResult;
 import org.inventory.communications.wsclient.TaskNotificationDescriptor;
 import org.inventory.communications.wsclient.TaskScheduleDescriptor;
 import org.inventory.communications.wsclient.TransientQuery;
@@ -116,7 +119,6 @@ import org.inventory.communications.wsclient.ViewInfoLight;
  */
 public class CommunicationsStub {
     private static CommunicationsStub instance;
-
     private KuwaibaService service;
     private static URL serverURL = null;
     private String error = java.util.ResourceBundle.getBundle("org/inventory/communications/Bundle").getString("LBL_NO_ERROR");
@@ -4731,33 +4733,58 @@ public class CommunicationsStub {
      * be taken upon finding differences  between what's on he sync data sources 
      * and the inventory system.
      * @param syncGroupId The id of the sync group associated to the requested task
-     * @return The list of differences
+     * @param progress
      */
-    public boolean launchSupervisedSynchronizationTask(long syncGroupId) {
+    public void launchSupervisedSynchronizationTask(long syncGroupId, final AbstractSyncRunnable progress) {
         try {
-            service.launchSupervisedSynchronizationTaskAsync(syncGroupId, session.getSessionId(), new AsyncHandler<LaunchSupervisedSynchronizationTaskResponse>() {
-
+            service.launchSupervisedSynchronizationTaskAsync(syncGroupId, session.getSessionId(), 
+            new AsyncHandler<LaunchSupervisedSynchronizationTaskResponse>(){
                 @Override
                 public void handleResponse(Response<LaunchSupervisedSynchronizationTaskResponse> res) {
                     try {
-                        //JOptionPane.showMessageDialog(null, res.get().getReturn(), "Info", JOptionPane.INFORMATION_MESSAGE);
                         LaunchSupervisedSynchronizationTaskResponse get = res.get();
-                        List<SyncFinding> aReturn = get.getReturn();
-                        System.out.println("algo");
+                        List<LocalSyncFinding> localSyncFindings = new ArrayList<>();
+                        for (SyncFinding finding : get.getReturn()) 
+                            localSyncFindings.add(new LocalSyncFinding(finding.getType(), finding.getDescription(), finding.getExtraInformation()));
+
+                        progress.setFindings(localSyncFindings);
+                        progress.run();
                     } catch (InterruptedException ex) {
                         Logger.getLogger(CommunicationsStub.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ExecutionException ex) {
                         System.out.println("Time out");
-
                     }
                 }
             });
-            return true;
         } catch (Exception ex) {
             this.error = ex.getMessage();
-            return false;
+            
         }
     }
+    
+     /**
+     * Launches a synchronization that requires a user to review the actions to 
+     * be taken upon finding differences  between what's on he sync data sources 
+     * and the inventory system.
+     * @param actions the list of action to execute after the user has check the findings
+     * @param localFindings the findings
+     * @return The list of results after executes the actions
+     */
+    public List<SyncResult> executSyncActions(List<Integer> actions, List<LocalSyncFinding> localFindings){
+        try {
+            List<SyncFinding> findings = new ArrayList<>();
+            for (LocalSyncFinding locaFinding : localFindings) {
+                SyncFinding s = new SyncFinding();
+                s.setDescription(locaFinding.getDescription());
+                s.setDescription(locaFinding.getExtraInformation());
+                s.setType(locaFinding.getType());
+            }
+            return service.executeSyncActions(actions, findings, session.getSessionId());
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    } 
     
     //<editor-fold desc="Business Rules" defaultstate="collapsed">
     /**
