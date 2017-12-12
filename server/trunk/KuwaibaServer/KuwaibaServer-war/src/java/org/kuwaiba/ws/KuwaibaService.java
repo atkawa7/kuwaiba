@@ -20,9 +20,12 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
+import com.neotropic.kuwaiba.scheduling.BackgroundJob;
+import com.neotropic.kuwaiba.scheduling.JobManager;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.jws.WebMethod;
@@ -31,6 +34,7 @@ import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.beans.WebserviceBeanRemote;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
@@ -5347,9 +5351,27 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "launchSupervisedSynchronizationTask")
     public List<SyncFinding> launchSupervisedSynchronizationTask(@WebParam(name = "syncGroupId") long syncGroupId, 
-            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException, InterruptedException, Exception {
         try {
-            return wsBean.launchSupervisedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);
+            
+            BackgroundJob job = wsBean.launchSupervisedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);
+            
+            BackgroundJob managedJob = null;
+            try {
+                managedJob = JobManager.getInstance().getJob(job.getId());
+            } catch(InvalidArgumentException ex) {
+            }
+            while (managedJob.getJobResult() == null && !managedJob.getStatus().name().equals(BackgroundJob.JOB_STATUS.FINISHED.name())) {
+                managedJob = null;
+                try {
+                    managedJob = JobManager.getInstance().getJob(job.getId());
+                } catch(InvalidArgumentException ex) {
+                }
+                TimeUnit.SECONDS.sleep(2);
+            }
+            
+            Object jobResult = managedJob.getJobResult();
+            return (List<SyncFinding>)jobResult;
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

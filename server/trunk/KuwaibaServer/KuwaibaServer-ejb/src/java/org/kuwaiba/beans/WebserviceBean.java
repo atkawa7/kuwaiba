@@ -29,7 +29,6 @@ import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import com.neotropic.kuwaiba.scheduling.BackgroundJob;
 import com.neotropic.kuwaiba.scheduling.JobManager;
 import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
-import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.io.IOException;
@@ -40,7 +39,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.concurrent.TimeUnit;
 import javax.ejb.Singleton;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
@@ -4418,9 +4416,9 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
-
+    
     @Override
-    public List<SyncFinding> launchSupervisedSynchronizationTask(long syncGroupId, String ipAddress, String sessionId) throws ServerSideException {
+    public BackgroundJob launchSupervisedSynchronizationTask(long syncGroupId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null || bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
@@ -4428,24 +4426,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
             Properties parameters = new Properties();
             parameters.put("syncGroupId", Long.toString(syncGroupId));                        
             
-            BackgroundJob managedJob = new BackgroundJob("DefaultSyncJob", false, parameters);
-            JobManager.getInstance().launch(managedJob);
-            
-            int retries = 0;
-            while (!managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.FINISHED) && retries < 10) {
-                TimeUnit.SECONDS.sleep(2);
-                retries ++;
-            }
-            
-            return (List<SyncFinding>)managedJob.getJobResult();
+            BackgroundJob backgroundJob = new BackgroundJob("DefaultSyncJob", false, parameters);
+            JobManager.getInstance().launch(backgroundJob);
+            return backgroundJob;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
-        } catch (InterruptedException ex) {
-            throw new RuntimeException(ex.getMessage());
         }
-    }
-        
-        
+    }        
         //</editor-fold>
         // <editor-fold defaultstate="collapsed" desc="Fault Management Integration">
 
