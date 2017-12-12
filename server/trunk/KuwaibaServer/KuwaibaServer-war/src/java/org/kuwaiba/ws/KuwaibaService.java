@@ -25,7 +25,6 @@ import com.neotropic.kuwaiba.scheduling.JobManager;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.jws.WebMethod;
@@ -5347,7 +5346,7 @@ public class KuwaibaService {
      * while an automated sync job automatically decides what to do based on built-in business rules
      * @param syncGroupId The sync group id
      * @param sessionId The session token
-     * @return A list of differences that require the authorization of a user to be reconciliated. Null in case the job could be finished in a proper way
+     * @return A list of differences that require the authorization of a user to be reconciliated
      * @throws ServerSideException If the sync group could not be found or if
      */
     @WebMethod(operationName = "launchSupervisedSynchronizationTask")
@@ -5396,6 +5395,31 @@ public class KuwaibaService {
         try {
             BackgroundJob managedJob = wsBean.launchAutomatedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);
             return null;
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in launchAutomatedSynchronizationTask: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Executes the synchronization actions that the user selected after check the  list of findings
+     * @param actions the list of actions selected by the user, it should be an action(execute, ignore, postpose) for every finding.   
+     * @param findings the list findings
+     * @param sessionId the session token
+     * @return the list of results after the actions were executed
+     * @throws ServerSideException 
+     */
+    @WebMethod(operationName = "executeSyncActions")
+    public List<SyncResult> executeSyncActions(
+            @WebParam(name = "actions") List<Integer> actions,
+            @WebParam(name = "findings") List<SyncFinding> findings,
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.executeSyncActions(actions, findings, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
