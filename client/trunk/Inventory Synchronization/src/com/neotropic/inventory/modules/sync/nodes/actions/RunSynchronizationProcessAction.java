@@ -16,10 +16,12 @@
 package com.neotropic.inventory.modules.sync.nodes.actions;
 
 import com.neotropic.inventory.modules.sync.nodes.SyncGroupNode;
+import com.neotropic.inventory.modules.sync.windows.SyncResultsFrame;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -29,11 +31,11 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalSyncFinding;
 import org.inventory.communications.core.LocalSyncGroup;
+import org.inventory.communications.core.LocalSyncResult;
 import org.inventory.communications.runnable.AbstractSyncRunnable;
-import org.inventory.communications.wsclient.SyncResult;
-
 
 import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.openide.util.Utilities;
@@ -42,7 +44,6 @@ import org.openide.util.Utilities;
  * This action launches the synchronization process for a given sync group
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-
 class RunSynchronizationProcessAction extends GenericInventoryAction {
     
     public RunSynchronizationProcessAction() {
@@ -67,11 +68,16 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SYNC, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
     
+    
+    /**
+     * Gets the list of findings and show a dialog to allow the user to choose de actions to findings 
+     */
     private class SyncRunnable extends AbstractSyncRunnable{
 
         @Override
         public void run() {
             List<Integer> syncActions = new ArrayList<>();
+            
             for(LocalSyncFinding find : getFindings()){
                 JTextField txtFindInfo = new JTextField();
                             txtFindInfo.setName("findInfo");
@@ -87,17 +93,36 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
                 JComboBox<String> cbAction = new JComboBox<>(options);
                 cbAction.setName("cmbDevices");
 
+                JCheckBox jcExecuteAll = new JCheckBox();
+                jcExecuteAll.setText("Yes to all");
+                jcExecuteAll.setName("Answer yes to all findings");
+                
                 JComplexDialogPanel pnlSyncDataSourcePropertie = new JComplexDialogPanel(
                         new String[] {"Info",
-                            "Extra Info:","Actions"}, 
-                        new JComponent[] {txtFindInfo, lblextra, cbAction});
-
+                            "Extra Info:","Actions","Yes to all"}, 
+                        new JComponent[] {txtFindInfo, lblextra, cbAction, jcExecuteAll});
+                
+                
+                
                 if (JOptionPane.showConfirmDialog(null, pnlSyncDataSourcePropertie, I18N.gm("sync_data_action_select"), 
                     JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
                     syncActions.add(cbAction.getSelectedIndex());
+                    if(jcExecuteAll.isSelected()){
+                        syncActions = new ArrayList<>();
+                        for(LocalSyncFinding x : getFindings())
+                            syncActions.add(1);
+                        break;
+                    }
                 }
             }
-            List<SyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(syncActions, getFindings());
+            if(syncActions.size() == getFindings().size()){
+                List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(syncActions, getFindings());
+                SyncResultsFrame syncResultFrame = new SyncResultsFrame(executSyncActions);
+                syncResultFrame.setVisible(true);
+            }
+            else
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
+                      NotificationUtil.INFO_MESSAGE, I18N.gm("sync_findings_actions"));
         }
     
     }
