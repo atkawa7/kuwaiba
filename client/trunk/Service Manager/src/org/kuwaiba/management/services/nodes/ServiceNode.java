@@ -93,8 +93,8 @@ public class ServiceNode extends ObjectNode {
                         ObjectNode objNode = (ObjectNode) dropNode;                        
                         
                         if (objNode.getParentNode() instanceof ServiceNode) {
-                            List<String> classNames = new ArrayList();
-                            List<Long> objectIds = new ArrayList();
+                            List<String> classNames = new ArrayList<>();
+                            List<Long> objectIds = new ArrayList<>();
                             
                             classNames.add(objNode.getObject().getClassName());
                             objectIds.add(objNode.getObject().getOid());
@@ -112,8 +112,8 @@ public class ServiceNode extends ObjectNode {
                 if (action == DnDConstants.ACTION_MOVE) {
                     if (dropNode instanceof ObjectNode) {
                         ObjectNode objectNode = (ObjectNode) dropNode;
-                        List<String> classNames = new ArrayList();
-                        List<Long> objectIds = new ArrayList();
+                        List<String> classNames = new ArrayList<>();
+                        List<Long> objectIds = new ArrayList<>();
                         
                         classNames.add(objectNode.getObject().getClassName());
                         objectIds.add(objectNode.getObject().getOid());

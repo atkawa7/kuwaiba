@@ -289,7 +289,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
             List<LocalObjectLight> nodesToBeDeleted = new ArrayList<>(getNodes()); 
 //We clone the existing nodes to synchronize the view, so saved nodes that are no longer listed as service resources are removed
 //We assume that render(byte[]) was called before calling render(LocalObjectLight)
-            Map<Long, LocalObjectLight> equipmentByPort = new HashMap();
+            Map<Long, LocalObjectLight> equipmentByPort = new HashMap<>();
             //We will ignore all resources that are not GenericCommunicationsElement
             for (LocalObjectLight serviceResource : serviceResources) {
                 boolean isGenericCommunicationsElement = com.isSubclassOf(serviceResource.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
