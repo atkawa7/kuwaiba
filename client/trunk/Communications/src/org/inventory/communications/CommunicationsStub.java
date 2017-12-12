@@ -639,10 +639,7 @@ public class CommunicationsStub {
      * @return allPosible children
      */
     public List<LocalClassMetadataLight> getPossibleChildren(String className, boolean ignoreCache) {
-        try{
-            ////TOREMOVE:
-            service.launchSupervisedSynchronizationTask(2126, session.getSessionId());
-            
+        try{            
             List<LocalClassMetadataLight> resAsLocal = null;
             if (!ignoreCache)
                 resAsLocal = cache.getPossibleChildrenCached(className);
