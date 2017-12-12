@@ -125,6 +125,7 @@ public class CreateSubnetAction extends GenericInventoryAction {
         @SuppressWarnings("unchecked")
         // <editor-fold defaultstate="collapsed" desc="Generated Code">  
         public final void initComponents(){
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setLayout(new BorderLayout());
             setTitle(I18N.gm("create_subnet"));
             setPreferredSize(new java.awt.Dimension(470, 200));

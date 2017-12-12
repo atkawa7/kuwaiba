@@ -113,7 +113,7 @@ public class AddIPAddressAction extends GenericInventoryAction {
     }
     
     
-    private class AddIPAddressFrame extends JFrame{
+    private class AddIPAddressFrame extends JFrame {
         private javax.swing.JButton btnAddIPAddress;
         private javax.swing.JButton btnClose;
         private javax.swing.JTextField txtIpAddress;
@@ -142,6 +142,7 @@ public class AddIPAddressAction extends GenericInventoryAction {
         @SuppressWarnings("unchecked")
         // <editor-fold defaultstate="collapsed" desc="Generated Code">  
         public final void initComponents(){
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setLayout(new BorderLayout());
             setTitle(I18N.gm("add_ip_address"));
             setPreferredSize(new java.awt.Dimension(470, 170));
@@ -234,7 +235,6 @@ public class AddIPAddressAction extends GenericInventoryAction {
             String ipAddress = txtIpAddress.getText();
             List<String> ips = new ArrayList<>();
             boolean isUsed = false;
-            boolean itBelong = false;
             
             if(ipAddress.contains("-")){
                 String[] split = ipAddress.split("-");

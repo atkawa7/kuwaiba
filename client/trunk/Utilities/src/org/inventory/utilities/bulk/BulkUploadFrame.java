@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
@@ -71,6 +72,7 @@ public class BulkUploadFrame extends javax.swing.JFrame {
     
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     public final void initComponents(){
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         tabPnlBulkUpload = new javax.swing.JTabbedPane();
         pnlListType = new javax.swing.JPanel();
         btnProcessListTypes = new javax.swing.JButton();

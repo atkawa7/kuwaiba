@@ -16,7 +16,6 @@
 package org.inventory.communications.core;
 
 import java.util.List;
-import org.inventory.communications.util.Constants;
 
 /**
  * This class represent a Sync  Group
@@ -73,7 +72,7 @@ public class LocalSyncGroup implements Comparable<LocalSyncGroup> {
 
     @Override
     public String toString() {
-        return getName() == null ? Constants.LABEL_NONAME : getName();
+        return getName();
     }
         
     @Override

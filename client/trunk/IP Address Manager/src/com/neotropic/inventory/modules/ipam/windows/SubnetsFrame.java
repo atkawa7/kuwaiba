@@ -47,6 +47,7 @@ public class SubnetsFrame extends JFrame {
     public SubnetsFrame(List<LocalPool> subnets, List<LocalObjectLight> selectedPorts) {
         this.selectedPorts = selectedPorts;
         setLayout(new BorderLayout());
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_TITLE_AVAILABLE_SUBNETS"));
         setSize(450, 600);
         setLocationRelativeTo(null);

@@ -50,12 +50,13 @@ public class VFRsFrame  extends JFrame{
     private List<LocalObjectLight> selectedSubnet;
     private List<LocalObjectLight> vfrs;
 
-        public VFRsFrame(List<LocalObjectLight> selectedSubnet, List<LocalObjectLight> vrfs) {
+    public VFRsFrame(List<LocalObjectLight> selectedSubnet, List<LocalObjectLight> vrfs) {
         this.selectedSubnet = selectedSubnet;
         this.vfrs = vrfs;
         setLayout(new BorderLayout());
         setTitle(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_TITLE_AVAILABLE_VFRS"));
         setSize(400, 650);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_INSTRUCTIONS_SELECT_VFR"));
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

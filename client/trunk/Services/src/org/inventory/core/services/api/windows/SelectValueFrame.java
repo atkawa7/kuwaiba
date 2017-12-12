@@ -45,8 +45,6 @@ import org.inventory.core.services.i18n.I18N;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class SelectValueFrame extends JFrame {
-    private static final int WIDTH = 400;
-    private static final int HEIGHT = 650;
     private List<ComposedAction> listeners;
     private JTextField txtSearch;
     private final JScrollPane pnlMain;
@@ -59,7 +57,8 @@ public class SelectValueFrame extends JFrame {
         
         setLayout(new BorderLayout());
         setTitle(title);
-        setSize(WIDTH, HEIGHT);
+        setSize(400, 650);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         JLabel lblInstructions = new JLabel(instructions);
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

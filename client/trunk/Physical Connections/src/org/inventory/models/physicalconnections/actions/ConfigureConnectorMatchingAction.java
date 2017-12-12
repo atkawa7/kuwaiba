@@ -63,6 +63,7 @@ public class ConfigureConnectorMatchingAction implements ActionListener {
         
         public MatchingRulesFrame() {
             setLayout(new BorderLayout());
+            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             
             matchingRules = com.getBusinessRules(LocalBusinessRule.TYPE_RELATIONSHIP_BY_ATTRIBUTE_VALUE);
             if (matchingRules == null) {

@@ -57,6 +57,7 @@ public class ServicesFrame extends JFrame {
         setLayout(new BorderLayout());
         setTitle(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_TITLE_AVAILABLE_SERVICES"));
         setSize(400, 650);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_INSTRUCTIONS_SELECT_SERVICE"));
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

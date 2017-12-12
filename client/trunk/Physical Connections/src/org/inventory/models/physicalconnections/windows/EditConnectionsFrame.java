@@ -72,6 +72,7 @@ public class EditConnectionsFrame extends JFrame {
         setLayout(new BorderLayout());
         setTitle(java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_TITLE_CONNECT_LINKS"));
         setSize(1200, 700);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_INSTRUCTIONS_CONNECT_LINKS"));
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));

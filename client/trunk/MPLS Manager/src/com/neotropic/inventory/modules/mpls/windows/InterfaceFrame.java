@@ -55,6 +55,7 @@ public class InterfaceFrame extends JFrame{
         this.devices = devices;
         setLayout(new BorderLayout());
         setTitle(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_TITLE_AVAILABLE"));
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(400, 650);
         setLocationRelativeTo(null);
         JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/mpls/Bundle").getString("LBL_INSTRUCTIONS_SELECT"));

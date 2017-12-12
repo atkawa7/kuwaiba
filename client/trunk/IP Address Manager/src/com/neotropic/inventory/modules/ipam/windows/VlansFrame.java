@@ -54,6 +54,7 @@ public class VlansFrame extends JFrame{
         this.selectedObjects = selectedObjects;
         this.vlans = vlans;
         setLayout(new BorderLayout());
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_TITLE_AVAILABLE_VLANS"));
         setSize(400, 650);
         setLocationRelativeTo(null);
