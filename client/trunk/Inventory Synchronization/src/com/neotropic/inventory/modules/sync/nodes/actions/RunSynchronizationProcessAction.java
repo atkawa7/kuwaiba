@@ -30,6 +30,7 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalSyncFinding;
 import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.runnable.AbstractSyncRunnable;
+import org.inventory.communications.wsclient.SyncResult;
 
 
 import org.inventory.core.services.api.actions.GenericInventoryAction;
@@ -74,6 +75,7 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
             for(LocalSyncFinding find : getFindings()){
                 JTextField txtFindInfo = new JTextField();
                             txtFindInfo.setName("findInfo");
+                            txtFindInfo.setText(find.getDescription());
                             txtFindInfo.setColumns(50);
                 String[] options = {"Execute", "Ignore"};
 
@@ -95,7 +97,7 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
                     syncActions.add(cbAction.getSelectedIndex());
                 }
             }
-            //CommunicationsStub.getInstance().executSyncActions(syncActions, null)
+            List<SyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(syncActions, getFindings());
         }
     
     }
@@ -103,35 +105,3 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
 
 
 
-
-//        
-        
-        //TODO remove this form here
-//                        
-//
-//                        JTree jtree = new JTree();
-//                        jtree.setName("findExtraInfo");
-//                        //txtFindExtraInfo.setColumns(150);
-//                        jtree.setEnabled(false);
-//
-
-//
-//                        CommunicationsStub.
-//                        if(jtree != null)
-//                           
-//                        else{
-//                            
-//                            
-//                             = new CommunicationsStub.JComplexDialogPanel(
-//                            new String[] {"Info",
-//                                "Extra Info:","Actions"}, 
-//                            new JComponent[] {txtFindInfo, lblextra, actionTo});
-//                        
-//                        }
-        //if (JOptionPane.showConfirmDialog(null, pnlSyncDataSourceProperties, "Take a choise", 
-//                                    JOptionPane.YES_OPTION) == JOptionPane.YES_OPTION) {
-//                                actions.add(1);
-//                            }
-       // 
-        
-        //System.out.println("Yeah!");
