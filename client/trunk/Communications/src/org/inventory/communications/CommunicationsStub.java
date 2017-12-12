@@ -4770,7 +4770,7 @@ public class CommunicationsStub {
      * @param localFindings the findings
      * @return The list of results after executes the actions
      */
-    public List<SyncResult> executSyncActions(List<Integer> actions, List<LocalSyncFinding> localFindings){
+    public List<SyncResult> executeSyncActions(List<Integer> actions, List<LocalSyncFinding> localFindings){
         try {
             List<SyncFinding> findings = new ArrayList<>();
             for (LocalSyncFinding locaFinding : localFindings) {
