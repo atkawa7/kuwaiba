@@ -6832,16 +6832,16 @@ public class KuwaibaService {
          * Creates a Synchronization Group. A Sync Group is a set of Synchronization Configurations that will be processed by the same
          * Synchronization Provider. Take into account that the schedule for the SG to be executed is not configured here, but in Task Manager's task
          * @param syncGroupId The name of the new sync group
-         * @param syncDataSourceConfigurationIds The id of the syncDataSourceConfigurations for the group
+         * @param syncGroupProperties The synchronization group properties
          * @param sessionId Session token
          * @throws ServerSideException If the name or the sync provider are invalid 
          */
         @WebMethod(operationName = "updateSynchronizationGroup")
         public void updateSynchronizationGroup(@WebParam(name="syncGroupId") long syncGroupId,
-                @WebParam(name="syncDataSourceConfigurationIds")List<Long> syncDataSourceConfigurationIds, 
+                @WebParam(name="syncGroupProperties")List<StringPair> syncGroupProperties, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
             try {
-                wsBean.updateSynchronizationGroup(syncGroupId, syncDataSourceConfigurationIds, getIPAddress(), sessionId);
+                wsBean.updateSynchronizationGroup(syncGroupId, syncGroupProperties, getIPAddress(), sessionId);
             } catch (Exception ex) {
                 if (ex instanceof ServerSideException)
                     throw ex;
@@ -6864,7 +6864,8 @@ public class KuwaibaService {
                 @WebParam(name="syncGroupId")long syncGroupId, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
             try {
-                return wsBean.getSynchronizationGroup(syncGroupId, getIPAddress(), sessionId);
+                //return wsBean.getSynchronizationGroup(syncGroupId, getIPAddress(), sessionId);
+                return null;
             } catch (Exception ex) {
                 if (ex instanceof ServerSideException)
                     throw ex;
@@ -6933,7 +6934,7 @@ public class KuwaibaService {
                 @WebParam(name="parameters")List<StringPair> parameters, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
             try {
-                
+                wsBean.updateSyncDataSourceConfiguration(syncDataSourceConfigId, parameters, getIPAddress(), sessionId);
             } catch (Exception ex) {
                 if (ex instanceof ServerSideException)
                     throw ex;
@@ -6951,7 +6952,7 @@ public class KuwaibaService {
          * @throws ServerSideException If the group could not be found
          */
         @WebMethod(operationName = "deleteSynchronizationGroup")
-        public void deleteSynchronizationGroup(@WebParam(name="syncGroupId")String syncGroupId, 
+        public void deleteSynchronizationGroup(@WebParam(name="syncGroupId")long syncGroupId, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
             try {
                 wsBean.deleteSynchronizationGroup(syncGroupId, getIPAddress(), sessionId);
@@ -6972,7 +6973,7 @@ public class KuwaibaService {
          * @throws ServerSideException If the config could not be found
          */
         @WebMethod(operationName = "deleteSynchronizationDataSourceConfig")
-        public void deleteSynchronizationDataSourceConfig(@WebParam(name="syncDataSourceConfigId")String syncDataSourceConfigId, 
+        public void deleteSynchronizationDataSourceConfig(@WebParam(name="syncDataSourceConfigId")long syncDataSourceConfigId, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
             try {
                 wsBean.deleteSynchronizationDataSourceConfig(syncDataSourceConfigId, getIPAddress(), sessionId);

@@ -539,7 +539,7 @@ public interface WebserviceBeanRemote {
         
         //<editor-fold desc="Synchronization API" defaultstate="collapsed">
         public long createSynchronizationGroup(String name, String syncProviderId, String ipAddress, String sessionId)throws ServerSideException;
-        public void updateSynchronizationGroup(long syncGroupId, List<Long> SyncDataSourceConfigIds, String ipAddress, String sessionId)throws ServerSideException;
+        public void updateSynchronizationGroup(long syncGroupId, List<StringPair> syncGroupProperties, String ipAddress, String sessionId)throws ServerSideException;
         
         
         public long createSynchronizationDataSourceConfig(long syncGroupId, String name, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
@@ -549,8 +549,8 @@ public interface WebserviceBeanRemote {
         public RemoteSynchronizationGroup getSynchronizationGroup(long syncGroupId, String ipAddress, String sessionId) throws ServerSideException;
         public List<RemoteSynchronizationGroup> getSynchronizationGroups(String ipAddress, String sessionId)throws ServerSideException;
         public List<RemoteSynchronizationConfiguration> getSyncDataSourceConfigurations(long syncGroupId, String ipAddress, String sessionId)throws ServerSideException;
-        public void deleteSynchronizationGroup(String syncGroupId, String ipAddress, String sessionId)throws ServerSideException;
-        public void deleteSynchronizationDataSourceConfig(String syncDataSourceConfigId, String ipAddress, String sessionId)throws ServerSideException;
+        public void deleteSynchronizationGroup(long syncGroupId, String ipAddress, String sessionId)throws ServerSideException;
+        public void deleteSynchronizationDataSourceConfig(long syncDataSourceConfigId, String ipAddress, String sessionId)throws ServerSideException;
         //</editor-fold>
     
     // Bookmarks

@@ -4282,6 +4282,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("createSynchronizationDataSourceConfig", ipAddress, sessionId);
+            //TODO: audit entry
             return aem.createSyncDataSourceConfig(syngGroupId, name, parameters);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -4294,6 +4295,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("createSynchronizationGroup", ipAddress, sessionId);
+            //TODO: audit entry
             return aem.createSyncGroup(name, syncProviderId);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -4301,13 +4303,13 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void updateSynchronizationGroup(long syncGroupId, List<Long> SyncDataSourceConfigIds, String ipAddress, String sessionId)throws ServerSideException{
+    public void updateSynchronizationGroup(long syncGroupId, List<StringPair> syncGroupProperties, String ipAddress, String sessionId)throws ServerSideException{
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("updateSyncDataSourceConfiguration", ipAddress, sessionId);
-
-
+            aem.updateSyncGroup(syncGroupId, syncGroupProperties);
+            //TODO: audit entry
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -4319,8 +4321,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("updateSyncDataSourceConfiguration", ipAddress, sessionId);
-
-
+            aem.updateSyncDataSourceConfig(syncDataSourceConfigId, parameters);
+            //TODO: audit entry
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -4379,26 +4381,26 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public void deleteSynchronizationGroup(String syncGroupId, String ipAddress, String sessionId)throws ServerSideException{
+    public void deleteSynchronizationGroup(long syncGroupId, String ipAddress, String sessionId)throws ServerSideException{
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("deleteSynchronizationGroup", ipAddress, sessionId);
-
-
+            aem.deleteSynchronizationGroup(syncGroupId);
+            //TODO: audit entry
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
 
     @Override
-    public void deleteSynchronizationDataSourceConfig(String syncDataSourceConfigId, String ipAddress, String sessionId)throws ServerSideException{
+    public void deleteSynchronizationDataSourceConfig(long syncDataSourceConfigId, String ipAddress, String sessionId)throws ServerSideException{
         if (aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateWebServiceCall("deleteSynchronizationDataSourceConfig", ipAddress, sessionId);
-
-
+            aem.deleteSynchronizationDataSourceConfig(syncDataSourceConfigId);
+            //TODO: audit entry
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

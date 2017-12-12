@@ -1215,11 +1215,18 @@ public interface ApplicationEntityManager {
     /**
      * Updates the data source configurations associated to a given sync group
      * @param syncGroupId The Id of the sync group to be updated
-     * @param dataSourceConfigurations The list of data source configurations
+     * @param syncGroupProperties The list of synchronization group properties
      * @throws ApplicationObjectNotFoundException If the sync group could not be found
      * @throws InvalidArgumentException If any of the provided data source configurations is invalid
      */
-    public void updateSyncGroup(long syncGroupId, List<SyncDataSourceConfiguration> dataSourceConfigurations)throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public void updateSyncGroup(long syncGroupId, List<StringPair> syncGroupProperties)throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Deletes a sync group
+     * @param syncGroupId The id of the sync group
+     * @throws ApplicationObjectNotFoundException If the sync group can no be found
+     */
+    public void deleteSynchronizationGroup(long syncGroupId) throws ApplicationObjectNotFoundException;
     /**
      * Creates a data source configuration and associates it to a sync group
      * @param syncGroupId The id of the sync group the data source configuration will be related to
@@ -1230,4 +1237,18 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException  If any of the parameters is not valid
      */
     public long createSyncDataSourceConfig(long syncGroupId, String name, List<StringPair> parameters)throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Updates a synchronization data source
+     * @param syncDataSourceConfigId The id of an synchronization data source
+     * @param parameters the list of parameters to update
+     * @throws ApplicationObjectNotFoundException If the sync data source cannot be found
+     */
+    public void updateSyncDataSourceConfig(long syncDataSourceConfigId, List<StringPair> parameters) throws ApplicationObjectNotFoundException;
+
+    /**
+     * Deletes a synchronization data source
+     * @param syncDataSourceConfigId The id of an synchronization data source
+     * @throws ApplicationObjectNotFoundException If the sync data source cannot be found
+     */
+    public void deleteSynchronizationDataSourceConfig(long syncDataSourceConfigId) throws ApplicationObjectNotFoundException ;
 }

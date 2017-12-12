@@ -3526,12 +3526,44 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public void updateSyncGroup(long syncGroupId, List<SyncDataSourceConfiguration> dataSourceConfigurations)throws InvalidArgumentException{
-        if (dataSourceConfigurations == null)
-            throw new InvalidArgumentException("The dataSourceConfigurations of the sync group can not be null");
+    public void updateSyncGroup(long syncGroupId, List<StringPair> syncGroupProperties) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        if (syncGroupProperties == null)
+            throw new InvalidArgumentException(String.format("The parameters of the sync group with id %s can not be null", syncGroupId));
+        
         try (Transaction tx = graphDb.beginTx()) {
             Node syncGroupNode = syncGroupsIndex.get(Constants.PROPERTY_ID, syncGroupId).getSingle();
-            //To do
+            
+            if (syncGroupNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Synchronization Group with id %s could not be found", syncGroupId));
+            
+            for (StringPair syncGroupProperty : syncGroupProperties)
+                syncGroupNode.setProperty(syncGroupProperty.getKey(), syncGroupProperty.getValue());
+                        
+            tx.success();
+        }
+    }
+    
+    @Override
+    public void deleteSynchronizationGroup(long syncGroupId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node syncGroupNode = graphDb.getNodeById(syncGroupId);
+            if (syncGroupNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find the Synchronization Data Source Configuration with id %s",syncGroupId));
+            
+            List<Relationship> relationshipsToDelete = new ArrayList();
+            List<Node> nodesToDelete = new ArrayList();
+           
+            for (Relationship relationship : syncGroupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP)) {
+                relationshipsToDelete.add(relationship);
+                nodesToDelete.add(relationship.getStartNode());
+            }
+            while (!relationshipsToDelete.isEmpty())
+                relationshipsToDelete.remove(0).delete();
+            
+            while (!nodesToDelete.isEmpty())
+                nodesToDelete.remove(0).delete();
+            
+            syncGroupNode.delete();
             tx.success();
         }
     }
@@ -3559,6 +3591,42 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             tx.success();
             return syncDataSourceConfigNode.getId();
         }           
+    }
+    
+    @Override
+    public void updateSyncDataSourceConfig(long syncDataSourceConfigId, List<StringPair> parameters) 
+        throws ApplicationObjectNotFoundException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node syncDataSourceConfig = graphDb.getNodeById(syncDataSourceConfigId);
+            if (syncDataSourceConfig == null)
+                throw new ApplicationObjectNotFoundException(String.format("Synchronization Data Source Configuration with id %s could not be found", syncDataSourceConfigId));
+            
+            for (StringPair parameter : parameters)
+                syncDataSourceConfig.setProperty(parameter.getKey(), parameter.getValue());
+                        
+            tx.success();
+        }
+    }
+    
+    @Override    
+    public void deleteSynchronizationDataSourceConfig(long syncDataSourceConfigId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node syncDataSourceConfigNode = graphDb.getNodeById(syncDataSourceConfigId);
+            if (syncDataSourceConfigNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find the Synchronization Data Source Configuration with id %s",syncDataSourceConfigId));
+            
+            List<Relationship> relationshipsToDelete = new ArrayList();
+           
+            for (Relationship relationship : syncDataSourceConfigNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP)) {
+                relationshipsToDelete.add(relationship);
+            }
+            while (!relationshipsToDelete.isEmpty())
+                relationshipsToDelete.remove(0).delete();
+            
+            syncDataSourceConfigNode.delete();
+            tx.success();
+        }
     }
     //</editor-fold>
 

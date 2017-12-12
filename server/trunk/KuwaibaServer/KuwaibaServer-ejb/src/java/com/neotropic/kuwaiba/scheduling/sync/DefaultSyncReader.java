@@ -37,10 +37,6 @@ public class DefaultSyncReader implements ItemReader {
     @Inject
     private JobContext jobContext;
     /**
-     * The job execution id is used to prevent the multiple execution of the read item method
-     */
-    private long jobExecutionId = -1;
-    /**
      * Reference to the sync group associated to this sync process
      */
     private SynchronizationGroup syncGroup;
