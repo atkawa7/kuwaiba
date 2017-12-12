@@ -31,6 +31,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
@@ -73,7 +74,11 @@ public class SyncActionWizard extends JFrame {
      * @param findings The list of findings to be displayed
      * @param listener The callback object that will listen for 
      */
-    public SyncActionWizard(LocalSyncGroup syncGroup, List<LocalSyncFinding> findings, final ActionListener listener) {
+    public SyncActionWizard(LocalSyncGroup syncGroup, List<LocalSyncFinding> findings, final ActionListener listener) throws IllegalArgumentException {
+        
+        if (findings.isEmpty())
+            throw new IllegalArgumentException("The list of findings can not empty");
+        
         setSize(400, 800);
         setLocationRelativeTo(null);
         setTitle(String.format("Findings in %s [%s]", syncGroup.getName(), syncGroup.getProvider()));
@@ -107,7 +112,10 @@ public class SyncActionWizard extends JFrame {
         btnClose.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dispose();
+                if (JOptionPane.showConfirmDialog(null, 
+                        "Are you sure you want to stop reviewing the findings? The remaining ones will be ignored", 
+                        "Information", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.YES_OPTION)
+                    dispose();
             }
         });
         
@@ -115,8 +123,13 @@ public class SyncActionWizard extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                renderFinding(findingsToDisplay.get(currentFinding));
-                currentFinding++;
+                if (currentFinding < findingsToDisplay.size()) {
+                    renderFinding(findingsToDisplay.get(currentFinding));
+                    currentFinding++;
+                } else {
+                    JOptionPane.showMessageDialog(null, "You have reviewed all the synchronization findings", "Information", JOptionPane.INFORMATION_MESSAGE);
+                    dispose();
+                }
             }
         });
         
@@ -132,9 +145,10 @@ public class SyncActionWizard extends JFrame {
         for (Component mnuItem : mnuActions.getComponents())
             ((JMenuItem)mnuItem).addActionListener(listener);
         
+        renderFinding(findings.get(0));
     }
     
-    public void renderFinding (LocalSyncFinding finding) {
+    public final void renderFinding (LocalSyncFinding finding) {
         lblFindingDescription.setText(finding.getDescription());
         pnlScrollMain.setViewportView(createTreeFromJSON(finding.getExtraInformation()));
     }
@@ -143,7 +157,7 @@ public class SyncActionWizard extends JFrame {
      * Builds a JTree based on a JSON string that defines a containment hierarchy, normally used 
      * to depict a branch that will be modified in the associated device 
      * @param jsonString The tree definition as a JSON document
-     * @return A tree with the 
+     * @return A tree with the structured defined in the JSON document
      */
     public static JTree createTreeFromJSON(String jsonString) {
         JsonReader jsonReader = Json.createReader(new StringReader(jsonString));
