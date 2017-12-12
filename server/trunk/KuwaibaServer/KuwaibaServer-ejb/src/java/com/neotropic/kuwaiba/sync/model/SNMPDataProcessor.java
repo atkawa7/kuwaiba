@@ -15,7 +15,6 @@
  */
 package com.neotropic.kuwaiba.sync.model;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -125,7 +124,7 @@ public class SNMPDataProcessor {
             OperationNotPermittedException, ApplicationObjectNotFoundException
             
     {
-        messages.add("Staring to mapping... ");
+        messages.add("Starting to map... ");
         readData();
         messages.add("Creating the class hierarchy");
         loadClassHierarchy();

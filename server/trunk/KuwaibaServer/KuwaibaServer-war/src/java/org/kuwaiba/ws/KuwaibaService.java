@@ -35,6 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.beans.WebserviceBeanRemote;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
@@ -5337,7 +5338,7 @@ public class KuwaibaService {
     }
     //</editor-fold>
     
-    //<editor-fold desc="Synchronization API methods" defaultstate="collapsed">
+    //<editor-fold desc="Synchronization Framework methods" defaultstate="collapsed">
     /**
      * Executes an synchronization job, which consist on connecting to the sync data source 
      * using the configuration attached to the given sync group and finding the differences 
@@ -5353,25 +5354,22 @@ public class KuwaibaService {
     public List<SyncFinding> launchSupervisedSynchronizationTask(@WebParam(name = "syncGroupId") long syncGroupId, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException, InterruptedException, Exception {
         try {
-            
-            BackgroundJob job = wsBean.launchSupervisedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);
-            
-            BackgroundJob managedJob = null;
-            try {
-                managedJob = JobManager.getInstance().getJob(job.getId());
-            } catch(InvalidArgumentException ex) {
-            }
-            while (managedJob.getJobResult() == null && !managedJob.getStatus().name().equals(BackgroundJob.JOB_STATUS.FINISHED.name())) {
-                managedJob = null;
-                try {
-                    managedJob = JobManager.getInstance().getJob(job.getId());
-                } catch(InvalidArgumentException ex) {
+            BackgroundJob managedJob = wsBean.launchSupervisedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);                      
+            int retries = 0;
+            while (!managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.FINISHED) && retries < 20) {
+                try {                
+                //For some reason (probably thread-concurrency related), the initial "managedJob" instance is different from the one
+                //updated in the SyncProcessor/Writer, so we have to contantly fetch it again.
+                managedJob = JobManager.getInstance().getJob(managedJob.getId());
+                Thread.sleep(2000);
+                }catch (InterruptedException | InvalidArgumentException ex) {
+                    throw new RuntimeException(ex.getMessage());
                 }
-                TimeUnit.SECONDS.sleep(2);
+                retries ++;
             }
             
-            Object jobResult = managedJob.getJobResult();
-            return (List<SyncFinding>)jobResult;
+            return (List<SyncFinding>)managedJob.getJobResult();
+            
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -5396,7 +5394,8 @@ public class KuwaibaService {
     public List<SyncResult> launchAutomatedSynchronizationTask(@WebParam(name = "syncGroupId") long syncGroupId, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            return wsBean.launchAutomatedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);
+            BackgroundJob managedJob = wsBean.launchAutomatedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);
+            return null;
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

@@ -4405,7 +4405,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public List<SyncResult> launchAutomatedSynchronizationTask(long syncGroupId, String ipAddress, String sessionId) throws ServerSideException {
+    public BackgroundJob launchAutomatedSynchronizationTask(long syncGroupId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null || bem == null || mem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
