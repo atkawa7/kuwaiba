@@ -20,20 +20,24 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.Json;
+import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
+import javax.json.JsonValue;
 import org.kuwaiba.apis.persistence.PersistenceService;
+import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 
 /**
  * An instance of this class define an action to be performed upon a sync difference
@@ -41,152 +45,189 @@ import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
  */
 public class SyncAction {
     
+    private final static String CONTAINMENT_HIERARCHY = "The containment hierarchy was updated parent %s, children %s";
+    private final static String OBJECT_UPDATED = "The object %s [%s] with id %s was updated";
+    private final static String OBJECT_CANNOT_UPDATED = "The object %s [%s] wasn't updated";
+    private final static String UPDATED = "updated successfully";
+    private final static String CREATED = "created successfully";
+    private final static String DELETED = "deleted successfully";
+    private final static String OBJECT_CREATED = "The object %s [%s] with id %s was created";
+    private final static String OBJECT_CANNOT_CREATED = "The object %s [%s] with wasn't created";
+    private final static String OBJECT_DELETED = "The object %s [%s] with id %s was deleted";
+    private final static String LISTTYPE_CREATED = "A list type %s was created";
+    private final static String LISTTYPE_CANNOT_CREATED = "A list type %s was created";
+    private final static String PORT_NO_MATCH = "This %s has no match please check it manually";
+    private final static String ERROR_DELETING = "The object %s [%s] with id %s wasn't deleted";
+    private final static String ERROR = "Error";
     
     private List<SyncFinding> findings;
-    private List<Boolean> actions;
+    private List<SyncResult> results;
+    private List<Integer> actions;
     private BusinessEntityManager bem;
-    private HashMap<Long, List<RemoteBusinessObjectLight>> newPorts;
-    private List<RemoteBusinessObjectLight> oldPorts;
+    private ApplicationEntityManager aem;
+    private MetadataEntityManager mem;
+    private HashMap<Long, Long> createdIdsToMap;
     
     private HashMap<String, String> newAttributes;
-    private List<RemoteBusinessObjectLight> portsToBeDeleted;
+    private List<Long> portsToBeDeleted;
     private List<RemoteBusinessObjectLight> newPortsWithNoMatch;
+    private HashMap<Long, List<Long>> newCreatedPorts;
     
-    public SyncAction(List<Boolean> actions, List<SyncFinding> results) {
+    public SyncAction(List<Integer> actions, List<SyncFinding> findings) {
         this.actions = actions;
-        this.findings = results;
+        this.findings = findings;
         PersistenceService persistenceService = PersistenceService.getInstance();
         bem = persistenceService.getBusinessEntityManager();
-        newPorts = new HashMap<>();
-        oldPorts = new ArrayList<>();
-        
+        aem = persistenceService.getApplicationEntityManager();
+        mem = persistenceService.getMetadataEntityManager();
+        newCreatedPorts = new HashMap<>();
+        results = new ArrayList<>();
         newAttributes = new HashMap<>();
         portsToBeDeleted = new ArrayList<>();
         newPortsWithNoMatch = new ArrayList<>();
+        createdIdsToMap = new HashMap<>();
     }
     
-    public List<String> executeResults() {
-        String className;
-        String parentClassName;
-        Long tempParentId;
-        HashMap<String, String> attributes;
-        HashMap<Long, Long> createdIdsToMap = new HashMap<>();
-        
-        //crear primero los list types
-        try {
-            for (SyncFinding find : findings) {
-               
-                attributes = new HashMap<>();
-                JsonReader jsonReader = Json.createReader(new StringReader(find.getExtraInformation()));
-                JsonObject jsonObj = jsonReader.readObject();
-                
-                String type = jsonObj.getString("type");
-                if(!type.equals("listType")){
-                    Long id = Long.valueOf(jsonObj.getString("id"));
-                    className = jsonObj.getString("className");
-                    parentClassName = jsonObj.getString("parentClassName");
-                    tempParentId = Long.valueOf(jsonObj.getString("parentId"));
+    public List<SyncResult> execute() throws InvalidArgumentException{
+        if(findings.size() != actions.size())
+            throw new InvalidArgumentException("The number of actions doesn't correspond with the number of findings");
+         //crear primero los list types
+        for (int i = 0; i < findings.size(); i++) {
+            if(actions.get(i) == 1){
+            JsonReader jsonReader = Json.createReader(new StringReader(findings.get(i).getExtraInformation()));
+            JsonObject jsonObj = jsonReader.readObject();
+            String type = jsonObj.getString("type");
+            jsonReader.close();
 
-                    JsonObject jsonAttributes = jsonObj.getJsonObject("attributes");
-                    attributes.put("name", jsonAttributes.getString("name"));
-                    attributes.put("description", jsonAttributes.getString("description"));
-                    if(!jsonAttributes.getString("serialNumber").isEmpty())
-                        attributes.put("serialNumber", jsonAttributes.getString("serialNumber"));
-                    if(!jsonAttributes.getString("vendor").isEmpty())
-                        attributes.put("vendor", jsonAttributes.getString("vendor"));
-                    if(!jsonAttributes.getString("modelName").isEmpty())
-                        attributes.put("modelName", jsonAttributes.getString("modelName"));
-                    //attributes.put("isLoadFromRegistry", "true");
-
-                    if (find.getType() == SyncFinding.EVENT_NEW){
-                        long parentId = createdIdsToMap.get(tempParentId);
-                        long createdObjectId = bem.createObject(className, parentClassName, parentId, attributes, -1);
-                        createdIdsToMap.put(id, createdObjectId);
-
-                        if(className.contains("Port")){
-                            List<RemoteBusinessObjectLight> listOfCreatedPorts = newPorts.get(parentId);
-                            if(listOfCreatedPorts == null)
-                                listOfCreatedPorts = new ArrayList();
-
-                            listOfCreatedPorts.add(new RemoteBusinessObject(createdObjectId, attributes.get("name"), className));
-                            newPorts.put(parentId, listOfCreatedPorts);  
+            switch (type) {
+                case "hierarchy":
+                    updateContaimentHiearchy(jsonObj);
+                    break;
+                case "listType":
+                    createMissingListTypes(jsonObj);
+                    break;
+                case "device":
+                    manageDevice(jsonObj, findings.get(i));
+                case "branch":
+                    JsonArray children = jsonObj.getJsonArray("children");
+                    for(JsonValue jObj : children){
+                        try (JsonReader childReader = Json.createReader(new StringReader(jObj.toString()))) {
+                            JsonObject child = childReader.readObject();
+                            manageObjectOfBranch(child.getJsonObject("child"), findings.get(i));
                         }
-                    }
-                    else if (find.getType() == SyncFinding.EVENT_UPDATE){
-                        bem.updateObject(className, id, attributes);
-                        if(tempParentId == 0l)
-                            createdIdsToMap.put(1L, id);
-                    }
+                    }   
+                    break;
+                case "object_port_move":
+                    migreteOldPortsIntoNewPosition(jsonObj);
+                    break;
+                
+                case "branch_to_delete":
+                    deleteOldStructure(jsonObj);
+                    break;
+                case "object_port_no_match":
+                    results.add(new SyncResult(String.format(PORT_NO_MATCH, "port"), "no match, check"));
+                    break;
                 }
             }
-            migratePorts();
-        } catch (InvalidArgumentException | ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-            Logger.getLogger(SyncAction.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return results;
+    }
+    
+    
+    private void updateContaimentHiearchy(JsonObject jo){
+        HashMap<String, List<String>> classes = new HashMap<>();
         
-        return null;
-    }
-    
-    /**
-     * This copy the old ports into their new locations
-     * @throws InvalidArgumentException
-     * @throws ObjectNotFoundException
-     * @throws MetadataObjectNotFoundException
-     * @throws OperationNotPermittedException 
-     */
-    private void migratePorts() throws InvalidArgumentException,
-            ObjectNotFoundException, MetadataObjectNotFoundException,
-            OperationNotPermittedException
-    {
-        for(RemoteBusinessObjectLight oldPort : oldPorts){
-            //We copy the new attributes into the new port, to keep the relationships
-            Long newParentId = getNewAttributes(oldPort);
-            if(newParentId != null){
-                
-                bem.updateObject(oldPort.getClassName(), oldPort.getId(), newAttributes);
-                
-                HashMap<String, Long[]> objectsToMove = new HashMap<>();
-                Long[] ids = {oldPort.getId()} ;
-                objectsToMove.put(oldPort.getClassName(), ids);
-                RemoteBusinessObject parent = bem.getObject(newParentId);
-                //move the old port into the new location
-                bem.moveObjects(parent.getClassName(), newParentId, new HashMap(objectsToMove));
+        for (Map.Entry<String, JsonValue> entry : jo.entrySet()) {
+            List<String> possibleChildren = classes.get(entry.getKey());
+            if(possibleChildren == null)
+                possibleChildren = new ArrayList<>();
+            possibleChildren.add(entry.getValue().toString());
+            classes.put(entry.getKey(), possibleChildren);
+        }
+        for (Map.Entry<String, List<String>> entrySet : classes.entrySet()) {
+            String key = entrySet.getKey();
+            List<String> possibleChildrenToAdd = entrySet.getValue();
+            try {
+                mem.addPossibleChildren(key, possibleChildrenToAdd.toArray(new String[possibleChildrenToAdd.size()]));
+                results.add(new SyncResult(String.format(CONTAINMENT_HIERARCHY, key, possibleChildrenToAdd), CREATED));
+                 
+            } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
+                Logger.getLogger(SyncAction.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
-        }//end for
-       
-        //messages.add("The ports were migrated");
-        for(RemoteBusinessObjectLight p : portsToBeDeleted){
-            //messages.add("trying to delete port:" + p.getName() +" - id: " + p.getId() + " after migration");
-            bem.deleteObject(p.getClassName(), p.getId(), false);
         }
     }
     
-    private Long getNewAttributes(RemoteBusinessObjectLight oldPort) 
-            throws InvalidArgumentException, ObjectNotFoundException, 
-            MetadataObjectNotFoundException
-    {
-        for (long parentOfNewPort : newPorts.keySet()) {
-            List<RemoteBusinessObjectLight> listOfCreatedPorts = newPorts.get(parentOfNewPort);
-            for (RemoteBusinessObjectLight p : listOfCreatedPorts) {
-                RemoteBusinessObject tempNewPort = bem.getObject(p.getId());
-                if(compareNames(oldPort.getName(), oldPort.getClassName(), p.getName(), p.getClassName()))
-                {
-                    HashMap<String, List<String>> tempAttributes = tempNewPort.getAttributes();
-                    for(String attr : tempAttributes.keySet()){
-                        List<String> listOfValues = tempAttributes.get(attr);
-                        newAttributes.put(attr, listOfValues.get(0));
-                    }
-                    //We no longer need the new port, so we deletes the new port
-                    if(!portsToBeDeleted.contains(tempNewPort))
-                        portsToBeDeleted.add(tempNewPort);
-                    return parentOfNewPort;
+    private void createMissingListTypes(JsonObject jo){
+        results.add(new SyncResult(String.format(LISTTYPE_CREATED, jo.getString("name")), CREATED));
+    }
+    
+    private void manageDevice(JsonObject device, SyncFinding find){
+        HashMap<String, String> attributes = new HashMap<>();
+        long deviceId = Long.valueOf(device.getString("deviceId"));
+        String deviceClassName = device.getString("deviceClassName");
+        JsonObject jsonAttributes = device.getJsonObject("attributes");
+        attributes.put("name", jsonAttributes.getString("name"));
+        attributes.put("description", jsonAttributes.getString("description"));
+        
+        if(jsonAttributes.get("serialNumber") != null)
+            attributes.put("serialNumber", jsonAttributes.getString("serialNumber"));
+        if(jsonAttributes.get("vendor") != null)
+            attributes.put("vendor", jsonAttributes.getString("vendor"));
+        if(jsonAttributes.get("modelName") != null)
+            attributes.put("modelName", jsonAttributes.getString("modelName")); 
+        if (find.getType() == SyncFinding.EVENT_UPDATE){
+            try{
+                bem.updateObject(deviceClassName, deviceId, attributes);
+                results.add(new SyncResult(String.format(OBJECT_UPDATED, attributes.get("name"), deviceClassName, Long.toString(deviceId)), UPDATED));
+            } catch (InvalidArgumentException | ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
+                results.add(new SyncResult(String.format(OBJECT_CANNOT_UPDATED, attributes.get("name"), deviceClassName), ERROR));
+            }
+        }
+    }
+    
+    private void manageObjectOfBranch(JsonObject child, SyncFinding find){
+        
+        HashMap<String, String> attributes = new HashMap<>();
+        Long childId = Long.valueOf(child.getString("childId"));
+        String className = child.getString("className");
+        String parentClassName = child.getString("parentClassName");
+        Long tempParentId = Long.valueOf(child.getString("parentId"));
+
+        JsonObject jsonAttributes = child.getJsonObject("attributes");
+        attributes.put("name", jsonAttributes.getString("name"));
+        attributes.put("description", jsonAttributes.getString("description"));
+        
+        if(jsonAttributes.get("serialNumber") != null)
+            attributes.put("serialNumber", jsonAttributes.getString("serialNumber"));
+        if(jsonAttributes.get("vendor") != null)
+            attributes.put("vendor", jsonAttributes.getString("vendor"));
+        if(jsonAttributes.get("modelName") != null)
+            attributes.put("modelName", jsonAttributes.getString("modelName"));
+        //attributes.put("isLoadFromRegistry", "true");
+
+        if (find.getType() == SyncFinding.EVENT_NEW){
+            try{
+                Long parentId = createdIdsToMap.get(tempParentId);
+                if(parentId == null)
+                    parentId = tempParentId;
+
+                if(className.contains("Port") && attributes.get("name").contains("Power")){
+                    long createdObjectId = bem.createObject(className, parentClassName, parentId, attributes, -1);
+                    createdIdsToMap.put(childId, createdObjectId);
+                    results.add(new SyncResult(String.format(OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), CREATED));
                 }
-                else
-                    newPortsWithNoMatch.add(tempNewPort);
+            } catch (InvalidArgumentException | ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
+                results.add(new SyncResult(String.format(OBJECT_CANNOT_CREATED, attributes.get("name"), className), ERROR));
             }
         }
-        return null;
+        else if (find.getType() == SyncFinding.EVENT_UPDATE){
+            try{
+                bem.updateObject(className, childId, attributes);
+                results.add(new SyncResult(String.format(OBJECT_UPDATED, attributes.get("name"), className, Long.toString(-1)), UPDATED));
+            } catch (InvalidArgumentException | ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
+                results.add(new SyncResult(String.format(OBJECT_CANNOT_UPDATED, attributes.get("name"), className), ERROR));
+            }
+        }
     }
     
     public enum EVENT {
@@ -195,54 +236,42 @@ public class SyncAction {
         POSTPONE
     }   
     
-    
-    private boolean compareNames(String oldName, String oldClassName, 
-            String newName, String newClassName)
-    {
-        if(oldClassName.equals(newClassName)){
-            oldName = oldName.toLowerCase();
-            newName = newName.toLowerCase();
-            if(oldName.equals(newName))
-                return true;
-            else if(oldClassName.equals("ElectricalPort")){
-                String[] split = oldName.split(" ");
-                return newName.contains(split[0]);
+    public void migreteOldPortsIntoNewPosition(JsonObject jsonPort){
+        
+        Long childId = Long.valueOf(jsonPort.getString("childId"));
+        String className = jsonPort.getString("childId");
+        Long tempParentId = Long.valueOf(jsonPort.getString("parentId"));
+        String parentClassName = jsonPort.getString("parentClassName");
+        JsonObject jsonPortAttributes = jsonPort.getJsonObject("attributes");
+        
+        Long portId = createdIdsToMap.get(childId);
+        HashMap<String, Long[]> objectsToMove = new HashMap<>();
+        Long[] ids = {portId} ;
+        objectsToMove.put(className, ids);
+        try {
+            Long parentId = createdIdsToMap.get(tempParentId);
+            if(parentId != null){
+                //move the old port into the new location
+                bem.moveObjects(parentClassName, tempParentId, new HashMap(objectsToMove));
+                results.add(new SyncResult(String.format(OBJECT_UPDATED, jsonPortAttributes.get("name"), className, Long.toString(portId)), UPDATED));
             }
-            else{    
-                int matchCounter = 0;
-                String[] splitOldName = oldName.toLowerCase().split("/");
-                String[] splitNewName = newName.toLowerCase().split("/");
-                int matchSuccess = splitOldName.length+1;
-
-                if(splitOldName[0].substring(0, 1).equals(splitNewName[0].substring(0,1)))
-                        matchCounter++;
-
-                if(splitOldName[0].substring(splitOldName[0].length()-1, splitOldName[0].length())
-                        .equals(splitNewName[0].substring(splitNewName[0].length()-1,splitNewName[0].length())))
-                    matchCounter++;
-
-                for(int i=splitNewName.length-1; i>0; i--){
-                    for(int j= splitOldName.length-1; j>0; j--){
-                        if(splitOldName[j].equals(splitNewName[i]))
-                            matchCounter++;
-                    }
-                }
-                return matchCounter >= matchSuccess;    
-            }
+            results.add(new SyncResult(String.format(OBJECT_CANNOT_UPDATED + "no parent found", jsonPortAttributes.get("name"), className, Long.toString(portId)), ERROR));
+        } catch (MetadataObjectNotFoundException | ObjectNotFoundException | OperationNotPermittedException ex) {
+            results.add(new SyncResult(String.format(OBJECT_CANNOT_UPDATED, jsonPortAttributes.get("name"), className, Long.toString(portId)), ERROR));
         }
-        return false;
     }
     
-//    private void deleteOldStructure() throws ObjectNotFoundException, 
-//            MetadataObjectNotFoundException, OperationNotPermittedException
-//    {
-//        messages.add("Deleteing old estructure!");
-//        for(RemoteBusinessObjectLight objToDelete : oldObjectStructure){ 
-//            if(objToDelete.getClassName().equals("Slot") || objToDelete.getClassName().equals("Transceiver")){
-//                messages.add("trying to delete slot " + objToDelete.toString() +" and all its children id: " + objToDelete.getId() + " after migration");
-//                bem.deleteObject(objToDelete.getClassName(), objToDelete.getId(), false);
-//            }
-//        }
-//        messages.add("The old data was removed");
-//    }
+    
+    private void deleteOldStructure(JsonObject json){
+        String className = json.getString("deviceClassName");
+        if(className.equals("Slot") || className.equals("Transceiver")){
+            try {
+                bem.deleteObject(className, Long.valueOf(json.getString("deviceId")), false);
+                results.add(new SyncResult(String.format(OBJECT_DELETED, json.get("deviceName"), className, json.getString("deviceId")), DELETED));
+                
+            } catch (ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
+                results.add(new SyncResult(String.format(ERROR_DELETING, json.get("deviceName"), className, json.getString("deviceId")), ERROR));
+            }
+        }
+    }
 }
