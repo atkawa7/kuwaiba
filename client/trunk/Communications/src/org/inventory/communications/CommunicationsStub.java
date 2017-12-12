@@ -51,7 +51,9 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalReport;
 import org.inventory.communications.core.LocalReportLight;
 import org.inventory.communications.core.LocalSyncDataSourceConfiguration;
+import org.inventory.communications.core.LocalSyncFinding;
 import org.inventory.communications.core.LocalSyncGroup;
+import org.inventory.communications.core.LocalSyncResult;
 import org.inventory.communications.core.LocalTaskResultMessage;
 import org.inventory.communications.core.LocalTask;
 import org.inventory.communications.core.LocalTaskNotificationDescriptor;
@@ -4739,7 +4741,10 @@ public class CommunicationsStub {
                 public void handleResponse(Response<LaunchSupervisedSynchronizationTaskResponse> res) {
                     try {
                         LaunchSupervisedSynchronizationTaskResponse get = res.get();
-                        List<SyncFinding> syncFindings = new ArrayList<>();
+                        List<LocalSyncFinding> syncFindings = new ArrayList<>();
+                        for (SyncFinding syncFinding : get.getReturn())
+                            syncFindings.add(new LocalSyncFinding(syncFinding.getType(), syncFinding.getDescription(), syncFinding.getExtraInformation()));
+                        
                         progress.setFindings(syncFindings);
                         progress.run();
                     } catch (InterruptedException ex) {
@@ -4763,20 +4768,29 @@ public class CommunicationsStub {
      * @param localFindings the findings
      * @return The list of results after executes the actions
      */
-    public List<SyncResult> executeSyncActions(List<Integer> actions, List<SyncFinding> localFindings){
+    public List<LocalSyncResult> executeSyncActions(List<Integer> actions, List<LocalSyncFinding> localFindings){
         try {
             List<SyncFinding> findings = new ArrayList<>();
-            for (SyncFinding locaFinding : localFindings) {
-                SyncFinding s = new SyncFinding();
-                s.setDescription(locaFinding.getDescription());
-                s.setDescription(locaFinding.getExtraInformation());
-                s.setType(locaFinding.getType());
+            for (LocalSyncFinding locaFinding : localFindings) {
+                SyncFinding finding = new SyncFinding();
+                finding.setDescription(locaFinding.getDescription());
+                finding.setDescription(locaFinding.getExtraInformation());
+                finding.setType(locaFinding.getType());
+                findings.add(finding);
             }
-            return service.executeSyncActions(actions, findings, session.getSessionId());
+            List<SyncResult> results = service.executeSyncActions(actions, findings, session.getSessionId());
+            
+            if(results != null){
+                List<LocalSyncResult> localResults = new ArrayList<>();
+                for(SyncResult result : results)
+                    localResults.add(new LocalSyncResult(result.getActionDescription(), result.getResult()));
+                return localResults;
+            }
+            
         } catch (ServerSideException_Exception ex) {
             this.error = ex.getMessage();
-            return null;
         }
+        return null;
     } 
     
     //<editor-fold desc="Business Rules" defaultstate="collapsed">
