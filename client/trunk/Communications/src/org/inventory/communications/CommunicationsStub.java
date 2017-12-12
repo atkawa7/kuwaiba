@@ -51,7 +51,6 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalReport;
 import org.inventory.communications.core.LocalReportLight;
 import org.inventory.communications.core.LocalSyncDataSourceConfiguration;
-import org.inventory.communications.core.LocalSyncFinding;
 import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.core.LocalTaskResultMessage;
 import org.inventory.communications.core.LocalTask;
@@ -4743,11 +4742,8 @@ public class CommunicationsStub {
                 public void handleResponse(Response<LaunchSupervisedSynchronizationTaskResponse> res) {
                     try {
                         LaunchSupervisedSynchronizationTaskResponse get = res.get();
-                        List<LocalSyncFinding> localSyncFindings = new ArrayList<>();
-                        for (SyncFinding finding : get.getReturn()) 
-                            localSyncFindings.add(new LocalSyncFinding(finding.getType(), finding.getDescription(), finding.getExtraInformation()));
-
-                        progress.setFindings(localSyncFindings);
+                        List<SyncFinding> syncFindings = new ArrayList<>();
+                        progress.setFindings(syncFindings);
                         progress.run();
                     } catch (InterruptedException ex) {
                         Logger.getLogger(CommunicationsStub.class.getName()).log(Level.SEVERE, null, ex);
@@ -4770,10 +4766,10 @@ public class CommunicationsStub {
      * @param localFindings the findings
      * @return The list of results after executes the actions
      */
-    public List<SyncResult> executeSyncActions(List<Integer> actions, List<LocalSyncFinding> localFindings){
+    public List<SyncResult> executeSyncActions(List<Integer> actions, List<SyncFinding> localFindings){
         try {
             List<SyncFinding> findings = new ArrayList<>();
-            for (LocalSyncFinding locaFinding : localFindings) {
+            for (SyncFinding locaFinding : localFindings) {
                 SyncFinding s = new SyncFinding();
                 s.setDescription(locaFinding.getDescription());
                 s.setDescription(locaFinding.getExtraInformation());

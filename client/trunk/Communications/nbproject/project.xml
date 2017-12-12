@@ -22,8 +22,13 @@
                 <package>org.inventory.communications.core.caching</package>
                 <package>org.inventory.communications.core.queries</package>
                 <package>org.inventory.communications.core.views</package>
+                <package>org.inventory.communications.runnable</package>
                 <package>org.inventory.communications.util</package>
             </public-packages>
+            <class-path-extension>
+                <runtime-relative-path>ext/javax.json-1.0.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/javax.json-1.0.2.jar</binary-origin>
+            </class-path-extension>
         </data>
     </configuration>
 </project>

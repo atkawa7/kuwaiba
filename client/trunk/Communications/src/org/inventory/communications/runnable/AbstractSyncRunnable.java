@@ -16,21 +16,21 @@
 package org.inventory.communications.runnable;
 
 import java.util.List;
-import org.inventory.communications.core.LocalSyncFinding;
+import org.inventory.communications.wsclient.SyncFinding;
 
 /**
- *
- * @author adrian
+ * Helps to return a list of findings from the launch Synchronization method into the action how invokes this method
+ * @author  Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
 public abstract class AbstractSyncRunnable implements Runnable{
 
-    private List<LocalSyncFinding> findings;
+    private List<SyncFinding> findings;
 
-    public void setFindings(List<LocalSyncFinding> findings) {
+    public void setFindings(List<SyncFinding> findings) {
         this.findings = findings;
     }
 
-    public List<LocalSyncFinding> getFindings() {
+    public List<SyncFinding> getFindings() {
         return findings;
     }
 }
