@@ -15,6 +15,7 @@
  */
 package com.neotropic.kuwaiba.sync.model;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -58,24 +59,38 @@ public class SNMPDataProcessor {
      * Device id
      */
     private long id;
-    
+    /**
+     * To load the structure of the actual device
+     */
     private HashMap<Long, List<RemoteBusinessObjectLight>> oldObjectStructure;
+    /**
+     * The actual ports of the device
+     */
     private List<RemoteBusinessObjectLight> oldPorts;
+    /**
+     * To keep a trace of the new ports created during synchronization
+     */
     private List<JsonObject> newPorts;
+    /**
+     * The ports of the device before the synchronization
+     */
     private List<JsonObject> notMatchedPorts;
+     /**
+     * The boards of the device before the synchronization
+     */
     private List<StringPair> oldBoards;
+    /**
+     * To keep a trace of the new boards created during synchronization
+     */
     private List<StringPair> newBoards;
-    private List<StringPair> newPortsWithNoMatch;
+    /**
+     * To keep a trace of the list types evaluated, to not create them twice
+     */
     private List<String> listTypeEvaluated;
-    private int j = 0;
     /**
      * An aux variable, used to store the branch of the old object structure while the objects are checked, before the creations of the branch
      */
     private  List<RemoteBusinessObjectLight> tempAuxOldBranch = new ArrayList<>();
-    /**
-     * An aux variable, used to store the branch while the objects are checked, before the creations of the branch
-     */
-    //private  List<JsonObject> tempAuxBranch = new ArrayList<>();
     /**
      * a map of the file to create the objects
      */
@@ -97,17 +112,19 @@ public class SNMPDataProcessor {
      */
     private String INITAL_ID = "0";
         
-    List<String> messages = new ArrayList<>();
-    List<JsonObject> branch;
+    /**
+     * To keep the objects during synchronization 
+     */
+    private List<JsonObject> branch;
     
     private BusinessEntityManager bem;
     private ApplicationEntityManager aem;
     private MetadataEntityManager mem;
 
-    public SNMPDataProcessor(String className, long id, HashMap<String, List<String>> data) {
+    public SNMPDataProcessor(RemoteBusinessObjectLight obj, HashMap<String, List<String>> data) {
         connect();
-        this.className = className;
-        this.id = id;
+        this.className = obj.getClassName();
+        this.id = obj.getId();
         allData = data;
         oldObjectStructure = new HashMap<>();
         newPorts = new ArrayList<>();
@@ -124,11 +141,9 @@ public class SNMPDataProcessor {
             OperationNotPermittedException, ApplicationObjectNotFoundException
             
     {
-        messages.add("Starting to map... ");
+        
         readData();
-        messages.add("Creating the class hierarchy");
         loadClassHierarchy();
-        messages.add("The actual data for this element will be loaded");
         readOldDeviceStructure(id, bem.getObjectChildren(className, id, -1));
         //printData(); //<- for debuging 
         checkObjects(Long.toString(id), "", "");
@@ -140,40 +155,42 @@ public class SNMPDataProcessor {
     
     /**
      * Reads the data loaded into memory
+     * @throws InvalidArgumentException if the table info load is corrupted and has no chassis
      */
-    public void readData(){
+    public void readData() throws InvalidArgumentException{
         //we look for the Initial parent
         if(allData.get("entPhysicalContainedIn").contains(INITAL_ID))
             createTreeFromFile(INITAL_ID);
         else
-            messages.add("No Chassis was found");
+            throw  new InvalidArgumentException("No Chassis was found");
         removeChildrenless();
         createMapOfClasses();
     }
-    
-    private void printData(){
-        for(String key : mapOfFile.keySet()){
-            String parsedClass;
-            List<String> children = mapOfFile.get(key);
-            if(!key.equals("0")){
-                int i = allData.get("instance").indexOf(key);
-                parsedClass = parseClass(allData.get("entPhysicalClass").get(i), 
-                        allData.get("entPhysicalName").get(i),
-                        allData.get("entPhysicalDescr").get(i));
-                System.out.println("id: " + key + " " + allData.get("entPhysicalName").get(i) + "["+parsedClass+"]");
-            }
-            else
-                System.out.println("R A C K -> ");
-            
-            for (String child : children) {
-                int childIndex = allData.get("instance").indexOf(child);
-                parsedClass = parseClass(allData.get("entPhysicalClass").get(childIndex), 
-                    allData.get("entPhysicalName").get(childIndex),
-                    allData.get("entPhysicalDescr").get(childIndex));
-                System.out.println("P:" + allData.get("entPhysicalContainedIn").get(childIndex) + " -id: " + child + " " + allData.get("entPhysicalName").get(childIndex) + "["+parsedClass+"]");
-            }
-        }
-    }
+
+// for debuging     
+//    private void printData(){
+//        for(String key : mapOfFile.keySet()){
+//            String parsedClass;
+//            List<String> children = mapOfFile.get(key);
+//            if(!key.equals("0")){
+//                int i = allData.get("instance").indexOf(key);
+//                parsedClass = parseClass(allData.get("entPhysicalClass").get(i), 
+//                        allData.get("entPhysicalName").get(i),
+//                        allData.get("entPhysicalDescr").get(i));
+//                System.out.println("id: " + key + " " + allData.get("entPhysicalName").get(i) + "["+parsedClass+"]");
+//            }
+//            else
+//                System.out.println("R A C K -> ");
+//            
+//            for (String child : children) {
+//                int childIndex = allData.get("instance").indexOf(child);
+//                parsedClass = parseClass(allData.get("entPhysicalClass").get(childIndex), 
+//                    allData.get("entPhysicalName").get(childIndex),
+//                    allData.get("entPhysicalDescr").get(childIndex));
+//                System.out.println("P:" + allData.get("entPhysicalContainedIn").get(childIndex) + " -id: " + child + " " + allData.get("entPhysicalName").get(childIndex) + "["+parsedClass+"]");
+//            }
+//        }
+//    }
     
     /**
      * Creates the hierarchy model in Kuwaiba if doesn't exist
@@ -271,8 +288,7 @@ public class SNMPDataProcessor {
                     
                     if(mappedClass.contains("Port") && !objectName.contains("Power"))
                         newPorts.add(jsonNewObj);
-
-                    System.out.println("|__ id:" + childId + "-"+objectName+ " [" + mappedClass + "] p:" + parentId);
+                    
                     branch.add(jsonNewObj);
                     
                 }
@@ -280,12 +296,11 @@ public class SNMPDataProcessor {
                 
                 //End of a branch
                 if ((i == childrenIds.size() - 1 && mapOfFile.get(childId) == null)|| mappedClass.contains("Port")) {
-                    System.out.println("---------------------------------------------");
                     //The is first time is tryng to sync from SNMP
                     if(!isBranchAlreadyCreated(branch)){
                         //Loaded from snmp first time
                         findings.add(new SyncFinding(SyncFinding.EVENT_NEW, 
-                                "A new branch of Slots, Boards, Port were, created the structure and ?", 
+                                "A new branch was found, created the structure of this branch?", 
                                 listToJson(branch, "branch").toString()));
                         branch = new ArrayList<>();
                     }
@@ -390,7 +405,6 @@ public class SNMPDataProcessor {
             else if(i == objects.size() -1 && children.isEmpty()){
                 oldObjectStructure.put(parentId, tempAuxOldBranch);
                 tempAuxOldBranch = new ArrayList<>();
-                j++;
             }
         }
     }
@@ -450,10 +464,10 @@ public class SNMPDataProcessor {
         for (String key : mapOfFile.keySet()) {
             if(!key.equals("0")){
                 List<String> childrenId = mapOfFile.get(key);
-                int j = allData.get("instance").indexOf(key);
-                String patentClassParsed = parseClass(allData.get("entPhysicalClass").get(j), 
-                        allData.get("entPhysicalName").get(j), 
-                        allData.get("entPhysicalDescr").get(j)
+                int w = allData.get("instance").indexOf(key);
+                String patentClassParsed = parseClass(allData.get("entPhysicalClass").get(w), 
+                        allData.get("entPhysicalName").get(w), 
+                        allData.get("entPhysicalDescr").get(w)
                 );
                 
                 List<String> childrenParsed = mapOfClasses.get(patentClassParsed);
@@ -734,8 +748,6 @@ public class SNMPDataProcessor {
         return -1;
     }
     
-    
-    
     //Things to be deleted
     public void removeObjectFromDelete(RemoteBusinessObjectLight obj){
         for(long branchId : oldObjectStructure.keySet())
@@ -743,36 +755,49 @@ public class SNMPDataProcessor {
     }
     
     public void checkDataToBeDeleted(){
-        for(long branchId : oldObjectStructure.keySet()){
-            JsonObject json = Json.createObjectBuilder().build();
-            List<JsonObject> toDelete = new ArrayList<>();
-            String path = "";
-            
-            for (RemoteBusinessObjectLight obj : oldObjectStructure.get(branchId)) {
-                if(branchId == id){
+        JsonObject json = Json.createObjectBuilder().build();
+        List<JsonObject> toDelete = new ArrayList<>();
+        String path = "";
+        try {
+            List<RemoteBusinessObjectLight> actualChildren = bem.getObjectChildren(className, id, -1);
+            for (RemoteBusinessObjectLight actualChild : actualChildren) {
+                if(!actualChild.getClassName().contains("Port") && !actualChild.getClassName().contains("ServiceInstance")){
                     json = jsonObjectToBuilder(json)
                             .add("type", "old_object_to_delete")
-                            .add("deviceId", Long.toString(obj.getId()))
-                            .add("deviceName", obj.getName())
-                            .add("deviceClassName", obj.getClassName()) 
+                            .add("deviceId", Long.toString(actualChild.getId()))
+                            .add("deviceName", actualChild.getName())
+                            .add("deviceClassName", actualChild.getClassName()) 
                             .build();
                     toDelete.add(json);
-                    path += obj.getName()+"/";
+                    path = "/";
 
-                    findings.add(new SyncFinding(SyncFinding.EVENT_DELETE, 
-                        String.format("Old objects will be deleted, this branch is no longer updated %s",path),
-                        listToJson(toDelete, "branch_to_delete").toString()));
+                findings.add(new SyncFinding(SyncFinding.EVENT_DELETE, 
+                    String.format("Old objects children of the device will be deleted %s",actualChild.toString()),
+                    listToJson(toDelete, "branch_to_delete").toString()));
                 }
             }
+
+        } catch (MetadataObjectNotFoundException | ObjectNotFoundException ex) {
+            Logger.getLogger(SNMPDataProcessor.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public void checkPortsWithNoMatch(){
-        for (JsonObject jnewPort : notMatchedPorts) {
+        for (JsonObject oldPort : notMatchedPorts) {
+            oldPort = jsonObjectToBuilder(oldPort).add("type", "object_port_no_match").build();
+            
+            findings.add(new SyncFinding(SyncFinding.EVENT_DELETE, 
+                String.format("There was no match with the port: %s [%s] - id: %s , after the sync, delete this port? ", 
+                        oldPort.getJsonObject("attributes").getString("name"), oldPort.getString("className"), oldPort.getString("id")),
+                oldPort.toString()));
+        }
+        
+        for (JsonObject jnewPort : newPorts) {
             jnewPort = jsonObjectToBuilder(jnewPort).add("type", "object_port_no_match").build();
             
-            findings.add(new SyncFinding(SyncFinding.EVENT_ERROR, 
-                String.format("There was no match with this old port, check the name %s  ", jnewPort.toString()),
+            findings.add(new SyncFinding(SyncFinding.EVENT_NEW,
+                String.format("There was no match with the port: %s [%s], after the sync, create this port?",
+                        jnewPort.getJsonObject("attributes").getString("name"), jnewPort.getString("className")),
                 jnewPort.toString()));
         }
     }
@@ -788,42 +813,65 @@ public class SNMPDataProcessor {
      * @param newClassName the new port class 
      * @return boolean if the name match
      */
-    private boolean comparePortNames(String oldName, String oldClassName, 
-            String newName, String newClassName)
-    {
+    private boolean comparePortNames(String oldName, String oldClassName, String newName, String newClassName){
         if(oldClassName.equals(newClassName)){
             oldName = oldName.toLowerCase();
             newName = newName.toLowerCase();
             if(oldName.equals(newName))
                 return true;
-            else if(oldClassName.equals("ElectricalPort")){
+            else if(oldClassName.equals("ElectricalPort") && newClassName.equals("ElectricalPort")){
                 String[] split = oldName.split(" ");
                 return newName.contains(split[0]);
             }
-            else{    
+            else{  
+                oldName = oldName.toLowerCase().trim();
+                 newName = newName.toLowerCase().trim();
                 int matchCounter = 0;
                 String[] splitOldName = oldName.toLowerCase().split("/");
                 String[] splitNewName = newName.toLowerCase().split("/");
                 int matchSuccess = splitOldName.length+1;
-
-                if(splitOldName[0].substring(0, 1).equals(splitNewName[0].substring(0,1)))
+                if(splitNewName.length != splitOldName.length)
+                    return false;
+                else{
+                    boolean part2 = false;
+                    boolean part3 = false;
+                    //fist part
+                    if(splitOldName[0].equals(splitNewName[0]))
                         matchCounter++;
-
-                if(splitOldName[0].substring(splitOldName[0].length()-1, splitOldName[0].length())
-                        .equals(splitNewName[0].substring(splitNewName[0].length()-1,splitNewName[0].length())))
-                    matchCounter++;
-
-                for(int i=splitNewName.length-1; i>0; i--){
-                    for(int j= splitOldName.length-1; j>0; j--){
-                        if(splitOldName[j].equals(splitNewName[i]))
+                    else{
+                        String oldPart1 = splitOldName[0];
+                        oldPart1 = oldPart1.replaceAll("[-+.^:,]","");
+                        
+                        String newPart1 = splitNewName[0];
+                        newPart1 = newPart1.replaceAll("[-+.^:,]","");
+                        //the first letter
+                        if(oldPart1.substring(0, 1).equals(newPart1.substring(0,1)))
                             matchCounter++;
+                        //the last letter
+                        if(oldPart1.substring(oldPart1.length()-1, oldPart1.length())
+                            .equals(newPart1.substring(newPart1.length()-1, newPart1.length())))
+                            matchCounter++;
+
+                        for(int i=splitNewName.length-1; i>0; i--){
+                            for(int t= splitOldName.length-1; t>0; t--){
+                                if(splitOldName[t].equals(splitNewName[i]))
+                                    matchCounter++;
+                            }
+                        }
+                        
+                        if(splitNewName[1].equals(splitOldName[1]))
+                            part2 = true;
+                        if(splitNewName[2].equals(splitOldName[2]))
+                            part3 = true;
+                        
+                        return matchCounter >= matchSuccess && part2 && part3;
                     }
                 }
-                return matchCounter >= matchSuccess;    
-            }
+            }//end kind of port optical
         }
         return false;
     }
+    
     
     /**
      * This copy the old ports into their new locations
@@ -838,35 +886,56 @@ public class SNMPDataProcessor {
     {
         List<RemoteBusinessObjectLight> foundOldPorts = new ArrayList<>();
         List<JsonObject> foundNewPorts = new ArrayList<>();
+        
         for(RemoteBusinessObjectLight oldPort : oldPorts){
             //We copy the new attributes into the new port, to keep the relationships
             JsonObject portInfo = searchOldPortInNewPorts(oldPort);
+            
             if(portInfo != null){
-                JsonObject jsonPortToMove = searchOldPortInNewPorts(oldPort);
-                if(jsonPortToMove != null){
-                    jsonPortToMove = jsonObjectToBuilder(jsonPortToMove).add("type", "object_port_move").build();
-                    jsonPortToMove = jsonObjectToBuilder(jsonPortToMove).add("chilId", Long.toString(oldPort.getId())).build();
+                portInfo = jsonObjectToBuilder(portInfo).add("type", "object_port_move").build();
+                portInfo = jsonObjectToBuilder(portInfo).add("childId", Long.toString(oldPort.getId())).build();
 
-                    findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE, 
-                                    String.format("Would you want to overwrite the atributes values in the port %s, with id: %s ", oldPort.toString(), oldPort.getId()),
-                                    jsonPortToMove.toString()));
-                    foundOldPorts.add(oldPort);
-                    foundNewPorts.add(portInfo);
-                }
-                else
-                    notMatchedPorts.add(Json.createObjectBuilder()
-                            .add("id",Long.toString(oldPort.getId()))
-                            .add("name", oldPort.getName())
-                            .add("className",oldPort.getClassName())
-                            .build());
+                findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE, 
+                                String.format("Would you want to overwrite the atributes values in the port %s, with id: %s ", oldPort.toString(), oldPort.getId()),
+                                portInfo.toString()));
+                foundOldPorts.add(oldPort);
+                foundNewPorts.add(portInfo);
+            }
+            else{
+                
+                JsonObject attributes = Json.createObjectBuilder().add("name", oldPort.getName()).build();
+                JsonObject oldPortj = Json.createObjectBuilder()
+                        .add("id", Long.toString(oldPort.getId()))
+                        .add("name", oldPort.getName())
+                        .add("className",oldPort.getClassName())
+                        .build();
+                
+                oldPortj = jsonObjectToBuilder(oldPortj).add("attributes", attributes).build();
+                notMatchedPorts.add(oldPortj);
             }
         }//end for
+        
         for (RemoteBusinessObjectLight goodPort : foundOldPorts)
             oldPorts.remove(goodPort);
         
-        for (RemoteBusinessObjectLight badPort : oldPorts) 
-            findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE, 
-                                String.format("Something went wrong with this ports %s, with id: %s , can't suggest action inspect manually", badPort.toString(), badPort.getId()),""));
+        for(JsonObject foundNewPort: foundNewPorts)
+            removePortThatMatch(foundNewPort);
+    }
+    
+    
+    private void removePortThatMatch(JsonObject jnewportFound){
+        int i = 0;
+        boolean found = false;
+        for(JsonObject jnewPort : newPorts){
+            if(jnewPort.getJsonObject("attributes").getString("name")
+                    .equals(jnewportFound.getJsonObject("attributes").getString("name")))
+            {
+                found = true;
+                break; 
+            }i++;
+        }
+        if(found)
+            newPorts.remove(i);
     }
     
     /**
@@ -879,10 +948,10 @@ public class SNMPDataProcessor {
      */
     private JsonObject searchOldPortInNewPorts(RemoteBusinessObjectLight oldPort) throws InvalidArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException{
         for (JsonObject jsonPort : newPorts) {
-            JsonObject jsonAttributes = jsonPort.getJsonObject("attributes");
-            String newPortName = jsonAttributes.getString("name");
-            
-            if(comparePortNames(oldPort.getName(), oldPort.getClassName(), newPortName, jsonPort.getString("className")))
+            if(comparePortNames(oldPort.getName(), oldPort.getClassName(), 
+                    jsonPort.getJsonObject("attributes").getString("name"), 
+                    jsonPort.getString("className"))
+               )
                 return jsonPort;
         }
         return null;

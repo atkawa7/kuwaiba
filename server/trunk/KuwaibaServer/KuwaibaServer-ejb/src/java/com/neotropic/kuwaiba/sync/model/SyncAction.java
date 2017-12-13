@@ -109,6 +109,7 @@ public class SyncAction {
                     break;
                 case "device":
                     manageDevice(jsonObj, findings.get(i));
+                    break;
                 case "branch":
                     JsonArray children = jsonObj.getJsonArray("children");
                     for(JsonValue jObj : children){
@@ -126,10 +127,12 @@ public class SyncAction {
                     deleteOldStructure(jsonObj);
                     break;
                 case "object_port_no_match":
-                    results.add(new SyncResult(String.format(ACTION_PORT_NO_MATCH, "port"), "No match was found, please check"));
+                    results.add(new SyncResult(String.format(ACTION_PORT_NO_MATCH, jsonObj.toString()), "No match was found, please check"));
                     break;
                 }
             }
+            results.add(new SyncResult(findings.get(i).getDescription() + " " +
+                    findings.get(i).getExtraInformation(), "The finding was skiped"));
         }
         return results;
     }
@@ -212,7 +215,7 @@ public class SyncAction {
                 if(parentId == null)
                     parentId = tempParentId;
 
-                if(className.contains("Port") && attributes.get("name").contains("Power")){
+                if(!className.contains("Port") || attributes.get("name").contains("Power")){
                     long createdObjectId = bem.createObject(className, parentClassName, parentId, attributes, -1);
                     createdIdsToMap.put(childId, createdObjectId);
                     results.add(new SyncResult(String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), ACTION_CREATED));
@@ -238,40 +241,41 @@ public class SyncAction {
     }   
     
     public void migrateOldPortsIntoNewPosition(JsonObject jsonPort){
-        
         Long childId = Long.valueOf(jsonPort.getString("childId"));
-        String className = jsonPort.getString("childId");
+        String className = jsonPort.getString("className");
         Long tempParentId = Long.valueOf(jsonPort.getString("parentId"));
         String parentClassName = jsonPort.getString("parentClassName");
         JsonObject jsonPortAttributes = jsonPort.getJsonObject("attributes");
         
-        Long portId = createdIdsToMap.get(childId);
-        HashMap<String, Long[]> objectsToMove = new HashMap<>();
-        Long[] ids = {portId} ;
+        HashMap<String, long[]> objectsToMove = new HashMap<>();
+        long[] ids = {childId} ;
         objectsToMove.put(className, ids);
         try {
             Long parentId = createdIdsToMap.get(tempParentId);
             if(parentId != null){
                 //move the old port into the new location
-                bem.moveObjects(parentClassName, tempParentId, new HashMap(objectsToMove));
-                results.add(new SyncResult(String.format(ACTION_OBJECT_UPDATED, jsonPortAttributes.get("name"), className, Long.toString(portId)), ACTION_UPDATED));
+                bem.moveObjects(parentClassName, parentId, objectsToMove);
+                results.add(new SyncResult(String.format(ACTION_OBJECT_UPDATED, jsonPortAttributes.get("name"), className, Long.toString(childId)), ACTION_UPDATED));
             }
-            results.add(new SyncResult(String.format(ACTION_OBJECT_CANNOT_UPDATED + "no parent found", jsonPortAttributes.get("name"), className, Long.toString(portId)), ACTION_ERROR));
+            results.add(new SyncResult(String.format(ACTION_OBJECT_CANNOT_UPDATED + "no parent found", jsonPortAttributes.get("name"), className, Long.toString(childId)), ACTION_ERROR));
         } catch (MetadataObjectNotFoundException | ObjectNotFoundException | OperationNotPermittedException ex) {
-            results.add(new SyncResult(String.format(ACTION_OBJECT_CANNOT_UPDATED, jsonPortAttributes.get("name"), className, Long.toString(portId)), ACTION_ERROR));
+            results.add(new SyncResult(String.format(ACTION_OBJECT_CANNOT_UPDATED, jsonPortAttributes.get("name"), className, Long.toString(childId)), ACTION_ERROR));
         }
     }
     
     
     private void deleteOldStructure(JsonObject json){
-        String className = json.getString("deviceClassName");
-        if(className.equals("Slot") || className.equals("Transceiver")){
+        JsonArray childs = json.getJsonArray("children");
+        for (JsonValue child : childs) {
+            JsonReader jsonReader = Json.createReader(new StringReader(child.toString()));
+            JsonObject obj = jsonReader.readObject().getJsonObject("child");
+            String className = obj.getString("deviceClassName");
             try {
-                bem.deleteObject(className, Long.valueOf(json.getString("deviceId")), false);
-                results.add(new SyncResult(String.format(ACTION_OBJECT_DELETED, json.get("deviceName"), className, json.getString("deviceId")), ACTION_DELETED));
+                bem.deleteObject(className, Long.valueOf(obj.getString("deviceId")), true);
+                results.add(new SyncResult(String.format(ACTION_OBJECT_DELETED, obj.get("deviceName"), className, obj.getString("deviceId")), ACTION_DELETED));
                 
             } catch (ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-                results.add(new SyncResult(String.format(ACTION_ERROR_DELETING, json.get("deviceName"), className, json.getString("deviceId")), ACTION_ERROR));
+                results.add(new SyncResult(String.format(ACTION_ERROR_DELETING, obj.get("deviceName"), className, obj.getString("deviceId")), ACTION_ERROR));
             }
         }
     }
