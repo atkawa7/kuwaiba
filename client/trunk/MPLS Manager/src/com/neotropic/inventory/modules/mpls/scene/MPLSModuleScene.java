@@ -225,7 +225,7 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
 
                                 if (aSideWidget == null || bSideWidget == null) {
                                     fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "connectionAutomaticallyRemoved")); //NOI18N
-                                    NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, String.format("One or both of the endpoints of connection of class %s and id %s could not be found, so the connection was removed from the view", className, objectId));
+                                    NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, String.format("One or both of the endpoints of the connection of class %s and id %s could not be found. The connection was removed from the view", className, objectId));
                                 }
                                 else {
                                     ConnectionWidget newEdge = (ObjectConnectionWidget)addEdge(container);

@@ -17,22 +17,13 @@ package com.neotropic.inventory.modules.sync.nodes.actions;
 
 import com.neotropic.inventory.modules.sync.nodes.SyncGroupNode;
 import com.neotropic.inventory.modules.sync.nodes.actions.windows.SyncActionWizard;
-import com.neotropic.inventory.modules.sync.nodes.actions.windows.SyncResultsFrame;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
-import javax.swing.JButton;
-import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalSyncGroup;
-import org.inventory.communications.core.LocalSyncResult;
 import org.inventory.communications.runnable.AbstractSyncRunnable;
-
 import org.inventory.core.services.api.actions.GenericInventoryAction;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.util.RequestProcessor;
@@ -43,7 +34,7 @@ import org.openide.util.Utilities;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 class RunSynchronizationProcessAction extends GenericInventoryAction {
-    
+    private SyncGroupNode selectedNode;
     public RunSynchronizationProcessAction() {
         putValue(NAME, I18N.gm("run_sync_process"));
     }
@@ -56,7 +47,7 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
         if (!selectedNodes.hasNext())
             return;
         
-        SyncGroupNode selectedNode = selectedNodes.next();
+        selectedNode = selectedNodes.next();
         SyncRunnable myRun = new SyncRunnable(selectedNode);
         CommunicationsStub.getInstance().launchSupervisedSynchronizationTask(selectedNode.getLookup().lookup(LocalSyncGroup.class).getId(), myRun);
     }
@@ -68,7 +59,7 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
     
     
     /**
-     * Gets the list of findings and show a dialog to allow the user to choose de actions to findings 
+     * Gets the list of findings and shows a dialog to allow the user to choose what actions will be performed
      */
     private class SyncRunnable extends AbstractSyncRunnable {
 
@@ -81,51 +72,8 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
         
         @Override
         public void runSync() {
-            final List<Integer> syncActions = new ArrayList<>();
-            SyncActionWizard syncWizard = new SyncActionWizard(new LocalSyncGroup(0l, "Sync Group", DEFAULT), getFindings());
+            SyncActionWizard syncWizard = new SyncActionWizard(selectedNode.getLookup().lookup(LocalSyncGroup.class), getFindings());
             syncWizard.setVisible(true);
         }
     }
 }
-
-
-
-//            for(LocalSyncFinding find : getFindings()){
-//                JTextField txtFindInfo = new JTextField();
-//                            txtFindInfo.setName("findInfo");
-//                            txtFindInfo.setText(find.getDescription());
-//                            txtFindInfo.setColumns(50);
-//                String[] options = {"Execute", "Ignore"};
-//
-//                JLabel lblextra = new JLabel();
-//                                lblextra.setName("findExtraInfo");
-//                                //lblextra.setColumns(50);
-//                                lblextra.setEnabled(false);
-//
-//                JComboBox<String> cbAction = new JComboBox<>(options);
-//                cbAction.setName("cmbDevices");
-//
-//                JCheckBox jcExecuteAll = new JCheckBox();
-//                jcExecuteAll.setText("Yes to all");
-//                jcExecuteAll.setName("Answer yes to all findings");
-//                
-//                JComplexDialogPanel pnlSyncDataSourcePropertie = new JComplexDialogPanel(
-//                        new String[] {"Info",
-//                            "Extra Info:","Actions","Yes to all"}, 
-//                        new JComponent[] {txtFindInfo, lblextra, cbAction, jcExecuteAll});
-//                
-//                
-//                
-//                if (JOptionPane.showConfirmDialog(null, pnlSyncDataSourcePropertie, I18N.gm("sync_data_action_select"), 
-//                    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-//                    syncActions.add(cbAction.getSelectedIndex());
-//                    if(jcExecuteAll.isSelected()){
-//                        syncActions = new ArrayList<>();
-//                        for(LocalSyncFinding x : getFindings()){
-//                            System.out.println(x.getDescription());
-//                            syncActions.add(1);
-//                        }
-//                        break;
-//                    }
-//                }
-//            }

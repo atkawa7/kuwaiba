@@ -326,7 +326,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                                 Widget bSideWidget = this.findWidget(bSideObject);
 
                                 if (aSideWidget == null || bSideWidget == null)
-                                    NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, "One or both of the endpoints of connection could not be found, so the connection was removed from the topology view");
+                                    NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, "One or both of the endpoints of a connection could not be found. The connection was removed from the topology view");
                                 else {
                                     String edgeName = "topologyEdge" + aSideObject.getOid() + bSideObject.getOid() + randomGenerator.nextInt(1000);
                                     ConnectionWidget newEdge = (ConnectionWidget)this.addEdge(edgeName);

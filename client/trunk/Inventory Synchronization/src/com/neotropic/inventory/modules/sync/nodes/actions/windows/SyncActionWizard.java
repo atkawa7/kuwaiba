@@ -36,6 +36,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
+import javax.swing.WindowConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalSyncFinding;
@@ -81,23 +82,24 @@ public class SyncActionWizard extends JFrame {
      */
     public SyncActionWizard(LocalSyncGroup syncGroup, final List<LocalSyncFinding> findings) throws IllegalArgumentException {
         this.findings = findings;
+        this.syncGroup = syncGroup;
+        
         syncActions = new ArrayList<>();
         
         if (findings.isEmpty())
             throw new IllegalArgumentException("The list of findings can not empty");
         
-        this.syncGroup = syncGroup;
-        
         setSize(800, 400);
         setLocationRelativeTo(null);
         
         setLayout(new BorderLayout(5, 5));
-        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         
         this.findingsToDisplay = findings;
         
-        txtFindingDescription = new JTextArea(3, 100);
-        add(txtFindingDescription, BorderLayout.NORTH);
+        txtFindingDescription = new JTextArea(5, 10);
+        txtFindingDescription.setLineWrap(true);
+        add(new JScrollPane(txtFindingDescription), BorderLayout.NORTH);
         
         pnlScrollMain = new JScrollPane();
         add(pnlScrollMain, BorderLayout.CENTER);
@@ -116,7 +118,7 @@ public class SyncActionWizard extends JFrame {
         btnClose.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (JOptionPane.showConfirmDialog(null, 
+                if (JOptionPane.showConfirmDialog(SyncActionWizard.this, 
                         "Are you sure you want to stop reviewing the findings? The remaining ones will be ignored", 
                         "Information", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.YES_OPTION)
                     dispose();
@@ -156,11 +158,11 @@ public class SyncActionWizard extends JFrame {
             currentFinding++;
             renderCurrentFinding();
         } else {
-            JOptionPane.showMessageDialog(null, "You have reviewed all the synchronization findings", "Information", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(SyncActionWizard.this, "You have reviewed all the synchronization findings", "Information", JOptionPane.INFORMATION_MESSAGE);
             dispose();
             if(syncActions.size() == findings.size()){
                 List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(syncActions, findings);
-                SyncResultsFrame syncResultFrame = new SyncResultsFrame(executSyncActions);
+                SyncResultsFrame syncResultFrame = new SyncResultsFrame(syncGroup, executSyncActions);
                 syncResultFrame.setVisible(true);
             }
             else

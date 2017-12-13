@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.EmptyBorder;
+import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.core.LocalSyncResult;
 import org.inventory.core.services.i18n.I18N;
 import org.openide.util.ImageUtilities;
@@ -44,9 +45,9 @@ public class SyncResultsFrame extends JFrame {
     private JScrollPane pnlScrollMain;
     private JList<LocalSyncResult> lstSyncResults;
 
-    public SyncResultsFrame(List<LocalSyncResult> results) {
+    public SyncResultsFrame(LocalSyncGroup syncGroup, List<LocalSyncResult> results) {
         setLayout(new BorderLayout());
-        setTitle(I18N.gm("sync_list_of_results"));
+        setTitle(String.format(I18N.gm("sync_list_of_results"), syncGroup.getName()));
         pnlScrollMain = new JScrollPane();
         setSize(400, 650);
         setLocationRelativeTo(null);
@@ -68,7 +69,7 @@ public class SyncResultsFrame extends JFrame {
                 LocalSyncResult value, int index, boolean isSelected, boolean cellHasFocus) {
             JLabel lblResultEntry = new JLabel("<html><b>Description: </b>" + value.getActionDescription() 
                                             + "<br/><b>Result: </b>" +value.getResult()+ "<html>");
-            lblResultEntry.setBorder(new EmptyBorder(5, 0, 5, 0));
+            lblResultEntry.setBorder(new EmptyBorder(5, 5, 5, 0));
             lblResultEntry.setIcon(ICON_SUCCESS);
             lblResultEntry.setOpaque(true);
             lblResultEntry.setBackground(Color.WHITE);

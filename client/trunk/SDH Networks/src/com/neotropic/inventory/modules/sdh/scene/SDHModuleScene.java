@@ -289,7 +289,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
 
                                 if (aSideWidget == null || bSideWidget == null) {
                                     NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, 
-                                            String.format("One or both of the endpoints of connection of class %s and id %s could not be found, so the connection was removed from the view", className, objectId));
+                                            String.format("One or both of the endpoints of the connection of class %s and id %s could not be found. The connection was removed from the view", className, objectId));
                                     fireChangeEvent(new ActionEvent(this, SCENE_CHANGE, "connectionAutomaticallyRemoved")); //NOI18N
                                 }
                                 else {
