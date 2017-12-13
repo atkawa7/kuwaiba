@@ -51,7 +51,10 @@ public class SyncActionWizard extends JFrame {
      * The current finding on display
      */
     private int currentFinding = 0;
-
+    /**
+     * Sync group associated to this sync process
+     */
+    private LocalSyncGroup syncGroup;
     /**
      * Label that displays the finding's textual description
      */
@@ -72,9 +75,11 @@ public class SyncActionWizard extends JFrame {
         if (findings.isEmpty())
             throw new IllegalArgumentException("The list of findings can not empty");
         
+        this.syncGroup = syncGroup;
+        
         setSize(400, 800);
         setLocationRelativeTo(null);
-        setTitle(String.format("Findings in %s [%s]", syncGroup.getName(), syncGroup.getProvider()));
+        
         setLayout(new BorderLayout(5, 5));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
@@ -123,7 +128,9 @@ public class SyncActionWizard extends JFrame {
     public final void renderCurrentFinding () {
         LocalSyncFinding finding = findingsToDisplay.get(currentFinding);
         txtFindingDescription.setText(finding.getDescription());
+        setTitle(String.format("Findings in %s [%s] - %s/%s", syncGroup.getName(), syncGroup.getProvider(), currentFinding + 1, findingsToDisplay.size()));
         pnlScrollMain.setViewportView(createTreeFromJSON(finding.getExtraInformation()));
+        
     }
     
     public void renderNextFinding() {
