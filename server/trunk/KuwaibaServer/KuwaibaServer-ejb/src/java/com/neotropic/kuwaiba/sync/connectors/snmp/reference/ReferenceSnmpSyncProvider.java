@@ -153,9 +153,8 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
     public List<SyncFinding> sync(HashMap<RemoteBusinessObjectLight, AbstractDataEntity> originalData) {
         List<SyncFinding> findings = new ArrayList<>();
         for (Map.Entry<RemoteBusinessObjectLight, AbstractDataEntity> entrySet : originalData.entrySet()) {
-            RemoteBusinessObjectLight obj = entrySet.getKey();
             TableData table = (TableData)entrySet.getValue();
-            SNMPDataProcessor x = new SNMPDataProcessor(obj.getClassName(), obj.getId(), (HashMap<String, List<String>>)table.getValue());
+            SNMPDataProcessor x = new SNMPDataProcessor(entrySet.getKey(), (HashMap<String, List<String>>)table.getValue());
             try {
                 findings.addAll(x.load());
             } catch (MetadataObjectNotFoundException | ObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
