@@ -16,7 +16,6 @@
 package com.neotropic.inventory.modules.sync.nodes.actions.windows;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,12 +28,10 @@ import javax.json.JsonReader;
 import javax.json.JsonValue;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import org.inventory.communications.core.LocalSyncFinding;
@@ -58,13 +55,9 @@ public class SyncActionWizard extends JFrame {
     /**
      * Label that displays the finding's textual description
      */
-    private JLabel lblFindingDescription;
-    /**
-     * The menu where you chose what action to perform from
-     */
-    private JPopupMenu mnuActions;
+    private JTextArea txtFindingDescription;
     private JScrollPane pnlScrollMain;
-    private JButton btnActions;
+    private JButton btnExecute;
     private JButton btnClose;
     private JButton btnSkip;
     
@@ -82,13 +75,13 @@ public class SyncActionWizard extends JFrame {
         setSize(400, 800);
         setLocationRelativeTo(null);
         setTitle(String.format("Findings in %s [%s]", syncGroup.getName(), syncGroup.getProvider()));
-        setLayout(new BorderLayout(5, 0));
+        setLayout(new BorderLayout(5, 5));
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         this.findingsToDisplay = findings;
         
-        lblFindingDescription = new JLabel();
-        add(lblFindingDescription, BorderLayout.NORTH);
+        txtFindingDescription = new JTextArea(3, 100);
+        add(txtFindingDescription, BorderLayout.NORTH);
         
         pnlScrollMain = new JScrollPane();
         add(pnlScrollMain, BorderLayout.CENTER);
@@ -98,16 +91,11 @@ public class SyncActionWizard extends JFrame {
         
         btnClose = new JButton("Close");
         btnSkip = new JButton("Skip");
-        btnActions = new JButton("Actions");
+        btnExecute = new JButton("Execute");
         
-        pnlBottom.add(btnActions);
+        pnlBottom.add(btnExecute);
         pnlBottom.add(btnSkip);
         pnlBottom.add(btnClose);
-        
-        mnuActions = new JPopupMenu();
-        mnuActions.add(new JMenuItem("Create"));
-        mnuActions.add(new JMenuItem("Delete"));
-        mnuActions.add(new JMenuItem("Update"));
         
         btnClose.addActionListener(new ActionListener() {
             @Override
@@ -133,23 +121,13 @@ public class SyncActionWizard extends JFrame {
             }
         });
         
-        btnActions.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                mnuActions.show(btnActions, btnActions.getBounds().x, 
-                        btnActions.getBounds().y + btnActions.getBounds().height);
-            }
-        });
-        
-        for (Component mnuItem : mnuActions.getComponents())
-            ((JMenuItem)mnuItem).addActionListener(listener);
+        btnExecute.addActionListener(listener);
         
         renderFinding(findings.get(0));
     }
     
     public final void renderFinding (LocalSyncFinding finding) {
-        lblFindingDescription.setText(finding.getDescription());
+        txtFindingDescription.setText(finding.getDescription());
         pnlScrollMain.setViewportView(createTreeFromJSON(finding.getExtraInformation()));
     }
     
