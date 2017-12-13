@@ -58,7 +58,7 @@ public class SelectValueFrame extends JFrame {
         setLayout(new BorderLayout());
         setTitle(title);
         setSize(400, 650);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         JLabel lblInstructions = new JLabel(instructions);
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));

@@ -72,7 +72,7 @@ public class BulkUploadFrame extends javax.swing.JFrame {
     
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     public final void initComponents(){
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         tabPnlBulkUpload = new javax.swing.JTabbedPane();
         pnlListType = new javax.swing.JPanel();
         btnProcessListTypes = new javax.swing.JButton();

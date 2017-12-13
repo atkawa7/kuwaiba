@@ -15,7 +15,6 @@
 
 package com.neotropic.inventory.modules.sync.nodes.actions.windows;
 
-import com.neotropic.inventory.modules.sync.windows.SyncResultsFrame;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -228,7 +227,7 @@ public class SyncActionWizard extends JFrame {
             JLabel lblMsg = new JLabel();
             String className = root.getString("className");
             JsonObject jsonPortAttributes = root.getJsonObject("attributes");
-            String id = "";
+            String id;
             if(root.get("id") != null){
                 id = root.getString("id");
                 lblMsg.setText("The port with id: "+id+ " " + jsonPortAttributes.getString("name") + "["+className+"]");
@@ -238,7 +237,7 @@ public class SyncActionWizard extends JFrame {
         } 
         
         JLabel lblMsg = new JLabel();
-        lblMsg.setText("no message");
+        lblMsg.setText("There is no extra information");
         return lblMsg;
         
     }

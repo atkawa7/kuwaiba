@@ -96,7 +96,7 @@ public class NotificationUtil {
         }
     }
 
-    public void showStatusMessage(String message, boolean important){
+    public void showStatusMessage(String message, boolean important) {
         if (StatusDisplayer.getDefault() != null){
             if (important)
                 StatusDisplayer.getDefault().setStatusText(message, StatusDisplayer.IMPORTANCE_ERROR_HIGHLIGHT);

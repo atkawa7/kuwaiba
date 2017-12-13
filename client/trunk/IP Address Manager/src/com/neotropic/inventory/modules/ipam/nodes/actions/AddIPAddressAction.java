@@ -142,7 +142,7 @@ public class AddIPAddressAction extends GenericInventoryAction {
         @SuppressWarnings("unchecked")
         // <editor-fold defaultstate="collapsed" desc="Generated Code">  
         public final void initComponents(){
-            setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setLayout(new BorderLayout());
             setTitle(I18N.gm("add_ip_address"));
             setPreferredSize(new java.awt.Dimension(470, 170));

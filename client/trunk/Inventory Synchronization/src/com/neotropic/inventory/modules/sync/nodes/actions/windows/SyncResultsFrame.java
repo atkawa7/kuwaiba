@@ -13,27 +13,31 @@
  *   limitations under the License.
  * 
  */
-package com.neotropic.inventory.modules.sync.windows;
+package com.neotropic.inventory.modules.sync.nodes.actions.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.GridLayout;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
+import javax.swing.border.EmptyBorder;
 import org.inventory.communications.core.LocalSyncResult;
 import org.inventory.core.services.i18n.I18N;
 
 /**
- * JFrame to show the list of results after synchronization
+ * JFrame to show the list of results after executing a synchronization process
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
 public class SyncResultsFrame extends JFrame{
     
     private JScrollPane pnlScrollMain;
-    private JList<String> lstSyncResults;
+    private JList<LocalSyncResult> lstSyncResults;
 
     public SyncResultsFrame(List<LocalSyncResult> results) {
         setLayout(new BorderLayout());
@@ -44,15 +48,29 @@ public class SyncResultsFrame extends JFrame{
 
         JPanel pnlListOfResults = new JPanel();
         pnlListOfResults.setLayout(new GridLayout(1, 2));
-        List<String> resultsInString = new ArrayList();
-        for(LocalSyncResult r: results)
-            resultsInString.add("Description: " + r.getActionDescription() + " Result: " + r.getResult());
         
-        lstSyncResults = new JList<>(resultsInString.toArray(new String[0]));
-        //lstSyncResults.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        lstSyncResults = new JList<>(results.toArray(new LocalSyncResult[0]));
+        lstSyncResults.setCellRenderer(new SyncResultsCellRenderer());
         
         pnlScrollMain.setViewportView(lstSyncResults);
-        add(lstSyncResults, BorderLayout.CENTER);
+        add(pnlScrollMain);
     }
    
+    private class SyncResultsCellRenderer implements ListCellRenderer<LocalSyncResult> {
+        private final Color evenBackground = new Color(182, 199, 220);
+        private final Color oddBackground = new Color(252, 181, 42);
+        
+        @Override
+        public Component getListCellRendererComponent(JList<? extends LocalSyncResult> list, 
+                LocalSyncResult value, int index, boolean isSelected, boolean cellHasFocus) {
+            JLabel lblResultEntry = new JLabel("<html><b>Description: </b>" + value.getActionDescription() 
+                                            + "<br/><b>Result: </b>" +value.getResult()+ "<html>");
+            lblResultEntry.setBorder(new EmptyBorder(5, 0, 0, 0));
+            if (index % 2 == 0) 
+                lblResultEntry.setBackground(evenBackground);
+            else 
+                lblResultEntry.setBackground(oddBackground);
+            return lblResultEntry;
+        }
+    }
 }

@@ -17,7 +17,7 @@ package com.neotropic.inventory.modules.sync.nodes.actions;
 
 import com.neotropic.inventory.modules.sync.nodes.SyncGroupNode;
 import com.neotropic.inventory.modules.sync.nodes.actions.windows.SyncActionWizard;
-import com.neotropic.inventory.modules.sync.windows.SyncResultsFrame;
+import com.neotropic.inventory.modules.sync.nodes.actions.windows.SyncResultsFrame;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;

@@ -58,7 +58,7 @@ public class BDIsInterfaceFrame extends JFrame{
         setTitle(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_TITLE_AVAILABLE_BDIS"));
         setSize(400, 650);
         setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JLabel lblInstructions = new JLabel(java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_INSTRUCTIONS_SELECT_BDI"));
         lblInstructions.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         

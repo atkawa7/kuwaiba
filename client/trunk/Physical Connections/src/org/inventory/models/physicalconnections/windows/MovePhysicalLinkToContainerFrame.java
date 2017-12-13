@@ -56,7 +56,7 @@ public class MovePhysicalLinkToContainerFrame  extends JFrame {
         
         setLayout(new BorderLayout());
         setTitle(I18N.gm("move_links"));
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(450, 550);
         
         JLabel lblInstructions = new JLabel(I18N.gm("instructions_to_move_links_into_conatiner"));
