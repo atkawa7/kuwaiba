@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridLayout;
 import java.util.List;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -29,12 +30,16 @@ import javax.swing.ListCellRenderer;
 import javax.swing.border.EmptyBorder;
 import org.inventory.communications.core.LocalSyncResult;
 import org.inventory.core.services.i18n.I18N;
+import org.openide.util.ImageUtilities;
 
 /**
  * JFrame to show the list of results after executing a synchronization process
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
-public class SyncResultsFrame extends JFrame{
+public class SyncResultsFrame extends JFrame {
+    private static final ImageIcon ICON_ERROR = ImageUtilities.loadImageIcon("com/neotropic/inventory/modules/sync/res/error.png", false);
+    private static final ImageIcon ICON_WARNING = ImageUtilities.loadImageIcon("com/neotropic/inventory/modules/sync/res/warning.png", false);
+    private static final ImageIcon ICON_SUCCESS = ImageUtilities.loadImageIcon("com/neotropic/inventory/modules/sync/res/success.png", false);
     
     private JScrollPane pnlScrollMain;
     private JList<LocalSyncResult> lstSyncResults;
@@ -57,19 +62,16 @@ public class SyncResultsFrame extends JFrame{
     }
    
     private class SyncResultsCellRenderer implements ListCellRenderer<LocalSyncResult> {
-        private final Color evenBackground = new Color(182, 199, 220);
-        private final Color oddBackground = new Color(252, 181, 42);
         
         @Override
         public Component getListCellRendererComponent(JList<? extends LocalSyncResult> list, 
                 LocalSyncResult value, int index, boolean isSelected, boolean cellHasFocus) {
             JLabel lblResultEntry = new JLabel("<html><b>Description: </b>" + value.getActionDescription() 
                                             + "<br/><b>Result: </b>" +value.getResult()+ "<html>");
-            lblResultEntry.setBorder(new EmptyBorder(5, 0, 0, 0));
-            if (index % 2 == 0) 
-                lblResultEntry.setBackground(evenBackground);
-            else 
-                lblResultEntry.setBackground(oddBackground);
+            lblResultEntry.setBorder(new EmptyBorder(5, 0, 5, 0));
+            lblResultEntry.setIcon(ICON_SUCCESS);
+            lblResultEntry.setOpaque(true);
+            lblResultEntry.setBackground(Color.WHITE);
             return lblResultEntry;
         }
     }

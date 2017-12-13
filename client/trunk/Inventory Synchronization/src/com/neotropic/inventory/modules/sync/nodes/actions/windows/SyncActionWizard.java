@@ -236,10 +236,7 @@ public class SyncActionWizard extends JFrame {
                 lblMsg.setText("The new port found with the sync " + jsonPortAttributes.getString("name") + "["+className+"]");
         } 
         
-        JLabel lblMsg = new JLabel();
-        lblMsg.setText("There is no extra information");
-        return lblMsg;
-        
+        return new JLabel("There is no extra information");
     }
     
 }
