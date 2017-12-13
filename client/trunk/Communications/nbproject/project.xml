@@ -33,7 +33,6 @@
                 <package>org.inventory.communications.core.views</package>
                 <package>org.inventory.communications.runnable</package>
                 <package>org.inventory.communications.util</package>
-                <package>org.inventory.communications.wsclient</package>
             </public-packages>
         </data>
     </configuration>
