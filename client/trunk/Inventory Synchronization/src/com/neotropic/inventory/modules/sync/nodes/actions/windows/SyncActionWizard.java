@@ -111,24 +111,29 @@ public class SyncActionWizard extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (currentFinding < findingsToDisplay.size()) {
-                    renderFinding(findingsToDisplay.get(currentFinding));
-                    currentFinding++;
-                } else {
-                    JOptionPane.showMessageDialog(null, "You have reviewed all the synchronization findings", "Information", JOptionPane.INFORMATION_MESSAGE);
-                    dispose();
-                }
+                renderNextFinding();
             }
         });
         
         btnExecute.addActionListener(listener);
         
-        renderFinding(findings.get(0));
+        renderCurrentFinding();
     }
     
-    public final void renderFinding (LocalSyncFinding finding) {
+    public final void renderCurrentFinding () {
+        LocalSyncFinding finding = findingsToDisplay.get(currentFinding);
         txtFindingDescription.setText(finding.getDescription());
         pnlScrollMain.setViewportView(createTreeFromJSON(finding.getExtraInformation()));
+    }
+    
+    public void renderNextFinding() {
+        if (currentFinding < findingsToDisplay.size() - 1) {
+            currentFinding++;
+            renderCurrentFinding();
+        } else {
+            JOptionPane.showMessageDialog(null, "You have reviewed all the synchronization findings", "Information", JOptionPane.INFORMATION_MESSAGE);
+            dispose();
+        }
     }
     
     /**
