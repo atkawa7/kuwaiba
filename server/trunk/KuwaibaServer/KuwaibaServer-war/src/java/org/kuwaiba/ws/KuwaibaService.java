@@ -5357,16 +5357,29 @@ public class KuwaibaService {
             int retries = 0;
             while (!managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.FINISHED) && retries < 20) {
                 try {                
-                //For some reason (probably thread-concurrency related), the initial "managedJob" instance is different from the one
-                //updated in the SyncProcessor/Writer, so we have to contantly fetch it again.
-                managedJob = JobManager.getInstance().getJob(managedJob.getId());
-                Thread.sleep(2000);
+                    //For some reason (probably thread-concurrency related), the initial "managedJob" instance is different from the one
+                    //updated in the SyncProcessor/Writer, so we have to contantly fetch it again.
+                    managedJob = JobManager.getInstance().getJob(managedJob.getId());
+
+                    if (managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.ABORTED)) {
+                        Exception exceptionThrownByTheJob = managedJob.getExceptionThrownByTheJob();
+
+                        if (exceptionThrownByTheJob != null) {
+                            if (exceptionThrownByTheJob instanceof InventoryException)
+                                throw new ServerSideException(managedJob.getExceptionThrownByTheJob().getMessage());
+                            else
+                                throw exceptionThrownByTheJob;
+                        }
+                    }
+                    Thread.sleep(2000);
                 }catch (InterruptedException | InvalidArgumentException ex) {
                     throw new RuntimeException(ex.getMessage());
                 }
                 retries ++;
             }
-            
+            if (retries == 20)
+                throw new ServerSideException("The supervised synchronization task can no be excecuted");
+                
             return (List<SyncFinding>)managedJob.getJobResult();
             
         } catch(Exception e){

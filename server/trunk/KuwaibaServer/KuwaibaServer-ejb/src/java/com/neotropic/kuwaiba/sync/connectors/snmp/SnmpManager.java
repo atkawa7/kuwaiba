@@ -112,7 +112,7 @@ public class SnmpManager {
         return target;
     }
     
-    public List<List<String>> getTableAsString(OID[] oids) {
+    public List<List<String>> getTableAsString(OID[] oids) throws RuntimeException {
         TableUtils tableUtils = new TableUtils(snmp, new DefaultPDUFactory());
         
         List<TableEvent> events = tableUtils.getTable(getTarget(), oids, null, null);

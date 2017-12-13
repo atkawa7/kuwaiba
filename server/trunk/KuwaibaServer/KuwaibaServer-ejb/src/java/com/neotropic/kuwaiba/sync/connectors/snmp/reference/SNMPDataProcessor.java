@@ -13,8 +13,9 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.sync.model;
+package com.neotropic.kuwaiba.sync.connectors.snmp.reference;
 
+import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -221,8 +222,8 @@ public class SNMPDataProcessor {
         
         if(!possibleChildren.isEmpty())
             findings.add(new SyncFinding(SyncFinding.EVENT_NEW, 
-                String.format("Your containment structure needs to be updated. "
-                        + "The following changes are to be performed: %s", jsonHierarchy.toString()),
+                String.format("Your containment hierarchy needs to be updated in "
+                        + "order to sync from SNMP this changes are need: %s  \nwould you want to update to continue?", jsonHierarchy.toString()),
                 jsonHierarchy.toString()));
     }
     

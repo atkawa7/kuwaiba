@@ -16,6 +16,8 @@
 
 package com.neotropic.kuwaiba.scheduling.sync;
 
+import com.neotropic.kuwaiba.scheduling.BackgroundJob;
+import com.neotropic.kuwaiba.scheduling.JobManager;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.io.Serializable;
 import java.util.Properties;
@@ -26,6 +28,7 @@ import javax.batch.runtime.context.JobContext;
 import javax.inject.Inject;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
+import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 
 /**
  * This reader will poll one by one the queued sync groups and retrieve the 
@@ -60,9 +63,18 @@ public class DefaultSyncReader implements ItemReader {
         if (!stop) {
             stop = true;
             jobContext.setTransientUserData(syncGroup);
-            return syncGroup.getProvider().mappedPoll(syncGroup);
-        }
-        
+            
+            Object result = null;
+            try {
+                result = syncGroup.getProvider().mappedPoll(syncGroup);
+            } catch(InventoryException ex) {
+                BackgroundJob managedJob = JobManager.getInstance().getJob(jobContext.getExecutionId());
+                managedJob.setStatus(BackgroundJob.JOB_STATUS.ABORTED);
+                managedJob.setExceptionThrownByTheJob(ex); // Catching the exception and ending the job
+                return null;
+            }
+            return result;
+        }        
         return null; //when this method returns null, no more iterations of the process are expected
         
     }

@@ -59,6 +59,10 @@ public class JobManager {
      */
     public void launch(BackgroundJob job) throws InvalidArgumentException, OperationNotPermittedException {
         
+        for (BackgroundJob currentJob : currentJobs)
+            if (currentJob.getStatus() == BackgroundJob.JOB_STATUS.FINISHED || currentJob.getStatus() == BackgroundJob.JOB_STATUS.ABORTED)
+                currentJobs.remove(currentJob);
+        
         if (currentJobs.size() == MAX_QUEUE_SIZE) {
             //We will see first of there's some finished jobs we can purge, if not an exception will be rised
             boolean maxExceeded = true;

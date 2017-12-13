@@ -58,6 +58,10 @@ public class BackgroundJob implements Runnable {
      * The job result. This field will be set once the job is finished
      */
     private Object jobResult;
+    /**
+     * Used to catch the exception thrown during the batch job execution
+     */
+    private Exception exceptionThrownByTheJob;
 
     public BackgroundJob(String jobTag, boolean allowConcurrence, Properties parameters) {
         this.jobTag = jobTag;
@@ -117,6 +121,14 @@ public class BackgroundJob implements Runnable {
     
     public Date getEndTime(){
         return BatchRuntime.getJobOperator().getJobExecution(id).getEndTime();
+    }
+
+    public Exception getExceptionThrownByTheJob() {
+        return exceptionThrownByTheJob;
+    }
+
+    public void setExceptionThrownByTheJob(Exception exceptionThrownByTheJob) {
+        this.exceptionThrownByTheJob = exceptionThrownByTheJob;
     }
     
     @Override

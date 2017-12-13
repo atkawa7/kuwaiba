@@ -18,7 +18,6 @@ package com.neotropic.kuwaiba.sync.connectors.snmp.reference;
 import com.neotropic.kuwaiba.sync.connectors.snmp.SnmpManager;
 import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
 import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
-import com.neotropic.kuwaiba.sync.model.SNMPDataProcessor;
 import com.neotropic.kuwaiba.sync.model.SyncAction;
 import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
@@ -34,11 +33,13 @@ import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+import org.kuwaiba.utils.i18n.I18N;
 import org.snmp4j.smi.OID;
 
 /**
@@ -70,10 +71,14 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
     }
 
     @Override
-    public HashMap<RemoteBusinessObjectLight, AbstractDataEntity> mappedPoll(SynchronizationGroup syncGroup) throws InvalidArgumentException {
-        try {
+    public HashMap<RemoteBusinessObjectLight, AbstractDataEntity> mappedPoll(SynchronizationGroup syncGroup) throws InvalidArgumentException, ConnectionException {
             HashMap<RemoteBusinessObjectLight, AbstractDataEntity> result  = new HashMap();
-            SnmpManager snmpMananger = SnmpManager.getInstance();
+            SnmpManager snmpManager;
+            try {
+                snmpManager = SnmpManager.getInstance();
+            } catch (IOException ex) {
+                throw new InternalError(String.format("The SNMP manager could not be started: ", ex.getMessage()));
+            }
             
             for (SyncDataSourceConfiguration agent : syncGroup.getSyncDataSourceConfigurations()) {
                 long id = -1L;
@@ -85,39 +90,51 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                 if (agent.getParameters().containsKey("deviceId")) //NOI18N
                     id = Long.valueOf(agent.getParameters().get("deviceId")); //NOI18N
                 else 
-                    throw new InvalidArgumentException(String.format("Parameter deviceId not defined in synchronization group %s (%s)", 
+                    throw new InvalidArgumentException(String.format(I18N.gm("parameter_deviceId_no_defined"), 
                             syncGroup.getName(), syncGroup.getId()));
                 
                 if (agent.getParameters().containsKey("deviceClass")) //NOI18N
                     className = agent.getParameters().get("deviceClass"); //NOI18N
                 else 
-                    throw new InvalidArgumentException(String.format("Parameter deviceClass not defined in synchronization group %s (%s)", 
+                    throw new InvalidArgumentException(String.format(I18N.gm("parameter_deviceClass_no_defined"), 
                             syncGroup.getName(), syncGroup.getId()));
                                 
                 if (agent.getParameters().containsKey("ipAddress")) //NOI18N
                     address = agent.getParameters().get("ipAddress"); //NOI18N
                 else 
-                    throw new InvalidArgumentException(String.format("Parameter ipAddress not defined in synchronization group %s (%s)", 
+                    throw new InvalidArgumentException(String.format(I18N.gm("parameter_ipAddress_no_defined"), 
                             syncGroup.getName(), syncGroup.getId()));
                     
                 if (agent.getParameters().containsKey("port")) //NOI18N 
                     port = agent.getParameters().get("port"); //NOI18N
                 else 
-                    throw new InvalidArgumentException(String.format("Parameter port not defined in synchronization group %s (%s)", 
+                    throw new InvalidArgumentException(String.format(I18N.gm("parameter_port_no_defined"), 
                             syncGroup.getName(), syncGroup.getId()));
                 
                 if (agent.getParameters().containsKey("community")) //NOI18N
                     community = agent.getParameters().get("community"); //NOI18N
                 else 
-                    throw new InvalidArgumentException(String.format("Parameter community not defined in synchronization group %s (%s)", 
-                            syncGroup.getName(), syncGroup.getId()));
+                    throw new InvalidArgumentException(String.format(I18N.gm("parameter_community_no_defined"), 
+                        syncGroup.getName(), syncGroup.getId()));
                 
-                snmpMananger.setAddress("udp:" + address + "/" + port); //NOI18N
-                snmpMananger.setCommunity(community);
-
+                RemoteBusinessObjectLight mappedObjLight = null;
+                
+                try {
+                    mappedObjLight = PersistenceService.getInstance().getBusinessEntityManager().getObjectLight(className, id);
+                } catch(InventoryException ex) {
+                    throw new InvalidArgumentException(String.format("The inventory object associated to sync group %s could not be retrived: ", ex.getMessage()));
+                }
+                List<List<String>> tableAsString = null;
                 ReferenceSnmpResourceDefinition entPhysicalTable = new ReferenceSnmpResourceDefinition();
-
-                List<List<String>> tableAsString = snmpMananger.getTableAsString(entPhysicalTable.values().toArray(new OID[0]));
+                
+                try {                
+                    snmpManager.setAddress("udp:" + address + "/" + port); //NOI18N
+                    snmpManager.setCommunity(community);
+                    
+                    tableAsString = snmpManager.getTableAsString(entPhysicalTable.values().toArray(new OID[0]));
+                } catch(RuntimeException ex) {
+                    throw new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString()));
+                }
 
                 HashMap<String, List<String>> value = new HashMap();
                 int i = 0;
@@ -136,17 +153,9 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                     instances.add(cell.get(size));
                 value.put("instance", instances); //NOI18N
                 
-                try {
-                    RemoteBusinessObjectLight mappedObjectLight = PersistenceService.getInstance().getBusinessEntityManager().getObjectLight(className, id);
-                    result.put(mappedObjectLight, new TableData("entPhysicalTable", value)); //NOI18N
-                } catch (InventoryException ex) {
-                    throw new InvalidArgumentException(String.format("The inventory object associated to sync group %s could not be retrived: ", ex.getMessage()));
-                }
+                result.put(mappedObjLight, new TableData("entPhysicalTable", value)); //NOI18N
             }
             return result;
-        } catch (IOException ex) {
-            throw new InternalError(String.format("The SNMP manager could not be started: ", ex.getMessage()));
-        }
     }
     
     @Override

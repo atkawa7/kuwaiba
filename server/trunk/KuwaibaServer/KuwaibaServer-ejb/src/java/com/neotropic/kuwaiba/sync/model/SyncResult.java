@@ -26,6 +26,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SyncResult {
+    public static int ERROR = 0;
+    public static int SUCCESS = 1;
+    public static int WARNING = 2;
+    
+    /**
+     * The type of result.
+     */
+    private int type;
     /**
      * The description of the action that was performed
      */
@@ -37,11 +45,20 @@ public class SyncResult {
    
     public SyncResult() { }
 
-    public SyncResult(String actionDescription, String result) {
+    public SyncResult(int type, String actionDescription, String result) {
+        this.type = type;
         this.actionDescription = actionDescription;
         this.result = result;
     }
+        
+    public int getType() {
+        return type;
+    }
 
+    public void setType(int type) {
+        this.type = type;
+    }
+    
     public String getActionDescription() {
         return actionDescription;
     }

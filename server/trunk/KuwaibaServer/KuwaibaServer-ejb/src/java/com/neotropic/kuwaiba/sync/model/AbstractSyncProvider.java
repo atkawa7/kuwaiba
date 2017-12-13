@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
@@ -63,7 +64,7 @@ public abstract class AbstractSyncProvider implements Serializable{
         
     public abstract List<AbstractDataEntity> unmappedPoll(SynchronizationGroup syncGroup);
             
-    public abstract HashMap<RemoteBusinessObjectLight, AbstractDataEntity> mappedPoll(SynchronizationGroup syncGroup) throws InvalidArgumentException;
+    public abstract HashMap<RemoteBusinessObjectLight, AbstractDataEntity> mappedPoll(SynchronizationGroup syncGroup) throws InvalidArgumentException, ConnectionException;
     /**
      * Implement this method if the synchronization process will be associated to an object in the inventory, for example, 
      * you will retrieve the hardware information about a network element and find what has changed overnight.
