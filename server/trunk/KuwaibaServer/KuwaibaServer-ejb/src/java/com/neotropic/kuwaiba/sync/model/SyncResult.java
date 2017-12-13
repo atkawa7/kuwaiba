@@ -26,12 +26,21 @@ import javax.xml.bind.annotation.XmlAccessorType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SyncResult {
-    public static int ERROR = 0;
-    public static int SUCCESS = 1;
-    public static int WARNING = 2;
-    
     /**
-     * The type of result.
+     * An unexpected error was found while execute the sync action
+     */
+    public static int ERROR = 0;
+    /**
+     * The sync action was executed successfully
+     */
+    public static int SUCCESS = 1;
+    /**
+     * The sync action was executed with warnings
+     */
+    public static int WARNING = 2;    
+    /**
+     * The type of result. Gives a feedback of the status of the executed action:
+     * ERROR, SUCCESS, WARNING
      */
     private int type;
     /**
