@@ -15,11 +15,13 @@
 
 package com.neotropic.inventory.modules.sync.nodes.actions.windows;
 
+import com.neotropic.inventory.modules.sync.windows.SyncResultsFrame;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.List;
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -27,15 +29,21 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalSyncFinding;
 import org.inventory.communications.core.LocalSyncGroup;
+import org.inventory.communications.core.LocalSyncResult;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 
 /**
  * This frame will be used to display the findings in the synchronization process and 
@@ -63,6 +71,8 @@ public class SyncActionWizard extends JFrame {
     private JButton btnExecute;
     private JButton btnClose;
     private JButton btnSkip;
+    private List<LocalSyncFinding> findings;
+    private  final List<Integer> syncActions;
     
     /**
      * Default constructor
@@ -70,18 +80,20 @@ public class SyncActionWizard extends JFrame {
      * @param findings The list of findings to be displayed
      * @param listener The callback object that will listen for 
      */
-    public SyncActionWizard(LocalSyncGroup syncGroup, List<LocalSyncFinding> findings, final ActionListener listener) throws IllegalArgumentException {
+    public SyncActionWizard(LocalSyncGroup syncGroup, final List<LocalSyncFinding> findings) throws IllegalArgumentException {
+        this.findings = findings;
+        syncActions = new ArrayList<>();
         
         if (findings.isEmpty())
             throw new IllegalArgumentException("The list of findings can not empty");
         
         this.syncGroup = syncGroup;
         
-        setSize(400, 800);
+        setSize(800, 400);
         setLocationRelativeTo(null);
         
         setLayout(new BorderLayout(5, 5));
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         this.findingsToDisplay = findings;
         
@@ -120,7 +132,14 @@ public class SyncActionWizard extends JFrame {
             }
         });
         
-        btnExecute.addActionListener(listener);
+        btnExecute.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                syncActions.add(1);
+                renderNextFinding();
+            }
+        });
         
         renderCurrentFinding();
     }
@@ -140,6 +159,14 @@ public class SyncActionWizard extends JFrame {
         } else {
             JOptionPane.showMessageDialog(null, "You have reviewed all the synchronization findings", "Information", JOptionPane.INFORMATION_MESSAGE);
             dispose();
+            if(syncActions.size() == findings.size()){
+                List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(syncActions, findings);
+                SyncResultsFrame syncResultFrame = new SyncResultsFrame(executSyncActions);
+                syncResultFrame.setVisible(true);
+            }
+            else
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
+                      NotificationUtil.INFO_MESSAGE, I18N.gm("sync_findings_actions"));
         }
     }
     
@@ -149,27 +176,71 @@ public class SyncActionWizard extends JFrame {
      * @param jsonString The tree definition as a JSON document
      * @return A tree with the structured defined in the JSON document
      */
-    public static JTree createTreeFromJSON(String jsonString) {
+    public static JComponent createTreeFromJSON(String jsonString) {
+        
         JsonReader jsonReader = Json.createReader(new StringReader(jsonString));
         JsonObject root = jsonReader.readObject();
-        DefaultMutableTreeNode rootNode =
-            new DefaultMutableTreeNode("Root Device");
+        String type = root.getString("type");
+        if(type.equals("branch")){
+            DefaultMutableTreeNode rootNode =
+                new DefaultMutableTreeNode("Root Device");
 
-        JTree tree = new JTree(rootNode);
+            JTree tree = new JTree(rootNode);
+            JsonArray children = root.getJsonArray("children");
 
-        JsonArray items = root.getJsonArray("branch");
+            int row = 0;
+            DefaultMutableTreeNode currentNode = rootNode;
+            for (JsonValue item : children) {
+                jsonReader = Json.createReader(new StringReader(item.toString()));
+                JsonObject obj = jsonReader.readObject().getJsonObject("child");
+                DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(obj.getJsonObject("attributes").getString("name") + "[" + obj.getString("className")+"]");
+                currentNode.add(newNode);
+                tree.expandRow(row);
+                currentNode = newNode;
+                row++;
+            }
 
-        int row = 0;
-        DefaultMutableTreeNode currentNode = rootNode;
-        for (JsonValue item : items) {
-            DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(item);
-            currentNode.add(newNode);
-            tree.expandRow(row);
-            currentNode = newNode;
-            row++;
+            return tree;
+        }
+        else if(type.equals("object_port_move")){
+                JLabel lblMsg = new JLabel();
+                Long childId = Long.valueOf(root.getString("childId"));
+                String className = root.getString("className");
+                Long tempParentId = Long.valueOf(root.getString("parentId"));
+                String parentClassName = root.getString("parentClassName");
+                JsonObject jsonPortAttributes = root.getJsonObject("attributes");
+                lblMsg.setText("The port: " + jsonPortAttributes.getString("name") + "[" + className + "] "
+                        + "will be updated with this attributes " + 
+                        jsonPortAttributes.toString());
+                return lblMsg;
         }
         
-        return tree;
+        else if(type.equals("device")){
+             JLabel lblMsg = new JLabel();
+            JsonObject jsonAttributes = root.getJsonObject("attributes");
+            jsonAttributes.getString("name");
+            jsonAttributes.getString("description");
+            lblMsg.setText("The device you are tryng to sync will be updated with this new attributes: \n" + jsonAttributes.toString());
+            return lblMsg;
+        }
+        
+        else if(type.equals("object_port_no_match")){
+            JLabel lblMsg = new JLabel();
+            String className = root.getString("className");
+            JsonObject jsonPortAttributes = root.getJsonObject("attributes");
+            String id = "";
+            if(root.get("id") != null){
+                id = root.getString("id");
+                lblMsg.setText("The port with id: "+id+ " " + jsonPortAttributes.getString("name") + "["+className+"]");
+            }
+            else
+                lblMsg.setText("The new port found with the sync " + jsonPortAttributes.getString("name") + "["+className+"]");
+        } 
+        
+        JLabel lblMsg = new JLabel();
+        lblMsg.setText("no message");
+        return lblMsg;
+        
     }
     
 }

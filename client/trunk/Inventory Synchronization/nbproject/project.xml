@@ -116,7 +116,9 @@
                     </run-dependency>
                 </dependency>
             </module-dependencies>
-            <public-packages/>
+            <public-packages>
+                <package>com.neotropic.inventory.modules.sync.windows</package>
+            </public-packages>
         </data>
     </configuration>
 </project>

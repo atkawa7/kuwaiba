@@ -16,20 +16,17 @@
 package com.neotropic.inventory.modules.sync.nodes.actions;
 
 import com.neotropic.inventory.modules.sync.nodes.SyncGroupNode;
+import com.neotropic.inventory.modules.sync.nodes.actions.windows.SyncActionWizard;
 import com.neotropic.inventory.modules.sync.windows.SyncResultsFrame;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.JMenuItem;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.communications.core.LocalSyncFinding;
 import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.core.LocalSyncResult;
 import org.inventory.communications.runnable.AbstractSyncRunnable;
@@ -37,7 +34,6 @@ import org.inventory.communications.runnable.AbstractSyncRunnable;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Utilities;
@@ -85,56 +81,51 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
         
         @Override
         public void runSync() {
-            List<Integer> syncActions = new ArrayList<>();
-            
-            for(LocalSyncFinding find : getFindings()){
-                JTextField txtFindInfo = new JTextField();
-                            txtFindInfo.setName("findInfo");
-                            txtFindInfo.setText(find.getDescription());
-                            txtFindInfo.setColumns(50);
-                String[] options = {"Execute", "Ignore"};
-
-                JLabel lblextra = new JLabel();
-                                lblextra.setName("findExtraInfo");
-                                //lblextra.setColumns(50);
-                                lblextra.setEnabled(false);
-
-                JComboBox<String> cbAction = new JComboBox<>(options);
-                cbAction.setName("cmbDevices");
-
-                JCheckBox jcExecuteAll = new JCheckBox();
-                jcExecuteAll.setText("Yes to all");
-                jcExecuteAll.setName("Answer yes to all findings");
-                
-                JComplexDialogPanel pnlSyncDataSourcePropertie = new JComplexDialogPanel(
-                        new String[] {"Info",
-                            "Extra Info:","Actions","Yes to all"}, 
-                        new JComponent[] {txtFindInfo, lblextra, cbAction, jcExecuteAll});
-                
-                
-                
-                if (JOptionPane.showConfirmDialog(null, pnlSyncDataSourcePropertie, I18N.gm("sync_data_action_select"), 
-                    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-                    syncActions.add(cbAction.getSelectedIndex());
-                    if(jcExecuteAll.isSelected()){
-                        syncActions = new ArrayList<>();
-                        for(LocalSyncFinding x : getFindings())
-                            syncActions.add(1);
-                        break;
-                    }
-                }
-            }
-            if(syncActions.size() == getFindings().size()){
-                List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(syncActions, getFindings());
-                SyncResultsFrame syncResultFrame = new SyncResultsFrame(executSyncActions);
-                syncResultFrame.setVisible(true);
-            }
-            else
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
-                      NotificationUtil.INFO_MESSAGE, I18N.gm("sync_findings_actions"));
+            final List<Integer> syncActions = new ArrayList<>();
+            SyncActionWizard syncWizard = new SyncActionWizard(new LocalSyncGroup(0l, "Sync Group", DEFAULT), getFindings());
+            syncWizard.setVisible(true);
         }
     }
 }
 
 
 
+//            for(LocalSyncFinding find : getFindings()){
+//                JTextField txtFindInfo = new JTextField();
+//                            txtFindInfo.setName("findInfo");
+//                            txtFindInfo.setText(find.getDescription());
+//                            txtFindInfo.setColumns(50);
+//                String[] options = {"Execute", "Ignore"};
+//
+//                JLabel lblextra = new JLabel();
+//                                lblextra.setName("findExtraInfo");
+//                                //lblextra.setColumns(50);
+//                                lblextra.setEnabled(false);
+//
+//                JComboBox<String> cbAction = new JComboBox<>(options);
+//                cbAction.setName("cmbDevices");
+//
+//                JCheckBox jcExecuteAll = new JCheckBox();
+//                jcExecuteAll.setText("Yes to all");
+//                jcExecuteAll.setName("Answer yes to all findings");
+//                
+//                JComplexDialogPanel pnlSyncDataSourcePropertie = new JComplexDialogPanel(
+//                        new String[] {"Info",
+//                            "Extra Info:","Actions","Yes to all"}, 
+//                        new JComponent[] {txtFindInfo, lblextra, cbAction, jcExecuteAll});
+//                
+//                
+//                
+//                if (JOptionPane.showConfirmDialog(null, pnlSyncDataSourcePropertie, I18N.gm("sync_data_action_select"), 
+//                    JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+//                    syncActions.add(cbAction.getSelectedIndex());
+//                    if(jcExecuteAll.isSelected()){
+//                        syncActions = new ArrayList<>();
+//                        for(LocalSyncFinding x : getFindings()){
+//                            System.out.println(x.getDescription());
+//                            syncActions.add(1);
+//                        }
+//                        break;
+//                    }
+//                }
+//            }
