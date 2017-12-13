@@ -4748,10 +4748,15 @@ public class CommunicationsStub {
                         progress.setFindings(syncFindings);
                         progress.getProgressHandle().finish();
                         progress.runSync();                        
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(CommunicationsStub.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (ExecutionException ex) {
-                        System.out.println("Time out");
+                    } catch (Exception ex) {
+                        String message = ex.getMessage();
+                        int idxOfSpace = message.indexOf(": ");
+                        String kindMessage = message.substring(idxOfSpace + 1);
+                        
+                        CommunicationsStub.this.error = kindMessage;
+                        progress.setFindings(null);
+                        progress.getProgressHandle().finish();                        
+                        progress.runSync();
                     }
                 }
             });
@@ -4785,7 +4790,7 @@ public class CommunicationsStub {
             if(results != null){
                 List<LocalSyncResult> localResults = new ArrayList<>();
                 for(SyncResult result : results)
-                    localResults.add(new LocalSyncResult(result.getActionDescription(), result.getResult()));
+                    localResults.add(new LocalSyncResult(result.getType(), result.getActionDescription(), result.getResult()));
                 return localResults;
             }
             

@@ -20,6 +20,18 @@ package org.inventory.communications.core;
  */
 public class LocalSyncResult {
     /**
+     * An unexpected error was found while execute the sync action
+     */
+    public static int ERROR = 0;
+    /**
+     * The sync action was executed successfully
+     */
+    public static int SUCCESS = 1;
+    /**
+     * The sync action was executed with warnings
+     */
+    public static int WARNING = 2;
+    /**
      * The description of the action that was performed
      */
     private String actionDescription;
@@ -27,12 +39,26 @@ public class LocalSyncResult {
      * The textual description of the result of that action
      */
     private String result;
+    /**
+     * The type of result. Gives a feedback of the status of the executed action:
+     * ERROR, SUCCESS, WARNING
+     */
+    private int type;
    
     public LocalSyncResult() { }
 
-    public LocalSyncResult(String actionDescription, String result) {
+    public LocalSyncResult(int type, String actionDescription, String result) {
+        this.type = type;
         this.actionDescription = actionDescription;
         this.result = result;
+    }
+    
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     public String getActionDescription() {

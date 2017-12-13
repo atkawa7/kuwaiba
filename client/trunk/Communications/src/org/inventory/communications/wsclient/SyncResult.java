@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="actionDescription" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="result" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -28,13 +29,31 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "syncResult", propOrder = {
+    "type",
     "actionDescription",
     "result"
 })
 public class SyncResult {
 
+    protected int type;
     protected String actionDescription;
     protected String result;
+
+    /**
+     * Gets the value of the type property.
+     * 
+     */
+    public int getType() {
+        return type;
+    }
+
+    /**
+     * Sets the value of the type property.
+     * 
+     */
+    public void setType(int value) {
+        this.type = value;
+    }
 
     /**
      * Gets the value of the actionDescription property.

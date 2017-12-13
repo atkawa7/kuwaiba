@@ -19,11 +19,14 @@ import com.neotropic.inventory.modules.sync.nodes.SyncGroupNode;
 import com.neotropic.inventory.modules.sync.nodes.actions.windows.SyncActionWizard;
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
+import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.core.LocalSyncFinding;
 import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.runnable.AbstractSyncRunnable;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.util.RequestProcessor;
@@ -72,8 +75,14 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
         
         @Override
         public void runSync() {
-            SyncActionWizard syncWizard = new SyncActionWizard(selectedNode.getLookup().lookup(LocalSyncGroup.class), getFindings());
-            syncWizard.setVisible(true);
+            List<LocalSyncFinding> findings = getFindings();
+            if (findings == null)
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            else {
+                SyncActionWizard syncWizard = new SyncActionWizard(new LocalSyncGroup(0l, "Sync Group", DEFAULT), findings);
+                syncWizard.setVisible(true);
+            }
         }
     }
 }
