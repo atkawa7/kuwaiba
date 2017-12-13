@@ -7,6 +7,15 @@
             <suite-component/>
             <module-dependencies>
                 <dependency>
+                    <code-name-base>org.netbeans.api.progress</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>1</release-version>
+                        <specification-version>1.38.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.openide.util.lookup</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -24,11 +33,8 @@
                 <package>org.inventory.communications.core.views</package>
                 <package>org.inventory.communications.runnable</package>
                 <package>org.inventory.communications.util</package>
+                <package>org.inventory.communications.wsclient</package>
             </public-packages>
-            <class-path-extension>
-                <runtime-relative-path>ext/javax.json-1.0.2.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/javax.json-1.0.2.jar</binary-origin>
-            </class-path-extension>
         </data>
     </configuration>
 </project>

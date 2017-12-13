@@ -17,14 +17,19 @@ package org.inventory.communications.runnable;
 
 import java.util.List;
 import org.inventory.communications.core.LocalSyncFinding;
+import org.netbeans.api.progress.ProgressHandle;
 
 /**
  * Helps to return a list of findings from the launch Synchronization method into the action how invokes this method
  * @author  Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
-public abstract class AbstractSyncRunnable implements Runnable{
+public abstract class AbstractSyncRunnable implements Runnable {
+    /**
+      * Used to manage the progress bar in the UI
+      */
+    private ProgressHandle progressHandle;
 
-    private List<LocalSyncFinding> findings;
+    private List<LocalSyncFinding> findings;    
 
     public void setFindings(List<LocalSyncFinding> findings) {
         this.findings = findings;
@@ -33,4 +38,21 @@ public abstract class AbstractSyncRunnable implements Runnable{
     public List<LocalSyncFinding> getFindings() {
         return findings;
     }
+
+    public ProgressHandle getProgressHandle() {
+        return progressHandle;
+    }
+
+    public void setProgressHandle(ProgressHandle progressHandle) {
+        this.progressHandle = progressHandle;
+    }
+    
+    @Override
+    public final void run() {  
+        // This implementation is empty becouse this method is called by the 
+        // RequestProcessor and to avoid a null pointer exception was nescessary 
+        // override it
+    }
+    
+    public abstract void runSync();
 }

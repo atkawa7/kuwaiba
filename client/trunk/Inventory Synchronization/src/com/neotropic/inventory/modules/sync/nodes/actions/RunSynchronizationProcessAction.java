@@ -38,6 +38,8 @@ import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.JComplexDialogPanel;
+import org.netbeans.api.progress.ProgressHandleFactory;
+import org.openide.util.RequestProcessor;
 import org.openide.util.Utilities;
 
 /**
@@ -59,7 +61,7 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
             return;
         
         SyncGroupNode selectedNode = selectedNodes.next();
-        SyncRunnable myRun = new SyncRunnable();
+        SyncRunnable myRun = new SyncRunnable(selectedNode);
         CommunicationsStub.getInstance().launchSupervisedSynchronizationTask(selectedNode.getLookup().lookup(LocalSyncGroup.class).getId(), myRun);
     }
 
@@ -72,10 +74,17 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
     /**
      * Gets the list of findings and show a dialog to allow the user to choose de actions to findings 
      */
-    private class SyncRunnable extends AbstractSyncRunnable{
+    private class SyncRunnable extends AbstractSyncRunnable {
 
+        public SyncRunnable(SyncGroupNode selectedNode) {
+            setProgressHandle(ProgressHandleFactory.createHandle(
+                String.format(I18N.gm("running_sync_process"), 
+                selectedNode.getName())));
+            RequestProcessor.getDefault().post(this);
+        }
+        
         @Override
-        public void run() {
+        public void runSync() {
             List<Integer> syncActions = new ArrayList<>();
             
             for(LocalSyncFinding find : getFindings()){
@@ -124,7 +133,6 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
                       NotificationUtil.INFO_MESSAGE, I18N.gm("sync_findings_actions"));
         }
-    
     }
 }
 

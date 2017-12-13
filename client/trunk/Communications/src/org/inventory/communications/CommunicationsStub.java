@@ -4746,7 +4746,8 @@ public class CommunicationsStub {
                             syncFindings.add(new LocalSyncFinding(syncFinding.getType(), syncFinding.getDescription(), syncFinding.getExtraInformation()));
                         
                         progress.setFindings(syncFindings);
-                        progress.run();
+                        progress.getProgressHandle().finish();
+                        progress.runSync();                        
                     } catch (InterruptedException ex) {
                         Logger.getLogger(CommunicationsStub.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (ExecutionException ex) {
@@ -4754,6 +4755,7 @@ public class CommunicationsStub {
                     }
                 }
             });
+            progress.getProgressHandle().start();
         } catch (Exception ex) {
             this.error = ex.getMessage();
             
