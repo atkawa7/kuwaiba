@@ -221,8 +221,8 @@ public class SNMPDataProcessor {
         
         if(!possibleChildren.isEmpty())
             findings.add(new SyncFinding(SyncFinding.EVENT_NEW, 
-                String.format("Your containment hierarchy needs to be updated in "
-                        + "order to sync from SNMP this changes are need: %s  \nwould you want to update to continue?", jsonHierarchy.toString()),
+                String.format("Your containment structure needs to be updated. "
+                        + "The following changes are to be performed: %s", jsonHierarchy.toString()),
                 jsonHierarchy.toString()));
     }
     

@@ -47,7 +47,7 @@ public class SyncAction {
     
     private final static String ACTION_CONTAINMENT_HIERARCHY = "The containment hierarchy was updated parent %s, children %s";
     private final static String ACTION_OBJECT_UPDATED = "The object %s [%s] with id %s was updated";
-    private final static String ACTION_OBJECT_CANNOT_UPDATED = "The object %s [%s] wasn't updated";
+    private final static String ACTION_OBJECT_CANNOT_UPDATED = "The object %s [%s] was not updated: ";
     private final static String ACTION_UPDATED = "Updated successfully";
     private final static String ACTION_CREATED = "Created successfully";
     private final static String ACTION_DELETED = "Deleted successfully";
@@ -132,7 +132,7 @@ public class SyncAction {
                 }
             }
             results.add(new SyncResult(findings.get(i).getDescription() + " " +
-                    findings.get(i).getExtraInformation(), "The finding was skiped"));
+                    findings.get(i).getExtraInformation(), "No action was perfomed, the finding was skipped"));
         }
         return results;
     }
@@ -257,7 +257,7 @@ public class SyncAction {
                 bem.moveObjects(parentClassName, parentId, objectsToMove);
                 results.add(new SyncResult(String.format(ACTION_OBJECT_UPDATED, jsonPortAttributes.get("name"), className, Long.toString(childId)), ACTION_UPDATED));
             }
-            results.add(new SyncResult(String.format(ACTION_OBJECT_CANNOT_UPDATED + "no parent found", jsonPortAttributes.get("name"), className, Long.toString(childId)), ACTION_ERROR));
+            results.add(new SyncResult(String.format(ACTION_OBJECT_CANNOT_UPDATED + "No valid parent found", jsonPortAttributes.get("name"), className, Long.toString(childId)), ACTION_ERROR));
         } catch (MetadataObjectNotFoundException | ObjectNotFoundException | OperationNotPermittedException ex) {
             results.add(new SyncResult(String.format(ACTION_OBJECT_CANNOT_UPDATED, jsonPortAttributes.get("name"), className, Long.toString(childId)), ACTION_ERROR));
         }
