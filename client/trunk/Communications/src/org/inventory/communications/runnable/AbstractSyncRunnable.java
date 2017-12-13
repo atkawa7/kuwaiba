@@ -46,7 +46,7 @@ public abstract class AbstractSyncRunnable implements Runnable {
     public void setProgressHandle(ProgressHandle progressHandle) {
         this.progressHandle = progressHandle;
     }
-    
+
     @Override
     public final void run() {  
         // This implementation is empty becouse this method is called by the 

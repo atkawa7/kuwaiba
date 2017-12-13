@@ -4776,7 +4776,7 @@ public class CommunicationsStub {
             for (LocalSyncFinding locaFinding : localFindings) {
                 SyncFinding finding = new SyncFinding();
                 finding.setDescription(locaFinding.getDescription());
-                finding.setDescription(locaFinding.getExtraInformation());
+                finding.setExtraInformation(locaFinding.getExtraInformation());
                 finding.setType(locaFinding.getType());
                 findings.add(finding);
             }
