@@ -22,15 +22,15 @@ public class LocalSyncResult {
     /**
      * An unexpected error was found while execute the sync action
      */
-    public static int ERROR = 0;
+    public static final int ERROR = 0;
     /**
      * The sync action was executed successfully
      */
-    public static int SUCCESS = 1;
+    public static final int SUCCESS = 1;
     /**
      * The sync action was executed with warnings
      */
-    public static int WARNING = 2;
+    public static final int WARNING = 2;
     /**
      * The description of the action that was performed
      */

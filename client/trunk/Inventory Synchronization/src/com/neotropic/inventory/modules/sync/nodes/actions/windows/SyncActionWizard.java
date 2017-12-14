@@ -36,14 +36,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
-import javax.swing.WindowConstants;
 import javax.swing.tree.DefaultMutableTreeNode;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalSyncFinding;
 import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.core.LocalSyncResult;
-import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.services.i18n.I18N;
 
 /**
  * This frame will be used to display the findings in the synchronization process and 
@@ -51,10 +48,6 @@ import org.inventory.core.services.i18n.I18N;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class SyncActionWizard extends JFrame {
-    /**
-     * The findings to be displayed
-     */
-    private List<LocalSyncFinding> findingsToDisplay;
     /**
      * The current finding on display
      */
@@ -71,8 +64,8 @@ public class SyncActionWizard extends JFrame {
     private JButton btnExecute;
     private JButton btnClose;
     private JButton btnSkip;
-    private List<LocalSyncFinding> findings;
-    private  final List<Integer> syncActions;
+    private List<LocalSyncFinding> allFindings;
+    private List<LocalSyncFinding> findingsToBeProcessed;
     
     /**
      * Default constructor
@@ -81,10 +74,9 @@ public class SyncActionWizard extends JFrame {
      * @param listener The callback object that will listen for 
      */
     public SyncActionWizard(LocalSyncGroup syncGroup, final List<LocalSyncFinding> findings) throws IllegalArgumentException {
-        this.findings = findings;
+        this.allFindings = findings;
         this.syncGroup = syncGroup;
-        
-        syncActions = new ArrayList<>();
+        this.findingsToBeProcessed = new ArrayList<>();
         
         if (findings.isEmpty())
             throw new IllegalArgumentException("The list of findings can not empty");
@@ -95,7 +87,7 @@ public class SyncActionWizard extends JFrame {
         setLayout(new BorderLayout(5, 5));
         //setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         
-        this.findingsToDisplay = findings;
+        
         
         txtFindingDescription = new JTextArea(5, 10);
         txtFindingDescription.setLineWrap(true);
@@ -119,7 +111,7 @@ public class SyncActionWizard extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (JOptionPane.showConfirmDialog(SyncActionWizard.this, 
-                        "Are you sure you want to stop reviewing the findings? The remaining ones will be ignored", 
+                        "Are you sure you want to stop reviewing the findings? No changes will be commited", 
                         "Information", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.YES_OPTION)
                     dispose();
             }
@@ -137,8 +129,16 @@ public class SyncActionWizard extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                syncActions.add(1);
-                renderNextFinding();
+                findingsToBeProcessed.add(allFindings.get(currentFinding));
+                
+                if (currentFinding == allFindings.size() - 1) {
+                    JOptionPane.showMessageDialog(SyncActionWizard.this, "You have reviewed all the synchronization findings. The selected actions will be performed now", "Information", JOptionPane.INFORMATION_MESSAGE);
+                    dispose();
+                    List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(findingsToBeProcessed);
+                    SyncResultsFrame syncResultFrame = new SyncResultsFrame(SyncActionWizard.this.syncGroup, executSyncActions);
+                    syncResultFrame.setVisible(true);
+                } else
+                    renderNextFinding();
             }
         });
         
@@ -146,29 +146,24 @@ public class SyncActionWizard extends JFrame {
     }
     
     public final void renderCurrentFinding () {
-        LocalSyncFinding finding = findingsToDisplay.get(currentFinding);
+        LocalSyncFinding finding = allFindings.get(currentFinding);
+        setTitle(String.format("Findings in %s [%s] - %s/%s", syncGroup.getName(), syncGroup.getProvider(), currentFinding + 1, allFindings.size()));
         txtFindingDescription.setText(finding.getDescription());
-        setTitle(String.format("Findings in %s [%s] - %s/%s", syncGroup.getName(), syncGroup.getProvider(), currentFinding + 1, findingsToDisplay.size()));
-        pnlScrollMain.setViewportView(createTreeFromJSON(finding.getExtraInformation()));
+        pnlScrollMain.setViewportView(buildExtraInformationComponentFromJSON(finding.getExtraInformation()));
         
+        if (currentFinding == allFindings.size() - 1)
+            btnExecute.setText("Finish");
+        
+        if (finding.getType() == LocalSyncFinding.EVENT_ERROR) {
+            btnExecute.setEnabled(false);
+        } else {
+            btnExecute.setEnabled(true);
+        }
     }
     
     public void renderNextFinding() {
-        if (currentFinding < findingsToDisplay.size() - 1) {
-            currentFinding++;
-            renderCurrentFinding();
-        } else {
-            JOptionPane.showMessageDialog(SyncActionWizard.this, "You have reviewed all the synchronization findings", "Information", JOptionPane.INFORMATION_MESSAGE);
-            dispose();
-            if(syncActions.size() == findings.size()){
-                List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(syncActions, findings);
-                SyncResultsFrame syncResultFrame = new SyncResultsFrame(syncGroup, executSyncActions);
-                syncResultFrame.setVisible(true);
-            }
-            else
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
-                      NotificationUtil.INFO_MESSAGE, I18N.gm("sync_findings_actions"));
-        }
+        currentFinding++;
+        renderCurrentFinding();
     }
     
     /**
@@ -177,7 +172,7 @@ public class SyncActionWizard extends JFrame {
      * @param jsonString The tree definition as a JSON document
      * @return A tree with the structured defined in the JSON document
      */
-    public static JComponent createTreeFromJSON(String jsonString) {
+    public JComponent buildExtraInformationComponentFromJSON(String jsonString) {
         
         JsonReader jsonReader = Json.createReader(new StringReader(jsonString));
         JsonObject root = jsonReader.readObject();

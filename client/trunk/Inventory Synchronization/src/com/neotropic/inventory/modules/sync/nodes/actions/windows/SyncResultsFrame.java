@@ -70,9 +70,18 @@ public class SyncResultsFrame extends JFrame {
             JLabel lblResultEntry = new JLabel("<html><b>Description: </b>" + value.getActionDescription() 
                                             + "<br/><b>Result: </b>" +value.getResult()+ "<html>");
             lblResultEntry.setBorder(new EmptyBorder(5, 5, 5, 0));
-            lblResultEntry.setIcon(ICON_SUCCESS);
             lblResultEntry.setOpaque(true);
             lblResultEntry.setBackground(Color.WHITE);
+            switch (value.getType()) {
+                case LocalSyncResult.ERROR:
+                    lblResultEntry.setIcon(ICON_ERROR);
+                    break;
+                case LocalSyncResult.WARNING:
+                    lblResultEntry.setIcon(ICON_WARNING);
+                    break;
+                default:
+                    lblResultEntry.setIcon(ICON_SUCCESS);
+            }
             return lblResultEntry;
         }
     }

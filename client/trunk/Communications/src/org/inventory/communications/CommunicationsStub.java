@@ -4771,33 +4771,30 @@ public class CommunicationsStub {
      * Launches a synchronization that requires a user to review the actions to 
      * be taken upon finding differences  between what's on he sync data sources 
      * and the inventory system.
-     * @param actions the list of action to execute after the user has check the findings
      * @param localFindings the findings
      * @return The list of results after executes the actions
      */
-    public List<LocalSyncResult> executeSyncActions(List<Integer> actions, List<LocalSyncFinding> localFindings){
+    public List<LocalSyncResult> executeSyncActions(List<LocalSyncFinding> localFindings){
         try {
-            List<SyncFinding> findings = new ArrayList<>();
+            List<SyncFinding> remoteFindings = new ArrayList<>();
             for (LocalSyncFinding locaFinding : localFindings) {
                 SyncFinding finding = new SyncFinding();
                 finding.setDescription(locaFinding.getDescription());
                 finding.setExtraInformation(locaFinding.getExtraInformation());
                 finding.setType(locaFinding.getType());
-                findings.add(finding);
+                remoteFindings.add(finding);
             }
-            List<SyncResult> results = service.executeSyncActions(actions, findings, session.getSessionId());
+            List<SyncResult> results = service.executeSyncActions(remoteFindings, session.getSessionId());
             
-            if(results != null){
-                List<LocalSyncResult> localResults = new ArrayList<>();
-                for(SyncResult result : results)
-                    localResults.add(new LocalSyncResult(result.getType(), result.getActionDescription(), result.getResult()));
-                return localResults;
-            }
+            List<LocalSyncResult> localResults = new ArrayList<>();
+            for(SyncResult result : results)
+                localResults.add(new LocalSyncResult(result.getType(), result.getActionDescription(), result.getResult()));
+            return localResults;
             
         } catch (ServerSideException_Exception ex) {
             this.error = ex.getMessage();
+            return null;
         }
-        return null;
     } 
     
     //<editor-fold desc="Business Rules" defaultstate="collapsed">
