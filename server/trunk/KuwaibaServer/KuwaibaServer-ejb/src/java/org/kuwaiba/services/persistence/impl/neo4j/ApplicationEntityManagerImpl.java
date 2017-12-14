@@ -3476,8 +3476,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             IndexHits<Node> syncGroupsNodes = syncGroupsIndex.query(Constants.PROPERTY_ID, "*");
             
             for (Node syncGroup : syncGroupsNodes)
-                synchronizationGroups.add(Util.createSyncGroupFromNode(syncGroup));
-                  
+                synchronizationGroups.add(Util.createSyncGroupFromNode(syncGroup));            
+            
             return synchronizationGroups;
         }
     }
@@ -3562,6 +3562,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             while (!nodesToDelete.isEmpty())
                 nodesToDelete.remove(0).delete();
             
+            syncGroupsIndex.remove(syncGroupNode);
             syncGroupNode.delete();
             tx.success();
         }
