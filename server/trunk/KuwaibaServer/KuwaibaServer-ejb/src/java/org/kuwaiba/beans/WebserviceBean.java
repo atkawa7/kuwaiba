@@ -4438,12 +4438,12 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }        
     
     @Override
-    public List<SyncResult> executeSyncActions(List<Integer> actions, List<SyncFinding> findings, String ipAddress, String sessionId)throws ServerSideException{
+    public List<SyncResult> executeSyncActions(List<SyncFinding> findings, String ipAddress, String sessionId)throws ServerSideException{
         if (aem == null || bem == null || mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("executeSyncActions", ipAddress, sessionId);
-            SyncAction syncActions = new SyncAction(actions, findings);
+            SyncAction syncActions = new SyncAction(findings);
             return  syncActions.execute();
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());

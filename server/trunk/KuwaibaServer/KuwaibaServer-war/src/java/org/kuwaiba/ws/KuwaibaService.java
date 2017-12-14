@@ -5420,7 +5420,6 @@ public class KuwaibaService {
     
     /**
      * Executes the synchronization actions that the user selected after check the  list of findings
-     * @param actions the list of actions selected by the user, it should be an action(execute, ignore, postpose) for every finding.   
      * @param findings the list findings
      * @param sessionId the session token
      * @return the list of results after the actions were executed
@@ -5428,11 +5427,10 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "executeSyncActions")
     public List<SyncResult> executeSyncActions(
-            @WebParam(name = "actions") List<Integer> actions,
             @WebParam(name = "findings") List<SyncFinding> findings,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            return wsBean.executeSyncActions(actions, findings, getIPAddress(), sessionId);
+            return wsBean.executeSyncActions(findings, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

@@ -29,7 +29,6 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
 import org.kuwaiba.apis.persistence.PersistenceService;
-import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
@@ -61,9 +60,7 @@ public class SyncAction {
     
     private List<SyncFinding> findings;
     private List<SyncResult> results;
-    private List<Integer> actions;
     private BusinessEntityManager bem;
-    private ApplicationEntityManager aem;
     private MetadataEntityManager mem;
     private HashMap<Long, Long> createdIdsToMap;
     
@@ -72,12 +69,10 @@ public class SyncAction {
     private List<RemoteBusinessObjectLight> newPortsWithNoMatch;
     private HashMap<Long, List<Long>> newCreatedPorts;
     
-    public SyncAction(List<Integer> actions, List<SyncFinding> findings) {
-        this.actions = actions;
+    public SyncAction(List<SyncFinding> findings) {
         this.findings = findings;
         PersistenceService persistenceService = PersistenceService.getInstance();
         bem = persistenceService.getBusinessEntityManager();
-        aem = persistenceService.getApplicationEntityManager();
         mem = persistenceService.getMetadataEntityManager();
         newCreatedPorts = new HashMap<>();
         results = new ArrayList<>();
@@ -88,18 +83,14 @@ public class SyncAction {
     }
     
     public List<SyncResult> execute() throws InvalidArgumentException{
-        if(findings.size() != actions.size())
-            throw new InvalidArgumentException("The number of actions doesn't match the number of findings");
-         //crear primero los list types
-        for (int i = 0; i < findings.size(); i++) {
-            if(actions.get(i) == 1){
-                JsonObject jsonObj;
-                String type;
-                try (JsonReader jsonReader = Json.createReader(new StringReader(findings.get(i).getExtraInformation()))) {
-                    jsonObj = jsonReader.readObject();
-                    type = jsonObj.getString("type");
-                }
-
+        //Create the list type first
+        for (SyncFinding finding : findings) {
+            JsonObject jsonObj;
+            String type;
+            try (final JsonReader jsonReader = Json.createReader(new StringReader(finding.getExtraInformation()))) {
+                jsonObj = jsonReader.readObject();
+                type = jsonObj.getString("type");
+            }
             switch (type) {
                 case "hierarchy":
                     updateContaimentHiearchy(jsonObj);
@@ -108,31 +99,28 @@ public class SyncAction {
                     createMissingListTypes(jsonObj);
                     break;
                 case "device":
-                    manageDevice(jsonObj, findings.get(i));
+                    manageDevice(jsonObj, finding);
                     break;
                 case "branch":
                     JsonArray children = jsonObj.getJsonArray("children");
-                    for(JsonValue jObj : children){
-                        try (JsonReader childReader = Json.createReader(new StringReader(jObj.toString()))) {
+                    for (JsonValue jObj : children) {
+                        try (final JsonReader childReader = Json.createReader(new StringReader(jObj.toString()))) {
                             JsonObject child = childReader.readObject();
-                            manageObjectOfBranch(child.getJsonObject("child"), findings.get(i));
+                            manageObjectOfBranch(child.getJsonObject("child"), finding);
                         }
                     }   
                     break;
                 case "object_port_move":
                     migrateOldPortsIntoNewPosition(jsonObj);
                     break;
-                
                 case "branch_to_delete":
                     deleteOldStructure(jsonObj);
                     break;
                 case "object_port_no_match":
                     results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_PORT_NO_MATCH, jsonObj.toString()), "No match was found, please check"));
                     break;
-                }
             }
-            results.add(new SyncResult(SyncResult.SUCCESS, findings.get(i).getDescription() + " " +
-                    findings.get(i).getExtraInformation(), "No action was perfomed, the finding was skipped"));
+            results.add(new SyncResult(SyncResult.SUCCESS, finding.getDescription() + " " + finding.getExtraInformation(), "No action was perfomed, the finding was skipped"));
         }
         return results;
     }
