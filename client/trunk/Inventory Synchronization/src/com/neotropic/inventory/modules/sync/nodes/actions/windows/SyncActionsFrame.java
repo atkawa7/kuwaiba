@@ -45,6 +45,9 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalSyncFinding;
 import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.core.LocalSyncResult;
+import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.progress.ProgressHandleFactory;
+import org.openide.util.RequestProcessor;
 
 /**
  * This frame will be used to display the findings in the synchronization process and 
@@ -128,9 +131,21 @@ public class SyncActionsFrame extends JFrame {
                 if (currentFinding == allFindings.size() - 1) {
                     JOptionPane.showMessageDialog(SyncActionsFrame.this, "You have reviewed all the synchronization findings. The selected actions will be performed now", "Information", JOptionPane.INFORMATION_MESSAGE);
                     dispose();
-                    List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(findingsToBeProcessed);
-                    SyncResultsFrame syncResultFrame = new SyncResultsFrame(SyncActionsFrame.this.syncGroup, executSyncActions);
-                    syncResultFrame.setVisible(true);
+                    
+                    final ProgressHandle progr = ProgressHandleFactory.createHandle("Executing the Sync Actions for " + SyncActionsFrame.this.syncGroup.getName());
+                    Runnable executeSyncActions = new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(findingsToBeProcessed);
+                            SyncResultsFrame syncResultFrame = new SyncResultsFrame(SyncActionsFrame.this.syncGroup, executSyncActions);
+                            syncResultFrame.setVisible(true);
+                            progr.finish();
+                        }
+
+                    };
+                    RequestProcessor.getDefault().post(executeSyncActions);
+                    progr.start();
                 } else {
                     currentFinding++;
                     renderCurrentFinding();
@@ -163,7 +178,7 @@ public class SyncActionsFrame extends JFrame {
     public final void renderCurrentFinding () {
         LocalSyncFinding finding = allFindings.get(currentFinding);
         setTitle(String.format("Findings in %s [%s] - %s/%s", syncGroup.getName(), syncGroup.getProvider(), currentFinding + 1, allFindings.size()));
-        txtFindingDescription.setText(finding.getDescription());
+        txtFindingDescription.setText(finding.getDescription() != null ? finding.getDescription() : "Empty");
         pnlScrollMain.setViewportView(buildExtraInformationComponentFromJSON(finding.getExtraInformation()));
         
         if (currentFinding == allFindings.size() - 1) {
@@ -174,6 +189,7 @@ public class SyncActionsFrame extends JFrame {
         if (finding.getType() == LocalSyncFinding.EVENT_ERROR) {
             btnExecute.setEnabled(false);
             pnlScrollMain.setBorder(alarmBorder);
+            findingsToBeProcessed.add(finding);
             
         } else {
             btnExecute.setEnabled(true);
@@ -188,6 +204,8 @@ public class SyncActionsFrame extends JFrame {
      * @return A tree with the structured defined in the JSON document
      */
     public JComponent buildExtraInformationComponentFromJSON(String jsonString) {
+        if (jsonString == null)
+            return new JLabel("There is no extra information");
         
         JsonReader jsonReader = Json.createReader(new StringReader(jsonString));
         JsonObject root = jsonReader.readObject();
