@@ -192,61 +192,57 @@ public class SyncActionsFrame extends JFrame {
         JsonReader jsonReader = Json.createReader(new StringReader(jsonString));
         JsonObject root = jsonReader.readObject();
         String type = root.getString("type");
-        if(type.equals("branch")){
-            DefaultMutableTreeNode rootNode =
-                new DefaultMutableTreeNode("Root Device");
-
-            JTree tree = new JTree(rootNode);
-            JsonArray children = root.getJsonArray("children");
-
-            int row = 0;
-            DefaultMutableTreeNode currentNode = rootNode;
-            for (JsonValue item : children) {
-                jsonReader = Json.createReader(new StringReader(item.toString()));
-                JsonObject obj = jsonReader.readObject().getJsonObject("child");
-                DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(obj.getJsonObject("attributes").getString("name") + "[" + obj.getString("className")+"]");
-                currentNode.add(newNode);
-                tree.expandRow(row);
-                currentNode = newNode;
-                row++;
-            }
-
-            return tree;
-        }
-        else if(type.equals("object_port_move")) {
+        switch (type) {
+            case "branch":
+                DefaultMutableTreeNode rootNode =
+                        new DefaultMutableTreeNode("Root Device");
+                
+                JTree tree = new JTree(rootNode);
+                JsonArray children = root.getJsonArray("children");
+                
+                int row = 0;
+                DefaultMutableTreeNode currentNode = rootNode;
+                for (JsonValue item : children) {
+                    jsonReader = Json.createReader(new StringReader(item.toString()));
+                    JsonObject obj = jsonReader.readObject().getJsonObject("child");
+                    DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(obj.getJsonObject("attributes").getString("name") + "[" + obj.getString("className")+"]");
+                    currentNode.add(newNode);
+                    tree.expandRow(row);
+                    currentNode = newNode;
+                    row++;
+                }
+                
+                return tree;
+            case "object_port_move":
+            {
                 JLabel lblMsg = new JLabel();
-                Long childId = Long.valueOf(root.getString("childId"));
                 String className = root.getString("className");
-                Long tempParentId = Long.valueOf(root.getString("parentId"));
-                String parentClassName = root.getString("parentClassName");
                 JsonObject jsonPortAttributes = root.getJsonObject("attributes");
                 lblMsg.setText("The port: " + jsonPortAttributes.getString("name") + "[" + className + "] "
                         + "will be updated with this attributes " + 
                         jsonPortAttributes.toString());
                 return lblMsg;
-        }
-        
-        else if(type.equals("device")) {
-             JLabel lblMsg = new JLabel();
-            JsonObject jsonAttributes = root.getJsonObject("attributes");
-            jsonAttributes.getString("name");
-            jsonAttributes.getString("description");
-            lblMsg.setText("The device you are tryng to sync will be updated with this new attributes: \n" + jsonAttributes.toString());
-            return lblMsg;
-        }
-        
-        else if(type.equals("object_port_no_match")){
-            JLabel lblMsg = new JLabel();
-            String className = root.getString("className");
-            JsonObject jsonPortAttributes = root.getJsonObject("attributes");
-            String id;
-            if(root.get("id") != null){
-                id = root.getString("id");
-                lblMsg.setText("The port with id: " + id+ " " + jsonPortAttributes.getString("name") + "["+className+"]");
             }
-            else
-                lblMsg.setText("The new port found with the sync " + jsonPortAttributes.getString("name") + "["+className+"]");
-        } 
+            case "device":
+            {
+                JLabel lblMsg = new JLabel();
+                JsonObject jsonAttributes = root.getJsonObject("attributes");
+                lblMsg.setText("The device you are tryng to sync will be updated with this new attributes: \n" + jsonAttributes.toString());
+                return lblMsg;
+            }
+            case "object_port_no_match":
+            {
+                JLabel lblMsg = new JLabel();
+                String className = root.getString("className");
+                JsonObject jsonPortAttributes = root.getJsonObject("attributes");
+                String id;
+                if(root.get("id") != null){
+                    id = root.getString("id");
+                    lblMsg.setText("The port with id: " + id+ " " + jsonPortAttributes.getString("name") + "["+className+"]");
+                    return lblMsg;
+                }
+            }
+        }
         
         return new JLabel("There is no extra information");
     }
