@@ -105,7 +105,7 @@ public class SyncActionsFrame extends JFrame {
         
         btnClose = new JButton("Close");
         btnSkip = new JButton("Skip");
-        btnExecute = new JButton("Execute");
+        btnExecute = new JButton("Add to Execution Queue");
         
         pnlBottom.add(btnExecute);
         pnlBottom.add(btnSkip);
@@ -125,8 +125,16 @@ public class SyncActionsFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                currentFinding++;
-                renderCurrentFinding();
+                if (currentFinding == allFindings.size() - 1) {
+                    JOptionPane.showMessageDialog(SyncActionsFrame.this, "You have reviewed all the synchronization findings. The selected actions will be performed now", "Information", JOptionPane.INFORMATION_MESSAGE);
+                    dispose();
+                    List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(findingsToBeProcessed);
+                    SyncResultsFrame syncResultFrame = new SyncResultsFrame(SyncActionsFrame.this.syncGroup, executSyncActions);
+                    syncResultFrame.setVisible(true);
+                } else {
+                    currentFinding++;
+                    renderCurrentFinding();
+                }
             }
         });
         
