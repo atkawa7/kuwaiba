@@ -25,9 +25,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 import javax.xml.ws.AsyncHandler;
@@ -4679,6 +4676,85 @@ public class CommunicationsStub {
     }
     
     /**
+     * Copy a sync group
+     * @param syncGroups The list of sync groups to copy
+     * @return A list with the new sync groups
+     */
+    public List<LocalSyncGroup> copySyncGroup(LocalSyncGroup[] syncGroups) {
+        try {
+            List<Long> syncGroupsIds = new ArrayList();
+            for (LocalSyncGroup syncGroup : syncGroups)
+                syncGroupsIds.add(syncGroup.getId());
+            List<RemoteSynchronizationGroup> remoteSyncGroups = service.copySyncGroup(syncGroupsIds, session.getSessionId());
+            
+            List<LocalSyncGroup> localSyncGroups = new ArrayList();
+            for (RemoteSynchronizationGroup remoteSyncGroup : remoteSyncGroups) {
+                localSyncGroups.add(new LocalSyncGroup(remoteSyncGroup.getId(), 
+                    remoteSyncGroup.getName(), 
+                    remoteSyncGroup.getProvider().getName()));
+            }
+            return localSyncGroups;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Copy a set of sync data source configuration into a given sync group
+     * @param syncGroupId The Sync Group Id target
+     * @param syncDataSourceConfiguration Set of sync data source configuration ids
+     * @return The list of copied sync data source configuration
+     */
+    public List<LocalSyncDataSourceConfiguration> copySyncDataSourceConfiguration(long syncGroupId, LocalSyncDataSourceConfiguration[] syncDataSourceConfiguration) {
+        try {
+            List<Long> syncDataSrcConfigIds = new ArrayList();
+            for (LocalSyncDataSourceConfiguration syncDataSrcConfig : syncDataSourceConfiguration)
+                syncDataSrcConfigIds.add(syncDataSrcConfig.getId());
+                            
+            List<RemoteSynchronizationConfiguration> lstRemoteSyncDataSrcConfig = service.copySyncDataSourceConfiguration(syncGroupId, syncDataSrcConfigIds, session.getSessionId());
+            
+            List<LocalSyncDataSourceConfiguration> lstLocalSyncDataSrcConfig = new ArrayList();
+            
+            for (RemoteSynchronizationConfiguration remoteSyncDataSrcConfig : lstRemoteSyncDataSrcConfig) {
+                HashMap<String, String> parameters = new HashMap<>();
+                for (StringPair parameter : remoteSyncDataSrcConfig.getParameters())
+                    parameters.put(parameter.getKey(), parameter.getValue());
+                
+                lstLocalSyncDataSrcConfig.add(new LocalSyncDataSourceConfiguration(
+                    remoteSyncDataSrcConfig.getId(), 
+                    remoteSyncDataSrcConfig.getName(), 
+                    parameters));
+                                
+            }
+            return lstLocalSyncDataSrcConfig;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Moves a sync data source configuration from a sync group to another sync group
+     * @param syncGroupId The Sync Group Id target
+     * @param syncDataSourceConfiguration Set of sync data source configuration ids
+     * @return True if the sync data source configuration was moved
+     */
+    public boolean moveSyncDataSourceConfiguration(long syncGroupId, LocalSyncDataSourceConfiguration[] syncDataSourceConfiguration) {
+        try {
+            List<Long> syncDataSrcConfigIds = new ArrayList();
+            for (LocalSyncDataSourceConfiguration syncDataSrcConfig : syncDataSourceConfiguration)
+                syncDataSrcConfigIds.add(syncDataSrcConfig.getId());
+            
+            service.moveSyncDataSourceConfiguration(syncGroupId, syncDataSrcConfigIds, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+        
+    /**
      * Gets the available sync groups
      * @return The list of available sync groups. Null otherwise
      */
@@ -4705,7 +4781,7 @@ public class CommunicationsStub {
      * @param syncGroupId the synchronization group id
      * @return a list of the data source configurations
      */
-    public List<LocalSyncDataSourceConfiguration> getSyncDataSourceConfigurations(long syncGroupId){
+    public List<LocalSyncDataSourceConfiguration> getSyncDataSourceConfigurations(long syncGroupId) {
         try {
             List<LocalSyncDataSourceConfiguration> res = new ArrayList<>();
             List<RemoteSynchronizationConfiguration> syncDataSourceConfigurations = 

@@ -16,6 +16,10 @@
 package com.neotropic.inventory.modules.sync;
 
 import com.neotropic.inventory.modules.sync.nodes.SyncGroupRootNode;
+import java.awt.event.KeyEvent;
+import javax.swing.InputMap;
+import javax.swing.KeyStroke;
+import javax.swing.text.DefaultEditorKit;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -67,9 +71,18 @@ public final class SyncManagerTopComponent extends TopComponent implements
     }
     
     public void initCustomComponents() {
-        treeMain = new BeanTreeView();
-        pnlScrollMain.setViewportView(treeMain);
+        getActionMap().put(DefaultEditorKit.copyAction, ExplorerUtils.actionCopy(em));
+        getActionMap().put(DefaultEditorKit.cutAction, ExplorerUtils.actionCut(em));
+        getActionMap().put(DefaultEditorKit.pasteAction, ExplorerUtils.actionPaste(em));
+        
+        InputMap keys = getInputMap(WHEN_IN_FOCUSED_WINDOW);
+        keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.copyAction);
+        keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.cutAction);
+        keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.pasteAction);
+        
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
+        treeMain = new BeanTreeView();
+        add(treeMain);
     }
 
     /**
@@ -80,19 +93,15 @@ public final class SyncManagerTopComponent extends TopComponent implements
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        pnlScrollMain = new javax.swing.JScrollPane();
-
         setLayout(new java.awt.BorderLayout());
-        add(pnlScrollMain, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JScrollPane pnlScrollMain;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        em.setRootContext(new SyncGroupRootNode());
         ExplorerUtils.activateActions(em, true);
+        em.setRootContext(new SyncGroupRootNode());
     }
 
     @Override

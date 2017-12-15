@@ -18,8 +18,10 @@ package com.neotropic.inventory.modules.sync.nodes;
 import com.neotropic.inventory.modules.sync.nodes.actions.SyncManagerActionFactory;
 import com.neotropic.inventory.modules.sync.nodes.properties.SyncConfigurationNativeTypeProperty;
 import java.awt.Image;
+import java.awt.datatransfer.Transferable;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.IOException;
 import java.util.HashMap;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
@@ -28,12 +30,15 @@ import org.inventory.communications.core.LocalSyncDataSourceConfiguration;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
+import org.openide.actions.CopyAction;
+import org.openide.actions.CutAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
 import org.openide.util.ImageUtilities;
+import org.openide.util.actions.SystemAction;
 import org.openide.util.lookup.Lookups;
 
 /**
@@ -122,7 +127,17 @@ public class SyncConfigurationNode extends AbstractNode implements PropertyChang
     
     @Override
     public Action[] getActions(boolean context) {
-        return new Action[] {SyncManagerActionFactory.getDeleteSyncDataSourceConfigurationAction()};
+        Action copyAction = SystemAction.get(CopyAction.class);
+        copyAction.putValue(Action.NAME, I18N.gm("lbl_copy_action"));
+
+        Action cutAction = SystemAction.get(CutAction.class);
+        cutAction.putValue(Action.NAME, I18N.gm("lbl_cut_action"));
+        
+        return new Action[] {
+            copyAction, 
+            cutAction, 
+            null, 
+            SyncManagerActionFactory.getDeleteSyncDataSourceConfigurationAction()};
     }
 
     @Override
@@ -133,5 +148,25 @@ public class SyncConfigurationNode extends AbstractNode implements PropertyChang
                 fireNameChange(null, getLookup().lookup(LocalSyncDataSourceConfiguration.class).getName());
             }
         }
+    }
+    
+    @Override
+    public Transferable drag() throws IOException {        
+        return getLookup().lookup(LocalSyncDataSourceConfiguration.class);
+    }
+    
+    @Override
+    public boolean canCut() {
+        return true;
+    }
+
+    @Override
+    public boolean canCopy() {
+        return true;
+    }
+
+    @Override
+    public boolean canDestroy() {
+        return true;
     }
 }

@@ -15,14 +15,19 @@
  */
 package org.inventory.communications.core;
 
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.util.HashMap;
 
 /**
  * This class represent Sync data source configuration
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class LocalSyncDataSourceConfiguration implements Comparable<LocalSyncDataSourceConfiguration>{
-     /**
+public class LocalSyncDataSourceConfiguration implements Transferable, Comparable<LocalSyncDataSourceConfiguration> {
+    public static DataFlavor DATA_FLAVOR = new DataFlavor(LocalSyncDataSourceConfiguration.class, "Object/LocalSyncDataSourceConfiguration");
+    /**
      * Configuration id
      */
     private long id;
@@ -73,5 +78,23 @@ public class LocalSyncDataSourceConfiguration implements Comparable<LocalSyncDat
     @Override
     public String toString() {
         return this.name;
+    }
+
+    @Override
+    public DataFlavor[] getTransferDataFlavors() {
+        return new DataFlavor[]{DATA_FLAVOR};
+    }
+
+    @Override
+    public boolean isDataFlavorSupported(DataFlavor flavor) {
+        return flavor == DATA_FLAVOR;
+    }
+
+    @Override
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+        if(flavor == DATA_FLAVOR)
+            return this;
+        else
+            throw new UnsupportedFlavorException(flavor);
     }
 }

@@ -52,8 +52,11 @@ public class ServiceNode extends ObjectNode {
     
     @Override
     public Action[] getActions(boolean context) {
+        Action pasteAction = SystemAction.get(PasteAction.class);
+        pasteAction.putValue(Action.NAME, I18N.gm("lbl_paste_action"));
+        
         return new Action [] {
-            SystemAction.get(PasteAction.class), 
+            pasteAction, 
             null, 
             ExecuteClassLevelReportAction.getInstance(),
             ServiceManagerActionFactory.getDeleteServiceAction(),

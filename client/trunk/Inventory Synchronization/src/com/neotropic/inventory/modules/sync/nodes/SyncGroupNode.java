@@ -20,9 +20,11 @@ import com.neotropic.inventory.modules.sync.nodes.properties.SyncGroupNativeType
 import java.util.Collections;
 import org.openide.util.ImageUtilities;
 import java.awt.Image;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.HashMap;
+import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import javax.swing.Action;
@@ -32,12 +34,18 @@ import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
+import org.openide.actions.CopyAction;
+import org.openide.actions.CutAction;
+import org.openide.actions.PasteAction;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
+import org.openide.nodes.NodeTransfer;
 import org.openide.nodes.PropertySupport;
 import org.openide.nodes.Sheet;
 import org.openide.nodes.Sheet.Set;
+import org.openide.util.actions.SystemAction;
+import org.openide.util.datatransfer.PasteType;
 import org.openide.util.lookup.Lookups;
 
 /**
@@ -77,11 +85,96 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
     
     @Override
     public Action[] getActions(boolean context) {
-        return new Action[] { SyncManagerActionFactory.getNewSyncDataSourceConfigurationAction(), null, 
-                                SyncManagerActionFactory.getNewRunSynchronizationProcessAction(), null, 
-                                SyncManagerActionFactory.getDeleteSyncGroupAction()};
+        Action copyAction = SystemAction.get(CopyAction.class);
+        copyAction.putValue(Action.NAME, I18N.gm("lbl_copy_action"));
+
+        Action cutAction = SystemAction.get(CutAction.class);
+        cutAction.putValue(Action.NAME, I18N.gm("lbl_cut_action"));
+
+        Action pasteAction = SystemAction.get(PasteAction.class);
+        pasteAction.putValue(Action.NAME, I18N.gm("lbl_paste_action"));
+            
+        return new Action[] {
+            SyncManagerActionFactory.getNewSyncDataSourceConfigurationAction(),
+            null, 
+            copyAction, 
+            cutAction, 
+            pasteAction, 
+            null, 
+            SyncManagerActionFactory.getNewRunSynchronizationProcessAction(), null, 
+            SyncManagerActionFactory.getDeleteSyncGroupAction()
+        };
     }
+    
+    @Override
+    protected void createPasteTypes(Transferable t, List s) {
+        super.createPasteTypes(t, s);
+        //From the transferable we figure out if it comes from a copy or a cut operation
+        PasteType paste = getDropType(t, NodeTransfer.node(t, NodeTransfer.CLIPBOARD_COPY) != null
+                ? DnDConstants.ACTION_COPY : DnDConstants.ACTION_MOVE, -1);
+        //It's also possible to define many paste types (like "normal paste" and "special paste")
+        //by adding more entries to the list. Those will appear as options in the context menu
+        if (paste != null) {
+            s.add(paste);
+        }
+    }
+    
+    @Override
+    public Transferable drag() throws IOException {        
+        return getLookup().lookup(LocalSyncGroup.class);
+    }
+    
+    @Override
+    public PasteType getDropType(Transferable _obj, final int action, int index) {
+        final Node dropNode = NodeTransfer.node(_obj,
+            NodeTransfer.DND_COPY_OR_MOVE + NodeTransfer.CLIPBOARD_CUT);
         
+        //When there's no an actual drag/drop operation, but a simple node selection
+        if (dropNode == null) 
+            return null;
+        
+        //The clipboard does not contain a SyncConfigurationNode
+        if (!(dropNode instanceof SyncConfigurationNode))
+            return null;
+                        
+        //Can't move to the same parent, only copy
+        if (this.equals(dropNode.getParentNode()) && (action == DnDConstants.ACTION_MOVE)) 
+            return null;
+        
+        return new PasteType() {
+
+            @Override
+            public Transferable paste() throws IOException {
+                LocalSyncDataSourceConfiguration dataSrcConfig = dropNode.getLookup().lookup(LocalSyncDataSourceConfiguration.class);
+                LocalSyncGroup syncGroup = getLookup().lookup(LocalSyncGroup.class);
+                
+                switch(action) {
+                    case DnDConstants.ACTION_COPY:
+                        List<LocalSyncDataSourceConfiguration> dataSrcConfigurations = CommunicationsStub.getInstance().copySyncDataSourceConfiguration(syncGroup.getId(), new LocalSyncDataSourceConfiguration[] {dataSrcConfig});
+                        if (dataSrcConfigurations != null) {
+                            if (getChildren() instanceof SyncGroupNodeChildren)
+                                ((SyncGroupNodeChildren) getChildren()).addNotify();
+                        } else
+                            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                        break;
+                    case DnDConstants.ACTION_MOVE:
+                        if (CommunicationsStub.getInstance().moveSyncDataSourceConfiguration(syncGroup.getId(), new LocalSyncDataSourceConfiguration[] {dataSrcConfig})) {
+                            //Refreshes the old parent node
+                            if (dropNode.getParentNode().getChildren() instanceof SyncGroupNodeChildren)
+                                ((SyncGroupNodeChildren) dropNode.getParentNode().getChildren()).addNotify();
+                            //Refreshes the new parent node
+                            if (getChildren() instanceof SyncGroupNodeChildren)
+                                ((SyncGroupNodeChildren) getChildren()).addNotify();
+                        } else
+                            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                        break;
+                }
+                return null;
+            }
+        };
+    }
+    
     @Override
     public Image getIcon(int i) {
         return icon;
@@ -115,8 +208,7 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
     @Override
     public boolean equals(Object obj) {
         return obj instanceof SyncGroupNode && 
-                ((SyncGroupNode) obj).getLookup().lookup(LocalSyncGroup.class).equals(getLookup().lookup(LocalSyncGroup.class));
-        
+            ((SyncGroupNode) obj).getLookup().lookup(LocalSyncGroup.class).equals(getLookup().lookup(LocalSyncGroup.class));
     }
 
     @Override
@@ -128,6 +220,16 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
     
     @Override
     public boolean canRename() {
+        return true;
+    }
+    
+    @Override
+    public boolean canCopy() {
+        return true;
+    }
+
+    @Override
+    public boolean canDestroy() {
         return true;
     }
 

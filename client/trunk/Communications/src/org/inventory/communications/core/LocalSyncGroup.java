@@ -15,13 +15,19 @@
  */
 package org.inventory.communications.core;
 
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 import java.util.List;
 
 /**
  * This class represent a Sync  Group
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class LocalSyncGroup implements Comparable<LocalSyncGroup> {
+public class LocalSyncGroup implements Transferable, Comparable<LocalSyncGroup> {
+    public static DataFlavor DATA_FLAVOR = new DataFlavor(LocalSyncGroup.class, "Object/LocalSyncGroup");
+    
     private long id;
     private String name;
     private String provider;
@@ -88,5 +94,23 @@ public class LocalSyncGroup implements Comparable<LocalSyncGroup> {
         int hash = 7;
         hash = 61 * hash + (int) (this.id ^ (this.id >>> 32));
         return hash;
+    }
+
+    @Override
+    public DataFlavor[] getTransferDataFlavors() {
+        return new DataFlavor[]{DATA_FLAVOR};
+    }
+
+    @Override
+    public boolean isDataFlavorSupported(DataFlavor flavor) {
+        return flavor == DATA_FLAVOR;
+    }
+
+    @Override
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+        if(flavor == DATA_FLAVOR)
+            return this;
+        else
+            throw new UnsupportedFlavorException(flavor);
     }
 }
