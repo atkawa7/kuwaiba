@@ -17,10 +17,7 @@
 package com.neotropic.kuwaiba.sync.model;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.List;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
-import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
@@ -64,16 +61,16 @@ public abstract class AbstractSyncProvider implements Serializable{
         
     public abstract List<AbstractDataEntity> unmappedPoll(SynchronizationGroup syncGroup);
             
-    public abstract HashMap<RemoteBusinessObjectLight, AbstractDataEntity> mappedPoll(SynchronizationGroup syncGroup) throws InvalidArgumentException, ConnectionException;
+    public abstract PollResult mappedPoll(SynchronizationGroup syncGroup);
     /**
      * Implement this method if the synchronization process will be associated to an object in the inventory, for example, 
      * you will retrieve the hardware information about a network element and find what has changed overnight.
-     * @param originalData A set of high-level representations of the info coming from the sync data source and the corresponding inventory object it should be mapped against
+     * @param pollResult A set of high-level representations of the info coming from the sync data source and the corresponding inventory object it should be mapped against
      * (for example, a Java matrix representing an SNMP table)
      * @return A set of results (e.g. new board on slot xxx, different serial number found for router yyyy)
      * @throws InvalidArgumentException
      */
-    public abstract List<SyncFinding> sync(HashMap<RemoteBusinessObjectLight, AbstractDataEntity> originalData) throws InvalidArgumentException;
+    public abstract List<SyncFinding> sync(PollResult pollResult) throws InvalidArgumentException;
     /**
      * Implement this method if the synchronization process won't be associated to a single object in the inventory, for example, 
      * if you want to see what virtual circuits were re-routed after switching to a backup link during a network failure 

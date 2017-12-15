@@ -85,40 +85,48 @@ public class SyncAction {
     public List<SyncResult> execute() throws InvalidArgumentException{
         //Create the list type first
         for (SyncFinding finding : findings) {
-            JsonObject jsonObj;
-            String type;
-            try (final JsonReader jsonReader = Json.createReader(new StringReader(finding.getExtraInformation()))) {
-                jsonObj = jsonReader.readObject();
-                type = jsonObj.getString("type");
+            JsonObject jsonObj = null;
+            String type = null;
+            if (finding.getExtraInformation() != null) {
+                try (final JsonReader jsonReader = Json.createReader(new StringReader(finding.getExtraInformation()))) {
+                    jsonObj = jsonReader.readObject();
+                    if (jsonObj.get("type") != null)
+                        type = jsonObj.getString("type");
+                }
             }
-            switch (type) {
-                case "hierarchy":
-                    updateContaimentHiearchy(jsonObj.getJsonObject("hierarchy"));
-                    break;
-                case "listType":
-                    createMissingListTypes(jsonObj);
-                    break;
-                case "device":
-                    manageDevices(jsonObj, finding);
-                    break;
-                case "branch":
-                    JsonArray children = jsonObj.getJsonArray("children");
-                    for (JsonValue jObj : children) {
-                        try (final JsonReader childReader = Json.createReader(new StringReader(jObj.toString()))) {
-                            JsonObject child = childReader.readObject();
-                            manageObjectOfBranch(child.getJsonObject("child"), finding);
-                        }
-                    }   
-                    break;
-                case "object_port_move":
-                    migrateOldPortsIntoNewPosition(jsonObj);
-                    break;
-                case "old_object_to_delete":
-                    deleteOldStructure(jsonObj);
-                    break;
-                case "object_port_no_match":
-                    results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_PORT_NO_MATCH, jsonObj.toString()), "No match was found, please check"));
-                    break;
+            if (type != null && jsonObj != null) {
+                switch (type) {
+                    case "hierarchy":
+                        updateContaimentHiearchy(jsonObj.getJsonObject("hierarchy"));
+                        break;
+                    case "listType":
+                        createMissingListTypes(jsonObj);
+                        break;
+                    case "device":
+                        manageDevices(jsonObj, finding);
+                        break;
+                    case "branch":
+                        JsonArray children = jsonObj.getJsonArray("children");
+                        for (JsonValue jObj : children) {
+                            try (final JsonReader childReader = Json.createReader(new StringReader(jObj.toString()))) {
+                                JsonObject child = childReader.readObject();
+                                manageObjectOfBranch(child.getJsonObject("child"), finding);
+                            }
+                        }   
+                        break;
+                    case "object_port_move":
+                        migrateOldPortsIntoNewPosition(jsonObj);
+                        break;
+                    case "old_object_to_delete":
+                        deleteOldStructure(jsonObj);
+                        break;
+                    case "object_port_no_match":
+                        results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_PORT_NO_MATCH, jsonObj.toString()), "No match was found, please check"));
+                        break;
+                }
+            } else {
+                if (finding.getType() == SyncFinding.EVENT_ERROR)
+                    results.add(new SyncResult(SyncResult.ERROR, finding.getDescription(), ACTION_ERROR));
             }
             //results.add(new SyncResult(SyncResult.SUCCESS, finding.getDescription() + " " + finding.getExtraInformation(), "No action was perfomed, the finding was skipped"));
         }

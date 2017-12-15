@@ -16,13 +16,11 @@
 
 package com.neotropic.kuwaiba.scheduling.sync;
 
-import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
+import com.neotropic.kuwaiba.sync.model.PollResult;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
-import java.util.HashMap;
 import javax.batch.api.chunk.ItemProcessor;
 import javax.batch.runtime.context.JobContext;
 import javax.inject.Inject;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
@@ -43,7 +41,7 @@ public class DefaultSyncProcessor implements ItemProcessor {
         if (item == null)
             throw new InvalidArgumentException("The result from the first stage of the synchronization process failed. Check the logs for details");
         
-        return syncGroup.getProvider().sync((HashMap<RemoteBusinessObjectLight, AbstractDataEntity>) item);
+        return syncGroup.getProvider().sync((PollResult) item);
     }
 
 }

@@ -28,7 +28,6 @@ import javax.batch.runtime.context.JobContext;
 import javax.inject.Inject;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
-import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 
 /**
  * This reader will poll one by one the queued sync groups and retrieve the 
@@ -64,16 +63,14 @@ public class DefaultSyncReader implements ItemReader {
             stop = true;
             jobContext.setTransientUserData(syncGroup);
             
-            Object result = null;
             try {
-                result = syncGroup.getProvider().mappedPoll(syncGroup);
-            } catch(InventoryException ex) {
+                return syncGroup.getProvider().mappedPoll(syncGroup);
+            } catch(Exception ex) {
                 BackgroundJob managedJob = JobManager.getInstance().getJob(jobContext.getExecutionId());
                 managedJob.setStatus(BackgroundJob.JOB_STATUS.ABORTED);
                 managedJob.setExceptionThrownByTheJob(ex); // Catching the exception and ending the job
                 return null;
             }
-            return result;
         }        
         return null; //when this method returns null, no more iterations of the process are expected
         
