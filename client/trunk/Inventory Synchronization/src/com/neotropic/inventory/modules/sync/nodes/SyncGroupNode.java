@@ -96,12 +96,12 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
             
         return new Action[] {
             SyncManagerActionFactory.getNewSyncDataSourceConfigurationAction(),
+            SyncManagerActionFactory.getNewRunSynchronizationProcessAction(),
             null, 
             copyAction, 
             cutAction, 
             pasteAction, 
             null, 
-            SyncManagerActionFactory.getNewRunSynchronizationProcessAction(), null, 
             SyncManagerActionFactory.getDeleteSyncGroupAction()
         };
     }

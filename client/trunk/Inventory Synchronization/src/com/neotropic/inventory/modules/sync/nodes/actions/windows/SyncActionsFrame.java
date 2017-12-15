@@ -118,7 +118,7 @@ public class SyncActionsFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (JOptionPane.showConfirmDialog(SyncActionsFrame.this, 
-                        "Are you sure you want to stop reviewing the findings? No changes will be commited", 
+                        "Are you sure you want to stop reviewing the findings? No changes will be committed", 
                         "Information", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.YES_OPTION)
                     dispose();
             }
