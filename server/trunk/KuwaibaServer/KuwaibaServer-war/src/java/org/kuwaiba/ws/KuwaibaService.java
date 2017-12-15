@@ -5435,7 +5435,7 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in launchAutomatedSynchronizationTask: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in executeSyncActions: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
