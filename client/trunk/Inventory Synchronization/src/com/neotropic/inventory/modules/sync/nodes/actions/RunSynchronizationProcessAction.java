@@ -52,7 +52,7 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
         
         selectedNode = selectedNodes.next();
         SyncRunnable myRun = new SyncRunnable();
-        CommunicationsStub.getInstance().launchSupervisedSynchronizationTask(selectedNode.getLookup().lookup(LocalSyncGroup.class).getId(), myRun);
+        CommunicationsStub.getInstance().launchSupervisedSynchronizationTask(selectedNode.getLookup().lookup(LocalSyncGroup.class), myRun);
     }
 
     @Override

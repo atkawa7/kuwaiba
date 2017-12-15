@@ -49,7 +49,7 @@ public class SyncResultsFrame extends JFrame {
         setLayout(new BorderLayout());
         setTitle(String.format(I18N.gm("sync_list_of_results"), syncGroup.getName()));
         pnlScrollMain = new JScrollPane();
-        setSize(400, 650);
+        setSize(800, 650);
         setLocationRelativeTo(null);
 
         JPanel pnlListOfResults = new JPanel();
