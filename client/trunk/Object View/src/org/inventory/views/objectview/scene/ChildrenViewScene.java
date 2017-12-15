@@ -305,14 +305,17 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                                 if (getNodes().contains(lol))
                                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
                                 else {
-                                    Widget widget = addNode(lol);
-                                    widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
-                                    widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
-                                    validate();
-                                    myChildren.remove(lol);
+                                    if (myChildren.contains(lol)) {
+                                        Widget widget = addNode(lol);
+                                        widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
+                                        widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
+                                        validate();
+                                        myChildren.remove(lol);
+                                    } else //The node is no longer inside the current object, since it already exists on the database, probably it was moved somewhere else
+                                        currentView.setDirty(true);
                                 }
                             }
-                            else
+                            else //The nodel was not found in the database, probably it was deleted
                                 currentView.setDirty(true);
                         } else {
                             if (reader.getName().equals(qEdge)) {
@@ -406,6 +409,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                 renderDefaultView(object, myChildren, myConnections);
 
                 setBackgroundImage(currentView.getBackground());
+                
                 if (currentView.isDirty()) {
                     fireChangeEvent(new ActionEvent(this, ChildrenViewScene.SCENE_CHANGEANDSAVE, "Removing old objects"));
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.WARNING_MESSAGE, "Some changes has been detected since the last time the view was saved. The view was updated accordingly");
