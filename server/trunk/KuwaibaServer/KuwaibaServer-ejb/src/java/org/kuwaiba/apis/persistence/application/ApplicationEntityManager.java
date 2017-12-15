@@ -1251,4 +1251,30 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the sync data source cannot be found
      */
     public void deleteSynchronizationDataSourceConfig(long syncDataSourceConfigId) throws ApplicationObjectNotFoundException ;
+    
+    /**
+     * Copy a set of sync group
+     * @param syncGroupIds The array of sync groups ids to copy
+     * @return A list of new sync groups
+     * @throws ApplicationObjectNotFoundException If some of the sync group cannot be found or If the provider of the sync group cannot be found
+     * @throws InvalidArgumentException If the sync group is malformed
+     */
+    public List<SynchronizationGroup> copySyncGroup(long[] syncGroupIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Copy a set of sync data source configuration into a given sync group
+     * @param syncGroupId The Sync Group Id target
+     * @param syncDataSourceConfigurationIds Set of sync data source configuration ids
+     * @return A list of new sync data source configuration
+     * @throws ApplicationObjectNotFoundException If the sync group cannot be found, or some sync data source configuration cannot be found
+     * @throws InvalidArgumentException If the sync group cannot be found, or some sync data source configuration cannot be found
+     */
+    public List<SyncDataSourceConfiguration> copySyncDataSourceConfiguration(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Moves a sync data source configuration from a sync group to another sync group
+     * @param syncGroupId The Sync Group Id target
+     * @param syncDataSourceConfigurationIds Set of sync data source configuration ids
+     * @throws ApplicationObjectNotFoundException If the sync group cannot be found, or some sync data source configuration cannot be found
+     * @throws InvalidArgumentException If the sync group is malformed, or some sync data source configuration is malformed
+     */
+    public void moveSyncDataSourceConfiguration(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
 }

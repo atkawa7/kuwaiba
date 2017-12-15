@@ -7043,6 +7043,80 @@ public class KuwaibaService {
             } 
         }
         
+        /**
+         * Copy a set of sync group
+         * @param syncGroupIds The array of sync groups ids to copy
+         * @param sessionId Session Token
+         * @return A list of new sync groups
+         * @throws ServerSideException If some of the sync group cannot be found or If the provider of the sync group cannot be found
+         *                             If the sync group is malformed
+         */
+        @WebMethod(operationName = "copySyncGroup")        
+        public List<RemoteSynchronizationGroup> copySyncGroup(
+            @WebParam(name="syncGroupIds") long[] syncGroupIds, 
+            @WebParam(name="sessionId") String sessionId) throws ServerSideException {
+            try {
+                return wsBean.copySyncGroup(syncGroupIds, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in copySyncGroup: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
+        }
+        
+        /**
+         * Copy a set of sync data source configuration into a given sync group
+         * @param syncGroupId The Sync Group Id target
+         * @param syncDataSourceConfigurationIds Set of sync data source configuration ids
+         * @param sessionId Session Token
+         * @return A list of new sync data source configuration
+         * @throws ServerSideException If the sync group cannot be found, or some sync data source configuration cannot be found
+         *                             If the sync group is malformed, or some sync data source configuration is malformed
+         */
+        @WebMethod(operationName = "copySyncDataSourceConfiguration")
+        public List<RemoteSynchronizationConfiguration> copySyncDataSourceConfiguration(
+            @WebParam(name="syncGroupId") long syncGroupId, 
+            @WebParam(name="syncDataSourceConfigurationId") long[] syncDataSourceConfigurationIds, 
+            @WebParam(name="sessionId") String sessionId) throws ServerSideException {
+            try {
+                return wsBean.copySyncDataSourceConfiguration(syncGroupId, syncDataSourceConfigurationIds, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in copySyncDataSourceConfiguration: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
+        }
+        
+        /**
+         * Moves a sync data source configuration from a sync group to another sync group
+         * @param syncGroupId The Sync Group Id target
+         * @param syncDataSourceConfigurationIds Set of sync data source configuration ids
+         * @param sessionId Session token
+         * @throws ServerSideException If the sync group cannot be found, or some sync data source configuration cannot be found
+         *                             If the sync group is malformed, or some sync data source configuration is malformed
+         */
+        @WebMethod(operationName = "moveSyncDataSourceConfiguration")
+        public void moveSyncDataSourceConfiguration(
+            @WebParam(name="syncGroupId") long syncGroupId, 
+            @WebParam(name="syncDataSourceConfiguration") long[] syncDataSourceConfigurationIds, 
+            @WebParam(name="sessionId") String sessionId) throws ServerSideException {
+            try {
+                wsBean.moveSyncDataSourceConfiguration(syncGroupId, syncDataSourceConfigurationIds, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in moveSyncDataSourceConfiguration: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
+        }
         //</editor-fold>
     // </editor-fold>
         
