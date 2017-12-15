@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 import javax.xml.ws.AsyncHandler;
@@ -4806,25 +4807,27 @@ public class CommunicationsStub {
      * Launches a synchronization that requires a user to review the actions to 
      * be taken upon finding differences  between what's on he sync data sources 
      * and the inventory system.
-     * @param syncGroupId The id of the sync group associated to the requested task
-     * @param progress
+     * @param syncGroup The sync group associated to the requested task
+     * @param progress a handler that waits until the synchronization task ends and send the results
      */
-    public void launchSupervisedSynchronizationTask(long syncGroupId, final AbstractSyncRunnable progress) {
+    public void launchSupervisedSynchronizationTask(final LocalSyncGroup syncGroup, final AbstractSyncRunnable progress) {
         try {
-            service.launchSupervisedSynchronizationTaskAsync(syncGroupId, session.getSessionId(), 
+            service.launchSupervisedSynchronizationTaskAsync(syncGroup.getId(), session.getSessionId(), 
             new AsyncHandler<LaunchSupervisedSynchronizationTaskResponse>(){
                 @Override
                 public void handleResponse(Response<LaunchSupervisedSynchronizationTaskResponse> res) {
                     try {
                         LaunchSupervisedSynchronizationTaskResponse get = res.get();
+                        
                         List<LocalSyncFinding> syncFindings = new ArrayList<>();
                         for (SyncFinding syncFinding : get.getReturn())
                             syncFindings.add(new LocalSyncFinding(syncFinding.getType(), syncFinding.getDescription(), syncFinding.getExtraInformation()));
                         
+                        progress.setLocalSyncGroup(syncGroup);
                         progress.setFindings(syncFindings);
                         progress.getProgressHandle().finish();
                         progress.runSync();                        
-                    } catch (Exception ex) {
+                    } catch (InterruptedException | ExecutionException ex) {
                         String message = ex.getMessage();
                         int idxOfSpace = message.indexOf(": ");
                         String kindMessage = message.substring(idxOfSpace + 1);
@@ -4844,9 +4847,7 @@ public class CommunicationsStub {
     }
     
      /**
-     * Launches a synchronization that requires a user to review the actions to 
-     * be taken upon finding differences  between what's on he sync data sources 
-     * and the inventory system.
+     * Executes the actions that the user has chosen after synchronization findings
      * @param localFindings the findings
      * @return The list of results after executes the actions
      */

@@ -17,6 +17,7 @@ package org.inventory.communications.runnable;
 
 import java.util.List;
 import org.inventory.communications.core.LocalSyncFinding;
+import org.inventory.communications.core.LocalSyncGroup;
 import org.netbeans.api.progress.ProgressHandle;
 
 /**
@@ -30,6 +31,8 @@ public abstract class AbstractSyncRunnable implements Runnable {
     private ProgressHandle progressHandle;
 
     private List<LocalSyncFinding> findings;    
+    
+    private LocalSyncGroup localSyncGroup;
 
     public void setFindings(List<LocalSyncFinding> findings) {
         this.findings = findings;
@@ -45,6 +48,14 @@ public abstract class AbstractSyncRunnable implements Runnable {
 
     public void setProgressHandle(ProgressHandle progressHandle) {
         this.progressHandle = progressHandle;
+    }
+
+    public LocalSyncGroup getLocalSyncGroup() {
+        return localSyncGroup;
+    }
+
+    public void setLocalSyncGroup(LocalSyncGroup localSyncGroup) {
+        this.localSyncGroup = localSyncGroup;
     }
 
     @Override
