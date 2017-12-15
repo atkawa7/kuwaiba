@@ -16,7 +16,6 @@
 package com.neotropic.kuwaiba.sync.connectors.snmp.reference;
 
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +38,6 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
-import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.ws.todeserialize.StringPair;
@@ -307,7 +305,7 @@ public class SNMPDataProcessor {
                     HashMap<String, String> comparedAttributes = compareAttributes(bem.getObject(id).getAttributes(), newAttributes);
                     if (!comparedAttributes.isEmpty()) {
                         findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
-                                String.format("The chassis has changes, attributes %s has changed, would you want to update?", comparedAttributes),
+                                String.format("The chassis has changes, attributes %s has changed, would you like to update it?", comparedAttributes),
                                 createExtraInfoToUpdateAttributesInObject(Long.toString(id), mappedClass, comparedAttributes).toString()));
                     }
                 }//All except the Chassis
@@ -396,7 +394,7 @@ public class SNMPDataProcessor {
                                         if(!changes.isEmpty()){
                                             newObj = jsonObjectToBuilder(newObj).add("deviceId", Long.toString(oldObj.getId())).build();
                                             findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
-                                                    String.format("Would you want to overwrite the atributes values in the object %s, with id: %s ", oldObj.toString(), oldObj.getId()),
+                                                    String.format("Would you like to overwrite the attributes values in the object %s, with id: %s ", oldObj.toString(), oldObj.getId()),
                                                     newObj.toString()));
                                         }
                                         toRemove.add(oldObj);
@@ -406,7 +404,7 @@ public class SNMPDataProcessor {
                                     if(!changes.isEmpty()){
                                         newObj = jsonObjectToBuilder(newObj).add("deviceId", Long.toString(oldObj.getId())).build();
                                         findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
-                                                String.format("Would you want to overwrite the atributes values in the object %s, with id: %s ", oldObj.toString(), oldObj.getId()),
+                                                String.format("Would you like to overwrite the attributes values in the object %s, with id: %s ", oldObj.toString(), oldObj.getId()),
                                                 newObj.toString()));
                                     }
                                     toRemove.add(oldObj);
@@ -835,7 +833,7 @@ public class SNMPDataProcessor {
                     
                     if(tParent.getClassName().contains("Port"))
                         findings.add(new SyncFinding(SyncFinding.EVENT_DELETE,
-                           String.format("This device %s was child of %s , this was wrong it should be the parent, a new one was relocated and updated, would you want to delete this old device?", 
+                           String.format("This device %s was child of %s, but it should be its parent, a new one was moved and updated, would you like to delete this old device?", 
                                    deviceToDelete.toString(), tParent.toString()), jsont.toString()));
                     
                     } catch (ObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
@@ -901,7 +899,7 @@ public class SNMPDataProcessor {
                     portFound = jsonObjectToBuilder(portFound).add("childId", Long.toString(oldPort.getId())).build();
 
                     findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
-                            String.format("Would you want to overwrite the attributes values for the port %s, with id: %s ", oldPort.toString(), oldPort.getId()),
+                            String.format("Would you like to overwrite the attribute values in port %s, with id: %s?", oldPort.toString(), oldPort.getId()),
                             portFound.toString()));
                     
                 }
@@ -915,7 +913,7 @@ public class SNMPDataProcessor {
                         portFound = jsonObjectToBuilder(portFound).add("attributes", newAttributes).build();
                         portFound = jsonObjectToBuilder(portFound).add("deviceId", Long.toString(oldPort.getId())).build();
                         findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
-                            String.format("Would you want to overwrite the attributes values for the port %s, with id: %s ", oldPort.toString(), oldPort.getId()),
+                            String.format("Would you like to overwrite the attributes in port %s, with id: %s?", oldPort.toString(), oldPort.getId()),
                             portFound.toString()));
                     }
                 }

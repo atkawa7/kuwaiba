@@ -138,7 +138,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     Util.createAttribute(classNode, attributeMetadata);
             }
             
-            //Now we make our class to inherit the atributes from its parent class (except for the root class, RootObject)
+            //Now we make our class to inherit the attributes from its parent class (except for the root class, RootObject)
             if (classDefinition.getParentClassName() == null) { //Is this class the root of all class hierarchy
                 
                 if (classDefinition.getName().equals(Constants.CLASS_ROOTOBJECT))

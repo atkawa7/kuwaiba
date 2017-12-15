@@ -250,7 +250,7 @@ public class LoadDataFromSNMP {
             //We copy the new attributes intoRemoteBusinessObjectLight the new port, to keep the relationships
             Long newParentId = getNewAttributes(oldPort);
             if(newParentId != null){
-                messages.add("A match with the created data was found, would you want to overwrite the attributes?");
+                messages.add("A match with the created data was found, would you like to overwrite the attributes?");
                 bem.updateObject(oldPort.getClassName(), oldPort.getId(), newAttributes);
                 HashMap<String, Long[]> objectsToMove = new HashMap<>();
                 Long[] ids = {oldPort.getId()} ;
@@ -325,11 +325,11 @@ public class LoadDataFromSNMP {
                     RemoteBusinessObject completeObj = bem.getObject(obj.getId());
                     HashMap<String, List<String>> attributes = completeObj.getAttributes();
                     if(!attributes.get("serialNumber").get(0).equals(serialNumber) && attributes.get("isLoadFromRegistry").get(0).equals("true")){
-                        messages.add("This element was created and is updated, would you wanna to overwrite the attributes? ");
+                        messages.add("This element was created and is up-to-date, do you want to to overwrite the attributes? ");
                         return obj;
                     }
                     else if(attributes.get("serialNumber").get(0).equals(serialNumber) && attributes.get("isLoadFromRegistry").get(0).equals("false")){
-                        messages.add("This element was created by hand, it has the same serial, would you want to delete and replaced?");
+                        messages.add("This element was created manually and it has the same serial number, would you like to delete it and replace it?");
                         return null;
                     }
                 }
