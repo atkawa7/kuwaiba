@@ -16,6 +16,7 @@
 package com.neotropic.inventory.modules.sync.nodes.actions.windows;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,6 +37,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTree;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalSyncFinding;
@@ -47,7 +51,7 @@ import org.inventory.communications.core.LocalSyncResult;
  * launch the respective action
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class SyncActionWizard extends JFrame {
+public class SyncActionsFrame extends JFrame {
     /**
      * The current finding on display
      */
@@ -66,6 +70,8 @@ public class SyncActionWizard extends JFrame {
     private JButton btnSkip;
     private List<LocalSyncFinding> allFindings;
     private List<LocalSyncFinding> findingsToBeProcessed;
+    private static final Border normalBorder = new EmptyBorder(2, 2, 2, 2);
+    private static final Border alarmBorder = new LineBorder(Color.RED, 1);
     
     /**
      * Default constructor
@@ -73,7 +79,7 @@ public class SyncActionWizard extends JFrame {
      * @param findings The list of findings to be displayed
      * @param listener The callback object that will listen for 
      */
-    public SyncActionWizard(LocalSyncGroup syncGroup, final List<LocalSyncFinding> findings) throws IllegalArgumentException {
+    public SyncActionsFrame(LocalSyncGroup syncGroup, final List<LocalSyncFinding> findings) throws IllegalArgumentException {
         this.allFindings = findings;
         this.syncGroup = syncGroup;
         this.findingsToBeProcessed = new ArrayList<>();
@@ -86,8 +92,6 @@ public class SyncActionWizard extends JFrame {
         
         setLayout(new BorderLayout(5, 5));
         //setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        
-        
         
         txtFindingDescription = new JTextArea(5, 10);
         txtFindingDescription.setLineWrap(true);
@@ -110,7 +114,7 @@ public class SyncActionWizard extends JFrame {
         btnClose.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (JOptionPane.showConfirmDialog(SyncActionWizard.this, 
+                if (JOptionPane.showConfirmDialog(SyncActionsFrame.this, 
                         "Are you sure you want to stop reviewing the findings? No changes will be commited", 
                         "Information", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.YES_OPTION)
                     dispose();
@@ -121,7 +125,8 @@ public class SyncActionWizard extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                renderNextFinding();
+                currentFinding++;
+                renderCurrentFinding();
             }
         });
         
@@ -132,13 +137,15 @@ public class SyncActionWizard extends JFrame {
                 findingsToBeProcessed.add(allFindings.get(currentFinding));
                 
                 if (currentFinding == allFindings.size() - 1) {
-                    JOptionPane.showMessageDialog(SyncActionWizard.this, "You have reviewed all the synchronization findings. The selected actions will be performed now", "Information", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(SyncActionsFrame.this, "You have reviewed all the synchronization findings. The selected actions will be performed now", "Information", JOptionPane.INFORMATION_MESSAGE);
                     dispose();
                     List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(findingsToBeProcessed);
-                    SyncResultsFrame syncResultFrame = new SyncResultsFrame(SyncActionWizard.this.syncGroup, executSyncActions);
+                    SyncResultsFrame syncResultFrame = new SyncResultsFrame(SyncActionsFrame.this.syncGroup, executSyncActions);
                     syncResultFrame.setVisible(true);
-                } else
-                    renderNextFinding();
+                } else {
+                    currentFinding++;
+                    renderCurrentFinding();
+                }
             }
         });
         
@@ -156,14 +163,12 @@ public class SyncActionWizard extends JFrame {
         
         if (finding.getType() == LocalSyncFinding.EVENT_ERROR) {
             btnExecute.setEnabled(false);
+            pnlScrollMain.setBorder(alarmBorder);
+            
         } else {
             btnExecute.setEnabled(true);
+            pnlScrollMain.setBorder(normalBorder);
         }
-    }
-    
-    public void renderNextFinding() {
-        currentFinding++;
-        renderCurrentFinding();
     }
     
     /**

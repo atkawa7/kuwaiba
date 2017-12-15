@@ -16,7 +16,7 @@
 package com.neotropic.inventory.modules.sync.nodes.actions;
 
 import com.neotropic.inventory.modules.sync.nodes.SyncGroupNode;
-import com.neotropic.inventory.modules.sync.nodes.actions.windows.SyncActionWizard;
+import com.neotropic.inventory.modules.sync.nodes.actions.windows.SyncActionsFrame;
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
 import java.util.List;
@@ -51,7 +51,7 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
             return;
         
         selectedNode = selectedNodes.next();
-        SyncRunnable myRun = new SyncRunnable(selectedNode);
+        SyncRunnable myRun = new SyncRunnable();
         CommunicationsStub.getInstance().launchSupervisedSynchronizationTask(selectedNode.getLookup().lookup(LocalSyncGroup.class).getId(), myRun);
     }
 
@@ -66,7 +66,7 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
      */
     private class SyncRunnable extends AbstractSyncRunnable {
 
-        public SyncRunnable(SyncGroupNode selectedNode) {
+        public SyncRunnable() {
             setProgressHandle(ProgressHandleFactory.createHandle(
                 String.format(I18N.gm("running_sync_process"), 
                 selectedNode.getName())));
@@ -80,7 +80,7 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else {
-                SyncActionWizard syncWizard = new SyncActionWizard(new LocalSyncGroup(0l, "Sync Group", DEFAULT), findings);
+                SyncActionsFrame syncWizard = new SyncActionsFrame(selectedNode.getLookup().lookup(LocalSyncGroup.class), findings);
                 syncWizard.setVisible(true);
             }
         }

@@ -48,7 +48,8 @@ public final class DeleteBusinessObjectAction extends CallbackSystemAction {
     }
     
     @Override
-    public JMenuItem getPopupPresenter() { super.getPopupPresenter();
+    public JMenuItem getPopupPresenter() { 
+        super.getPopupPresenter();
         return popupPresenter;
     }
        
