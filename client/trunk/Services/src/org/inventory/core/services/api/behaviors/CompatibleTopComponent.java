@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package org.inventory.core.services.compatible;
+package org.inventory.core.services.api.behaviors;
 
 /**
  * This interface is used to verify the compatibility in a top component, for 

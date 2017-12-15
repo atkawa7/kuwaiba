@@ -28,7 +28,6 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
-import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -37,7 +36,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -162,11 +160,17 @@ public class SyncActionsFrame extends JFrame {
                 findingsToBeProcessed.add(allFindings.get(currentFinding));
                 
                 if (currentFinding == allFindings.size() - 1) {
-                    JOptionPane.showMessageDialog(SyncActionsFrame.this, "You have reviewed all the synchronization findings. The selected actions will be performed now", "Information", JOptionPane.INFORMATION_MESSAGE);
+                    if (findingsToBeProcessed.isEmpty())
+                        JOptionPane.showMessageDialog(SyncActionsFrame.this, 
+                                "You have reviewed all the synchronization findings with no selected actions to perform", "Information", JOptionPane.INFORMATION_MESSAGE);
+                    else {
+                        JOptionPane.showMessageDialog(SyncActionsFrame.this, 
+                                "You have reviewed all the synchronization findings. The selected actions will be performed now", "Information", JOptionPane.INFORMATION_MESSAGE);
+                        List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(findingsToBeProcessed);
+                        SyncResultsFrame syncResultFrame = new SyncResultsFrame(SyncActionsFrame.this.syncGroup, executSyncActions);
+                        syncResultFrame.setVisible(true);
+                    }
                     dispose();
-                    List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(findingsToBeProcessed);
-                    SyncResultsFrame syncResultFrame = new SyncResultsFrame(SyncActionsFrame.this.syncGroup, executSyncActions);
-                    syncResultFrame.setVisible(true);
                 } else {
                     currentFinding++;
                     renderCurrentFinding();
@@ -191,11 +195,11 @@ public class SyncActionsFrame extends JFrame {
         if (finding.getType() == LocalSyncFinding.EVENT_ERROR) {
             btnExecute.setEnabled(false);
             pnlScrollMain.setBorder(alarmBorder);
-            findingsToBeProcessed.add(finding);
-            
+            btnSkip.setText("Next");
         } else {
             btnExecute.setEnabled(true);
             pnlScrollMain.setBorder(normalBorder);
+            btnSkip.setText("Skip");
         }
     }
     
