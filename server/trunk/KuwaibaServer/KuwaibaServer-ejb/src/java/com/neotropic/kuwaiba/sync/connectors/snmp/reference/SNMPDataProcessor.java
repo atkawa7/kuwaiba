@@ -253,8 +253,7 @@ public class SNMPDataProcessor {
         jHierarchyFinding = jsonObjectToBuilder(jHierarchyFinding).add("hierarchy",jsonHierarchy).build();
         
         findings.add(new SyncFinding(SyncFinding.EVENT_NEW,
-                String.format("Your containment hierarchy could need to be updated in "
-                        + "order to sync from SNMP, this are the hierarchy containment need it: %s  \nwould you approve to execute?", jsonHierarchy.toString()),
+                String.format("Your containment hierarchy needs to be updated like this %s\nDo you want to proceed?", jsonHierarchy.toString()),
                 jHierarchyFinding.toString()));
     }
 
@@ -305,7 +304,7 @@ public class SNMPDataProcessor {
                     HashMap<String, String> comparedAttributes = compareAttributes(bem.getObject(id).getAttributes(), newAttributes);
                     if (!comparedAttributes.isEmpty()) {
                         findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
-                                String.format("The chassis has changes, attributes %s has changed, would you like to update it?", comparedAttributes),
+                                String.format("The chassis has changes, attributes %s have changed, would you like to update it?", comparedAttributes),
                                 createExtraInfoToUpdateAttributesInObject(Long.toString(id), mappedClass, comparedAttributes).toString()));
                     }
                 }//All except the Chassis
@@ -338,7 +337,7 @@ public class SNMPDataProcessor {
                     if (!isBranchAlreadyCreated(branch)) {
                         //Loaded from snmp first time
                         findings.add(new SyncFinding(SyncFinding.EVENT_NEW,
-                                "A new branch was found, created the structure of this branch?",
+                                "A new branch was found. Do you want to create the structure for this branch?",
                                 listToJson(branch, "branch").toString()));
                     }
                     branch = new ArrayList<>();
@@ -353,7 +352,7 @@ public class SNMPDataProcessor {
      *
      * @param name objName
      * @param className objClassName
-     * @param serialNumber the attribute serial number of the given obj
+     * @param serialNumber the attribute serial number of the given object
      * @return a RemoteBusinessObjectLight with the object if exists otherwise
      * returns null
      * @throws InvalidArgumentException
@@ -416,8 +415,8 @@ public class SNMPDataProcessor {
                                         newObj = jsonObjectToBuilder(newObj).add("deviceId", Long.toString(oldObj.getId())).build();
                                         RemoteBusinessObjectLight newParent = bem.getParent(completeObj.getClassName(), completeObj.getId());
                                         findings.add(new SyncFinding(SyncFinding.EVENT_DELETE,
-                                            String.format("it seems that this object object %s, with id: %s  has been moved, "
-                                                    + "according to the the sync the parent is %s, but its actual parent is %s", oldObj.toString(), oldObj.getId(), objParentName, newParent.toString()),
+                                            String.format("It seems that the object %s, with id: %s  has been moved, "
+                                                    + "according to the the SNMP source the parent is %s, but its parent in Kuwaiba is %s", oldObj.toString(), oldObj.getId(), objParentName, newParent.toString()),
                                             newObj.toString()));
                                     }//same serial
                                 }
@@ -853,7 +852,7 @@ public class SNMPDataProcessor {
             oldPort = jsonObjectToBuilder(oldPort).add("type", "object_port_no_match").build();
 
             findings.add(new SyncFinding(SyncFinding.EVENT_DELETE,
-                    String.format("There was no match with the port: %s [%s] - id: %s , after the sync, delete this port? ",
+                    String.format("There was no match for port: %s [%s] - id: %s. Do you want to delete this port after the sync process?",
                             oldPort.getJsonObject("attributes").getString("name"), oldPort.getString("className"), oldPort.getString("id")),
                     oldPort.toString()));
         }
@@ -862,7 +861,7 @@ public class SNMPDataProcessor {
             jnewPort = jsonObjectToBuilder(jnewPort).add("type", "object_port_no_match").build();
 
             findings.add(new SyncFinding(SyncFinding.EVENT_NEW,
-                    String.format("There was no match with the port: %s [%s], after the sync, create this port?",
+                    String.format("There was no match for port: %s [%s]. Do you want to delete this port after the sync process?",
                             jnewPort.getJsonObject("attributes").getString("name"), jnewPort.getString("className")),
                     jnewPort.toString()));
         }

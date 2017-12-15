@@ -18,12 +18,8 @@ package org.kuwaiba.apis.persistence.business;
 
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
-import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
-import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
-import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.util.HashMap;
 import java.util.List;
-import javax.sql.rowset.spi.SyncProvider;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
