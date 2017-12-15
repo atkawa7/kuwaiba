@@ -33,7 +33,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalSyncDataSourceConfiguration;
 import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.util.Constants;
-import org.inventory.communications.wsclient.StringPair;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.openide.actions.CopyAction;
