@@ -25,6 +25,7 @@ import java.awt.dnd.DnDConstants;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import javax.swing.Action;
@@ -32,6 +33,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalSyncDataSourceConfiguration;
 import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.util.Constants;
+import org.inventory.communications.wsclient.StringPair;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.openide.actions.CopyAction;
@@ -62,7 +64,9 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
     @Override
     public void setName(String newName) {
         if (newName != null) {
-            if (CommunicationsStub.getInstance().updateFavoritesFolder(getLookup().lookup(LocalSyncGroup.class).getId(), newName)) {
+            HashMap<String, String> attributes = new HashMap<>();
+            attributes.put("name", newName);
+            if (CommunicationsStub.getInstance().updateSyncGroup(getLookup().lookup(LocalSyncGroup.class).getId(), attributes)) {
                 getLookup().lookup(LocalSyncGroup.class).setName(newName);
                 if (getSheet() != null)
                     setSheet(createSheet());
