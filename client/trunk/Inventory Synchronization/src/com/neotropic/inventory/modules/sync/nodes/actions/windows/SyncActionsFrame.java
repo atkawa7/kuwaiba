@@ -166,8 +166,10 @@ public class SyncActionsFrame extends JFrame {
         txtFindingDescription.setText(finding.getDescription());
         pnlScrollMain.setViewportView(buildExtraInformationComponentFromJSON(finding.getExtraInformation()));
         
-        if (currentFinding == allFindings.size() - 1)
-            btnExecute.setText("Finish");
+        if (currentFinding == allFindings.size() - 1) {
+            btnExecute.setText("Add to Queue and Finish");
+            btnSkip.setText("Skip and Finish");
+        }
         
         if (finding.getType() == LocalSyncFinding.EVENT_ERROR) {
             btnExecute.setEnabled(false);
@@ -211,7 +213,7 @@ public class SyncActionsFrame extends JFrame {
 
             return tree;
         }
-        else if(type.equals("object_port_move")){
+        else if(type.equals("object_port_move")) {
                 JLabel lblMsg = new JLabel();
                 Long childId = Long.valueOf(root.getString("childId"));
                 String className = root.getString("className");
@@ -224,7 +226,7 @@ public class SyncActionsFrame extends JFrame {
                 return lblMsg;
         }
         
-        else if(type.equals("device")){
+        else if(type.equals("device")) {
              JLabel lblMsg = new JLabel();
             JsonObject jsonAttributes = root.getJsonObject("attributes");
             jsonAttributes.getString("name");
@@ -240,7 +242,7 @@ public class SyncActionsFrame extends JFrame {
             String id;
             if(root.get("id") != null){
                 id = root.getString("id");
-                lblMsg.setText("The port with id: "+id+ " " + jsonPortAttributes.getString("name") + "["+className+"]");
+                lblMsg.setText("The port with id: " + id+ " " + jsonPortAttributes.getString("name") + "["+className+"]");
             }
             else
                 lblMsg.setText("The new port found with the sync " + jsonPortAttributes.getString("name") + "["+className+"]");
