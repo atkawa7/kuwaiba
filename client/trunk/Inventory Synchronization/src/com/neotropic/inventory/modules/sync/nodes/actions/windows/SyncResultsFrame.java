@@ -18,15 +18,22 @@ package com.neotropic.inventory.modules.sync.nodes.actions.windows;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Graphics;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.util.List;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
+import javax.swing.ListSelectionModel;
+import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.core.LocalSyncResult;
@@ -57,6 +64,7 @@ public class SyncResultsFrame extends JFrame {
         
         lstSyncResults = new JList<>(results.toArray(new LocalSyncResult[0]));
         lstSyncResults.setCellRenderer(new SyncResultsCellRenderer());
+        lstSyncResults.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         
         pnlScrollMain.setViewportView(lstSyncResults);
         add(pnlScrollMain);

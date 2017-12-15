@@ -67,8 +67,9 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
             attributes.put("name", newName);
             if (CommunicationsStub.getInstance().updateSyncGroup(getLookup().lookup(LocalSyncGroup.class).getId(), attributes)) {
                 getLookup().lookup(LocalSyncGroup.class).setName(newName);
+                propertyChange(new PropertyChangeEvent(getLookup().lookup(LocalSyncGroup.class), Constants.PROPERTY_NAME, "", newName));
                 if (getSheet() != null)
-                    setSheet(createSheet());
+                   setSheet(createSheet());
             } else {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());                

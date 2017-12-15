@@ -28,6 +28,7 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
+import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -36,6 +37,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -220,9 +222,12 @@ public class SyncActionsFrame extends JFrame {
                 
                 int row = 0;
                 DefaultMutableTreeNode currentNode = rootNode;
+                
                 for (JsonValue item : children) {
                     jsonReader = Json.createReader(new StringReader(item.toString()));
                     JsonObject obj = jsonReader.readObject().getJsonObject("child");
+                    if(row == 0)
+                        rootNode.setUserObject(obj.getString("parentName") + "["+obj.getString("parentClassName")+"]");
                     DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(obj.getJsonObject("attributes").getString("name") + "[" + obj.getString("className")+"]");
                     currentNode.add(newNode);
                     tree.expandRow(row);
@@ -235,6 +240,7 @@ public class SyncActionsFrame extends JFrame {
             {
                 JLabel lblMsg = new JLabel();
                 String className = root.getString("className");
+                
                 JsonObject jsonPortAttributes = root.getJsonObject("attributes");
                 lblMsg.setText("The port: " + jsonPortAttributes.getString("name") + "[" + className + "] "
                         + "will be updated with this attributes " + 
@@ -264,5 +270,5 @@ public class SyncActionsFrame extends JFrame {
         
         return new JLabel("There is no extra information");
     }
-    
+ 
 }

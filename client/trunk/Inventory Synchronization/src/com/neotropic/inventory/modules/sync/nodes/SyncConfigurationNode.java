@@ -68,6 +68,27 @@ public class SyncConfigurationNode extends AbstractNode implements PropertyChang
     }
     
     @Override
+    public void setName(String newName){
+        if (newName != null) {
+            HashMap<String, String> attributes = new HashMap<>();
+            attributes.put("name", newName);
+            if (CommunicationsStub.getInstance().updateSyncDataSourceConfiguration(getLookup().lookup(LocalSyncDataSourceConfiguration.class).getId(), attributes)) {
+                getLookup().lookup(LocalSyncDataSourceConfiguration.class).setName(newName);
+                propertyChange(new PropertyChangeEvent(getLookup().lookup(LocalSyncDataSourceConfiguration.class), Constants.PROPERTY_NAME, "", newName));
+                if (getSheet() != null)
+                   setSheet(createSheet());
+            } else {
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());                
+            }
+        }
+    }
+            
+    @Override
+    public boolean canRename() {
+        return true;
+    }
+    @Override
     public String getDisplayName() {
         return getLookup().lookup(LocalSyncDataSourceConfiguration.class).toString();
     }
