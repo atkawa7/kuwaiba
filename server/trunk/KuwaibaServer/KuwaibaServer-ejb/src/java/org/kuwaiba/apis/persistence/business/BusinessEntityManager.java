@@ -443,7 +443,7 @@ public interface BusinessEntityManager {
      * Gets the children of a given object
      * @param className Object's class name
      * @param oid Object's oid
-     * @param maxResults max number of children to be returned
+     * @param maxResults max number of children to be returned, -1 to return all
      * @return The list of children
      * @throws MetadataObjectNotFoundException If the object's can't be found
      * @throws ObjectNotFoundException If the object or its new parent can't be found

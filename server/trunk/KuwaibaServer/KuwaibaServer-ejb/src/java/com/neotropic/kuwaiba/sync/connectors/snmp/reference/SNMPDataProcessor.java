@@ -364,7 +364,7 @@ public class SNMPDataProcessor {
             throws InvalidArgumentException, MetadataObjectNotFoundException,
             ObjectNotFoundException {
         int numberOfMatch = 0;
-        List<RemoteBusinessObjectLight> toRemove = new ArrayList<>();
+        
         for (JsonObject newObj : branch) {
             boolean hasSerialNumber = false;
             String objClassName = newObj.getString("className");
@@ -397,7 +397,7 @@ public class SNMPDataProcessor {
                                                     String.format("Would you like to overwrite the attributes values in the object %s, with id: %s ", oldObj.toString(), oldObj.getId()),
                                                     newObj.toString()));
                                         }
-                                        toRemove.add(oldObj);
+                                        
                                     }//end
                                 }// has serial
                                 else{
@@ -407,7 +407,7 @@ public class SNMPDataProcessor {
                                                 String.format("Would you like to overwrite the attributes values in the object %s, with id: %s ", oldObj.toString(), oldObj.getId()),
                                                 newObj.toString()));
                                     }
-                                    toRemove.add(oldObj);
+                                    
                                 }
                             }//end same parent
                             else {
