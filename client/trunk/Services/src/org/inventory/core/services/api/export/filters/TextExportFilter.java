@@ -37,7 +37,10 @@ public abstract class TextExportFilter {
     public abstract String getExtension();
     /**
      * The export action. This method WON'T close the stream!
-     * @throws 
+     * @param result
+     * @param out
+     * @return 
+     * @throws IOException    
      */
     public abstract boolean export(Object[][] result, FileOutputStream out) throws IOException;
     /**
