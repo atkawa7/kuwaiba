@@ -38,6 +38,7 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.ws.todeserialize.StringPair;
@@ -239,22 +240,37 @@ public class SNMPDataProcessor {
 
         JsonObject jsonHierarchy = Json.createObjectBuilder().build();
         for (String parentClass : mapOfClasses.keySet()) {
+            
+            List<ClassMetadataLight> actualPossibleChildren = mem.getPossibleChildren(parentClass);
             List<String> possibleChildrenToAdd = mapOfClasses.get(parentClass);
+            
             if (possibleChildrenToAdd != null) {
                 JsonArray children = Json.createArrayBuilder().build();
-                
                 for (String possibleChild : possibleChildrenToAdd){
-                    JsonObject jchild = Json.createObjectBuilder().add("child", possibleChild).build();
-                    children = jsonArrayToBuilder(children).add(jchild).build();
+                    boolean isPossibleChild = false;
+                    for(ClassMetadataLight possibleClassName : actualPossibleChildren){
+                        if(possibleChild.equals(possibleClassName.getName()))
+                            isPossibleChild = true;
+                            
+                        if(!isPossibleChild){    
+                            JsonObject jchild = Json.createObjectBuilder().add("child", possibleChild).build();
+                            children = jsonArrayToBuilder(children).add(jchild).build();    
+                        }
+                    }
                 }
-                jsonHierarchy = jsonObjectToBuilder(jsonHierarchy).add(parentClass, children).build();  
+                if(!children.isEmpty())
+                    jsonHierarchy = jsonObjectToBuilder(jsonHierarchy).add(parentClass, children).build();  
             }
         }//end for
         jHierarchyFinding = jsonObjectToBuilder(jHierarchyFinding).add("hierarchy",jsonHierarchy).build();
         
-        findings.add(new SyncFinding(SyncFinding.EVENT_NEW,
-                String.format("Your containment hierarchy needs to be updated like this %s\nDo you want to proceed?", jsonHierarchy.toString()),
-                jHierarchyFinding.toString()));
+        if(jsonHierarchy.isEmpty()){
+            jHierarchyFinding = jsonObjectToBuilder(jHierarchyFinding).add("hierarchy",jsonHierarchy).build();
+
+            findings.add(new SyncFinding(SyncFinding.EVENT_NEW,
+                    String.format("Your containment hierarchy needs to be updated like this %s\nDo you want to proceed?", jsonHierarchy.toString()),
+                    jHierarchyFinding.toString()));
+        }
     }
 
     /**
@@ -299,10 +315,11 @@ public class SNMPDataProcessor {
                 HashMap<String, String> newAttributes = createNewAttributes(i);
 
                 //The chassis can be only updated
-                if (objectName.contains("Chassis")) {
+                if (className.contains(mappedClass)) {
                     newAttributes.remove("name"); //the router name won't be changed
                     HashMap<String, String> comparedAttributes = compareAttributes(bem.getObject(id).getAttributes(), newAttributes);
                     if (!comparedAttributes.isEmpty()) {
+                        comparedAttributes.put("name", obj.getName());
                         findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
                                 String.format("The chassis has changes, attributes %s have changed, would you like to update it?", comparedAttributes),
                                 createExtraInfoToUpdateAttributesInObject(Long.toString(id), mappedClass, comparedAttributes).toString()));
@@ -319,10 +336,9 @@ public class SNMPDataProcessor {
                             .add("attributes", parseAttributesToJson(newAttributes))
                             .build();
 
-                    if (mappedClass.contains("Port") && !objectName.contains("Power") && !mappedClass.contains("Power")){ 
+                    if (mappedClass.contains("Port") && !objectName.contains("Power") && !mappedClass.contains("Power"))
                         newPorts.add(jsonNewObj);
-                    }
-                    
+                        
                     //check if is already created
                     isAlreadyCreated = isDeviceAlreadyCreated(jsonNewObj, newAttributes);
                     if(!isAlreadyCreated)
@@ -586,32 +602,31 @@ public class SNMPDataProcessor {
     public String parseClass(String className_, String name, String descr) {
         int classId = Integer.valueOf(className_);
         if (classId == 3) //chassis
-        {
             return className;
-        } else if (classId == 10) { //port
-            if (name.contains("usb") || descr.contains("usb")) {
+        
+        else if (classId == 10) { //port
+            if (name.contains("usb") || descr.contains("usb")) 
                 return "USBPort";
-            }
-            if (descr.contains("Ethernet")) {
+            
+            if (descr.contains("Ethernet")) 
                 return "ElectricalPort";
-            } else {
+            else 
                 return "OpticalPort";
-            }
+            
         } else if (classId == 5) { //container
-            if (!descr.contains("Disk")) {
+            if (!descr.contains("Disk")) 
                 return "Slot";
-            }
-        } else if (classId == 6 && name.contains("Power") && !name.contains("Module")) {
+            
+        } else if (classId == 6 && name.contains("Power") && !name.contains("Module")) 
             return "PowerPort";
-        } else if (classId == 6 && name.contains("Module")) {
+        else if (classId == 6 && name.contains("Module")) 
             return "HybridBoard";
-        } else if (classId == 9) { //module
-            if (name.contains("transceiver") || descr.contains("transceiver")) {
+        else if (classId == 9) { //module
+            if (name.contains("transceiver") || descr.contains("transceiver")) 
                 return "Transceiver";
-            }
+            
             return "IPBoard";
         }
-
         return null;
     }
 
@@ -625,20 +640,19 @@ public class SNMPDataProcessor {
     private boolean isClassUsed(String classId_, String descr) {
         int classId = Integer.valueOf(classId_);
         //chassis(3) port(10) powerSupply(6) module(9) container(5) 
-        if (classId == 3 || classId == 10 || classId == 6 || classId == 9) {
+        if (classId == 3 || classId == 10 || classId == 6 || classId == 9)
             return true;
-        } else {
+        else 
             return classId == 5 && !descr.trim().toLowerCase().contains("disk");
-        }
     }
 
     private JsonObject listToJson(List<JsonObject> branch, String type) {
         JsonObject json = Json.createObjectBuilder().add("type", type).build();
         JsonArray children = Json.createArrayBuilder().build();
 
-        for (JsonObject jo : branch) {
+        for (JsonObject jo : branch) 
             children = jsonArrayToBuilder(children).add(Json.createObjectBuilder().add("child", jo)).build();
-        }
+        
         json = jsonObjectToBuilder(json).add("children", children).build();
 
         return json;
@@ -654,9 +668,9 @@ public class SNMPDataProcessor {
     private JsonObject createExtraInfoToUpdateAttributesInObject(String deviceId, String deviceClassName, HashMap<String, String> attributes) {
         JsonObject jsonObj = Json.createObjectBuilder().add("type", "device").add("deviceId", deviceId).add("deviceClassName", deviceClassName).build();
         JsonObject jattributes = Json.createObjectBuilder().build();
-        for (String key : attributes.keySet()) {
+        for (String key : attributes.keySet()) 
             jattributes = jsonObjectToBuilder(jattributes).add(key, attributes.get(key)).build();
-        }
+        
         jsonObj = jsonObjectToBuilder(jsonObj).add("attributes", jattributes).build();
         return jsonObj;
     }
@@ -670,9 +684,8 @@ public class SNMPDataProcessor {
      */
     private JsonObject parseAttributesToJson(HashMap<String, String> attributes) {
         JsonObject jsonObj = Json.createObjectBuilder().build();
-        for (String key : attributes.keySet()) {
+        for (String key : attributes.keySet()) 
             jsonObj = jsonObjectToBuilder(jsonObj).add(key, attributes.get(key)).build();
-        }
 
         return jsonObj;
     }
@@ -686,9 +699,8 @@ public class SNMPDataProcessor {
     private JsonObjectBuilder jsonObjectToBuilder(JsonObject jo) {
         JsonObjectBuilder job = Json.createObjectBuilder();
 
-        for (Entry<String, JsonValue> entry : jo.entrySet()) {
+        for (Entry<String, JsonValue> entry : jo.entrySet()) 
             job.add(entry.getKey(), entry.getValue());
-        }
 
         return job;
     }
@@ -701,9 +713,9 @@ public class SNMPDataProcessor {
      */
     private JsonArrayBuilder jsonArrayToBuilder(JsonArray ja) {
         JsonArrayBuilder jao = Json.createArrayBuilder();
-        for (JsonValue v : ja) {
+        for (JsonValue v : ja) 
             jao.add(v);
-        }
+        
         return jao;
     }
 
@@ -712,24 +724,22 @@ public class SNMPDataProcessor {
 
         String objectName = allData.get("entPhysicalName").get(index);
         //For optical ports
-        if (objectName.contains("GigabitEthernet")) {
+        if (objectName.contains("GigabitEthernet")) 
             objectName = objectName.replace("GigabitEthernet", "Gi");
-        }
 
         attributes.put("name", objectName);
         attributes.put("description", allData.get("entPhysicalDescr").get(index));
         if (!allData.get("entPhysicalMfgName").get(index).isEmpty()) {
             String vendor = findingListTypeId(index);
-            if (vendor != null) {
+            if (vendor != null) 
                 attributes.put("vendor", vendor);
-            }
         }
-        if (!allData.get("entPhysicalSerialNum").get(index).isEmpty()) {
+        if (!allData.get("entPhysicalSerialNum").get(index).isEmpty()) 
             attributes.put("serialNumber", allData.get("entPhysicalSerialNum").get(index));
-        }
-        if (!allData.get("entPhysicalModelName").get(index).isEmpty()) {
+        
+        if (!allData.get("entPhysicalModelName").get(index).isEmpty()) 
             attributes.put("modelName", allData.get("entPhysicalModelName").get(index));
-        }
+        
         return attributes;
     }
 
@@ -801,8 +811,8 @@ public class SNMPDataProcessor {
                 
                 json = jsonObjectToBuilder(json).add("device", jdevice).build();
                 findings.add(new SyncFinding(SyncFinding.EVENT_DELETE,
-                            String.format("The object id id: %s - %s and all the children of the device will be deleted", 
-                                    Long.toString(actualChildFirstLevel.getId()), actualChildFirstLevel.toString()),
+                            String.format("The %s - %s and all its children will be deleted, please be careful, if you are not sure select \"skip\"", 
+                                    actualChildFirstLevel.toString(), Long.toString(actualChildFirstLevel.getId())),
                             json.toString()));
             }
         }
@@ -832,7 +842,7 @@ public class SNMPDataProcessor {
                     
                     if(tParent.getClassName().contains("Port"))
                         findings.add(new SyncFinding(SyncFinding.EVENT_DELETE,
-                           String.format("This device %s was child of %s, but it should be its parent, a new one was moved and updated, would you like to delete this old device?", 
+                           String.format("This device %s was child of %s, but it should be its parent, a new one was moved and updated, would you like to delete this old device?, this operations its totally safe", 
                                    deviceToDelete.toString(), tParent.toString()), jsont.toString()));
                     
                     } catch (ObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
@@ -881,7 +891,6 @@ public class SNMPDataProcessor {
         List<RemoteBusinessObjectLight> foundOldPorts = new ArrayList<>();
         List<JsonObject> foundNewPorts = new ArrayList<>();
         
-        
         for (RemoteBusinessObjectLight oldPort : oldPorts) {
             //We copy the new attributes into the new port, to keep the relationships
             RemoteBusinessObjectLight oldPortParent = bem.getParent(oldPort.getClassName(), oldPort.getId());
@@ -900,7 +909,6 @@ public class SNMPDataProcessor {
                     findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
                             String.format("Would you like to overwrite the attribute values in port %s, with id: %s?", oldPort.toString(), oldPort.getId()),
                             portFound.toString()));
-                    
                 }
                 else{
                     HashMap<String, String> attributes = compareAttributes(bem.getObject(oldPort.getId()).getAttributes(), portFound.getJsonObject("attributes"));
@@ -986,18 +994,15 @@ public class SNMPDataProcessor {
             oldName = oldName.toLowerCase().trim();
             newName = newName.toLowerCase().trim();
             if (!oldName.equals(newName)) {
-
-                String[] splitOldName = oldName.split(" ");
-                if (splitOldName.length > 1)
-                    return newName.contains(splitOldName[0]);
-
-                int matchCounter = 0;
+                
+                String[] splitOldName;
+                if(!oldName.contains("/") && !newName.contains("/"))
+                    return newName.trim().contains(oldName.toLowerCase().replace("port", "").trim());
+                
                 splitOldName = oldName.toLowerCase().split("/");
                 String[] splitNewName = newName.toLowerCase().split("/");
 
-                int matchSuccess = splitOldName.length + 1;
                 boolean allPartsAreEquals = true;
-
                 if (splitNewName.length == splitOldName.length) {
                     for (int i = 0; i < splitOldName.length; i++) {
                         if (!splitOldName[i].equals(splitNewName[i]))
@@ -1006,35 +1011,41 @@ public class SNMPDataProcessor {
                     if (allPartsAreEquals) 
                         return true;
 
-                    if (splitOldName[0].equals(splitNewName[0])) //first part
-                        matchCounter++;
+                    //first part
+                    boolean firstPart= false;
+                    String oldPart1 = splitOldName[0];
+                    oldPart1 = oldPart1.replaceAll("[-._:,]", "");
                     
-                    else {
-                        String oldPart1 = splitOldName[0];
-                        oldPart1 = oldPart1.replaceAll("[-._:,]", "");
+                    String newPart1 = splitNewName[0];
+                    
+                    newPart1 = newPart1.replaceAll("[-._:,]", "");
+                    if (oldPart1.equals(newPart1))
+                        firstPart = true;
+                    
+                    else if(newPart1.contains("tentigt"))
+                        newPart1 = newPart1.replace("tentigt", "tt");
+                    else if(newPart1.contains("gigabitethernet"))
+                        newPart1 = newPart1.replace("gigabitethernet", "ge");
+                    else if(newPart1.contains("mgmteth"))
+                        newPart1 = newPart1.replace("mgmteth", "mg");
+                    else if(newPart1.contains("gi") && newPart1.length() < 4)
+                        newPart1 = newPart1.replace("gi", "ge");
+                    else if(newPart1.contains("tengi"))
+                        newPart1 = newPart1.replace("tengi", "te");
+                    
+                    if (oldPart1.replaceAll("\\s+","").equals(newPart1.replaceAll("\\s+","")) && !firstPart)
+                            firstPart = true;
 
-                        String newPart1 = splitNewName[0];
-                        newPart1 = newPart1.replaceAll("[-._:,]", "");
-                        if (oldPart1.equals(newPart1)) 
-                            return true;
-                        
-                        //the first letter
-                        if (oldPart1.substring(0, 1).equals(newPart1.substring(0, 1))) 
-                            matchCounter++;
-                        
-                        //the last letter
-                        if (oldPart1.substring(oldPart1.length() - 1, oldPart1.length())
-                                .equals(newPart1.substring(newPart1.length() - 1, newPart1.length())))
-                            matchCounter++;
-
-                        if (splitOldName.length > 1 && splitNewName.length > 1) {
-                            for (int i = 1; i < splitOldName.length; i++) {
-                                if (splitOldName[i].equals(splitNewName[i])) 
-                                    matchCounter++;
-                            }
+                    //the other parts
+                    boolean lastPartAreEquals = true;
+                    if (splitOldName.length > 1 && splitNewName.length > 1) {
+                        for (int i = 1; i < splitOldName.length; i++) {
+                            if (!splitOldName[i].equals(splitNewName[i])) 
+                                lastPartAreEquals = false;
                         }
-                        return matchCounter >= matchSuccess;
                     }
+                    return (firstPart && lastPartAreEquals) ;
+                   
                 } else 
                     return false;
             }//end kind of port optical

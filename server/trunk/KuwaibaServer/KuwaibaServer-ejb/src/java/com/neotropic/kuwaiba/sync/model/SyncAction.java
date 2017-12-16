@@ -47,16 +47,13 @@ public class SyncAction {
     
     private final static String ACTION_CONTAINMENT_HIERARCHY = "The containment hierarchy was updated parent %s, children %s";
     private final static String ACTION_OBJECT_UPDATED = "The object %s [%s] with id %s was updated";
-    private final static String ACTION_OBJECT_CANNOT_UPDATED = "The object %s [%s] was not updated: ";
     private final static String ACTION_UPDATED = "Updated successfully";
     private final static String ACTION_CREATED = "Created successfully";
     private final static String ACTION_DELETED = "Deleted successfully";
     private final static String ACTION_OBJECT_CREATED = "The object %s [%s] with id %s was created";
-    private final static String ACTION_OBJECT_CANNOT_CREATED = "The object %s [%s] with wasn't created";
     private final static String ACTION_OBJECT_DELETED = "The object %s [%s] with id %s was deleted";
     private final static String ACTION_LISTTYPE_CREATED = "A list type %s was created";
     private final static String ACTION_PORT_NO_MATCH = "This %s has no match, please check it manually";
-    private final static String ACTION_ERROR_DELETING = "The object %s [%s] with id %s wasn't deleted";
     private final static String ACTION_ERROR = "Error";
     
     private List<SyncFinding> findings;
@@ -115,10 +112,10 @@ public class SyncAction {
                         }   
                         break;
                     case "object_port_move":
-                        migrateOldPortsIntoNewPosition(jsonObj);
+                        migrateOldPortsIntoNewPosition(jsonObj, finding);
                         break;
                     case "old_object_to_delete":
-                        deleteOldStructure(jsonObj);
+                        deleteOldStructure(jsonObj, finding);
                         break;
                     case "object_port_no_match":
                         results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_PORT_NO_MATCH, jsonObj.toString()), "No match was found, please check"));
@@ -205,7 +202,7 @@ public class SyncAction {
                 bem.updateObject(deviceClassName, deviceId, attributes);
                 results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_UPDATED, attributes.get("name"), deviceClassName, Long.toString(deviceId)), ACTION_UPDATED));
             } catch (InvalidArgumentException | ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-                results.add(new SyncResult(SyncResult.ERROR, ex.getMessage(), ACTION_ERROR));
+                results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), ACTION_ERROR));
             }
         }
     }
@@ -242,15 +239,15 @@ public class SyncAction {
                     results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), ACTION_CREATED));
                 }
             } catch (InvalidArgumentException | ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-                results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_CANNOT_CREATED, attributes.get("name"), className), ACTION_ERROR));
+                results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), ACTION_ERROR));
             }
         }
         else if (find.getType() == SyncFinding.EVENT_UPDATE){
             try{
                 bem.updateObject(className, childId, attributes);
-                results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_UPDATED, attributes.get("name"), className, Long.toString(-1)), ACTION_UPDATED));
+                results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_UPDATED, attributes.get("name"), className, Long.toString(childId)), ACTION_UPDATED));
             } catch (InvalidArgumentException | ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-                results.add(new SyncResult(SyncResult.ERROR, ex.getMessage(), ACTION_ERROR));
+                results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), ACTION_ERROR));
             }
         }
     }
@@ -261,17 +258,16 @@ public class SyncAction {
         POSTPONE
     }   
     
-    public void migrateOldPortsIntoNewPosition(JsonObject jsonPort){
+    public void migrateOldPortsIntoNewPosition(JsonObject jsonPort, SyncFinding find){
+
         Long childId = Long.valueOf(jsonPort.getString("childId"));
         String className = jsonPort.getString("className");
         Long tempParentId = Long.valueOf(jsonPort.getString("parentId"));
         String parentClassName = jsonPort.getString("parentClassName");
-        JsonObject jsonPortAttributes = jsonPort.getJsonObject("attributes");
+        JsonObject jsnPrtAttrs = jsonPort.getJsonObject("attributes");
         HashMap<String, String> newAttributes = new HashMap<>();
-        for (Map.Entry<String, JsonValue> entry : jsonPortAttributes.entrySet())
-            newAttributes.put(entry.getKey(), entry.getValue().toString());
-        
-        
+        newAttributes.put("name", jsnPrtAttrs.getString("name"));
+        newAttributes.put("description", jsnPrtAttrs.getString("description"));
         
         HashMap<String, long[]> objectsToMove = new HashMap<>();
         long[] ids = {childId} ;
@@ -282,19 +278,19 @@ public class SyncAction {
                 //move the old port into the new location
                 bem.updateObject(className, childId, newAttributes);
                 bem.moveObjects(parentClassName, parentId, objectsToMove);
-                results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_UPDATED, jsonPortAttributes.get("name"), className, Long.toString(childId)), ACTION_UPDATED));
+                results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_UPDATED, jsnPrtAttrs.get("name"), className, Long.toString(childId)), ACTION_UPDATED));
             }
             else
-                results.add(new SyncResult(SyncResult.ERROR, String.format(ACTION_OBJECT_CANNOT_UPDATED + "No valid parent found", jsonPortAttributes.get("name"), className, Long.toString(childId)), ACTION_ERROR));
+                results.add(new SyncResult(SyncResult.ERROR, find.getDescription() + "No valid parent found", ACTION_ERROR));
         } catch (MetadataObjectNotFoundException | ObjectNotFoundException | OperationNotPermittedException ex) {
-            results.add(new SyncResult(SyncResult.ERROR, ex.getMessage(), ACTION_ERROR));
+            results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), ACTION_ERROR));
         } catch (InvalidArgumentException ex) {
             Logger.getLogger(SyncAction.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     
-    private void deleteOldStructure(JsonObject json){
+    private void deleteOldStructure(JsonObject json, SyncFinding find){
         JsonObject jdevice = json.getJsonObject("device");
         String className = jdevice.getString("deviceClassName");
         try {
@@ -302,7 +298,7 @@ public class SyncAction {
             results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_DELETED, jdevice.get("deviceName"), className, jdevice.getString("deviceId")), ACTION_DELETED));
 
         } catch (ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-            results.add(new SyncResult(SyncResult.ERROR, ex.getMessage(), ACTION_ERROR));
+            results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), ACTION_ERROR));
         }
         
     }

@@ -3547,7 +3547,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             Node syncGroupNode = graphDb.getNodeById(syncGroupId);
             if (syncGroupNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Can not find the Synchronization Data Source Configuration with id %s",syncGroupId));
+                throw new ApplicationObjectNotFoundException(String.format("Can not find the Synchronization group with id %s",syncGroupId));
             
             List<Relationship> relationshipsToDelete = new ArrayList();
             List<Node> nodesToDelete = new ArrayList();
