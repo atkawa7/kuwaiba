@@ -80,8 +80,13 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else {
-                SyncActionsFrame syncWizard = new SyncActionsFrame(selectedNode.getLookup().lookup(LocalSyncGroup.class), findings);
-                syncWizard.setVisible(true);
+                if(findings.isEmpty())
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
+                    NotificationUtil.INFO_MESSAGE, I18N.gm("no_founds"));
+                else{
+                    SyncActionsFrame syncWizard = new SyncActionsFrame(selectedNode.getLookup().lookup(LocalSyncGroup.class), findings);
+                    syncWizard.setVisible(true);
+                }
             }
         }
     }

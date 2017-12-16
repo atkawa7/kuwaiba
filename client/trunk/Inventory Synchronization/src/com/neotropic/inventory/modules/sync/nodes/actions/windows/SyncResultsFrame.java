@@ -18,26 +18,26 @@ package com.neotropic.inventory.modules.sync.nodes.actions.windows;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Graphics;
 import java.awt.GridLayout;
-import java.awt.Insets;
 import java.util.List;
-import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.ListCellRenderer;
-import javax.swing.ListSelectionModel;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.core.LocalSyncResult;
+import org.inventory.core.services.api.export.ExportTablePanel;
+import org.inventory.core.services.api.export.ExportableTable;
+import org.inventory.core.services.api.export.filters.CSVFilter;
+import org.inventory.core.services.api.export.filters.TextExportFilter;
 import org.inventory.core.services.i18n.I18N;
+import org.openide.DialogDescriptor;
+import org.openide.DialogDisplayer;
 import org.openide.util.ImageUtilities;
 
 /**
@@ -50,7 +50,7 @@ public class SyncResultsFrame extends JFrame {
     private static final ImageIcon ICON_SUCCESS = ImageUtilities.loadImageIcon("com/neotropic/inventory/modules/sync/res/success.png", false);
     
     private JScrollPane pnlScrollMain;
-    private JList<LocalSyncResult> lstSyncResults;
+    private SyncResultsList<LocalSyncResult> lstSyncResults;
 
     public SyncResultsFrame(LocalSyncGroup syncGroup, List<LocalSyncResult> results) {
         setLayout(new BorderLayout());
@@ -60,11 +60,26 @@ public class SyncResultsFrame extends JFrame {
         setLocationRelativeTo(null);
 
         JPanel pnlListOfResults = new JPanel();
-        pnlListOfResults.setLayout(new GridLayout(1, 2));
+        pnlListOfResults.setLayout(new GridLayout(1, 1));
+        JButton btnExport = new JButton();
+        btnExport.setText(I18N.gm("export")); // NOI18N
+        btnExport.setToolTipText(I18N.gm( "export")); // NOI18N
+        btnExport.setFocusable(false);
+        btnExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnExport.addActionListener(new java.awt.event.ActionListener() {
+            
+            @Override
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ExportTablePanel exportPanel = new ExportTablePanel(new TextExportFilter[]{CSVFilter.getInstance()}, lstSyncResults);
+                DialogDescriptor dd = new DialogDescriptor(exportPanel, I18N.gm("export_options"),true, exportPanel);
+                DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+            }
+        });
+        add(btnExport, BorderLayout.NORTH);
         
-        lstSyncResults = new JList<>(results.toArray(new LocalSyncResult[0]));
+        lstSyncResults = new SyncResultsList<>(results.toArray(new LocalSyncResult[0]));
         lstSyncResults.setCellRenderer(new SyncResultsCellRenderer());
-        lstSyncResults.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         
         pnlScrollMain.setViewportView(lstSyncResults);
         add(pnlScrollMain);
@@ -92,5 +107,25 @@ public class SyncResultsFrame extends JFrame {
             }
             return lblResultEntry;
         }
+    }
+    
+    private class SyncResultsList<E> extends JList implements ExportableTable{
+
+        public SyncResultsList(Object[] listData) {
+            super(listData);
+        }
+
+        @Override
+        public Object[][] getResults(Range range) {
+            Object[][] res = new Object[this.getModel().getSize()+1][2];
+            res[0][0]="Description"; res[0][1]="Result";
+            for (int i = 0; i < this.getModel().getSize(); i++) {
+                LocalSyncResult elementAt = (LocalSyncResult)this.getModel().getElementAt(i);
+                res[i+1][0]= elementAt.getActionDescription();
+                res[i+1][1]= elementAt.getResult();
+            }
+            return res;
+        }
+        
     }
 }
