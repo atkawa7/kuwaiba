@@ -122,14 +122,19 @@ public class LocalTask implements Comparable<LocalTask> {
     }
 
     public void setCommitOnExecute(boolean commitOnExecute) {
-        this.commitOnExecute = commitOnExecute;
+        boolean oldEnabled = this.isEnabled();
+        try {
+            firePropertyChange(Constants.PROPERTY_COMMIT_ON_EXECUTE, oldEnabled, String.valueOf(enabled));
+            this.commitOnExecute = commitOnExecute;
+        } catch (PropertyVetoException ex) {}
+        
     }
     
 
     public void setEnabled(boolean enabled) {
         boolean oldEnabled = this.isEnabled();
         try {
-            firePropertyChange(Constants.PROPERTY_ENABLED, String.valueOf(oldEnabled), String.valueOf(enabled));
+            firePropertyChange(Constants.PROPERTY_ENABLED, oldEnabled, String.valueOf(enabled));
             this.enabled = enabled;
         } catch (PropertyVetoException ex) {}
     }
