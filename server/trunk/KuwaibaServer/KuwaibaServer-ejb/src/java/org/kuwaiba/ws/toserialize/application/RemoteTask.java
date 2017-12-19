@@ -78,6 +78,7 @@ public final class RemoteTask implements Serializable {
         this.name = name;
         this.description = description;
         this.enabled = enabled;
+        this.commitOnExecute = commitOnExecute;
         this.script = script;
         this.parameters = parameters;
         this.schedule = schedule;

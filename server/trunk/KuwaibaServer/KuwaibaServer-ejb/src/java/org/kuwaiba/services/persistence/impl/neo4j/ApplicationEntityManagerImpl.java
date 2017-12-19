@@ -2225,8 +2225,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
             String affectedProperty, oldValue, newValue;
             affectedProperty = propertyName;
-            oldValue = (String) (taskNode.hasProperty(propertyName) ? taskNode.getProperty(propertyName) : " ");
-            
+            oldValue = String.valueOf(taskNode.hasProperty(propertyName) ? taskNode.getProperty(propertyName) : " ");
+
             switch (propertyName) {
                 case Constants.PROPERTY_NAME:
                 case Constants.PROPERTY_DESCRIPTION:
@@ -2514,9 +2514,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             //Commit only if it's configured to do so 
             if (taskNode.hasProperty(Constants.PROPERTY_COMMIT_ON_EXECUTE) && (boolean)taskNode.getProperty(Constants.PROPERTY_COMMIT_ON_EXECUTE))
                 tx.success();
-            else
+            else 
                 tx.failure();
-            
+
             return (TaskResult)theResult;
 
         } catch(CompilationFailedException | InvalidArgumentException ex) {
