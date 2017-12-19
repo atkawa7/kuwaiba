@@ -132,7 +132,7 @@ public class SyncActionsFrame extends JFrame {
                     JOptionPane.showMessageDialog(SyncActionsFrame.this, "You have reviewed all the synchronization findings. The selected actions will be performed now", "Information", JOptionPane.INFORMATION_MESSAGE);
                     dispose();
                     
-                    final ProgressHandle progr = ProgressHandleFactory.createHandle("Executing the Sync Actions for " + SyncActionsFrame.this.syncGroup.getName());
+                    final ProgressHandle progr = ProgressHandleFactory.createHandle(String.format("Executing sync actions for %s", SyncActionsFrame.this.syncGroup.getName()));
                     Runnable executeSyncActions = new Runnable() {
                         
                         @Override
@@ -205,7 +205,8 @@ public class SyncActionsFrame extends JFrame {
     
     /**
      * Builds a JTree based on a JSON string that defines a containment hierarchy, normally used 
-     * to depict a branch that will be modified in the associated device 
+     * to depict a branch that will be modified in the associated device
+     * TODO: Rewrite this so it does not depend on the format returned by the reference implementation
      * @param jsonString The tree definition as a JSON document
      * @return A tree with the structured defined in the JSON document
      */
@@ -247,7 +248,7 @@ public class SyncActionsFrame extends JFrame {
                 
                 JsonObject jsonPortAttributes = root.getJsonObject("attributes");
                 lblMsg.setText("The port: " + jsonPortAttributes.getString("name") + "[" + className + "] "
-                        + "will be updated with this attributes " + 
+                        + "will be updated with these attributes " + 
                         jsonPortAttributes.toString());
                 return lblMsg;
             }
@@ -255,7 +256,7 @@ public class SyncActionsFrame extends JFrame {
             {
                 JLabel lblMsg = new JLabel();
                 JsonObject jsonAttributes = root.getJsonObject("attributes");
-                lblMsg.setText("The device you are tryng to sync will be updated with this new attributes: \n" + jsonAttributes.toString());
+                lblMsg.setText("The device you are trying to sync will be updated with these new attributes: \n" + jsonAttributes.toString());
                 return lblMsg;
             }
             case "object_port_no_match":
@@ -274,5 +275,4 @@ public class SyncActionsFrame extends JFrame {
         
         return new JLabel("There is no extra information");
     }
- 
 }

@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="commitOnExecute" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="script" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="parameters" type="{http://ws.kuwaiba.org/}stringPair" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="schedule" type="{http://ws.kuwaiba.org/}taskScheduleDescriptor" minOccurs="0"/>
@@ -42,6 +43,7 @@ import javax.xml.bind.annotation.XmlType;
     "name",
     "description",
     "enabled",
+    "commitOnExecute",
     "script",
     "parameters",
     "schedule",
@@ -54,6 +56,7 @@ public class RemoteTask {
     protected String name;
     protected String description;
     protected boolean enabled;
+    protected boolean commitOnExecute;
     protected String script;
     @XmlElement(nillable = true)
     protected List<StringPair> parameters;
@@ -140,6 +143,22 @@ public class RemoteTask {
      */
     public void setEnabled(boolean value) {
         this.enabled = value;
+    }
+
+    /**
+     * Gets the value of the commitOnExecute property.
+     * 
+     */
+    public boolean isCommitOnExecute() {
+        return commitOnExecute;
+    }
+
+    /**
+     * Sets the value of the commitOnExecute property.
+     * 
+     */
+    public void setCommitOnExecute(boolean value) {
+        this.commitOnExecute = value;
     }
 
     /**

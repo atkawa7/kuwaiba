@@ -289,6 +289,10 @@ public class Constants {
      */
     public static final String PROPERTY_ENABLED = "enabled"; //NOI18N
     /**
+     * Property commit on execute
+     */
+    public static final String PROPERTY_COMMIT_ON_EXECUTE = "commitOnExecute"; //NOI18N
+    /**
      * Property script
      */
     public static final String PROPERTY_SCRIPT = "script"; //NOI18N

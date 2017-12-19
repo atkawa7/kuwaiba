@@ -50,6 +50,7 @@ public class TaskManagerService implements VetoableChangeListener {
             case Constants.PROPERTY_NAME:
             case Constants.PROPERTY_DESCRIPTION:
             case Constants.PROPERTY_ENABLED:
+            case Constants.PROPERTY_COMMIT_ON_EXECUTE:
             case Constants.PROPERTY_SCRIPT:
                 if (!com.updateTaskProperties(theTask.getId(), evt.getPropertyName(), (String)evt.getNewValue())) {
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

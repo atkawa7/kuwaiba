@@ -1156,13 +1156,14 @@ public class CommunicationsStub {
      * @param name Task name
      * @param description Task description
      * @param enabled Is the task enabled?
+     * @param commitOnExecute Should the changes made in this task (if any) be committed to the database after its execution?
      * @param script Task script
      * @param parameters Task parameters as pairs param name/param value
      * @param schedule Schedule descriptor
      * @param notificationType Notification type descriptor
      * @return A local representation of the task if the operation was successful, null otherwise
      */
-    public LocalTask createTask(String name, String description, boolean enabled, 
+    public LocalTask createTask(String name, String description, boolean enabled, boolean commitOnExecute,
             String script, HashMap<String, String> parameters, LocalTaskScheduleDescriptor schedule, LocalTaskNotificationDescriptor notificationType) {
         try {
             TaskScheduleDescriptor atsd = null;
@@ -1191,10 +1192,10 @@ public class CommunicationsStub {
                 }
             }
                 
-            long taskId = service.createTask(name, description, enabled, script, 
+            long taskId = service.createTask(name, description, enabled, commitOnExecute, script, 
                    remoteParameters, atsd, tnd, session.getSessionId());
             
-            return new LocalTask(taskId, name, description, enabled, script, 
+            return new LocalTask(taskId, name, description, enabled, commitOnExecute, script, 
                     null, schedule, notificationType, new ArrayList<LocalUserObjectLight>());
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -1329,7 +1330,7 @@ public class CommunicationsStub {
                                         user.getFirstName(), user.getLastName(), user.isEnabled(), user.getType()));
                 
                 localTasks.add(new LocalTask(remoteTask.getId(), remoteTask.getName(), 
-                        remoteTask.getDescription(), remoteTask.isEnabled(), remoteTask.getScript(), 
+                        remoteTask.getDescription(), remoteTask.isEnabled(), remoteTask.isCommitOnExecute(), remoteTask.getScript(), 
                         remoteParameters, ltsd, tnd, users));
             }
             
@@ -2621,6 +2622,8 @@ public class CommunicationsStub {
 
     /**
      * Creates a new group
+     * @param groupName Group's name
+     * @param groupDescription Group's description
      * @return The newly created group or null in case of error
      */
     public LocalUserGroupObject createGroup(String groupName, String groupDescription){

@@ -55,7 +55,7 @@ class CreateTaskAction extends GenericInventoryAction {
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             LocalTask newTask = com.createTask(((JTextField)pnlGeneralInfo.getComponent("txtName")).getText(), 
                     ((JTextField)pnlGeneralInfo.getComponent("txtDescription")).getText(), 
-                    true, "", null, null, null);
+                    true, false, "", null, null, null);
             
             if (newTask == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

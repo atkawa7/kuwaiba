@@ -86,7 +86,7 @@ public class TaskNode extends AbstractNode {
     @Override
     public String getDisplayName() {
         LocalTask task = getLookup().lookup (LocalTask.class);
-        return task.getName() == null ? "<No Name>" : task.getName();
+        return task.getName() == null || task.getName().isEmpty() ? "<No Name>" : task.getName();
     }
     
     public void resetPropertySheet() {
@@ -107,6 +107,9 @@ public class TaskNode extends AbstractNode {
             generalPropertySet.put(descriptionProperty);
             PropertySupport.Reflection<Boolean> enabledProperty = new PropertySupport.Reflection(task, boolean.class, Constants.PROPERTY_ENABLED);
             generalPropertySet.put(enabledProperty);
+            PropertySupport.Reflection<Boolean> commitOnExecuteProperty = new PropertySupport.Reflection(task, boolean.class, Constants.PROPERTY_COMMIT_ON_EXECUTE);
+            commitOnExecuteProperty.setShortDescription("Should this task commit the changes made after its execution (if any)?");
+            generalPropertySet.put(commitOnExecuteProperty);
             PropertySupport.Reflection<String> scriptProperty = new PropertySupport.Reflection(task, String.class, Constants.PROPERTY_SCRIPT);
             generalPropertySet.put(scriptProperty);
 

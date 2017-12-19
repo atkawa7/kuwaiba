@@ -41,9 +41,13 @@ public class LocalTask implements Comparable<LocalTask> {
      */
     private String description;
     /**
-     * Id this task enabled?
+     * Is this task enabled?
      */
     private boolean enabled;
+    /**
+     * Should the changes made in this task (if any) be committed after its execution?
+     */
+    private boolean commitOnExecute;
     /**
      * Task script
      */
@@ -69,13 +73,14 @@ public class LocalTask implements Comparable<LocalTask> {
      */
     private List<VetoableChangeListener> changeListeners;
 
-    public LocalTask(long id, String name, String description, boolean enabled, 
+    public LocalTask(long id, String name, String description, boolean enabled, boolean commitOnExecute,
             String script, HashMap<String, String> parameters, LocalTaskScheduleDescriptor schedule, 
             LocalTaskNotificationDescriptor notificationType, List<LocalUserObjectLight> users) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.enabled = enabled;
+        this.commitOnExecute = commitOnExecute;
         this.script = script;
         this.parameters = parameters;
         this.schedule = schedule;
@@ -111,6 +116,15 @@ public class LocalTask implements Comparable<LocalTask> {
     public boolean isEnabled() {
         return enabled;
     }
+
+    public boolean getCommitOnExecute() {
+        return commitOnExecute;
+    }
+
+    public void setCommitOnExecute(boolean commitOnExecute) {
+        this.commitOnExecute = commitOnExecute;
+    }
+    
 
     public void setEnabled(boolean enabled) {
         boolean oldEnabled = this.isEnabled();
