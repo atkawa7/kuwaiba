@@ -467,7 +467,8 @@ public class Util {
         return new Task(taskNode.getId(),
                                 (String)taskNode.getProperty(Constants.PROPERTY_NAME), 
                                 (String)taskNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
-                                (boolean)taskNode.getProperty(Constants.PROPERTY_ENABLED), 
+                                (boolean)taskNode.getProperty(Constants.PROPERTY_ENABLED),
+                                taskNode.hasProperty(Constants.PROPERTY_COMMIT_ON_EXECUTE) ? (boolean)taskNode.getProperty(Constants.PROPERTY_COMMIT_ON_EXECUTE) : false,
                                 taskNode.hasProperty(Constants.PROPERTY_SCRIPT) ? (String)taskNode.getProperty(Constants.PROPERTY_SCRIPT) : null, 
                                 parameters, schedule, notificationType, subscribedUsers);
         

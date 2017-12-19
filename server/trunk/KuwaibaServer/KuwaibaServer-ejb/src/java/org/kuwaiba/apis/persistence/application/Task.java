@@ -43,6 +43,10 @@ public final class Task {
      */
     private boolean enabled;
     /**
+     * Should this task commit the changes (if any) after its execution?
+     */
+    private boolean commitOnExecute;
+    /**
      * Task script
      */
     private String script;
@@ -63,7 +67,7 @@ public final class Task {
      */
     private List<UserProfileLight> users;
 
-    public Task(long id, String name, String description, boolean enabled, String script, 
+    public Task(long id, String name, String description, boolean enabled, boolean commitOnExecute, String script, 
             List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType, List<UserProfileLight> users) {
         this.id = id;
         this.name = name;
@@ -71,6 +75,7 @@ public final class Task {
         this.enabled = enabled;
         this.script = script;
         this.parameters = parameters;
+        this.commitOnExecute = commitOnExecute;
         this.schedule = schedule;
         this.notificationType = notificationType;
         this.users = users;
@@ -147,6 +152,13 @@ public final class Task {
     public void setUsers(List<UserProfileLight> users) {
         this.users = users;
     }
-    
+
+    public boolean commitOnExecute() {
+        return commitOnExecute;
+    }
+
+    public void setCommitOnExecute(boolean commitOnExecute) {
+        this.commitOnExecute = commitOnExecute;
+    }
 }    
     

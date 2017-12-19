@@ -2901,14 +2901,14 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
 
     @Override
-    public long createTask(String name, String description, boolean enabled, String script, 
+    public long createTask(String name, String description, boolean enabled, boolean commitOnExecute, String script, 
             List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType, 
             String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("createTask", ipAddress, sessionId);
-            long res = aem.createTask(name, description, enabled, script, parameters, schedule, notificationType);
+            long res = aem.createTask(name, description, enabled, commitOnExecute, script, parameters, schedule, notificationType);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
                 String.format("Created task %s with id %s", name, res));
@@ -2995,8 +2995,9 @@ public class WebserviceBean implements WebserviceBeanRemote {
             for (UserProfileLight aUser : theTask.getUsers())
                 users.add(new UserInfoLight(aUser));
             
-            return new RemoteTask(theTask.getId(), theTask.getName(), theTask.getDescription(), theTask.isEnabled(), theTask.getScript(),
-                                    theTask.getParameters(), theTask.getSchedule(), theTask.getNotificationType(), users);
+            return new RemoteTask(theTask.getId(), theTask.getName(), theTask.getDescription(), theTask.isEnabled(), 
+                                    theTask.commitOnExecute(), theTask.getScript(), theTask.getParameters(), theTask.getSchedule(), 
+                                    theTask.getNotificationType(), users);
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -3030,7 +3031,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 List<UserInfoLight> users = new ArrayList<>();
                 for (UserProfileLight aUser : task.getUsers())
                     users.add(new UserInfoLight(aUser));
-                remoteTasks.add(new RemoteTask(task.getId(), task.getName(), task.getDescription(), task.isEnabled(), task.getScript(),
+                remoteTasks.add(new RemoteTask(task.getId(), task.getName(), task.getDescription(), task.isEnabled(), task.commitOnExecute(), task.getScript(),
                                     task.getParameters(), task.getSchedule(), task.getNotificationType(), users));
             }
             
@@ -3055,7 +3056,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
                 List<UserInfoLight> users = new ArrayList<>();
                 for (UserProfileLight aUser : task.getUsers())
                     users.add(new UserInfoLight(aUser));
-                remoteTasks.add(new RemoteTask(task.getId(), task.getName(), task.getDescription(), task.isEnabled(), task.getScript(),
+                remoteTasks.add(new RemoteTask(task.getId(), task.getName(), task.getDescription(), task.isEnabled(), task.commitOnExecute(), task.getScript(),
                                     task.getParameters(), task.getSchedule(), task.getNotificationType(), users));
             }
             return remoteTasks;

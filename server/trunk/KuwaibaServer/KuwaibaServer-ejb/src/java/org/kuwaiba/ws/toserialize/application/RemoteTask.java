@@ -45,6 +45,10 @@ public final class RemoteTask implements Serializable {
      */
     private boolean enabled;
     /**
+     * Should this task commit the changes (if any) after its execution. Handle with care!
+     */
+    private boolean commitOnExecute;
+    /**
      * Task script
      */
     private String script;
@@ -68,7 +72,7 @@ public final class RemoteTask implements Serializable {
     //No-arg constructor required
     public RemoteTask() {   }
 
-    public RemoteTask(long id, String name, String description, boolean enabled, 
+    public RemoteTask(long id, String name, String description, boolean enabled, boolean commitOnExecute,
             String script, List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType, List<UserInfoLight> users) {
         this.id = id;
         this.name = name;
@@ -151,6 +155,14 @@ public final class RemoteTask implements Serializable {
 
     public void setUsers(List<UserInfoLight> users) {
         this.users = users;
+    }
+
+    public boolean isCommitOnExecute() {
+        return commitOnExecute;
+    }
+
+    public void setCommitOnExecute(boolean commitOnExecute) {
+        this.commitOnExecute = commitOnExecute;
     }
 }    
     

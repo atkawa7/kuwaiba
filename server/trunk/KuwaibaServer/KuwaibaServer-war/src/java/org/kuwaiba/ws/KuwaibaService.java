@@ -1560,6 +1560,7 @@ public class KuwaibaService {
      * @param name Task name
      * @param description Task description
      * @param enabled Is the task enabled?
+     * @param commitOnExecute Should this task commit the changes (if any) after its execution? <b>Handle with extreme care, you are basically running arbitrary code and affecting the db</b>
      * @param script The script to be executed
      * @param parameters The parameters for the script
      * @param schedule When the task should be executed
@@ -1567,19 +1568,21 @@ public class KuwaibaService {
      * @param sessionId The session token
      * @return The id of the newly created task
      * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the task is disabled
      *                             If something goes wrong
      */
     @WebMethod(operationName = "createTask")
     public long createTask(@WebParam(name = "name")String name,
             @WebParam(name = "description")String description,
             @WebParam(name = "enabled")boolean enabled,
+            @WebParam(name = "commitOnExecute")boolean commitOnExecute,
             @WebParam(name = "script")String script,
             @WebParam(name = "parameters")List<StringPair> parameters,
             @WebParam(name = "schedule")TaskScheduleDescriptor schedule,
             @WebParam(name = "notificationType")TaskNotificationDescriptor notificationType,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
-            return wsBean.createTask(name, description, enabled, script, parameters, 
+            return wsBean.createTask(name, description, enabled, commitOnExecute, script, parameters, 
                     schedule, notificationType, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)

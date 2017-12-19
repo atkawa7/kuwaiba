@@ -821,13 +821,14 @@ public interface ApplicationEntityManager {
      * @param name Task name
      * @param description Task description
      * @param enabled Is the task enabled?
+     * @param commitOnExecute Should this task commit the changes made (if any) after executing it?
      * @param script The script to be executed
      * @param parameters The parameters for the script
      * @param schedule When the task should be executed
      * @param notificationType How the result of the task should be notified to the associated users 
      * @return The id of the newly created task
      */
-    public long createTask(String name, String description, boolean enabled, String script, List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType);
+    public long createTask(String name, String description, boolean enabled, boolean commitOnExecute, String script, List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType);
     /**
      * Updates any of these properties from a task: name, description, enabled and script
      * @param taskId Task id

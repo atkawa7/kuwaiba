@@ -213,6 +213,7 @@ public class Constants {
     public static final String PROPERTY_FIRST_NAME = "firstName"; //NOI18N
     public static final String PROPERTY_LAST_NAME = "lastName"; //NOI18N
     public static final String PROPERTY_ENABLED = "enabled"; //NOI18N
+    public static final String PROPERTY_COMMIT_ON_EXECUTE = "commitOnExecute"; //NOI18N
     public static final String PROPERTY_SCRIPT = "script"; //NOI18N
     public static final String PROPERTY_EXECUTION_TYPE = "executionTime"; //NOI18N
     public static final String PROPERTY_EVERY_X_MINUTES = "everyXMinutes"; //NOI18N

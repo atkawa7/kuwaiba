@@ -2184,11 +2184,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public long createTask(String name, String description, boolean enabled, String script, List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType) {
+    public long createTask(String name, String description, boolean enabled, boolean commitOnExecute, String script, 
+            List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType) {
         try(Transaction tx = graphDb.beginTx()) {
             Node taskNode = graphDb.createNode();
             taskNode.setProperty(Constants.PROPERTY_NAME, name == null ? "" : name);
             taskNode.setProperty(Constants.PROPERTY_DESCRIPTION, description == null ? "" : description);
+            taskNode.setProperty(Constants.PROPERTY_COMMIT_ON_EXECUTE, commitOnExecute);
             taskNode.setProperty(Constants.PROPERTY_ENABLED, enabled);
             
             if (script != null)
@@ -2221,33 +2223,27 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node taskNode = taskIndex.get(Constants.PROPERTY_ID, taskId).getSingle();
             if (taskNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", taskId));
-            String affectedProperties = "", oldValues = "", newValues = "";
-
+            String affectedProperty, oldValue, newValue;
+            affectedProperty = propertyName;
+            oldValue = (String) (taskNode.hasProperty(propertyName) ? taskNode.getProperty(propertyName) : " ");
+            
             switch (propertyName) {
                 case Constants.PROPERTY_NAME:
                 case Constants.PROPERTY_DESCRIPTION:
                 case Constants.PROPERTY_SCRIPT:
-                    oldValues += " " + (taskNode.hasProperty(propertyName) ? taskNode.getProperty(propertyName) : " ");
-                    
                     taskNode.setProperty(propertyName, propertyValue);
-                    
-                    affectedProperties += " " + Constants.PROPERTY_SCRIPT;
-                    newValues += " " + propertyValue;
                     break;
                 case Constants.PROPERTY_ENABLED:
-                    oldValues += " " + (taskNode.hasProperty(propertyName) ? taskNode.getProperty(propertyName) : " ");
-                    
+                case Constants.PROPERTY_COMMIT_ON_EXECUTE:
                     taskNode.setProperty(propertyName, Boolean.valueOf(propertyValue));
-                    
-                    affectedProperties += " " + Constants.PROPERTY_ENABLED;
-                    newValues += " " + propertyValue;
                     break;
                 default:
                     throw new InvalidArgumentException(String.format("%s is not a valid task property", propertyName));
             }
             String taskName = taskNode.hasProperty(Constants.PROPERTY_NAME) ? (String) taskNode.getProperty(Constants.PROPERTY_NAME) : " ";
+            newValue = propertyValue;
             tx.success();
-            return new ChangeDescriptor(affectedProperties, oldValues, newValues, 
+            return new ChangeDescriptor(affectedProperty, oldValue, newValue, 
                 String.format("Updated properties in Task with name %s and id %s ", taskName, taskId));
         }
     }
@@ -2476,7 +2472,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public TaskResult executeTask(long taskId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
-        String script = null;
+        
         Binding environmentParameters = new Binding();
         
         try (Transaction tx = graphDb.beginTx()) {
@@ -2486,7 +2482,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (!taskNode.hasProperty(Constants.PROPERTY_SCRIPT))
                 throw new InvalidArgumentException(String.format("The task with id %s does not have a script", taskId));
             
-            script = (String)taskNode.getProperty(Constants.PROPERTY_SCRIPT);
+            if (!(boolean)taskNode.getProperty(Constants.PROPERTY_ENABLED))
+                throw new InvalidArgumentException("This task can not be executed because it's disabled");
+            
+            String script = (String)taskNode.getProperty(Constants.PROPERTY_SCRIPT);
             
             Iterable<String> allProperties = taskNode.getPropertyKeys();
             HashMap<String, String> scriptParameters = new HashMap<>();
@@ -2512,6 +2511,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             else if (!TaskResult.class.isInstance(theResult))
                 throw new InvalidArgumentException("The script does not return a TaskResult object. Please check the return value.");
            
+            //Commit only if it's configured to do so 
+            if (taskNode.hasProperty(Constants.PROPERTY_COMMIT_ON_EXECUTE) && (boolean)taskNode.getProperty(Constants.PROPERTY_COMMIT_ON_EXECUTE))
+                tx.success();
+            else
+                tx.failure();
+            
             return (TaskResult)theResult;
 
         } catch(CompilationFailedException | InvalidArgumentException ex) {
