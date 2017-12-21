@@ -146,7 +146,7 @@ public class EndToEndViewTopComponent extends TopComponent implements
         if (saved)
             return getDisplayName();
         else
-            return String.format("<html><b>%s [" + I18N.gm("modified") + "]</b></html>", getDisplayName());
+            return String.format(I18N.gm("modified"), getDisplayName());
     }
 
     private void saveView() {   
