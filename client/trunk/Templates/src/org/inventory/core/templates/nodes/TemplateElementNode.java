@@ -75,13 +75,13 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
     public Action[] getActions(boolean context) {
         return new Action[] {TemplateActionsFactory.getCreateTemplateElementAction(), 
                              TemplateActionsFactory.getCreateTemplateElementSpecialAction(),
-                             null, 
                              TemplateActionsFactory.getEditLayoutAction(),
-                             null, 
-                             TemplateActionsFactory.getDeleteTemplateElementAction(),
                              null,
                              CopyAction.get(CopyAction.class),
-                             PasteAction.get(PasteAction.class)};
+                             PasteAction.get(PasteAction.class),
+                             null, 
+                             TemplateActionsFactory.getDeleteTemplateElementAction() };
+                             
     }
     
     @Override

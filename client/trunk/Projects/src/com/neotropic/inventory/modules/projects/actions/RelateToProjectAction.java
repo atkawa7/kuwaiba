@@ -46,7 +46,7 @@ public class RelateToProjectAction extends GenericObjectNodeAction implements Ge
     public void actionPerformed(ActionEvent e) {
         List<LocalObjectLight> projects = ProjectsModuleService.getAllProjects();
         if (projects == null) {
-            JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to run the Projects module", I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to use the Projects module", I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
         } else {
             if (projects.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "There are no projects created. Create at least one using the Projects Module", 

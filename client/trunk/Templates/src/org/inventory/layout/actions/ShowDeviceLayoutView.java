@@ -53,7 +53,7 @@ public class ShowDeviceLayoutView extends GenericObjectNodeAction implements Gen
     public void actionPerformed(ActionEvent e) {        
         LocalClassMetadata equipmentModelClass = CommunicationsStub.getInstance().getMetaForClass(Constants.CLASS_EQUIPMENTMODEL, true); //NOI18N
         if (equipmentModelClass == null) {
-            JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to run the Show Device Layout action", I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to use the Device Layout feature", I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             return;
         }
         

@@ -745,21 +745,30 @@ public class SDHConnectionWizard {
                     int position = aContainerDefinition.getPositions().get(0).getPosition(); //This container definition has always only one position: The one used in this TransportLink
                     availablePositions[position - 1] = new AvailableContainerLinkPosition(position, aContainerDefinition.getContainer());
                     //A container might occupy more than one slot, if it's a concatenated circuit. Now, we will fill the adjacent which are also being used
-                        int numberOfAdjacentPositions ;
-                        switch (aContainerDefinition.getContainer().getClassName()) {
-                            case SDHModuleService.CLASS_VC12:
+                    int numberOfAdjacentPositions ;
+                    String[] containerClassNameTokens = aContainerDefinition.getContainer().getClassName().split("-");
+                    //Available positions are always given in terms of VC12s. A single VC3 = 21 VC12s
+                    switch (containerClassNameTokens[0]) {
+                        case SDHModuleService.CLASS_VC12:
+                            if (containerClassNameTokens.length == 1)
                                 numberOfAdjacentPositions = 0;
-                                break;
-                            case SDHModuleService.CLASS_VC3:
+                            else
+                                numberOfAdjacentPositions = Integer.valueOf(containerClassNameTokens[1]) - 1;
+                            break;
+                        case SDHModuleService.CLASS_VC3:
+                            if (containerClassNameTokens.length == 1)
                                 numberOfAdjacentPositions = 20;
-                                break;
-                            default:
-                                JOptionPane.showMessageDialog(null, "The ContainerLink class name does not allow to calculate the total number of concatenated positions", "Error", JOptionPane.ERROR_MESSAGE);
-                                return new AvailableContainerLinkPosition[0];
-                        }
+                            else
+                                numberOfAdjacentPositions = 21 * Integer.valueOf(containerClassNameTokens[1]) - 1;
+                            break;
+                        default:
+                            JOptionPane.showMessageDialog(null, String.format("The total number of positions used by %s can not be determined using its class name", 
+                                    aContainerDefinition.getContainer()), "Error", JOptionPane.ERROR_MESSAGE);
+                            return new AvailableContainerLinkPosition[0];
+                    }
                         
-                        for (int j = position; j < position + numberOfAdjacentPositions; j++)
-                            availablePositions[j] = new AvailableContainerLinkPosition(j + 1, aContainerDefinition.getContainer());                        
+                    for (int j = position; j < position + numberOfAdjacentPositions; j++)
+                        availablePositions[j] = new AvailableContainerLinkPosition(j + 1, aContainerDefinition.getContainer());                        
                 }
                 
                 //Then we fill the rest (if any) with free slots
@@ -769,7 +778,7 @@ public class SDHConnectionWizard {
                 }
                 return availablePositions;
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(null, "The ContainerLink class name does not allow to calculate the total number of positions", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "A malformed container link class name was found. Please make sure that you are using the right naming format", "Error", JOptionPane.ERROR_MESSAGE);
                 return new AvailableContainerLinkPosition[0];
             }
         }

@@ -59,7 +59,7 @@ public class EditLayoutAction extends GenericInventoryAction {
     public void actionPerformed(ActionEvent e) {
         LocalClassMetadata equipmentModelClass = CommunicationsStub.getInstance().getMetaForClass(Constants.CLASS_EQUIPMENTMODEL, true);
         if (equipmentModelClass == null) {
-            JOptionPane.showMessageDialog(null, String.format("%s: %s", I18N.gm("database_seems_outdated"), I18N.gm("patch_equipment_model_layout")), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, I18N.gm("patch_equipment_model_layout"), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             return;
         }
         
@@ -107,5 +107,4 @@ public class EditLayoutAction extends GenericInventoryAction {
         }
         topComponent.requestActive();
     }
-    
 }
