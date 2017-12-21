@@ -89,7 +89,7 @@ public class RackViewConnectionRouter implements Router {
         Point srcEquipmentPoint = getSceneLocation(sourceEquipmentWidget);
         Point trgEquipmentPoint = getSceneLocation(targetEquipmentWidget);
                 
-        List<Point> points = new ArrayList();
+        List<Point> points = new ArrayList<>();
         
         if (srcEquipmentPoint != null && trgEquipmentPoint != null) {
             Rectangle srcEquipmentBounds = sourceEquipmentWidget.getBounds();

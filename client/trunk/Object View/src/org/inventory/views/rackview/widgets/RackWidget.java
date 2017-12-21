@@ -62,7 +62,7 @@ public class RackWidget extends SelectableRackViewWidget {
     private LayerWidget equipmentsLayer;
     private LayerWidget edgeLayer;
     
-    private List<LocalObject> localEquipments = new ArrayList();
+    private List<LocalObject> localEquipments = new ArrayList<>();
 
     public RackWidget(RackViewScene scene, LocalObjectLight businessObject, int rackUnitWidth, int rackUnitHeight, int rackUnitBottomMargin) {
         super(scene, businessObject);
@@ -70,8 +70,8 @@ public class RackWidget extends SelectableRackViewWidget {
         this.rackUnitHeight = rackUnitHeight;
         this.spacingRackUnits = rackUnitBottomMargin;
         
-        mapRackUnits = new HashMap();
-        localEquipments = new ArrayList();       
+        mapRackUnits = new HashMap<>();
+        localEquipments = new ArrayList<>();       
         buildRack();
     }
     
@@ -159,7 +159,7 @@ public class RackWidget extends SelectableRackViewWidget {
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return;
             }
-            List<LocalObject> equipments = new ArrayList();
+            List<LocalObject> equipments = new ArrayList<>();
             for (LocalObjectLight equipmentLight : equipmentsLight) {
                 LocalObject equipment = CommunicationsStub.getInstance().getObjectInfo(equipmentLight.getClassName(), equipmentLight.getOid());
                 
@@ -335,7 +335,7 @@ public class RackWidget extends SelectableRackViewWidget {
         int equipmentRackUnits = (int) equipment.getAttribute(Constants.PROPERTY_RACK_UNITS);
         int equipmentPosition = (int) equipment.getAttribute(Constants.PROPERTY_POSITION);
         
-        List<Integer> currentRackUnits = new ArrayList();
+        List<Integer> currentRackUnits = new ArrayList<>();
         for (int i = 0; i < equipmentRackUnits; i += 1)
             currentRackUnits.add(equipmentPosition + i);
                 

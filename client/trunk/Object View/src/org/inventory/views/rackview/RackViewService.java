@@ -194,12 +194,12 @@ public class RackViewService {
     }
     
     public List<List<LocalObjectLight>> getRackTable() {
-        List<LocalObjectLight> ports = new ArrayList();
+        List<LocalObjectLight> ports = new ArrayList<>();
         for (LocalObjectLight node : scene.getNodes()) {
             if (scene.findWidget(node) instanceof PortWidget)
                 ports.add(node);
         }        
-        List<List<LocalObjectLight>> result = new ArrayList();
+        List<List<LocalObjectLight>> result = new ArrayList<>();
                 
         while (!ports.isEmpty()) {
             LocalObjectLight port = ports.get(0);
@@ -226,7 +226,7 @@ public class RackViewService {
                 LocalObjectLight sourcePortObj = sourcePort.getLookup().lookup(LocalObjectLight.class);
                 LocalObjectLight targetPortObj = targetPort.getLookup().lookup(LocalObjectLight.class);
                 
-                List<LocalObjectLight> row = new ArrayList();
+                List<LocalObjectLight> row = new ArrayList<>();
                 row.add(sourceDevice.getLookup().lookup(LocalObject.class));
                 row.add(sourcePortObj);
                 row.add(targetDevice.getLookup().lookup(LocalObject.class));
