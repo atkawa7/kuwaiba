@@ -328,7 +328,7 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         if (value)
             this.setHtmlDisplayName(this.getDisplayName());
         else
-            this.setHtmlDisplayName(String.format("<html><b>%s [" + I18N.gm("modified") + "]</b></html>", getDisplayName()));
+            this.setHtmlDisplayName(String.format(I18N.gm("modified"), getDisplayName()));
     }
     
     public boolean checkForUnsavedView() {
