@@ -309,7 +309,7 @@ public class SDHModule implements GenericCommercialModule {
             attributesToBeSet.put(Constants.PROPERTY_NAME, defaultName == null ? "" : defaultName);
             
             //All tributary links must be delivered using a container link
-            String containerLinkType = linkType.replace("TributaryLink", ""); //The name of the correponding container link is the same as the tributary link without the suffix "TributaryLink"
+            String containerLinkType = linkType.replace("TributaryLink", ""); //The name of the corresponding container link is the same as the tributary link without the suffix "TributaryLink"
             newContainerLinkId = bem.createSpecialObject(containerLinkType, null, -1, attributesToBeSet, -1);
             
             //The new tributary link
