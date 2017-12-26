@@ -196,7 +196,10 @@ public class SyncActionsFrame extends JFrame {
             btnExecute.setEnabled(false);
             pnlScrollMain.setBorder(alarmBorder);
             btnSkip.setText("Next");
-        } else {
+        }
+        if (finding.getType() == LocalSyncFinding.EVENT_DELETE)
+            pnlScrollMain.setBorder(alarmBorder);
+        else {
             btnExecute.setEnabled(true);
             pnlScrollMain.setBorder(normalBorder);
             btnSkip.setText("Skip");
