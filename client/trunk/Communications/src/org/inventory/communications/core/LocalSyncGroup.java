@@ -112,5 +112,5 @@ public class LocalSyncGroup implements Transferable, Comparable<LocalSyncGroup> 
             return this;
         else
             throw new UnsupportedFlavorException(flavor);
-    }
+    }    
 }
