@@ -190,11 +190,13 @@ public class SNMPDataProcessor {
      */
     public void readData() throws InvalidArgumentException {
         //we look for the Initial parent
-        if (allData.get("entPhysicalContainedIn").contains(INITAL_ID)) {
+        if (allData.get("entPhysicalContainedIn").contains(INITAL_ID))
             createTreeFromFile(INITAL_ID);
-        } else {
-            throw new InvalidArgumentException("No Chassis was found");
-        }
+        else 
+            findings.add(new SyncFinding(SyncFinding.EVENT_ERROR,
+                                            String.format("No Chassis was found in the SNMP sync"),
+                                            "no extra infromation"));
+        
         removeChildrenless();
         createMapOfClasses();
     }
@@ -246,17 +248,20 @@ public class SNMPDataProcessor {
             
             if (possibleChildrenToAdd != null) {
                 JsonArray children = Json.createArrayBuilder().build();
-                for (String possibleChild : possibleChildrenToAdd){
+                for (String possibleChildToAdd : possibleChildrenToAdd){
                     boolean isPossibleChild = false;
-                    for(ClassMetadataLight possibleClassName : actualPossibleChildren){
-                        if(possibleChild.equals(possibleClassName.getName()))
+                    for(ClassMetadataLight actualPossibleClassName : actualPossibleChildren){
+                        if(possibleChildToAdd.equals(actualPossibleClassName.getName())){
                             isPossibleChild = true;
-                            
-                        if(!isPossibleChild){    
-                            JsonObject jchild = Json.createObjectBuilder().add("child", possibleChild).build();
-                            children = jsonArrayToBuilder(children).add(jchild).build();    
+                            break;
                         }
+                    }        
+                    
+                    if(!isPossibleChild){    
+                        JsonObject jchild = Json.createObjectBuilder().add("child", possibleChildToAdd).build();
+                        children = jsonArrayToBuilder(children).add(jchild).build();    
                     }
+                    
                 }
                 if(!children.isEmpty())
                     jsonHierarchy = jsonObjectToBuilder(jsonHierarchy).add(parentClass, children).build();  
@@ -264,7 +269,7 @@ public class SNMPDataProcessor {
         }//end for
         jHierarchyFinding = jsonObjectToBuilder(jHierarchyFinding).add("hierarchy",jsonHierarchy).build();
         
-        if(jsonHierarchy.isEmpty()){
+        if(!jsonHierarchy.isEmpty()){
             jHierarchyFinding = jsonObjectToBuilder(jHierarchyFinding).add("hierarchy",jsonHierarchy).build();
 
             findings.add(new SyncFinding(SyncFinding.EVENT_NEW,
@@ -303,7 +308,7 @@ public class SNMPDataProcessor {
             
                 int i = allData.get("instance").indexOf(childId);
                 parentId = allData.get("entPhysicalContainedIn").get(i);
-                if (parentId.equals("1")) 
+                if (parentClassName.equals(className)) //if is the chassis 
                     parentId = Long.toString(id);
 
                 String objectName = allData.get("entPhysicalName").get(i);
@@ -313,52 +318,59 @@ public class SNMPDataProcessor {
                 //We parse the class Id from SNMP into kuwaiba's class name
                 String mappedClass = parseClass(allData.get("entPhysicalClass").get(i), objectName, allData.get("entPhysicalDescr").get(i));
                 HashMap<String, String> newAttributes = createNewAttributes(i);
+                if(mappedClass == null)
+                    findings.add(new SyncFinding(SyncFinding.EVENT_ERROR,
+                                String.format("The data your are trying to load has empty fields, the ClassName of the row with id: %s - %s "
+                                        + "could not be determined due to these empty fields, the -entPhysicalDescr- or the -entPhysicalName- maybe are empty,  please check the data you are trying to load", childId, newAttributes),
+                                null));
+                //it was impossible to parse the SNMP class into kuwaiba's class
+                else{
+                    //The chassis can be only updated
+                    if (className.contains(mappedClass)) {
+                        newAttributes.remove("name"); //the router name won't be changed
+                        HashMap<String, String> comparedAttributes = compareAttributes(bem.getObject(id).getAttributes(), newAttributes);
+                        if (!comparedAttributes.isEmpty()) {
+                            comparedAttributes.put("name", obj.getName());
+                            findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
+                                    String.format("The chassis has changes, attributes %s have changed, would you like to update it?", comparedAttributes),
+                                    createExtraInfoToUpdateAttributesInObject(Long.toString(id), mappedClass, comparedAttributes).toString()));
+                        }
+                    }//All except the Chassis
+                    else {
+                        JsonObject jsonNewObj = Json.createObjectBuilder()
+                                .add("type", "object")
+                                .add("childId", childId)
+                                .add("parentId", parentId)
+                                .add("parentName", parentName)
+                                .add("parentClassName", parentClassName)
+                                .add("className", mappedClass)
+                                .add("attributes", parseAttributesToJson(newAttributes))
+                                .build();
 
-                //The chassis can be only updated
-                if (className.contains(mappedClass)) {
-                    newAttributes.remove("name"); //the router name won't be changed
-                    HashMap<String, String> comparedAttributes = compareAttributes(bem.getObject(id).getAttributes(), newAttributes);
-                    if (!comparedAttributes.isEmpty()) {
-                        comparedAttributes.put("name", obj.getName());
-                        findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
-                                String.format("The chassis has changes, attributes %s have changed, would you like to update it?", comparedAttributes),
-                                createExtraInfoToUpdateAttributesInObject(Long.toString(id), mappedClass, comparedAttributes).toString()));
+                        if (mappedClass.contains("Port") && !objectName.contains("Power") && !mappedClass.contains("Power"))
+                            newPorts.add(jsonNewObj);
+
+                        //check if is already created
+                        isAlreadyCreated = isDeviceAlreadyCreated(jsonNewObj, newAttributes);
+                        if(!isAlreadyCreated)
+                            branch.add(jsonNewObj);
+
                     }
-                }//All except the Chassis
-                else {
-                    JsonObject jsonNewObj = Json.createObjectBuilder()
-                            .add("type", "object")
-                            .add("childId", childId)
-                            .add("parentId", parentId)
-                            .add("parentName", parentName)
-                            .add("parentClassName", parentClassName)
-                            .add("className", mappedClass)
-                            .add("attributes", parseAttributesToJson(newAttributes))
-                            .build();
+                    checkObjects(childId, objectName, mappedClass);
 
-                    if (mappedClass.contains("Port") && !objectName.contains("Power") && !mappedClass.contains("Power"))
-                        newPorts.add(jsonNewObj);
-                        
-                    //check if is already created
-                    isAlreadyCreated = isDeviceAlreadyCreated(jsonNewObj, newAttributes);
-                    if(!isAlreadyCreated)
-                        branch.add(jsonNewObj);
-                    
-                }
-                checkObjects(childId, objectName, mappedClass);
-
-                //End of a branch
-                if (!isAlreadyCreated && ((i == childrenIds.size() - 1 && mapOfFile.get(childId) == null) || mappedClass.contains("Port"))) {
-                    //The is first time is tryng to sync from SNMP
-                    if (!isBranchAlreadyCreated(branch)) {
-                        //Loaded from snmp first time
-                        findings.add(new SyncFinding(SyncFinding.EVENT_NEW,
-                                "A new branch was found. Do you want to create the structure for this branch?",
-                                listToJson(branch, "branch").toString()));
+                    //End of a branch
+                    if (!isAlreadyCreated && ((i == childrenIds.size() - 1 && mapOfFile.get(childId) == null) || mappedClass.contains("Port"))) {
+                        //The is first time is tryng to sync from SNMP
+                        if (!isBranchAlreadyCreated(branch)) {
+                            //Loaded from snmp first time
+                            findings.add(new SyncFinding(SyncFinding.EVENT_NEW,
+                                    "A new branch was found. Do you want to create the structure for this branch?",
+                                    listToJson(branch, "branch").toString()));
+                        }
+                        branch = new ArrayList<>();
                     }
-                    branch = new ArrayList<>();
-                }
-            }//end of each
+                }//end of each
+            }
         }
     }
 
@@ -379,7 +391,6 @@ public class SNMPDataProcessor {
             throws InvalidArgumentException, MetadataObjectNotFoundException,
             ObjectNotFoundException {
         int numberOfMatch = 0;
-        
         for (JsonObject newObj : branch) {
             boolean hasSerialNumber = false;
             String objClassName = newObj.getString("className");
@@ -397,22 +408,31 @@ public class SNMPDataProcessor {
                     List<RemoteBusinessObjectLight> oldBranch = oldObjectStructure.get(i);
 
                     for (RemoteBusinessObjectLight oldObj : oldBranch) {
+                        
                         RemoteBusinessObjectLight oldParent = bem.getParent(oldObj.getClassName(), oldObj.getId());
                         RemoteBusinessObject completeObj = bem.getObject(oldObj.getId());
                         HashMap<String, List<String>> attributes = completeObj.getAttributes();
+                        String oldSerialNumber = "";
+                        if(attributes.get("serialNumber") != null)
+                            oldSerialNumber = attributes.get("serialNumber").get(0);
                         HashMap<String, String> changes = compareAttributes(completeObj.getAttributes(), objAttributes);
                         if (oldObj.getName().equals(newObjName) && oldObj.getClassName().equals(objClassName)) {
                             //has the same parent
+                            if(objParentClassName.equals(className)){
+                                objParentName = oldParent.getName();
+                                numberOfMatch++;
+                            }
                             if (oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName)) {
+                                
                                 if (hasSerialNumber) {
-                                    if (!attributes.get("serialNumber").get(0).equals(serialNumber)) { //&& attributes.get("isLoadFromRegistry").get(0).equals("true")){
+                                    if (oldSerialNumber.equals(serialNumber)) {
                                         if(!changes.isEmpty()){
                                             newObj = jsonObjectToBuilder(newObj).add("deviceId", Long.toString(oldObj.getId())).build();
                                             findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
                                                     String.format("Would you like to overwrite the attributes values in the object %s, with id: %s ", oldObj.toString(), oldObj.getId()),
                                                     newObj.toString()));
                                         }
-                                        
+
                                     }//end
                                 }// has serial
                                 else{
@@ -422,26 +442,17 @@ public class SNMPDataProcessor {
                                                 String.format("Would you like to overwrite the attributes values in the object %s, with id: %s ", oldObj.toString(), oldObj.getId()),
                                                 newObj.toString()));
                                     }
-                                    
                                 }
                             }//end same parent
-                            else {
-                                if (hasSerialNumber) {
-                                    if (!attributes.get("serialNumber").get(0).equals(serialNumber)) { //&& attributes.get("isLoadFromRegistry").get(0).equals("true")){
-                                        newObj = jsonObjectToBuilder(newObj).add("deviceId", Long.toString(oldObj.getId())).build();
-                                        RemoteBusinessObjectLight newParent = bem.getParent(completeObj.getClassName(), completeObj.getId());
-                                        findings.add(new SyncFinding(SyncFinding.EVENT_DELETE,
-                                            String.format("It seems that the object %s, with id: %s  has been moved, "
-                                                    + "according to the the SNMP source the parent is %s, but its parent in Kuwaiba is %s", oldObj.toString(), oldObj.getId(), objParentName, newParent.toString()),
-                                            newObj.toString()));
-                                    }//same serial
-                                }
-                            }//diferent parent
+                            else 
+                                break;
+                            
                             numberOfMatch++;
                         }//end name igual
                     }//end for old objs
                 }//end old branch
             }//end if not router
+            
             if(objClassName.contains("Port"))
                 numberOfMatch++;
         }
@@ -569,24 +580,24 @@ public class SNMPDataProcessor {
                         allData.get("entPhysicalDescr").get(w)
                 );
 
-                List<String> childrenParsed = mapOfClasses.get(patentClassParsed);
-                if (childrenParsed == null) {
-                    childrenParsed = new ArrayList<>();
-                }
+                if(patentClassParsed != null){
+                    List<String> childrenParsed = mapOfClasses.get(patentClassParsed);
+                    if (childrenParsed == null) 
+                        childrenParsed = new ArrayList<>();
 
-                for (String child : childrenId) {
-                    int indexOfChild = allData.get("instance").indexOf(child);
-                    String childParsedClass = parseClass(
-                            allData.get("entPhysicalClass").get(indexOfChild),
-                            allData.get("entPhysicalName").get(indexOfChild),
-                            allData.get("entPhysicalDescr").get(indexOfChild)
-                    );
+                    for (String child : childrenId) {
+                        int indexOfChild = allData.get("instance").indexOf(child);
+                        String childParsedClass = parseClass(
+                                allData.get("entPhysicalClass").get(indexOfChild),
+                                allData.get("entPhysicalName").get(indexOfChild),
+                                allData.get("entPhysicalDescr").get(indexOfChild)
+                        );
 
-                    if (!childrenParsed.contains(childParsedClass)) {
-                        childrenParsed.add(childParsedClass);
+                        if(childParsedClass != null && !childrenParsed.contains(childParsedClass))
+                            childrenParsed.add(childParsedClass);
                     }
+                    mapOfClasses.put(patentClassParsed, childrenParsed);
                 }
-                mapOfClasses.put(patentClassParsed, childrenParsed);
             }
         }
     }
@@ -600,15 +611,19 @@ public class SNMPDataProcessor {
      * @return equivalent kuwaiba's class
      */
     public String parseClass(String className_, String name, String descr) {
+        if (descr.isEmpty() || className_.isEmpty() ||  name.isEmpty())
+            return null;
+        
         int classId = Integer.valueOf(className_);
         if (classId == 3) //chassis
             return className;
-        
         else if (classId == 10) { //port
-            if (name.contains("usb") || descr.contains("usb")) 
+            if (name.toLowerCase().contains("usb") || descr.toLowerCase().contains("usb")) 
                 return "USBPort";
             
-            if (descr.contains("Ethernet")) 
+            if (name.toLowerCase().contains("mgmteth") || name.toLowerCase().contains("cpu") || name.toLowerCase().contains("control") ||
+                    (descr.toLowerCase().contains("ethernet") && !descr.toLowerCase().contains("gigabit")) ||
+                    descr.toLowerCase().contains("fast")) 
                 return "ElectricalPort";
             else 
                 return "OpticalPort";
@@ -622,7 +637,8 @@ public class SNMPDataProcessor {
         else if (classId == 6 && name.contains("Module")) 
             return "HybridBoard";
         else if (classId == 9) { //module
-            if (name.contains("transceiver") || descr.contains("transceiver")) 
+            if (name.contains("transceiver") || descr.contains("transceiver") || descr.toLowerCase().contains("sfp") 
+                    || descr.toLowerCase().contains("xfp") || descr.toLowerCase().contains("cpak") || descr.toLowerCase().equals("ge t")) 
                 return "Transceiver";
             
             return "IPBoard";
@@ -798,6 +814,23 @@ public class SNMPDataProcessor {
         }
     }
 
+    public void deleteBranch(String space, RemoteBusinessObjectLight actualChildFirstLevel){
+        
+        try {
+            List<RemoteBusinessObjectLight> objectChildren = bem.getObjectChildren(actualChildFirstLevel.getClassName(), actualChildFirstLevel.getId(), 0);
+            if(!objectChildren.isEmpty()){
+                for (RemoteBusinessObjectLight objectChildren1 : objectChildren) {
+                    deleteBranch(space, objectChildren1);
+                }
+                space += " ";
+            }
+        } catch (MetadataObjectNotFoundException | ObjectNotFoundException ex) {
+            Logger.getLogger(SNMPDataProcessor.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    
+    }
+    
     public void checkDataToBeDeleted() {
         JsonObject json = Json.createObjectBuilder().add("type", "old_object_to_delete").build();
         for (RemoteBusinessObjectLight actualChildFirstLevel : actualFirstLevelChildren) {
@@ -811,7 +844,7 @@ public class SNMPDataProcessor {
                 
                 json = jsonObjectToBuilder(json).add("device", jdevice).build();
                 findings.add(new SyncFinding(SyncFinding.EVENT_DELETE,
-                            String.format("The %s - %s and all its children will be deleted, please be careful, if you are not sure select \"skip\"", 
+                            String.format("The %s - %s and all its children WILL BE DELETED, please OPEN The NavigationTree an double check before delete this object, if you are not sure select \"skip\"", 
                                     actualChildFirstLevel.toString(), Long.toString(actualChildFirstLevel.getId())),
                             json.toString()));
             }
@@ -868,10 +901,10 @@ public class SNMPDataProcessor {
         }
 
         for (JsonObject jnewPort : newPorts) {
-            jnewPort = jsonObjectToBuilder(jnewPort).add("type", "object_port_no_match").build();
+            jnewPort = jsonObjectToBuilder(jnewPort).add("type", "object_port_no_match_new").build();
 
             findings.add(new SyncFinding(SyncFinding.EVENT_NEW,
-                    String.format("There was no match for port: %s [%s]. Do you want to delete this port after the sync process?",
+                    String.format("There was no match for port: %s [%s]. Do you want to create this port after the sync process?",
                             jnewPort.getJsonObject("attributes").getString("name"), jnewPort.getString("className")),
                     jnewPort.toString()));
         }
@@ -1022,8 +1055,10 @@ public class SNMPDataProcessor {
                     if (oldPart1.equals(newPart1))
                         firstPart = true;
                     
-                    else if(newPart1.contains("tentigt"))
+                    else if(newPart1.contains("tentigt")) //TenGigE
                         newPart1 = newPart1.replace("tentigt", "tt");
+                    else if(newPart1.contains("tengige")) //TenGigE
+                        newPart1 = newPart1.replace("tengige", "te");
                     else if(newPart1.contains("gigabitethernet"))
                         newPart1 = newPart1.replace("gigabitethernet", "ge");
                     else if(newPart1.contains("mgmteth"))

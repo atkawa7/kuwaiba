@@ -217,4 +217,9 @@ public class ClassMetadataLight implements Serializable{
         hash = 59 * hash + Objects.hashCode(this.name);
         return hash;
     }
+    
+    @Override
+    public String toString(){
+        return getName();
+    }
 }
