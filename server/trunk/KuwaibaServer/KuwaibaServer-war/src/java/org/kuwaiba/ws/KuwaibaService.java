@@ -5351,6 +5351,7 @@ public class KuwaibaService {
      * @param sessionId The session token
      * @return A list of differences that require the authorization of a user to be reconciliated
      * @throws ServerSideException If the sync group could not be found or if
+     * @throws InterruptedException
      */
     @WebMethod(operationName = "launchSupervisedSynchronizationTask")
     public List<SyncFinding> launchSupervisedSynchronizationTask(@WebParam(name = "syncGroupId") long syncGroupId, 
@@ -5385,7 +5386,7 @@ public class KuwaibaService {
                 
             return (List<SyncFinding>)managedJob.getJobResult();
             
-        } catch(Exception e){
+        } catch(ServerSideException | RuntimeException e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
