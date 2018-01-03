@@ -19,6 +19,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -38,35 +39,35 @@ import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
 /**
- * Shows an editor to move a selected physical link into an existing wire container
+ * Shows an editor to selected physical link(s) and move them out of a wire container
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class MovePhysicalLinkToContainerFrame  extends JFrame {
+public class MovePhysicalLinkOutOfContainerFrame extends JFrame{
 
     private ExplorablePanel pnlexistingWireContainers;
     private BeanTreeView treeWireContainers;
     private JButton btnMoveLinks;
 
-    private LocalObjectLight selectedContainer;
-    private List<LocalObjectLight> linksToMove;
+    private List<LocalObjectLight> selectedLinks;
+    private LocalObjectLight containerParent;
     private final CommunicationsStub com = CommunicationsStub.getInstance();
     
-    public MovePhysicalLinkToContainerFrame(List<LocalObjectLight> linksToMove, List<LocalObjectLight> existintWireContainersList) {
-        this.linksToMove = linksToMove;
+    public MovePhysicalLinkOutOfContainerFrame(List<LocalObjectLight> existingPhysicalLinks, LocalObjectLight containerParent) {
+        this.containerParent = containerParent;
         
         setLayout(new BorderLayout());
         setTitle(I18N.gm("move_links_into_container"));
         setSize(450, 550);
         
-        JLabel lblInstructions = new JLabel(I18N.gm("instructions_to_move_links_into_conatiner"));
-        btnMoveLinks = new JButton(I18N.gm("move_links_into_container"));
+        JLabel lblInstructions = new JLabel(I18N.gm("instructions_to_move_links_out_of_conatiner"));
+        btnMoveLinks = new JButton(I18N.gm("move_links_out_of_container"));
         btnMoveLinks.setEnabled(false);
-        btnMoveLinks.addActionListener(new MovePhysicalLinkToContainerFrame.BtnMoveLinksActionListener());
+        btnMoveLinks.addActionListener(new MovePhysicalLinkOutOfContainerFrame.BtnMoveLinksActionListener());
    
         treeWireContainers = new BeanTreeView();
         pnlexistingWireContainers = new ExplorablePanel();
         pnlexistingWireContainers.getExplorerManager().setRootContext(new ActionlessSpecialOnlyContainersRootNode(
-                new ActionlessSpecialOnlyContainersRootNode.ActionlessSpecialOnlyContainersRootChildren(existintWireContainersList)));
+                new ActionlessSpecialOnlyContainersRootNode.ActionlessSpecialOnlyContainersRootChildren(existingPhysicalLinks)));
                 
         treeWireContainers.setRootVisible(false);
         
@@ -76,19 +77,23 @@ public class MovePhysicalLinkToContainerFrame  extends JFrame {
         
         add(btnMoveLinks, BorderLayout.SOUTH);
         init();
-    }
+    }    
     
     private void init() {
         pnlexistingWireContainers.getLookup().lookupResult(LocalObjectLight.class).addLookupListener(new LookupListener() {
 
             @Override
             public void resultChanged(LookupEvent ev) {
+                selectedLinks = new ArrayList<>();
                 if (((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().hasNext()){
-                   selectedContainer = ((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator().next();
+                   Iterator<? extends LocalObjectLight> iterator = ((Lookup.Result<LocalObjectLight>)ev.getSource()).allInstances().iterator();
+                    while (iterator.hasNext()) {
+                        selectedLinks.add(iterator.next());
+                    }
                    btnMoveLinks.setEnabled(true);
                 }
                 else
-                   selectedContainer = null;
+                   selectedLinks = null;
             }
         });
     }
@@ -99,22 +104,18 @@ public class MovePhysicalLinkToContainerFrame  extends JFrame {
         public void actionPerformed(ActionEvent e) {
             List<Refreshable> topComponents = new ArrayList();
             
-            for (LocalObjectLight link : linksToMove) {
-                LocalObjectLight parent = com.getParent(link.getClassName(), link.getOid());
-                TopComponent topComponent = WindowManager.getDefault().findTopComponent("ObjectViewTopComponent_" + parent.getOid());
-                
-                if (topComponent instanceof Refreshable)
-                    topComponents.add((Refreshable) topComponent);
-            }
+            TopComponent topComponent = WindowManager.getDefault().findTopComponent("ObjectViewTopComponent_" + containerParent.getOid());
+            if (topComponent instanceof Refreshable)
+                    topComponents.add((Refreshable) topComponent);    
             
-            if(com.moveSpecialObjects(selectedContainer.getClassName(),
-                    selectedContainer.getOid(), 
-                    linksToMove.toArray(new LocalObjectLight[linksToMove.size()]))) {
+            if(com.moveSpecialObjects(containerParent.getClassName(),
+                    containerParent.getOid(), 
+                    selectedLinks.toArray(new LocalObjectLight[selectedLinks.size()]))) {
                 
-                for (Refreshable topComponent : topComponents)
-                    topComponent.refresh();
+                for (Refreshable tc : topComponents)
+                    tc.refresh();
                 
-                JOptionPane.showMessageDialog(null, I18N.gm("links_moved_successfully"), I18N.gm("success"), JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "The link(s) was moved sucessfully", I18N.gm("success"), JOptionPane.INFORMATION_MESSAGE);
                 dispose();
             } else
                 JOptionPane.showMessageDialog(null, com.getError(), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);

@@ -34,10 +34,10 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service = GenericObjectNodeAction.class)
-public class MoveLinkToContainerAction  extends GenericObjectNodeAction{
+public class MoveLinksToContainerAction extends GenericObjectNodeAction{
 
-    public MoveLinkToContainerAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_MOVE_LINKS"));
+    public MoveLinksToContainerAction() {
+        putValue(NAME, I18N.gm("move_links_into_container"));
     }
     
     @Override
@@ -45,7 +45,7 @@ public class MoveLinkToContainerAction  extends GenericObjectNodeAction{
         
         for (LocalObjectLight object : selectedObjects) {
             if(!CommunicationsStub.getInstance().isSubclassOf(object.getClassName(), Constants.CLASS_GENERICPHYSICALLINK)){
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, "Please select only physical links");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, I18N.gm("select_only_physical_links"));
                 return;
             }
         }
