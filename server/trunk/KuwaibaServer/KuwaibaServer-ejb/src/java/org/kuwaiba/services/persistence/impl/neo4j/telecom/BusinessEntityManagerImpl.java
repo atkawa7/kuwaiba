@@ -1034,9 +1034,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         try(Transaction tx = graphDb.beginTx()) {
             Node newParentNode = getInstanceOfClass(targetClassName, targetOid);
             for (String myClass : objects.keySet()){
-                if (!mem.canBeSpecialChild(targetClassName, myClass))
+                //check if can be special child only if is not a physical connection, 
+                //this is to allow moving physical links in and out of the wire containers, without modifying the hierarchy containment
+                if(!mem.isSubClass(Constants.CLASS_PHYSICALCONNECTION, myClass)){
+                    if (!mem.canBeSpecialChild(targetClassName, myClass))
                     throw new OperationNotPermittedException(String.format("An instance of class %s can not be special child of an instance of class %s", myClass,targetClassName));
-
+                }
+                
                 Node instanceClassNode = classIndex.get(Constants.PROPERTY_NAME, myClass).getSingle();
                 if (instanceClassNode == null)
                     throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", myClass));

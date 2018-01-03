@@ -1281,10 +1281,24 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Array sizes do not match");
         try {
             aem.validateWebServiceCall("moveObjectsToPool", ipAddress, sessionId);
+            HashMap<String,List<Long>> temObjects = new HashMap<>();
+            for (int i = 0; i< objectClasses.length; i++){
+                List<Long> ids = temObjects.get(objectClasses[i]);
+                if (ids == null)
+                    ids = new ArrayList<>();
+                
+                ids.add(objectOids[i]);
+                temObjects.put(objectClasses[i], ids);
+            }
+
             HashMap<String,long[]> objects = new HashMap<>();
-            for (int i = 0; i< objectClasses.length;i++){
-                if (objects.get(objectClasses[i]) == null)
-                    objects.put(objectClasses[i], new long[]{objectOids[i]});
+            for(String className : temObjects.keySet()){
+                List<Long> ids = temObjects.get(className);
+                long[] ids_ = new long[ids.size()];
+                for (int i=0; i<ids.size(); i++) 
+                    ids_[i] = ids.get(i);
+                
+                objects.put(className, ids_);
             }
             bem.moveObjectsToPool(targetClass, targetOid, objects);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
@@ -1303,10 +1317,24 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Array sizes do not match");
         try {
             aem.validateWebServiceCall("moveObjects", ipAddress, sessionId);
+            HashMap<String,List<Long>> temObjects = new HashMap<>();
+            for (int i = 0; i< objectClasses.length; i++){
+                List<Long> ids = temObjects.get(objectClasses[i]);
+                if (ids == null)
+                    ids = new ArrayList<>();
+                
+                ids.add(objectOids[i]);
+                temObjects.put(objectClasses[i], ids);
+            }
+            
             HashMap<String,long[]> objects = new HashMap<>();
-            for (int i = 0; i< objectClasses.length;i++){
-                if (objects.get(objectClasses[i]) == null)
-                    objects.put(objectClasses[i], new long[]{objectOids[i]});
+            for(String className : temObjects.keySet()){
+                List<Long> ids = temObjects.get(className);
+                long[] ids_ = new long[ids.size()];
+                for (int i=0; i<ids.size(); i++) 
+                    ids_[i] = ids.get(i);
+                
+                objects.put(className, ids_);
             }
             bem.moveObjects(targetClass, targetOid, objects);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
@@ -1325,11 +1353,27 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException("Array sizes do not match");
         try {
             aem.validateWebServiceCall("moveSpecialObjects", ipAddress, sessionId);
-            HashMap<String,long[]> objects = new HashMap<>();
-            for (int i = 0; i< objectClasses.length;i++){
-                if (objects.get(objectClasses[i]) == null)
-                    objects.put(objectClasses[i], new long[]{objectOids[i]});
+            HashMap<String,List<Long>> temObjects = new HashMap<>();
+            
+            for (int i = 0; i< objectClasses.length; i++){
+                List<Long> ids = temObjects.get(objectClasses[i]);
+                if (ids == null)
+                    ids = new ArrayList<>();
+                
+                ids.add(objectOids[i]);
+                temObjects.put(objectClasses[i], ids);
             }
+            
+            HashMap<String,long[]> objects = new HashMap<>();
+            for(String className : temObjects.keySet()){
+                List<Long> ids = temObjects.get(className);
+                long[] ids_ = new long[ids.size()];
+                for (int i=0; i<ids.size(); i++) 
+                    ids_[i] = ids.get(i);
+                
+                objects.put(className, ids_);
+            }
+            
             bem.moveSpecialObjects(targetClass, targetOid, objects);
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                     ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
