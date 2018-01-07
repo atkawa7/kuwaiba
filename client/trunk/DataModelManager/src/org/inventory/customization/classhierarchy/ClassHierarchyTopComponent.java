@@ -69,10 +69,7 @@ import org.openide.util.NbBundle.Messages;
         persistenceType = TopComponent.PERSISTENCE_NEVER
 )
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
-@Messages({
-    "CTL_ClassHierarchyTopComponent=Class Hierarchy View",
-    "HINT_ClassHierarchyTopComponent=Update Class Hierarchy View"
-})
+
 public final class ClassHierarchyTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable, ActionListener {
     
     private ExplorerManager em;
@@ -82,8 +79,8 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
     public ClassHierarchyTopComponent() {
         initComponents();
         initComponentsCustom();
-        setName(Bundle.CTL_ClassHierarchyTopComponent());
-        setToolTipText(Bundle.HINT_ClassHierarchyTopComponent());
+        setName(I18N.gm("ClassHierarchy.module.name"));
+        setToolTipText(I18N.gm("ClassHierarchy.module.tooltiptext"));
     }
     
     private void initComponentsCustom() {
@@ -458,7 +455,7 @@ public final class ClassHierarchyTopComponent extends TopComponent implements Ex
             scene.userSelectionSuggested (Collections.singleton (selectedItem), true);
 
             //Updates the lookup so that other modules are aware of this selection
-            ((AbstractScene.SceneLookup)scene.getLookup()).updateLookup(scene.findWidget(selectedItem));
+            ((AbstractScene.SceneLookup)scene.getLookup()).updateLookup(scene.findWidget(selectedItem).getLookup());
         }
     }
 }
