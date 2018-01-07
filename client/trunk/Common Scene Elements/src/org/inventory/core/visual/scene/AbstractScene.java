@@ -23,6 +23,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Set;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
@@ -145,11 +147,23 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
             public void objectStateChanged(ObjectSceneEvent event, Object changedObject, ObjectState previousState, ObjectState newState) {}
             @Override
             public void selectionChanged(ObjectSceneEvent event, Set<Object> previousSelection, Set<Object> newSelection) {
-                if (newSelection.size() == 1) {
-                    Widget theWidget = findWidget(newSelection.iterator().next());
-                    lookup.updateLookup(theWidget);
+                if (newSelection.size() > 0){ 
+                    Widget[] widgetArray = new Widget[newSelection.size()];
+                    Iterator<Object> iterator = newSelection.iterator();
+                    int j = 0;
+                    while (iterator.hasNext()) {
+                        widgetArray[j] = findWidget(iterator.next());
+                        j++;
+                    }
+
+                    Lookup[] lookups = new Lookup[newSelection.size()];
+                    for (int i = 0; i < widgetArray.length; i++) 
+                        lookups[i] = widgetArray[i].getLookup();
+                    
+                    lookup.updateLookup(lookups);
                 }
             }
+            
             @Override
             public void highlightingChanged(ObjectSceneEvent event, Set<Object> previousHighlighting, Set<Object> newHighlighting) {}
             @Override
@@ -300,8 +314,8 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
      */
     public class SceneLookup extends ProxyLookup {
 
-        public final void updateLookup(Widget aWidget){
-            this.setLookups(aWidget.getLookup());
+        public final void updateLookup(Lookup... lookups){
+            this.setLookups(lookups);
         }
     }
 

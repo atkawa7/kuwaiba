@@ -59,6 +59,6 @@ public class CustomSelectProvider implements SelectProvider {
         }
         
         //Updates the lookup so that other modules are aware of this selection
-        ((AbstractScene.SceneLookup)scene.getLookup()).updateLookup(widget);
+        ((AbstractScene.SceneLookup)scene.getLookup()).updateLookup(widget.getLookup());
     }    
 }
