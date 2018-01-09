@@ -54,8 +54,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
     protected CreateAttributeAction createAttributeAction;
     protected DeleteAttributeAction deleteAttributeAction;
     protected Sheet sheet;
-    private final Image defaultIcon = Utils.createRectangleIcon(Utils.DEFAULT_CLASS_ICON_COLOR, 
-            Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT);
+    private Image defaultIcon;
 
     public ClassMetadataNode(LocalClassMetadataLight lcml) {
         super(new ClassMetadataChildren(), Lookups.singleton(lcml));
@@ -66,6 +65,8 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
         deleteAction = new DeleteClassAction(this);
         createAttributeAction = new CreateAttributeAction(this);
         deleteAttributeAction = new DeleteAttributeAction(this);
+        defaultIcon = Utils.createRectangleIcon(lcml.getColor(), 
+            Utils.DEFAULT_ICON_WIDTH, Utils.DEFAULT_ICON_HEIGHT); 
     }
     
     public LocalClassMetadataLight getClassMetadata() {

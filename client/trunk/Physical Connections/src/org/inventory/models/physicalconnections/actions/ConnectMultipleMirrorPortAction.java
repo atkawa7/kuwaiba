@@ -127,6 +127,11 @@ public class ConnectMultipleMirrorPortAction extends GenericObjectNodeAction {
 
     @Override
     public String[] appliesTo() {
-        return new String[] {Constants.CLASS_GENERICDISTRIBUTIONFRAME};
+        return new String[] { Constants.CLASS_GENERICDISTRIBUTIONFRAME };
+    }
+    
+    @Override
+    public int numberOfNodes() {
+        return 1;
     }
 }

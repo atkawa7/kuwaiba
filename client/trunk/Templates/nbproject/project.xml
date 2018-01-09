@@ -134,7 +134,7 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
-                <package>org.inventory.layout</package>
+                <package>org.inventory.core.templates.layouts</package>
             </public-packages>
         </data>
     </configuration>

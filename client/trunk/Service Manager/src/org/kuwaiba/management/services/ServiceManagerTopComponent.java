@@ -46,15 +46,15 @@ import org.openide.windows.WindowManager;
 autostore = false)
 @TopComponent.Description(
     preferredID = "ServiceManagerTopComponent",
-iconBase = "org/kuwaiba/management/services/res/icon.png",
-persistenceType = TopComponent.PERSISTENCE_ALWAYS)
+    iconBase = "org/kuwaiba/management/services/res/icon.png",
+    persistenceType = TopComponent.PERSISTENCE_ALWAYS)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "org.kuwaiba.management.services.ServiceManagerTopComponent")
 @ActionReferences(value = {@ActionReference(path = "Menu/Tools/Advanced", position = 1),
     @ActionReference(path = "Toolbars/10_Advanced", position = 1)})
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_ServiceManagerAction",
-preferredID = "ServiceManagerTopComponent")
+    preferredID = "ServiceManagerTopComponent")
 @Messages({
     "CTL_ServiceManagerAction=Service Manager",
     "CTL_ServiceManagerTopComponent=Service Manager",
@@ -73,7 +73,6 @@ public final class ServiceManagerTopComponent extends TopComponent
         initCustomComponents();
         setName(Bundle.CTL_ServiceManagerTopComponent());
         setToolTipText(Bundle.HINT_ServiceManagerTopComponent());
-        
         
         nu = Lookup.getDefault().lookup(NotificationUtil.class);
         sms = new ServiceManagerService(this);

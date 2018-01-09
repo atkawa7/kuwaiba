@@ -70,7 +70,12 @@ public class ShowRackViewAction extends GenericObjectNodeAction implements Gener
 
     @Override
     public String[] appliesTo() {
-        return new String[] {Constants.CLASS_RACK};
+        return new String[] { Constants.CLASS_RACK };
+    }
+    
+    @Override
+    public int numberOfNodes() {
+        return 1;
     }
     
 }

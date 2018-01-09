@@ -91,4 +91,9 @@ public final class ShowMoreInformationAction extends GenericObjectNodeAction {
             setBorder(null);
         }
     }
+    
+    @Override
+    public int numberOfNodes() {
+        return 1;
+    }
 }

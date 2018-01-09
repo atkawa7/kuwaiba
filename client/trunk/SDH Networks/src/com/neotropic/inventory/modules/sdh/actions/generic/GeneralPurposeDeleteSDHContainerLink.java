@@ -72,5 +72,10 @@ public class GeneralPurposeDeleteSDHContainerLink extends GenericObjectNodeActio
     public String[] appliesTo() {
         return new String[] {Constants.CLASS_GENERICSDHCONTAINERLINK};        
     }
+    
+    @Override
+    public int numberOfNodes() {
+        return 1;
+    }
 }
     

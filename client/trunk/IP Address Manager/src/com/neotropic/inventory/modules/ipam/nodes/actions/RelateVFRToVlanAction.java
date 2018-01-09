@@ -74,4 +74,9 @@ public class RelateVFRToVlanAction extends GenericObjectNodeAction implements Ge
     public String[] appliesTo() {
         return new String[] {Constants.CLASS_VRFINSTANCE, Constants.CLASS_BRIDGEDOMAININTERFACE};
     }
+    
+    @Override
+    public int numberOfNodes() {
+        return -1;
+    }
 }

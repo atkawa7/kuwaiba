@@ -81,4 +81,9 @@ public class EditConnectionsAction extends GenericObjectNodeAction {
     public String[] appliesTo() {
         return new String[] {Constants.CLASS_GENERICPHYSICALCONTAINER};
     }
+
+    @Override
+    public int numberOfNodes() {
+        return 1;
+    }
 }

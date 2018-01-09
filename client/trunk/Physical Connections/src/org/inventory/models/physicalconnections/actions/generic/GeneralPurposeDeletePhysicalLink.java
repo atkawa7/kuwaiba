@@ -98,4 +98,9 @@ public class GeneralPurposeDeletePhysicalLink extends GenericObjectNodeAction im
     public String[] appliesTo() {
         return new String[] {Constants.CLASS_GENERICPHYSICALLINK};
     }
+    
+    @Override
+    public int numberOfNodes() {
+        return 1;
+    }
 }

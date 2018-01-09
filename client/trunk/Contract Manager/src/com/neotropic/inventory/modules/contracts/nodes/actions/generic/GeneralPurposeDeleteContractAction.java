@@ -57,4 +57,9 @@ public class GeneralPurposeDeleteContractAction extends GenericObjectNodeAction 
     public String[] appliesTo() {
         return new String [] {Constants.CLASS_GENERICCONTRACT};
     }
+    
+    @Override
+    public int numberOfNodes() {
+        return 1;
+    }
 }

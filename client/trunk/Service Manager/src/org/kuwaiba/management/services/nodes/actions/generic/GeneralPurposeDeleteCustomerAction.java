@@ -62,6 +62,11 @@ public class GeneralPurposeDeleteCustomerAction extends GenericObjectNodeAction 
 
     @Override
     public String[] appliesTo() {
-        return new String[] {Constants.CLASS_GENERICCUSTOMER};
+        return new String[] { Constants.CLASS_GENERICCUSTOMER };
+    }
+    
+    @Override
+    public int numberOfNodes() {
+        return 1;
     }
 }

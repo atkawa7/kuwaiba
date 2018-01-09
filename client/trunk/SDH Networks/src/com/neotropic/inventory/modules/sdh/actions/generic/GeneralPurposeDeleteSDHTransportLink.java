@@ -72,5 +72,10 @@ public class GeneralPurposeDeleteSDHTransportLink extends GenericObjectNodeActio
     public String[] appliesTo() {
         return new String[] {Constants.CLASS_GENERICSDHTRANSPORTLINK};
     }
+    
+    @Override
+    public int numberOfNodes() {
+        return 1;
+    }
 }
     

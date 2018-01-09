@@ -69,14 +69,14 @@ public class IconPropertyEditor extends PropertyEditorSupport
 
     @Override
     public String getAsText() {
-        return "[" + I18N.gm("click_to_choose_file") + "]";
+        return I18N.gm("click_to_choose_file");
     }
     
     @Override
     public Component getCustomEditor(){
        if (myPanel == null){
             myPanel = new InnerPanel();
-            maxAllowedSize = (attribute.equals(Constants.PROPERTY_ICON)) ? 32 : 16;
+            maxAllowedSize = attribute.equals(Constants.PROPERTY_ICON) ? 32 : 16;
        }
        return myPanel;
     }
@@ -115,7 +115,7 @@ public class IconPropertyEditor extends PropertyEditorSupport
                         }
                     } catch (IOException ex) {
                         icon = null;
-                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, I18N.gm("file_could_not_be_converted") + ex.getMessage());
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, String.format(I18N.gm("file_could_not_be_converted"), ex.getMessage()));
                     }
                 }
             }

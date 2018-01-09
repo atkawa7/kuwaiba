@@ -70,4 +70,9 @@ public class RelateIPToBDIInterfaceAction extends GenericObjectNodeAction implem
     public String[] appliesTo() {
         return new String [] {Constants.CLASS_IP_ADDRESS};
     }
+    
+    @Override
+    public int numberOfNodes() {
+        return -1;
+    }
 }

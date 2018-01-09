@@ -66,10 +66,8 @@ public class MoveLinksToContainerAction extends GenericObjectNodeAction{
         if (specialAttributes.containsKey("endpointB")) //NOI18N
             endpointB = specialAttributes.get("endpointB")[0]; //NOI18N
         
-        LocalObjectLight parent = null;
-        
         if(endpointA != null && endpointB != null){
-            parent = CommunicationsStub.getInstance().getCommonParent(endpointA.getClassName(), endpointA.getOid(), endpointB.getClassName(), endpointB.getOid());
+            LocalObjectLight parent = CommunicationsStub.getInstance().getCommonParent(endpointA.getClassName(), endpointA.getOid(), endpointB.getClassName(), endpointB.getOid());
         
             if (parent == null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
@@ -123,4 +121,9 @@ public class MoveLinksToContainerAction extends GenericObjectNodeAction{
     public String[] appliesTo() {
         return new String[] {Constants.CLASS_GENERICPHYSICALLINK};
     }    
+
+    @Override
+    public int numberOfNodes() {
+        return 1;
+    }
 }

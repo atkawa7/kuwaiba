@@ -72,4 +72,9 @@ public final class UpdateNodeAction extends GenericObjectNodeAction implements P
     public String[] appliesTo() {
         return null; //Enable this action for any object
     }
+    
+    @Override
+    public int numberOfNodes() {
+        return 1;
+    }
 }

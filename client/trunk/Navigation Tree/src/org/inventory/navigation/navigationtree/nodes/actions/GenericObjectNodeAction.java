@@ -16,7 +16,6 @@
 package org.inventory.navigation.navigationtree.nodes.actions;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
@@ -35,23 +34,16 @@ public abstract class GenericObjectNodeAction extends GenericInventoryAction {
     @Override
     public boolean isEnabled() {
         Lookup.Result<? extends ObjectNode> selectedObjectNode = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class);
-        Iterator<? extends ObjectNode> selectedNodes = null;
-        if (selectedObjectNode != null)
-            selectedNodes = selectedObjectNode.allInstances().iterator();
         
-        if (selectedObjects == null)
-            selectedObjects = new ArrayList<>();
-        else
-            selectedObjects.clear();
-        
-        if (selectedNodes == null)
+        if (selectedObjectNode == null)
             return false;
         
-        while(selectedNodes.hasNext()) {
-            LocalObjectLight selectedObject  = selectedNodes.next().getLookup().lookup(LocalObjectLight.class);
-            selectedObjects.add(selectedObject);
-        }
-        return !selectedObjects.isEmpty();
+        selectedObjects = new ArrayList<>();
+        
+        for (ObjectNode selectedNode : selectedObjectNode.allInstances())
+            selectedObjects.add(selectedNode.getObject());
+        
+        return numberOfNodes() == -1 ? !selectedObjects.isEmpty() : selectedObjects.size() == numberOfNodes();
     }
     
     public void setSelectedObjects(List<LocalObjectLight> selectedObjects) {
@@ -59,14 +51,20 @@ public abstract class GenericObjectNodeAction extends GenericInventoryAction {
     }
     
     /**
-     * What instances support this action
-     * @return A validator. See class Constants (in Application Nodes) for possible values so far.
+     * The validators necessary for the action to be enabled
+     * @return A validator. A string that declares a particular condition in an object (for example, saying that a port is already connected). Use null if this action can be applied to any object
      * You can add your own if the server supports them
      */
     public abstract String[] getValidators();
     /**
-     * Gets the classes that can apply this action
-     * @return The class names
+     * Instances of these classes are eligible to perform this action. Abstract and super classes are allowed
+     * @return An array with the class names
      */
     public abstract String[] appliesTo();
+    
+    /**
+     * The number of nodes that has to be selected so this action is enabled. Use -1 for any (provided at least one is selected)
+     * @return 
+     */
+    public abstract int numberOfNodes();
 }

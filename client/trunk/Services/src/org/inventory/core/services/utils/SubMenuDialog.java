@@ -51,9 +51,9 @@ public class SubMenuDialog extends JDialog {
     private static SubMenuDialog instance;
     
     private SubMenuDialog() {
-        setModal(true);
-        setLocationByPlatform(true);
         setUndecorated(true);
+        setLocationRelativeTo(null);
+        setModalityType(ModalityType.APPLICATION_MODAL);
         
         initComponents();
         String escKey = "escKey";

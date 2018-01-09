@@ -113,32 +113,35 @@ public final class CreateMultipleBusinessObjectAction extends GenericObjectNodeA
     public JMenuItem getPopupPresenter() {
         JMenu mnuPossibleChildren = new JMenu("New Multiple");
         
-        LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
-        if (selectedObject == null) 
+        //Since this action is not only available for ObjectNodes, but also for RootObjectNode instances, we can't just use setEnable(isEnabled())
+        //All object creation methods will behave the same way
+        if (Utilities.actionsGlobalContext().lookupResult(AbstractNode.class).allInstances().size() > 1) {
             mnuPossibleChildren.setEnabled(false);
-        else {
-            
-            List<LocalClassMetadataLight> items = com.getPossibleChildren(selectedObject.getClassName(), false);
-
-            if (items == null) {
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.INFO_MESSAGE,
-                    com.getError());
-                mnuPossibleChildren.setEnabled(false);
-            }
-            else {
-                if (items.isEmpty())
-                    mnuPossibleChildren.setEnabled(false);
-                else
-                    for(LocalClassMetadataLight item: items){
-                            JMenuItem smiChildren = new JMenuItem(item.getClassName());
-                            smiChildren.setName(item.getClassName());
-                            smiChildren.addActionListener(this);
-                            mnuPossibleChildren.add(smiChildren);
-                    }
-
-                MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
-            }
+            return mnuPossibleChildren;
         }
+        
+        LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
+        List<LocalClassMetadataLight> items = com.getPossibleChildren(selectedObject.getClassName(), false);
+
+        if (items == null) {
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.INFO_MESSAGE,
+                com.getError());
+            mnuPossibleChildren.setEnabled(false);
+        }
+        else {
+            if (items.isEmpty())
+                mnuPossibleChildren.setEnabled(false);
+            else
+                for(LocalClassMetadataLight item: items){
+                        JMenuItem smiChildren = new JMenuItem(item.getClassName());
+                        smiChildren.setName(item.getClassName());
+                        smiChildren.addActionListener(this);
+                        mnuPossibleChildren.add(smiChildren);
+                }
+
+            MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
+        }
+                
         return mnuPossibleChildren;
     }
 
@@ -150,5 +153,10 @@ public final class CreateMultipleBusinessObjectAction extends GenericObjectNodeA
     @Override
     public String[] appliesTo() {
         return null; //Enable this action for any object
+    }
+    
+    @Override
+    public int numberOfNodes() {
+        return 1;
     }
 }

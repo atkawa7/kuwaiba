@@ -87,4 +87,9 @@ public class RelateGenericNetworkElementToInterface extends GenericObjectNodeAct
     public String[] appliesTo() {        
         return new String [] {Constants.CLASS_GENERICNETWORKELEMENT};
     }
+    
+    @Override
+    public int numberOfNodes() {
+        return -1;
+    }
 }

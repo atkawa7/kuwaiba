@@ -157,3 +157,4 @@
 * Added the Inventory Synchronization module
 * Multiple bug fixes and improvements
 * Shortcuts added to the most frequently used actions in scenes
+* The class nodes in the Data Model Manager are colored with the color assigned to the class

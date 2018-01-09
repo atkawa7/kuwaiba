@@ -65,4 +65,8 @@ public class ShowServiceTopologyViewAction extends GenericObjectNodeAction imple
         return new String[] {Constants.CLASS_GENERICSERVICE};
     }
     
+    @Override
+    public int numberOfNodes() {
+        return 1;
+    }
 }

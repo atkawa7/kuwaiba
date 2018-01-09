@@ -27,7 +27,7 @@ import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.nodes.TemplateElementNode;
-import org.inventory.layout.DeviceLayoutTopComponent;
+import org.inventory.core.templates.layouts.DeviceLayoutTopComponent;
 import org.openide.util.Utilities;
 import org.openide.windows.WindowManager;
 

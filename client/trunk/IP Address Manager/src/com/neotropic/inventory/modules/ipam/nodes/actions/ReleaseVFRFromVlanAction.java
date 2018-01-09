@@ -106,4 +106,9 @@ public class ReleaseVFRFromVlanAction  extends GenericObjectNodeAction implement
     public String[] appliesTo() {
         return new String[] {Constants.CLASS_VRFINSTANCE, Constants.CLASS_BRIDGEDOMAININTERFACE};
     }
+    
+    @Override
+    public int numberOfNodes() {
+        return -1;
+    }
 }

@@ -58,16 +58,10 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
     }
     
     @Override
-    public boolean isEnabled() {
-        super.isEnabled();
-        return selectedObjects.size() == 2;
-    }
-    
-    @Override
     public void actionPerformed(ActionEvent e) {
         Iterator<? extends ObjectNode> endpoints = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
         List<ObjectNode> endpointNodes = new ArrayList();
-        List<LocalObjectLight> existintWireContainersList = new ArrayList<>();
+        List<LocalObjectLight> existingWireContainersList;
 
         while(endpoints.hasNext())
             endpointNodes.add(endpoints.next());
@@ -90,7 +84,7 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
             return;
         }
         //if there are wirecontainers in both of the two selected nodes 
-        existintWireContainersList = CommunicationsStub.getInstance().getContainersBetweenObjects(endpointA.getClassName(), endpointA.getOid(), 
+        existingWireContainersList = CommunicationsStub.getInstance().getContainersBetweenObjects(endpointA.getClassName(), endpointA.getOid(), 
                 endpointB.getClassName(), endpointB.getOid(), Constants.CLASS_WIRECONTAINER);
                             
         JComboBox<String> cmbConnectionType = new JComboBox(new String[] {"Container", "Link"});
@@ -102,12 +96,17 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
             if (cmbConnectionType.getSelectedIndex() == 0) 
                 new NewContainerWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent).show();
             else 
-                new NewLinkWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent, existintWireContainersList).show();
+                new NewLinkWizard(endpointNodes.get(0), endpointNodes.get(1), commonParent, existingWireContainersList).show();
         }
     }
 
     @Override
     public String[] appliesTo() {
         return null; //Enable this action for any object
+    }
+    
+    @Override
+    public int numberOfNodes() {
+        return 2;
     }
 }

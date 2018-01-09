@@ -71,13 +71,13 @@ public class DeleteMPLSConnectionAction extends GenericObjectNodeAction /*implem
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_MPLS_MODULE, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
 
-//    @Override
-//    public JMenuItem getPopupPresenter() {
-//        return popupPresenter;
-//    }
-
     @Override
     public String[] appliesTo() {
         return new String[] {Constants.CLASS_MPLSLINK};
+    }
+    
+    @Override
+    public int numberOfNodes() {
+        return -1;
     }
 }

@@ -69,4 +69,9 @@ public class CreateSoftwareAssetAction extends GenericObjectNodeAction {
     public String[] appliesTo() {
         return new String[] {Constants.CLASS_GENERICAPPLICATIONELEMENT};
     }
+    
+    @Override
+    public int numberOfNodes() {
+        return 1;
+    }
 }

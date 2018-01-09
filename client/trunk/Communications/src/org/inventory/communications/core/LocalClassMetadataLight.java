@@ -255,6 +255,6 @@ public class LocalClassMetadataLight implements Transferable, Comparable<LocalCl
 
     @Override
     public int compareTo(LocalClassMetadataLight o) {
-        return getClassName().compareTo(o.getClassName());
+        return getDisplayName().compareTo(o.getDisplayName());
     }
  }

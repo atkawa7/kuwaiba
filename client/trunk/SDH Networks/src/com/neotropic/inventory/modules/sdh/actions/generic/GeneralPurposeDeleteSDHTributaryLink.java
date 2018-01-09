@@ -76,5 +76,10 @@ public class GeneralPurposeDeleteSDHTributaryLink extends GenericObjectNodeActio
     public String[] appliesTo() {
         return new String[] {Constants.CLASS_GENERICSDHTRIBUTARYLINK};
     }
+    
+    @Override
+    public int numberOfNodes() {
+        return 1;
+    }
 }
     

@@ -74,6 +74,13 @@ public final class CreateBusinessObjectFromTemplateAction extends GenericObjectN
     @Override
     public JMenuItem getPopupPresenter() {
         JMenu mnuPossibleChildren = new JMenu("New from Template");
+        
+        //Since this action is not only available for ObjectNodes, but also for RootObjectNode instances, we can't just use setEnable(isEnabled())
+        //All object creation methods will behave the same way
+        if (Utilities.actionsGlobalContext().lookupResult(AbstractNode.class).allInstances().size() > 1) {
+            mnuPossibleChildren.setEnabled(false);
+            return mnuPossibleChildren;
+        }
 
         LocalObjectLight selectedObject = Utilities.actionsGlobalContext().lookup(LocalObjectLight.class);
         
@@ -101,6 +108,9 @@ public final class CreateBusinessObjectFromTemplateAction extends GenericObjectN
 
             MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
         }
+        
+        mnuPossibleChildren.setEnabled(isEnabled());
+        
         return mnuPossibleChildren;
     }
 
@@ -149,5 +159,10 @@ public final class CreateBusinessObjectFromTemplateAction extends GenericObjectN
     @Override
     public String[] appliesTo() {
         return null; //Enable this action for any object
+    }
+    
+    @Override
+    public int numberOfNodes() {
+        return 1;
     }
 }

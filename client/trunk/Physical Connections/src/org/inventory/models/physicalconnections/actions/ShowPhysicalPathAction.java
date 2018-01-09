@@ -73,4 +73,9 @@ public class ShowPhysicalPathAction extends GenericObjectNodeAction implements P
     public String[] appliesTo() {
         return new String [] {Constants.CLASS_GENERICPORT};
     }
+    
+    @Override
+    public int numberOfNodes() {
+        return 1;
+    }
 }

@@ -16,9 +16,7 @@
 package org.inventory.navigation.navigationtree.nodes.actions;
 
 /**
- * Interface used like parameter in the ActionsGroupActions class to identify 
- * which actions are grouped as open view.
+ * Interface used mark a given action (that in the end displays a view) so it can be grouped in an element's context menu "Open View...".
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public interface GenericOpenViewAction extends GenericActionsGroupActions {    
-}
+public interface GenericOpenViewAction extends GenericActionsGroupActions { }

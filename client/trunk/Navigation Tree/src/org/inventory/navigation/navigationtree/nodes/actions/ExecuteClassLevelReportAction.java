@@ -32,7 +32,6 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalReportLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.ComposedAction;
-import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.SubMenuDialog;
 import org.inventory.core.services.utils.SubMenuItem;
@@ -45,7 +44,7 @@ import org.openide.util.actions.Presenter;
  * Shows the class reports available for the selected node (if any) and run any of them
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ExecuteClassLevelReportAction extends GenericInventoryAction implements ComposedAction, Presenter.Popup {
+public class ExecuteClassLevelReportAction extends GenericObjectNodeAction implements ComposedAction, Presenter.Popup {
     private static ExecuteClassLevelReportAction instance;
     
     private ExecuteClassLevelReportAction() {
@@ -138,5 +137,20 @@ public class ExecuteClassLevelReportAction extends GenericInventoryAction implem
     @Override
     public JMenuItem getPopupPresenter() {
         return new JMenuItem(this);
+    }
+
+    @Override
+    public String[] getValidators() {
+        return null;
+    }
+
+    @Override
+    public String[] appliesTo() {
+        return null;
+    }
+
+    @Override
+    public int numberOfNodes() {
+        return 1;
     }
 }

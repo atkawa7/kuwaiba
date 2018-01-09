@@ -79,4 +79,9 @@ public class RelateEndPointToIPAddressAction extends GenericObjectNodeAction imp
     public String[] appliesTo() {
         return new String [] {Constants.CLASS_GENERICPORT};
     }
+    
+    @Override
+    public int numberOfNodes() {
+        return -1;
+    }
 }

@@ -58,5 +58,9 @@ public class ShowEndToEndDetailedViewAction extends GenericObjectNodeAction impl
     public String[] appliesTo() {
         return new String[] {Constants.CLASS_GENERICSERVICE};
     }
-
+    
+    @Override
+    public int numberOfNodes() {
+        return 1;
+    }
 }

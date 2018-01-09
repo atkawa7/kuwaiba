@@ -121,4 +121,9 @@ public final class CreateSpecialBusinessObjectAction extends GenericObjectNodeAc
     public String[] appliesTo() {
         return null; //Enable this action for any object
     }
+    
+    @Override
+    public int numberOfNodes() {
+        return 1;
+    }
 }

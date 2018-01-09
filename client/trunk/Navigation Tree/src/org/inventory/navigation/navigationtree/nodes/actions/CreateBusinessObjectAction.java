@@ -34,6 +34,7 @@ import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.RootObjectNode;
 import org.openide.nodes.AbstractNode;
+import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 
 /**
@@ -69,7 +70,7 @@ public final class CreateBusinessObjectAction extends GenericObjectNodeAction im
         if(mandatoryObjectAttributes.length > 0){
             AttributesForm mandatoryAttributeForm = new AttributesForm(mandatoryObjectAttributes);
             attributes = mandatoryAttributeForm.createNewObjectForm();
-            if(!attributes.isEmpty()) //the createNewObject form is closed, and the ok button is never clicked 
+            if(!attributes.isEmpty()) //the createNewObject form is closed, but the ok button is never clicked 
                 createObject(objectClass, attributes);
         } 
         else
@@ -78,7 +79,15 @@ public final class CreateBusinessObjectAction extends GenericObjectNodeAction im
     
     @Override
     public JMenuItem getPopupPresenter() {
-        JMenu mnuPossibleChildren = new JMenu((String) getValue(NAME));
+        JMenu mnuPossibleChildren = new JMenu("New");
+        
+        //Since this action is not only available for ObjectNodes, but also for RootObjectNode instances, we can't just use setEnable(isEnabled())
+        //All object creation methods will behave the same way
+        if (Utilities.actionsGlobalContext().lookupResult(AbstractNode.class).allInstances().size() > 1) {
+            mnuPossibleChildren.setEnabled(false);
+            return mnuPossibleChildren;
+        }
+        
         List<LocalClassMetadataLight> items;
         if (node instanceof RootObjectNode) //For the root node
             items = com.getPossibleChildren(Constants.DUMMYROOT, false);
@@ -103,6 +112,7 @@ public final class CreateBusinessObjectAction extends GenericObjectNodeAction im
             }
             MenuScroller.setScrollerFor(mnuPossibleChildren, 20, 100);
         }
+
         return mnuPossibleChildren;
     }
     
@@ -140,5 +150,10 @@ public final class CreateBusinessObjectAction extends GenericObjectNodeAction im
     @Override
     public String[] appliesTo() {
         return null; //Enable this action for any object
+    }
+    
+    @Override
+    public int numberOfNodes() {
+        return 1;
     }
 }
