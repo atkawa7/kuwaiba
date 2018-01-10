@@ -474,6 +474,19 @@ public interface BusinessEntityManager {
             throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException;
     
     /**
+     * Returns the special children of a given object as RemoteBusinessObjectLight instances. This method is not recursive.
+     * @param parentOid The id of the parent object
+     * @param parentClass The class name of the parent object
+     * @param classToFilter The superclass/class to be used to filter the results. You can also use abstract superclasses.
+     * @param maxResults The max number of results to fetch. Use -1 to retrieve all
+     * @return The list of special children of the given object, filtered using classToFilter
+     * @throws MetadataObjectNotFoundException If the parent class name provided could not be found
+     * @throws ObjectNotFoundException If the parent object could not be found
+     */
+    public List<RemoteBusinessObjectLight> getSpecialChildrenOfClassLight(long parentOid, String parentClass, String classToFilter, int maxResults)
+            throws MetadataObjectNotFoundException, ObjectNotFoundException;
+    
+    /**
      * Gets all class and abstract class children of a given class to filter in 
      * a hierarchy with root in the given parent.
      * Use case: used in some class level and inventory level reports script 

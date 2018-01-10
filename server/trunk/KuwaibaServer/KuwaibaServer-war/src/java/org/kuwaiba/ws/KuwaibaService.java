@@ -2051,6 +2051,34 @@ public class KuwaibaService {
             }
         }
     }
+    
+    /**
+     * Returns the special children of a given object as RemoteObjectLight instances. This method is not recursive.
+     * @param parentOid The id of the parent object
+     * @param parentClass The class name of the parent object
+     * @param classToFilter The superclass/class to be used to filter the results. You can also use abstract superclasses.
+     * @param maxResults The max number of results to fetch. Use -1 to retrieve all
+     * @param sessionId The session token
+     * @return The list of special children of the given object, filtered using classToFilter
+     * @throws ServerSideException If the parent class name provided could not be found or if the parent object could not be found
+     */
+    @WebMethod(operationName="getSpecialChildrenOfClassLight")
+    public List<RemoteObjectLight> getSpecialChildrenOfClassLight(@WebParam(name="parentOid")long parentOid,
+            @WebParam(name="parentClass")String parentClass,
+            @WebParam(name="classToFilter")String classToFilter,
+            @WebParam(name="maxResults")int maxResults,
+            @WebParam(name ="sessionId")String sessionId) throws ServerSideException {
+        try{
+            return wsBean.getSpecialChildrenOfClassLight(parentOid, parentClass, classToFilter, maxResults, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getSpecialChildrenOfClassLight: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
 
     /**
       * Gets the complete information about a given object (all its attributes)
@@ -5346,7 +5374,8 @@ public class KuwaibaService {
      * using the configuration attached to the given sync group and finding the differences 
      * between the information currently in the inventory platform and what's in the sync data source. 
      * A supervised sync job needs a human to review the differences and decide what to do,
-     * while an automated sync job automatically decides what to do based on built-in business rules
+     * while an automated sync job automatically decides what to do based on built-in business rules.
+     * Please note that the execution might take some time, so it is expected that the client to implement an asynchronous call
      * @param syncGroupId The sync group id
      * @param sessionId The session token
      * @return A list of differences that require the authorization of a user to be reconciliated
@@ -5362,7 +5391,7 @@ public class KuwaibaService {
             while (!managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.FINISHED) && retries < 20) {
                 try {                
                     //For some reason (probably thread-concurrency related), the initial "managedJob" instance is different from the one
-                    //updated in the SyncProcessor/Writer, so we have to contantly fetch it again.
+                    //updated in the SyncProcessor/Writer, so we have to constantly fetch it again.
                     managedJob = JobManager.getInstance().getJob(managedJob.getId());
 
                     if (managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.ABORTED)) {

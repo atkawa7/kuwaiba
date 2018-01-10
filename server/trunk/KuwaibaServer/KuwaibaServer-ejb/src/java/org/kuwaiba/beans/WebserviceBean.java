@@ -990,6 +990,19 @@ public class WebserviceBean implements WebserviceBeanRemote {
     }
     
     @Override
+    public List<RemoteObjectLight> getSpecialChildrenOfClassLight(long parentOid, String parentClass, 
+            String classToFilter, int maxResults, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getSpecialChildrenOfClassLight", ipAddress, sessionId);
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getSpecialChildrenOfClassLight(parentOid, parentClass,classToFilter, maxResults));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
     public List<RemoteObjectLight> getChildrenOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId) 
         throws ServerSideException {
         
