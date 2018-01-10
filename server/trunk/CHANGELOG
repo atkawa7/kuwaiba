@@ -127,3 +127,7 @@
 * Added support for the Inventory Synchronization framework
 * WS API extended with multiple utility methods (plus those related to particular features, like Device Layouts and Sync)
 * Multiple bugfixes and improvements
+* The Connection Wizzard shows if there are existing containers and allow the user to choose if the new links should be created inside a container.
+* It's now possible also move links out of a container choosing the links container from the object view.
+* It's now possible to move one or several links into a container from the object view. 
+* The tasks can now make commit if something is created in the task.
