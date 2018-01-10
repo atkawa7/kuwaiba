@@ -1,5 +1,5 @@
 # Neotropic SAS 2017
-# Kuwaiba Open Network Inventory - Web Service Stub Generator v0.3
+# Kuwaiba Open Network Inventory - Web Service Stub Generator v0.4
 # This script generates the Java client side stubs necessary to consume the platform's web service. Use -h flag to see the full list of options
 
 # Defaults
@@ -28,7 +28,7 @@ then
     rm -rf "${destination}/org/inventory/communications/wsclient"
 fi
 
-wsimport -d $destination -encoding UTF-8 -p org.inventory.communications.wsclient -Xnocompile $url -b kuwaibaAsync.xml 
+wsimport -d $destination -p org.inventory.communications.wsclient -Xnocompile $url -b kuwaibaAsync.xml 
 
 if [ $? -eq 0 ]
 then

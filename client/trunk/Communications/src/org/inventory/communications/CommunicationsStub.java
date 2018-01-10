@@ -304,6 +304,28 @@ public class CommunicationsStub {
     }
     
     /**
+     * Returns the special children of a given object as RemoteBusinessObjectLight instances. This method is not recursive.
+     * @param parentOid The id of the parent object
+     * @param parentClass The class name of the parent object
+     * @param classToFilter The superclass/class to be used to filter the results. You can also use abstract superclasses.
+     * @return The list of special children of the given object, filtered using classToFilter. Null if  the parent class name provided could not be found or if the parent object could not be found
+     */
+    public List<LocalObjectLight> getSpecialChildrenOfClassLight(long parentOid, String parentClass, String classToFilter) {
+        try {
+            List <RemoteObjectLight> children = service.getSpecialChildrenOfClassLight(parentOid, parentClass, classToFilter, -1, session.getSessionId());
+            List <LocalObjectLight> res = new ArrayList<>();
+
+            for (RemoteObjectLight rol : children)
+                res.add(new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName()));
+
+            return res;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
      * Gets recursively all children of an object of a given class
      * @param oid Parent whose children are requested
      * @param parentClassName Class name of the element we want the children from
@@ -311,14 +333,13 @@ public class CommunicationsStub {
      * @return An array with the children objects
      */
     public List<LocalObjectLight> getChildrenOfClassLightRecursive(long oid, String parentClassName, String childrenClassName) {
-        try{
+        try {
             List <RemoteObjectLight> children = service.getChildrenOfClassLightRecursive(oid, parentClassName, childrenClassName, -1, session.getSessionId());
             List <LocalObjectLight> res = new ArrayList<>();
 
-            for (RemoteObjectLight rol : children){
- 
+            for (RemoteObjectLight rol : children)
                 res.add(new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName()));
-            }
+
             return res;
         }catch(Exception ex){
             this.error = ex.getMessage();

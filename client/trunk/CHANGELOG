@@ -158,3 +158,4 @@
 * Multiple bug fixes and improvements
 * Shortcuts added to the most frequently used actions in scenes
 * The class nodes in the Data Model Manager are colored with the color assigned to the class
+* Added an action to fix the possible inconsistencies in links and containers that may happen when moving elements with connections attached to them. This is the seed for a diagnostics module that will be added in further versions
