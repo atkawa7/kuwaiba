@@ -114,3 +114,16 @@
 * The methods User Management was extended and some parts rewritten
 * Added a migration patch that moves all stand-alone users to a default group. Users can no loger not to belong to a group
 * Changed license from GPLv2 to GPLv3
+* Unique and mandatory attributes support was added
+* New Projects and Bookmarks modules added to the API
+* When creating  or updating new objects, the attribute values are now simple strings instead of lists of strings
+* Reporting API extended (Preliminary support for Google Charts and more HTML components)
+* Added convenience methods to the Persistence API
+* Preliminary version of the business rules API
+* Audit trail entries added to many methods
+
+1.6
+* It's possible to create sdh links that use concatenated containers. This way, the user can create sdh connections with arbitrary capacities to support services such as Ethernet/IP over SDH
+* Added support for the Inventory Synchronization framework
+* WS API extended with multiple utility methods (plus those related to particular features, like Device Layouts and Sync)
+* Multiple bugfixes and improvements
