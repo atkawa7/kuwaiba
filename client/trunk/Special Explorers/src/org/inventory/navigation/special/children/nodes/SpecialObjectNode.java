@@ -20,10 +20,10 @@ import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.ActionGroupActionsFactory;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.navigation.special.children.nodes.actions.CreateSpecialBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.EditObjectAction;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericActionsGroupActions;
 import org.inventory.navigation.navigationtree.nodes.actions.UpdateNodeAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.inventory.navigation.special.children.nodes.actions.CreateMultipleSpecialBusinessObjectAction;
@@ -54,7 +54,7 @@ public class SpecialObjectNode extends ObjectNode {
         actions.add(explorerAction);
         actions.add(null); //Separator
         for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)){
-            if (action instanceof GenericActionsGroupActions)
+            if (action.getClass().getAnnotation(ActionsGroupType.class) != null)
                 continue;
             
             if (action.appliesTo() != null) {

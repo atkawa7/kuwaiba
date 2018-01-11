@@ -23,8 +23,8 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.ShowDeviceLayoutTopComponent;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericOpenViewAction;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.WindowManager;
 
@@ -32,8 +32,9 @@ import org.openide.windows.WindowManager;
  * Action used to show how a given device looks like (in the real world)
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
+@ActionsGroupType(group=ActionsGroupType.Group.OPEN_VIEW)
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ShowDeviceLayoutView extends GenericObjectNodeAction implements GenericOpenViewAction {
+public class ShowDeviceLayoutView extends GenericObjectNodeAction {
     
     public ShowDeviceLayoutView() {
         putValue(NAME, "Device Layout");

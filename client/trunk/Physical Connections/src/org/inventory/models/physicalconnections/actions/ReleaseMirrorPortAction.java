@@ -23,15 +23,16 @@ import org.inventory.communications.util.Constants;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericMirrorPortAction;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
  * This action allows to remove the port mirroring relationship between two ports
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
+@ActionsGroupType(group=ActionsGroupType.Group.MIRROR_PORT)
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseMirrorPortAction extends GenericObjectNodeAction implements GenericMirrorPortAction {
+public class ReleaseMirrorPortAction extends GenericObjectNodeAction {
 
     public ReleaseMirrorPortAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_RELEASE_MIRROR_PORT"));

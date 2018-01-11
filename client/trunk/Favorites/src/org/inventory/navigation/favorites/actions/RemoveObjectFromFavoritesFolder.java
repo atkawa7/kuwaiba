@@ -33,8 +33,8 @@ import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.SubMenuDialog;
 import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericReleaseFromAction;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -42,8 +42,9 @@ import org.openide.util.lookup.ServiceProvider;
  * Action to remove an associated object to a favoritesFolder
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
+@ActionsGroupType(group=ActionsGroupType.Group.RELEASE_FROM)
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RemoveObjectFromFavoritesFolder extends GenericObjectNodeAction implements GenericReleaseFromAction, ComposedAction {
+public class RemoveObjectFromFavoritesFolder extends GenericObjectNodeAction implements ComposedAction {
     
     public RemoveObjectFromFavoritesFolder() {
         putValue(NAME, I18N.gm("remove_from_favorites_folder"));

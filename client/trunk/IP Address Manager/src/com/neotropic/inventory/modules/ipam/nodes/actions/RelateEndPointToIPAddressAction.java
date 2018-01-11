@@ -28,8 +28,8 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericRelateToAction;
 import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
@@ -38,8 +38,9 @@ import org.openide.util.lookup.ServiceProvider;
  * Actions to relate a Generic port to an IP address
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
+@ActionsGroupType(group=ActionsGroupType.Group.RELATE_TO)
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateEndPointToIPAddressAction extends GenericObjectNodeAction implements GenericRelateToAction {
+public class RelateEndPointToIPAddressAction extends GenericObjectNodeAction {
 
     public RelateEndPointToIPAddressAction(){
         putValue(NAME, I18N.gm("relate_to_ip"));

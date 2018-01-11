@@ -19,8 +19,8 @@ import java.util.ResourceBundle;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericOpenViewAction;
 import org.inventory.views.rackview.RackViewTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.WindowManager;
@@ -29,8 +29,9 @@ import org.openide.windows.WindowManager;
  * Action to show the rack view of a rack
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
+@ActionsGroupType(group=ActionsGroupType.Group.OPEN_VIEW)
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ShowRackViewAction extends GenericObjectNodeAction implements GenericOpenViewAction {
+public class ShowRackViewAction extends GenericObjectNodeAction {
     
     public ShowRackViewAction() {
         putValue(NAME, ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_SHOW_RACK_VIEW"));

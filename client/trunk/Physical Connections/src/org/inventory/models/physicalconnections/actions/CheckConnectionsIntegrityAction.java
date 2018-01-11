@@ -33,6 +33,7 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -40,6 +41,7 @@ import org.openide.util.lookup.ServiceProvider;
  * This actions verifies that all connections inside a given object (not recursively) are well formed and have the proper parent
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
+@ActionsGroupType(group=ActionsGroupType.Group.DIAGNOSTIC)
 @ServiceProvider(service = GenericObjectNodeAction.class)
 public class CheckConnectionsIntegrityAction extends GenericObjectNodeAction {
 

@@ -25,16 +25,17 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericRelateToAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Actions to relate a Service Instance to a BridgeDomain
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
+@ActionsGroupType(group=ActionsGroupType.Group.RELATE_TO)
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateEndPointToInterfaceAction extends GenericObjectNodeAction implements GenericRelateToAction {
+public class RelateEndPointToInterfaceAction extends GenericObjectNodeAction {
 
     public RelateEndPointToInterfaceAction(){
         putValue(NAME, I18N.gm("relate_to_interface"));

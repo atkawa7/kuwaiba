@@ -21,8 +21,8 @@ import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericOpenViewAction;
 import org.kuwaiba.management.services.views.topology.TopologyViewScene;
 import org.kuwaiba.management.services.views.topology.TopologyViewTopComponent;
 import org.openide.util.lookup.ServiceProvider;
@@ -32,8 +32,9 @@ import org.openide.windows.TopComponent;
  * Opens a view that shows the network equipment associated directly to the service and the physical connections between these nodes
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
+@ActionsGroupType(group=ActionsGroupType.Group.OPEN_VIEW)
 @ServiceProvider(service = GenericObjectNodeAction.class)
-public class ShowServiceTopologyViewAction extends GenericObjectNodeAction implements GenericOpenViewAction {
+public class ShowServiceTopologyViewAction extends GenericObjectNodeAction {
 
     public ShowServiceTopologyViewAction() {
         putValue(NAME, "Show Topology View");

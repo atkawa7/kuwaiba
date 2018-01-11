@@ -30,21 +30,21 @@ import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 /**
- *
+ * This class represent an action that has a sub menu of actions grouped
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ActionsGroup extends GenericObjectNodeAction implements Presenter.Popup {
-    public final Class<?> actionsGroupClass;
-    public final String iconPath;
+    private final ActionsGroupType.Group actionGroupType;
+    private final String iconPath;
     
-    public ActionsGroup(String lblAction, String iconPath, Class<?> actionsGroupClass) {
+    public ActionsGroup(String lblAction, String iconPath, ActionsGroupType.Group actionGroupType) {
         putValue(NAME, lblAction != null ? lblAction : "");        
-        this.actionsGroupClass = actionsGroupClass;
+        this.actionGroupType = actionGroupType;
         this.iconPath = iconPath;
     }
     
-    public Class<?> getActionsGroupClass() {
-        return actionsGroupClass;
+    public ActionsGroupType.Group getActionGroupType() {
+        return actionGroupType;
     }
     
     @Override
@@ -83,9 +83,10 @@ public class ActionsGroup extends GenericObjectNodeAction implements Presenter.P
         }
         List<GenericObjectNodeAction> actions = new ArrayList();
         
-        for (Object object : Lookup.getDefault().lookupAll(actionsGroupClass)) {
-            if (object instanceof GenericObjectNodeAction) {
-                GenericObjectNodeAction action = (GenericObjectNodeAction) object;
+        for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)) {
+            ActionsGroupType actionsGroupType = action.getClass().getAnnotation(ActionsGroupType.class);
+            
+            if (actionsGroupType != null && actionsGroupType.group() != null && actionsGroupType.group() == actionGroupType) {
                 
                 if (action.appliesTo() != null) {
                     for (String className : action.appliesTo()) {

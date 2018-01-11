@@ -30,16 +30,17 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.SubMenuDialog;
 import org.inventory.core.services.utils.SubMenuItem;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericReleaseFromAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Releases a relation between a service instance and an interface
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
+@ActionsGroupType(group=ActionsGroupType.Group.RELEASE_FROM)
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseGenericPortFromInterfaceAction extends GenericObjectNodeAction implements GenericReleaseFromAction, ComposedAction {
+public class ReleaseGenericPortFromInterfaceAction extends GenericObjectNodeAction implements ComposedAction {
     
     public ReleaseGenericPortFromInterfaceAction() {
         putValue(NAME, ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_RELEASE_INTERFACE"));

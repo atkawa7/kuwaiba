@@ -30,16 +30,17 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.SubMenuDialog;
 import org.inventory.core.services.utils.SubMenuItem;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericReleaseFromAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Action to release an object associated with a project
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
+@ActionsGroupType(group=ActionsGroupType.Group.RELEASE_FROM)
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseFromProject extends GenericObjectNodeAction implements GenericReleaseFromAction, ComposedAction {
+public class ReleaseFromProject extends GenericObjectNodeAction implements ComposedAction {
     private final ResourceBundle bundle;
     
     public ReleaseFromProject() {

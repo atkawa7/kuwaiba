@@ -25,16 +25,17 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.windows.SelectValueFrame;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericRelateToAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Action to relate an object to a Project
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
+@ActionsGroupType(group=ActionsGroupType.Group.RELATE_TO)
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RelateToProjectAction extends GenericObjectNodeAction implements GenericRelateToAction, ComposedAction {
+public class RelateToProjectAction extends GenericObjectNodeAction implements ComposedAction {
     private final ResourceBundle bundle;
     
     public RelateToProjectAction() {

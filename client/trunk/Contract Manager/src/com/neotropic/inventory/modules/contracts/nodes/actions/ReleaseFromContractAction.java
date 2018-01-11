@@ -31,8 +31,8 @@ import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.SubMenuDialog;
 import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericReleaseFromAction;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 
@@ -40,8 +40,9 @@ import org.openide.util.lookup.ServiceProvider;
  * This action releases de relationship between the object and the service
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
+@ActionsGroupType(group=ActionsGroupType.Group.RELEASE_FROM)
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseFromContractAction extends GenericObjectNodeAction implements GenericReleaseFromAction, ComposedAction {
+public class ReleaseFromContractAction extends GenericObjectNodeAction implements ComposedAction {
     
     public ReleaseFromContractAction() {
         putValue(NAME, I18N.gm("release_from_contract"));

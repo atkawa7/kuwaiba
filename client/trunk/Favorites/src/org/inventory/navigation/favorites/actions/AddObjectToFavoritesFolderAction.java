@@ -27,16 +27,17 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.windows.SelectValueFrame;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericRelateToAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Action to add object to a favorite folder
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
+@ActionsGroupType(group=ActionsGroupType.Group.RELATE_TO)
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class AddObjectToFavoritesFolderAction extends GenericObjectNodeAction implements GenericRelateToAction, ComposedAction {
+public class AddObjectToFavoritesFolderAction extends GenericObjectNodeAction implements ComposedAction {
         
     public AddObjectToFavoritesFolderAction() {
         putValue(NAME, I18N.gm("add_to_favorite_folder"));

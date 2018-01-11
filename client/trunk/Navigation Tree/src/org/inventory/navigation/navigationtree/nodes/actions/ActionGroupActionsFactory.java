@@ -24,12 +24,13 @@ public class ActionGroupActionsFactory {
     private static ActionsGroup relateToGroupActions;
     private static ActionsGroup releaseFromGroupActions;
     private static ActionsGroup mirrorPortActions;
+    private static ActionsGroup diagnosticActions;
     
     public static ActionsGroup getInstanceOfOpenViewGroupActions() {
         if (openViewGroupActions == null)
             openViewGroupActions = new ActionsGroup("Show", 
                 "org/inventory/navigation/navigationtree/res/show_view_actions_group.png", 
-                GenericOpenViewAction.class);
+                ActionsGroupType.Group.OPEN_VIEW);
         return openViewGroupActions;                    
     }
     
@@ -37,7 +38,7 @@ public class ActionGroupActionsFactory {
         if (relateToGroupActions == null)
             relateToGroupActions = new ActionsGroup("Relate To", 
                 "org/inventory/navigation/navigationtree/res/relate_to_actions_group.png",
-                GenericRelateToAction.class);
+                ActionsGroupType.Group.RELATE_TO);
         return relateToGroupActions;                    
     }
 
@@ -45,13 +46,19 @@ public class ActionGroupActionsFactory {
         if (releaseFromGroupActions == null)
             releaseFromGroupActions = new ActionsGroup("Release From", 
                 "org/inventory/navigation/navigationtree/res/release_from_actions_group.png",
-                GenericReleaseFromAction.class);
+                ActionsGroupType.Group.RELEASE_FROM);
         return releaseFromGroupActions;                    
     }
     
     public static ActionsGroup getInstanceMirrorPortActions() {
         return mirrorPortActions == null ? mirrorPortActions = new ActionsGroup("Mirror Ports", 
             "org/inventory/navigation/navigationtree/res/mirror_ports_actions_group.png", 
-            GenericMirrorPortAction.class) : mirrorPortActions;
+            ActionsGroupType.Group.MIRROR_PORT) : mirrorPortActions;
+    }
+    
+    public static ActionsGroup getInstanceDiagnosticActions() {
+        return diagnosticActions == null ? diagnosticActions = new ActionsGroup("Diagnostics", 
+            "org/inventory/navigation/navigationtree/res/diagnostic_actions_group.png", 
+            ActionsGroupType.Group.DIAGNOSTIC) : diagnosticActions;
     }
 }

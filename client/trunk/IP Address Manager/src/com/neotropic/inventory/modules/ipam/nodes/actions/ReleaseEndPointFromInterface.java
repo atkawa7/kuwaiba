@@ -29,16 +29,17 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.SubMenuDialog;
 import org.inventory.core.services.utils.SubMenuItem;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericReleaseFromAction;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Release a relation between service instance and an interface
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
+@ActionsGroupType(group=ActionsGroupType.Group.RELEASE_FROM)
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ReleaseEndPointFromInterface extends GenericObjectNodeAction implements GenericReleaseFromAction, ComposedAction {
+public class ReleaseEndPointFromInterface extends GenericObjectNodeAction implements ComposedAction {
     
     public ReleaseEndPointFromInterface() {
         putValue(NAME, I18N.gm("release_from_interface"));

@@ -29,15 +29,16 @@ import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAc
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.JComplexDialogPanel;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericMirrorPortAction;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.openide.util.lookup.ServiceProvider;
 
 /**
  * This action allows to connect directly two ports
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
+@ActionsGroupType(group=ActionsGroupType.Group.MIRROR_PORT)
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ConnectMirrorPortAction extends GenericObjectNodeAction implements GenericMirrorPortAction {
+public class ConnectMirrorPortAction extends GenericObjectNodeAction {
 
     public ConnectMirrorPortAction() {
         putValue(NAME, java.util.ResourceBundle.getBundle("org/inventory/models/physicalconnections/Bundle").getString("LBL_CONNECT_MIRROR_PORT"));

@@ -38,13 +38,13 @@ import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAc
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.ActionGroupActionsFactory;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.CreateBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.CreateBusinessObjectFromTemplateAction;
 import org.inventory.navigation.navigationtree.nodes.actions.CreateMultipleBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.DeleteBusinessObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.EditObjectAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ExecuteClassLevelReportAction;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericActionsGroupActions;
 import org.inventory.navigation.navigationtree.nodes.actions.UpdateNodeAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.inventory.navigation.navigationtree.nodes.properties.DateTypeProperty;
@@ -277,9 +277,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         actions.add(ExecuteClassLevelReportAction.getInstance());
                         
         for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)) {
-            if (action instanceof GenericActionsGroupActions)
+            if (action.getClass().getAnnotation(ActionsGroupType.class) != null)
                 continue;
-            
+                        
             if (action.appliesTo() != null) {
                 for (String className : action.appliesTo()) {
                     if (CommunicationsStub.getInstance().isSubclassOf(object.getClassName(), className)) {
@@ -288,7 +288,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                         break;
                     }
                 }
-            } 
+            } else
+                actions.add(action);                
 // Not used for now
 //                else {
 //                if (action.getValidators() != null) {
@@ -307,7 +308,8 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         actions.add(ActionGroupActionsFactory.getInstanceOfRelateToGroupActions());
         actions.add(ActionGroupActionsFactory.getInstanceOfReleaseFromGroupActions());
         actions.add(ActionGroupActionsFactory.getInstanceMirrorPortActions());
-                                
+        actions.add(ActionGroupActionsFactory.getInstanceDiagnosticActions());
+        
         actions.add(null); //Separator
         actions.add(explorerAction);
         actions.add(ShowMoreInformationAction.getInstance(getObject().getOid(), getObject().getClassName()));

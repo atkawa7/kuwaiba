@@ -20,8 +20,8 @@ import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
-import org.inventory.navigation.navigationtree.nodes.actions.GenericOpenViewAction;
 import org.inventory.views.objectview.ObjectViewTopComponent;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.WindowManager;
@@ -30,11 +30,9 @@ import org.openide.windows.WindowManager;
  * This action opens an Object View for the selected node
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-//@ActionID(category = "Tools", id = "org.inventory.views.objectview.ObjectViewTopComponent")
-//@ActionReferences(value = { @ActionReference(path = "Menu/Tools/Views"),
-//    @ActionReference(path = "Toolbars/02_Views", position = 1 )})
+@ActionsGroupType(group=ActionsGroupType.Group.OPEN_VIEW)
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ShowObjectViewAction extends GenericObjectNodeAction implements GenericOpenViewAction {
+public class ShowObjectViewAction extends GenericObjectNodeAction {
 
     public ShowObjectViewAction() {
         putValue(NAME, "Object View");
