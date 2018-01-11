@@ -22,6 +22,7 @@ import java.awt.Point;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.util.Arrays;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
@@ -123,9 +124,9 @@ public class RackUnitWidget extends RackViewWidget {
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return;
             }
-            // Moves the equipment if are not in the current rack
+            // Moves the equipment if it's not in the current rack
             if (!equipmentParent.equals(parentRack)) {                                
-                if (!CommunicationsStub.getInstance().moveObjects(parentRack.getClassName(), parentRack.getOid(), new LocalObjectLight [] {equipment})) {
+                if (!CommunicationsStub.getInstance().moveObjects(parentRack.getClassName(), parentRack.getOid(), Arrays.asList((LocalObjectLight)equipment))) {
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                     return;
@@ -139,7 +140,7 @@ public class RackUnitWidget extends RackViewWidget {
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return;
             }
-            // Adds the equipment in the rack
+            // Adds the equipment to the rack
             equipment = CommunicationsStub.getInstance().getObjectInfo(equipmentLight.getClassName(), equipmentLight.getOid());
             if (equipment == null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 

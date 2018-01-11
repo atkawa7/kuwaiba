@@ -1638,7 +1638,7 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean moveObjects(String targetClass, long targetOid, LocalObjectLight[] objects) {
+    public boolean moveObjects(String targetClass, long targetOid, List<LocalObjectLight> objects) {
         try{
             List<Long> objectOids = new ArrayList<>();
             List<String> objectClasses = new ArrayList<>();
@@ -1655,7 +1655,7 @@ public class CommunicationsStub {
         }
     }
     
-    public boolean moveSpecialObjects(String targetClass, long targetOid, LocalObjectLight[] objects) {
+    public boolean moveSpecialObjects(String targetClass, long targetOid, List<LocalObjectLight> objects) {
         try{
             List<Long> objectOids = new ArrayList<>();
             List<String> objectClasses = new ArrayList<>();

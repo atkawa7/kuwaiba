@@ -22,6 +22,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javax.swing.Action;
@@ -378,7 +379,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
                         } else {
                             if (action == DnDConstants.ACTION_MOVE) {
-                                if (com.moveObjects(getObject().getClassName(), getObject().getOid(), new LocalObjectLight[]{obj})) {
+                                if (com.moveObjects(getObject().getClassName(), getObject().getOid(), Arrays.asList(obj))) {
                                     //Refreshes the old parent node
                                     if (dropNode.getParentNode().getChildren() instanceof AbstractChildren)
                                         ((AbstractChildren)dropNode.getParentNode().getChildren()).addNotify();

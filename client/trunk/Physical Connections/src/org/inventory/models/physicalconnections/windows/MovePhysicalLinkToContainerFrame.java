@@ -109,7 +109,7 @@ public class MovePhysicalLinkToContainerFrame  extends JFrame {
             
             if(com.moveSpecialObjects(selectedContainer.getClassName(),
                     selectedContainer.getOid(), 
-                    linksToMove.toArray(new LocalObjectLight[linksToMove.size()]))) {
+                    linksToMove)) {
                 
                 for (Refreshable topComponent : topComponents)
                     topComponent.refresh();

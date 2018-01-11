@@ -425,6 +425,10 @@ public class Constants {
      * Generic classes
      */
     public static final String CLASS_GENERICCONNECTION="GenericConnection";
+    /**
+     * Generic classes
+     */
+    public static final String CLASS_GENERICPHYSICALCONNECTION="GenericPhysicalConnection";
 
 
     //Misc versions

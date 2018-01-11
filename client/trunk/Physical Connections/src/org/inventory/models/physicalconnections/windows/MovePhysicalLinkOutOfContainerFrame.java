@@ -110,12 +110,12 @@ public class MovePhysicalLinkOutOfContainerFrame extends JFrame{
             
             if(com.moveSpecialObjects(containerParent.getClassName(),
                     containerParent.getOid(), 
-                    selectedLinks.toArray(new LocalObjectLight[selectedLinks.size()]))) {
+                    selectedLinks)) {
                 
                 for (Refreshable tc : topComponents)
                     tc.refresh();
                 
-                JOptionPane.showMessageDialog(null, "The link(s) was moved sucessfully", I18N.gm("success"), JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, "The links were moved sucessfully", I18N.gm("success"), JOptionPane.INFORMATION_MESSAGE);
                 dispose();
             } else
                 JOptionPane.showMessageDialog(null, com.getError(), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
