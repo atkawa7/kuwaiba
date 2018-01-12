@@ -18,13 +18,17 @@ package org.kuwaiba.web;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.util.List;
+import java.util.ArrayList;
 import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 import javax.inject.Named;
 import javax.servlet.http.Part;
 import org.kuwaiba.beans.ToolsBeanRemote;
 import org.kuwaiba.web.misc.JsfUtil;
-
+import org.kuwaiba.util.patches.GenericPatch;
 /**
  * Controls how all the actions in the administration console are executed
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
@@ -35,13 +39,17 @@ public class ToolsController implements Serializable {
     
     private Part dataModelFile;
     /**
-     * The patches to be executed
+     * The patchesIds to be executed
      */
-    private String[] patches;
+    private String[] patchesIds;
+    
+    private DataModel dataModelPatches;
+    
+    private List<GenericPatch> patches;
     
     @EJB
     private ToolsBeanRemote tbr;
-       
+    
     public String prepareResetDatabase() {
         return "ResetDatabase"; //NOI18N
     }
@@ -87,10 +95,20 @@ public class ToolsController implements Serializable {
     public String applyPatches() {
         try {
             
-            if (patches == null || patches.length == 0) 
+            if (patchesIds == null || patchesIds.length == 0) 
                 JsfUtil.addSuccessMessage(String.format("No patches were selected."));
-            else {
-                String[] executedPatchesMessages = tbr.executePatches(patches);
+            else {                
+                List<GenericPatch> patchesToApply = new ArrayList();
+                
+                for (GenericPatch patch : patches) {
+                    for (String patchesId : patchesIds) {
+                        if (patch.getId().equals(patchesId)) {
+                            patchesToApply.add(patch);
+                            break;
+                        }
+                    }
+                }
+                String[] executedPatchesMessages = tbr.executePatches(patchesToApply);
 
                 for (int i = 0; i < executedPatchesMessages.length; i++) {
                     if (executedPatchesMessages[i] == null)
@@ -113,11 +131,17 @@ public class ToolsController implements Serializable {
         this.dataModelFile = dataModelFile;
     }
 
-    public String[] getPatches() {
-        return patches;
+    public String[] getPatchesIds() {
+        return patchesIds;
     }
 
-    public void setPatches(String[] patches) {
-        this.patches = patches;
+    public void setPatchesIds(String[] patchesIds) {
+        this.patchesIds = patchesIds;
+    }
+    
+    public DataModel getPatches() {
+        if (patches == null)
+            patches = tbr.getPatches();
+        return dataModelPatches == null ? dataModelPatches = new ListDataModel(patches) : dataModelPatches;
     }
 }

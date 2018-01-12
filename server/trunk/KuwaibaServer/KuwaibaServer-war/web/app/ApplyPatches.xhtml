@@ -18,23 +18,8 @@
                #{bundle.ApplyPatchesDescription}
             </p>
             <h:form id="form">
-                <h:selectManyCheckbox value="#{Tools.patches}" layout="pageDirection">
-                    <!-- These options should be dynamic in the future -->
-                    <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.0 &#8594; 1.1.x] Reset passwords.&lt;/b&gt; All users in the database will have their passwords reset to the same &quot;username&quot; value. The passwords were stored as unsalted MD5 hashes until version 1.0 and in version 1.1 BCrypt is used instead." itemValue="1" />
-                    <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.0 &#8594; 1.1.x] Migrate hard-coded reports.&lt;/b&gt; This action creates wrapper dynamic reports for the old hard-coded ones. In future releases, the hard-coded reports will disappear completely. Class GenericMPLService will be renamed to GenericMPLSService as well." itemValue="2" />
-                    <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.1.x &#8594; 1.5] Migrate group-less users.&lt;/b&gt; All users without group will be moved to a default group so the new user management policies can be applied." itemValue="3" />
-                    <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.1.x &#8594; 1.5] Projects Module support.&lt;/b&gt; This action adds the abstract classes GenericProject, GenericActivity and some sample subclasses to allow that the Projects Module to work correctly." itemValue="4" />
-                    <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.1.x &#8594; 1.5] Rack Views.&lt;/b&gt; This action adds the attribute rackUnitsNumberingDescending to the Rack class, adding support for ascending and descending rack unit numbering." itemValue="5" />
-                    <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.1.x &#8594; 1.5] Connector Matching.&lt;/b&gt; This action adds the classes and attributes in the data model to allow that the connector matching rules can be configured." itemValue="6" />                    
-                    <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.1.x &#8594; 1.5] Port Type Fix.&lt;/b&gt; This patch will update the classes ElectricalPort and OpticalPort, changing the type of the &lt;i&gt;type&lt;/i&gt; attribute to ElectricalPortType and OpticalPortType respectively, to fix a bug detected in a default datamodel. &lt;b&gt;Warning: This action will set to null the value of the attribute in the existing instances&lt;/b&gt;." itemValue="7" />                    
-                    <f:selectItem itemEscaped="false" itemLabel="&lt;b&gt;[1.5 &#8594; 1.6] Device Layout Support.&lt;/b&gt; This patch will create the attribute &lt;i&gt;model&lt;/i&gt; of type &lt;i&gt;EquipmentModel&lt;/i&gt; in the class &lt;i&gt;GenericCommunicationsElement&lt;/i&gt;&lt;/b&gt; and its subclasses 
-                         and adds the classes &lt;i&gt;GenericApplicationListType&lt;/i&gt; and &lt;i&gt;CustomShape&lt;/i&gt;.&lt;/b&gt;
-                        &lt;br /&gt;&lt;b&gt;Warning: this patch will fail if any subclass of &lt;i&gt;GenericCommunicationsElement&lt;/i&gt; already has an attribute called &lt;i&gt;model&lt;/i&gt; &lt;/b&gt; and won't migrate the old values to the new model.
-                        &lt;br /&gt;&lt;i&gt;What to do?&lt;/i&gt;:
-                        &lt;br /&gt;1. Delete the attribute &lt;i&gt;model&lt;/i&gt; in the said subclass.
-                        &lt;br /&gt;2. Run the patch.
-                        &lt;br /&gt;3. Create an &lt;i&gt;EquipmentModel&lt;/i&gt; instance for each &lt;i&gt;model&lt;/i&gt; value you already had prior to the execution of the patch.
-                        &lt;br /&gt;4. Manually set the &lt;i&gt;model&lt;/i&gt; attribute to the respective value using the the enumeration you just populated in the instances that might have been affected." itemValue="8" />               
+                <h:selectManyCheckbox value="#{Tools.patchesIds}" layout="pageDirection">
+                    <f:selectItems itemLabelEscaped="false" value="#{Tools.patches}" var="patch" itemLabel="&lt;b&gt;[#{patch.sourceVersion} &#8594; #{patch.targetVersion}] #{patch.title}.&lt;/b&gt; #{patch.description}" itemValue="#{patch.id}" />
                 </h:selectManyCheckbox>
                 <br />
                 <h:commandButton class="button" action="#{Tools.applyPatches}" value="#{bundle.ApplyPatchesApply}" />

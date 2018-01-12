@@ -880,7 +880,7 @@ public class Util {
         return (String)aClass.iterator().next().getEndNode().getProperty(Constants.PROPERTY_NAME);
     }
        
-    public static void createAttribute(Node classNode, AttributeMetadata attributeDefinition) throws InvalidArgumentException {
+    public static void createAttribute(Node classNode, AttributeMetadata attributeDefinition, boolean recursive) throws InvalidArgumentException {
         if (attributeDefinition.getName() == null || attributeDefinition.getName().isEmpty())
             throw new InvalidArgumentException("Attribute name can not be null or an empty string");
         
@@ -893,11 +893,21 @@ public class Util {
 
         for(Path p : UPDATE_TRAVERSAL.traverse(classNode)){
             String currentClassName = (String) p.endNode().getProperty(Constants.PROPERTY_NAME);
-            for(Relationship rel : p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE)){
-                if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeDefinition.getName()))
-                    throw new InvalidArgumentException(String.format("Class %s already has an attribute named %s", 
+            
+            boolean hasAttribute = false;
+            
+            for(Relationship rel : p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE)){                
+                if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeDefinition.getName())) {
+                    if (recursive)
+                        throw new InvalidArgumentException(String.format("Class %s already has an attribute named %s", 
                             currentClassName, attributeDefinition.getName()));
+                    
+                    hasAttribute = true;
+                }
             }
+            if (hasAttribute)
+                continue;
+            
             Label label = DynamicLabel.label(Constants.LABEL_ATTRIBUTE);
             Node attrNode = classNode.getGraphDatabase().createNode(label);
             attrNode.setProperty(Constants.PROPERTY_NAME, attributeDefinition.getName()); //This should not be null. That should be checked in the caller

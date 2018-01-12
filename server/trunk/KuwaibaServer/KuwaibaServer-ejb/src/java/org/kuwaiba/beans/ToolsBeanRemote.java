@@ -16,8 +16,10 @@
 
 package org.kuwaiba.beans;
 
+import java.util.List;
 import javax.ejb.Remote;
 import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.util.patches.GenericPatch;
 
 /**
  * Misc management tools
@@ -42,5 +44,10 @@ public interface ToolsBeanRemote {
      * @param patches A string array with the ids of the patches to be executed.
      * @return The error messages (if any) after applying the patches. Null entries mean successful execution for the corresponding patches
      */
-    public String[] executePatches(String[] patches);
+    public String[] executePatches(List<GenericPatch> patches);
+    /**
+     * Gets the possible patches
+     * @return A list of the possible patches
+     */
+    public List<GenericPatch> getPatches();
 }

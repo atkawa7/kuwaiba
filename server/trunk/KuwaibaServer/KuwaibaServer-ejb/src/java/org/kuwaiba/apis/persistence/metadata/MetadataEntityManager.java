@@ -135,10 +135,14 @@ public interface MetadataEntityManager {
      * Adds an attribute to a class.
      * @param className The class the attribute will be added to.
      * @param attributeDefinition An object with the definition of the attribute.
+     * @param recursive Defines if the subclasses that has an attribute with name 
+     *                  equal to the name of the new attribute can conserve (false) it 
+     *                  or must be removed (true), in the case when the attribute must 
+     *                  be removed throws an exception
      * @throws MetadataObjectNotFoundException if there is no a class with such className
      * @throws InvalidArgumentException if any of the parameters to create the attribute has a wrong value
      */
-    public void createAttribute(String className, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException;
+    public void createAttribute(String className, AttributeMetadata attributeDefinition, boolean recursive) throws MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**
      * Adds an attribute to a class

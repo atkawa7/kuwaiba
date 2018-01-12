@@ -385,7 +385,7 @@ public class WebserviceBean implements WebserviceBeanRemote {
             attributeMetadata.setVisible(attributeDefinition.isVisible());
             attributeMetadata.setNoCopy(attributeDefinition.isNoCopy());
 
-            mem.createAttribute(className, attributeMetadata);
+            mem.createAttribute(className, attributeMetadata, true);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 

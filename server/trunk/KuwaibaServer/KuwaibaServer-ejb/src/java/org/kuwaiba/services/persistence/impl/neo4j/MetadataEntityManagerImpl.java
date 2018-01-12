@@ -135,7 +135,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             if (classDefinition.getAttributes() != null) {
                 for (AttributeMetadata attributeMetadata : classDefinition.getAttributes())
                     //This no longer checks for duplicates since the attributes are now a set
-                    Util.createAttribute(classNode, attributeMetadata);
+                    Util.createAttribute(classNode, attributeMetadata, true);
             }
             
             //Now we make our class to inherit the attributes from its parent class (except for the root class, RootObject)
@@ -656,7 +656,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     }
 
     @Override
-    public void createAttribute(String className, AttributeMetadata attributeDefinition) 
+    public void createAttribute(String className, AttributeMetadata attributeDefinition, boolean recursive) 
             throws MetadataObjectNotFoundException, InvalidArgumentException {
         if (attributeDefinition.getName() == null || attributeDefinition.getName().isEmpty())
             throw new InvalidArgumentException("Attribute name can not be null or an empty string");
@@ -670,7 +670,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", className));
             
-            Util.createAttribute(classNode, attributeDefinition);
+            Util.createAttribute(classNode, attributeDefinition, recursive);
             //Refresh cache for the affected classes
             refreshCacheOn(classNode);
             tx.success();
@@ -687,7 +687,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Can not find a class with id %s", classId));
         
-            Util.createAttribute(classNode, attributeDefinition);
+            Util.createAttribute(classNode, attributeDefinition, true);
             //Refresh cache for the affected classes
             refreshCacheOn(classNode);
             tx.success();
