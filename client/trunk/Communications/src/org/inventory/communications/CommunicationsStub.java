@@ -310,7 +310,7 @@ public class CommunicationsStub {
      * @param classToFilter The superclass/class to be used to filter the results. You can also use abstract superclasses.
      * @return The list of special children of the given object, filtered using classToFilter. Null if  the parent class name provided could not be found or if the parent object could not be found
      */
-    public List<LocalObjectLight> getSpecialChildrenOfClassLight(long parentOid, String parentClass, String classToFilter) {
+    public List<LocalObjectLight> getSpecialChildrenOfClassLight(String parentClass, long parentOid, String classToFilter) {
         try {
             List <RemoteObjectLight> children = service.getSpecialChildrenOfClassLight(parentOid, parentClass, classToFilter, -1, session.getSessionId());
             List <LocalObjectLight> res = new ArrayList<>();

@@ -23,6 +23,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.util.Constants;
@@ -117,8 +118,9 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
 
     public void firePropertyChangeEvent(String property, Object oldValue, Object newValue) {
         synchronized(propertyChangeListeners) {
-            for (PropertyChangeListener listener : propertyChangeListeners)
-                listener.propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));
+            Iterator<PropertyChangeListener> listenersIterator = propertyChangeListeners.iterator();
+            while (listenersIterator.hasNext())
+                listenersIterator.next().propertyChange(new PropertyChangeEvent(this, property, oldValue, newValue));
         }
     }
 

@@ -17,16 +17,19 @@
 package org.inventory.models.physicalconnections.actions;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeCellRenderer;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
@@ -46,7 +49,7 @@ import org.openide.util.lookup.ServiceProvider;
 public class CheckConnectionsIntegrityAction extends GenericObjectNodeAction {
 
     public CheckConnectionsIntegrityAction() {
-        putValue(NAME, I18N.gm("check_connections_integrity"));
+        putValue(NAME, I18N.gm("check_connections_integrity")); //NOI18N
     }
     
     @Override
@@ -56,7 +59,7 @@ public class CheckConnectionsIntegrityAction extends GenericObjectNodeAction {
 
     @Override
     public String[] appliesTo() {
-        return new String[] { "ViewableObject" };
+        return new String[] { Constants.CLASS_VIEWABLEOBJECT };
     }
 
     @Override
@@ -67,13 +70,11 @@ public class CheckConnectionsIntegrityAction extends GenericObjectNodeAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         List<LocalObjectLight> specialChildren = CommunicationsStub.getInstance().
-                getSpecialChildrenOfClassLight(selectedObjects.get(0).getOid(), selectedObjects.get(0).getClassName(), Constants.CLASS_GENERICPHYSICALCONNECTION);
+                getSpecialChildrenOfClassLight(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid(), Constants.CLASS_GENERICPHYSICALCONNECTION);
         
         if (specialChildren == null) 
-            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError()); //NOI18N
         else {
-            //The connections with a loose end
-            List<LocalObjectLight> ignored = new ArrayList<>();
             //The connections whose endpoints' common parent is different from its current parent object (which happens to be the currently selcted object)
             //The key of the hashmap is the actual parent, while the value is an array of connections that should be moved to said parent 
             HashMap<LocalObjectLight, List<LocalObjectLight>> toBeProcessed = new HashMap<>();
@@ -83,26 +84,20 @@ public class CheckConnectionsIntegrityAction extends GenericObjectNodeAction {
                 
                 //If any of the endpoints is loose, it might just not be connected, so we ignore it and go on
                 List<LocalObjectLight> endpointA = CommunicationsStub.getInstance().
-                        getSpecialAttribute(specialChild.getClassName(), specialChild.getOid(), "endpointA");
-                if (endpointA == null || endpointA.isEmpty()) {
-                    ignored.add(specialChild);
+                        getSpecialAttribute(specialChild.getClassName(), specialChild.getOid(), "endpointA"); //NOI18N
+                if (endpointA == null || endpointA.isEmpty())
                     continue;
-                } 
                 
                 List<LocalObjectLight> endpointB = CommunicationsStub.getInstance().
-                        getSpecialAttribute(specialChild.getClassName(), specialChild.getOid(), "endpointB");
-                if (endpointB == null || endpointB.isEmpty()) {
-                    ignored.add(specialChild);
+                        getSpecialAttribute(specialChild.getClassName(), specialChild.getOid(), "endpointB"); //NOI18N
+                if (endpointB == null || endpointB.isEmpty())
                     continue;
-                }
                 
                 LocalObjectLight commonParent = CommunicationsStub.getInstance().getCommonParent(endpointA.get(0).getClassName(), endpointA.get(0).getOid(), 
                         endpointB.get(0).getClassName(), endpointB.get(0).getOid());
                 
-                if (commonParent == null) {
-                    ignored.add(specialChild);
+                if (commonParent == null)
                     continue;
-                }
                 
                 if (!selectedObjects.get(0).equals(commonParent)) {  //If the common parent is different, out it on a list and wait for user authorization to move it
                     if (toBeProcessed.containsKey(commonParent))
@@ -113,25 +108,22 @@ public class CheckConnectionsIntegrityAction extends GenericObjectNodeAction {
             }
             
             if (toBeProcessed.isEmpty())
-                JOptionPane.showMessageDialog(null, "All connections seem to be consistent", I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(null, I18N.gm("connections_consistent"), I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE); //NOI18N
             else {
                 JPanel pnlConnectionsToBeprocessed = new JPanel(new BorderLayout(0, 10));
-                pnlConnectionsToBeprocessed.add(new JLabel("The following connections should have another parent.\n Perhaps one of their endpoints was moved. Do you want to correct this issue?"), BorderLayout.NORTH);
+                pnlConnectionsToBeprocessed.add(new JLabel(I18N.gm("fix_wrong_connection_parent_issue")), BorderLayout.NORTH); //NOI18N
                 
-                JList<LocalObjectLight> lstToBeProcessed = new JList<>();
-                
-                JScrollPane pnlScrollMain = new JScrollPane(lstToBeProcessed);
-                
+                JScrollPane pnlScrollMain = new JScrollPane(new NewConnectionParentsTree(toBeProcessed));
                 pnlConnectionsToBeprocessed.add(pnlScrollMain);
                 
                 if (JOptionPane.showConfirmDialog(null, pnlConnectionsToBeprocessed, 
-                        I18N.gm("information"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                        I18N.gm("information"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) { //NOI18N
                     
                     for (LocalObjectLight commonParent : toBeProcessed.keySet()) {
                         if (CommunicationsStub.getInstance().moveSpecialObjects(
                                 commonParent.getClassName(), commonParent.getOid(), toBeProcessed.get(commonParent)))
-                            NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
-                                    NotificationUtil.INFO_MESSAGE, String.format("Connections sucessfully moved to %s", commonParent));
+                            NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"),  //NOI18N
+                                    NotificationUtil.INFO_MESSAGE, String.format(I18N.gm("connections_successfully_moved_to"), commonParent));
                         else
                             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
@@ -145,5 +137,41 @@ public class CheckConnectionsIntegrityAction extends GenericObjectNodeAction {
     @Override
     public int numberOfNodes() {
         return 1;
-    }    
+    }
+    
+    private class NewConnectionParentsTree extends JTree {
+        public NewConnectionParentsTree(HashMap<LocalObjectLight, List<LocalObjectLight>> toBeProcessed) {
+            super(new DefaultMutableTreeNode("Affected connections and their new suggested parents"));
+            setCellRenderer(new NewConnectionParentsTreeCellRenderer());
+//            ((DefaultTreeCellRenderer)getCellRenderer()).setClosedIcon(null);
+//            ((DefaultTreeCellRenderer)getCellRenderer()).setOpenIcon(null);
+            DefaultMutableTreeNode topNode = (DefaultMutableTreeNode)this.getModel().getRoot();
+            
+            for (LocalObjectLight newParent : toBeProcessed.keySet()) {
+                DefaultMutableTreeNode newParentNode = new DefaultMutableTreeNode(newParent);
+                for (LocalObjectLight connection : toBeProcessed.get(newParent))
+                    newParentNode.add(new DefaultMutableTreeNode(connection));
+                topNode.add(newParentNode);
+            }
+            
+            //We manually expand the nodes
+            for (int i = 0; i < this.getRowCount(); i++)
+                this.expandRow(i);
+        }
+    }
+    
+    private class NewConnectionParentsTreeCellRenderer implements TreeCellRenderer {
+
+        @Override
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+            if (row == 0) //The description
+                return new JLabel("<html><b>" + value + "</b></html>"); //NOI18N
+                      
+            if (!leaf)
+                return new JLabel(String.format("<html><i>[New Parent] %s</i></html>", value)); //A new parent
+            
+            return new JLabel(value.toString()); //A connection
+        }
+    }
+    
 }
