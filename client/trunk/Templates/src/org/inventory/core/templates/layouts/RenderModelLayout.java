@@ -115,13 +115,19 @@ public class RenderModelLayout {
             this.errorMessage = CommunicationsStub.getInstance().getError();
             return null;
         }
-        for (Object attrValue : localObject.getAttributes().values()) {
-            if (attrValue instanceof LocalObjectListItem) {
-                LocalObjectListItem loli = (LocalObjectListItem) attrValue;
-                if (Constants.CLASS_EQUIPMENTMODEL.equals(loli.getClassName())) //NOI18N
-                    return loli;
+        
+        for (String attributeKey : localObject.getAttributes().keySet()) {            
+            if ("model".equals(attributeKey)) {
+                Object attributeValue = localObject.getAttributes().get("model");
+                if (attributeValue instanceof LocalObjectListItem) {
+                    LocalObjectListItem listItem = (LocalObjectListItem) attributeValue;
+                    
+                    if (CommunicationsStub.getInstance().isSubclassOf(listItem.getClassName(), Constants.CLASS_GENERICOBJECTLIST))
+                        return listItem;
+                }
             }
         }
+        
         errorMessage = String.format("The object %s does not have an attribute \"model\" or is not set", localObject);
         return null;
     }

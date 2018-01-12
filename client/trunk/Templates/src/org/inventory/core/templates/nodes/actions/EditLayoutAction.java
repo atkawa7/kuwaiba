@@ -75,16 +75,19 @@ public class EditLayoutAction extends GenericInventoryAction {
         
         LocalObjectListItem loli = null;
                 
-        for (Object attributeValue : templateElement.getAttributes().values()) {            
-            if (attributeValue instanceof LocalObjectListItem) {                
-                LocalObjectListItem listItem = (LocalObjectListItem) attributeValue;
-                
-                if (Constants.CLASS_EQUIPMENTMODEL.equals(listItem.getClassName())) {
-                    loli = listItem;
-                    break;
+        for (String attributeKey : templateElement.getAttributes().keySet()) {            
+            if ("model".equals(attributeKey)) {
+                Object attributeValue = templateElement.getAttributes().get("model");
+                if (attributeValue instanceof LocalObjectListItem) {
+                    LocalObjectListItem listItem = (LocalObjectListItem) attributeValue;
+                    
+                    if (CommunicationsStub.getInstance().isSubclassOf(listItem.getClassName(), Constants.CLASS_GENERICOBJECTLIST)) {
+                        loli = listItem;
+                        break;
+                    }
                 }
             }
-        }
+        }        
         if (loli == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.ERROR_MESSAGE, "The property \"model\" is not set");

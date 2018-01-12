@@ -16,6 +16,7 @@
  */
 package org.inventory.core.templates.layouts;
 
+import java.awt.BorderLayout;
 import org.inventory.core.templates.layouts.shapehierarchy.ShapeHierarchyTopComponent;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -61,6 +62,7 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
             .set(Collections.singleton(service.getPalette()), null);
         
         pnlScrollPane.setViewportView(service.getScene().createView());
+        add(service.getScene().createSatelliteView(), BorderLayout.SOUTH);
     }
     
     public DeviceLayoutTopComponent() {
