@@ -16,16 +16,22 @@
  */
 package org.inventory.core.templates.layouts.customshapes.nodes.actions;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
+import java.io.IOException;
+import javax.xml.bind.DatatypeConverter;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
+import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.customshapes.nodes.CustomShapeRootNode;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
+import org.openide.util.Exceptions;
 import org.openide.util.Utilities;
 
 /**
@@ -57,6 +63,25 @@ public class CreateCustomShapeAction extends GenericInventoryAction {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {
+            try {
+                byte[] byteArray = Utils.getByteArrayFromImage(Utils.createRectangleIcon(Color.BLACK, 33, 33), null);
+                
+                String byteArrayEncode = DatatypeConverter.printBase64Binary(byteArray);                
+                String iconAttributeValue = "defaultIcon" + ";/;" +  "png" + ";/;" + byteArrayEncode; //NOI18N
+
+                LocalObject updateCustomShape = new LocalObject(loli.getClassName(), loli.getId(), 
+                    new String[] {"icon"}, new Object[] {iconAttributeValue});
+
+                if (!CommunicationsStub.getInstance().saveObject(updateCustomShape)) {
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                    return;
+                }
+            } catch (IOException ex) {
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                    NotificationUtil.ERROR_MESSAGE, "The default icon can not be created");
+                return;
+            }
             ((AbstractChildren) node.getChildren()).addNotify();
             //Refresh cache
             CommunicationsStub.getInstance().getList(customShapeClass.getClassName(), false, true);
