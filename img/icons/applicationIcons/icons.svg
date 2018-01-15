@@ -622,9 +622,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="1351.2377"
-     inkscape:cy="-90.035022"
+     inkscape:zoom="1"
+     inkscape:cx="1372.5332"
+     inkscape:cy="-176.16975"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -6520,7 +6520,7 @@
        sodipodi:cy="267.47366"
        sodipodi:rx="19.697975"
        sodipodi:ry="18.435284"
-       d="m 209.8592,267.47366 a 19.697975,18.435284 0 1 1 -39.39595,0 19.697975,18.435284 0 1 1 39.39595,0 z"
+       d="m 209.8592,267.47366 c 0,10.18153 -8.81908,18.43529 -19.69798,18.43529 -10.87889,0 -19.69797,-8.25376 -19.69797,-18.43529 0,-10.18152 8.81908,-18.43528 19.69797,-18.43528 10.8789,0 19.69798,8.25376 19.69798,18.43528 z"
        transform="matrix(0.96085989,0,0,1.0266723,1182.8994,1046.5502)"
        inkscape:export-filename="/home/michin/workspace/java/KuwaibaRCP/trunk/Models Layouts/src/org/inventory/design/modelsLayouts/res/ellipse.png"
        inkscape:export-xdpi="51.867798"
@@ -6651,25 +6651,25 @@
        x="-188.91765"
        y="371.45212"
        ry="0"
-       inkscape:export-filename="/home/michin/workspace/java/KuwaibaRCP/trunk/Reports/src/org/inventory/reports/res/reports.png"
+       inkscape:export-filename="/home/lulita/workspace/java/KuwaibaRCP/trunk/Navigation Tree/src/org/inventory/navigation/navigationtree/res/diagnostic_actions_group.png"
        inkscape:export-xdpi="33.749985"
        inkscape:export-ydpi="33.749985" />
     <text
        sodipodi:linespacing="0%"
        xml:space="preserve"
        style="font-size:12px;font-style:normal;font-weight:normal;line-height:0%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:sans-serif"
-       x="-174.40245"
-       y="430.74548"
+       x="-173.73497"
+       y="430.93274"
        id="text4205-3-8-9-7-7-0-6"
-       inkscape:export-filename="/home/michin/workspace/java/KuwaibaRCP/trunk/Reports/src/org/inventory/reports/res/reports.png"
+       inkscape:export-filename="/home/lulita/workspace/java/KuwaibaRCP/trunk/Navigation Tree/src/org/inventory/navigation/navigationtree/res/diagnostic_actions_group.png"
        inkscape:export-xdpi="33.749985"
        inkscape:export-ydpi="33.749985"
        transform="scale(1.0593707,0.94395663)"><tspan
          sodipodi:role="line"
          id="tspan4207-1-9-4-7-5-9-7"
-         x="-174.40245"
-         y="430.74548"
-         style="font-size:41.36859131px;font-weight:bold;line-height:1.25;fill:#ffffff;font-family:sans-serif">P</tspan></text>
+         x="-173.73497"
+         y="430.93274"
+         style="font-size:41.36859131px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;line-height:1.25;fill:#ffffff;font-family:Lato;-inkscape-font-specification:Lato Bold">D</tspan></text>
     <rect
        style="fill:#aa0000;fill-opacity:1;stroke-width:1.06666671999999996"
        id="rect3396-5-7-36-7-3-3"
@@ -6696,7 +6696,7 @@
          id="tspan4207-1-9-4-7-5-9-7-7"
          x="-175.77788"
          y="378.35477"
-         style="font-size:41.36859131px;font-weight:bold;line-height:1.25;fill:#ffffff;font-family:sans-serif">U</tspan></text>
+         style="font-size:41.36859130999999934px;font-weight:bold;line-height:1.25000000000000000;fill:#ffffff;font-family:Lato;-inkscape-font-specification:Lato Bold;font-style:normal;font-stretch:normal;font-variant:normal">U</tspan></text>
     <rect
        style="fill:#ffffff;fill-opacity:1;stroke-width:1.06666671999999996"
        id="rect3396-5-7-36-7-3-3-3"
@@ -7096,7 +7096,7 @@
        d="m 1123.9759,540.24084 c 0,14.24456 -11.5475,25.79204 -25.7921,25.79204 -14.2445,0 -25.792,-11.54748 -25.792,-25.79204 0,-14.24455 11.5475,-25.79204 25.792,-25.79204 14.2446,0 25.7921,11.54749 25.7921,25.79204 z" />
     <path
        style="fill:none;stroke:#ffffff;stroke-width:2.4000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
-       d="m 1271.6057,908.29072 -17.716,-0.0407 0.065,-21.83657 18.1517,0.10004"
+       d="M 0,0 0,0"
        id="path3837"
        inkscape:connector-type="polyline"
        inkscape:connector-curvature="0"
@@ -7192,5 +7192,105 @@
          id="rect3401-0-7-6-0"
          style="fill:#ff00cc;fill-opacity:1;stroke:#ffffff;stroke-width:3.56064034;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none" />
     </g>
-  </g>
+    <rect
+       style="fill:#008080;fill-opacity:1;stroke:none;stroke-width:2.38752842000000021;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect3792"
+       width="97.612473"
+       height="97.612473"
+       x="1450.9769"
+       y="1279.4718"
+       inkscape:export-filename="/home/lulita/workspace/java/KuwaibaRCP/trunk/Templates/src/org/inventory/core/templates/res/rectangle.png"
+       inkscape:export-xdpi="27.6604"
+       inkscape:export-ydpi="27.6604" />
+    <rect
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="rect3767-9"
+       width="60"
+       height="60"
+       x="1469.4253"
+       y="1297.6815"
+       inkscape:export-filename="/home/lulita/workspace/java/KuwaibaRCP/trunk/Templates/src/org/inventory/core/templates/res/rectangle.png"
+       inkscape:export-xdpi="27.6604"
+       inkscape:export-ydpi="27.6604" />
+    <rect
+       style="fill:#d45500;fill-opacity:1;stroke:none;stroke-width:2.38752842000000021;stroke-miterlimit:4;stroke-dasharray:none"
+       id="rect3792-6"
+       width="97.612473"
+       height="97.612473"
+       x="1580.1937"
+       y="1281.7135"
+       inkscape:export-filename="/home/lulita/workspace/java/KuwaibaRCP/trunk/Templates/src/org/inventory/core/templates/res/ellipse.png"
+       inkscape:export-xdpi="27.660404"
+       inkscape:export-ydpi="27.660404" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="path3769-1"
+       sodipodi:cx="190.16122"
+       sodipodi:cy="267.47366"
+       sodipodi:rx="19.697975"
+       sodipodi:ry="18.435284"
+       d="m 209.8592,267.47366 a 19.697975,18.435284 0 1 1 -39.39595,0 19.697975,18.435284 0 1 1 39.39595,0 z"
+       transform="matrix(1.5534592,0,0,1.6598625,1333.496,886.35288)"
+       inkscape:export-filename="/home/lulita/workspace/java/KuwaibaRCP/trunk/Templates/src/org/inventory/core/templates/res/ellipse.png"
+       inkscape:export-xdpi="27.660404"
+       inkscape:export-ydpi="27.660404" />
+    <rect
+       style="fill:#338000;fill-opacity:1;stroke:none"
+       id="rect3792-6-0"
+       width="97.612473"
+       height="97.612473"
+       x="1718.6072"
+       y="1280.8958"
+       inkscape:export-filename="/home/lulita/workspace/java/KuwaibaRCP/trunk/Templates/src/org/inventory/core/templates/res/polygon.png"
+       inkscape:export-xdpi="27.6604"
+       inkscape:export-ydpi="27.6604" />
+    <path
+       sodipodi:type="star"
+       style="fill:#ffffff;fill-opacity:1;stroke:none"
+       id="path3765-4"
+       sodipodi:sides="3"
+       sodipodi:cx="188.646"
+       sodipodi:cy="302.57645"
+       sodipodi:r1="23.086185"
+       sodipodi:r2="11.375146"
+       sodipodi:arg1="0.52728705"
+       sodipodi:arg2="1.5744846"
+       inkscape:flatsided="false"
+       inkscape:rounded="0"
+       inkscape:randomized="0"
+       d="m 208.59651,314.1932 -19.99247,-0.24168 -19.9937,0.0942 10.20554,-17.19314 9.91526,-17.36216 9.78693,17.43483 z"
+       inkscape:transform-center-x="0.074484472"
+       inkscape:transform-center-y="-8.8900247"
+       transform="matrix(1.758108,0,0,1.5502302,1436.0864,869.34034)"
+       inkscape:export-filename="/home/lulita/workspace/java/KuwaibaRCP/trunk/Templates/src/org/inventory/core/templates/res/polygon.png"
+       inkscape:export-xdpi="27.6604"
+       inkscape:export-ydpi="27.6604" />
+    <rect
+       style="fill:#800066;fill-opacity:1;stroke:none"
+       id="rect3792-6-0-2"
+       width="97.612473"
+       height="97.612473"
+       x="1675.1937"
+       y="1404.7135"
+       inkscape:export-filename="/home/lulita/workspace/java/KuwaibaRCP/trunk/Templates/src/org/inventory/core/templates/res/label.png"
+       inkscape:export-xdpi="27.660404"
+       inkscape:export-ydpi="27.660404" />
+    <flowRoot
+       transform="matrix(2.1410348,0,0,2.1410348,1512.7842,782.05909)"
+       xml:space="preserve"
+       id="flowRoot2985-2"
+       style="font-size:40px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Lato;-inkscape-font-specification:Lato"
+       inkscape:export-filename="/home/lulita/workspace/java/KuwaibaRCP/trunk/Templates/src/org/inventory/core/templates/res/label.png"
+       inkscape:export-xdpi="27.660404"
+       inkscape:export-ydpi="27.660404"><flowRegion
+         id="flowRegion2987-2"><rect
+           id="rect2989-0"
+           width="113.57143"
+           height="45.714287"
+           x="84.285713"
+           y="286.64789"
+           style="fill:#ffffff" /></flowRegion><flowPara
+         id="flowPara2991-5"
+         style="font-weight:bold;-inkscape-font-specification:Lato Bold">A</flowPara></flowRoot>  </g>
 </svg>
