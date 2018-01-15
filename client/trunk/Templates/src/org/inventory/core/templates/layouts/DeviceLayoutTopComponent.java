@@ -30,6 +30,7 @@ import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.scene.ModelLayoutScene;
 import org.inventory.core.templates.layouts.customshapes.CustomShapesTopComponent;
 import org.netbeans.api.settings.ConvertAsProperties;
+import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
@@ -217,9 +218,13 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
     }//GEN-LAST:event_btnCleanActionPerformed
     
     private void btnShowPaletteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowPaletteActionPerformed
-        for (TopComponent topComponent : WindowManager.getDefault().findMode("commonpalette").getTopComponents()) { // NOI18N
-            if (!topComponent.isOpened()) // open the palette is was closed
-                topComponent.open();
+        for (Mode mode : WindowManager.getDefault().getModes()) {
+            for (TopComponent topComponent : WindowManager.getDefault().findMode(mode.getName()).getTopComponents()) {
+                if (!topComponent.isOpened()) { // open the palette is was closed
+                    if (topComponent.getClass().getName().equals("org.netbeans.spi.palette.PaletteTopComponent")) // NOI18N
+                        topComponent.open();
+                }
+            }
         }
     }//GEN-LAST:event_btnShowPaletteActionPerformed
 
