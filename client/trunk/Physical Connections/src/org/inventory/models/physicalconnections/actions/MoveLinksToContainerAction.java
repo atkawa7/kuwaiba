@@ -34,8 +34,10 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service = GenericObjectNodeAction.class)
-public class MoveLinksToContainerAction extends GenericObjectNodeAction{
+public class MoveLinksToContainerAction  extends GenericObjectNodeAction{
 
+    private CommunicationsStub com = CommunicationsStub.getInstance(); 
+    
     public MoveLinksToContainerAction() {
         putValue(NAME, I18N.gm("move_links_into_container"));
     }
@@ -44,66 +46,110 @@ public class MoveLinksToContainerAction extends GenericObjectNodeAction{
     public void actionPerformed(ActionEvent e) {
         
         for (LocalObjectLight object : selectedObjects) {
-            if(!CommunicationsStub.getInstance().isSubclassOf(object.getClassName(), Constants.CLASS_GENERICPHYSICALLINK)){
+            if(!com.isSubclassOf(object.getClassName(), Constants.CLASS_GENERICPHYSICALLINK)){
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, I18N.gm("select_only_physical_links"));
                 return;
             }
         }
-                
-        HashMap<String, LocalObjectLight[]> specialAttributes = CommunicationsStub.getInstance().getSpecialAttributes(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
+          
+        HashMap<String, LocalObjectLight[]> specialAttributes;
+        
+        List<LocalObjectLight> endpointsA = new ArrayList<>();
+        List<LocalObjectLight> endpointsB = new ArrayList<>();
 
-        if (specialAttributes == null ) {
-            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            return;
-        }
-        
-        LocalObjectLight endpointA = null;
-        LocalObjectLight endpointB = null;
+        for (LocalObjectLight selectedObject : selectedObjects) {
+            specialAttributes = com.getSpecialAttributes(selectedObject.getClassName(), selectedObject.getOid());
             
-        if (specialAttributes.containsKey("endpointA")) //NOI18N
-            endpointA = specialAttributes.get("endpointA")[0]; //NOI18N
-            
-        if (specialAttributes.containsKey("endpointB")) //NOI18N
-            endpointB = specialAttributes.get("endpointB")[0]; //NOI18N
-        
-        if(endpointA != null && endpointB != null){
-            LocalObjectLight parent = CommunicationsStub.getInstance().getCommonParent(endpointA.getClassName(), endpointA.getOid(), endpointB.getClassName(), endpointB.getOid());
-        
-            if (parent == null) {
+            if (specialAttributes == null ) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return;
             }
-
-            List<LocalObjectLight> parentsA = CommunicationsStub.getInstance().getParents(endpointA.getClassName(), endpointA.getOid());
-            List<LocalObjectLight> parentsB = CommunicationsStub.getInstance().getParents(endpointB.getClassName(), endpointB.getOid());
-            List<LocalObjectLight> existingContainers = new ArrayList<>();
-            boolean childrenToEvaluatedA = true;
-            int indexA = parentsA.indexOf(parent);
-
-            while(childrenToEvaluatedA){
-                indexA--;
-                if(indexA == 0)
-                    childrenToEvaluatedA = false;
-
-                int indexB = parentsB.indexOf(parent);
-                boolean childrenToEvaluatedB = true;
-                LocalObjectLight parentA = parentsA.get(indexA);
-
-                while(childrenToEvaluatedB){
-                    indexB--;
-                    if(indexB == 0)
-                        childrenToEvaluatedB = false;
-
-                    LocalObjectLight parentB = parentsB.get(indexB);
-
-                    existingContainers.addAll(CommunicationsStub.getInstance().getContainersBetweenObjects(
-                            parentA.getClassName(), parentA.getOid(), parentB.getClassName(), parentB.getOid(), Constants.CLASS_WIRECONTAINER));
+            
+            if (specialAttributes.containsKey("endpointA")) //NOI18N
+                endpointsA.add(specialAttributes.get("endpointA")[0]); //NOI18N
+            
+            if (specialAttributes.containsKey("endpointB")) //NOI18N
+                endpointsB.add(specialAttributes.get("endpointB")[0]); //NOI18N
+        }
+        
+        LocalObjectLight parent;
+        List<LocalObjectLight> parents = new ArrayList<>();
+        
+        if(!endpointsA.isEmpty() && !endpointsB.isEmpty()){
+            for(int i=0; i<endpointsA.size(); i++)
+                parents.add(com.getCommonParent(endpointsA.get(i).getClassName(), endpointsA.get(i).getOid(), endpointsB.get(i).getClassName(), endpointsB.get(i).getOid()));
+            
+            parent = parents.get(0);
+            for (int i=1; i<parents.size(); i++) {
+                if (!parent.equals(parents.get(i))) {
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, "no same parent");
+                    return;
                 }
             }
 
-            MovePhysicalLinkToContainerFrame frame = new MovePhysicalLinkToContainerFrame(selectedObjects, existingContainers);
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
+            List<List<LocalObjectLight>> allParentsA = new ArrayList<>();
+            List<List<LocalObjectLight>> allParentsB = new ArrayList<>();
+            for(int i=0; i<endpointsA.size(); i++){
+                List<LocalObjectLight> parentsA = com.getParents(endpointsA.get(i).getClassName(), endpointsA.get(i).getOid());
+                List<LocalObjectLight> parentsB = com.getParents(endpointsB.get(i).getClassName(), endpointsB.get(i).getOid());
+                allParentsA.add(parentsA);
+                allParentsB.add(parentsB);
+            }
+            
+            List<LocalObjectLight> prntsTemp = allParentsA.get(0);
+            for (int j = 1; j < allParentsA.size(); j++) {
+                List<LocalObjectLight> prntsA = allParentsA.get(j);
+                for (int k = 0; k < prntsA.size(); k++) {
+                    if(!prntsA.get(k).equals(prntsTemp.get(k))){
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, I18N.gm("select_links_with_same_end_ponits"));
+                        return;
+                    }
+                }
+            }
+
+            prntsTemp = allParentsB.get(0);
+            for (int j = 1; j < allParentsB.size(); j++) {
+                List<LocalObjectLight> prntsB = allParentsB.get(j);
+                for (int k = 0; k < prntsB.size(); k++) {
+                    if(!prntsB.get(k).equals(prntsTemp.get(k))){
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, I18N.gm("select_links_with_same_end_ponits"));
+                        return;
+                    }
+                }
+            }
+            
+            for(int i=0; i<endpointsA.size(); i++){
+                List<LocalObjectLight> parentsA = com.getParents(endpointsA.get(i).getClassName(), endpointsA.get(i).getOid());
+                List<LocalObjectLight> parentsB = com.getParents(endpointsB.get(i).getClassName(), endpointsB.get(i).getOid());    
+                List<LocalObjectLight> existingContainers = new ArrayList<>();
+                boolean childrenToEvaluatedA = true;
+                int indexA = parentsA.indexOf(parent);
+
+                while(childrenToEvaluatedA){
+                    indexA--;
+                    if(indexA == 0)
+                        childrenToEvaluatedA = false;
+
+                    int indexB = parentsB.indexOf(parent);
+                    boolean childrenToEvaluatedB = true;
+                    LocalObjectLight parentA = parentsA.get(indexA);
+
+                    while(childrenToEvaluatedB){
+                        indexB--;
+                        if(indexB == 0)
+                            childrenToEvaluatedB = false;
+
+                        LocalObjectLight parentB = parentsB.get(indexB);
+
+                        existingContainers.addAll(com.getContainersBetweenObjects(
+                                parentA.getClassName(), parentA.getOid(), parentB.getClassName(), parentB.getOid(), Constants.CLASS_WIRECONTAINER));
+                    }
+                }
+
+                MovePhysicalLinkToContainerFrame frame = new MovePhysicalLinkToContainerFrame(selectedObjects, existingContainers);
+                frame.setLocationRelativeTo(null);
+                frame.setVisible(true);
+            }
         }
     }
     
@@ -121,9 +167,9 @@ public class MoveLinksToContainerAction extends GenericObjectNodeAction{
     public String[] appliesTo() {
         return new String[] {Constants.CLASS_GENERICPHYSICALLINK};
     }    
-
+    
     @Override
     public int numberOfNodes() {
-        return 1;
+        return -1;
     }
 }
