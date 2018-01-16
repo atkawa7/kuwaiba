@@ -153,9 +153,10 @@
 * Added a refresh button to all views
 * All the frames that are used to select a value from a list (like those used in "Relate to..." actions) share a common code base and behave the same way. Double click now automatically accepts the selction.
 * Copy/cut and paste actions enabled in the Service Manager Module, Contract Manager Module and Pool Manager Module
-* Common context-aware actions has icons and similar actions were grouped to simplify the node's menu 
+* Common context-aware actions have icons and similar actions were grouped to simplify the node's menu 
 * Added the Inventory Synchronization module
-* Multiple bug fixes and improvements
 * Shortcuts added to the most frequently used actions in scenes
 * The class nodes in the Data Model Manager are colored with the color assigned to the class
+* There are new actions that allow the user to put links into an existing container or putting them out of an existing container 
 * Added an action to fix the possible inconsistencies in links and containers that may happen when moving elements with connections attached to them. This is the seed for a diagnostics module that will be added in further versions
+* Multiple bug fixes and improvements

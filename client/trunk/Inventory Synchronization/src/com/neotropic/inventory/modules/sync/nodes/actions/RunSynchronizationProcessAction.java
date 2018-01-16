@@ -20,6 +20,7 @@ import com.neotropic.inventory.modules.sync.nodes.actions.windows.SyncActionsFra
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalSyncFinding;
@@ -51,8 +52,13 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
             return;
         
         selectedNode = selectedNodes.next();
-        SyncRunnable myRun = new SyncRunnable();
-        CommunicationsStub.getInstance().launchSupervisedSynchronizationTask(selectedNode.getLookup().lookup(LocalSyncGroup.class), myRun);
+        
+        if (selectedNode.getChildren().getNodes().length == 0)
+            JOptionPane.showMessageDialog(null, I18N.gm("sync_no_configs"), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+        else {
+            SyncRunnable myRun = new SyncRunnable();
+            CommunicationsStub.getInstance().launchSupervisedSynchronizationTask(selectedNode.getLookup().lookup(LocalSyncGroup.class), myRun);
+        }
     }
 
     @Override
@@ -81,8 +87,7 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else {
                 if(findings.isEmpty())
-                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
-                    NotificationUtil.INFO_MESSAGE, I18N.gm("no_founds"));
+                    JOptionPane.showMessageDialog(null, I18N.gm("sync_no_findings"), I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
                 else{
                     SyncActionsFrame syncWizard = new SyncActionsFrame(selectedNode.getLookup().lookup(LocalSyncGroup.class), findings);
                     syncWizard.setVisible(true);
