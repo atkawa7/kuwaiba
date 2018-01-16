@@ -117,7 +117,7 @@ public class ActionsGroup extends GenericObjectNodeAction implements Presenter.P
                 mnuiAction.setName((String) action.getValue(NAME));
                 putValue(mnuiAction.getName(), action);
                 mnuiAction.addActionListener(this);
-                
+                mnuiAction.setEnabled(action.isEnabled());
                 mnuActionsGroup.add(mnuiAction);
             }
             MenuScroller.setScrollerFor(mnuActionsGroup, 20, 100);
