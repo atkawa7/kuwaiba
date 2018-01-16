@@ -1382,7 +1382,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             for (Relationship specialChildRelationships : parentNode.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING)) {
                 RemoteBusinessObjectLight specialChild = Util.createRemoteObjectLightFromNode(specialChildRelationships.getStartNode());
                 
-                if (mem.isSubClass(specialChild.getClassName(), classToFilter)) {
+                if (mem.isSubClass(classToFilter, specialChild.getClassName())) {
                     res.add(specialChild);
                     if (maxResults > 0 && ++counter == maxResults)
                         break;
