@@ -23,6 +23,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.views.rackview.widgets.RackViewConnectionWidget;
 import org.netbeans.api.visual.action.SelectProvider;
 import org.netbeans.api.visual.widget.Widget;
@@ -65,7 +66,7 @@ public class RackConnectionSelectProvider implements SelectProvider {
 
                     LocalClassMetadata connectionClass = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
                     if (connectionClass == null) {
-                        NotificationUtil.getInstance().showSimplePopup("Error", 
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                             NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                         continue;
                     }

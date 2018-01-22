@@ -19,6 +19,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.List;
+import javax.swing.JPopupMenu;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObject;
@@ -35,9 +36,11 @@ import org.inventory.views.rackview.widgets.RackViewConnectionWidget;
 import org.inventory.views.rackview.widgets.RackWidget;
 import org.inventory.views.rackview.widgets.RackWidgetWrapper;
 import org.inventory.views.rackview.widgets.actions.ChangePositionAction;
+import org.inventory.views.rackview.widgets.actions.DeletePhysicalLink;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.ConnectorState;
+import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
@@ -54,6 +57,8 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
     
     private final ChangePositionAction changePositionAction = new ChangePositionAction();
     
+    private final PopupMenuProvider defaultPopupMenuProvider;
+    
     public RackViewScene(LocalObjectLight rack) {
         this.rack = rack;
         getActions().addAction(ActionFactory.createZoomAction());
@@ -66,6 +71,20 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
         interactionLayer = new LayerWidget(this);
         addChild(nodeLayer);
         addChild(interactionLayer);
+        
+        defaultPopupMenuProvider = new PopupMenuProvider() {
+            private JPopupMenu popupMenu = null;
+            
+            @Override
+            public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
+                if (popupMenu == null) {
+                    popupMenu = new JPopupMenu("Connection Menu");
+                    popupMenu.add(DeletePhysicalLink.getInstance());
+                }
+                DeletePhysicalLink.getInstance().setSelectedWidget(widget);
+                return popupMenu;
+            }
+        };
     }
     
     public LocalObjectLight getRack() {
@@ -238,6 +257,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
         RackViewConnectionWidget newWidget = new RackViewConnectionWidget(this, edge);
         newWidget.getLabelWidget().setVisible(false);
         newWidget.getActions().addAction(ActionFactory.createSelectAction(new RackConnectionSelectProvider()));
+        newWidget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
         
         LocalClassMetadata edgeClass = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
         if (edgeClass == null) {

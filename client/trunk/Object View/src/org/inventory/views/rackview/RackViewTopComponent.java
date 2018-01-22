@@ -389,6 +389,10 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
     @Override
     public void refresh() {
     }
+    
+    public void refreshScene() {
+        btnRefreshActionPerformed(null);
+    }
 
     @Override
     public boolean isCompatible() {
