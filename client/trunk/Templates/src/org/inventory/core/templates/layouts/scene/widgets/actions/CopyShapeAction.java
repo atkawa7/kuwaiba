@@ -17,35 +17,24 @@
 package org.inventory.core.templates.layouts.scene.widgets.actions;
 
 import java.awt.event.ActionEvent;
-import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.scene.ModelLayoutScene;
-import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Action used to copy a widget in the scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class CopyShapeAction extends GenericInventoryAction {
+public class CopyShapeAction extends GenericShapeAction {
     private static CopyShapeAction instance;
-    private Widget selectedWidget;
     private Shape shapeToCopy;
     
     private CopyShapeAction() {
-        putValue(NAME, "Copy");
+        putValue(NAME, I18N.gm("lbl_copy_action"));
     }
     
     public static CopyShapeAction getInstance() {
         return instance == null ? instance = new CopyShapeAction() : instance;
-    }
-    
-    public Widget getSelectedWidget() {
-        return selectedWidget;        
-    }
-    
-    public void setSelectedWidget(Widget selectedWidget) {
-        this.selectedWidget = selectedWidget;
     }
     
     public Shape getShapeToCopy() {
@@ -55,12 +44,7 @@ public class CopyShapeAction extends GenericInventoryAction {
     public void setShapeToCopy(Shape shapeToCopy) {
         this.shapeToCopy = shapeToCopy;
     }
-    
-    @Override
-    public LocalPrivilege getPrivilege() {
-        return null;
-    }
-
+        
     @Override
     public void actionPerformed(ActionEvent e) {
         if (selectedWidget != null) {

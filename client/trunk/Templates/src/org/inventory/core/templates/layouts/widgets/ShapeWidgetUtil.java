@@ -20,16 +20,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 import org.inventory.core.templates.layouts.lookup.SharedContent;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.nodes.ShapeNode;
-import org.inventory.core.templates.layouts.scene.ModelLayoutScene;
 import org.netbeans.api.visual.border.BorderFactory;
-import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.spi.palette.PaletteController;
 import org.openide.util.Lookup;
@@ -57,7 +54,7 @@ public class ShapeWidgetUtil {
             return;
         if (evt.getPropertyName() == null)
             return;
-        Scene scene = widget.getScene();
+////        Scene scene = widget.getScene();
         
         if (Shape.PROPERTY_NAME.equals(evt.getPropertyName())) {
         }
@@ -76,12 +73,12 @@ public class ShapeWidgetUtil {
             int newWidthValue = (Integer) evt.getNewValue();
             widget.setPreferredSize(new Dimension(newWidthValue, bounds.height));
                         
-            if (scene instanceof ModelLayoutScene) {
-                int oldWidthValue = (Integer) evt.getOldValue();
-                
-                double widthPercentage = Double.parseDouble(Integer.toString(newWidthValue)) / Double.parseDouble(Integer.toString(oldWidthValue));
-                ((ModelLayoutScene) scene).updateWidget(widget, widthPercentage, 1);
-            }            
+////            if (scene instanceof ModelLayoutScene) {
+////                int oldWidthValue = (Integer) evt.getOldValue();
+////                
+////                double widthPercentage = Double.parseDouble(Integer.toString(newWidthValue)) / Double.parseDouble(Integer.toString(oldWidthValue));
+////                ((ModelLayoutScene) scene).updateWidget(widget, widthPercentage, 1);
+////            }            
         }
         else if (Shape.PROPERTY_HEIGHT.equals(evt.getPropertyName())) {
             Rectangle bounds = widget.getBounds();
@@ -90,12 +87,12 @@ public class ShapeWidgetUtil {
             int newHeightValue = (Integer) evt.getNewValue();
             widget.setPreferredSize(new Dimension(bounds.width, newHeightValue));
                         
-            if (scene instanceof ModelLayoutScene) {
-                int oldHeightValue = (Integer) evt.getOldValue();
-                
-                double heightPercentage = Double.parseDouble(Integer.toString(newHeightValue)) / Double.parseDouble(Integer.toString(oldHeightValue));
-                ((ModelLayoutScene) scene).updateWidget(widget, 1, heightPercentage);
-            }
+////            if (scene instanceof ModelLayoutScene) {
+////                int oldHeightValue = (Integer) evt.getOldValue();
+////                
+////                double heightPercentage = Double.parseDouble(Integer.toString(newHeightValue)) / Double.parseDouble(Integer.toString(oldHeightValue));
+////                ((ModelLayoutScene) scene).updateWidget(widget, 1, heightPercentage);
+////            }
         }
         else if (Shape.PROPERTY_COLOR.equals(evt.getPropertyName())) {
             widget.setBackground((Color) evt.getNewValue());
@@ -111,7 +108,7 @@ public class ShapeWidgetUtil {
         widget.getScene().validate();
         widget.getScene().paint();
         
-        if (scene instanceof ModelLayoutScene)
-            ((ModelLayoutScene) scene).fireChangeEvent(new ActionEvent(widget, ModelLayoutScene.SCENE_CHANGE, evt.getPropertyName() + " Property Changed"));
+////        if (scene instanceof ModelLayoutScene)
+////            ((ModelLayoutScene) scene).fireChangeEvent(new ActionEvent(widget, ModelLayoutScene.SCENE_CHANGE, evt.getPropertyName() + " Property Changed"));
     }
 }

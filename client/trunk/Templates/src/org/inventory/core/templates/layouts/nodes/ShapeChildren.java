@@ -17,7 +17,7 @@
 package org.inventory.core.templates.layouts.nodes;
 
 import org.inventory.core.templates.layouts.model.Shape;
-import org.inventory.core.templates.layouts.ModelLayoutService;
+import org.inventory.core.templates.layouts2.EquipmentLayoutPalette;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
@@ -35,7 +35,7 @@ public class ShapeChildren extends Children.Keys {
     @Override
     protected void addNotify() {
         super.addNotify();
-        setKeys(ModelLayoutService.shapes.get(category));
+        setKeys(EquipmentLayoutPalette.shapes.get(category));
     }
     
     @Override

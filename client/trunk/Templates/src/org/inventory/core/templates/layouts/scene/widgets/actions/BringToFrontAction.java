@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010-2017, Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2018, Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License
@@ -14,29 +14,28 @@
  *  limitations under the License.
  *
  */
-package org.inventory.core.templates.layouts.nodes;
+package org.inventory.core.templates.layouts.scene.widgets.actions;
 
-import org.inventory.core.templates.layouts2.EquipmentLayoutPalette;
-import org.openide.nodes.Children;
-import org.openide.nodes.Node;
+import java.awt.event.ActionEvent;
 
 /**
- * Shape palette category set
+ *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class CategoryChildren extends Children.Keys {
+public class BringToFrontAction extends GenericShapeAction {
+    private static BringToFrontAction instance;
     
-    public CategoryChildren() {        
+    private BringToFrontAction() {
+        putValue(NAME, "Bring To Front");
     }
     
+    public static BringToFrontAction getInstance() {
+        return instance == null ? instance = new BringToFrontAction() : instance;
+    }
+
     @Override
-    protected void addNotify() {
-        super.addNotify();
-        setKeys(EquipmentLayoutPalette.shapes.keySet());
+    public void actionPerformed(ActionEvent e) {
+        selectedWidget.bringToFront();
     }
     
-    @Override
-    protected Node[] createNodes(Object key) {
-        return new Node[] {new CategoryNode((String) key)};
-    }
 }

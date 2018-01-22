@@ -47,15 +47,7 @@ public class SelectableShapeWidget extends Widget implements PropertyChangeListe
     
     @Override
     public Lookup fixLookup() {
-        PaletteController pallete = SharedContent.getInstance().getAbstractLookup().lookup(PaletteController.class);
-        
-        List lst = new ArrayList();
-        lst.add(shapeNode);
-        lst.add(pallete);
-        
-        SharedContent.getInstance().getInstanceContent().set(lst, null);
-                
-        return SharedContent.getInstance().getAbstractLookup();
+        return ShapeWidgetUtil.fixLookup(shapeNode);
     }
     
     @Override

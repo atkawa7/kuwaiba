@@ -54,6 +54,7 @@ public class ResizeShapeProvider implements ResizeProvider, ResizeStrategy {
         
     @Override
     public void resizingFinished(Widget widget) {
+        /*
         if (oldLocation == null || oldBounds == null)
             return;
         MoveShapeProvider moveShapeProvider = new MoveShapeProvider();
@@ -80,6 +81,7 @@ public class ResizeShapeProvider implements ResizeProvider, ResizeStrategy {
         oldBounds = null;
         
         moveShapeProvider.movementFinished(newWidget);
+                */
     }
     
     @Override

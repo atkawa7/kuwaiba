@@ -19,8 +19,7 @@ package org.inventory.core.templates.layouts.scene.widgets.actions;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
-import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.scene.ModelLayoutScene;
 import org.netbeans.api.visual.widget.Widget;
@@ -29,14 +28,12 @@ import org.netbeans.api.visual.widget.Widget;
  * Action used to paste a widget in the scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class PasteShapeAction extends GenericInventoryAction {
+public class PasteShapeAction extends GenericShapeAction {
     private static PasteShapeAction instance;
-    private Widget selectedWidget;
     private Point localLocation;
     
     private PasteShapeAction() {
-        putValue(NAME, "Paste");
-
+        putValue(NAME, I18N.gm("lbl_paste_action"));
     }
     
     public static PasteShapeAction getInstance() {
@@ -50,15 +47,7 @@ public class PasteShapeAction extends GenericInventoryAction {
                 
         return instance;        
     }
-    
-    public Widget getSelectedWidget() {
-        return selectedWidget;        
-    }
-    
-    public void setSelectedWidget(Widget selectedWidget) {
-        this.selectedWidget = selectedWidget;
-    }
-    
+        
     public Point getLocalLocation() {
         return localLocation;                        
     }
@@ -67,11 +56,6 @@ public class PasteShapeAction extends GenericInventoryAction {
         this.localLocation = localLocation;
     }
     
-    @Override
-    public LocalPrivilege getPrivilege() {
-        return null;
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if (selectedWidget != null) {

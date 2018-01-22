@@ -21,7 +21,7 @@ import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.core.templates.layouts.DeviceLayoutTopComponent;
+import org.inventory.core.templates.layouts2.EquipmentLayoutTopComponent;
 import org.openide.util.Utilities;
 import org.openide.windows.WindowManager;
 
@@ -41,19 +41,19 @@ public class EditCustomShapeLayoutAction extends GenericInventoryAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalObjectListItem preferedShape = Utilities.actionsGlobalContext().lookup(LocalObjectListItem.class);
-        if (preferedShape == null)
+        LocalObjectListItem customShape = Utilities.actionsGlobalContext().lookup(LocalObjectListItem.class);
+        if (customShape == null)
             return;
-        DeviceLayoutTopComponent topComponent = (DeviceLayoutTopComponent) WindowManager.getDefault().findTopComponent(DeviceLayoutTopComponent.ID + preferedShape.getId());
+        EquipmentLayoutTopComponent topComponent = (EquipmentLayoutTopComponent) WindowManager.getDefault().findTopComponent(EquipmentLayoutTopComponent.ID + customShape.getId());
         if (topComponent == null) {
-            topComponent = new DeviceLayoutTopComponent(preferedShape);
+            topComponent = new EquipmentLayoutTopComponent(customShape);
             topComponent.open();
         } else {
             if (topComponent.isOpened())
                 topComponent.requestAttention(true);
             else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
                    //so we will reuse the instance, refreshing the vierw first
-                topComponent.refresh();
+////                topComponent.refresh();
                 topComponent.open();
             }
         }

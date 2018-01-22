@@ -17,19 +17,15 @@
 package org.inventory.core.templates.layouts.scene.widgets.actions;
 
 import java.awt.event.ActionEvent;
-import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.scene.ModelLayoutScene;
-import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Action used to make a group copy a widget in the scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class GroupCopyShapeAction extends GenericInventoryAction {
+public class GroupCopyShapeAction extends GenericShapeAction {
     private static GroupCopyShapeAction instance;
-    private Widget selectedWidget;
     private Shape shapeToCopy;
     
     public GroupCopyShapeAction() {
@@ -40,14 +36,6 @@ public class GroupCopyShapeAction extends GenericInventoryAction {
         return instance == null ? instance = new GroupCopyShapeAction() : instance;
     }
     
-    public Widget getSelectedWidget() {
-        return selectedWidget;        
-    }
-    
-    public void setSelectedWidget(Widget selectedWidget) {
-        this.selectedWidget = selectedWidget;
-    }
-    
     public Shape getShapeToCopy() {
         return shapeToCopy;
     }
@@ -55,12 +43,7 @@ public class GroupCopyShapeAction extends GenericInventoryAction {
     public void setShapeToCopy(Shape shapeToCopy) {
         this.shapeToCopy = shapeToCopy;
     }
-
-    @Override
-    public LocalPrivilege getPrivilege() {
-        return null;
-    }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         if (selectedWidget != null) {

@@ -20,7 +20,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.Collections;
 import org.inventory.core.templates.layouts.model.Shape;
-import org.inventory.core.templates.layouts.scene.ModelLayoutScene;
+import org.inventory.core.templates.layouts2.scene.EquipmentLayoutScene;
 import org.netbeans.api.visual.action.SelectProvider;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.model.ObjectScene;
@@ -47,7 +47,7 @@ public class ShapeSelectProvider implements SelectProvider {
 
     @Override
     public void select (Widget widget, Point localLocation, boolean invertSelection) {        
-        ModelLayoutScene scene = ((ModelLayoutScene) widget.getScene());
+        EquipmentLayoutScene scene = ((EquipmentLayoutScene) widget.getScene());
 
         Object object = scene.findObject (widget);
 
@@ -58,7 +58,7 @@ public class ShapeSelectProvider implements SelectProvider {
             scene.userSelectionSuggested (Collections.singleton (object), invertSelection);
             
             for (Shape shape : scene.getNodes()) {
-                Widget shapeWidget = ((ModelLayoutScene) widget.getScene()).findWidget(shape);
+                Widget shapeWidget = ((EquipmentLayoutScene) widget.getScene()).findWidget(shape);
                 if (shapeWidget != null && !widget.equals(shapeWidget)) {
                     if (shape.isOpaque()) {
                         shapeWidget.setBorder(BorderFactory.createLineBorder(shape.getBorderWidth(), shape.getBorderColor()));                        

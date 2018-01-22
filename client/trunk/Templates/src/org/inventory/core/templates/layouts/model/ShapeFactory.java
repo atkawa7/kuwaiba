@@ -16,6 +16,8 @@
  */
 package org.inventory.core.templates.layouts.model;
 
+import org.inventory.communications.core.LocalObjectListItem;
+
 /**
  * Factory used to get instances of shapes, given a type of shape
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
@@ -46,6 +48,13 @@ public class ShapeFactory {
         if (PolygonShape.SHAPE_TYPE.equals(type))
             return new PolygonShape();
         
+        if (ContainerShape.SHAPE_TYPE.equals(type))
+            return new ContainerShape();
+        
         return null;
+    }    
+    
+    public CustomShape getCustomShape(LocalObjectListItem listItem) {
+        return listItem != null ? new CustomShape(listItem) : null;
     }    
 }

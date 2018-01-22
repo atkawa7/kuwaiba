@@ -112,7 +112,7 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
                         if (parent == null)
                             return;
                         
-                        RenderModelLayout render = new RenderModelLayout(((CustomShape) shape).getObject(), widget.getParentWidget(), -1, -1, -1, -1);
+                        RenderModelLayout render = new RenderModelLayout(((CustomShape) shape).getListItem(), widget.getParentWidget(), -1, -1, -1, -1);
                                                 
                         if (render.hasEquipmentModelLayout()) {
                             scene.setIsNewCustomShape(true);
@@ -133,7 +133,7 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
                         newShape.setParent((Shape) parent);
                         newShape.setName(shapeName);
                         newShape.setIsEquipment(isEquipment);
-                        
+                        /*
                         if (widget instanceof ModelLayoutScene) {
                             newWidget = scene.addNode(newShape);
                             newWidget.setVisible(false);
@@ -162,6 +162,7 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
                             }
                             newWidget.setVisible(true);
                         } else
+                        */
                             newWidget = scene.addNode(newShape);
                     }
                     if (newWidget != null) {

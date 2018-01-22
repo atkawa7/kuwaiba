@@ -26,8 +26,8 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.core.templates.layouts2.EquipmentLayoutTopComponent;
 import org.inventory.core.templates.nodes.TemplateElementNode;
-import org.inventory.core.templates.layouts.DeviceLayoutTopComponent;
 import org.openide.util.Utilities;
 import org.openide.windows.WindowManager;
 
@@ -73,7 +73,7 @@ public class EditLayoutAction extends GenericInventoryAction {
             return;
         }
         
-        LocalObjectListItem loli = null;
+        LocalObjectListItem model = null;
                 
         for (String attributeKey : templateElement.getAttributes().keySet()) {            
             if ("model".equals(attributeKey)) {
@@ -82,29 +82,31 @@ public class EditLayoutAction extends GenericInventoryAction {
                     LocalObjectListItem listItem = (LocalObjectListItem) attributeValue;
                     
                     if (CommunicationsStub.getInstance().isSubclassOf(listItem.getClassName(), Constants.CLASS_GENERICOBJECTLIST)) {
-                        loli = listItem;
+                        model = listItem;
                         break;
                     }
                 }
             }
         }        
-        if (loli == null) {
+        if (model == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.ERROR_MESSAGE, "The property \"model\" is not set");
             return;
         }
         
-        DeviceLayoutTopComponent topComponent = (DeviceLayoutTopComponent) WindowManager.getDefault().findTopComponent(DeviceLayoutTopComponent.ID + loli.getId());
+////        EquipmentLayoutTopComponentOld topComponent = (EquipmentLayoutTopComponentOld) WindowManager.getDefault().findTopComponent(EquipmentLayoutTopComponentOld.ID + model.getId());
+        EquipmentLayoutTopComponent topComponent = (EquipmentLayoutTopComponent) WindowManager.getDefault().findTopComponent(EquipmentLayoutTopComponent.ID + model.getId());
         
         if (topComponent == null) {
-            topComponent = new DeviceLayoutTopComponent(loli);
+////            topComponent = new EquipmentLayoutTopComponentOld(model);
+            topComponent = new EquipmentLayoutTopComponent(model);
             topComponent.open();
         } else {
             if (topComponent.isOpened())
                 topComponent.requestAttention(true);
             else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
                    //so we will reuse the instance, refreshing the vierw first
-                topComponent.refresh();
+////                topComponent.refresh();
                 topComponent.open();
             }
         }

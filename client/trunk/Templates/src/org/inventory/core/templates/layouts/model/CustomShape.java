@@ -24,11 +24,14 @@ import org.inventory.communications.core.LocalObjectListItem;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class CustomShape extends Shape {
-    private Image icon;
-    private LocalObjectListItem object;
+    public static String SHAPE_TYPE = "custom"; //NOI18N
     
-    public CustomShape(LocalObjectListItem object) {
-        this.object = object;
+    private Image icon;
+    private LocalObjectListItem listItem;
+    
+    public CustomShape(LocalObjectListItem listItem) {
+        this.listItem = listItem;
+        setOpaque(false);
     }
     
     public CustomShape(LocalObjectListItem object, Image icon) {
@@ -44,23 +47,23 @@ public class CustomShape extends Shape {
         this.icon = icon;
     }
     
-    public LocalObjectListItem getObject() {
-        return object;        
+    public LocalObjectListItem getListItem() {
+        return listItem;        
     }
     
-    public void setObject(LocalObjectListItem object) {
-        this.object = object;
+    public void setListItem(LocalObjectListItem object) {
+        this.listItem = object;
     }
     
     @Override
     public Shape shapeCopy() {
-        CustomShape customShape = new CustomShape(getObject(), getIcon());
+        CustomShape customShape = new CustomShape(getListItem(), getIcon());
         shapeCopy(customShape);
         return customShape;
     }
 
     @Override
     public String getShapeType() {
-        return "customShape";  //NOI18N
+        return SHAPE_TYPE;
     }
 }

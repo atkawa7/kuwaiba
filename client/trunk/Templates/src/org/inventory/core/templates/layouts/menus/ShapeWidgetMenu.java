@@ -17,12 +17,24 @@
 package org.inventory.core.templates.layouts.menus;
 
 import java.awt.Point;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.Action;
 import javax.swing.JPopupMenu;
+import org.inventory.core.templates.layouts.scene.widgets.actions.BringToBackAction;
 import org.inventory.core.templates.layouts.scene.widgets.actions.CopyShapeAction;
 import org.inventory.core.templates.layouts.scene.widgets.actions.DeleteShapeAction;
+import org.inventory.core.templates.layouts.scene.widgets.actions.GenericShapeAction;
 import org.inventory.core.templates.layouts.scene.widgets.actions.GroupCopyShapeAction;
+import org.inventory.core.templates.layouts.scene.widgets.actions.GroupShapesAction1;
+import org.inventory.core.templates.layouts.scene.widgets.actions.BringToBackOneStepAction;
+import org.inventory.core.templates.layouts.scene.widgets.actions.BringToFrontAction;
+import org.inventory.core.templates.layouts.scene.widgets.actions.BringToFrontOneStepAction;
+import org.inventory.core.templates.layouts.scene.widgets.actions.DeleteContainerShapeAction;
 import org.inventory.core.templates.layouts.scene.widgets.actions.GroupShapesAction;
 import org.inventory.core.templates.layouts.scene.widgets.actions.PasteShapeAction;
+import org.inventory.core.templates.layouts.scene.widgets.actions.UngroupShapesAction;
+import org.inventory.core.templates.layouts.widgets.ContainerShapeWidget;
 import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -33,6 +45,8 @@ import org.netbeans.api.visual.widget.Widget;
 public class ShapeWidgetMenu implements PopupMenuProvider {
     private static ShapeWidgetMenu instance;
     private JPopupMenu popupMenu = null;
+    private JPopupMenu containerShapePopupMenu = null;
+    private List<GenericShapeAction> actions = null;
     
     private ShapeWidgetMenu() {
     }
@@ -43,27 +57,73 @@ public class ShapeWidgetMenu implements PopupMenuProvider {
 
     @Override
     public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
+        if (widget instanceof ContainerShapeWidget)
+            return getContainerShapePopupMenu(widget, localLocation);
+        else
+            return getShapePopupMenu(widget, localLocation);
+            
+
+    }
+    
+    private JPopupMenu getShapePopupMenu(Widget widget, Point localLocation) {
         if (popupMenu == null) {
+            actions = new ArrayList();
+            actions.add(CopyShapeAction.getInstance());
+            actions.add(PasteShapeAction.getInstance());
+            actions.add(GroupCopyShapeAction.getInstance());
+            actions.add(BringToFrontAction.getInstance());
+            actions.add(BringToFrontOneStepAction.getInstance());
+            actions.add(BringToBackAction.getInstance());
+            actions.add(BringToBackOneStepAction.getInstance());
+            actions.add(DeleteShapeAction.getInstance());
+                                    
             popupMenu = new JPopupMenu();
             popupMenu.add(CopyShapeAction.getInstance());
             popupMenu.add(PasteShapeAction.getInstance());
             popupMenu.addSeparator();
             popupMenu.add(GroupCopyShapeAction.getInstance());
             popupMenu.addSeparator();
-            popupMenu.add(GroupShapesAction.getInstance());
+            popupMenu.add(GroupShapesAction1.getInstance());
+            popupMenu.addSeparator();
+            popupMenu.add(BringToFrontAction.getInstance());
+            popupMenu.add(BringToFrontOneStepAction.getInstance());
+            popupMenu.addSeparator();
+            popupMenu.add(BringToBackAction.getInstance());
+            popupMenu.add(BringToBackOneStepAction.getInstance());
             popupMenu.addSeparator();
             popupMenu.add(DeleteShapeAction.getInstance());
         }
-        CopyShapeAction.getInstance().setSelectedWidget(widget);
+        for (Action action : actions)
+            ((GenericShapeAction) action).setSelectedWidget(widget);
         
-        GroupCopyShapeAction.getInstance().setSelectedWidget(widget);
-        
-        PasteShapeAction.getInstance().setSelectedWidget(widget);
         PasteShapeAction.getInstance().setLocalLocation(localLocation);
-        
-        DeleteShapeAction.getInstance().setSelectedWidget(widget);
         return popupMenu;
     }
     
+    private JPopupMenu getContainerShapePopupMenu(Widget widget, Point localLocation) {
+        containerShapePopupMenu = new JPopupMenu();
+        if (widget instanceof ContainerShapeWidget) {
+            if (!((ContainerShapeWidget) widget).isCustomShape()) {
+                if (((ContainerShapeWidget) widget).getShapesSet().isEmpty())
+                    containerShapePopupMenu.add(GroupShapesAction.getInstance());
+                else
+                    containerShapePopupMenu.add(UngroupShapesAction.getInstance());
+                containerShapePopupMenu.addSeparator();
+            }
+        }
+        containerShapePopupMenu.add(DeleteContainerShapeAction.getInstance());
+        
+        if (widget instanceof ContainerShapeWidget) {
+            if (!((ContainerShapeWidget) widget).isCustomShape()) {
+                if (((ContainerShapeWidget) widget).getShapesSet().isEmpty())
+                    GroupShapesAction.getInstance().setSelectedWidget(widget);
+                else
+                    UngroupShapesAction.getInstance().setSelectedWidget(widget);
+            }
+        }
+        DeleteContainerShapeAction.getInstance().setSelectedWidget(widget);
+        
+        return containerShapePopupMenu;
+    }
 }
 

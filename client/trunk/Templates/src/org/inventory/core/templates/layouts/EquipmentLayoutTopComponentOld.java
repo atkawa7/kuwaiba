@@ -42,15 +42,15 @@ import org.openide.windows.WindowManager;
         dtd = "-//org.inventory.design.drawobject//DrawObject//EN",
         autostore = false
 )
-public final class DeviceLayoutTopComponent extends TopComponent implements ActionListener, Refreshable {
+public final class EquipmentLayoutTopComponentOld extends TopComponent implements ActionListener, Refreshable {
     public static String ID = "DeviceLayoutTopComponent_"; //NOI18N
     private ModelLayoutService service;
     
-    private DeviceLayoutConfigurationObject configObject;
+    private EquipmentLayoutConfigurationObject configObject;
     
-    public DeviceLayoutTopComponent(LocalObjectListItem listItem) {
+    public EquipmentLayoutTopComponentOld(LocalObjectListItem listItem) {
         this();
-        configObject = new DeviceLayoutConfigurationObject();
+        configObject = new EquipmentLayoutConfigurationObject();
         configObject.setProperty("saved", true); //NOI18N
         
         service = new ModelLayoutService(listItem);
@@ -66,7 +66,7 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         add(service.getScene().createSatelliteView(), BorderLayout.SOUTH);
     }
     
-    public DeviceLayoutTopComponent() {
+    public EquipmentLayoutTopComponentOld() {
         initComponents();
     }
     
@@ -103,10 +103,11 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         barMain.setRollover(true);
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/save.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnSave.text")); // NOI18N
-        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnSave.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponentOld.class, "EquipmentLayoutTopComponentOld.btnSave.text")); // NOI18N
+        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponentOld.class, "EquipmentLayoutTopComponentOld.btnSave.toolTipText")); // NOI18N
         btnSave.setFocusable(false);
         btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnSave.setLabel(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponentOld.class, "EquipmentLayoutTopComponentOld.btnSave.label")); // NOI18N
         btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         btnSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -116,8 +117,8 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         barMain.add(btnSave);
 
         btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/delete.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnDelete, org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnDelete.text")); // NOI18N
-        btnDelete.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnDelete.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnDelete, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponentOld.class, "EquipmentLayoutTopComponentOld.btnDelete.text")); // NOI18N
+        btnDelete.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponentOld.class, "EquipmentLayoutTopComponentOld.btnDelete.toolTipText")); // NOI18N
         btnDelete.setFocusable(false);
         btnDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnDelete.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -129,8 +130,8 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         barMain.add(btnDelete);
 
         btnClean.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/clean.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnClean, org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnClean.text")); // NOI18N
-        btnClean.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnClean.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnClean, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponentOld.class, "EquipmentLayoutTopComponentOld.btnClean.text")); // NOI18N
+        btnClean.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponentOld.class, "EquipmentLayoutTopComponentOld.btnClean.toolTipText")); // NOI18N
         btnClean.setFocusable(false);
         btnClean.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnClean.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -142,8 +143,8 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         barMain.add(btnClean);
 
         btnManagePredefineShapes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/manage_predefined_shapes.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnManagePredefineShapes, org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnManagePredefineShapes.text")); // NOI18N
-        btnManagePredefineShapes.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnManagePredefineShapes.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnManagePredefineShapes, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponentOld.class, "EquipmentLayoutTopComponentOld.btnManagePredefineShapes.text")); // NOI18N
+        btnManagePredefineShapes.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponentOld.class, "EquipmentLayoutTopComponentOld.btnManagePredefineShapes.toolTipText")); // NOI18N
         btnManagePredefineShapes.setFocusable(false);
         btnManagePredefineShapes.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnManagePredefineShapes.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -155,8 +156,8 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         barMain.add(btnManagePredefineShapes);
 
         btnShowPalette.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/show_palette.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnShowPalette, org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnShowPalette.text")); // NOI18N
-        btnShowPalette.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnShowPalette.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnShowPalette, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponentOld.class, "EquipmentLayoutTopComponentOld.btnShowPalette.text")); // NOI18N
+        btnShowPalette.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponentOld.class, "EquipmentLayoutTopComponentOld.btnShowPalette.toolTipText")); // NOI18N
         btnShowPalette.setFocusable(false);
         btnShowPalette.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnShowPalette.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -168,8 +169,8 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         barMain.add(btnShowPalette);
 
         btnShapeHierarchy.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/shape_hierarchy.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnShapeHierarchy, org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnShapeHierarchy.text")); // NOI18N
-        btnShapeHierarchy.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnShapeHierarchy.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnShapeHierarchy, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponentOld.class, "EquipmentLayoutTopComponentOld.btnShapeHierarchy.text")); // NOI18N
+        btnShapeHierarchy.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponentOld.class, "EquipmentLayoutTopComponentOld.btnShapeHierarchy.toolTipText")); // NOI18N
         btnShapeHierarchy.setFocusable(false);
         btnShapeHierarchy.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnShapeHierarchy.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);

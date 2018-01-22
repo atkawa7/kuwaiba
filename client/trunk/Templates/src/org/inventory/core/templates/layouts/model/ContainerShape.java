@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010-2017, Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2018, Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License
@@ -17,22 +17,23 @@
 package org.inventory.core.templates.layouts.model;
 
 /**
- * Class used to represent rectangles
+ *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class RectangleShape extends Shape {
-    public static final String SHAPE_TYPE = "rectangle";  //NOI18N
+public class ContainerShape extends Shape {
+    public static final String SHAPE_TYPE = "container"; //NOI18N
+    public static final String PROPERTY_IS_CUSTOM_SHAPE = "isCustomShape"; //NOI18N
+////    
+    private boolean isCustomShape;
     
-    public RectangleShape() {
-        super();
+    public ContainerShape() {
+        setOpaque(false);
+        isCustomShape = false;
     }
     
-    public RectangleShape(String urlIcon) {
+    public ContainerShape(String urlIcon) {
         super(urlIcon);
-    }
-    
-    public RectangleShape(Shape parent) {
-        super(parent);
+        setOpaque(false);
     }
     
     @Override
@@ -40,15 +41,18 @@ public class RectangleShape extends Shape {
         return SHAPE_TYPE;     
     }
     
+    public boolean isCustomShape() {
+        return isCustomShape;        
+    }
+        
+    public void setIsCustomShape(boolean isCustomShape) {
+        this.isCustomShape = isCustomShape;        
+    }
+
     @Override
     public Shape shapeCopy() {
-        RectangleShape shapeCpy = new RectangleShape();
-        shapeCopy(shapeCpy);
-        return shapeCpy;
-    }
-    
-    @Override
-    protected void shapeCopy(Shape shapeCpy) {   
-        super.shapeCopy(shapeCpy);
+        ContainerShape customShape = new ContainerShape();
+        shapeCopy(customShape);
+        return customShape;
     }
 }

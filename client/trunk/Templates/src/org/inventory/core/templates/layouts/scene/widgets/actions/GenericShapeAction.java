@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010-2017, Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2018, Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License
@@ -14,29 +14,29 @@
  *  limitations under the License.
  *
  */
-package org.inventory.core.templates.layouts.nodes;
+package org.inventory.core.templates.layouts.scene.widgets.actions;
 
-import org.inventory.core.templates.layouts2.EquipmentLayoutPalette;
-import org.openide.nodes.Children;
-import org.openide.nodes.Node;
+import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.netbeans.api.visual.widget.Widget;
 
 /**
- * Shape palette category set
+ *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class CategoryChildren extends Children.Keys {
+public abstract class GenericShapeAction extends GenericInventoryAction {
+    protected Widget selectedWidget;
     
-    public CategoryChildren() {        
+    public Widget getSelectedWidget() {
+        return selectedWidget;
+    }
+    
+    public void setSelectedWidget(Widget selectedWidget) {
+        this.selectedWidget = selectedWidget;
     }
     
     @Override
-    protected void addNotify() {
-        super.addNotify();
-        setKeys(EquipmentLayoutPalette.shapes.keySet());
-    }
-    
-    @Override
-    protected Node[] createNodes(Object key) {
-        return new Node[] {new CategoryNode((String) key)};
+    public LocalPrivilege getPrivilege() {
+        return null;
     }
 }

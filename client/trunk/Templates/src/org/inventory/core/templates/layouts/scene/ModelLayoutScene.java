@@ -44,7 +44,7 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.scene.AbstractScene;
-import org.inventory.core.templates.layouts.scene.widgets.actions.GroupShapesAction;
+import org.inventory.core.templates.layouts.scene.widgets.actions.GroupShapesAction1;
 import org.inventory.core.templates.layouts.lookup.SharedContent;
 import org.inventory.core.templates.layouts.lookup.SharedContentLookup;
 import org.inventory.core.templates.layouts.menus.ShapeWidgetMenu;
@@ -155,19 +155,21 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         widget.getActions().addAction(ActionFactory.createSelectAction(new ShapeSelectProvider()));
         widget.getActions().addAction(ActionFactory.createResizeAction(resizeShapeProvider, resizeShapeProvider));
         widget.getActions().addAction(ActionFactory.createMoveAction(null, new MoveShapeProvider()));
-        widget.getActions().addAction(ActionFactory.createAcceptAction(modelLayoutAcceptProvider));
+////        widget.getActions().addAction(ActionFactory.createAcceptAction(modelLayoutAcceptProvider));
         widget.getActions().addAction(ActionFactory.createAcceptAction(shapeNameAcceptProvider));
         widget.getActions().addAction(ActionFactory.createPopupMenuAction(ShapeWidgetMenu.getInstance()));
         
         if (node.getParent() == null) {
+            /*
             if (shapesLayer.getChildren().size() == 1) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
                     NotificationUtil.INFO_MESSAGE, I18N.gm("equipment_model_layout_scene_message"));
                 return null;
             } else {
+                */                
                 shapesLayer.addChild(widget);
                 rootWidget = widget;
-            }
+////            }
         } else {
             Widget parent = findWidget(node.getParent());
             parent.addChild(widget);
@@ -493,7 +495,7 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         SharedContent.getInstance().getInstanceContent().set(Collections.singleton(pallete), null);                
         return SharedContent.getInstance().getAbstractLookup();
     }
-    
+    /*
     public void fireShapeBoundsChange(Widget widget, Rectangle oldShapeBounds, Rectangle newShapeBounds) {
         Shape shape = (Shape) ((ModelLayoutScene) widget.getScene()).findObject(widget);
         if (shape != null) {
@@ -507,7 +509,7 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
             shape.firePropertyChange(widget, Shape.PROPERTY_HEIGHT, oldShapeBounds.height, newShapeBounds.height);
         }
     }
-    
+    */
     private void getShapeHierarchy(ModelLayoutScene scene, Widget widget, Map<Shape, List<Shape>> hierarchy) {
         Shape shape = (Shape) scene.findObject(widget);                                                                        
         
@@ -537,9 +539,9 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
             
             addNewWidgetChildren(scene, hierarchy, child, widthPercentage, heightPercentage);
             
-            scene.fireShapeBoundsChange(widget, 
-                new Rectangle(child.getX(), child.getY(), child.getWidth(), child.getHeight()), 
-                new Rectangle(x, y, width, height));
+////            scene.fireShapeBoundsChange(widget, 
+////                new Rectangle(child.getX(), child.getY(), child.getWidth(), child.getHeight()), 
+////                new Rectangle(x, y, width, height));
         }
     }
     
@@ -553,7 +555,7 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
             scene.removeNode(shapeChild);            
         }
     }
-    
+    /*
     public void updateWidget(Widget oldWidget, double widthPercentage, double heightPercentage) {
         ModelLayoutScene scene = (ModelLayoutScene) oldWidget.getScene();
         // Gets the current shapes hierarchy
@@ -561,7 +563,7 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         getShapeHierarchy(scene, oldWidget, hierarchy);
         
         removeRecursive(scene, oldWidget);        
-        if (!GroupShapesAction.getInstance().isGroup()) {
+        if (!GroupShapesAction1.getInstance().isGroup()) {
             // If shapes are ungroup then no resize
             widthPercentage = 1;
             heightPercentage = 1;
@@ -569,7 +571,8 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         Shape shape = (Shape) scene.findObject(oldWidget);
         addNewWidgetChildren(scene, hierarchy, shape, widthPercentage, heightPercentage);
     }
-    
+    */
+    /*
     public Widget changeWidget(Dimension newSize, Widget oldWidget, Rectangle oldBounds, double widthPercentage, double heightPercentage, ResizeProvider.ControlPoint controlPoint) {
         if (oldWidget.getParentWidget() == null)
             return null;
@@ -580,7 +583,7 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         getShapeHierarchy(scene, oldWidget, hierarchy);
         
         removeRecursive(scene, oldWidget);        
-        if (!GroupShapesAction.getInstance().isGroup()) {
+        if (!GroupShapesAction1.getInstance().isGroup()) {
             // If shapes are ungroup then no resize
             widthPercentage = 1;
             heightPercentage = 1;
@@ -630,4 +633,5 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         addNewWidgetChildren(scene, hierarchy, shape, widthPercentage, heightPercentage);
         return newWidget;
     }
+    */
 }

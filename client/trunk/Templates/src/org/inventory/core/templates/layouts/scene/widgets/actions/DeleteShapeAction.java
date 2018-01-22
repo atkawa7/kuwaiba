@@ -21,26 +21,23 @@ import static javax.swing.Action.NAME;
 import static javax.swing.Action.SMALL_ICON;
 import javax.swing.ImageIcon;
 import javax.swing.JMenuItem;
-import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.ImageIconResource;
-import org.inventory.core.templates.layouts.lookup.SharedContentLookup;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.scene.ModelLayoutScene;
-import org.netbeans.api.visual.widget.Widget;
+import org.inventory.core.templates.layouts2.scene.EquipmentLayoutScene;
 import org.openide.util.actions.Presenter;
 
 /**
  * Action used to delete a widget in the scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class DeleteShapeAction extends GenericInventoryAction implements Presenter.Popup {
+public class DeleteShapeAction extends GenericShapeAction implements Presenter.Popup {
     private static DeleteShapeAction instance;
-    private Widget selectedWidget;
     private final JMenuItem popupPresenter;
     
     private DeleteShapeAction() {
-        putValue(NAME, "Delete");
+        putValue(NAME, I18N.gm("delete"));
         putValue(SMALL_ICON, ImageIconResource.WARNING_ICON);
                 
         popupPresenter = new JMenuItem();
@@ -54,36 +51,16 @@ public class DeleteShapeAction extends GenericInventoryAction implements Present
         return instance == null ? instance = new DeleteShapeAction() : instance;                
     }
     
-    public Widget getSelectedWidget() {
-        return selectedWidget;        
-    }
-    
-    public void setSelectedWidget(Widget selectedWidget) {
-        this.selectedWidget = selectedWidget;
-    }
-
-    @Override
-    public LocalPrivilege getPrivilege() {
-        return null;
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if (selectedWidget != null) {
-            ModelLayoutScene scene = ((ModelLayoutScene) selectedWidget.getScene());
-            Object object = scene.findObject(selectedWidget);
-            
-            if (object != null && object instanceof Shape) {
-                Widget parentWidget = selectedWidget.getParentWidget();
-                
-                Shape shape = (Shape) object;
+            EquipmentLayoutScene scene = (EquipmentLayoutScene) selectedWidget.getScene();
+            Object obj = scene.findObject(selectedWidget);
+            if (obj != null && obj instanceof Shape) {
+                Shape shape = (Shape) obj;
                 shape.removeAllPropertyChangeListeners();
+                scene.removeNode((Shape) obj);
                 
-                scene.removeNode(shape);
-                
-                if (parentWidget != null && parentWidget instanceof SharedContentLookup) {
-                    ((SharedContentLookup) parentWidget).fixLookup();
-                }                
                 scene.validate();
                 scene.paint();
                 
