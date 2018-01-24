@@ -46,14 +46,32 @@ public class MovePhysicalLinkToContainerFrame  extends JFrame {
     private ExplorablePanel pnlexistingWireContainers;
     private BeanTreeView treeWireContainers;
     private JButton btnMoveLinks;
+    private static List<LocalObjectLight> existintWireContainersList;
 
-    private LocalObjectLight selectedContainer;
-    private List<LocalObjectLight> linksToMove;
+    private  LocalObjectLight selectedContainer;
+    private static List<LocalObjectLight> linksToMove;
     private final CommunicationsStub com = CommunicationsStub.getInstance();
+    private static MovePhysicalLinkToContainerFrame instance = null;
     
-    public MovePhysicalLinkToContainerFrame(List<LocalObjectLight> linksToMove, List<LocalObjectLight> existintWireContainersList) {
-        this.linksToMove = linksToMove;
+    public static MovePhysicalLinkToContainerFrame getInstance(List<LocalObjectLight> linksToMove, List<LocalObjectLight> existintWireContainersList) {
+      if(instance == null) {
+         instance = new MovePhysicalLinkToContainerFrame(linksToMove, existintWireContainersList);
+      }
+      else{
+          MovePhysicalLinkToContainerFrame.linksToMove = linksToMove;
+          MovePhysicalLinkToContainerFrame.existintWireContainersList = existintWireContainersList;
+      }
+      return instance;
+   }
+    
+    private MovePhysicalLinkToContainerFrame(List<LocalObjectLight> linksToMove, List<LocalObjectLight> existintWireContainersList) {
+        MovePhysicalLinkToContainerFrame.linksToMove = linksToMove;
+        MovePhysicalLinkToContainerFrame.existintWireContainersList = existintWireContainersList;
         
+        init();
+    }
+    
+    private void init() {
         setLayout(new BorderLayout());
         setTitle(I18N.gm("move_links_into_container"));
         setSize(450, 550);
@@ -75,10 +93,7 @@ public class MovePhysicalLinkToContainerFrame  extends JFrame {
         add(pnlexistingWireContainers, BorderLayout.CENTER);
         
         add(btnMoveLinks, BorderLayout.SOUTH);
-        init();
-    }
-    
-    private void init() {
+        
         pnlexistingWireContainers.getLookup().lookupResult(LocalObjectLight.class).addLookupListener(new LookupListener() {
 
             @Override

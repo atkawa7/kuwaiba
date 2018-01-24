@@ -34,11 +34,11 @@ import org.openide.util.lookup.ServiceProvider;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 @ServiceProvider(service = GenericObjectNodeAction.class)
-public class MoveLinksToContainerAction  extends GenericObjectNodeAction{
+public class MoveLinksIntoContainerAction  extends GenericObjectNodeAction{
 
     private CommunicationsStub com = CommunicationsStub.getInstance(); 
     
-    public MoveLinksToContainerAction() {
+    public MoveLinksIntoContainerAction() {
         putValue(NAME, I18N.gm("move_links_into_container"));
     }
     
@@ -89,32 +89,31 @@ public class MoveLinksToContainerAction  extends GenericObjectNodeAction{
 
             List<List<LocalObjectLight>> allParentsA = new ArrayList<>();
             List<List<LocalObjectLight>> allParentsB = new ArrayList<>();
+            List<Boolean> sameParents = new ArrayList<>();
             for(int i=0; i<endpointsA.size(); i++){
-                List<LocalObjectLight> parentsA = com.getParents(endpointsA.get(i).getClassName(), endpointsA.get(i).getOid());
-                List<LocalObjectLight> parentsB = com.getParents(endpointsB.get(i).getClassName(), endpointsB.get(i).getOid());
+                List<LocalObjectLight> parentsA = com.getParentsUntilFirstOfClass(endpointsA.get(i).getClassName(), endpointsA.get(i).getOid(), parent.getClassName());
+                List<LocalObjectLight> parentsB = com.getParentsUntilFirstOfClass(endpointsB.get(i).getClassName(), endpointsB.get(i).getOid(), parent.getClassName());
                 allParentsA.add(parentsA);
                 allParentsB.add(parentsB);
+                sameParents.add(false);
             }
             
             List<LocalObjectLight> prntsTemp = allParentsA.get(0);
-            for (int j = 1; j < allParentsA.size(); j++) {
-                List<LocalObjectLight> prntsA = allParentsA.get(j);
-                for (int k = 0; k < prntsA.size(); k++) {
-                    if(!prntsA.get(k).equals(prntsTemp.get(k))){
-                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, I18N.gm("select_links_with_same_end_ponits"));
-                        return;
+            for(int j = 0; j < allParentsA.size(); j++){
+                LocalObjectLight prntA = allParentsA.get(j).get(allParentsA.get(j).size()-2);
+                for (int k = 0; k < allParentsB.size(); k++) {
+                    LocalObjectLight prntb = allParentsB.get(k).get(allParentsB.get(k).size()-2);
+                    if(prntA.equals(prntb)){
+                        sameParents.set(j, true);
+                        break;
                     }
                 }
             }
-
-            prntsTemp = allParentsB.get(0);
-            for (int j = 1; j < allParentsB.size(); j++) {
-                List<LocalObjectLight> prntsB = allParentsB.get(j);
-                for (int k = 0; k < prntsB.size(); k++) {
-                    if(!prntsB.get(k).equals(prntsTemp.get(k))){
-                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, I18N.gm("select_links_with_same_end_ponits"));
-                        return;
-                    }
+            
+            for (boolean is : sameParents) {
+                if(!is){
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, I18N.gm("select_links_with_same_end_ponits"));
+                    return; 
                 }
             }
             
@@ -146,7 +145,7 @@ public class MoveLinksToContainerAction  extends GenericObjectNodeAction{
                     }
                 }
 
-                MovePhysicalLinkToContainerFrame frame = new MovePhysicalLinkToContainerFrame(selectedObjects, existingContainers);
+                MovePhysicalLinkToContainerFrame frame = MovePhysicalLinkToContainerFrame.getInstance(selectedObjects, existingContainers);
                 frame.setLocationRelativeTo(null);
                 frame.setVisible(true);
             }
