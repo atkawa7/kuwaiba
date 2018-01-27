@@ -32,7 +32,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.core.templates.layouts.RenderModelLayout;
+import org.inventory.core.templates.layouts.RenderDeviceLayout;
 import org.netbeans.api.visual.border.Border;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
@@ -391,7 +391,11 @@ public class RackWidget extends SelectableRackViewWidget {
             if (getRackViewScene().getShowConnections()) {
                 getRackViewScene().setAddingNestedDevice(false);
                 
-                RenderModelLayout render = new RenderModelLayout(equipment, equipmentsLayer, 0, 0, width, height);
+                RenderDeviceLayout render = new RenderDeviceLayout(equipment, 
+                    equipmentsLayer, 
+                    new Point(Constants.DEVICE_LAYOUT_RESIZE_BORDER_SIZE, Constants.DEVICE_LAYOUT_RESIZE_BORDER_SIZE), 
+                    new Rectangle(0, 0, width, height));
+                
                 if (render.hasEquipmentModelLayout()) {
                     render.render();
                     equipmentWidget = (EquipmentWidget) render.getModelLayoutWidget();

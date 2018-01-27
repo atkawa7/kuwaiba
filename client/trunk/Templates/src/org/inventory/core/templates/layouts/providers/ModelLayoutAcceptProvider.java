@@ -29,7 +29,7 @@ import javax.swing.JTextField;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.JComplexDialogPanel;
-import org.inventory.core.templates.layouts.RenderModelLayout;
+import org.inventory.core.templates.layouts.RenderDeviceLayout;
 import org.inventory.core.templates.layouts.lookup.SharedContentLookup;
 import org.inventory.core.templates.layouts.model.CircleShape;
 import org.inventory.core.templates.layouts.model.LabelShape;
@@ -111,8 +111,8 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
                     else if (shape instanceof CustomShape) {
                         if (parent == null)
                             return;
-                        
-                        RenderModelLayout render = new RenderModelLayout(((CustomShape) shape).getListItem(), widget.getParentWidget(), -1, -1, -1, -1);
+                        /*
+                        RenderDeviceLayout render = new RenderDeviceLayout(((CustomShape) shape).getListItem(), widget.getParentWidget(), -1, -1, -1, -1);
                                                 
                         if (render.hasEquipmentModelLayout()) {
                             scene.setIsNewCustomShape(true);
@@ -127,6 +127,7 @@ public class ModelLayoutAcceptProvider implements AcceptProvider {
                             scene.setNewCustomShapeParent(null);
                             scene.setNewCustomShape(null);
                         }
+                        */
                     }
                     if (newShape != null) {
                         

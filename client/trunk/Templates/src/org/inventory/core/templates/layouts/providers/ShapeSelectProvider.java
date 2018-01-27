@@ -20,7 +20,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.Collections;
 import org.inventory.core.templates.layouts.model.Shape;
-import org.inventory.core.templates.layouts2.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 import org.netbeans.api.visual.action.SelectProvider;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.model.ObjectScene;

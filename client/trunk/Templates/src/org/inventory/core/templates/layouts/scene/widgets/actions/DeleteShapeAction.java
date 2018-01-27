@@ -25,7 +25,7 @@ import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.ImageIconResource;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.scene.ModelLayoutScene;
-import org.inventory.core.templates.layouts2.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 import org.openide.util.actions.Presenter;
 
 /**

@@ -16,19 +16,15 @@
  */
 package org.inventory.core.templates.layouts.scene;
 
-import org.inventory.core.templates.layouts.scene.widgets.actions.ResizeShapeProvider;
-import org.inventory.core.templates.layouts.scene.widgets.actions.MoveShapeProvider;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeListener;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.namespace.QName;
@@ -42,12 +38,9 @@ import javax.xml.stream.XMLStreamReader;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.scene.AbstractScene;
-import org.inventory.core.templates.layouts.scene.widgets.actions.GroupShapesAction1;
 import org.inventory.core.templates.layouts.lookup.SharedContent;
 import org.inventory.core.templates.layouts.lookup.SharedContentLookup;
-import org.inventory.core.templates.layouts.menus.ShapeWidgetMenu;
 import org.inventory.core.templates.layouts.model.CircleShape;
 import org.inventory.core.templates.layouts.model.LabelShape;
 import org.inventory.core.templates.layouts.model.PolygonShape;
@@ -56,15 +49,12 @@ import org.inventory.core.templates.layouts.providers.ModelLayoutAcceptProvider;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.model.ShapeFactory;
 import org.inventory.core.templates.layouts.providers.ShapeNameAcceptProvider;
-import org.inventory.core.templates.layouts.providers.ShapeSelectProvider;
 import org.inventory.core.templates.layouts.widgets.CircleShapeWidget;
 import org.inventory.core.templates.layouts.widgets.LabelShapeWidget;
 import org.inventory.core.templates.layouts.widgets.PolygonShapeWidget;
 import org.inventory.core.templates.layouts.widgets.RectangleShapeWidget;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
-import org.netbeans.api.visual.action.ResizeProvider;
-import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.spi.palette.PaletteController;
@@ -149,15 +139,15 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         
         widget.setOpaque(node.isOpaque());
         
-        shapeToWidget(node, widget);
+////        shapeToWidget(node, widget);
         
-        ResizeShapeProvider resizeShapeProvider = new ResizeShapeProvider();
-        widget.getActions().addAction(ActionFactory.createSelectAction(new ShapeSelectProvider()));
-        widget.getActions().addAction(ActionFactory.createResizeAction(resizeShapeProvider, resizeShapeProvider));
-        widget.getActions().addAction(ActionFactory.createMoveAction(null, new MoveShapeProvider()));
-////        widget.getActions().addAction(ActionFactory.createAcceptAction(modelLayoutAcceptProvider));
-        widget.getActions().addAction(ActionFactory.createAcceptAction(shapeNameAcceptProvider));
-        widget.getActions().addAction(ActionFactory.createPopupMenuAction(ShapeWidgetMenu.getInstance()));
+////        ResizeShapeProvider resizeShapeProvider = new ResizeShapeProvider();
+////        widget.getActions().addAction(ActionFactory.createSelectAction(new ShapeSelectProvider()));
+////        widget.getActions().addAction(ActionFactory.createResizeAction(resizeShapeProvider, resizeShapeProvider));
+////        widget.getActions().addAction(ActionFactory.createMoveAction(null, new MoveShapeProvider()));
+////////        widget.getActions().addAction(ActionFactory.createAcceptAction(modelLayoutAcceptProvider));
+////        widget.getActions().addAction(ActionFactory.createAcceptAction(shapeNameAcceptProvider));
+////        widget.getActions().addAction(ActionFactory.createPopupMenuAction(ShapeWidgetMenu.getInstance()));
         
         if (node.getParent() == null) {
             /*
@@ -408,39 +398,39 @@ public class ModelLayoutScene extends AbstractScene<Shape, String> implements Sh
         return shape;                        
     }
     
-    public static void shapeToWidget(Shape sourceShape, Widget targetWidget) {
-        //TODO: Calculate the width and height using the dimension in the parent
-        /*
-        Widget parentWidget = sourceShape.getParent() == null ? this : findWidget(sourceShape.getParent());
-        if (parentWidget == null) { return; } 
-        
-        Rectangle parentBounds = parentWidget.getPreferredBounds();
-        
-        if (parentBounds == null) { return; }
-        */
-        if (sourceShape.getX() == null) { sourceShape.setX(0); }
-        
-        if (sourceShape.getY() == null) { sourceShape.setY(0); }
-        
-        if (sourceShape.getWidth() == null)
-            sourceShape.setWidth(64 /*parentBounds.width / 2*/);
-        if (sourceShape.getHeight() == null)
-            sourceShape.setHeight(32 /*parentBounds.height / 2*/);
-        
-        if (targetWidget == null)
-            return;            
-        targetWidget.setPreferredLocation(new Point(sourceShape.getX(), sourceShape.getY()));
-        targetWidget.setPreferredSize(new Dimension(sourceShape.getWidth(), sourceShape.getHeight()));
-        targetWidget.setBackground(sourceShape.getColor());
-        if (sourceShape.isOpaque()) {
-            targetWidget.setBorder(BorderFactory.createLineBorder(sourceShape.getBorderWidth(), sourceShape.getBorderColor()));
-            
-        } else {
-            targetWidget.setBorder(BorderFactory.createOpaqueBorder(
-                sourceShape.getBorderWidth(), sourceShape.getBorderWidth(), 
-                sourceShape.getBorderWidth(), sourceShape.getBorderWidth()));
-        }
-    }
+////    public static void shapeToWidget(Shape sourceShape, Widget targetWidget) {
+////        //TODO: Calculate the width and height using the dimension in the parent
+////        /*
+////        Widget parentWidget = sourceShape.getParent() == null ? this : findWidget(sourceShape.getParent());
+////        if (parentWidget == null) { return; } 
+////        
+////        Rectangle parentBounds = parentWidget.getPreferredBounds();
+////        
+////        if (parentBounds == null) { return; }
+////        */
+////        if (sourceShape.getX() == null) { sourceShape.setX(0); }
+////        
+////        if (sourceShape.getY() == null) { sourceShape.setY(0); }
+////        
+////        if (sourceShape.getWidth() == null)
+////            sourceShape.setWidth(64 /*parentBounds.width / 2*/);
+////        if (sourceShape.getHeight() == null)
+////            sourceShape.setHeight(32 /*parentBounds.height / 2*/);
+////        
+////        if (targetWidget == null)
+////            return;            
+////        targetWidget.setPreferredLocation(new Point(sourceShape.getX(), sourceShape.getY()));
+////        targetWidget.setPreferredSize(new Dimension(sourceShape.getWidth(), sourceShape.getHeight()));
+////        targetWidget.setBackground(sourceShape.getColor());
+////        if (sourceShape.isOpaque()) {
+////            targetWidget.setBorder(BorderFactory.createLineBorder(sourceShape.getBorderWidth(), sourceShape.getBorderColor()));
+////            
+////        } else {
+////            targetWidget.setBorder(BorderFactory.createOpaqueBorder(
+////                sourceShape.getBorderWidth(), sourceShape.getBorderWidth(), 
+////                sourceShape.getBorderWidth(), sourceShape.getBorderWidth()));
+////        }
+////    }
     
     private void recursiveRender(XMLStreamReader reader, QName tagShape, Shape parent) throws XMLStreamException {
         Shape shape = XMLtoShape(reader, parent);

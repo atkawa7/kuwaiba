@@ -19,7 +19,7 @@ package org.inventory.core.templates.layouts.scene.widgets.actions;
 import java.awt.event.ActionEvent;
 
 /**
- *
+ * Action used to Bring to Back a Shape
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class BringToBackAction extends GenericShapeAction {

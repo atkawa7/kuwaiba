@@ -21,7 +21,7 @@ import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.core.templates.layouts2.EquipmentLayoutTopComponent;
+import org.inventory.core.templates.layouts.EquipmentLayoutTopComponent;
 import org.openide.util.Utilities;
 import org.openide.windows.WindowManager;
 

@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.inventory.core.templates.layouts2;
+package org.inventory.core.templates.layouts;
 
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
@@ -23,7 +23,7 @@ import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.core.templates.layouts2.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 
 /**
  *
@@ -84,7 +84,7 @@ public class EquipmentLayoutService {
         } else {
             if (CommunicationsStub.getInstance().updateListTypeItemRelatedView(model.getId(), model.getClassName(), 
                 layoutView.getId(), null, null, structure, scene.getBackgroundImage())) {
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "The device layout was saved successfully");
                 return true;
             } else {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 

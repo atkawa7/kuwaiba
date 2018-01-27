@@ -22,13 +22,14 @@ import java.util.ArrayList;
 import java.util.List;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.widgets.ContainerShapeWidget;
-import org.inventory.core.templates.layouts2.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.widgets.ShapeWidgetUtil;
+import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 import org.netbeans.api.visual.action.ResizeProvider;
 import org.netbeans.api.visual.action.ResizeStrategy;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * Provider used to resize container shapes
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ResizeContainerShapeProvider implements ResizeProvider, ResizeStrategy {
@@ -62,8 +63,10 @@ public class ResizeContainerShapeProvider implements ResizeProvider, ResizeStrat
                     continue;
                 shapeWidget.setVisible(false);
                 shapeWidget.revalidate();
+                                
                 shapeWidgetSet.add(shapeWidget);                
             }
+            ShapeWidgetUtil.makingVisibleChanges(widget);
         }
     }
     
@@ -81,6 +84,7 @@ public class ResizeContainerShapeProvider implements ResizeProvider, ResizeStrat
                     innerWidget.revalidate();
                 }
             }
+            ShapeWidgetUtil.makingVisibleChanges(widget);
             return;
         }
         
@@ -120,6 +124,8 @@ public class ResizeContainerShapeProvider implements ResizeProvider, ResizeStrat
                         resizeShapeWidgetProvider.resizingRestarted(widget);
                         Shape containerShape = (Shape) scene.findObject(widget);
                         resizeShapeWidgetProvider.firePropertyChange(containerShape, widget);
+                        
+                        ShapeWidgetUtil.makingVisibleChanges(widget);
                         return;
                     }
                 }
@@ -151,10 +157,11 @@ public class ResizeContainerShapeProvider implements ResizeProvider, ResizeStrat
                     Shape innerShape = (Shape) scene.findObject(innerWidget);             
                     resizeShapeWidgetProvider.firePropertyChange(innerShape, innerWidget);
                 }
+                ShapeWidgetUtil.makingVisibleChanges(widget);
             }
         }
     }
-
+    
     @Override
     public Rectangle boundsSuggested(Widget widget, Rectangle originalBounds, Rectangle suggestedBounds, ControlPoint controlPoint) {
         return suggestedBounds;

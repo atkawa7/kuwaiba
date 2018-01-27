@@ -25,6 +25,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.inventory.communications.util.Constants;
 
 /**
  * Class used to represent a generic shape
@@ -42,9 +43,12 @@ public abstract class Shape implements Transferable {
     public static String PROPERTY_BORDER_COLOR = "borderColor"; //NOI18N
     public static String PROPERTY_IS_EQUIPMENT = "isEquipment"; //NOI18N
     public static String PROPERTY_OPAQUE = "opaque"; //NOI18N
+    
+    public static Integer DEFAULT_X = 0;
+    public static Integer DEFAULT_Y = 0;
     public static Integer DEFAULT_WITH = 64;
     public static Integer DEFAULT_HEIGHT = 64;
-    public static Integer DEFAULT_BORDER_SIZE = 4;
+    public static Integer DEFAULT_BORDER_SIZE = Constants.DEVICE_LAYOUT_RESIZE_BORDER_SIZE;
     private static long counter = 0;
     public static DataFlavor DATA_FLAVOR = new DataFlavor(Shape.class, "DrawObject/Shape");  //NOI18N
         
@@ -70,6 +74,12 @@ public abstract class Shape implements Transferable {
         
         id = counter;
         counter += 1;
+        
+        x = DEFAULT_X;
+        y = DEFAULT_Y;
+        width = DEFAULT_WITH;
+        height = DEFAULT_HEIGHT;
+        borderWidth = DEFAULT_BORDER_SIZE;
     }
     
     public Shape(Shape parent) {

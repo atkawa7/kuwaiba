@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.inventory.core.templates.layouts2.scene.providers;
+package org.inventory.core.templates.layouts.widgets.providers;
 
 import java.awt.Point;
 import java.awt.datatransfer.Transferable;
@@ -24,7 +24,7 @@ import org.inventory.core.templates.layouts.lookup.SharedContentLookup;
 import org.inventory.core.templates.layouts.model.CustomShape;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.model.ShapeFactory;
-import org.inventory.core.templates.layouts2.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.widget.Widget;
@@ -54,23 +54,20 @@ public class EquipmentLayoutAcceptProvider implements AcceptProvider {
         if (widget.getScene() instanceof EquipmentLayoutScene) {
             scene = (EquipmentLayoutScene) widget.getScene();
             
-            Shape shape = ShapeFactory.getInstance().getShape(shapeTransferred.getShapeType());
-            if (shape == null) {
-                if (shapeTransferred instanceof CustomShape) {
-                    shape = ShapeFactory.getInstance().getCustomShape(((CustomShape) shapeTransferred).getListItem());
-                    shape.setWidth(-1);
-                    shape.setHeight(-1);
-                }
-                else
-                    throw new UnsupportedOperationException(String.format("%s not supported yet", shapeTransferred.getClass()));
-            } else {
-                shape.setWidth(Shape.DEFAULT_WITH);
-                shape.setHeight(Shape.DEFAULT_HEIGHT);
-            }
+            Shape shape = null;
+            if (shapeTransferred instanceof CustomShape)
+                shape = ShapeFactory.getInstance().getCustomShape(((CustomShape) shapeTransferred).getListItem());
+            else
+                shape = ShapeFactory.getInstance().getShape(shapeTransferred.getShapeType());
+            
+            if (shape == null)
+                throw new UnsupportedOperationException(String.format("%s not supported yet", shapeTransferred.getClass()));
+            
+            shape.setWidth(Shape.DEFAULT_WITH);
+            shape.setHeight(Shape.DEFAULT_HEIGHT);
             shape.setX(point.x);
             shape.setY(point.y);
-            
-            
+                        
             Widget newWidget = scene.addNode(shape);
             if (newWidget != null) {
                 if (newWidget instanceof SharedContentLookup)

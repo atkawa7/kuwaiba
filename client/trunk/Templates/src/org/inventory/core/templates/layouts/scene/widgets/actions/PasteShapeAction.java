@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,90 +16,125 @@
  */
 package org.inventory.core.templates.layouts.scene.widgets.actions;
 
-import java.awt.Dimension;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
+import static javax.swing.Action.NAME;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.core.templates.layouts.model.ContainerShape;
+import org.inventory.core.templates.layouts.model.CustomShape;
 import org.inventory.core.templates.layouts.model.Shape;
-import org.inventory.core.templates.layouts.scene.ModelLayoutScene;
+import org.inventory.core.templates.layouts.widgets.ContainerShapeWidget;
+import org.inventory.core.templates.layouts.widgets.providers.MoveContainerShapeProvider;
+import org.inventory.core.templates.layouts.widgets.providers.ResizeContainerShapeProvider;
+import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- * Action used to paste a widget in the scene
+ * Action used to Paste Shapes
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class PasteShapeAction extends GenericShapeAction {
     private static PasteShapeAction instance;
-    private Point localLocation;
+    private Point location;
     
     private PasteShapeAction() {
         putValue(NAME, I18N.gm("lbl_paste_action"));
     }
     
     public static PasteShapeAction getInstance() {
-        instance = instance == null ? instance = new PasteShapeAction() : instance;
+        if (instance == null)
+            instance = new PasteShapeAction();
         
-        if (CopyShapeAction.getInstance().getShapeToCopy() == null && 
-            GroupCopyShapeAction.getInstance().getShapeToCopy() == null)
+        if (CopyShapeAction.getInstance().getShapeToCopy() == null)
             instance.setEnabled(false);
         else
             instance.setEnabled(true);
-                
-        return instance;        
-    }
         
-    public Point getLocalLocation() {
-        return localLocation;                        
+        return instance;
     }
     
-    public void setLocalLocation(Point localLocation) {
-        this.localLocation = localLocation;
+    public Point getLocation() {
+        return location;
     }
     
+    public void setLocation(Point location) {
+        this.location = location;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (selectedWidget != null) {
-            if (localLocation != null) {
-                Shape shapeToCopy = CopyShapeAction.getInstance().getShapeToCopy();
-                if (shapeToCopy != null)
-                    recursivePaste(selectedWidget, localLocation, shapeToCopy, false);
+            if (location != null) {
+                EquipmentLayoutScene scene = null;
                 
-                shapeToCopy = GroupCopyShapeAction.getInstance().getShapeToCopy();
-                if (shapeToCopy != null)
-                    recursivePaste(selectedWidget, localLocation, shapeToCopy, true);
-            }
-        }
-    }
-    
-    public void recursivePaste(Widget parentWidget, Point localLocation, Shape shapeToCpy, boolean recursive) {
-        ModelLayoutScene scene = (ModelLayoutScene) parentWidget.getScene();
-        Object parentObject = scene.findObject(parentWidget);
-        
-        if (parentObject instanceof Shape) {
-            Shape shapeCpy = shapeToCpy.shapeCopy();
-            shapeCpy.setParent((Shape) parentObject);
-            
-            Widget shapeCpyWidget = scene.addNode(shapeCpy);
-            
-            shapeCpyWidget.setPreferredLocation(new Point(localLocation.x, localLocation.y));
-            shapeCpyWidget.setPreferredSize(new Dimension(shapeCpy.getWidth(), shapeCpy.getHeight()));
-            shapeCpyWidget.setBackground(shapeCpy.getColor());
-            scene.validate();
-            scene.paint();
-            
-            shapeCpyWidget.bringToFront();
-            
-            if (recursive) {
-                Widget widgetToCpy = scene.findWidget(shapeToCpy);
-                if (widgetToCpy != null) {
-                    for (Widget child : widgetToCpy.getChildren()) {
-                        Object childObj = scene.findObject(child);
-                        if (childObj instanceof Shape) {
-                            recursivePaste(shapeCpyWidget, child.getPreferredLocation(), (Shape) childObj, recursive);
+                if (selectedWidget instanceof EquipmentLayoutScene)
+                    scene = (EquipmentLayoutScene) selectedWidget;
+                else if (selectedWidget.getScene() instanceof EquipmentLayoutScene) {
+                    scene = (EquipmentLayoutScene) selectedWidget.getScene();
+                    location = selectedWidget.convertLocalToScene(location);
+                }
+                                    
+                if (scene != null) {
+                    Shape shapeToCpy = CopyShapeAction.getInstance().getShapeToCopy();
+
+                    Shape shape = shapeToCpy.shapeCopy();                    
+                    
+                    if (shape instanceof ContainerShape) {
+                        ContainerShapeWidget containerToCpy = (ContainerShapeWidget) scene.findWidget(shapeToCpy);
+                        List<Shape> shapeSetToCpy = containerToCpy.getShapesSet();
+                        
+                        List<Shape> innerShapes = new ArrayList();
+                        
+                        for (Shape innerShapeToCpy : shapeSetToCpy) {
+                            Shape innerShape = innerShapeToCpy.shapeCopy();
+                            innerShapes.add(innerShape);
+                            scene.addNode(innerShape);
                         }
+                        ContainerShapeWidget containerWidget = (ContainerShapeWidget) scene.addNode(shape);
+                        containerWidget.setShapesSet(innerShapes);
+                        
+                        MoveContainerShapeProvider moveContainerShapeProvider = new MoveContainerShapeProvider();
+                        moveContainerShapeProvider.movementStarted(containerWidget);
+                        
+                        containerWidget.setPreferredLocation(location);
+                        containerWidget.revalidate();
+                        
+                        moveContainerShapeProvider.movementFinished(containerWidget);
+                        
+                    } else if (shape instanceof CustomShape) {
+                        shape.setX(location.x);
+                        shape.setY(location.y);
+                        
+                        CustomShape tempCustomShape = (CustomShape) shape.shapeCopy();
+
+                        Widget widget = scene.addNode(shape);
+                        scene.validate();
+                        scene.paint();
+
+                        ResizeContainerShapeProvider resizeContainerShapeProvider = new ResizeContainerShapeProvider();
+                        resizeContainerShapeProvider.resizingStarted(widget);
+
+                        widget.setPreferredLocation(new Point(tempCustomShape.getX(), tempCustomShape.getY()));
+                        widget.setPreferredBounds(new Rectangle(
+                            -Shape.DEFAULT_BORDER_SIZE, -Shape.DEFAULT_BORDER_SIZE, 
+                            tempCustomShape.getWidth(), tempCustomShape.getHeight()));
+                        widget.revalidate();
+                        
+                        resizeContainerShapeProvider.resizingFinished(widget);                        
+                    } else {
+                        shape.setX(location.x);
+                        shape.setY(location.y);
+                        
+                        scene.addNode(shape);
+                        scene.validate();
+                        scene.paint();
                     }
                 }
             }
         }
     }
+    
 }

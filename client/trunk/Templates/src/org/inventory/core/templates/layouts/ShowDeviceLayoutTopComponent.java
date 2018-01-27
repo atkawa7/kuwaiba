@@ -17,6 +17,8 @@
 package org.inventory.core.templates.layouts;
 
 import java.awt.KeyEventDispatcher;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -186,18 +188,20 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {              
-        RenderModelLayout renderModelLayout = new RenderModelLayout(objectLight, scene, 100, 100, 700, 700);
-        if (renderModelLayout.getEquipmentModelView() == null) {
+        RenderDeviceLayout renderDeviceLayout = new RenderDeviceLayout(objectLight, scene, 
+            new Point(0, 0), new Rectangle(0, 0, 1000, 100));
+        
+        if (renderDeviceLayout.getEquipmentModelView() == null && !renderDeviceLayout.hasDefaultDeviceLayout()) {
             close();
-            if (renderModelLayout.getErrorMessage() != null) {
+            if (renderDeviceLayout.getErrorMessage() != null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
-                    NotificationUtil.INFO_MESSAGE, renderModelLayout.getErrorMessage());
+                    NotificationUtil.INFO_MESSAGE, renderDeviceLayout.getErrorMessage());
             }
             return;
         }
-        renderModelLayout.setOriginalSize(true);
-        renderModelLayout.render();
-        scene.revalidate();
+//        renderDeviceLayout.setOriginalSize(true);
+        renderDeviceLayout.render();
+        scene.validate();
         scene.paint();
     }
 

@@ -22,13 +22,10 @@ package org.inventory.core.templates.layouts.model;
  */
 public class ContainerShape extends Shape {
     public static final String SHAPE_TYPE = "container"; //NOI18N
-    public static final String PROPERTY_IS_CUSTOM_SHAPE = "isCustomShape"; //NOI18N
-////    
-    private boolean isCustomShape;
-    
+            
     public ContainerShape() {
+        super();
         setOpaque(false);
-        isCustomShape = false;
     }
     
     public ContainerShape(String urlIcon) {
@@ -41,18 +38,15 @@ public class ContainerShape extends Shape {
         return SHAPE_TYPE;     
     }
     
-    public boolean isCustomShape() {
-        return isCustomShape;        
-    }
-        
-    public void setIsCustomShape(boolean isCustomShape) {
-        this.isCustomShape = isCustomShape;        
-    }
-
     @Override
     public Shape shapeCopy() {
         ContainerShape customShape = new ContainerShape();
         shapeCopy(customShape);
         return customShape;
+    }
+
+    @Override
+    protected void shapeCopy(Shape shapeCpy) {   
+        super.shapeCopy(shapeCpy);
     }
 }

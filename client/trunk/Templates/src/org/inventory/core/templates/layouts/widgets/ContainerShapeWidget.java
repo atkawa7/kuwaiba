@@ -22,12 +22,12 @@ import java.util.List;
 import org.inventory.core.templates.layouts.model.ContainerShape;
 import org.inventory.core.templates.layouts.model.CustomShape;
 import org.inventory.core.templates.layouts.model.Shape;
-import org.inventory.core.templates.layouts2.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * Shape widget used to contain another shapes widget
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ContainerShapeWidget extends SelectableShapeWidget {

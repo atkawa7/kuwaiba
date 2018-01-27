@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.inventory.core.templates.layouts2;
+package org.inventory.core.templates.layouts;
 
 import java.awt.Color;
 import java.awt.Image;
@@ -33,7 +33,6 @@ import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.model.CircleShape;
-import org.inventory.core.templates.layouts.model.ContainerShape;
 import org.inventory.core.templates.layouts.model.CustomShape;
 import org.inventory.core.templates.layouts.model.LabelShape;
 import org.inventory.core.templates.layouts.model.PolygonShape;
@@ -70,9 +69,9 @@ public class EquipmentLayoutPalette {
     }
     
     public PaletteController createPalette() {
-        shapes.put(I18N.gm("palette_category_display_name_predefined_shapes"), getCustomShapes());
-        shapes.put(I18N.gm("palette_category_display_name_general_shapes"), getGenericShape());
-        
+        shapes.put(I18N.gm("palette_category_display_name_general_shapes"), getGenericShapes());
+        shapes.put(I18N.gm("palette_category_display_name_custom_shapes"), getCustomShapes());
+                
         AbstractNode paletteRoot = new AbstractNode(new CategoryChildren());
         paletteRoot.setDisplayName(I18N.gm("palette_root_display_name"));
         paletteController = PaletteFactory.createPalette(paletteRoot, new EquipmentLayoutPalette.CustomPaletteActions(), null, new EquipmentLayoutPalette.CustomDragAndDropHandler());
@@ -113,7 +112,7 @@ public class EquipmentLayoutPalette {
         return items.toArray(new Shape[0]);
     }
     
-    private Shape [] getGenericShape() {
+    private Shape [] getGenericShapes() {
         LabelShape labelShape = new LabelShape("org/inventory/core/templates/res/label.png");
         labelShape.setName(I18N.gm("basic_shape_label_name"));
         
@@ -126,15 +125,11 @@ public class EquipmentLayoutPalette {
         CircleShape circleShape = new CircleShape("org/inventory/core/templates/res/ellipse.png");
         circleShape.setName(I18N.gm("basic_circle_label_name"));
         
-        ContainerShape containerShape = new ContainerShape("org/inventory/core/templates/res/container.png");
-        containerShape.setName(I18N.gm("basic_container_label_name"));
-        
         return new Shape [] {
             labelShape,
             rectangleShape,
             polygonShape,
             circleShape,
-            containerShape
         };
     }
     

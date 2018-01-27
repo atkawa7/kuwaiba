@@ -111,4 +111,65 @@ public class ShapeWidgetUtil {
 ////        if (scene instanceof ModelLayoutScene)
 ////            ((ModelLayoutScene) scene).fireChangeEvent(new ActionEvent(widget, ModelLayoutScene.SCENE_CHANGE, evt.getPropertyName() + " Property Changed"));
     }
+    
+    public static void makingVisibleChanges(Widget widget) {
+        widget.getScene().setVisible(false);
+        widget.getScene().revalidate();
+        widget.getScene().setVisible(true);
+        widget.getScene().revalidate();
+    }
+    
+    public static void shapeToWidget(Shape sourceShape, Widget targetWidget) {
+        if (sourceShape == null || targetWidget == null)
+            return;
+        targetWidget.setPreferredLocation(new Point(sourceShape.getX(), sourceShape.getY()));
+        targetWidget.setPreferredBounds(new Rectangle(
+            sourceShape.getBorderWidth(), sourceShape.getBorderWidth(), 
+            sourceShape.getWidth(), sourceShape.getHeight()));
+        targetWidget.setBackground(sourceShape.getColor());
+        if (sourceShape.isOpaque())
+            targetWidget.setBorder(BorderFactory.createLineBorder(sourceShape.getBorderWidth(), sourceShape.getBorderColor()));
+        else {
+            targetWidget.setBorder(BorderFactory.createOpaqueBorder(
+                sourceShape.getBorderWidth(), sourceShape.getBorderWidth(), 
+                sourceShape.getBorderWidth(), sourceShape.getBorderWidth()));
+        }
+        targetWidget.setOpaque(sourceShape.isOpaque());
+        
+        targetWidget.revalidate();
+    }
+    
+////    public static void shapeToWidget(Shape sourceShape, Widget targetWidget) {
+////        //TODO: Calculate the width and height using the dimension in the parent
+////        /*
+////        Widget parentWidget = sourceShape.getParent() == null ? this : findWidget(sourceShape.getParent());
+////        if (parentWidget == null) { return; } 
+////        
+////        Rectangle parentBounds = parentWidget.getPreferredBounds();
+////        
+////        if (parentBounds == null) { return; }
+////        */
+////        if (sourceShape.getX() == null) { sourceShape.setX(0); }
+////        
+////        if (sourceShape.getY() == null) { sourceShape.setY(0); }
+////        
+////        if (sourceShape.getWidth() == null)
+////            sourceShape.setWidth(64 /*parentBounds.width / 2*/);
+////        if (sourceShape.getHeight() == null)
+////            sourceShape.setHeight(32 /*parentBounds.height / 2*/);
+////        
+////        if (targetWidget == null)
+////            return;            
+////        targetWidget.setPreferredLocation(new Point(sourceShape.getX(), sourceShape.getY()));
+////        targetWidget.setPreferredSize(new Dimension(sourceShape.getWidth(), sourceShape.getHeight()));
+////        targetWidget.setBackground(sourceShape.getColor());
+////        if (sourceShape.isOpaque()) {
+////            targetWidget.setBorder(BorderFactory.createLineBorder(sourceShape.getBorderWidth(), sourceShape.getBorderColor()));
+////            
+////        } else {
+////            targetWidget.setBorder(BorderFactory.createOpaqueBorder(
+////                sourceShape.getBorderWidth(), sourceShape.getBorderWidth(), 
+////                sourceShape.getBorderWidth(), sourceShape.getBorderWidth()));
+////        }
+////    }
 }

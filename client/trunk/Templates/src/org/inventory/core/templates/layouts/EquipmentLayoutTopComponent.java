@@ -14,52 +14,30 @@
  *  limitations under the License.
  *
  */
-package org.inventory.core.templates.layouts2;
+package org.inventory.core.templates.layouts;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Collections;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.core.templates.layouts.EquipmentLayoutConfigurationObject;
 import org.inventory.core.templates.layouts.customshapes.CustomShapesTopComponent;
 import org.inventory.core.templates.layouts.lookup.SharedContent;
+import org.inventory.core.templates.layouts.scene.ModelLayoutScene;
 import org.inventory.core.templates.layouts.shapehierarchy.ShapeHierarchyTopComponent;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
 /**
- * Top component which displays something.
- */
-////@ConvertAsProperties(
-////        dtd = "-//org.inventory.core.templates.layouts2//Equipment//EN",
-////        autostore = false
-////)
-////@TopComponent.Description(
-////        preferredID = "EquipmentLayoutTopComponent",    
-////        //iconBase="SET/PATH/TO/ICON/HERE", 
-////        persistenceType = TopComponent.PERSISTENCE_ALWAYS
-////)
-////@TopComponent.Registration(mode = "editor", openAtStartup = false)
-////@ActionID(category = "Window", id = "org.inventory.core.templates.layouts2.EquipmentLayoutTopComponent")
-////@ActionReference(path = "Menu/Window" /*, position = 333 */)
-////@TopComponent.OpenActionRegistration(
-////        displayName = "#CTL_EquipmentAction",
-////        preferredID = "EquipmentLayoutTopComponent"
-////)
-////@Messages({
-////    "CTL_EquipmentAction=Equipment",
-////    "CTL_EquipmentTopComponent=Equipment Window",
-////    "HINT_EquipmentTopComponent=This is a Equipment window"
-////})
-/**
- *  
+ * Top Component used to define the Equipment Layouts
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public final class EquipmentLayoutTopComponent extends TopComponent implements Refreshable {
+public final class EquipmentLayoutTopComponent extends TopComponent implements ActionListener, Refreshable {
     public static String ID = "EquipmentTopComponent_";
     private EquipmentLayoutService service;
     
@@ -67,9 +45,6 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements R
 
     public EquipmentLayoutTopComponent() {
         initComponents();
-////        setName(Bundle.CTL_EquipmentTopComponent());
-////        setToolTipText(Bundle.HINT_EquipmentTopComponent());
-
     }
     
     public EquipmentLayoutTopComponent(LocalObjectListItem model) {
@@ -111,9 +86,14 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements R
         barMain = new javax.swing.JToolBar();
         btnSave = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
+        btnClean = new javax.swing.JButton();
+        separator1 = new javax.swing.JToolBar.Separator();
+        btnGroup = new javax.swing.JButton();
+        separator2 = new javax.swing.JToolBar.Separator();
+        btnRefresh = new javax.swing.JButton();
         btnCustomShapes = new javax.swing.JButton();
         btnShowPalette = new javax.swing.JButton();
-        btnRefresh = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
         add(pnlScroll, java.awt.BorderLayout.CENTER);
@@ -121,8 +101,8 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements R
         barMain.setRollover(true);
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/save.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnSave.text")); // NOI18N
-        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnSave.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnSave.text_1")); // NOI18N
+        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnSave.toolTipText_1")); // NOI18N
         btnSave.setFocusable(false);
         btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -134,8 +114,8 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements R
         barMain.add(btnSave);
 
         btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/delete.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnDelete, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnDelete.text")); // NOI18N
-        btnDelete.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnDelete.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnDelete, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnDelete.text_1")); // NOI18N
+        btnDelete.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnDelete.toolTipText_1")); // NOI18N
         btnDelete.setFocusable(false);
         btnDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnDelete.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -146,9 +126,50 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements R
         });
         barMain.add(btnDelete);
 
+        btnClean.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/clean.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnClean, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnClean.text_1")); // NOI18N
+        btnClean.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnClean.toolTipText_1")); // NOI18N
+        btnClean.setFocusable(false);
+        btnClean.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnClean.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnClean.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCleanActionPerformed(evt);
+            }
+        });
+        barMain.add(btnClean);
+        barMain.add(separator1);
+
+        btnGroup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/groupShapes.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnGroup, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnGroup.text")); // NOI18N
+        btnGroup.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnGroup.toolTipText")); // NOI18N
+        btnGroup.setFocusable(false);
+        btnGroup.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnGroup.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnGroup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGroupActionPerformed(evt);
+            }
+        });
+        barMain.add(btnGroup);
+        barMain.add(separator2);
+
+        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/refresh.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnRefresh.text_1")); // NOI18N
+        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnRefresh.toolTipText_1")); // NOI18N
+        btnRefresh.setFocusable(false);
+        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRefreshActionPerformed(evt);
+            }
+        });
+        barMain.add(btnRefresh);
+
         btnCustomShapes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/custom_shapes.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnCustomShapes, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnCustomShapes.text")); // NOI18N
-        btnCustomShapes.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnCustomShapes.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnCustomShapes, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnCustomShapes.text_1")); // NOI18N
+        btnCustomShapes.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnCustomShapes.toolTipText_1")); // NOI18N
         btnCustomShapes.setFocusable(false);
         btnCustomShapes.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnCustomShapes.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -160,8 +181,8 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements R
         barMain.add(btnCustomShapes);
 
         btnShowPalette.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/show_palette.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnShowPalette, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnShowPalette.text")); // NOI18N
-        btnShowPalette.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnShowPalette.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnShowPalette, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnShowPalette.text_1")); // NOI18N
+        btnShowPalette.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnShowPalette.toolTipText_1")); // NOI18N
         btnShowPalette.setFocusable(false);
         btnShowPalette.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnShowPalette.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -172,18 +193,18 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements R
         });
         barMain.add(btnShowPalette);
 
-        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/refresh.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnRefresh.text")); // NOI18N
-        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnRefresh.toolTipText")); // NOI18N
-        btnRefresh.setFocusable(false);
-        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/shape_hierarchy.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.jButton1.text_1")); // NOI18N
+        jButton1.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.jButton1.toolTipText_1")); // NOI18N
+        jButton1.setFocusable(false);
+        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRefreshActionPerformed(evt);
+                jButton1ActionPerformed(evt);
             }
         });
-        barMain.add(btnRefresh);
+        barMain.add(jButton1);
 
         add(barMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
@@ -236,9 +257,9 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements R
             
             if (service.deleteLayout()) {
                 service.getScene().clear();
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "The current view was deleted");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "The current davice layout was deleted");
             } else
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "The current view can not be deleted");            
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "The current device layout can not be deleted");            
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
@@ -248,14 +269,50 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements R
         service.renderLayout();
     }//GEN-LAST:event_btnRefreshActionPerformed
 
+    private void btnCleanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCleanActionPerformed
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to clear the canvas?", 
+                I18N.gm("confirmation"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+            service.getScene().clear();
+            setSaved(false);
+        }
+    }//GEN-LAST:event_btnCleanActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        /*
+            ShapeHierarchyTopComponent topComponent = (ShapeHierarchyTopComponent) WindowManager.getDefault().findTopComponent("ShapeHierarchyTopComponent_" + service.getListItem().getId()); //NOI18N
+            if (topComponent == null) {
+                topComponent = new ShapeHierarchyTopComponent(service.getScene(), service.getListItem());
+                topComponent.open();
+            } else {
+                if (topComponent.isOpened())
+                    topComponent.requestAttention(true);
+                else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
+                       //so we will reuse the instance, refreshing the vierw first
+                    //topComponent.refresh();
+                    topComponent.open();
+                }
+            }
+            topComponent.requestActive();
+        */
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void btnGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGroupActionPerformed
+        service.getScene().addContainerShape();
+    }//GEN-LAST:event_btnGroupActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;
+    private javax.swing.JButton btnClean;
     private javax.swing.JButton btnCustomShapes;
     private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnGroup;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnSave;
     private javax.swing.JButton btnShowPalette;
+    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane pnlScroll;
+    private javax.swing.JToolBar.Separator separator1;
+    private javax.swing.JToolBar.Separator separator2;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
@@ -264,7 +321,8 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements R
         service.renderLayout();      
         if (service.getLayoutView()== null)
             btnDelete.setEnabled(false);
-////        service.getScene().addChangeListener(this); 
+        
+        service.getScene().addChangeListener(this); 
     }
 
     @Override
@@ -291,6 +349,34 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements R
         // TODO read your settings according to their version
     }
     
+    @Override
+    public String getDisplayName(){
+        if (super.getDisplayName() == null)
+            return "<" + I18N.gm("no_view") + ">";
+        return super.getDisplayName().trim().isEmpty() ? "<" + I18N.gm("no_view") + ">" : super.getDisplayName();
+    }
+    
+    @Override
+    public void refresh() {
+        EquipmentLayoutPalette.getInstance().createPalette();
+                
+        SharedContent.getInstance().getInstanceContent()
+            .set(Collections.singleton(EquipmentLayoutPalette.getInstance().getPalette()), null);
+        
+        // btnShowPaletteActionPerformed(null);
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        switch (e.getID()){
+            case ModelLayoutScene.SCENE_CHANGE:
+                setSaved(false);
+                break;
+            case ModelLayoutScene.SCENE_CHANGEANDSAVE:
+                break;
+        }
+    }
+    
     public void setSaved(boolean value) {
         configObject.setProperty("saved", value); //NOI18N
         
@@ -299,12 +385,22 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements R
         else
             this.setHtmlDisplayName(String.format(I18N.gm("modified"), getDisplayName()));
     }
-
-    @Override
-    public void refresh() {
-        EquipmentLayoutPalette.getInstance().createPalette();
+    
+    public boolean checkForUnsavedView() {
+        if (!(boolean) configObject.getProperty("saved")) { //NOI18N
+            int option = JOptionPane.showConfirmDialog(null, "This divice layout has not been saved, do you want to save it?", 
+                I18N.gm("confirmation"), JOptionPane.YES_NO_CANCEL_OPTION);
+            if (option == JOptionPane.YES_OPTION) {
                 
-        SharedContent.getInstance().getInstanceContent()
-            .set(Collections.singleton(EquipmentLayoutPalette.getInstance().getPalette()), null);
+                btnSaveActionPerformed(null);
+                configObject.setProperty("saved", true); //NOI18N
+                return true;
+            }
+            if (option == JOptionPane.NO_OPTION)
+                return true;                
+        } else
+            return true;
+        return false;
     }
+    
 }

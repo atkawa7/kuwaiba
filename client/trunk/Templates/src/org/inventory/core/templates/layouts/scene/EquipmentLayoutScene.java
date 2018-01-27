@@ -14,9 +14,8 @@
  *  limitations under the License.
  *
  */
-package org.inventory.core.templates.layouts2.scene;
+package org.inventory.core.templates.layouts.scene;
 
-import com.sun.imageio.plugins.common.I18N;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -25,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.swing.JPopupMenu;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -40,6 +40,7 @@ import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.lookup.SharedContent;
 import org.inventory.core.templates.layouts.lookup.SharedContentLookup;
 import org.inventory.core.templates.layouts.menus.ShapeWidgetMenu;
@@ -51,17 +52,20 @@ import org.inventory.core.templates.layouts.model.PolygonShape;
 import org.inventory.core.templates.layouts.model.RectangleShape;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.model.ShapeFactory;
+import org.inventory.core.templates.layouts.providers.ShapeNameAcceptProvider;
 import org.inventory.core.templates.layouts.providers.ShapeSelectProvider;
+import org.inventory.core.templates.layouts.scene.widgets.actions.PasteShapeAction;
 import org.inventory.core.templates.layouts.widgets.ContainerShapeWidget;
 import org.inventory.core.templates.layouts.widgets.ShapeWidgetFactory;
 import org.inventory.core.templates.layouts.widgets.providers.MoveContainerShapeProvider;
 import org.inventory.core.templates.layouts.widgets.providers.MoveShapeWidgetProvider;
 import org.inventory.core.templates.layouts.widgets.providers.ResizeContainerShapeProvider;
 import org.inventory.core.templates.layouts.widgets.providers.ResizeShapeWidgetProvider;
-import org.inventory.core.templates.layouts2.scene.providers.EquipmentLayoutAcceptProvider;
+import org.inventory.core.templates.layouts.widgets.providers.EquipmentLayoutAcceptProvider;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
+import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.spi.palette.PaletteController;
@@ -69,19 +73,49 @@ import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 
 /**
- *
+ * Scene used to design an Equipment Layout 
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class EquipmentLayoutScene extends AbstractScene<Shape, String> implements SharedContentLookup {
     private final List<CustomShape> customShapes;
+    private final ShapeNameAcceptProvider shapeNameAcceptProvider = new ShapeNameAcceptProvider();
     
     public EquipmentLayoutScene(LocalObjectListItem model) {
         nodeLayer = new LayerWidget(this);        
         addChild(nodeLayer);
+        
+        getActions().addAction(ActionFactory.createPopupMenuAction(new PopupMenuProvider() {
+            private JPopupMenu popupMenu = null;
+
+            @Override
+            public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
+                if (popupMenu == null) {
+                    popupMenu = new JPopupMenu();
+                    popupMenu.add(PasteShapeAction.getInstance());
+                }
+                PasteShapeAction.getInstance().setSelectedWidget(widget);
+                PasteShapeAction.getInstance().setLocation(localLocation);
+                return popupMenu;
+            }
+        }));
+                
         getActions().addAction(ActionFactory.createAcceptAction(new EquipmentLayoutAcceptProvider()));
         customShapes = new ArrayList();
         initSelectionListener();
     }
+    
+    public void addContainerShape() {
+        Shape shape = new ContainerShape();
+        shape.setX(50);
+        shape.setX(50);
+        shape.setWidth(Shape.DEFAULT_WITH);
+        shape.setHeight(Shape.DEFAULT_HEIGHT);
+        shape.setBorderWidth(-Shape.DEFAULT_BORDER_SIZE);
+        
+        addNode(shape);
+    }
+    
+        
     
     private boolean isInnerShape(Shape shape) {
         for (CustomShape customShape : customShapes) {
@@ -138,6 +172,8 @@ public class EquipmentLayoutScene extends AbstractScene<Shape, String> implement
                 xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_WIDTH), Integer.toString(shape.getWidth())));
                 xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_HEIGHT), Integer.toString(shape.getHeight())));
                 xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_OPAQUE), Boolean.toString(shape.isOpaque())));
+                xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_IS_EQUIPMENT), Boolean.toString(shape.isEquipment())));
+                xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_NAME), shape.getName() != null ? shape.getName() : ""));
                                 
                 if (ContainerShape.SHAPE_TYPE.equals(shapeType)) {
                     
@@ -159,13 +195,13 @@ public class EquipmentLayoutScene extends AbstractScene<Shape, String> implement
                     xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), Long.toString(((CustomShape) shape).getListItem().getId())));
                     xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASSNAME), ((CustomShape) shape).getListItem().getClassName()));
                     
-                } else {
-                    xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_NAME), shape.getName() != null ? shape.getName() : ""));
+                } else {                    
                     xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_COLOR), Integer.toString(shape.getColor().getRGB())));
                     xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_BORDER_COLOR), Integer.toString(shape.getBorderColor().getRGB())));
-                    xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_IS_EQUIPMENT), Boolean.toString(shape.isEquipment())));
+//                    xmlew.add(xmlef.createAttribute(new QName(Shape.PROPERTY_IS_EQUIPMENT), Boolean.toString(shape.isEquipment())));
                                         
                     if (RectangleShape.SHAPE_TYPE.equals(shapeType)) {
+                        xmlew.add(xmlef.createAttribute(new QName(RectangleShape.PROPERTY_IS_SLOT), Boolean.toString(((RectangleShape) shape).isSlot())));
                     } else if (LabelShape.SHAPE_TYPE.equals(shapeType)) {
                     } else if (CircleShape.SHAPE_TYPE.equals(shapeType)) {
                     } else if (PolygonShape.SHAPE_TYPE.equals(shapeType)) {
@@ -336,7 +372,7 @@ public class EquipmentLayoutScene extends AbstractScene<Shape, String> implement
                             
                             LocalObjectLight lol = CommunicationsStub.getInstance().getObjectInfoLight(className, Long.valueOf(id));
                             if (lol == null)
-                                NotificationUtil.getInstance().showSimplePopup(I18N.getString("error"), 
+                                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                             else {
                                 LocalObjectListItem listItem = new LocalObjectListItem(lol.getOid(), lol.getClassName(), lol.getName());
@@ -366,7 +402,19 @@ public class EquipmentLayoutScene extends AbstractScene<Shape, String> implement
                             attrValue = reader.getAttributeValue(null, Shape.PROPERTY_OPAQUE);
                             if (attrValue != null)
                                 shape.setOpaque(Boolean.valueOf(attrValue));
-
+                            
+//                            attrValue = reader.getAttributeValue(null, Shape.PROPERTY_IS_EQUIPMENT);
+//                            if (attrValue != null)
+//                                shape.setOpaque(Boolean.valueOf(attrValue));
+                            
+                            attrValue = reader.getAttributeValue(null, Shape.PROPERTY_NAME);
+                            if (attrValue != null)
+                                shape.setName(attrValue);
+                            
+                            attrValue = reader.getAttributeValue(null, Shape.PROPERTY_IS_EQUIPMENT);
+                            if (attrValue != null)
+                                shape.setIsEquipment(Boolean.valueOf(attrValue));
+                            
                             if (ContainerShape.SHAPE_TYPE.equals(shapeType)) {
                                 ContainerShapeWidget containerShapeWidget = (ContainerShapeWidget) addNode(shape);
                                 if (customShapeWidget != null)
@@ -398,21 +446,24 @@ public class EquipmentLayoutScene extends AbstractScene<Shape, String> implement
                                                                 
                                 Widget widget = addNode(shape);
                                 
-                                ResizeContainerShapeProvider resizeContainerShapeProvider = new ResizeContainerShapeProvider();
-                                resizeContainerShapeProvider.resizingStarted(widget);
-
-                                widget.setPreferredLocation(new Point(tempCustomShape.getX(), tempCustomShape.getY()));
-                                widget.setPreferredBounds(new Rectangle(
+                                Point widgetPoint = new Point(tempCustomShape.getX(), tempCustomShape.getY());
+                                Rectangle widgetBounds = new Rectangle(
                                     -Shape.DEFAULT_BORDER_SIZE, -Shape.DEFAULT_BORDER_SIZE, 
-                                    tempCustomShape.getWidth(), tempCustomShape.getHeight()));
-                                widget.revalidate();
+                                    tempCustomShape.getWidth(), tempCustomShape.getHeight());
+                                
+                                if (!widgetPoint.equals(widgetPoint) || !widget.getPreferredBounds().equals(widgetBounds)) {
+                                    
+                                    ResizeContainerShapeProvider resizeContainerShapeProvider = new ResizeContainerShapeProvider();
+                                    resizeContainerShapeProvider.resizingStarted(widget);
 
-                                resizeContainerShapeProvider.resizingFinished(widget);
+                                    widget.setPreferredLocation(widgetPoint);
+                                    widget.setPreferredBounds(widgetBounds);
+                                    widget.revalidate();
+
+                                    resizeContainerShapeProvider.resizingFinished(widget);
+                                }
+                                
                             } else {
-                                attrValue = reader.getAttributeValue(null, Shape.PROPERTY_NAME);
-                                if (attrValue != null)
-                                    shape.setName(attrValue);
-
                                 attrValue = reader.getAttributeValue(null, Shape.PROPERTY_COLOR);
                                 if (attrValue != null)
                                     shape.setColor(new Color(Integer.valueOf(attrValue)));
@@ -421,11 +472,12 @@ public class EquipmentLayoutScene extends AbstractScene<Shape, String> implement
                                 if (attrValue != null)
                                     shape.setBorderColor(new Color(Integer.valueOf(attrValue)));
 
-                                attrValue = reader.getAttributeValue(null, Shape.PROPERTY_IS_EQUIPMENT);
-                                if (attrValue != null)
-                                    shape.setIsEquipment(Boolean.valueOf(attrValue));
-
                                 if (RectangleShape.SHAPE_TYPE.equals(shapeType)) {
+                                    attrValue = reader.getAttributeValue(null, RectangleShape.PROPERTY_IS_SLOT);
+                                    
+                                    if (attrValue != null)
+                                        ((RectangleShape) shape).setIsSlot(Boolean.valueOf(attrValue));
+                                    
                                 } else if (LabelShape.SHAPE_TYPE.equals(shapeType)) {
                                 } else if (CircleShape.SHAPE_TYPE.equals(shapeType)) {
                                 } else if (PolygonShape.SHAPE_TYPE.equals(shapeType)) {
@@ -514,6 +566,7 @@ public class EquipmentLayoutScene extends AbstractScene<Shape, String> implement
             shapeWidget.getActions().addAction(ActionFactory.createResizeAction(resizeShapeWidgetProvider, resizeShapeWidgetProvider));
             shapeWidget.getActions().addAction(ActionFactory.createMoveAction(null, new MoveShapeWidgetProvider()));
         }
+        shapeWidget.getActions().addAction(ActionFactory.createAcceptAction(shapeNameAcceptProvider));
         shapeWidget.getActions().addAction(ActionFactory.createPopupMenuAction(ShapeWidgetMenu.getInstance()));
                 
         nodeLayer.addChild(shapeWidget);
@@ -521,6 +574,8 @@ public class EquipmentLayoutScene extends AbstractScene<Shape, String> implement
         if (node instanceof CustomShape)
             customShapes.add((CustomShape) node);
                         
+        validate();
+        paint();                        
         return shapeWidget;
     }
 

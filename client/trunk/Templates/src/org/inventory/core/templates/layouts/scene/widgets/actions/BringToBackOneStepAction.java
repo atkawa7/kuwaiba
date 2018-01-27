@@ -19,11 +19,10 @@ package org.inventory.core.templates.layouts.scene.widgets.actions;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * Action used to Bring to Back One Step a Shape
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class BringToBackOneStepAction extends GenericShapeAction {

@@ -22,6 +22,7 @@ import org.inventory.core.templates.layouts.lookup.SharedContent;
 import org.inventory.core.templates.layouts.model.CircleShape;
 import org.inventory.core.templates.layouts.model.LabelShape;
 import org.inventory.core.templates.layouts.model.PolygonShape;
+import org.inventory.core.templates.layouts.model.RectangleShape;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.nodes.ShapeNode;
 import org.openide.nodes.PropertySupport;
@@ -63,6 +64,10 @@ public class ShapeGeneralProperty extends PropertySupport.ReadWrite {
             return shape.isEquipment();
         else if (Shape.PROPERTY_OPAQUE.equals(getName()))
             return shape.isOpaque();
+        else if (shape instanceof RectangleShape) {
+            if (RectangleShape.PROPERTY_IS_SLOT.equals(getName()))
+                return ((RectangleShape) shape).isSlot();
+        }
         else if (shape instanceof LabelShape) {
             if (LabelShape.PROPERTY_LABEL.equals(getName()))
                 return ((LabelShape) shape).getLabel();
@@ -90,7 +95,13 @@ public class ShapeGeneralProperty extends PropertySupport.ReadWrite {
     public void setValue(Object val) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         ShapeNode shapeNode = SharedContent.getInstance().getAbstractLookup().lookup(ShapeNode.class);
         Shape shape = shapeNode.getLookup().lookup(Shape.class);
-        if (shape instanceof LabelShape) {
+        if (shape instanceof RectangleShape) {
+            if (RectangleShape.PROPERTY_IS_SLOT.equals(getName())) {
+                shape.firePropertyChange(shapeNode, RectangleShape.PROPERTY_IS_SLOT, ((RectangleShape) shape).isSlot(), val);
+                ((RectangleShape) shape).setIsSlot((Boolean) val);
+                return;
+            }
+        } else if (shape instanceof LabelShape) {
             if (LabelShape.PROPERTY_LABEL.equals(getName())) {
                 shape.firePropertyChange(shapeNode, LabelShape.PROPERTY_LABEL, ((LabelShape) shape).getLabel(), val);
                 ((LabelShape) shape).setLabel((String) val);

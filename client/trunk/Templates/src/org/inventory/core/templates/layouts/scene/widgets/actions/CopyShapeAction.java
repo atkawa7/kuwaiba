@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,17 +17,18 @@
 package org.inventory.core.templates.layouts.scene.widgets.actions;
 
 import java.awt.event.ActionEvent;
+import static javax.swing.Action.NAME;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.model.Shape;
-import org.inventory.core.templates.layouts.scene.ModelLayoutScene;
+import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 
 /**
- * Action used to copy a widget in the scene
+ * Action used to Copy Shapes
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class CopyShapeAction extends GenericShapeAction {
     private static CopyShapeAction instance;
-    private Shape shapeToCopy;
+    private Shape shapeToCpy;
     
     private CopyShapeAction() {
         putValue(NAME, I18N.gm("lbl_copy_action"));
@@ -38,25 +39,18 @@ public class CopyShapeAction extends GenericShapeAction {
     }
     
     public Shape getShapeToCopy() {
-        return shapeToCopy;
+        return shapeToCpy;
     }
-    
-    public void setShapeToCopy(Shape shapeToCopy) {
-        this.shapeToCopy = shapeToCopy;
-    }
-        
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (selectedWidget != null) {
-            // Copy and Group copy actions are mutually exclusive
-            GroupCopyShapeAction.getInstance().setShapeToCopy(null);
+            EquipmentLayoutScene scene = (EquipmentLayoutScene) selectedWidget.getScene();
             
-            ModelLayoutScene scene = ((ModelLayoutScene) selectedWidget.getScene());
-            Object object = scene.findObject(selectedWidget);
+            Object obj = scene.findObject(selectedWidget);
             
-            if (object != null && object instanceof Shape) {
-                shapeToCopy = (Shape) object;
-            }
+            if (obj instanceof Shape)
+                shapeToCpy = (Shape) obj;
         }
     }
     

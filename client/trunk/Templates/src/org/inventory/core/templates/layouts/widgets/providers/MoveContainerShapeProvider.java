@@ -21,12 +21,13 @@ import java.util.ArrayList;
 import java.util.List;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.widgets.ContainerShapeWidget;
-import org.inventory.core.templates.layouts2.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.widgets.ShapeWidgetUtil;
+import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 import org.netbeans.api.visual.action.MoveProvider;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * Provided used to Move a Container Shape
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class MoveContainerShapeProvider implements MoveProvider {
@@ -54,9 +55,11 @@ public class MoveContainerShapeProvider implements MoveProvider {
                 if (shapeWidget == null)
                     continue;
                 shapeWidget.setVisible(false);
-                shapeWidget.revalidate();
+                shapeWidget.revalidate();                
+                
                 shapeWidgetSet.add(shapeWidget);                
             }
+            ShapeWidgetUtil.makingVisibleChanges(widget);
         }
     }
 
@@ -65,13 +68,15 @@ public class MoveContainerShapeProvider implements MoveProvider {
         Point finishPoint = widget.getPreferredLocation();
         if (finishPoint.x < 0 || finishPoint.y < 0) {
             widget.setPreferredLocation(startPoint);
+            widget.revalidate();
             
             if (shapeWidgetSet == null) {
                 for (Widget innerWidget : shapeWidgetSet) {
                     innerWidget.setVisible(true);                    
                     innerWidget.revalidate();
                 }
-            }            
+            }
+            ShapeWidgetUtil.makingVisibleChanges(widget);
             return;
         }
         
@@ -113,6 +118,7 @@ public class MoveContainerShapeProvider implements MoveProvider {
                     shape.setY(finishPoint.y);
                     shape.firePropertyChange(widget, Shape.PROPERTY_Y, shapeStartPoint.y, shapeFinishPoint.y);
                 }
+                ShapeWidgetUtil.makingVisibleChanges(widget);
             }
         }
     }

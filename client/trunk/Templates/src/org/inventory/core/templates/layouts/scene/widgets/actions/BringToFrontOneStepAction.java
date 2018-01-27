@@ -17,16 +17,11 @@
 package org.inventory.core.templates.layouts.scene.widgets.actions;
 
 import java.awt.event.ActionEvent;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.core.services.api.actions.GenericInventoryAction;
-import org.inventory.core.templates.layouts2.scene.EquipmentLayoutScene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * Action used to Bring to Front One Step a Shape
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class BringToFrontOneStepAction extends GenericShapeAction {

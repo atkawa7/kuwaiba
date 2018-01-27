@@ -24,7 +24,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.model.Shape;
-import org.inventory.core.templates.layouts.scene.ModelLayoutScene;
+import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.widget.Widget;
@@ -49,18 +49,22 @@ public class ShapeNameAcceptProvider implements AcceptProvider {
 
     @Override
     public void accept(Widget widget, Point point, Transferable transferable) {
-        if (widget.getScene() instanceof ModelLayoutScene) {
+        if (widget.getScene() instanceof EquipmentLayoutScene) {
             LocalObjectLight lol = null;
             try {
                 lol = (LocalObjectLight) transferable.getTransferData(LocalObjectLight.DATA_FLAVOR);
             } catch (UnsupportedFlavorException | IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
-            Shape shape = (Shape) ((ModelLayoutScene) widget.getScene()).findObject(widget);
+            Shape shape = (Shape) ((EquipmentLayoutScene) widget.getScene()).findObject(widget);
             
             String oldName = shape.getName();
             shape.setName(lol != null ? lol.getName() : "");
             shape.firePropertyChange(widget, Shape.PROPERTY_NAME, oldName, shape.getName());
+            
+            boolean oldIsInventoryObj = shape.isEquipment();
+            shape.setIsEquipment(true);
+            shape.firePropertyChange(widget, Shape.PROPERTY_IS_EQUIPMENT, oldIsInventoryObj, shape.isEquipment());
             
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "Shape name set");
         }

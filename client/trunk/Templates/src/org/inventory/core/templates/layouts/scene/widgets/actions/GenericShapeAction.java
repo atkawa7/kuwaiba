@@ -21,7 +21,7 @@ import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * Generic Shape Action used to define the common features of shapes actions
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public abstract class GenericShapeAction extends GenericInventoryAction {

@@ -29,7 +29,7 @@ public class Constants {
     public static final int DEBUG_LEVEL_FINE = 2;
     public static int DEBUG_LEVEL = DEBUG_LEVEL_INFO;
     
-    public static final int LAYOUTS_RESIZE_BORDER_SIZE = 4;
+    public static final int DEVICE_LAYOUT_RESIZE_BORDER_SIZE = 4;
     //public static int DEBUG_LEVEL = DEBUG_LEVEL_DISABLED;
      /**
      * IP address type for IPv4

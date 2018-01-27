@@ -18,7 +18,7 @@ package org.inventory.core.templates.layouts.widgets.providers;
 
 import java.awt.Point;
 import org.inventory.core.templates.layouts.model.Shape;
-import org.inventory.core.templates.layouts2.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 import org.netbeans.api.visual.action.MoveProvider;
 import org.netbeans.api.visual.widget.Widget;
 

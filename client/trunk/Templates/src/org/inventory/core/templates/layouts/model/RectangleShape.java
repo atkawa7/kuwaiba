@@ -22,6 +22,9 @@ package org.inventory.core.templates.layouts.model;
  */
 public class RectangleShape extends Shape {
     public static final String SHAPE_TYPE = "rectangle";  //NOI18N
+    public static final String PROPERTY_IS_SLOT = "isSlot";
+    
+    private boolean isSlot = false;
     
     public RectangleShape() {
         super();
@@ -35,6 +38,14 @@ public class RectangleShape extends Shape {
         super(parent);
     }
     
+    public boolean isSlot() {
+        return isSlot;
+    }
+        
+    public void setIsSlot(boolean isSlot) {
+        this.isSlot = isSlot;                
+    }
+        
     @Override
     public String getShapeType() {
         return SHAPE_TYPE;     

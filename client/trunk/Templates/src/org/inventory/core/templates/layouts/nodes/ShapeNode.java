@@ -135,7 +135,11 @@ public class ShapeNode extends AbstractNode implements PropertyChangeListener {
         propertiesPropertySet.setDisplayName(I18N.gm("property_set_display_name_properties"));
         propertiesPropertySet.setName("properties");  //NOI18N
         if (getShape() instanceof RectangleShape) {
-                        
+            ShapeGeneralProperty propertyIsSlot = new ShapeGeneralProperty(RectangleShape.PROPERTY_IS_SLOT, Boolean.class, 
+                I18N.gm("property_display_name_shape_is_slot"), "");
+            
+            propertiesPropertySet.put(propertyIsSlot);
+                                    
         } else if (getShape() instanceof LabelShape) {
             ShapeGeneralProperty propertyLabel = new ShapeGeneralProperty(LabelShape.PROPERTY_LABEL, String.class, 
                 I18N.gm("property_display_name_shape_label"), "");

@@ -22,14 +22,12 @@ import java.util.List;
 import javax.swing.Action;
 import javax.swing.JPopupMenu;
 import org.inventory.core.templates.layouts.scene.widgets.actions.BringToBackAction;
-import org.inventory.core.templates.layouts.scene.widgets.actions.CopyShapeAction;
 import org.inventory.core.templates.layouts.scene.widgets.actions.DeleteShapeAction;
 import org.inventory.core.templates.layouts.scene.widgets.actions.GenericShapeAction;
-import org.inventory.core.templates.layouts.scene.widgets.actions.GroupCopyShapeAction;
-import org.inventory.core.templates.layouts.scene.widgets.actions.GroupShapesAction1;
 import org.inventory.core.templates.layouts.scene.widgets.actions.BringToBackOneStepAction;
 import org.inventory.core.templates.layouts.scene.widgets.actions.BringToFrontAction;
 import org.inventory.core.templates.layouts.scene.widgets.actions.BringToFrontOneStepAction;
+import org.inventory.core.templates.layouts.scene.widgets.actions.CopyShapeAction;
 import org.inventory.core.templates.layouts.scene.widgets.actions.DeleteContainerShapeAction;
 import org.inventory.core.templates.layouts.scene.widgets.actions.GroupShapesAction;
 import org.inventory.core.templates.layouts.scene.widgets.actions.PasteShapeAction;
@@ -70,7 +68,9 @@ public class ShapeWidgetMenu implements PopupMenuProvider {
             actions = new ArrayList();
             actions.add(CopyShapeAction.getInstance());
             actions.add(PasteShapeAction.getInstance());
-            actions.add(GroupCopyShapeAction.getInstance());
+////            actions.add(CopyShapeAction1.getInstance());
+////            actions.add(PasteShapeAction1.getInstance());
+////            actions.add(GroupCopyShapeAction.getInstance());
             actions.add(BringToFrontAction.getInstance());
             actions.add(BringToFrontOneStepAction.getInstance());
             actions.add(BringToBackAction.getInstance());
@@ -81,10 +81,10 @@ public class ShapeWidgetMenu implements PopupMenuProvider {
             popupMenu.add(CopyShapeAction.getInstance());
             popupMenu.add(PasteShapeAction.getInstance());
             popupMenu.addSeparator();
-            popupMenu.add(GroupCopyShapeAction.getInstance());
-            popupMenu.addSeparator();
-            popupMenu.add(GroupShapesAction1.getInstance());
-            popupMenu.addSeparator();
+////            popupMenu.add(GroupCopyShapeAction.getInstance());
+////            popupMenu.addSeparator();
+////            popupMenu.add(GroupShapesAction1.getInstance());
+////            popupMenu.addSeparator();
             popupMenu.add(BringToFrontAction.getInstance());
             popupMenu.add(BringToFrontOneStepAction.getInstance());
             popupMenu.addSeparator();
@@ -96,12 +96,21 @@ public class ShapeWidgetMenu implements PopupMenuProvider {
         for (Action action : actions)
             ((GenericShapeAction) action).setSelectedWidget(widget);
         
-        PasteShapeAction.getInstance().setLocalLocation(localLocation);
+////        PasteShapeAction1.getInstance().setLocalLocation(localLocation);
+        PasteShapeAction.getInstance().setLocation(localLocation);
         return popupMenu;
     }
     
     private JPopupMenu getContainerShapePopupMenu(Widget widget, Point localLocation) {
         containerShapePopupMenu = new JPopupMenu();
+        
+        containerShapePopupMenu.add(CopyShapeAction.getInstance());
+        containerShapePopupMenu.add(PasteShapeAction.getInstance());
+        containerShapePopupMenu.addSeparator();
+        
+        
+        // containerShapePopupMenu.add(DeleteContainerShapeAction.getInstance());
+        
         if (widget instanceof ContainerShapeWidget) {
             if (!((ContainerShapeWidget) widget).isCustomShape()) {
                 if (((ContainerShapeWidget) widget).getShapesSet().isEmpty())
@@ -112,6 +121,10 @@ public class ShapeWidgetMenu implements PopupMenuProvider {
             }
         }
         containerShapePopupMenu.add(DeleteContainerShapeAction.getInstance());
+        
+        CopyShapeAction.getInstance().setSelectedWidget(widget);
+        PasteShapeAction.getInstance().setSelectedWidget(widget);
+        PasteShapeAction.getInstance().setLocation(localLocation);        
         
         if (widget instanceof ContainerShapeWidget) {
             if (!((ContainerShapeWidget) widget).isCustomShape()) {

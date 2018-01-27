@@ -26,7 +26,7 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.core.templates.layouts2.EquipmentLayoutTopComponent;
+import org.inventory.core.templates.layouts.EquipmentLayoutTopComponent;
 import org.inventory.core.templates.nodes.TemplateElementNode;
 import org.openide.util.Utilities;
 import org.openide.windows.WindowManager;
@@ -49,10 +49,31 @@ public class EditLayoutAction extends GenericInventoryAction {
     @Override
     public boolean isEnabled() {
         TemplateElementNode selectedNode = Utilities.actionsGlobalContext().lookup(TemplateElementNode.class);
-        LocalObjectLight selectedObject = selectedNode.getLookup().lookup(LocalObjectLight.class);
+        if (selectedNode == null)
+            return false;
         
-        return CommunicationsStub.getInstance().isSubclassOf(selectedObject.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT) || 
-               CommunicationsStub.getInstance().isSubclassOf(selectedObject.getClassName(), Constants.CLASS_GENERICDISTRIBUTIONFRAME);
+        LocalObjectLight selectedObject = selectedNode.getLookup().lookup(LocalObjectLight.class);
+        if (selectedObject == null)
+            return false;
+        
+        LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(selectedObject.getClassName(), false);
+        if (lcm == null) {
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            return false;
+        }
+        if (lcm.hasAttribute("model")) {
+            LocalObject localObj = CommunicationsStub.getInstance().getTemplateElement(selectedObject.getClassName(), selectedObject.getOid());
+            if (localObj == null) {
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                return false;
+            }
+            Object model = localObj.getAttribute("model");
+            if (model instanceof LocalObjectListItem)
+                return true;
+        }
+        return false;
     }
     
     @Override

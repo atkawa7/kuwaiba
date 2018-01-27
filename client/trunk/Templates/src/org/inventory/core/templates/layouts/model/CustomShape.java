@@ -28,8 +28,9 @@ public class CustomShape extends Shape {
     
     private Image icon;
     private LocalObjectListItem listItem;
-    
+        
     public CustomShape(LocalObjectListItem listItem) {
+        super();
         this.listItem = listItem;
         setOpaque(false);
     }
@@ -65,5 +66,10 @@ public class CustomShape extends Shape {
     @Override
     public String getShapeType() {
         return SHAPE_TYPE;
+    }
+    
+    @Override
+    protected void shapeCopy(Shape shapeCpy) {   
+        super.shapeCopy(shapeCpy);
     }
 }

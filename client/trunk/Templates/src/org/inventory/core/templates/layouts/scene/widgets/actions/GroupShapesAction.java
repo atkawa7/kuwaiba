@@ -23,11 +23,11 @@ import java.util.List;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.widgets.ContainerShapeWidget;
-import org.inventory.core.templates.layouts2.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * Action use to group shapes
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class GroupShapesAction extends GenericShapeAction {
