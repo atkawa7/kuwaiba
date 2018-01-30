@@ -106,7 +106,7 @@ public class MovePhysicalLinkOutOfContainerFrame extends JFrame{
             
             TopComponent topComponent = WindowManager.getDefault().findTopComponent("ObjectViewTopComponent_" + containerParent.getOid());
             if (topComponent instanceof Refreshable)
-                    topComponents.add((Refreshable) topComponent);    
+                topComponents.add((Refreshable) topComponent);    
             
             if(com.moveSpecialObjects(containerParent.getClassName(),
                     containerParent.getOid(), 

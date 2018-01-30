@@ -97,23 +97,37 @@ public class MoveLinksIntoContainerAction  extends GenericObjectNodeAction{
                 allParentsB.add(parentsB);
                 sameParents.add(false);
             }
-            
-            List<LocalObjectLight> prntsTemp = allParentsA.get(0);
-            for(int j = 0; j < allParentsA.size(); j++){
-                LocalObjectLight prntA = allParentsA.get(j).get(allParentsA.get(j).size()-2);
-                for (int k = 0; k < allParentsB.size(); k++) {
-                    LocalObjectLight prntb = allParentsB.get(k).get(allParentsB.get(k).size()-2);
-                    if(prntA.equals(prntb)){
-                        sameParents.set(j, true);
-                        break;
-                    }
-                }
+            //If all the endpoints has same EndPointA and EndPointB
+            boolean sameParentsA = true;
+            LocalObjectLight tempPrnt = allParentsA.get(0).get(allParentsA.get(0).size()-2);
+            for (int i = 1; i < allParentsA.size(); i++) {
+                if(!tempPrnt.equals(allParentsA.get(i).get(allParentsA.get(i).size()-2)))
+                    sameParentsA = false;
             }
             
-            for (boolean is : sameParents) {
-                if(!is){
-                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, I18N.gm("select_links_with_same_end_ponits"));
-                    return; 
+            boolean sameParentsB = true;
+            tempPrnt = allParentsB.get(0).get(allParentsB.get(0).size()-2);
+            for (int i = 1; i < allParentsB.size(); i++) {
+                if(!tempPrnt.equals(allParentsB.get(i).get(allParentsB.get(1).size()-2)))
+                    sameParentsB = false;
+            }
+            //Check if parents are the same but in diferent side
+            if(!sameParentsA || !sameParentsB){
+                for(int j = 0; j < allParentsA.size(); j++){
+                    LocalObjectLight prntA = allParentsA.get(j).get(allParentsA.get(j).size()-2);
+                    for (List<LocalObjectLight> allParentsB1 : allParentsB) {
+                        LocalObjectLight prntB = allParentsB1.get(allParentsB1.size() - 2);
+                        if(prntA.equals(prntB)){
+                            sameParents.set(j, true);
+                            break;
+                        }
+                    }
+                }
+                for (boolean is : sameParents) {
+                    if(!is){
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, I18N.gm("select_links_with_same_end_ponits"));
+                        return; 
+                    }
                 }
             }
             
