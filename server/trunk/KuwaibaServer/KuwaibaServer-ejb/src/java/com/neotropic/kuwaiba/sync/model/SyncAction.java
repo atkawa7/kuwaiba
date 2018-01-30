@@ -104,6 +104,9 @@ public class SyncAction {
                     case "branch":
                         manageObjectOfBranch(jsonObj, finding);
                         break;
+                    case "new-subranch":
+                        manageObjectOfBranch(jsonObj, finding);
+                        break;    
                     case "object_port_move":
                         migrateOldPortsIntoNewPosition(jsonObj, finding);
                         break;
@@ -221,6 +224,9 @@ public class SyncAction {
                 String className = child.getJsonObject("child").getString("className");
                 String parentClassName = child.getJsonObject("child").getString("parentClassName");
                 Long tempParentId = Long.valueOf(child.getJsonObject("child").getString("parentId"));
+                Long parentId = 0l;
+                if(child.getJsonObject("child").get("deviceParentId") != null)
+                    parentId = Long.valueOf(child.getJsonObject("child").getString("deviceParentId"));
 
                 JsonObject jsonAttributes = child.getJsonObject("child").getJsonObject("attributes");
                 attributes.put("name", jsonAttributes.getString("name"));
@@ -246,9 +252,14 @@ public class SyncAction {
                     }
                     else{
                         try{
-                            Long parentId = createdIdsToMap.get(tempParentId);
-                            if(parentId == null)
-                                parentId = tempParentId;
+                            if(child.getJsonObject("child").get("deviceParentId") == null){
+                                
+                                parentId = createdIdsToMap.get(tempParentId);
+                                if(parentId == null)
+                                    parentId = tempParentId;
+                            }
+                            else //if we are updating a branch
+                                createdIdsToMap.put(tempParentId, parentId);
 
                             if(!className.contains("Port") || attributes.get("name").contains("Power")){
                                 long createdObjectId = bem.createObject(className, parentClassName, parentId, attributes, -1);
@@ -416,7 +427,7 @@ public class SyncAction {
         JsonObject jdevice = json.getJsonObject("device");
         String className = jdevice.getString("deviceClassName");
         try {
-            bem.deleteObject(className, Long.valueOf(jdevice.getString("deviceId")), true);
+            bem.deleteObject(className, Long.valueOf(jdevice.getString("deviceId")), false);
             results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_DELETED, jdevice.get("deviceName"), className, jdevice.getString("deviceId")), ACTION_DELETED));
 
         } catch (ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {

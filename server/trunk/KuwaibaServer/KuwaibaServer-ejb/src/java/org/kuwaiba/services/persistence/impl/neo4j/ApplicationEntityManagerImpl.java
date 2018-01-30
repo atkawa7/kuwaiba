@@ -2510,7 +2510,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new InvalidArgumentException("The script returned a null object. Please check the syntax.");
             else if (!TaskResult.class.isInstance(theResult))
                 throw new InvalidArgumentException("The script does not return a TaskResult object. Please check the return value.");
-           
             //Commit only if it's configured to do so 
             if (taskNode.hasProperty(Constants.PROPERTY_COMMIT_ON_EXECUTE) && (boolean)taskNode.getProperty(Constants.PROPERTY_COMMIT_ON_EXECUTE))
                 tx.success();

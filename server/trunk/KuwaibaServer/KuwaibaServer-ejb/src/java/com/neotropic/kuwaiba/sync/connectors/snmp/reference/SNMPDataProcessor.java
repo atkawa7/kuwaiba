@@ -116,16 +116,14 @@ public class SNMPDataProcessor {
      * Default initial ParentId in the SNMP table data
      */
     private String INITAL_ID = "0";
-
     /**
      * To keep the objects during synchronization
      */
     private List<JsonObject> branch;
-
     /**
-     * the device that we are updating
+     * It's used to store the object info we are trying to update
      */
-    RemoteBusinessObjectLight obj;
+    private RemoteBusinessObjectLight obj;
     /**
      * reference to the bem
      */
@@ -185,7 +183,6 @@ public class SNMPDataProcessor {
 
     /**
      * Reads the data loaded into memory
-     *
      * @throws InvalidArgumentException if the table info load is corrupted and
      * has no chassis
      */
@@ -280,7 +277,6 @@ public class SNMPDataProcessor {
 
     /**
      * Create into kuwaiba's objects the lines read it from the SNMP
-     *
      * @param parentId
      * @param parentClassName
      * @param parentName
@@ -304,11 +300,10 @@ public class SNMPDataProcessor {
         List<String> childrenIds = mapOfFile.get(parentId);
         if (childrenIds != null) {
             for (String childId : childrenIds) {
-                boolean isAlreadyCreated = false;
-            
+                
                 int i = allData.get("instance").indexOf(childId);
                 parentId = allData.get("entPhysicalContainedIn").get(i);
-                if (parentClassName.equals(className)) //if is the chassis 
+                if (parentClassName.equals(className)) //if is the chassis we must keep the id
                     parentId = Long.toString(id);
 
                 String objectName = allData.get("entPhysicalName").get(i);
@@ -318,12 +313,12 @@ public class SNMPDataProcessor {
                 //We parse the class Id from SNMP into kuwaiba's class name
                 String mappedClass = parseClass(allData.get("entPhysicalClass").get(i), objectName, allData.get("entPhysicalDescr").get(i));
                 HashMap<String, String> newAttributes = createNewAttributes(i);
-                if(mappedClass == null)
+                
+                if(mappedClass == null) //it was impossible to parse the SNMP class into kuwaiba's class
                     findings.add(new SyncFinding(SyncFinding.EVENT_ERROR,
                                 String.format("The data your are trying to load has empty fields, the ClassName of the row with id: %s - %s "
-                                        + "could not be determined due to these empty fields, the -entPhysicalDescr- or the -entPhysicalName- maybe are empty,  please check the data you are trying to load", childId, newAttributes),
+                                        + "could not be determined due to these empty fields, the -entPhysicalDescr- or the -entPhysicalName- could be empty,  please check the data you are trying to load", childId, newAttributes),
                                 null));
-                //it was impossible to parse the SNMP class into kuwaiba's class
                 else{
                     //The chassis can be only updated
                     if (className.contains(mappedClass)) {
@@ -331,12 +326,13 @@ public class SNMPDataProcessor {
                         HashMap<String, String> comparedAttributes = compareAttributes(bem.getObject(id).getAttributes(), newAttributes);
                         if (!comparedAttributes.isEmpty()) {
                             comparedAttributes.put("name", obj.getName());
+                                    
                             findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
-                                    String.format("The chassis has changes, attributes %s have changed, would you like to update it?", comparedAttributes),
+                                    String.format("The chassis has changes, attributes %s have changed, would you like to update it?", getAttributesWithNames(comparedAttributes)),
                                     createExtraInfoToUpdateAttributesInObject(Long.toString(id), mappedClass, comparedAttributes).toString()));
                         }
-                    }//All except the Chassis
-                    else {
+                    //all the data except the chassis
+                    } else { 
                         JsonObject jsonNewObj = Json.createObjectBuilder()
                                 .add("type", "object")
                                 .add("childId", childId)
@@ -351,7 +347,7 @@ public class SNMPDataProcessor {
                             newPorts.add(jsonNewObj);
 
                         //check if is already created
-                        isDeviceAlreadyCreated(jsonNewObj, newAttributes);
+                        isDeviceAlreadyCreated(jsonNewObj);
                         branch.add(jsonNewObj);
 
                     }
@@ -360,7 +356,7 @@ public class SNMPDataProcessor {
                     //End of a branch
                     if (((mapOfFile.get(childId) == null) || mappedClass.contains("Port"))) {
                         //The is first time is tryng to sync from SNMP
-                        if (!isBranchAlreadyCreated(branch)) {
+                        if (!isBranchAlreadyCreated()) {
                             //Loaded from snmp first time
                             findings.add(new SyncFinding(SyncFinding.EVENT_NEW,
                                     "A new branch was found. Do you want to create the structure for this branch?",
@@ -386,19 +382,18 @@ public class SNMPDataProcessor {
      * @throws MetadataObjectNotFoundException
      * @throws ObjectNotFoundException
      */
-    private boolean isBranchAlreadyCreated(List<JsonObject> branch)
+    private boolean isBranchAlreadyCreated()
             throws InvalidArgumentException, MetadataObjectNotFoundException,
             ObjectNotFoundException {
         int matches = 0;
         List<RemoteBusinessObjectLight> oldPath =  new ArrayList<>();
-        int g = 0;
-        for (JsonObject newObj : branch) {
-            g++;
+        JsonObject jObj;
+        for (int w=0; w < branch.size(); w++) {
             boolean hasSerialNumber = false;
-            String objClassName = newObj.getString("className");
-            String objParentName = newObj.getString("parentName");
-            String objParentClassName = newObj.getString("parentClassName");
-            JsonObject objAttributes = newObj.getJsonObject("attributes");
+            String objClassName = branch.get(w).getString("className");
+            String objParentName = branch.get(w).getString("parentName");
+            String objParentClassName = branch.get(w).getString("parentClassName");
+            JsonObject objAttributes = branch.get(w).getJsonObject("attributes");
             String newObjName = objAttributes.getString("name");
             String serialNumber = "";
             if (objAttributes.get("serialNumber") != null) { //Is Board 
@@ -413,35 +408,42 @@ public class SNMPDataProcessor {
                     for (RemoteBusinessObjectLight oldObj : oldBranch) {
                         
                         RemoteBusinessObjectLight oldParent = bem.getParent(oldObj.getClassName(), oldObj.getId());
-                        RemoteBusinessObject completeObj = bem.getObject(oldObj.getId());
-                        HashMap<String, List<String>> attributes = completeObj.getAttributes();
+                        RemoteBusinessObject completeOldObj = bem.getObject(oldObj.getId());
+                        HashMap<String, List<String>> attributes = completeOldObj.getAttributes();
                         String oldSerialNumber = "";
                         if(attributes.get("serialNumber") != null)
                             oldSerialNumber = attributes.get("serialNumber").get(0);
-                        HashMap<String, String> changes = compareAttributes(completeObj.getAttributes(), objAttributes);
+                        HashMap<String, String> attributeChanges = compareAttributes(completeOldObj.getAttributes(), objAttributes);
+                        
+                        if(objParentClassName.equals(className))
+                                objParentName = oldParent.getName();
+                        
                         if (oldObj.getName().equals(newObjName) && oldObj.getClassName().equals(objClassName)) {
                             oldPath.add(oldObj);
-                            if(objParentClassName.equals(className)){
-                                objParentName = oldParent.getName();
-                                //numberOfMatch++;
-                            }//has the same parent
                             if (oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName)) {
+                                jObj = branch.get(w);
                                 if (hasSerialNumber) {
                                     if (oldSerialNumber.equals(serialNumber)) {
-                                        if(!changes.isEmpty()){
-                                            newObj = jsonObjectToBuilder(newObj).add("deviceId", Long.toString(oldObj.getId())).build();
+                                        if(!attributeChanges.isEmpty()){
+                                            jObj = jsonObjectToBuilder(jObj).add("deviceId", Long.toString(oldObj.getId())).build();
+                                            jObj = jsonObjectToBuilder(jObj).add("type", "device").build();
+                                            jObj = jsonObjectToBuilder(jObj).add("deviceClassName", oldObj.getClassName()).build();
+                                            jObj = jsonObjectToBuilder(jObj).add("attributes", parseAttributesToJson(attributeChanges)).build();
                                             findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
-                                                    String.format("Would you like to overwrite the attributes values in the object %s, with id: %s ", oldObj.toString(), oldObj.getId()),
-                                                    newObj.toString()));
+                                                    String.format("Would you like to overwrite the attributes %s in the object %s, with id: %s ", getAttributesWithNames(attributeChanges), oldObj.toString(), oldObj.getId()),
+                                                   jObj.toString()));
                                         }
                                     }//end
                                 }// has serial
                                 else{
-                                    if(!changes.isEmpty()){
-                                        newObj = jsonObjectToBuilder(newObj).add("deviceId", Long.toString(oldObj.getId())).build();
+                                    if(!attributeChanges.isEmpty()){
+                                        jObj = jsonObjectToBuilder(jObj).add("deviceId", Long.toString(oldObj.getId())).build();
+                                        jObj = jsonObjectToBuilder(jObj).add("type", "device").build();
+                                        jObj = jsonObjectToBuilder(jObj).add("deviceClassName", oldObj.getClassName()).build();
+                                        jObj = jsonObjectToBuilder(jObj).add("attributes", parseAttributesToJson(attributeChanges)).build();
                                         findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
-                                                String.format("Would you like to overwrite the attributes values in the object %s, with id: %s ", oldObj.toString(), oldObj.getId()),
-                                                newObj.toString()));
+                                                String.format("Would you like to overwrite the attributes %s in the object %s, with id: %s ", getAttributesWithNames(attributeChanges), oldObj.toString(), oldObj.getId()),
+                                                jObj.toString()));
                                     }
                                 }
                                 matches++;
@@ -449,6 +451,15 @@ public class SNMPDataProcessor {
                             else 
                                 break;
                         }//end name igual
+                        if (oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName)
+                                && w < branch.size()-1 && !objParentClassName.equals(className)) 
+                        {
+                            if (!oldObj.getName().equals(newObjName) && !oldObj.getClassName().equals(objClassName)) {
+                                jObj = branch.get(w);
+                                jObj = jsonObjectToBuilder(jObj).add("deviceParentId", Long.toString(oldParent.getId())).build();
+                                branch.set(w, jObj);
+                            }
+                        }
                     }//end for old objs
                 }//end old branch
                 //if the ipBoard or the slot or the parent exists but not the children 
@@ -524,7 +535,7 @@ public class SNMPDataProcessor {
      * @param json the new object
      * @return true if is already created
      */
-    private boolean isDeviceAlreadyCreated(JsonObject json, HashMap<String, String> newAttributes){
+    private boolean isDeviceAlreadyCreated(JsonObject json){
         RemoteBusinessObjectLight objFound = null;
         for (RemoteBusinessObjectLight actualFirstLevelChild : actualFirstLevelChildren) {
             if(actualFirstLevelChild.getClassName().equals(json.getString("className")) && 
@@ -562,7 +573,8 @@ public class SNMPDataProcessor {
             if (!children.isEmpty())
                 readActualDeviceStructure(objects.get(i).getId(), children);
             else{
-                oldObjectStructure.put(k, tempAuxOldBranch);
+                if(!tempAuxOldBranch.isEmpty())
+                    oldObjectStructure.put(k, tempAuxOldBranch);
                 tempAuxOldBranch = new ArrayList<>();
                 k++;
             }
@@ -666,7 +678,6 @@ public class SNMPDataProcessor {
 
     /**
      * Creates a kuwaiba's class hierarchy from the SNMP file
-     *
      * @param className_ the given class name
      * @param name name of the element
      * @param descr description of the element
@@ -798,7 +809,17 @@ public class SNMPDataProcessor {
         return jao;
     }
 
-    private HashMap<String, String> createNewAttributes(int index) throws MetadataObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException {
+    /**
+     * Create the attributes of the given index entry of the data read it from SNMP
+     * @param index the index of the entry
+     * @return a HashMap with attribute name(key) attribute value (value)
+     * @throws MetadataObjectNotFoundException
+     * @throws InvalidArgumentException
+     * @throws OperationNotPermittedException 
+     */
+    private HashMap<String, String> createNewAttributes(int index) 
+            throws MetadataObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException
+    {
         HashMap<String, String> attributes = new HashMap<>();
 
         String objectName = allData.get("entPhysicalName").get(index);
@@ -830,7 +851,7 @@ public class SNMPDataProcessor {
      */
     private HashMap<String, String> compareAttributes(HashMap<String, List<String>> oldObjectAttributes, HashMap<String, String> newObjectAttributes){
         
-        HashMap<String, String> changesInAttributes = new HashMap<>();
+        HashMap<String, String> updatedAttributes = new HashMap<>();
 
         for (String attributeName : newObjectAttributes.keySet()) {
             String newAttributeValue = newObjectAttributes.get(attributeName);
@@ -838,12 +859,12 @@ public class SNMPDataProcessor {
                 List<String> oldAttributeValues = oldObjectAttributes.get(attributeName);
                 if (oldAttributeValues != null && newAttributeValue != null) {
                     if (!oldAttributeValues.get(0).equals(newAttributeValue)) 
-                        changesInAttributes.put(attributeName, newAttributeValue);
+                        updatedAttributes.put(attributeName, newAttributeValue);
                 }
             } else
-                changesInAttributes.put(attributeName, newAttributeValue);//an added attribute
+                updatedAttributes.put(attributeName, newAttributeValue);//an added attribute
         }
-        return changesInAttributes;
+        return updatedAttributes;
     }
     
     /**
@@ -854,7 +875,7 @@ public class SNMPDataProcessor {
      */
     private HashMap<String, String> compareAttributes(HashMap<String, List<String>> oldObjectAttributes,  JsonObject newObjectAttributes){
         
-        HashMap<String, String> changesInAttributes = new HashMap<>();
+        HashMap<String, String> updatedAttributes = new HashMap<>();
 
         for (String attributeName : newObjectAttributes.keySet()) {
             String newAttributeValue = newObjectAttributes.getString(attributeName);
@@ -862,12 +883,12 @@ public class SNMPDataProcessor {
                 List<String> oldAttributeValues = oldObjectAttributes.get(attributeName);
                 if (oldAttributeValues != null && newAttributeValue != null) {
                     if (!oldAttributeValues.get(0).equals(newAttributeValue)) 
-                        changesInAttributes.put(attributeName, newAttributeValue);
+                        updatedAttributes.put(attributeName, newAttributeValue);
                 }
             } else
-                changesInAttributes.put(attributeName, newAttributeValue);//an added attribute
+                updatedAttributes.put(attributeName, newAttributeValue);//an added attribute
         }
-        return changesInAttributes;
+        return updatedAttributes;
     }
 
     //Things to be deleted
@@ -1076,9 +1097,8 @@ public class SNMPDataProcessor {
     /**
      * Compare the old port names with the new name, the first load of the SNMP
      * sync depends of the name of the ports because this names are the only
-     * common stating point to begin the search and creation of the device
+     * common point to start the search and update/creation of the device
      * structure
-     *
      * @param oldName the old port name
      * @param oldClassName the old port class
      * @param newName the new port name
@@ -1156,11 +1176,10 @@ public class SNMPDataProcessor {
     
     //<editor-fold desc="List Types" defaultstate="collapsed">
     /**
-     * Returns the listTypeId if exists or creates a Finding in case that the
-     * list type doesn't exist in Kuwaiba
-     *
-     * @param i the index of the list type in the SNMP table
-     * @return the list type (is exist, otherwise is an empty String)
+     * Returns the listTypeId if exists or creates a Finding to create the list 
+     * type in case that the list type doesn't exist in Kuwaiba
+     * @param i the index of the list type in the SNMP data
+     * @return the list type (if exists, otherwise is an empty String)
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      */
@@ -1171,12 +1190,13 @@ public class SNMPDataProcessor {
             Long listTypeId = matchVendorNames(allData.get("entPhysicalMfgName").get(i));
             if (listTypeId > 0) {
                 vendor = Long.toString(listTypeId);
-            } else { // if the list type doesn't exist we also create a finding
+            } else {//The list type doesn't exist, we create a finding
                 if (!listTypeEvaluated.contains(allData.get("entPhysicalMfgName").get(i))) {
+                    
                     long createListTypeItem = aem.createListTypeItem("EquipmentVendor", allData.get("entPhysicalMfgName").get(i), allData.get("entPhysicalMfgName").get(i));
 
                     findings.add(new SyncFinding(SyncFinding.EVENT_ERROR,
-                            "The list type: " + allData.get("entPhysicalMfgName").get(i) + " it was created",
+                            "The list type: " + allData.get("entPhysicalMfgName").get(i) + "was created",
                             Json.createObjectBuilder()
                             .add("type", "listType")
                             .add("name", allData.get("entPhysicalMfgName").get(i))
@@ -1193,12 +1213,11 @@ public class SNMPDataProcessor {
 
     /**
      * Compare the names from the SNMP file in order to find one that match with
-     * a created list item in kuwaiba
-     *
+     * a created list types in kuwaiba
      * @param listTypeNameToLoad the list type name
      * @return the kuwaiba's list type item id
-     * @throws MetadataObjectNotFoundException
-     * @throws InvalidArgumentException
+     * @throws MetadataObjectNotFoundException if the list type doesn't exists
+     * @throws InvalidArgumentException if the class name provided is not a list type
      */
     private long matchVendorNames(String listTypeNameToLoad) throws MetadataObjectNotFoundException, InvalidArgumentException {
         List<RemoteBusinessObjectLight> listTypeItems = aem.getListTypeItems("EquipmentVendor");
@@ -1231,6 +1250,25 @@ public class SNMPDataProcessor {
             }
         }
         return -1;
+    }
+    
+    /**
+     * To translate the list type attributes form their id their names 
+     * @param comparedAttributes the attributes with ids
+     * @return a hash map of translated attributes
+     * @throws MetadataObjectNotFoundException if some class name given to search a list type doesn't exists
+     * @throws InvalidArgumentException if some class name given to search a list type is not a list type
+     * @throws ObjectNotFoundException the given list type id doesn't exists
+     */
+    private HashMap<String, String> getAttributesWithNames(HashMap<String, String> comparedAttributes) throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException {
+        HashMap<String, String> translatedAttributes = new HashMap<>();
+        for (String attributeName : comparedAttributes.keySet()) {
+            if(attributeName.equals("vendor"))
+                translatedAttributes.put(attributeName, aem.getListTypeItem("EquipmentVendor", Long.valueOf(comparedAttributes.get(attributeName))).getName());
+            else
+                translatedAttributes.put(attributeName, comparedAttributes.get(attributeName));
+        }
+        return translatedAttributes;
     }
     //</editor-fold>
 }

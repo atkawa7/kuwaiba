@@ -1133,7 +1133,8 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getLastParentUntilFirstOfClass", ipAddress, sessionId);
-            return new RemoteObjectLight(bem.getFirstParentOfClass(objectClassName, oid, objectToMatchClassName));
+            RemoteBusinessObjectLight firstParentOfClass = bem.getFirstParentOfClass(objectClassName, oid, objectToMatchClassName);
+            return firstParentOfClass != null ? new RemoteObjectLight(firstParentOfClass) : null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

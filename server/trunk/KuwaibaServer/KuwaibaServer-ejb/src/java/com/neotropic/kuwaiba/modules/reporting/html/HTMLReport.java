@@ -34,8 +34,13 @@ public class HTMLReport extends InventoryReport {
      */
     private List<String> linkedStyleSheets;
     /**
+     * favicon URL.
+     */
+    private String favicon;
+    /**
      * Text of the embedded Javascript section.
      */
+    
     private List<String> embeddedJavascript;
     /**
      * List of the URL of the external js linked from the report document. Note that the location has to be reachable from whenever the report will be rendered.
@@ -51,6 +56,7 @@ public class HTMLReport extends InventoryReport {
         this.linkedJavascriptFiles = new ArrayList<>();
         this.embeddedJavascript = new ArrayList<>();
         this.components = new ArrayList<>();
+        this.favicon = "";
     }
 
     public String asHTML() {
@@ -92,6 +98,12 @@ public class HTMLReport extends InventoryReport {
         builder.append(title);
         builder.append(" - Kuwaiba Open Network Inventory</title>"); //NOI18N
         
+        if(!favicon.isEmpty()){
+            builder.append("<link rel=\"shortcut icon\" href=\""); //NOI18N
+            builder.append(favicon);
+            builder.append("\"/>");
+        }
+            
         builder.append("</head><body>"); //NOI18N
         
         for (HTMLComponent component : components)
@@ -112,6 +124,14 @@ public class HTMLReport extends InventoryReport {
 
     public void setEmbeddedStyleSheet(String embeddedStyleSheet) {
         this.embeddedStyleSheet = embeddedStyleSheet;
+    }
+
+    public String getFavicon() {
+        return favicon;
+    }
+
+    public void setFavicon(String favicon) {
+        this.favicon = favicon;
     }
 
     public List<String> getLinkedStyleSheets() {

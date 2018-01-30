@@ -768,13 +768,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 
                 if (objectNode.hasRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING))
                     parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).getEndNode();
-                              
                 
                 if (parentNode == null)
                     throw new ApplicationObjectNotFoundException(String.format("Navigation tree root not found. Contact your administrator (%s, %s)", objectClassName, oid));
                 
                 if (parentNode.hasLabel(DynamicLabel.label(Constants.LABEL_ROOT))) //If the parent node is the dummy root, just return null
                     return null;
+                
                 else { 
                     String parentNodeClass = Util.getClassName(parentNode);
                     
