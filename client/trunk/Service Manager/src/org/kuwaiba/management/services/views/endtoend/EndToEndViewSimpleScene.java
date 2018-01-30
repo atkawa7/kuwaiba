@@ -40,6 +40,7 @@ import org.inventory.communications.core.LocalLogicalConnectionDetails;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.actions.CustomAddRemoveControlPointAction;
 import org.inventory.core.visual.actions.CustomMoveAction;
 import org.inventory.core.visual.actions.CustomMoveControlPointAction;
@@ -361,6 +362,7 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
 
     @Override
     public void render(LocalObjectLight selectedService) {
+        
         List<LocalObjectLight> serviceResources = com.getServiceResources(selectedService.getClassName(), selectedService.getOid());
         if (serviceResources == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
@@ -371,7 +373,6 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                 for (LocalObjectLight serviceResource : serviceResources) {
                     if (com.isSubclassOf(serviceResource.getClassName(), "GenericLogicalConnection")) {
                         LocalLogicalConnectionDetails logicalCircuitDetails = com.getLogicalLinkDetails(serviceResource.getClassName(), serviceResource.getOid());
-                        
                         //Let's create the boxes corresponding to the endpoint A of the logical circuit
                         List<LocalObjectLight> parentsUntilFirstComEquipmentA = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
                                 getClassName(), logicalCircuitDetails.getEndpointA().getOid(), "GenericCommunicationsElement");
@@ -388,7 +389,7 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                                 getClassName(), logicalCircuitDetails.getEndpointB().getOid(), "GenericCommunicationsElement");
 
                         LocalObjectLight bSideEquipmentLogical = parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1);
-                            
+                        
                         if (findWidget(bSideEquipmentLogical) != null)
                             nodesToBeDeleted.remove(bSideEquipmentLogical);
                         else
@@ -408,53 +409,59 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                         //We start with the A side
                         if (!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()) {
                             LocalObjectLight nextPhysicalHop = logicalCircuitDetails.getPhysicalPathForEndpointA().get(logicalCircuitDetails.getPhysicalPathForEndpointA().size() - 1);
-                            List<LocalObjectLight> parentsUntilFirstNextComEquipmentA = com.getParentsUntilFirstOfClass(nextPhysicalHop.
-                                getClassName(), nextPhysicalHop.getOid(), "GenericCommunicationsElement");
+                            //If the equipemt physical is not a subclass of GenericCommunicationsElement, nothing will be shown.
+                            LocalObjectLight aSideEquipmentPhysical = com.getFirstParentOfClass(nextPhysicalHop.getClassName(), nextPhysicalHop.getOid(), "GenericCommunicationsElement");
                             
-                            LocalObjectLight aSideEquipmentPhysical = parentsUntilFirstNextComEquipmentA.get(parentsUntilFirstNextComEquipmentA.size() - 1);
-                            if (findWidget(aSideEquipmentPhysical) != null)
-                                nodesToBeDeleted.remove(aSideEquipmentPhysical);
-                            else
-                                addNode(aSideEquipmentPhysical);
-                            
-                            if (findWidget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1)) != null) 
-                                nodesToBeDeleted.remove(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1));
-                            else{ 
-                                ObjectConnectionWidget physicalLinkWidgetA = (ObjectConnectionWidget) findWidget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1));
-                                if(physicalLinkWidgetA == null)
-                                    physicalLinkWidgetA = (ObjectConnectionWidget) addEdge(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1));
-                                    
-                                
-                                physicalLinkWidgetA.getLabelWidget().setLabel(aSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointA().getName() + " ** " +
-                                    aSideEquipmentPhysical.getName() + ":" + nextPhysicalHop.getName());
-                                setEdgeSource(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1), aSideEquipmentLogical);
-                                setEdgeTarget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1), aSideEquipmentPhysical);
+                            if(aSideEquipmentPhysical == null)
+                                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.WARNING_MESSAGE, I18N.gm("no_physical_part_has_been_set_sides"));
+                            else{
+                                if (findWidget(aSideEquipmentPhysical) != null)
+                                    nodesToBeDeleted.remove(aSideEquipmentPhysical);
+                                else
+                                    addNode(aSideEquipmentPhysical);
+
+                                if (findWidget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1)) != null) 
+                                    nodesToBeDeleted.remove(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1));
+                                else{ 
+                                    ObjectConnectionWidget physicalLinkWidgetA = (ObjectConnectionWidget) findWidget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1));
+                                    if(physicalLinkWidgetA == null)
+                                        physicalLinkWidgetA = (ObjectConnectionWidget) addEdge(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1));
+
+
+                                    physicalLinkWidgetA.getLabelWidget().setLabel(aSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointA().getName() + " ** " +
+                                        aSideEquipmentPhysical.getName() + ":" + nextPhysicalHop.getName());
+                                    setEdgeSource(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1), aSideEquipmentLogical);
+                                    setEdgeTarget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1), aSideEquipmentPhysical);
+                                }
                             }
                         }
                         
                         //Now the b side
                         if (!logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty()) {
                             LocalObjectLight nextPhysicalHop = logicalCircuitDetails.getPhysicalPathForEndpointB().get(logicalCircuitDetails.getPhysicalPathForEndpointB().size() - 1);
-                            List<LocalObjectLight> parentsUntilFirstNextComEquipmentB = com.getParentsUntilFirstOfClass(nextPhysicalHop.
-                                getClassName(), nextPhysicalHop.getOid(), "GenericCommunicationsElement");
-                        
-                            LocalObjectLight bSideEquipmentPhysical = parentsUntilFirstNextComEquipmentB.get(parentsUntilFirstNextComEquipmentB.size() - 1);
-                            if (findWidget(bSideEquipmentPhysical) != null)
-                                nodesToBeDeleted.remove(bSideEquipmentPhysical);
-                            else
-                                addNode(bSideEquipmentPhysical);
+                            LocalObjectLight bSideEquipmentPhysical = com.getFirstParentOfClass(nextPhysicalHop.getClassName(), nextPhysicalHop.getOid(), "GenericCommunicationsElement");
+                            //If the equipemt physical is not a subclass of GenericCommunicationsElement, nothing will be shown.
+                            if(bSideEquipmentPhysical == null)
+                                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.WARNING_MESSAGE, I18N.gm("no_physical_part_has_been_set_sides"));
                             
-                            if (findWidget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1)) != null) 
-                                nodesToBeDeleted.remove(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1));
-                            else{ 
-                                ObjectConnectionWidget physicalLinkWidgetB = (ObjectConnectionWidget) findWidget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1));
-                                if(physicalLinkWidgetB == null)
-                                    physicalLinkWidgetB = (ObjectConnectionWidget) addEdge(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1));
-                                    
-                                physicalLinkWidgetB.getLabelWidget().setLabel(bSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointB().getName() + " ** " +
-                                    bSideEquipmentPhysical.getName() + ":" + nextPhysicalHop.getName());
-                                setEdgeSource(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1), bSideEquipmentLogical);
-                                setEdgeTarget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1), bSideEquipmentPhysical);
+                            else{
+                                if (findWidget(bSideEquipmentPhysical) != null)
+                                    nodesToBeDeleted.remove(bSideEquipmentPhysical);
+                                else
+                                    addNode(bSideEquipmentPhysical);
+
+                                if (findWidget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1)) != null) 
+                                    nodesToBeDeleted.remove(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1));
+                                else{ 
+                                    ObjectConnectionWidget physicalLinkWidgetB = (ObjectConnectionWidget) findWidget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1));
+                                    if(physicalLinkWidgetB == null)
+                                        physicalLinkWidgetB = (ObjectConnectionWidget) addEdge(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1));
+
+                                    physicalLinkWidgetB.getLabelWidget().setLabel(bSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointB().getName() + " ** " +
+                                        bSideEquipmentPhysical.getName() + ":" + nextPhysicalHop.getName());
+                                    setEdgeSource(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1), bSideEquipmentLogical);
+                                    setEdgeTarget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1), bSideEquipmentPhysical);
+                                }
                             }
                         }
                     }
