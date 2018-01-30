@@ -119,13 +119,14 @@ public class ShapeWidgetUtil {
         widget.getScene().revalidate();
     }
     
-    public static void shapeToWidget(Shape sourceShape, Widget targetWidget) {
+    public static void shapeToWidget(Shape sourceShape, Widget targetWidget, boolean revalidate) {
         if (sourceShape == null || targetWidget == null)
             return;
         targetWidget.setPreferredLocation(new Point(sourceShape.getX(), sourceShape.getY()));
         targetWidget.setPreferredBounds(new Rectangle(
             sourceShape.getBorderWidth(), sourceShape.getBorderWidth(), 
             sourceShape.getWidth(), sourceShape.getHeight()));
+        targetWidget.setPreferredSize(new Dimension(sourceShape.getWidth(), sourceShape.getHeight()));
         targetWidget.setBackground(sourceShape.getColor());
         if (sourceShape.isOpaque())
             targetWidget.setBorder(BorderFactory.createLineBorder(sourceShape.getBorderWidth(), sourceShape.getBorderColor()));
@@ -136,7 +137,8 @@ public class ShapeWidgetUtil {
         }
         targetWidget.setOpaque(sourceShape.isOpaque());
         
-        targetWidget.revalidate();
+        if (!revalidate)
+            targetWidget.revalidate();
     }
     
 ////    public static void shapeToWidget(Shape sourceShape, Widget targetWidget) {

@@ -16,7 +16,9 @@
  */
 package org.inventory.core.templates.layouts.widgets.providers;
 
+import java.awt.Color;
 import java.awt.Point;
+import org.inventory.core.templates.layouts.LayoutOutputManager;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 import org.netbeans.api.visual.action.MoveProvider;
@@ -40,6 +42,13 @@ public class MoveShapeWidgetProvider implements MoveProvider {
         if (finishPoint.x < 0 || finishPoint.y < 0) {
             widget.setPreferredLocation(startPoint);
             widget.revalidate();
+            
+            if (widget.getScene() instanceof EquipmentLayoutScene) {
+                EquipmentLayoutScene scene = (EquipmentLayoutScene) widget.getScene();
+
+                LayoutOutputManager.getInstance().getLayoutOutput(scene.getModel())
+                    .printLine("The shape cannot be moved to negative positions", Color.RED);
+            }
             return;
         }
         

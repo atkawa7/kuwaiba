@@ -16,6 +16,7 @@
  */
 package org.inventory.core.templates.layouts;
 
+import java.awt.Color;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectListItem;
@@ -74,7 +75,10 @@ public class EquipmentLayoutService {
             if (viewId != -1) { //Success
                 layoutView = new LocalObjectView(viewId, "EquipmentLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
-                    NotificationUtil.INFO_MESSAGE, I18N.gm("view_save_successfully"));
+                    NotificationUtil.INFO_MESSAGE, "The device layout was saved successfully");
+                
+                LayoutOutputManager.getInstance().getLayoutOutput(getModel())
+                    .printLine("The device layout was saved successfully", Color.GREEN);
                 return true;
             } else {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
@@ -85,6 +89,9 @@ public class EquipmentLayoutService {
             if (CommunicationsStub.getInstance().updateListTypeItemRelatedView(model.getId(), model.getClassName(), 
                 layoutView.getId(), null, null, structure, scene.getBackgroundImage())) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "The device layout was saved successfully");
+                
+                LayoutOutputManager.getInstance().getLayoutOutput(getModel())
+                    .printLine("The device layout was saved successfully", Color.GREEN);
                 return true;
             } else {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 

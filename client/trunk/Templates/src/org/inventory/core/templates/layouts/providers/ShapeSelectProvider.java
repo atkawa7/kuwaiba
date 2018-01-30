@@ -19,6 +19,7 @@ package org.inventory.core.templates.layouts.providers;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.Collections;
+import org.inventory.core.services.api.notifications.StatusUtil;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 import org.netbeans.api.visual.action.SelectProvider;
@@ -69,7 +70,11 @@ public class ShapeSelectProvider implements SelectProvider {
                     }
                 }                                                
             }
-            widget.setBorder(BorderFactory.createResizeBorder(4, Color.BLACK, true));
+            widget.setBorder(BorderFactory.createResizeBorder(Shape.DEFAULT_BORDER_SIZE, Color.BLACK, true));
+            
+            double width = widget.getPreferredBounds().getWidth();
+            double height = widget.getPreferredBounds().getHeight();
+            StatusUtil.getInstance().setStatusText("Aspect ratio: " +  Math.round(width / height) + ":1");
         } else
             scene.userSelectionSuggested (Collections.emptySet (), invertSelection);
     }

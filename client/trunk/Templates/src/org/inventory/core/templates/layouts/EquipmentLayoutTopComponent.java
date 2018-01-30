@@ -17,6 +17,7 @@
 package org.inventory.core.templates.layouts;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collections;
@@ -24,10 +25,11 @@ import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.api.notifications.StatusUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.customshapes.CustomShapesTopComponent;
 import org.inventory.core.templates.layouts.lookup.SharedContent;
-import org.inventory.core.templates.layouts.scene.ModelLayoutScene;
+import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 import org.inventory.core.templates.layouts.shapehierarchy.ShapeHierarchyTopComponent;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
@@ -89,11 +91,10 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements A
         btnClean = new javax.swing.JButton();
         separator1 = new javax.swing.JToolBar.Separator();
         btnGroup = new javax.swing.JButton();
+        btnShowGuide = new javax.swing.JToggleButton();
         separator2 = new javax.swing.JToolBar.Separator();
-        btnRefresh = new javax.swing.JButton();
         btnCustomShapes = new javax.swing.JButton();
         btnShowPalette = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
         add(pnlScroll, java.awt.BorderLayout.CENTER);
@@ -152,20 +153,20 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements A
             }
         });
         barMain.add(btnGroup);
-        barMain.add(separator2);
 
-        btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/refresh.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnRefresh, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnRefresh.text_1")); // NOI18N
-        btnRefresh.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnRefresh.toolTipText_1")); // NOI18N
-        btnRefresh.setFocusable(false);
-        btnRefresh.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        btnRefresh.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        btnRefresh.addActionListener(new java.awt.event.ActionListener() {
+        btnShowGuide.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/showGuide.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnShowGuide, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnShowGuide.text")); // NOI18N
+        btnShowGuide.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnShowGuide.toolTipText")); // NOI18N
+        btnShowGuide.setFocusable(false);
+        btnShowGuide.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnShowGuide.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnShowGuide.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRefreshActionPerformed(evt);
+                btnShowGuideActionPerformed(evt);
             }
         });
-        barMain.add(btnRefresh);
+        barMain.add(btnShowGuide);
+        barMain.add(separator2);
 
         btnCustomShapes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/custom_shapes.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnCustomShapes, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.btnCustomShapes.text_1")); // NOI18N
@@ -193,19 +194,6 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements A
         });
         barMain.add(btnShowPalette);
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/shape_hierarchy.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(jButton1, org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.jButton1.text_1")); // NOI18N
-        jButton1.setToolTipText(org.openide.util.NbBundle.getMessage(EquipmentLayoutTopComponent.class, "EquipmentLayoutTopComponent.jButton1.toolTipText_1")); // NOI18N
-        jButton1.setFocusable(false);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-        barMain.add(jButton1);
-
         add(barMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -228,6 +216,9 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements A
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         if (service.getScene().getNodes().isEmpty()) {
+            LayoutOutputManager.getInstance().getLayoutOutput(service.getModel())
+                .printLine("The canvas is empty, the device layout cannot be saved", Color.RED);
+            
             JOptionPane.showConfirmDialog(null, "The canvas is empty, the device layout cannot be saved", 
                 I18N.gm("confirmation"), JOptionPane.OK_OPTION);
             setSaved(true);
@@ -238,6 +229,11 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements A
             btnDelete.setEnabled(true);
             setSaved(true);
         }
+        
+        
+//        new LayoutOutput("Layout Output", service.getModel());
+////        StatusDisplayer.getDefault()..setStatusText("saved!!!");
+        
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnShowPaletteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowPaletteActionPerformed
@@ -263,12 +259,6 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements A
         }
     }//GEN-LAST:event_btnDeleteActionPerformed
 
-    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        btnSaveActionPerformed(null);
-        service.getScene().clear();
-        service.renderLayout();
-    }//GEN-LAST:event_btnRefreshActionPerformed
-
     private void btnCleanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCleanActionPerformed
         if (JOptionPane.showConfirmDialog(null, "Are you sure you want to clear the canvas?", 
                 I18N.gm("confirmation"), JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
@@ -277,28 +267,22 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements A
         }
     }//GEN-LAST:event_btnCleanActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        /*
-            ShapeHierarchyTopComponent topComponent = (ShapeHierarchyTopComponent) WindowManager.getDefault().findTopComponent("ShapeHierarchyTopComponent_" + service.getListItem().getId()); //NOI18N
-            if (topComponent == null) {
-                topComponent = new ShapeHierarchyTopComponent(service.getScene(), service.getListItem());
-                topComponent.open();
-            } else {
-                if (topComponent.isOpened())
-                    topComponent.requestAttention(true);
-                else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
-                       //so we will reuse the instance, refreshing the vierw first
-                    //topComponent.refresh();
-                    topComponent.open();
-                }
-            }
-            topComponent.requestActive();
-        */
-    }//GEN-LAST:event_jButton1ActionPerformed
-
     private void btnGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGroupActionPerformed
         service.getScene().addContainerShape();
     }//GEN-LAST:event_btnGroupActionPerformed
+
+    private void btnShowGuideActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowGuideActionPerformed
+        if (!btnShowGuide.isSelected()) {
+            service.getScene().getGuideLayer().setVisible(true);
+            service.getScene().validate();
+            service.getScene().paint();
+            
+        } else {
+            service.getScene().getGuideLayer().setVisible(false);
+            service.getScene().validate();
+            service.getScene().paint();
+        }
+    }//GEN-LAST:event_btnShowGuideActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;
@@ -306,27 +290,30 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements A
     private javax.swing.JButton btnCustomShapes;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnGroup;
-    private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnSave;
+    private javax.swing.JToggleButton btnShowGuide;
     private javax.swing.JButton btnShowPalette;
-    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane pnlScroll;
     private javax.swing.JToolBar.Separator separator1;
     private javax.swing.JToolBar.Separator separator2;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
+        StatusUtil.getInstance().setStatusText("");
+        
         btnShowPaletteActionPerformed(null);
 
         service.renderLayout();      
         if (service.getLayoutView()== null)
             btnDelete.setEnabled(false);
         
-        service.getScene().addChangeListener(this); 
+        service.getScene().addChangeListener(this);         
     }
 
     @Override
     public void componentClosed() {
+        StatusUtil.getInstance().setStatusText("");
+        
         service.getScene().removeAllListeners();
         service.getScene().clear();
         
@@ -369,10 +356,10 @@ public final class EquipmentLayoutTopComponent extends TopComponent implements A
     @Override
     public void actionPerformed(ActionEvent e) {
         switch (e.getID()){
-            case ModelLayoutScene.SCENE_CHANGE:
+            case EquipmentLayoutScene.SCENE_CHANGE:
                 setSaved(false);
                 break;
-            case ModelLayoutScene.SCENE_CHANGEANDSAVE:
+            case EquipmentLayoutScene.SCENE_CHANGEANDSAVE:
                 break;
         }
     }

@@ -18,15 +18,11 @@ package org.inventory.core.templates.layouts.widgets;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
-import java.util.List;
-import org.inventory.core.templates.layouts.lookup.SharedContent;
 import org.inventory.core.templates.layouts.lookup.SharedContentLookup;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.nodes.ShapeNode;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
-import org.netbeans.spi.palette.PaletteController;
 import org.openide.util.Lookup;
 import org.openide.util.lookup.Lookups;
 

@@ -31,7 +31,6 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.customshapes.nodes.CustomShapeRootNode;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
-import org.openide.util.Exceptions;
 import org.openide.util.Utilities;
 
 /**

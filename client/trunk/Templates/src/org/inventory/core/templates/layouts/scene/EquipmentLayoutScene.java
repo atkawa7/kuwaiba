@@ -57,15 +57,18 @@ import org.inventory.core.templates.layouts.providers.ShapeSelectProvider;
 import org.inventory.core.templates.layouts.scene.widgets.actions.PasteShapeAction;
 import org.inventory.core.templates.layouts.widgets.ContainerShapeWidget;
 import org.inventory.core.templates.layouts.widgets.ShapeWidgetFactory;
+import org.inventory.core.templates.layouts.widgets.providers.DeviceLayoutAcceptProviderToDevices;
 import org.inventory.core.templates.layouts.widgets.providers.MoveContainerShapeProvider;
 import org.inventory.core.templates.layouts.widgets.providers.MoveShapeWidgetProvider;
 import org.inventory.core.templates.layouts.widgets.providers.ResizeContainerShapeProvider;
 import org.inventory.core.templates.layouts.widgets.providers.ResizeShapeWidgetProvider;
-import org.inventory.core.templates.layouts.widgets.providers.EquipmentLayoutAcceptProvider;
+import org.inventory.core.templates.layouts.widgets.providers.DeviceLayoutAcceptProviderToShapes;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.PopupMenuProvider;
+import org.netbeans.api.visual.border.BorderFactory;
+import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.spi.palette.PaletteController;
@@ -80,10 +83,21 @@ public class EquipmentLayoutScene extends AbstractScene<Shape, String> implement
     private final List<CustomShape> customShapes;
     private final ShapeNameAcceptProvider shapeNameAcceptProvider = new ShapeNameAcceptProvider();
     
+    private LayerWidget guideLayer;
+    private final LocalObjectListItem model;
+    
     public EquipmentLayoutScene(LocalObjectListItem model) {
+        this.model = model;
+        
         nodeLayer = new LayerWidget(this);        
+        guideLayer = new LayerWidget(this);
+        addChild(guideLayer);
         addChild(nodeLayer);
         
+        getActions().addAction(ActionFactory.createZoomAction());
+        getInputBindings().setZoomActionModifiers(0); //No keystroke combinations
+        getActions().addAction(ActionFactory.createPanAction());
+                
         getActions().addAction(ActionFactory.createPopupMenuAction(new PopupMenuProvider() {
             private JPopupMenu popupMenu = null;
 
@@ -99,9 +113,45 @@ public class EquipmentLayoutScene extends AbstractScene<Shape, String> implement
             }
         }));
                 
-        getActions().addAction(ActionFactory.createAcceptAction(new EquipmentLayoutAcceptProvider()));
+        getActions().addAction(ActionFactory.createAcceptAction(new DeviceLayoutAcceptProviderToShapes()));
+        getActions().addAction(ActionFactory.createAcceptAction(new DeviceLayoutAcceptProviderToDevices()));
         customShapes = new ArrayList();
         initSelectionListener();
+        initGuideLayer();
+    }
+    
+    public LayerWidget getGuideLayer() {
+        return guideLayer;
+    }
+    
+    public LocalObjectListItem getModel() {
+        return model;        
+    }
+    
+    private void initGuideLayer() {
+        guideLayer.setLayout(LayoutFactory.createVerticalFlowLayout());
+        
+        int rackUnitWidth = 1086 * 3;
+        int rackUnitHeight = 100 * 3;
+        int spanHeight = 15 * 3;
+        
+        for (int i = 0; i < 5; i += 1) {
+            Widget rackUnitGuide = new Widget(this);
+            rackUnitGuide.setOpaque(true);
+            //rackUnitGuide.setBackground(Color.BLUE);
+            rackUnitGuide.setBorder(BorderFactory.createDashedBorder(Color.LIGHT_GRAY, 
+                Shape.DEFAULT_BORDER_SIZE, Shape.DEFAULT_BORDER_SIZE, true));
+            rackUnitGuide.setPreferredBounds(new Rectangle(-Shape.DEFAULT_BORDER_SIZE, -Shape.DEFAULT_BORDER_SIZE, rackUnitWidth, rackUnitHeight));
+
+            Widget span = new Widget(this);
+            span.setOpaque(false);
+            rackUnitGuide.setBorder(BorderFactory.createDashedBorder(Color.LIGHT_GRAY, 
+                Shape.DEFAULT_BORDER_SIZE, Shape.DEFAULT_BORDER_SIZE, true));
+            span.setPreferredBounds(new Rectangle(-Shape.DEFAULT_BORDER_SIZE, -Shape.DEFAULT_BORDER_SIZE, rackUnitWidth, spanHeight));
+
+            guideLayer.addChild(rackUnitGuide);
+            guideLayer.addChild(span);
+        }
     }
     
     public void addContainerShape() {
@@ -203,52 +253,28 @@ public class EquipmentLayoutScene extends AbstractScene<Shape, String> implement
                     if (RectangleShape.SHAPE_TYPE.equals(shapeType)) {
                         xmlew.add(xmlef.createAttribute(new QName(RectangleShape.PROPERTY_IS_SLOT), Boolean.toString(((RectangleShape) shape).isSlot())));
                     } else if (LabelShape.SHAPE_TYPE.equals(shapeType)) {
+                        xmlew.add(xmlef.createAttribute(new QName("label"), ((LabelShape) shape).getLabel())); //NOI18N
+                        xmlew.add(xmlef.createAttribute(new QName("textColor"), Integer.toString(((LabelShape) shape).getTextColor().getRGB()))); //NOI18N
+                        xmlew.add(xmlef.createAttribute(new QName("fontSize"), Integer.toString(((LabelShape) shape).getFontSize()))); //NOI18N
                     } else if (CircleShape.SHAPE_TYPE.equals(shapeType)) {
-                    } else if (PolygonShape.SHAPE_TYPE.equals(shapeType)) {
-                    }
-                }
-                xmlew.add(xmlef.createEndElement(tagShape, null));
-                    /*
-                    String type = parentShape.getShapeType();
-                    if (type.equals(RectangleShape.SHAPE_TYPE)) {
-
-                    }
-                    if (type.equals(LabelShape.SHAPE_TYPE)) {
-                        xmlew.add(xmlef.createAttribute(new QName("label"), ((LabelShape) parentShape).getLabel())); //NOI18N
-                        xmlew.add(xmlef.createAttribute(new QName("textColor"), Integer.toString(((LabelShape) parentShape).getTextColor().getRGB()))); //NOI18N
-                        xmlew.add(xmlef.createAttribute(new QName("fontSize"), Integer.toString(((LabelShape) parentShape).getFontSize()))); //NOI18N
-                    }
-                    if (type.equals(CircleShape.SHAPE_TYPE)) {
                         xmlew.add(xmlef.createAttribute(
                             new QName(CircleShape.PROPERTY_ELLIPSE_COLOR), 
-                            Integer.toString(((CircleShape) parentShape).getEllipseColor().getRGB())));
+                            Integer.toString(((CircleShape) shape).getEllipseColor().getRGB())));
 
                         xmlew.add(xmlef.createAttribute(
                             new QName(CircleShape.PROPERTY_OVAL_COLOR), 
-                            Integer.toString(((CircleShape) parentShape).getOvalColor().getRGB())));
-                    }
-                    if (type.equals(PolygonShape.SHAPE_TYPE)) {
+                            Integer.toString(((CircleShape) shape).getOvalColor().getRGB())));
+                    } else if (PolygonShape.SHAPE_TYPE.equals(shapeType)) {
                         xmlew.add(xmlef.createAttribute(
                             new QName(PolygonShape.PROPERTY_INTERIOR_COLOR), 
-                            Integer.toString(((PolygonShape) parentShape).getInteriorColor().getRGB())));
+                            Integer.toString(((PolygonShape) shape).getInteriorColor().getRGB())));
 
                         xmlew.add(xmlef.createAttribute(
                             new QName(PolygonShape.PROPERTY_OUTLINE_COLOR), 
-                            Integer.toString(((PolygonShape) parentShape).getOutlineColor().getRGB())));
+                            Integer.toString(((PolygonShape) shape).getOutlineColor().getRGB())));
                     }
-
-                    List<Widget> children = parent.getChildren();
-
-                    if (children.isEmpty()) {
-                        xmlew.add(xmlef.createEndElement(qnShape, null));
-                        return;
-                    }
-
-                    for (Widget child : children) {            
-                        createXMLLayout(child, xmlew, xmlef);
-                    }
-                    xmlew.add(xmlef.createEndElement(qnShape, null));
-                    */
+                }
+                xmlew.add(xmlef.createEndElement(tagShape, null));
             }
             xmlew.add(xmlef.createEndElement(tagLayout, null));
             
@@ -479,8 +505,35 @@ public class EquipmentLayoutScene extends AbstractScene<Shape, String> implement
                                         ((RectangleShape) shape).setIsSlot(Boolean.valueOf(attrValue));
                                     
                                 } else if (LabelShape.SHAPE_TYPE.equals(shapeType)) {
-                                } else if (CircleShape.SHAPE_TYPE.equals(shapeType)) {
-                                } else if (PolygonShape.SHAPE_TYPE.equals(shapeType)) {
+                                    attrValue = reader.getAttributeValue(null, "label"); //NOI18N
+                                    if (attrValue != null)
+                                        ((LabelShape) shape).setLabel(attrValue);
+
+                                    attrValue = reader.getAttributeValue(null, "textColor"); //NOI18N
+                                    if (attrValue != null)
+                                        ((LabelShape) shape).setTextColor(new Color(Integer.valueOf(attrValue)));
+
+                                    attrValue = reader.getAttributeValue(null, "fontSize"); //NOI18N
+                                    if (attrValue != null)
+                                        ((LabelShape) shape).setFontSize(Integer.valueOf(attrValue));                
+                                }
+                                if (CircleShape.SHAPE_TYPE.equals(shapeType)) {
+                                    attrValue = reader.getAttributeValue(null, CircleShape.PROPERTY_ELLIPSE_COLOR);
+                                    if (attrValue != null)
+                                        ((CircleShape) shape).setEllipseColor(new Color(Integer.valueOf(attrValue)));
+
+                                    attrValue = reader.getAttributeValue(null, CircleShape.PROPERTY_OVAL_COLOR);
+                                    if (attrValue != null)
+                                        ((CircleShape) shape).setOvalColor(new Color(Integer.valueOf(attrValue)));
+                                }
+                                if (PolygonShape.SHAPE_TYPE.equals(shapeType)) {
+                                    attrValue = reader.getAttributeValue(null, PolygonShape.PROPERTY_INTERIOR_COLOR);
+                                    if (attrValue != null)
+                                        ((PolygonShape) shape).setInteriorColor(new Color(Integer.valueOf(attrValue)));
+
+                                    attrValue = reader.getAttributeValue(null, PolygonShape.PROPERTY_OUTLINE_COLOR);
+                                    if (attrValue != null)
+                                        ((PolygonShape) shape).setOutlineColor(new Color(Integer.valueOf(attrValue)));
                                 }
                                 addNode(shape);
                                 if (customShapeWidget != null)

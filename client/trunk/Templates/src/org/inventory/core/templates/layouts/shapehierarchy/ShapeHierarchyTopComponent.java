@@ -20,7 +20,7 @@ import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.nodes.ShapeHierarchyChildren;
-import org.inventory.core.templates.layouts.scene.ModelLayoutScene;
+import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.BeanTreeView;
 import org.openide.nodes.AbstractNode;
@@ -36,7 +36,7 @@ import org.openide.windows.WindowManager;
 public final class ShapeHierarchyTopComponent extends TopComponent implements ExplorerManager.Provider {
     private final ExplorerManager em = new ExplorerManager();
     private final BeanTreeView beanTreeView = new BeanTreeView();
-    private ModelLayoutScene scene;
+    private EquipmentLayoutScene scene;
     private LocalObjectListItem listItem;
     
     private ShapeHierarchyTopComponent() {
@@ -45,7 +45,7 @@ public final class ShapeHierarchyTopComponent extends TopComponent implements Ex
         setToolTipText(I18N.gm("top_component_tool_tip_text_shape_hierarchy"));
     }
     
-    public ShapeHierarchyTopComponent(ModelLayoutScene scene, LocalObjectListItem listItem) {
+    public ShapeHierarchyTopComponent(EquipmentLayoutScene scene, LocalObjectListItem listItem) {
         this();
         this.listItem = listItem;
         this.scene = scene;
@@ -111,14 +111,14 @@ public final class ShapeHierarchyTopComponent extends TopComponent implements Ex
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        Shape rootShape = (Shape) scene.findObject(scene.getRootWidget());
-        if (rootShape == null)
-            return;
-        
-        AbstractNode root = new AbstractNode(new ShapeHierarchyChildren(rootShape, scene));
-        root.setDisplayName(rootShape.getName());
-        root.setIconBaseWithExtension("org/inventory/core/templates/res/root_shape_hierarchy_icon.png");
-        em.setRootContext(root);
+////        Shape rootShape = (Shape) scene.findObject(scene.getRootWidget());
+////        if (rootShape == null)
+////            return;
+////        
+////        AbstractNode root = new AbstractNode(new ShapeHierarchyChildren(rootShape, scene));
+////        root.setDisplayName(rootShape.getName());
+////        root.setIconBaseWithExtension("org/inventory/core/templates/res/root_shape_hierarchy_icon.png");
+////        em.setRootContext(root);
     }
     
     @Override

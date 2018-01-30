@@ -19,7 +19,7 @@ package org.inventory.core.templates.layouts.nodes;
 import java.util.ArrayList;
 import java.util.List;
 import org.inventory.core.templates.layouts.model.Shape;
-import org.inventory.core.templates.layouts.scene.ModelLayoutScene;
+import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -29,10 +29,10 @@ import org.openide.nodes.Node;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ShapeHierarchyChildren extends Children.Keys {
-    private final ModelLayoutScene scene;
+    private final EquipmentLayoutScene scene;
     private final Shape rootShape;
     
-    public ShapeHierarchyChildren(Shape rootShape, ModelLayoutScene scene) {
+    public ShapeHierarchyChildren(Shape rootShape, EquipmentLayoutScene scene) {
         this.scene = scene;
         this.rootShape = rootShape;
     }

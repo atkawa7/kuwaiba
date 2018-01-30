@@ -243,7 +243,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
         }            
         if (getRack().equals(node)) {
             if (showConnections)
-                widget = new RackWidget(this, node, 1086, 100, 15);
+                widget = new RackWidget(this, node, (int) Math.round(1086 * 1.5), (int) Math.round(100 * 1.5), 15);
             else
                 widget = new RackWidget(this, node, 300, 35, 5);
             widget.createActions(AbstractScene.ACTION_SELECT);

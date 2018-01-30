@@ -16,9 +16,11 @@
  */
 package org.inventory.core.templates.layouts.widgets.providers;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+import org.inventory.core.templates.layouts.LayoutOutputManager;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.widgets.ContainerShapeWidget;
 import org.inventory.core.templates.layouts.widgets.ShapeWidgetUtil;
@@ -77,6 +79,16 @@ public class MoveContainerShapeProvider implements MoveProvider {
                 }
             }
             ShapeWidgetUtil.makingVisibleChanges(widget);
+            
+            if (widget.getScene() instanceof EquipmentLayoutScene) {
+                EquipmentLayoutScene scene = (EquipmentLayoutScene) widget.getScene();
+
+                LayoutOutputManager.getInstance().getLayoutOutput(scene.getModel())
+                    .printLine("The shape cannot be moved to negative positions", Color.RED);
+                
+                LayoutOutputManager.getInstance().getLayoutOutput(scene.getModel())
+                    .printLine("Select the shape to show the shapes contained", Color.BLACK);
+            }
             return;
         }
         

@@ -128,7 +128,7 @@ public class ShapeNode extends AbstractNode implements PropertyChangeListener {
         generalPropertySet.put(propertyHeigth);
         generalPropertySet.put(propertyColor);
         generalPropertySet.put(propertyBoderColor);
-        generalPropertySet.put(propertyIsEquipment);
+        ////generalPropertySet.put(propertyIsEquipment);
         generalPropertySet.put(propertyOpaque);
         sheet.put(generalPropertySet);
         

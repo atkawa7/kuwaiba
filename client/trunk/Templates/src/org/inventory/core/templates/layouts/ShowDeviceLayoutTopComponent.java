@@ -187,7 +187,7 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
     private javax.swing.JScrollPane pnlScrollPane;
     // End of variables declaration//GEN-END:variables
     @Override
-    public void componentOpened() {              
+    public void componentOpened() {
         RenderDeviceLayout renderDeviceLayout = new RenderDeviceLayout(objectLight, scene, 
             new Point(0, 0), new Rectangle(0, 0, 1000, 100));
         

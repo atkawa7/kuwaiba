@@ -16,10 +16,12 @@
  */
 package org.inventory.core.templates.layouts.widgets.providers;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
+import org.inventory.core.templates.layouts.LayoutOutputManager;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.widgets.ContainerShapeWidget;
 import org.inventory.core.templates.layouts.widgets.ShapeWidgetUtil;
@@ -85,6 +87,15 @@ public class ResizeContainerShapeProvider implements ResizeProvider, ResizeStrat
                 }
             }
             ShapeWidgetUtil.makingVisibleChanges(widget);
+            
+            if (widget.getScene() instanceof EquipmentLayoutScene) {
+                EquipmentLayoutScene scene = (EquipmentLayoutScene) widget.getScene();
+
+                LayoutOutputManager.getInstance().getLayoutOutput(scene.getModel())
+                    .printLine("The shape cannot be resized because the given size is out of bounds of layout", Color.RED);
+                LayoutOutputManager.getInstance().getLayoutOutput(scene.getModel())
+                    .printLine("Select the shape to show the shapes contained", Color.BLACK);
+            }
             return;
         }
         

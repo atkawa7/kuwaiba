@@ -33,7 +33,7 @@ import org.netbeans.api.visual.widget.Widget;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class EquipmentLayoutAcceptProvider implements AcceptProvider {
+public class DeviceLayoutAcceptProviderToShapes implements AcceptProvider {
 
     @Override
     public ConnectorState isAcceptable(Widget widget, Point point, Transferable t) {

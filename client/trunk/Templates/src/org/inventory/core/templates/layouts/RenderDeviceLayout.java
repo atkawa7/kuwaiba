@@ -16,6 +16,7 @@
 package org.inventory.core.templates.layouts;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -48,34 +49,34 @@ import org.inventory.core.templates.layouts.model.PolygonShape;
 import org.inventory.core.templates.layouts.model.RectangleShape;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.model.ShapeFactory;
-import org.inventory.core.templates.layouts.scene.ModelLayoutScene;
 import org.inventory.core.templates.layouts.widgets.CircleShapeWidget;
 import org.inventory.core.templates.layouts.widgets.PolygonShapeWidget;
 import org.inventory.core.templates.layouts.widgets.ResizableLabelWidget;
 import org.inventory.core.templates.layouts.widgets.ShapeWidgetUtil;
-import org.netbeans.api.visual.border.BorderFactory;
+import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Exceptions;
 
 /**
- * Class used to render a model type widget in any scene
+ * Class used to render a model type portWidget in any scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class RenderDeviceLayout {
     /**
      * List of classes that has a default device layout
      */
-    private static final String[] classesWithDefaultDeviceLayout = new String [] {"GenericDistributionFrame"};
+    private static final String[] classesWithDefaultDeviceLayout = new String [] {"GenericDistributionFrame", "GenericBoard", "GenericCommunicationsElement", "Slot"};
+    /**
+     * List of classes of ports that can be shown in the layout
+     */
     private static final String[] portsEnabled = new String[] {"ElectricalPort", "OpticalPort"};
     
     private String errorMessage;
     private final Widget parentWidget;
     private final Rectangle bounds;
     private final Point location;
-    private double widthPercentage;
-    private double heightPercentage;
     /**
-     * A widget that represent the device layout in the scene
+     * A portWidget that represent the device layout in the scene
      */
     private Widget deviceLayoutWidget;
     
@@ -113,6 +114,10 @@ public class RenderDeviceLayout {
         return deviceLayoutObj != null;
     }
     
+    public boolean hasDefaultDeviceLayout() {
+        return hasDefaultDeviceLayout;
+    }
+    
     public LocalObjectView getEquipmentModelView() {
         return deviceLayoutObj;
     }
@@ -120,11 +125,7 @@ public class RenderDeviceLayout {
     public String getErrorMessage() {
         return errorMessage;
     }
-    
-    public boolean hasDefaultDeviceLayout() {
-        return hasDefaultDeviceLayout;
-    }
-    
+        
     private LocalObjectListItem getEquipmentModel() {
         if (deviceToRender == null)
             return null;
@@ -137,35 +138,6 @@ public class RenderDeviceLayout {
                 I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             return null;            
         }
-        
-        
-        /*
-        if (CommunicationsStub.getInstance().isSubclassOf(deviceToRender.getClassName(), Constants.CLASS_CUSTOMSHAPE))
-            return (LocalObjectListItem) deviceToRender;
-        
-        if (!CommunicationsStub.getInstance().isSubclassOf(deviceToRender.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT) &&
-            !CommunicationsStub.getInstance().isSubclassOf(deviceToRender.getClassName(), Constants.CLASS_GENERICDISTRIBUTIONFRAME))
-            return null;
-        
-        LocalObject localObject = CommunicationsStub.getInstance().getObjectInfo(deviceToRender.getClassName(), deviceToRender.getOid());
-        if (localObject == null) {
-            this.errorMessage = CommunicationsStub.getInstance().getError();
-            return null;
-        }
-        
-        
-        for (String attributeKey : localObject.getAttributes().keySet()) {            
-            if ("model".equals(attributeKey)) {
-                Object attributeValue = localObject.getAttributes().get("model");
-                if (attributeValue instanceof LocalObjectListItem) {
-                    LocalObjectListItem listItem = (LocalObjectListItem) attributeValue;
-                    
-                    if (CommunicationsStub.getInstance().isSubclassOf(listItem.getClassName(), Constants.CLASS_GENERICOBJECTLIST))
-                        return listItem;
-                }
-            }
-        }
-        */
         LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(deviceToRender.getClassName(), false);
         if (lcm == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
@@ -233,58 +205,121 @@ public class RenderDeviceLayout {
         if (isPortEnable(device))
             result.add(device);
         
-        for (LocalObjectLight child : nodes.get(device))
-            findPortsEnabled(child, result);
+        for (LocalObjectLight child : nodes.get(device)) {
+            
+            if (!hasDefaultDeviceLayout(child))
+                findPortsEnabled(child, result);
+        }
     }
     
-    private void renderDefaultDeviceLayout(LocalObjectLight device) {
-        deviceLayoutWidget = parentWidget.getScene() instanceof AbstractScene ? 
+    private void renderDefaultDeviceLayout(LocalObjectLight device, Widget parentWidget) {
+        if (!hasDefaultDeviceLayout(device))
+            return;
+        
+        Widget deviceWidget = parentWidget.getScene() instanceof AbstractScene ? 
             ((AbstractScene) parentWidget.getScene()).addNode(device) : 
             new Widget(parentWidget.getScene());
-        deviceLayoutWidget.getScene().validate();
-        deviceLayoutWidget.getScene().paint();
+        deviceWidget.getScene().validate();
+        deviceWidget.getScene().paint();
         
-        deviceLayoutWidget.setPreferredLocation(new Point(location));
-        deviceLayoutWidget.setPreferredBounds(new Rectangle(bounds));
-        deviceLayoutWidget.setBackground(Color.BLACK);
-        deviceLayoutWidget.setOpaque(false);
-        deviceLayoutWidget.revalidate();
-        parentWidget.addChild(deviceLayoutWidget);
+        if (device != deviceToRender)
+            parentWidget.setLayout(LayoutFactory.createHorizontalFlowLayout(LayoutFactory.SerialAlignment.LEFT_TOP, 2));
+        
+        LocalClassMetadata deviceClass = CommunicationsStub.getInstance().getMetaForClass(device.getClassName(), false);
+        if (deviceClass == null) {
+            deviceWidget.setBackground(Color.BLACK);
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        } else
+            deviceWidget.setBackground(deviceClass.getColor() == null ? Color.BLACK : deviceClass.getColor());
+        
+        deviceWidget.setOpaque(true);
+        deviceWidget.setToolTipText(device.getName());
+        deviceWidget.revalidate();
+                
+        parentWidget.addChild(deviceWidget);
+            parentWidget.getScene().validate();
+            parentWidget.getScene().repaint();
         
         initNodes(device, getObjectChildren(device));
         
         List<LocalObjectLight> ports = new ArrayList();
         
-        findPortsEnabled(device, ports);                                
+        findPortsEnabled(device, ports);     
         
-        int portWidth = (int) Math.round(bounds.getWidth() / ports.size()) ;
-        portWidth -= 4;
-        //TODO: size > 6 then 2 rows
-        int portHeight = bounds.height - 8;
+        boolean addRow = false;
+        if (ports.size() > 6)
+            addRow = true;
         
-        int x = 4;
-        int y = 4;
+        int numCols = ports.size();
+        int numRows = 1;
         
-        for (LocalObjectLight port : ports) {
-            Widget widget = ((AbstractScene) deviceLayoutWidget.getScene()).addNode(port);
-                    deviceLayoutWidget.getScene().validate();
-        deviceLayoutWidget.getScene().paint();
-            
-            widget.setPreferredLocation(new Point(x, y));
-            widget.setPreferredBounds(new Rectangle(0, 0, portWidth, portHeight));
-            widget.setBackground(Color.YELLOW);
-            widget.setOpaque(false);
-            widget.revalidate();
-            deviceLayoutWidget.addChild(widget);
-            x += portWidth + 4;
+        if (addRow) {
+            numCols += - (int) Math.round(ports.size() / 2);
+            numRows = 2;
+        }                
+        int span = 8;
+        int portWidth = (int) Math.round(bounds.width / (numCols == 0 ? numCols = 1 : numCols)) - span;
+        int portHeight = (int) Math.round(bounds.height / numRows) - span;
+        
+        if (portWidth < portHeight)
+            portHeight = portWidth;
+        else
+            portWidth = portHeight;
+        
+        if (portWidth > 25) {
+            portWidth = 25;
+            portHeight = 25;
         }
+        
+        for (int i = 0; i < numRows; i += 1) {
+            int y = 4 + (portHeight + span) * i;
+            
+            for (int j = 0; j < numCols; j += 1) {
+                int x = 4 + (portWidth + span) * j;
+                
+                int idx = i * numCols + j;
+                
+                if (idx < ports.size()) {
+                    LocalObjectLight port = ports.get(idx);
+                    
+                    Widget portWidget = ((AbstractScene) deviceWidget.getScene()).addNode(port);
 
+                    deviceWidget.getScene().validate();
+                    deviceWidget.getScene().paint();
+
+                    portWidget.setPreferredLocation(new Point(x, y));
+                    portWidget.setPreferredBounds(new Rectangle(0, 0, portWidth, portHeight));
+                                        
+                    LocalClassMetadata portClass = CommunicationsStub.getInstance().getMetaForClass(port.getClassName(), false);
+                    if (portClass == null) {
+                        portWidget.setBackground(Color.BLACK);
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                            NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                    } else
+                        portWidget.setBackground(portClass.getColor() == null ? Color.BLACK : portClass.getColor());
+                    portWidget.setOpaque(true);
+                    deviceWidget.setToolTipText(port.getName());
+                    
+                    portWidget.revalidate();
+                    deviceWidget.addChild(portWidget);
+                } else
+                    break;
+            }
+        }        
+        for (LocalObjectLight child : nodes.get(device))
+            renderDefaultDeviceLayout(child, deviceWidget);
     }
     
     public void render() {
         if (deviceLayoutObj == null) {
-            if (hasDefaultDeviceLayout)
-                renderDefaultDeviceLayout(deviceToRender);
+            if (hasDefaultDeviceLayout) {
+                renderDefaultDeviceLayout(deviceToRender, parentWidget);
+                
+                deviceLayoutWidget = ((AbstractScene) parentWidget.getScene()).findWidget(deviceToRender);
+                deviceLayoutWidget.setPreferredLocation(new Point(location));
+                deviceLayoutWidget.setPreferredBounds(new Rectangle(bounds));
+            }                
             return;
         }
         
@@ -445,10 +480,35 @@ public class RenderDeviceLayout {
                                     if (attrValue != null)
                                         ((RectangleShape) shape).setIsSlot(Boolean.valueOf(attrValue));
                                 } else if (LabelShape.SHAPE_TYPE.equals(shapeType)) {
-                                } else if (CircleShape.SHAPE_TYPE.equals(shapeType)) {
-                                } else if (PolygonShape.SHAPE_TYPE.equals(shapeType)) {
+                                    
+                                    attrValue = reader.getAttributeValue(null, "label"); //NOI18N
+                                    if (attrValue != null)
+                                        ((LabelShape) shape).setLabel(attrValue);
+
+                                    attrValue = reader.getAttributeValue(null, "textColor"); //NOI18N
+                                    if (attrValue != null)
+                                        ((LabelShape) shape).setTextColor(new Color(Integer.valueOf(attrValue)));
+
+                                    attrValue = reader.getAttributeValue(null, "fontSize"); //NOI18N
+                                    if (attrValue != null)
+                                        ((LabelShape) shape).setFontSize(Integer.valueOf(attrValue));                
+                                } if (CircleShape.SHAPE_TYPE.equals(shapeType)) {
+                                    attrValue = reader.getAttributeValue(null, CircleShape.PROPERTY_ELLIPSE_COLOR);
+                                    if (attrValue != null)
+                                        ((CircleShape) shape).setEllipseColor(new Color(Integer.valueOf(attrValue)));
+
+                                    attrValue = reader.getAttributeValue(null, CircleShape.PROPERTY_OVAL_COLOR);
+                                    if (attrValue != null)
+                                        ((CircleShape) shape).setOvalColor(new Color(Integer.valueOf(attrValue)));
+                                } if (PolygonShape.SHAPE_TYPE.equals(shapeType)) {
+                                    attrValue = reader.getAttributeValue(null, PolygonShape.PROPERTY_INTERIOR_COLOR);
+                                    if (attrValue != null)
+                                        ((PolygonShape) shape).setInteriorColor(new Color(Integer.valueOf(attrValue)));
+
+                                    attrValue = reader.getAttributeValue(null, PolygonShape.PROPERTY_OUTLINE_COLOR);
+                                    if (attrValue != null)
+                                        ((PolygonShape) shape).setOutlineColor(new Color(Integer.valueOf(attrValue)));
                                 }
-                                                                
                                 shapes.add(shape);
                             }
                         }
@@ -468,160 +528,24 @@ public class RenderDeviceLayout {
         }
         
     }
-        
-    public void render2dfs() {
-        if (deviceLayoutObj == null)
-            return;
-        
-        byte[] structure = deviceLayoutObj.getStructure();
-        if (structure == null)
-            return;
-        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-        QName tagShape = new QName("shape"); //NOI18N
-        
-        try {
-            ByteArrayInputStream bais = new ByteArrayInputStream(structure);
-            XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
-
-            while (reader.hasNext()) {
-                int event = reader.next();
-                if (event == XMLStreamConstants.START_ELEMENT) {                    
-                    if (reader.getName().equals(tagShape)) {
-                        Shape model = ModelLayoutScene.XMLtoShape(reader, null);
-                        if (model.getWidth() == null || model.getHeight() == null)
-                            return;
-                        widthPercentage = originalSize ? 1 : Double.valueOf(Integer.toString(bounds.width)) / Double.valueOf(Integer.toString(model.getWidth()));
-                        heightPercentage = originalSize ? 1 : Double.valueOf(Integer.toString(bounds.height)) / Double.valueOf(Integer.toString(model.getHeight()));
-                        
-                        List<LocalObjectLight> children = getObjectChildren(deviceToRender);                                                
-                        recursiveRender(true, deviceToRender, children, reader, tagShape, null, parentWidget, widthPercentage, heightPercentage);
-                    }
-                }
-            }
-            reader.close();
-            
-            parentWidget.getScene().validate();
-            parentWidget.getScene().repaint();
-            
-        } catch (NumberFormatException | XMLStreamException ex) {
-            NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.ERROR_MESSAGE, "The view seems corrupted and could not be loaded");
-            parentWidget.getScene().removeChildren();
-            if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
-                Exceptions.printStackTrace(ex);
-        }
-    }
-    
-    private void recursiveRender(boolean parentEnable, LocalObjectLight object, 
-        List<LocalObjectLight> objChildren, XMLStreamReader reader, QName tagShape, 
-        Shape parentShape, Widget parentWidget, double widthPercentage, double heightPercentage) throws XMLStreamException {
-        
-        String type = reader.getAttributeValue(null, "type"); //NOI18N
-        Shape shape = ModelLayoutScene.XMLtoShape(reader, parentShape);
-        
-        if (shape == null)
-            return;
-        
-        boolean shapeEnable = parentEnable;
-        if (parentEnable) {
-            if (shape.isEquipment()) {
-                shapeEnable = shape.getName() != null && object != null && shape.getName().equals(object.getName());                                
-            } else
-                shapeEnable = true;
-        }
-        if (parentShape == null) {
-            shapeEnable = shape.getName() != null && shape.getName().equals(deviceModel.getName());
-        }        
-        Widget shapeWidget = null;
-        
-        if (RectangleShape.SHAPE_TYPE.equals(type)) {            
-            shapeWidget = shapeEnable && object != null ? ((AbstractScene) parentWidget.getScene()).addNode(object) : new Widget(parentWidget.getScene());
-        } else if (LabelShape.SHAPE_TYPE.equals(type)) {
-            shapeWidget = new ResizableLabelWidget(parentWidget.getScene());
-            //TODO: for future feature the use of the width or height percentage 
-            //depend of the orientation of the text
-            ((LabelShape) shape).setFontSize((int) (((LabelShape) shape).getFontSize() * Math.abs(heightPercentage - 0.30)));
-            Font font = new Font(null, 0, ((LabelShape) shape).getFontSize());
-            ((ResizableLabelWidget) shapeWidget).setFont(font);
-            ((ResizableLabelWidget) shapeWidget).setLabel(((LabelShape) shape).getLabel());
-            
-            if (shapeEnable)
-                ((ResizableLabelWidget) shapeWidget).setForeground(((LabelShape) shape).getTextColor());
-            else
-                ((ResizableLabelWidget) shapeWidget).setForeground(Color.GRAY);
-        } else if (CircleShape.SHAPE_TYPE.equals(type)) {
-            shapeWidget = new CircleShapeWidget(parentWidget.getScene(), (CircleShape) shape);            
-            if (!shapeEnable) {
-                ((CircleShapeWidget) shapeWidget).setEllipseColor(Color.GRAY);
-                ((CircleShapeWidget) shapeWidget).setOvalColor(Color.GRAY);
-            }
-        } else if (PolygonShape.SHAPE_TYPE.equals(type)) {
-            shapeWidget = new PolygonShapeWidget(parentWidget.getScene(), (PolygonShape) shape);
-            if (!shapeEnable) {
-                ((PolygonShapeWidget) shapeWidget).setInteriorColor(Color.GRAY);
-                ((PolygonShapeWidget) shapeWidget).setOutlineColor(Color.GRAY);
-            }
-        }
-        if (shapeWidget == null)
-            throw new UnsupportedOperationException("The " + shape.getShapeType() + " is not supported yet.");
-        shapeWidget.setOpaque(shape.isOpaque());
-        
-        if (parentShape != null) {
-            shape.setX((int) (shape.getX() * widthPercentage));
-            shape.setY((int) (shape.getY() * heightPercentage));
-        } else {
-            deviceLayoutWidget = shapeWidget;
-            shape.setX(bounds.x);
-            shape.setY(bounds.y);
-        }        
-        shape.setWidth((int) (shape.getWidth() * widthPercentage));
-        shape.setHeight((int) (shape.getHeight() * heightPercentage));
-        
-        ShapeWidgetUtil.shapeToWidget(shape, shapeWidget);
-        if (!shapeEnable) {
-            if (shape.isOpaque()) {
-                shapeWidget.setBorder(BorderFactory.createLineBorder(shape.getBorderWidth(), Color.GRAY));
-            } else {
-                shapeWidget.setBorder(BorderFactory.createOpaqueBorder(
-                    shape.getBorderWidth(), shape.getBorderWidth(), 
-                    shape.getBorderWidth(), shape.getBorderWidth()));
-            }
-            shapeWidget.setBackground(Color.LIGHT_GRAY);
-        }
-        shapeWidget.revalidate();
-        parentWidget.addChild(shapeWidget);
-        parentWidget.getScene().validate();
-        parentWidget.getScene().paint();
-        
-        while (reader.hasNext()) {
-            
-            int event = reader.next();
-            if (event == XMLStreamConstants.START_ELEMENT) {
-                if (reader.getName().equals(tagShape)) {
-                    
-                    Shape shapeChild = ModelLayoutScene.XMLtoShape(reader, null);
-                    LocalObjectLight objChild = findTheObjectForTheShape2(shapeChild, objChildren);
-                    List<LocalObjectLight> children = getObjectChildren(objChild);
-                    
-                    if (children == null) {
-                        children = objChildren;
-                    }
-                    recursiveRender(shapeEnable, objChild, children, reader, tagShape, shape, shapeWidget, widthPercentage, heightPercentage);
-                }                                              
-            } else if (event == XMLStreamConstants.END_ELEMENT)
-                return;
-        }
-    }
     
     private void addNodes() {
         AbstractScene scene = (AbstractScene) parentWidget.getScene();
         
         for (Shape shape : shapes) {
             
-            if (shape.isEquipment()) {
+            if (!shape.getName().equals("")) {
                 List<LocalObjectLight> nodesToShape = compareObjectNameAndShapeName(shape);
 
-                if (nodesToShape.isEmpty())
+                if (nodesToShape.isEmpty()) {
+                    Widget widget = new Widget(deviceLayoutWidget.getScene());
+                    ShapeWidgetUtil.shapeToWidget(shape, widget, true);                    
+                    
+                    widget.setBackground(Color.LIGHT_GRAY);
+                    widget.setOpaque(true);
+                    deviceLayoutWidget.addChild(widget);
                     continue;
+                }
 
                 LocalObjectLight node = nodesToShape.get(0);
 
@@ -630,7 +554,7 @@ public class RenderDeviceLayout {
                     widget.getScene().validate();
                     widget.getScene().paint();
 
-                    ShapeWidgetUtil.shapeToWidget(shape, widget);
+                    ShapeWidgetUtil.shapeToWidget(shape, widget, true);
                     deviceLayoutWidget.addChild(widget);
                     
                     if (shape instanceof RectangleShape) {
@@ -644,13 +568,40 @@ public class RenderDeviceLayout {
                     if (node.equals(deviceToRender)) {
                         Widget widget = new Widget(deviceLayoutWidget.getScene());
                         widget.setOpaque(false);
-                        ShapeWidgetUtil.shapeToWidget(shape, widget);
+                        ShapeWidgetUtil.shapeToWidget(shape, widget, true);
                         deviceLayoutWidget.addChild(widget);
                     }
                 }
             } else {
-                Widget widget = new Widget(deviceLayoutWidget.getScene());
-                ShapeWidgetUtil.shapeToWidget(shape, widget);
+                Widget widget = null;
+                
+                String type = shape.getShapeType();
+                if (RectangleShape.SHAPE_TYPE.equals(type)) {
+                    widget = new Widget(deviceLayoutWidget.getScene());
+                    ShapeWidgetUtil.shapeToWidget(shape, widget, true);                
+                                        
+                } else if (LabelShape.SHAPE_TYPE.equals(type)) {                    
+                    widget = new ResizableLabelWidget(deviceLayoutWidget.getScene());
+                    widget.setPreferredSize(new Dimension(shape.getWidth(), shape.getHeight()));
+                    ShapeWidgetUtil.shapeToWidget(shape, widget, true);
+                                                            
+                    ((LabelShape) shape).setFontSize((int) (((LabelShape) shape).getFontSize() * Math.abs(shape.getHeight() - 0.30)));
+                    Font font = new Font(null, 0, ((LabelShape) shape).getFontSize());
+                    ((ResizableLabelWidget) widget).setFont(font);
+                    ((ResizableLabelWidget) widget).setLabel(((LabelShape) shape).getLabel());
+                    ((ResizableLabelWidget) widget).setForeground(((LabelShape) shape).getTextColor());
+                    widget.revalidate();
+                    
+                } else if (CircleShape.SHAPE_TYPE.equals(type)) {
+                    widget = new CircleShapeWidget(parentWidget.getScene(), (CircleShape) shape);
+                    widget.setPreferredSize(new Dimension(shape.getWidth(), shape.getHeight()));
+                    ShapeWidgetUtil.shapeToWidget(shape, widget, true);
+                    
+                } else if (PolygonShape.SHAPE_TYPE.equals(type)) {
+                    widget = new PolygonShapeWidget(parentWidget.getScene(), (PolygonShape) shape);
+                    widget.setPreferredSize(new Dimension(shape.getWidth(), shape.getHeight()));
+                    ShapeWidgetUtil.shapeToWidget(shape, widget, true);
+                }
                 deviceLayoutWidget.addChild(widget);
             }
         }
@@ -661,25 +612,6 @@ public class RenderDeviceLayout {
         
         for(LocalObjectLight node : nodes.keySet()) {
             String name = node.getName();
-            
-////            LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(node.getClassName(), false);
-////            if (lcm == null) {
-////                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-////                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-////                continue;
-////            }
-////            if (lcm.hasAttribute("model")) {
-////                LocalObject nodeObj = CommunicationsStub.getInstance().getObjectInfo(node.getClassName(), node.getOid());
-////                if (nodeObj == null) {
-////                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-////                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-////                    continue;
-////                }
-////                Object model = nodeObj.getAttribute("model");
-////                
-////                if (model instanceof LocalObjectListItem)
-////                    name = ((LocalObjectListItem) model).getName();
-////            }
             
             if (shape.getName().equals(name))
                 result.add(node);
@@ -701,6 +633,8 @@ public class RenderDeviceLayout {
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 continue;
             }
+            RenderDeviceLayout render = new RenderDeviceLayout(child, widget, new Point(0, 0), widget.getPreferredBounds());
+            
             if (lcm.hasAttribute("model")) {
                 LocalObject localObj = CommunicationsStub.getInstance().getObjectInfo(child.getClassName(), child.getOid());
                 if (localObj == null) {
@@ -709,10 +643,14 @@ public class RenderDeviceLayout {
                     continue;
                 }
                 Object model = localObj.getAttribute("model");
+                
                 if (model instanceof LocalObjectListItem) {
-                    RenderDeviceLayout render = new RenderDeviceLayout(child, widget, new Point(0, 0), widget.getPreferredBounds());
                     render.render();
+                    continue;
                 }
+            }
+            if (render.hasDefaultDeviceLayout()) {
+                render.render();
             }          
         }
     }
@@ -742,19 +680,6 @@ public class RenderDeviceLayout {
         return null;
     }
     
-    
-    private LocalObjectLight findTheObjectForTheShape2(Shape shape, List<LocalObjectLight> children) {
-        if (shape.getName() == null || "".equals(shape.getName()) || children == null)
-            return null;
-        
-        for (LocalObjectLight child : children) {
-            if (shape.getName().equals(child.getName())) {
-                return child;                
-            }
-        }
-        return null;
-    }
-    
     private void initNodes(LocalObjectLight node, List<LocalObjectLight> nodeChildren) {
         nodes.put(node, nodeChildren == null ? new ArrayList() : nodeChildren);
         
@@ -764,7 +689,6 @@ public class RenderDeviceLayout {
                 initNodes(nodeChild, getObjectChildren(nodeChild));                                    
         }
     }
-    
     
     private List<LocalObjectLight> getObjectChildren(LocalObjectLight lol) {
         if (lol == null)
@@ -780,7 +704,7 @@ public class RenderDeviceLayout {
             return children;
     }
     
-    public Widget getModelLayoutWidget() {
+    public Widget getDeviceLayoutWidget() {
         return deviceLayoutWidget;
     }
 }

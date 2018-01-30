@@ -68,9 +68,6 @@ public class ShapeWidgetMenu implements PopupMenuProvider {
             actions = new ArrayList();
             actions.add(CopyShapeAction.getInstance());
             actions.add(PasteShapeAction.getInstance());
-////            actions.add(CopyShapeAction1.getInstance());
-////            actions.add(PasteShapeAction1.getInstance());
-////            actions.add(GroupCopyShapeAction.getInstance());
             actions.add(BringToFrontAction.getInstance());
             actions.add(BringToFrontOneStepAction.getInstance());
             actions.add(BringToBackAction.getInstance());
@@ -81,10 +78,6 @@ public class ShapeWidgetMenu implements PopupMenuProvider {
             popupMenu.add(CopyShapeAction.getInstance());
             popupMenu.add(PasteShapeAction.getInstance());
             popupMenu.addSeparator();
-////            popupMenu.add(GroupCopyShapeAction.getInstance());
-////            popupMenu.addSeparator();
-////            popupMenu.add(GroupShapesAction1.getInstance());
-////            popupMenu.addSeparator();
             popupMenu.add(BringToFrontAction.getInstance());
             popupMenu.add(BringToFrontOneStepAction.getInstance());
             popupMenu.addSeparator();
@@ -95,8 +88,7 @@ public class ShapeWidgetMenu implements PopupMenuProvider {
         }
         for (Action action : actions)
             ((GenericShapeAction) action).setSelectedWidget(widget);
-        
-////        PasteShapeAction1.getInstance().setLocalLocation(localLocation);
+                
         PasteShapeAction.getInstance().setLocation(localLocation);
         return popupMenu;
     }
@@ -107,10 +99,7 @@ public class ShapeWidgetMenu implements PopupMenuProvider {
         containerShapePopupMenu.add(CopyShapeAction.getInstance());
         containerShapePopupMenu.add(PasteShapeAction.getInstance());
         containerShapePopupMenu.addSeparator();
-        
-        
-        // containerShapePopupMenu.add(DeleteContainerShapeAction.getInstance());
-        
+                
         if (widget instanceof ContainerShapeWidget) {
             if (!((ContainerShapeWidget) widget).isCustomShape()) {
                 if (((ContainerShapeWidget) widget).getShapesSet().isEmpty())
