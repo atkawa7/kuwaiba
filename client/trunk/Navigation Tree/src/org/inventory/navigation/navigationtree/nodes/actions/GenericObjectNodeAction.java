@@ -29,6 +29,7 @@ import org.openide.util.Utilities;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public abstract class GenericObjectNodeAction extends GenericInventoryAction {
+    
     protected List<LocalObjectLight> selectedObjects;
         
     @Override

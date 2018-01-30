@@ -33,6 +33,7 @@ import org.inventory.communications.core.LocalReportLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.SubMenuDialog;
 import org.inventory.core.services.utils.SubMenuItem;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
@@ -99,11 +100,14 @@ public class ExecuteClassLevelReportAction extends GenericObjectNodeAction imple
                     faos.write(theReport);
                     faos.flush();
                 }
-                if(Desktop.isDesktopSupported()) 
-                try {
-                    Desktop.getDesktop().browse(Utilities.toURI(tempFile));
-                } catch (IOException ex) {
-                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
+                if(Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)){ 
+                    try {
+                        Desktop.getDesktop().browse(Utilities.toURI(tempFile));
+                    } catch (IOException | UnsupportedOperationException ex) {
+                        NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
+                    }
+                } else {
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, String.format("asda %s", Utilities.toURI(tempFile)) );
                 }
                 
             } catch (IOException ex) {

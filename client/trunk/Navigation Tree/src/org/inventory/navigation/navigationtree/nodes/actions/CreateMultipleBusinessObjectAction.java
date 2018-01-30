@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -74,7 +74,9 @@ public final class CreateMultipleBusinessObjectAction extends GenericObjectNodeA
         JComplexDialogPanel saveDialog = new JComplexDialogPanel(
             new String[] {"Name Pattern", "Number of Objects"}, new JComponent[] {txtNamePattern, spinnerNumberOfObjects});
         
-        if (JOptionPane.showConfirmDialog(null, saveDialog, "New Multiple", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+        if (JOptionPane.showConfirmDialog(null, saveDialog, 
+                "New Multiple Objects of [" + ((JMenuItem) e.getSource()).getName() + "]", 
+                JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             String namePattern = ((JTextField)saveDialog.getComponent("txtNamePattern")).getText();
             int numberOfObjects = 0;
             Object spinnerValue= ((JSpinner)saveDialog.getComponent("spinnerNumberOfObjects")).getValue();
