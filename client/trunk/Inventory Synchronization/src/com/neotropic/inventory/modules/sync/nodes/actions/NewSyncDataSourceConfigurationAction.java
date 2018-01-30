@@ -56,7 +56,7 @@ class NewSyncDataSourceConfigurationAction extends GenericInventoryAction {
         
         SyncGroupNode selectedNode = selectedNodes.next();
         
-        List<LocalObjectLight> commDevices = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+        List<LocalObjectLight> commDevices = CommunicationsStub.getInstance().getObjectsOfClassLight(Constants.CLASS_GENERICNETWORKELEMENT);
         if (commDevices == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 
                         CommunicationsStub.getInstance().getError());

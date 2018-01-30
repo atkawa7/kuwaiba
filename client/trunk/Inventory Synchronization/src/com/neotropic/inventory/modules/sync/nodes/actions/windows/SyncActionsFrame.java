@@ -258,8 +258,7 @@ public class SyncActionsFrame extends JFrame {
             case "device":
             {
                 JLabel lblMsg = new JLabel();
-                JsonObject jsonAttributes = root.getJsonObject("attributes");
-                lblMsg.setText("The device you are trying to sync will be updated with these new attributes: \n" + jsonAttributes.toString());
+                lblMsg.setText("The device you are trying to sync will be updated with new attributes");
                 return lblMsg;
             }
             case "object_port_no_match":
