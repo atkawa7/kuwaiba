@@ -63,7 +63,7 @@ public class ActionsGroup extends GenericObjectNodeAction implements Presenter.P
         
         if (action != null) {
             ObjectNode node = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
-            List<LocalObjectLight> objects = new ArrayList();
+            List<LocalObjectLight> objects = new ArrayList<>();
             objects.add(node.getObject());
             action.setSelectedObjects(objects);
             action.actionPerformed(e);
@@ -81,7 +81,7 @@ public class ActionsGroup extends GenericObjectNodeAction implements Presenter.P
             mnuActionsGroup.setEnabled(false);
             return mnuActionsGroup;
         }
-        List<GenericObjectNodeAction> actions = new ArrayList();
+        List<GenericObjectNodeAction> actions = new ArrayList<>();
         
         for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)) {
             ActionsGroupType actionsGroupType = action.getClass().getAnnotation(ActionsGroupType.class);

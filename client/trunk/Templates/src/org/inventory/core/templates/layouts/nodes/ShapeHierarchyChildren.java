@@ -44,7 +44,7 @@ public class ShapeHierarchyChildren extends Children.Keys {
         if (rootWidget == null)
             return;        
         
-        List<Shape> children = new ArrayList();
+        List<Shape> children = new ArrayList<>();
         
         for (Widget child : rootWidget.getChildren()) {
             Shape shape = (Shape) scene.findObject(child);

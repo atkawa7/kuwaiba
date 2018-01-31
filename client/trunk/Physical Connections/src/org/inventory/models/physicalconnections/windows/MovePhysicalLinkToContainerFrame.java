@@ -112,7 +112,7 @@ public class MovePhysicalLinkToContainerFrame  extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            List<Refreshable> topComponents = new ArrayList();
+            List<Refreshable> topComponents = new ArrayList<>();
             
             
             LocalObjectLight parent = com.getParent(linksToMove.get(0).getClassName(), linksToMove.get(0).getOid());

@@ -50,7 +50,7 @@ class RemoveParameterFromTaskAction extends GenericInventoryAction implements Co
                 "Information", JOptionPane.INFORMATION_MESSAGE);
             
         } else {
-            List<SubMenuItem> subMenuItems = new ArrayList();
+            List<SubMenuItem> subMenuItems = new ArrayList<>();
             for (String parameter : parameters.keySet())
                 subMenuItems.add(new SubMenuItem(parameter));
             SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);

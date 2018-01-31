@@ -148,10 +148,10 @@ public class FavoritesFolderNode extends AbstractNode implements PropertyChangeL
                         ObjectNode favoritesItem = (ObjectNode) dropNode;
                         
                         if (favoritesItem.getParentNode() instanceof FavoritesFolderNode) {
-                            List<String> objClass = new ArrayList();
+                            List<String> objClass = new ArrayList<>();
                             objClass.add(favoritesItem.getObject().getClassName());
                             
-                            List<Long> objId = new ArrayList();
+                            List<Long> objId = new ArrayList<>();
                             objId.add(favoritesItem.getObject().getOid());
                                 
                             if (CommunicationsStub.getInstance().addObjectsToFavoritesFolder(objClass, objId, localFavoritesFolder.getId())) {
@@ -171,10 +171,10 @@ public class FavoritesFolderNode extends AbstractNode implements PropertyChangeL
                         if (favoritesItem.getParentNode() instanceof FavoritesFolderNode) {
                             FavoritesFolderNode bookmark = (FavoritesFolderNode) favoritesItem.getParentNode();
                             
-                            List<String> objClass = new ArrayList();
+                            List<String> objClass = new ArrayList<>();
                             objClass.add(favoritesItem.getObject().getClassName());
                                 
-                            List<Long> objId = new ArrayList();
+                            List<Long> objId = new ArrayList<>();
                             objId.add(favoritesItem.getObject().getOid());
                             if (CommunicationsStub.getInstance().removeObjectsFromFavoritesFolder(
                                 objClass, 

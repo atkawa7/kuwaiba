@@ -38,8 +38,8 @@ public class ContainmentManagerService {
 
     public ContainmentManagerService(ContainmentManagerTopComponent hctc){
         this.hctc = hctc;
-        listModel = new ArrayList();
-        treeModel = new ArrayList();
+        listModel = new ArrayList<>();
+        treeModel = new ArrayList<>();
     }
 
     public final void updateModels(){

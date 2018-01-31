@@ -154,7 +154,7 @@ public class SelectValueFrame extends JFrame {
     
     public void addListener(ComposedAction listener) {
         if (listeners == null)
-            listeners = new ArrayList();
+            listeners = new ArrayList<>();
         
         if (!listeners.contains(listener))
             listeners.add(listener);
@@ -175,7 +175,7 @@ public class SelectValueFrame extends JFrame {
     }
         
     public void filter(String text) {
-        List<Object> filteredObjects = new ArrayList();
+        List<Object> filteredObjects = new ArrayList<>();
         for (Object possibleValue : possibleValues) {
             if (possibleValue.toString().toLowerCase().contains(text.toLowerCase()))
                 filteredObjects.add(possibleValue);

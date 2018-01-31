@@ -419,7 +419,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
             } else {
                 List<LocalObjectLight> devicesLight = CommunicationsStub.getInstance().getObjectChildren(rack.getOid(), rack.getClassName());
                 if (devicesLight != null) {
-                    List<LocalClassMetadata> objChildrenClasses = new ArrayList();
+                    List<LocalClassMetadata> objChildrenClasses = new ArrayList<>();
 
                     for (LocalObjectLight device : devicesLight) {
                         LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(device.getClassName(), true);
@@ -444,7 +444,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                                 message += String.format("The %s attribute type in class %s must be an Integer\n", Constants.PROPERTY_RACK_UNITS, lcm.toString());
                         }
                     }
-                    List<LocalObject> devices = new ArrayList();
+                    List<LocalObject> devices = new ArrayList<>();
                     if (message.isEmpty()) {
                         for (LocalObjectLight deviceLight : devicesLight) {
                             LocalObject device = CommunicationsStub.getInstance().getObjectInfo(deviceLight.getClassName(), deviceLight.getOid());

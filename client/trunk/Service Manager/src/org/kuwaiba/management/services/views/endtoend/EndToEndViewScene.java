@@ -35,7 +35,8 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Shows an end-to-end view of a service by trying to match the endpoints of the logical circuits
- * directly associated to the selected instance. The view looks a lot like the Physical Path view, but they're totally different
+ * directly associated to the selected instance. The view looks a lot like the Physical Path view, but they're totally different: It's intended to deal exclusively 
+ * with logical connections, though it uses the physical path to fill the gaps between different logical segments
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight>{

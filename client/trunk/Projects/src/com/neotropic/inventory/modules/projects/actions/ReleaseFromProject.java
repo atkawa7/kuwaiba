@@ -57,7 +57,7 @@ public class ReleaseFromProject extends GenericObjectNodeAction implements Compo
         
         if (projects != null) {
             if (!projects.isEmpty()) {
-                List<SubMenuItem> subMenuItems = new ArrayList();
+                List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight project : projects) {
                     SubMenuItem subMenuItem = new SubMenuItem(project.toString());
                     subMenuItem.addProperty(Constants.PROPERTY_CLASSNAME, project.getClassName());

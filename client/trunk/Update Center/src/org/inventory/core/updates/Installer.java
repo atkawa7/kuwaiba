@@ -64,8 +64,8 @@ public class Installer extends ModuleInstall {
     
     private static final Runnable runAutoUpdate = new Runnable() {
         
-        private final List<UpdateElement> modulesForInstall = new ArrayList();
-        private final List<UpdateElement> modulesForUpdate = new ArrayList();
+        private final List<UpdateElement> modulesForInstall = new ArrayList<>();
+        private final List<UpdateElement> modulesForUpdate = new ArrayList<>();
         private boolean restart = false;
         boolean isUpdateCenterRegistered = true;
                 

@@ -23,6 +23,8 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
@@ -84,7 +86,7 @@ public class TopologyViewTopComponent extends TopComponent implements
 
             // <editor-fold defaultstate="collapsed" desc="Tool Bar Definition">
             JToolBar barMainToolBar = new JToolBar();
-            JButton btnSave = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/save.png")));
+            final JButton btnSave = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/save.png")));
             btnSave.setToolTipText("Save the current view");
             btnSave.addActionListener(new ActionListener() {
                 @Override
@@ -92,7 +94,7 @@ public class TopologyViewTopComponent extends TopComponent implements
                     saveView();
                 }
             });
-
+            
             JButton btnExport = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/export.png")));
             btnExport.setToolTipText("Export to popular image formats");
             btnExport.addActionListener(new ActionListener() {
@@ -105,7 +107,8 @@ public class TopologyViewTopComponent extends TopComponent implements
                     DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
                 }
             });
-            JButton btnRefresh = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/refresh.png")));
+            
+            final JButton btnRefresh = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/refresh.png")));
             btnRefresh.setToolTipText("Refresh the current view");
             btnRefresh.addActionListener(new ActionListener() {
 
@@ -115,9 +118,30 @@ public class TopologyViewTopComponent extends TopComponent implements
                     componentOpened();
                 }
             });
+            
+            JToggleButton btnDisaggregate = new JToggleButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/disaggregate.png")));
+            btnDisaggregate.setToolTipText("Expand the contents of all STMX transporting container links");
+            btnDisaggregate.addActionListener(new ActionListener() {
+
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    if (((JToggleButton)e.getSource()).isSelected()) {
+                        scene.expandTransportLinks();
+                        btnSave.setEnabled(false); //Saving and refreshing won't be supported while the transport links are expanded
+                        btnRefresh.setEnabled(false);
+                    }
+                    else {
+                        scene.collapseTransportLinks();
+                        btnSave.setEnabled(true);
+                        btnRefresh.setEnabled(true);
+                    }
+                }
+            });
+            
             barMainToolBar.add(btnSave);
             barMainToolBar.add(btnExport);
             barMainToolBar.add(btnRefresh);
+            barMainToolBar.add(btnDisaggregate);
             // </editor-fold>  
             add(barMainToolBar, BorderLayout.NORTH);
             associateLookup(scene.getLookup());

@@ -59,6 +59,10 @@ import org.openide.util.Exceptions;
 public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
     
     protected static final String VIEW_CLASS = "ServiceTopologyView";
+    /**
+     * A map that contains the expanded transport links and their container links, so they can be collapsed when the user needs it (see {@link #expandTransportLinks() } and {@link #collapseTransportLinks() })
+     */
+    private HashMap<LocalObjectLight, List<LocalObjectLight>> expandedTransportLinks;
     
     private CommunicationsStub com = CommunicationsStub.getInstance();
     /**
@@ -84,6 +88,8 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
         addChild(nodeLayer);
         
         initSelectionListener();
+        
+        expandedTransportLinks = new HashMap<>();
     }
     
     @Override
@@ -166,7 +172,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
 
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
-        //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
+        //<editor-fold defaultstate="collapsed" desc="Uncomment this for debugging purposes. This outputs the XML view as a file">
 //        try (FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/oview_" + VIEW_CLASS + ".xml")) {
 //            fos.write(structure);
 //        } catch(Exception e) { }
@@ -287,14 +293,12 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
             List<LocalObjectLight> nodesToBeDeleted = new ArrayList<>(getNodes()); 
-//We clone the existing nodes to synchronize the view, so saved nodes that are no longer listed as service resources are removed
-//We assume that render(byte[]) was called before calling render(LocalObjectLight)
+            //We clone the existing nodes to synchronize the view, so saved nodes that are no longer listed as service resources are removed
+            //We assume that render(byte[]) was called before calling render(LocalObjectLight)
             Map<Long, LocalObjectLight> equipmentByPort = new HashMap<>();
             //We will ignore all resources that are not GenericCommunicationsElement
             for (LocalObjectLight serviceResource : serviceResources) {
-                boolean isGenericCommunicationsElement = com.isSubclassOf(serviceResource.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
-                
-                if (isGenericCommunicationsElement) {
+                if (com.isSubclassOf(serviceResource.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)) {
                     if (findWidget(serviceResource) == null)
                         addNode(serviceResource);
                     
@@ -312,7 +316,8 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
             for (LocalObjectLight nodeToBeDeleted : nodesToBeDeleted) {
                 removeNodeWithEdges(nodeToBeDeleted);
                 validate();
-            }           
+            }
+            
             //Once the nodes have been added, we retrieve the physical and logical (STMX) connections between them and ignore those that end in other elements
             for (LocalObjectLight aNode : getNodes()) {
                 List<LocalObjectLightList> physicalConnections = com.getPhysicalConnectionsInObject(aNode.getClassName(), aNode.getOid());
@@ -340,7 +345,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                 setEdgeSource(aConnection.get(1), sourceEquipment);
                                 setEdgeTarget(aConnection.get(1), targetEquipment);
                             }
-
+                            
                             connectionWidget.getLabelWidget().setLabel(sourceEquipment.getName() + ":" + sourcePort.getName() + 
                                         " ** " +targetEquipment.getName() + ":" + targetPort.getName());
                         } //Else, we just ignore this connection trace
@@ -413,5 +418,48 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
         edgeLayer.addChild(newWidget);
         validate();
         return newWidget;
+    }
+    
+    /**
+     * This method disaggregates the existing transport links (STMX) showing the container links that are carried by them. The transport links are hidden in the mean time
+     */
+    public void expandTransportLinks() {
+        ArrayList<LocalObjectLight> currentTransportLinks = new ArrayList<>(getEdges());
+        for (LocalObjectLight edge : currentTransportLinks) {
+            List<LocalObjectLight> containerLinks = com.getSpecialAttribute(edge.getClassName(), edge.getOid(), "sdhTransports"); //NOI18N
+            
+            if (containerLinks != null && !containerLinks.isEmpty()) {
+                expandedTransportLinks.put(edge, containerLinks); //This map will be use to gracefully collapse all the STMX that will be expanded in this operation
+                
+                for (LocalObjectLight containerLink : containerLinks) {
+                    if (findWidget(containerLink) == null) { //This validation should not be necessary, but just in case
+                        addEdge(containerLink);
+                        setEdgeSource(containerLink, getEdgeSource(edge));
+                        setEdgeTarget(containerLink, getEdgeTarget(edge));
+                    }
+                }
+                //The STMX is only set invisible if it transports something
+                findWidget(edge).setVisible(false);
+            }
+        }
+        validate();
+    }
+    
+    /**
+     * This method does the opposite as {@link #expandTransportLinks() }
+     */
+    public void collapseTransportLinks() {
+        for (LocalObjectLight expandedTransportLink : expandedTransportLinks.keySet()) {
+            Widget expandedTransportLinkWidget = findWidget(expandedTransportLink);
+            if (expandedTransportLinkWidget != null) {
+                for (LocalObjectLight containerLink : expandedTransportLinks.get(expandedTransportLink)) {
+                    if (findWidget(containerLink) != null) 
+                        removeEdge(containerLink);
+                }
+                expandedTransportLinkWidget.setVisible(true);
+            }
+        }
+        validate();
+        expandedTransportLinks.clear();
     }
 }

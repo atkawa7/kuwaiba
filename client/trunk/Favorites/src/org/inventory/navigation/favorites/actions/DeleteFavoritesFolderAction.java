@@ -71,7 +71,7 @@ public class DeleteFavoritesFolderAction extends GenericInventoryAction implemen
             
             FavoritesFolderNode selectedNode = selectedNodes.next();
             
-            List<Long> ids = new ArrayList();
+            List<Long> ids = new ArrayList<>();
             ids.add(selectedNode.getFavoritesFolder().getId());
             
             if (CommunicationsStub.getInstance().deleteFavoritesFolders(ids)) {

@@ -41,12 +41,12 @@ public class ClassMetadataChildren extends Array {
 
     public ClassMetadataChildren(){
         this.main = false;
-        this.keys= new ArrayList();
+        this.keys= new ArrayList<>();
     }
 
     @Override
     protected Collection<Node> initCollection () {
-        List<Node> myNodes = new ArrayList();
+        List<Node> myNodes = new ArrayList<>();
         for (LocalClassMetadataLight lcml : keys)
             if (main) // This is kinda weird, because
                 myNodes.add(new ClassMetadataNode(lcml,main));
@@ -66,7 +66,7 @@ public class ClassMetadataChildren extends Array {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             } else {
-                keys = new ArrayList();
+                keys = new ArrayList<>();
                 keys.addAll(children);
             }
         }

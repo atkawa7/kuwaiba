@@ -60,7 +60,7 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         Iterator<? extends ObjectNode> endpoints = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
-        List<ObjectNode> endpointNodes = new ArrayList();
+        List<ObjectNode> endpointNodes = new ArrayList<>();
         List<LocalObjectLight> existingWireContainersList;
 
         while(endpoints.hasNext())

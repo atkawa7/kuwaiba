@@ -38,7 +38,7 @@ public class ClassMetadataSpecialChildren extends ClassMetadataChildren {
     
     @Override
     protected Collection<Node> initCollection() {
-        List<Node> myNodes = new ArrayList();
+        List<Node> myNodes = new ArrayList<>();
         for (LocalClassMetadataLight lcml : keys) {
             if (main)
                 myNodes.add(new ClassMetadataSpecialNode(lcml, main));
@@ -57,7 +57,7 @@ public class ClassMetadataSpecialChildren extends ClassMetadataChildren {
             if (children == null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             } else {
-                keys = new ArrayList();
+                keys = new ArrayList<>();
                 keys.addAll(children);
             }
         }

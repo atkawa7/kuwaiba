@@ -56,7 +56,7 @@ class RelateToGroupAction extends GenericInventoryAction implements ComposedActi
             LocalUserGroupObject currentGroup = selectedNode.getParentNode().getLookup().lookup(LocalUserGroupObject.class);
             currentUser = selectedNode.getLookup().lookup(LocalUserObject.class);
             
-            List<SubMenuItem> subMenuItems = new ArrayList();
+            List<SubMenuItem> subMenuItems = new ArrayList<>();
             
             List<LocalUserGroupObject> allGroups = CommunicationsStub.getInstance().getGroups();
             if (allGroups == null) {

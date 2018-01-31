@@ -335,7 +335,7 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 setKeys(Collections.EMPTY_SET);
             } else {                
-                List<LocalObjectLight> children = new ArrayList();
+                List<LocalObjectLight> children = new ArrayList<>();
                 children.addAll(templateElementChildren);
                 children.addAll(templateElementSpecialChildren);
                 Collections.sort(children);

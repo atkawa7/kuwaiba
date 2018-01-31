@@ -40,7 +40,7 @@ public class ShapeWidgetUtil {
     public static Lookup fixLookup(ShapeNode shapeNode) {
         PaletteController pallete = SharedContent.getInstance().getAbstractLookup().lookup(PaletteController.class);
         
-        List lst = new ArrayList();
+        List lst = new ArrayList<>();
         lst.add(shapeNode);
         lst.add(pallete);
         

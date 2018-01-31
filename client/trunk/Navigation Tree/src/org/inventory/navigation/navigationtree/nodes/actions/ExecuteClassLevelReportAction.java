@@ -69,7 +69,7 @@ public class ExecuteClassLevelReportAction extends GenericObjectNodeAction imple
                     NotificationUtil.WARNING_MESSAGE, CommunicationsStub.getInstance().getError());
             } else {
                 if (!reportDescriptors.isEmpty()) {
-                    List<SubMenuItem> subMenuItems = new ArrayList();
+                    List<SubMenuItem> subMenuItems = new ArrayList<>();
                     for (LocalReportLight reportDescriptor : reportDescriptors) {
                         SubMenuItem subMenuItem = new SubMenuItem(reportDescriptor.getName());
                         subMenuItem.setToolTipText(reportDescriptor.getDescription());

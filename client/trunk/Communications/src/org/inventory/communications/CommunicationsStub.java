@@ -220,7 +220,7 @@ public class CommunicationsStub {
      * Retrieves an object children providing the object class id
      * @param oid object's id
      * @param objectClassId object's class id
-     * @return an array of local objects representing the object's children. Null in a problem occurs during the execution
+     * @return an array of local objects representing the object's children. Null if a problem occurs during the execution
      */
     public List<LocalObjectLight> getObjectChildren(long oid, long objectClassId){
         try{
@@ -4667,7 +4667,7 @@ public class CommunicationsStub {
      */        
     public boolean updateSyncDataSourceConfiguration(long syncDataSourceConfigId, HashMap<String, String> parameters) {
         try {
-            List<StringPair> remoteParameters = new ArrayList();
+            List<StringPair> remoteParameters = new ArrayList<>();
             
             for (String parameterName : parameters.keySet()) {
                 StringPair remoteParameter = new StringPair();
@@ -4707,12 +4707,12 @@ public class CommunicationsStub {
      */
     public List<LocalSyncGroup> copySyncGroup(LocalSyncGroup[] syncGroups) {
         try {
-            List<Long> syncGroupsIds = new ArrayList();
+            List<Long> syncGroupsIds = new ArrayList<>();
             for (LocalSyncGroup syncGroup : syncGroups)
                 syncGroupsIds.add(syncGroup.getId());
             List<RemoteSynchronizationGroup> remoteSyncGroups = service.copySyncGroup(syncGroupsIds, session.getSessionId());
             
-            List<LocalSyncGroup> localSyncGroups = new ArrayList();
+            List<LocalSyncGroup> localSyncGroups = new ArrayList<>();
             for (RemoteSynchronizationGroup remoteSyncGroup : remoteSyncGroups) {
                 localSyncGroups.add(new LocalSyncGroup(remoteSyncGroup.getId(), 
                     remoteSyncGroup.getName(), 
@@ -4733,13 +4733,13 @@ public class CommunicationsStub {
      */
     public List<LocalSyncDataSourceConfiguration> copySyncDataSourceConfiguration(long syncGroupId, LocalSyncDataSourceConfiguration[] syncDataSourceConfiguration) {
         try {
-            List<Long> syncDataSrcConfigIds = new ArrayList();
+            List<Long> syncDataSrcConfigIds = new ArrayList<>();
             for (LocalSyncDataSourceConfiguration syncDataSrcConfig : syncDataSourceConfiguration)
                 syncDataSrcConfigIds.add(syncDataSrcConfig.getId());
                             
             List<RemoteSynchronizationConfiguration> lstRemoteSyncDataSrcConfig = service.copySyncDataSourceConfiguration(syncGroupId, syncDataSrcConfigIds, session.getSessionId());
             
-            List<LocalSyncDataSourceConfiguration> lstLocalSyncDataSrcConfig = new ArrayList();
+            List<LocalSyncDataSourceConfiguration> lstLocalSyncDataSrcConfig = new ArrayList<>();
             
             for (RemoteSynchronizationConfiguration remoteSyncDataSrcConfig : lstRemoteSyncDataSrcConfig) {
                 HashMap<String, String> parameters = new HashMap<>();
@@ -4767,7 +4767,7 @@ public class CommunicationsStub {
      */
     public boolean moveSyncDataSourceConfiguration(long syncGroupId, LocalSyncDataSourceConfiguration[] syncDataSourceConfiguration) {
         try {
-            List<Long> syncDataSrcConfigIds = new ArrayList();
+            List<Long> syncDataSrcConfigIds = new ArrayList<>();
             for (LocalSyncDataSourceConfiguration syncDataSrcConfig : syncDataSourceConfiguration)
                 syncDataSrcConfigIds.add(syncDataSrcConfig.getId());
             

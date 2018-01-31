@@ -60,12 +60,12 @@ def bem = PersistenceService.getInstance().getBusinessEntityManager();
         hierarchy(child_, allChildren);
     }
 }
-def allChildren_ = new ArrayList();
+def allChildren_ = new ArrayList<>();
 allChildren_.add(currentObj);
 
 hierarchy(currentObj, allChildren_);
 
-def allChildren_2 = new ArrayList();
+def allChildren_2 = new ArrayList<>();
 allChildren_.each { child -> 
     def containersA = bem.getSpecialAttribute(child.getClassName(), child.getId(), "endpointA");
     if (containersA != null) {
@@ -85,7 +85,7 @@ allChildren_2.each { child ->
     allChildren_.add(child);
 }
 
-def connections = new ArrayList();
+def connections = new ArrayList<>();
 def communicationsPort = bem.getChildrenOfClassLightRecursive(currentObj.getId(), currentObj.getClassName(), "ConfigurationItem", -1);
 communicationsPort.each { child ->
     def physicalPath = bem.getPhysicalPath(child.getClassName(), child.getId());
@@ -97,7 +97,7 @@ communicationsPort.each { child ->
     }
 }
 def serviceMap = [:];
-def serviceList = new ArrayList();
+def serviceList = new ArrayList<>();
 
 allChildren_.each { child ->
     def associatedServices = bem.getSpecialAttribute(child.getClassName(), child.getId(), "uses"); 

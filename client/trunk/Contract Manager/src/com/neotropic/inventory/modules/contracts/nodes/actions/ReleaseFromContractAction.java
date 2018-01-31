@@ -62,7 +62,7 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
                 JOptionPane.showMessageDialog(null, I18N.gm("no_cotracts_related_to_selected_object"), 
                     I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             else {
-                List<SubMenuItem> subMenuItems = new ArrayList();
+                List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight contract : contracts) {
                     SubMenuItem subMenuItem = new SubMenuItem(contract.toString());
                     subMenuItem.addProperty(Constants.PROPERTY_ID, contract.getOid());

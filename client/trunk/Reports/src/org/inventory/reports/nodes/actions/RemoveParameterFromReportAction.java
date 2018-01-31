@@ -54,7 +54,7 @@ class RemoveParameterFromReportAction extends GenericInventoryAction implements 
                 JOptionPane.showMessageDialog(null, "There are no parameters to the selected report", 
                     "Information", JOptionPane.INFORMATION_MESSAGE);
             } else {
-                List<SubMenuItem> subMenuItems = new ArrayList();
+                List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (String parameter : theReport.getParameters())
                     subMenuItems.add(new SubMenuItem(parameter));
                 SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);

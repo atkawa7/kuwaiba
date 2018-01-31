@@ -45,8 +45,8 @@ public class ConnectMultipleMirrorPortAction extends GenericObjectNodeAction {
         List<LocalObjectLight> children = CommunicationsStub.getInstance().getObjectChildren(selectedObjects.get(0).getOid(), selectedObjects.get(0).getClassName());
         List<LocalObjectLight> endPoints =  new ArrayList<>();
         
-        List<LocalObjectLight> endPointsA = new ArrayList();
-        List<LocalObjectLight> endPointsB = new ArrayList();
+        List<LocalObjectLight> endPointsA = new ArrayList<>();
+        List<LocalObjectLight> endPointsB = new ArrayList<>();
         
         List<String> aObjectsClasses = new ArrayList<>();
         List<String> bObjectsClasses = new ArrayList<>();

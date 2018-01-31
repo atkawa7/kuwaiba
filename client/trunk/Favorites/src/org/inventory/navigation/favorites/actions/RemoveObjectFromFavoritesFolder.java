@@ -63,7 +63,7 @@ public class RemoveObjectFromFavoritesFolder extends GenericObjectNodeAction imp
         
         if (favoritesFolder!= null) {
             if (!favoritesFolder.isEmpty()) {
-                List<SubMenuItem> subMenuItems = new ArrayList();
+                List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalFavoritesFolder favoriteFolder : favoritesFolder) {
                     SubMenuItem subMenuItem = new SubMenuItem(favoriteFolder.toString());
                     subMenuItem.addProperty(Constants.PROPERTY_ID, favoriteFolder.getId());
@@ -92,8 +92,8 @@ public class RemoveObjectFromFavoritesFolder extends GenericObjectNodeAction imp
 
                 Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
 
-                List<String> objClass = new ArrayList();
-                List<Long> objId = new ArrayList();
+                List<String> objClass = new ArrayList<>();
+                List<Long> objId = new ArrayList<>();
 
                 boolean success = true;
                 while (selectedNodes.hasNext()) {

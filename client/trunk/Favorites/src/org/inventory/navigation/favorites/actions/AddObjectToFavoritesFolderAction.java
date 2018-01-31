@@ -81,8 +81,8 @@ public class AddObjectToFavoritesFolderAction extends GenericObjectNodeAction im
             if (selectedValue == null)
                 JOptionPane.showMessageDialog(null, I18N.gm("select_a_favorites_folder"));
             else {
-                List<String> objectsClassName = new ArrayList();
-                List<Long> objectsId = new ArrayList();
+                List<String> objectsClassName = new ArrayList<>();
+                List<Long> objectsId = new ArrayList<>();
                 
                 for (LocalObjectLight selectedObject : selectedObjects) {
                     objectsClassName.add(selectedObject.getClassName());

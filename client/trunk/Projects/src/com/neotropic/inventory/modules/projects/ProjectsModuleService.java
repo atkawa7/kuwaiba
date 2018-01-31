@@ -44,7 +44,7 @@ public class ProjectsModuleService {
         if (projectPools == null)
             return null;
         
-        List<LocalObjectLight> result = new ArrayList();
+        List<LocalObjectLight> result = new ArrayList<>();
         
         for (LocalPool projectPool : projectPools) {
             List<LocalObjectLight> projects = CommunicationsStub.getInstance().getPoolItems(projectPool.getOid());

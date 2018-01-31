@@ -70,7 +70,7 @@ public abstract class Shape implements Transferable {
     private final List<PropertyChangeListener> propertyChangeListeners;
     
     public Shape() {
-        propertyChangeListeners = new ArrayList();
+        propertyChangeListeners = new ArrayList<>();
         
         id = counter;
         counter += 1;
