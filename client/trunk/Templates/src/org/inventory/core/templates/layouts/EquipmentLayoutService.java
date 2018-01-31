@@ -27,7 +27,7 @@ import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
 
 /**
- *
+ * The service class associated to the main device layout edition component
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class EquipmentLayoutService {
@@ -75,10 +75,10 @@ public class EquipmentLayoutService {
             if (viewId != -1) { //Success
                 layoutView = new LocalObjectView(viewId, "EquipmentLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
-                    NotificationUtil.INFO_MESSAGE, "The device layout was saved successfully");
+                    NotificationUtil.INFO_MESSAGE, I18N.gm("device_layout_saved_successfully"));
                 
                 LayoutOutputManager.getInstance().getLayoutOutput(getModel())
-                    .printLine("The device layout was saved successfully", Color.GREEN);
+                    .printLine(I18N.gm("device_layout_saved_successfully"), Color.GREEN);
                 return true;
             } else {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
@@ -88,10 +88,10 @@ public class EquipmentLayoutService {
         } else {
             if (CommunicationsStub.getInstance().updateListTypeItemRelatedView(model.getId(), model.getClassName(), 
                 layoutView.getId(), null, null, structure, scene.getBackgroundImage())) {
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "The device layout was saved successfully");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, I18N.gm("device_layout_saved_successfully"));
                 
                 LayoutOutputManager.getInstance().getLayoutOutput(getModel())
-                    .printLine("The device layout was saved successfully", Color.GREEN);
+                    .printLine(I18N.gm("device_layout_saved_successfully"), Color.GREEN);
                 return true;
             } else {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
