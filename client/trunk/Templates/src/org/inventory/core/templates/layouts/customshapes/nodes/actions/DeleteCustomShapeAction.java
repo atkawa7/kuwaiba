@@ -35,7 +35,7 @@ import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 
 /**
- *
+ * This action deletes custom shape items
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class DeleteCustomShapeAction extends GenericInventoryAction implements Presenter.Popup {

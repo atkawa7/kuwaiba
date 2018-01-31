@@ -19,6 +19,7 @@ package org.inventory.core.templates.layouts.widgets.providers;
 import java.awt.Point;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import org.inventory.core.templates.layouts.lookup.SharedContentLookup;
 import org.inventory.core.templates.layouts.model.CustomShape;
@@ -30,7 +31,7 @@ import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * Provider used to accept the drag and drop of shapes in the scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class DeviceLayoutAcceptProviderToShapes implements AcceptProvider {
@@ -74,6 +75,8 @@ public class DeviceLayoutAcceptProviderToShapes implements AcceptProvider {
                     ((SharedContentLookup) newWidget).fixLookup();
             }
         }
+        if (widget.getScene() instanceof DeviceLayoutScene)
+            ((DeviceLayoutScene) widget.getScene()).fireChangeEvent(new ActionEvent(this, DeviceLayoutScene.SCENE_CHANGE, "Shape change"));
     }
         
 }

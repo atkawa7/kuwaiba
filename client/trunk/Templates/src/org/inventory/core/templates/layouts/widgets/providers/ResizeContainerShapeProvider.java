@@ -19,6 +19,7 @@ package org.inventory.core.templates.layouts.widgets.providers;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 import org.inventory.core.templates.layouts.LayoutOutputManager;
@@ -169,6 +170,7 @@ public class ResizeContainerShapeProvider implements ResizeProvider, ResizeStrat
                     resizeShapeWidgetProvider.firePropertyChange(innerShape, innerWidget);
                 }
                 ShapeWidgetUtil.makingVisibleChanges(widget);
+                scene.fireChangeEvent(new ActionEvent(this, DeviceLayoutScene.SCENE_CHANGE, "Shape change"));
             }
         }
     }

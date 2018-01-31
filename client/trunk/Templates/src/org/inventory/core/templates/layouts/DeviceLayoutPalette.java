@@ -48,7 +48,7 @@ import org.openide.util.Lookup;
 import org.openide.util.datatransfer.ExTransferable;
 
 /**
- *
+ * Class to represent an instance of palette controller
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class DeviceLayoutPalette {

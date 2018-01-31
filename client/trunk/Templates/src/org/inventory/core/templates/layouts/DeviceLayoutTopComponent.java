@@ -229,11 +229,6 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
             btnDelete.setEnabled(true);
             setSaved(true);
         }
-        
-        
-//        new LayoutOutput("Layout Output", service.getModel());
-////        StatusDisplayer.getDefault()..setStatusText("saved!!!");
-        
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnShowPaletteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowPaletteActionPerformed
@@ -268,7 +263,7 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
     }//GEN-LAST:event_btnCleanActionPerformed
 
     private void btnGroupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGroupActionPerformed
-        service.getScene().addContainerShape();
+        service.getScene().setAddContainerShape(true);
     }//GEN-LAST:event_btnGroupActionPerformed
 
     private void btnShowGuideActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowGuideActionPerformed
@@ -304,7 +299,7 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         btnShowPaletteActionPerformed(null);
 
         service.renderLayout();      
-        if (service.getLayoutView()== null)
+        if (service.getDeviceLayoutView()== null)
             btnDelete.setEnabled(false);
         
         service.getScene().addChangeListener(this);         
@@ -349,8 +344,6 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
                 
         SharedContent.getInstance().getInstanceContent()
             .set(Collections.singleton(DeviceLayoutPalette.getInstance().getPalette()), null);
-        
-        // btnShowPaletteActionPerformed(null);
     }
     
     @Override

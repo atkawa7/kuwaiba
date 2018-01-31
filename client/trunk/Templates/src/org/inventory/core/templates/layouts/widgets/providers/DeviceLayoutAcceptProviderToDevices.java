@@ -19,6 +19,7 @@ package org.inventory.core.templates.layouts.widgets.providers;
 import java.awt.Point;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -34,7 +35,7 @@ import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * Provider used to accept the drag and drop of devices in the scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class DeviceLayoutAcceptProviderToDevices implements AcceptProvider {
@@ -89,6 +90,8 @@ public class DeviceLayoutAcceptProviderToDevices implements AcceptProvider {
                 }
             }
         }
+        if (widget.getScene() instanceof DeviceLayoutScene)
+            ((DeviceLayoutScene) widget.getScene()).fireChangeEvent(new ActionEvent(this, DeviceLayoutScene.SCENE_CHANGE, "Shape change"));
     }
         
 }

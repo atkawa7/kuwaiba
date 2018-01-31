@@ -19,6 +19,7 @@ package org.inventory.core.templates.layouts.providers;
 import java.awt.Point;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -67,6 +68,7 @@ public class ShapeNameAcceptProvider implements AcceptProvider {
             shape.firePropertyChange(widget, Shape.PROPERTY_IS_EQUIPMENT, oldIsInventoryObj, shape.isEquipment());
             
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "Shape name set");
+            ((DeviceLayoutScene) widget.getScene()).fireChangeEvent(new ActionEvent(this, DeviceLayoutScene.SCENE_CHANGE, "Shape Paste"));
         }
     }
     

@@ -43,7 +43,7 @@ import org.openide.util.Exceptions;
 import org.openide.util.Utilities;
 
 /**
- *
+ * This action sets the icon for a Custom shape in the palette
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class SetPaletteIconAction extends GenericInventoryAction {

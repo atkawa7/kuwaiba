@@ -52,7 +52,7 @@ public class UngroupShapesAction extends GenericShapeAction {
                 scene.validate();
                 scene.paint();
                 
-                scene.fireChangeEvent(new ActionEvent(this, DeviceLayoutScene.SCENE_CHANGE, "Shape deleted"));
+                scene.fireChangeEvent(new ActionEvent(this, DeviceLayoutScene.SCENE_CHANGE, "Shapes ungrouped"));
             }
         }
     }

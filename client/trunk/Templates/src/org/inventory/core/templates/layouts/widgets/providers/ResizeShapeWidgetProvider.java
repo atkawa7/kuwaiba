@@ -19,6 +19,7 @@ package org.inventory.core.templates.layouts.widgets.providers;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import org.inventory.core.templates.layouts.LayoutOutputManager;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
@@ -27,7 +28,7 @@ import org.netbeans.api.visual.action.ResizeStrategy;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * Provider used to resize shapes
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ResizeShapeWidgetProvider implements ResizeProvider, ResizeStrategy {
@@ -93,6 +94,7 @@ public class ResizeShapeWidgetProvider implements ResizeProvider, ResizeStrategy
                         .printLine("The shape cannot be resized because the given size is out of bounds of layout", Color.RED);
                 }
                 firePropertyChange(shape, widget);
+                scene.fireChangeEvent(new ActionEvent(this, DeviceLayoutScene.SCENE_CHANGE, "Shape change"));
             }
         }        
     }

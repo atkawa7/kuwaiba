@@ -33,7 +33,7 @@ import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 public class DeviceLayoutService {
     private final LocalObjectListItem model;
     private final DeviceLayoutScene scene;
-    private LocalObjectView layoutView;
+    private LocalObjectView deviceLayoutView;
         
     public DeviceLayoutService(LocalObjectListItem model) {
         this.model = model;
@@ -48,19 +48,19 @@ public class DeviceLayoutService {
         return scene;
     }
     
-    public LocalObjectView getLayoutView() {
-        return layoutView;
+    public LocalObjectView getDeviceLayoutView() {
+        return deviceLayoutView;
     }
     
     public void renderLayout() {
         List<LocalObjectViewLight> relatedViews = CommunicationsStub.getInstance().getListTypeItemRelatedViews(model.getId(), model.getClassName());
         if (relatedViews != null) {
             if (relatedViews.isEmpty()) {
-                layoutView = null;
+                deviceLayoutView = null;
                 scene.render((byte[]) null);
             } else {
-                layoutView = CommunicationsStub.getInstance().getListTypeItemRelatedView(model.getId(), model.getClassName(), relatedViews.get(0).getId());
-                scene.render(layoutView.getStructure());
+                deviceLayoutView = CommunicationsStub.getInstance().getListTypeItemRelatedView(model.getId(), model.getClassName(), relatedViews.get(0).getId());
+                scene.render(deviceLayoutView.getStructure());
             }            
         } else
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
@@ -68,12 +68,12 @@ public class DeviceLayoutService {
     
     public boolean saveLayout() {
         byte[] structure = scene.getAsXML();
-        if (layoutView == null) {
+        if (deviceLayoutView == null) {
             long viewId = CommunicationsStub.getInstance().createListTypeItemRelateView(
                 model.getId(), model.getClassName(), "DeviceLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
             
             if (viewId != -1) { //Success
-                layoutView = new LocalObjectView(viewId, "DeviceLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
+                deviceLayoutView = new LocalObjectView(viewId, "DeviceLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
                     NotificationUtil.INFO_MESSAGE, I18N.gm("device_layout_saved_successfully"));
                 
@@ -87,7 +87,7 @@ public class DeviceLayoutService {
             }
         } else {
             if (CommunicationsStub.getInstance().updateListTypeItemRelatedView(model.getId(), model.getClassName(), 
-                layoutView.getId(), null, null, structure, scene.getBackgroundImage())) {
+                deviceLayoutView.getId(), null, null, structure, scene.getBackgroundImage())) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, I18N.gm("device_layout_saved_successfully"));
                 
                 LayoutOutputManager.getInstance().getLayoutOutput(getModel())
@@ -102,15 +102,14 @@ public class DeviceLayoutService {
     }
     
     public boolean deleteLayout() {
-        if (layoutView == null)
+        if (deviceLayoutView == null)
             return false;
         if (model == null)
             return false;
-        boolean deleted = CommunicationsStub.getInstance().deleteListTypeItemRelatedView(
-            model.getId(), model.getClassName(), layoutView.getId());
+        boolean deleted = CommunicationsStub.getInstance().deleteListTypeItemRelatedView(model.getId(), model.getClassName(), deviceLayoutView.getId());
         
         if (deleted)
-            layoutView = null;
+            deviceLayoutView = null;
         return deleted;
     }
 }

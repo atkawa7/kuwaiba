@@ -26,7 +26,7 @@ import org.openide.util.Utilities;
 import org.openide.windows.WindowManager;
 
 /**
- *
+ * This action shows the editor to custom the related device layout
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class EditCustomShapeLayoutAction extends GenericInventoryAction {
@@ -53,7 +53,7 @@ public class EditCustomShapeLayoutAction extends GenericInventoryAction {
                 topComponent.requestAttention(true);
             else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
                    //so we will reuse the instance, refreshing the vierw first
-////                topComponent.refresh();
+                //topComponent.refresh();
                 topComponent.open();
             }
         }

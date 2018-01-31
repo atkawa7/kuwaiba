@@ -18,6 +18,7 @@ package org.inventory.core.templates.layouts.scene.widgets.actions;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
+import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
@@ -57,6 +58,9 @@ public class BringToFrontOneStepAction extends GenericShapeAction {
             idxA = children.indexOf(oldFrontWidgetOneStep);
             idxB = children.indexOf(selectedWidget);            
         }
+        
+        if (selectedWidget.getScene() instanceof DeviceLayoutScene)
+            ((DeviceLayoutScene) selectedWidget.getScene()).fireChangeEvent(new ActionEvent(this, DeviceLayoutScene.SCENE_CHANGE, "Shape bring to front"));
     }
     
 }

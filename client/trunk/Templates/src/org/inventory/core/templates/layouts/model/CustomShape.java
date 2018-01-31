@@ -20,7 +20,7 @@ import java.awt.Image;
 import org.inventory.communications.core.LocalObjectListItem;
 
 /**
- *
+ * A custom shape is a predefined shape used the custom shape tool
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class CustomShape extends Shape {

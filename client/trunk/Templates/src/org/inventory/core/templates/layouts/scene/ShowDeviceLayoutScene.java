@@ -27,9 +27,9 @@ import org.netbeans.api.visual.widget.Widget;
  * Scene used to show a model layout
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class LayoutViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
+public class ShowDeviceLayoutScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
     
-    public LayoutViewScene() {
+    public ShowDeviceLayoutScene() {
         
         getActions().addAction(ActionFactory.createZoomAction());
         getInputBindings().setZoomActionModifiers(0); //No keystroke combinations

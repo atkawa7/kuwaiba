@@ -132,6 +132,7 @@ public class PasteShapeAction extends GenericShapeAction {
                         scene.validate();
                         scene.paint();
                     }
+                    scene.fireChangeEvent(new ActionEvent(this, DeviceLayoutScene.SCENE_CHANGE, "Shape Paste"));
                 }
             }
         }

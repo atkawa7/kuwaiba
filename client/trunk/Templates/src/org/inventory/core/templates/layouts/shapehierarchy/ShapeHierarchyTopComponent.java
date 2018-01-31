@@ -18,12 +18,9 @@ package org.inventory.core.templates.layouts.shapehierarchy;
 
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.core.templates.layouts.model.Shape;
-import org.inventory.core.templates.layouts.nodes.ShapeHierarchyChildren;
 import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.BeanTreeView;
-import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Node;
 import org.openide.windows.TopComponent;
 import org.openide.windows.Mode;

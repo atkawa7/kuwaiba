@@ -47,7 +47,7 @@ public class ShapeSelectProvider implements SelectProvider {
     }
 
     @Override
-    public void select (Widget widget, Point localLocation, boolean invertSelection) {        
+    public void select (Widget widget, Point localLocation, boolean invertSelection) {                  
         DeviceLayoutScene scene = ((DeviceLayoutScene) widget.getScene());
 
         Object object = scene.findObject (widget);

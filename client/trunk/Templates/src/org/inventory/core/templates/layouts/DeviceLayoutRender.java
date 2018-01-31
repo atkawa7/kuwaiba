@@ -61,7 +61,7 @@ import org.openide.util.Exceptions;
  * Class used to render a model type portWidget in any scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class RenderDeviceLayout {
+public class DeviceLayoutRender {
     /**
      * List of classes that has a default device layout
      */
@@ -96,7 +96,7 @@ public class RenderDeviceLayout {
      */
     private final HashMap<LocalObjectLight, List<LocalObjectLight>> nodes = new HashMap();
         
-    public RenderDeviceLayout(LocalObjectLight deviceToRender, Widget parentWidget, Point location, Rectangle bounds) {
+    public DeviceLayoutRender(LocalObjectLight deviceToRender, Widget parentWidget, Point location, Rectangle bounds) {
         this.deviceToRender = deviceToRender;
         this.parentWidget = parentWidget;
         this.bounds = bounds;
@@ -633,7 +633,7 @@ public class RenderDeviceLayout {
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 continue;
             }
-            RenderDeviceLayout render = new RenderDeviceLayout(child, widget, new Point(0, 0), widget.getPreferredBounds());
+            DeviceLayoutRender render = new DeviceLayoutRender(child, widget, new Point(0, 0), widget.getPreferredBounds());
             
             if (lcm.hasAttribute("model")) {
                 LocalObject localObj = CommunicationsStub.getInstance().getObjectInfo(child.getClassName(), child.getOid());

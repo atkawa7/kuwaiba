@@ -18,6 +18,7 @@ package org.inventory.core.templates.layouts.widgets.providers;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
 import org.inventory.core.templates.layouts.LayoutOutputManager;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
@@ -25,7 +26,7 @@ import org.netbeans.api.visual.action.MoveProvider;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
- *
+ * Provided used to Move a Shape
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class MoveShapeWidgetProvider implements MoveProvider {
@@ -63,6 +64,9 @@ public class MoveShapeWidgetProvider implements MoveProvider {
                 shape.firePropertyChange(widget, Shape.PROPERTY_Y, startPoint.y, finishPoint.y);
             }
         }
+        
+        if (widget.getScene() instanceof DeviceLayoutScene)
+            ((DeviceLayoutScene) widget.getScene()).fireChangeEvent(new ActionEvent(this, DeviceLayoutScene.SCENE_CHANGE, "Shape change"));
     }
 
     @Override

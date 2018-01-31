@@ -17,6 +17,7 @@
 package org.inventory.core.templates.layouts.scene.widgets.actions;
 
 import java.awt.event.ActionEvent;
+import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 
 /**
  * Action used to Bring to Back a Shape
@@ -36,6 +37,9 @@ public class BringToBackAction extends GenericShapeAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         selectedWidget.bringToBack();
+        
+        if (selectedWidget.getScene() instanceof DeviceLayoutScene)
+            ((DeviceLayoutScene) selectedWidget.getScene()).fireChangeEvent(new ActionEvent(this, DeviceLayoutScene.SCENE_CHANGE, "Shape bring to back"));
     }
     
 }

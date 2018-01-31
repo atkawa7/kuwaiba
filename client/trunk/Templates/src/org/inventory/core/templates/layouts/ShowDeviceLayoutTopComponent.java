@@ -30,7 +30,7 @@ import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
-import org.inventory.core.templates.layouts.scene.LayoutViewScene;
+import org.inventory.core.templates.layouts.scene.ShowDeviceLayoutScene;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.openide.DialogDescriptor;
@@ -46,7 +46,7 @@ import org.openide.windows.TopComponent;
         autostore = false
 )
 public final class ShowDeviceLayoutTopComponent extends TopComponent {
-    private LayoutViewScene scene;
+    private ShowDeviceLayoutScene scene;
     private LocalObjectLight objectLight;
     
     KeyEventDispatcher keyEventDispatcher;
@@ -61,7 +61,7 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
         
         setName(String.format("Device Layout for %s", objectLight.getName()));
         
-        scene = new LayoutViewScene();
+        scene = new ShowDeviceLayoutScene();
         associateLookup(scene.getLookup());
         scene.setLayout(LayoutFactory.createAbsoluteLayout());
         pnlScrollPane.setViewportView(scene.createView());
@@ -188,7 +188,7 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        RenderDeviceLayout renderDeviceLayout = new RenderDeviceLayout(objectLight, scene, 
+        DeviceLayoutRender renderDeviceLayout = new DeviceLayoutRender(objectLight, scene, 
             new Point(0, 0), new Rectangle(0, 0, 1000, 100));
         
         if (renderDeviceLayout.getEquipmentModelView() == null && !renderDeviceLayout.hasDefaultDeviceLayout()) {

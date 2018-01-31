@@ -17,7 +17,7 @@
 package org.inventory.core.templates.layouts.model;
 
 /**
- *
+ * A Container Shape is a set of shapes grouped into the container
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ContainerShape extends Shape {

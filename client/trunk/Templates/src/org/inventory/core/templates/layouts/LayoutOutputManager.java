@@ -26,7 +26,7 @@ import org.openide.windows.IOProvider;
 import org.openide.windows.InputOutput;
 
 /**
- * Manager to show in a output top component messages from the layout designer
+ * Manager to show in an output top component, messages from the layout designer
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class LayoutOutputManager {

@@ -77,6 +77,7 @@ public class GroupShapesAction extends GenericShapeAction {
                 }
             }            
             ((ContainerShapeWidget) selectedWidget).setShapesSet(shapesSet);
+            scene.fireChangeEvent(new ActionEvent(this, DeviceLayoutScene.SCENE_CHANGE, "Shape Paste"));
         }
     }
 }

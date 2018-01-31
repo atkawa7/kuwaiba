@@ -67,6 +67,7 @@ import org.inventory.core.visual.scene.AbstractScene;
 import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.PopupMenuProvider;
+import org.netbeans.api.visual.action.SelectProvider;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.LayerWidget;
@@ -86,6 +87,8 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
     private LayerWidget guideLayer;
     private final LocalObjectListItem model;
     
+    private boolean addContainer = false;
+    
     public DeviceLayoutScene(LocalObjectListItem model) {
         this.model = model;
         
@@ -93,6 +96,25 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
         guideLayer = new LayerWidget(this);
         addChild(guideLayer);
         addChild(nodeLayer);
+        
+        getActions().addAction(ActionFactory.createSelectAction(new SelectProvider() {
+
+            @Override
+            public boolean isAimingAllowed(Widget widget, Point localLocation, boolean invertSelection) {
+                return false;
+            }
+
+            @Override
+            public boolean isSelectionAllowed(Widget widget, Point localLocation, boolean invertSelection) {
+                return addContainer;
+            }
+
+            @Override
+            public void select(Widget widget, Point localLocation, boolean invertSelection) {
+                addContainer = false;
+                addContainerShape(widget.convertLocalToScene(localLocation));
+            }
+        }));
         
         getActions().addAction(ActionFactory.createZoomAction());
         getInputBindings().setZoomActionModifiers(0); //No keystroke combinations
@@ -111,14 +133,15 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
                 PasteShapeAction.getInstance().setLocation(localLocation);
                 return popupMenu;
             }
-        }));
-                
+        }));                
         getActions().addAction(ActionFactory.createAcceptAction(new DeviceLayoutAcceptProviderToShapes()));
         getActions().addAction(ActionFactory.createAcceptAction(new DeviceLayoutAcceptProviderToDevices()));
+        
         customShapes = new ArrayList();
         initSelectionListener();
         initGuideLayer();
-    }
+    }    
+    
     
     public LayerWidget getGuideLayer() {
         return guideLayer;
@@ -133,12 +156,11 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
         
         int rackUnitWidth = 1086 * 3;
         int rackUnitHeight = 100 * 3;
-        int spanHeight = 15 * 3;
+        int spanHeight = 15;
         
         for (int i = 0; i < 5; i += 1) {
             Widget rackUnitGuide = new Widget(this);
             rackUnitGuide.setOpaque(true);
-            //rackUnitGuide.setBackground(Color.BLUE);
             rackUnitGuide.setBorder(BorderFactory.createDashedBorder(Color.LIGHT_GRAY, 
                 Shape.DEFAULT_BORDER_SIZE, Shape.DEFAULT_BORDER_SIZE, true));
             rackUnitGuide.setPreferredBounds(new Rectangle(-Shape.DEFAULT_BORDER_SIZE, -Shape.DEFAULT_BORDER_SIZE, rackUnitWidth, rackUnitHeight));
@@ -154,18 +176,20 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
         }
     }
     
-    public void addContainerShape() {
+    public void setAddContainerShape(boolean addContainer) {
+        this.addContainer = addContainer;
+    }
+    
+    private void addContainerShape(Point location) {
         Shape shape = new ContainerShape();
-        shape.setX(50);
-        shape.setX(50);
+        shape.setX(location.x);
+        shape.setY(location.y);
         shape.setWidth(Shape.DEFAULT_WITH);
         shape.setHeight(Shape.DEFAULT_HEIGHT);
         shape.setBorderWidth(-Shape.DEFAULT_BORDER_SIZE);
         
         addNode(shape);
     }
-    
-        
     
     private boolean isInnerShape(Shape shape) {
         for (CustomShape customShape : customShapes) {

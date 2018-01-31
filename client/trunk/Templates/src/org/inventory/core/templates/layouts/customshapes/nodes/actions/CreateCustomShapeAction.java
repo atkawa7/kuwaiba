@@ -34,7 +34,7 @@ import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.openide.util.Utilities;
 
 /**
- *
+ * This action crates custom shape items
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class CreateCustomShapeAction extends GenericInventoryAction {
