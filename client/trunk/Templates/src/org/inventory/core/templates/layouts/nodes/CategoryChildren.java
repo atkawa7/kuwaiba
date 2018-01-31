@@ -16,7 +16,7 @@
  */
 package org.inventory.core.templates.layouts.nodes;
 
-import org.inventory.core.templates.layouts.EquipmentLayoutPalette;
+import org.inventory.core.templates.layouts.DeviceLayoutPalette;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 
@@ -32,7 +32,7 @@ public class CategoryChildren extends Children.Keys {
     @Override
     protected void addNotify() {
         super.addNotify();
-        setKeys(EquipmentLayoutPalette.shapes.keySet());
+        setKeys(DeviceLayoutPalette.shapes.keySet());
     }
     
     @Override

@@ -26,7 +26,7 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.core.templates.layouts.EquipmentLayoutTopComponent;
+import org.inventory.core.templates.layouts.DeviceLayoutTopComponent;
 import org.inventory.core.templates.nodes.TemplateElementNode;
 import org.openide.util.Utilities;
 import org.openide.windows.WindowManager;
@@ -115,12 +115,12 @@ public class EditLayoutAction extends GenericInventoryAction {
             return;
         }
         
-////        EquipmentLayoutTopComponentOld topComponent = (EquipmentLayoutTopComponentOld) WindowManager.getDefault().findTopComponent(EquipmentLayoutTopComponentOld.ID + model.getId());
-        EquipmentLayoutTopComponent topComponent = (EquipmentLayoutTopComponent) WindowManager.getDefault().findTopComponent(EquipmentLayoutTopComponent.ID + model.getId());
+////        DeviceLayoutTopComponentOld topComponent = (DeviceLayoutTopComponentOld) WindowManager.getDefault().findTopComponent(DeviceLayoutTopComponentOld.ID + model.getId());
+        DeviceLayoutTopComponent topComponent = (DeviceLayoutTopComponent) WindowManager.getDefault().findTopComponent(DeviceLayoutTopComponent.ID + model.getId());
         
         if (topComponent == null) {
-////            topComponent = new EquipmentLayoutTopComponentOld(model);
-            topComponent = new EquipmentLayoutTopComponent(model);
+////            topComponent = new DeviceLayoutTopComponentOld(model);
+            topComponent = new DeviceLayoutTopComponent(model);
             topComponent.open();
         } else {
             if (topComponent.isOpened())

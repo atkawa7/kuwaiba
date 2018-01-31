@@ -51,17 +51,17 @@ import org.openide.util.datatransfer.ExTransferable;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class EquipmentLayoutPalette {
+public class DeviceLayoutPalette {
     public static final HashMap<String, Shape []> shapes = new HashMap();
     
-    private static EquipmentLayoutPalette instance;
+    private static DeviceLayoutPalette instance;
     private PaletteController paletteController;
     
-    private EquipmentLayoutPalette() {
+    private DeviceLayoutPalette() {
     }
     
-    public static EquipmentLayoutPalette getInstance() {
-        return instance == null ? instance = new EquipmentLayoutPalette() : instance;
+    public static DeviceLayoutPalette getInstance() {
+        return instance == null ? instance = new DeviceLayoutPalette() : instance;
     }
     
     public PaletteController getPalette() {
@@ -74,7 +74,7 @@ public class EquipmentLayoutPalette {
                 
         AbstractNode paletteRoot = new AbstractNode(new CategoryChildren());
         paletteRoot.setDisplayName(I18N.gm("palette_root_display_name"));
-        paletteController = PaletteFactory.createPalette(paletteRoot, new EquipmentLayoutPalette.CustomPaletteActions(), null, new EquipmentLayoutPalette.CustomDragAndDropHandler());
+        paletteController = PaletteFactory.createPalette(paletteRoot, new DeviceLayoutPalette.CustomPaletteActions(), null, new DeviceLayoutPalette.CustomDragAndDropHandler());
         
         return paletteController;
     }

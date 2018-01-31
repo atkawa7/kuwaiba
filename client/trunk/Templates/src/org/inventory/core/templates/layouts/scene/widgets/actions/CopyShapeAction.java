@@ -20,7 +20,7 @@ import java.awt.event.ActionEvent;
 import static javax.swing.Action.NAME;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.model.Shape;
-import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 
 /**
  * Action used to Copy Shapes
@@ -45,7 +45,7 @@ public class CopyShapeAction extends GenericShapeAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (selectedWidget != null) {
-            EquipmentLayoutScene scene = (EquipmentLayoutScene) selectedWidget.getScene();
+            DeviceLayoutScene scene = (DeviceLayoutScene) selectedWidget.getScene();
             
             Object obj = scene.findObject(selectedWidget);
             

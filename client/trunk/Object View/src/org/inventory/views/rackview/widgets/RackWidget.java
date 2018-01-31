@@ -396,7 +396,7 @@ public class RackWidget extends SelectableRackViewWidget {
                     new Point(Constants.DEVICE_LAYOUT_RESIZE_BORDER_SIZE, Constants.DEVICE_LAYOUT_RESIZE_BORDER_SIZE), 
                     new Rectangle(0, 0, width, height));
                 
-                if (render.hasEquipmentModelLayout() || render.hasDefaultDeviceLayout()) {
+                if (render.hasDeviceLayout() || render.hasDefaultDeviceLayout()) {
                     render.render();
                     equipmentWidget = (EquipmentWidget) render.getDeviceLayoutWidget();
                     equipmentWidget.setHasLayout(true);

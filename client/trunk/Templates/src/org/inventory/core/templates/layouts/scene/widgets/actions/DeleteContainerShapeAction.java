@@ -25,7 +25,7 @@ import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.ImageIconResource;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.widgets.ContainerShapeWidget;
-import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 import org.openide.util.actions.Presenter;
 
 /**
@@ -55,7 +55,7 @@ public class DeleteContainerShapeAction extends GenericShapeAction implements Pr
     public void actionPerformed(ActionEvent e) {
         if (selectedWidget != null) {
             if (selectedWidget instanceof ContainerShapeWidget) {
-                EquipmentLayoutScene scene = (EquipmentLayoutScene) selectedWidget.getScene();
+                DeviceLayoutScene scene = (DeviceLayoutScene) selectedWidget.getScene();
                 Object obj = scene.findObject(selectedWidget);
                 
                 if (obj != null && obj instanceof Shape) {
@@ -69,7 +69,7 @@ public class DeleteContainerShapeAction extends GenericShapeAction implements Pr
                     scene.validate();
                     scene.paint();
 
-                    scene.fireChangeEvent(new ActionEvent(this, EquipmentLayoutScene.SCENE_CHANGE, "Shape deleted"));
+                    scene.fireChangeEvent(new ActionEvent(this, DeviceLayoutScene.SCENE_CHANGE, "Shape deleted"));
                 }
             }
         }

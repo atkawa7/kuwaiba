@@ -21,4 +21,4 @@ import org.inventory.core.services.api.behaviors.ConfigurationObject;
  * Configuration object to model layout
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class EquipmentLayoutConfigurationObject extends ConfigurationObject {}
+public class DeviceLayoutConfigurationObject extends ConfigurationObject {}

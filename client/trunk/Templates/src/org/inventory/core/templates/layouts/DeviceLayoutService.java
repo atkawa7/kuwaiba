@@ -24,27 +24,27 @@ import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 
 /**
  * The service class associated to the main device layout edition component
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class EquipmentLayoutService {
+public class DeviceLayoutService {
     private final LocalObjectListItem model;
-    private final EquipmentLayoutScene scene;
+    private final DeviceLayoutScene scene;
     private LocalObjectView layoutView;
         
-    public EquipmentLayoutService(LocalObjectListItem model) {
+    public DeviceLayoutService(LocalObjectListItem model) {
         this.model = model;
-        this.scene = new EquipmentLayoutScene(model);
+        this.scene = new DeviceLayoutScene(model);
     }
     
     public LocalObjectListItem getModel() {
         return model;
     }
     
-    public EquipmentLayoutScene getScene() {
+    public DeviceLayoutScene getScene() {
         return scene;
     }
     
@@ -70,10 +70,10 @@ public class EquipmentLayoutService {
         byte[] structure = scene.getAsXML();
         if (layoutView == null) {
             long viewId = CommunicationsStub.getInstance().createListTypeItemRelateView(
-                model.getId(), model.getClassName(), "EquipmentLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
+                model.getId(), model.getClassName(), "DeviceLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
             
             if (viewId != -1) { //Success
-                layoutView = new LocalObjectView(viewId, "EquipmentLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
+                layoutView = new LocalObjectView(viewId, "DeviceLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
                     NotificationUtil.INFO_MESSAGE, I18N.gm("device_layout_saved_successfully"));
                 

@@ -21,7 +21,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import org.inventory.core.templates.layouts.LayoutOutputManager;
 import org.inventory.core.templates.layouts.model.Shape;
-import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 import org.netbeans.api.visual.action.ResizeProvider;
 import org.netbeans.api.visual.action.ResizeStrategy;
 import org.netbeans.api.visual.widget.Widget;
@@ -61,8 +61,8 @@ public class ResizeShapeWidgetProvider implements ResizeProvider, ResizeStrategy
             return;
         }
         
-        if (widget.getScene() instanceof EquipmentLayoutScene) {
-            EquipmentLayoutScene scene = (EquipmentLayoutScene) widget.getScene();
+        if (widget.getScene() instanceof DeviceLayoutScene) {
+            DeviceLayoutScene scene = (DeviceLayoutScene) widget.getScene();
             Shape shape = (Shape) scene.findObject(widget);
             
             if (shape != null) {

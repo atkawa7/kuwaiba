@@ -29,7 +29,7 @@ import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.widgets.ContainerShapeWidget;
 import org.inventory.core.templates.layouts.widgets.providers.MoveContainerShapeProvider;
 import org.inventory.core.templates.layouts.widgets.providers.ResizeContainerShapeProvider;
-import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
@@ -68,12 +68,12 @@ public class PasteShapeAction extends GenericShapeAction {
     public void actionPerformed(ActionEvent e) {
         if (selectedWidget != null) {
             if (location != null) {
-                EquipmentLayoutScene scene = null;
+                DeviceLayoutScene scene = null;
                 
-                if (selectedWidget instanceof EquipmentLayoutScene)
-                    scene = (EquipmentLayoutScene) selectedWidget;
-                else if (selectedWidget.getScene() instanceof EquipmentLayoutScene) {
-                    scene = (EquipmentLayoutScene) selectedWidget.getScene();
+                if (selectedWidget instanceof DeviceLayoutScene)
+                    scene = (DeviceLayoutScene) selectedWidget;
+                else if (selectedWidget.getScene() instanceof DeviceLayoutScene) {
+                    scene = (DeviceLayoutScene) selectedWidget.getScene();
                     location = selectedWidget.convertLocalToScene(location);
                 }
                                     

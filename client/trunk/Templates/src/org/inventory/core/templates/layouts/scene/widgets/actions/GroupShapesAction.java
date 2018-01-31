@@ -23,7 +23,7 @@ import java.util.List;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.widgets.ContainerShapeWidget;
-import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 import org.netbeans.api.visual.widget.Widget;
 
 /**
@@ -44,10 +44,10 @@ public class GroupShapesAction extends GenericShapeAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (selectedWidget instanceof ContainerShapeWidget) {
-            if (!(selectedWidget.getScene() instanceof EquipmentLayoutScene))
+            if (!(selectedWidget.getScene() instanceof DeviceLayoutScene))
                 return;
             
-            EquipmentLayoutScene scene = (EquipmentLayoutScene) selectedWidget.getScene();
+            DeviceLayoutScene scene = (DeviceLayoutScene) selectedWidget.getScene();
             
             Rectangle selectedWidgetLocalBounds = selectedWidget.getBounds();
                         

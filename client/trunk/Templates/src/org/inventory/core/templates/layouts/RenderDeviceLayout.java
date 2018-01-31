@@ -103,14 +103,14 @@ public class RenderDeviceLayout {
         
         this.location = location;
         errorMessage = null;
-        initializeRenderEquipmentModelLayout();
+        initializeRenderDeviceLayout();
     }
     
     public void setOriginalSize(boolean originalSize) {
         this.originalSize = originalSize;
     }
     
-    public boolean hasEquipmentModelLayout() {
+    public boolean hasDeviceLayout() {
         return deviceLayoutObj != null;
     }
     
@@ -161,7 +161,7 @@ public class RenderDeviceLayout {
         return null;
     }
     
-    private void initializeRenderEquipmentModelLayout() {
+    private void initializeRenderDeviceLayout() {
         deviceModel = getEquipmentModel();
         
         if (deviceModel == null)

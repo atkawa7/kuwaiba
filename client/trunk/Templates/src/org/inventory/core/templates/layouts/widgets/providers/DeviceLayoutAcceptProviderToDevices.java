@@ -23,12 +23,12 @@ import java.io.IOException;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.core.templates.layouts.EquipmentLayoutPalette;
+import org.inventory.core.templates.layouts.DeviceLayoutPalette;
 import org.inventory.core.templates.layouts.lookup.SharedContentLookup;
 import org.inventory.core.templates.layouts.model.CustomShape;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.model.ShapeFactory;
-import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.widget.Widget;
@@ -57,11 +57,11 @@ public class DeviceLayoutAcceptProviderToDevices implements AcceptProvider {
         } catch (UnsupportedFlavorException | IOException ex) {
             return;
         }
-        EquipmentLayoutScene scene;
-        if (widget.getScene() instanceof EquipmentLayoutScene) {
-            scene = (EquipmentLayoutScene) widget.getScene();
+        DeviceLayoutScene scene;
+        if (widget.getScene() instanceof DeviceLayoutScene) {
+            scene = (DeviceLayoutScene) widget.getScene();
             
-            Shape shapeTransferred = EquipmentLayoutPalette.getInstance().getPalette().getSelectedItem().lookup(Shape.class);
+            Shape shapeTransferred = DeviceLayoutPalette.getInstance().getPalette().getSelectedItem().lookup(Shape.class);
             if (shapeTransferred == null)
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
                     NotificationUtil.INFO_MESSAGE, "Select a shape from the palette");

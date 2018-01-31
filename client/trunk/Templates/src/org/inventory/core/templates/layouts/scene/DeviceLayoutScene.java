@@ -79,14 +79,14 @@ import org.openide.util.Lookup;
  * Scene used to design an Equipment Layout 
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class EquipmentLayoutScene extends AbstractScene<Shape, String> implements SharedContentLookup {
+public class DeviceLayoutScene extends AbstractScene<Shape, String> implements SharedContentLookup {
     private final List<CustomShape> customShapes;
     private final ShapeNameAcceptProvider shapeNameAcceptProvider = new ShapeNameAcceptProvider();
     
     private LayerWidget guideLayer;
     private final LocalObjectListItem model;
     
-    public EquipmentLayoutScene(LocalObjectListItem model) {
+    public DeviceLayoutScene(LocalObjectListItem model) {
         this.model = model;
         
         nodeLayer = new LayerWidget(this);        

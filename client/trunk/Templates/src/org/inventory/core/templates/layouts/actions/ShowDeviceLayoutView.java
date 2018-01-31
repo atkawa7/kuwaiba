@@ -59,21 +59,21 @@ public class ShowDeviceLayoutView extends GenericObjectNodeAction {
         }
         
         for (LocalObjectLight lol : selectedObjects) {
-            ShowDeviceLayoutTopComponent modelLayoutView = ((ShowDeviceLayoutTopComponent) WindowManager.
+            ShowDeviceLayoutTopComponent devicelayoutView = ((ShowDeviceLayoutTopComponent) WindowManager.
                 getDefault().findTopComponent("ShowDeviceLayoutTopComponent_" + lol.getOid())); //NOI18N
             
-            if (modelLayoutView == null) {
-                modelLayoutView = new ShowDeviceLayoutTopComponent(lol);
-                modelLayoutView.open();
+            if (devicelayoutView == null) {
+                devicelayoutView = new ShowDeviceLayoutTopComponent(lol);
+                devicelayoutView.open();
             } else {
-                if (modelLayoutView.isOpened())
-                    modelLayoutView.requestAttention(true);
+                if (devicelayoutView.isOpened())
+                    devicelayoutView.requestAttention(true);
                 else  //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
                        //so we will reuse the instance, refreshing the vierw first
-                    modelLayoutView.open();
+                    devicelayoutView.open();
                 
             }
-            modelLayoutView.requestActive();
+            devicelayoutView.requestActive();
         }
     }
 

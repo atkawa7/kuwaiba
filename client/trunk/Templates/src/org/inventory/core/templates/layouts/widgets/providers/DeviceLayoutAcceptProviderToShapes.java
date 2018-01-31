@@ -24,7 +24,7 @@ import org.inventory.core.templates.layouts.lookup.SharedContentLookup;
 import org.inventory.core.templates.layouts.model.CustomShape;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.model.ShapeFactory;
-import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.widget.Widget;
@@ -50,9 +50,9 @@ public class DeviceLayoutAcceptProviderToShapes implements AcceptProvider {
         } catch (UnsupportedFlavorException | IOException ex) {
             return;
         }
-        EquipmentLayoutScene scene;
-        if (widget.getScene() instanceof EquipmentLayoutScene) {
-            scene = (EquipmentLayoutScene) widget.getScene();
+        DeviceLayoutScene scene;
+        if (widget.getScene() instanceof DeviceLayoutScene) {
+            scene = (DeviceLayoutScene) widget.getScene();
             
             Shape shape = null;
             if (shapeTransferred instanceof CustomShape)

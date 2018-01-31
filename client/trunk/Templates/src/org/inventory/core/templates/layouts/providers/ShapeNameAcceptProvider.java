@@ -24,7 +24,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.model.Shape;
-import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 import org.netbeans.api.visual.action.AcceptProvider;
 import org.netbeans.api.visual.action.ConnectorState;
 import org.netbeans.api.visual.widget.Widget;
@@ -49,14 +49,14 @@ public class ShapeNameAcceptProvider implements AcceptProvider {
 
     @Override
     public void accept(Widget widget, Point point, Transferable transferable) {
-        if (widget.getScene() instanceof EquipmentLayoutScene) {
+        if (widget.getScene() instanceof DeviceLayoutScene) {
             LocalObjectLight lol = null;
             try {
                 lol = (LocalObjectLight) transferable.getTransferData(LocalObjectLight.DATA_FLAVOR);
             } catch (UnsupportedFlavorException | IOException ex) {
                 Exceptions.printStackTrace(ex);
             }
-            Shape shape = (Shape) ((EquipmentLayoutScene) widget.getScene()).findObject(widget);
+            Shape shape = (Shape) ((DeviceLayoutScene) widget.getScene()).findObject(widget);
             
             String oldName = shape.getName();
             shape.setName(lol != null ? lol.getName() : "");

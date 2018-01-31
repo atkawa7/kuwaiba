@@ -71,14 +71,7 @@ public class ShapeWidgetUtil {
             if (bounds == null) 
                 return;
             int newWidthValue = (Integer) evt.getNewValue();
-            widget.setPreferredSize(new Dimension(newWidthValue, bounds.height));
-                        
-////            if (scene instanceof ModelLayoutScene) {
-////                int oldWidthValue = (Integer) evt.getOldValue();
-////                
-////                double widthPercentage = Double.parseDouble(Integer.toString(newWidthValue)) / Double.parseDouble(Integer.toString(oldWidthValue));
-////                ((ModelLayoutScene) scene).updateWidget(widget, widthPercentage, 1);
-////            }            
+            widget.setPreferredSize(new Dimension(newWidthValue, bounds.height));         
         }
         else if (Shape.PROPERTY_HEIGHT.equals(evt.getPropertyName())) {
             Rectangle bounds = widget.getBounds();
@@ -86,13 +79,6 @@ public class ShapeWidgetUtil {
                 return;
             int newHeightValue = (Integer) evt.getNewValue();
             widget.setPreferredSize(new Dimension(bounds.width, newHeightValue));
-                        
-////            if (scene instanceof ModelLayoutScene) {
-////                int oldHeightValue = (Integer) evt.getOldValue();
-////                
-////                double heightPercentage = Double.parseDouble(Integer.toString(newHeightValue)) / Double.parseDouble(Integer.toString(oldHeightValue));
-////                ((ModelLayoutScene) scene).updateWidget(widget, 1, heightPercentage);
-////            }
         }
         else if (Shape.PROPERTY_COLOR.equals(evt.getPropertyName())) {
             widget.setBackground((Color) evt.getNewValue());
@@ -106,10 +92,7 @@ public class ShapeWidgetUtil {
             }
         }
         widget.getScene().validate();
-        widget.getScene().paint();
-        
-////        if (scene instanceof ModelLayoutScene)
-////            ((ModelLayoutScene) scene).fireChangeEvent(new ActionEvent(widget, ModelLayoutScene.SCENE_CHANGE, evt.getPropertyName() + " Property Changed"));
+        widget.getScene().paint();        
     }
     
     public static void makingVisibleChanges(Widget widget) {

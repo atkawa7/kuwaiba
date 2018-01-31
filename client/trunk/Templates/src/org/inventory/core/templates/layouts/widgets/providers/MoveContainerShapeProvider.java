@@ -24,7 +24,7 @@ import org.inventory.core.templates.layouts.LayoutOutputManager;
 import org.inventory.core.templates.layouts.model.Shape;
 import org.inventory.core.templates.layouts.widgets.ContainerShapeWidget;
 import org.inventory.core.templates.layouts.widgets.ShapeWidgetUtil;
-import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 import org.netbeans.api.visual.action.MoveProvider;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -42,10 +42,10 @@ public class MoveContainerShapeProvider implements MoveProvider {
         
         if (widget instanceof ContainerShapeWidget) {
             
-            if (!(widget.getScene() instanceof EquipmentLayoutScene))
+            if (!(widget.getScene() instanceof DeviceLayoutScene))
                 return;                
             
-            EquipmentLayoutScene scene = (EquipmentLayoutScene) widget.getScene();
+            DeviceLayoutScene scene = (DeviceLayoutScene) widget.getScene();
             
             List<Shape> shapeSet = ((ContainerShapeWidget) widget).getShapesSet();
             if (shapeSet == null)
@@ -80,8 +80,8 @@ public class MoveContainerShapeProvider implements MoveProvider {
             }
             ShapeWidgetUtil.makingVisibleChanges(widget);
             
-            if (widget.getScene() instanceof EquipmentLayoutScene) {
-                EquipmentLayoutScene scene = (EquipmentLayoutScene) widget.getScene();
+            if (widget.getScene() instanceof DeviceLayoutScene) {
+                DeviceLayoutScene scene = (DeviceLayoutScene) widget.getScene();
 
                 LayoutOutputManager.getInstance().getLayoutOutput(scene.getModel())
                     .printLine("The shape cannot be moved to negative positions", Color.RED);
@@ -96,9 +96,9 @@ public class MoveContainerShapeProvider implements MoveProvider {
             return;
         
         if (widget instanceof ContainerShapeWidget) {
-            if (widget.getScene() instanceof EquipmentLayoutScene) {
+            if (widget.getScene() instanceof DeviceLayoutScene) {
                 
-                EquipmentLayoutScene scene = (EquipmentLayoutScene) widget.getScene();
+                DeviceLayoutScene scene = (DeviceLayoutScene) widget.getScene();
                 
                 int changeInX = finishPoint.x - startPoint.x;
                 int changeInY = finishPoint.y - startPoint.y;

@@ -22,7 +22,7 @@ import java.util.List;
 import org.inventory.core.templates.layouts.model.ContainerShape;
 import org.inventory.core.templates.layouts.model.CustomShape;
 import org.inventory.core.templates.layouts.model.Shape;
-import org.inventory.core.templates.layouts.scene.EquipmentLayoutScene;
+import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
 
@@ -56,8 +56,8 @@ public class ContainerShapeWidget extends SelectableShapeWidget {
     }
     
     public void clearShapesSet() {
-        if (getScene() instanceof EquipmentLayoutScene) {
-            EquipmentLayoutScene scene = (EquipmentLayoutScene) getScene();
+        if (getScene() instanceof DeviceLayoutScene) {
+            DeviceLayoutScene scene = (DeviceLayoutScene) getScene();
             
             for (Shape shape : shapesSet) {
                 Widget widget = scene.findWidget(shape);
@@ -73,7 +73,7 @@ public class ContainerShapeWidget extends SelectableShapeWidget {
                 scene.validate();
                 scene.paint();
                 
-                scene.fireChangeEvent(new ActionEvent(this, EquipmentLayoutScene.SCENE_CHANGE, "Shape deleted"));
+                scene.fireChangeEvent(new ActionEvent(this, DeviceLayoutScene.SCENE_CHANGE, "Shape deleted"));
             }
         }
     }    
