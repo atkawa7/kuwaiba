@@ -189,7 +189,7 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
     @Override
     public void componentOpened() {
         DeviceLayoutRender renderDeviceLayout = new DeviceLayoutRender(objectLight, scene, 
-            new Point(0, 0), new Rectangle(0, 0, 1000, 100));
+            new Point(0, 0), new Rectangle(0, 0, 7000, 1000));
         
         if (renderDeviceLayout.getEquipmentModelView() == null && !renderDeviceLayout.hasDefaultDeviceLayout()) {
             close();
@@ -199,7 +199,7 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
             }
             return;
         }
-//        renderDeviceLayout.setOriginalSize(true);
+        renderDeviceLayout.setOriginalSize(true);
         renderDeviceLayout.render();
         scene.validate();
         scene.paint();

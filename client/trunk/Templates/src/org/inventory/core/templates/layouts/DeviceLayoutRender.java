@@ -53,6 +53,7 @@ import org.inventory.core.templates.layouts.widgets.CircleShapeWidget;
 import org.inventory.core.templates.layouts.widgets.PolygonShapeWidget;
 import org.inventory.core.templates.layouts.widgets.ResizableLabelWidget;
 import org.inventory.core.templates.layouts.widgets.ShapeWidgetUtil;
+import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Exceptions;
@@ -530,6 +531,7 @@ public class DeviceLayoutRender {
     }
     
     private void addNodes() {
+        
         AbstractScene scene = (AbstractScene) parentWidget.getScene();
         
         for (Shape shape : shapes) {
@@ -544,6 +546,8 @@ public class DeviceLayoutRender {
                     widget.setBackground(Color.LIGHT_GRAY);
                     widget.setOpaque(true);
                     deviceLayoutWidget.addChild(widget);
+                    scene.validate();
+                    scene.paint();
                     continue;
                 }
 
@@ -556,6 +560,8 @@ public class DeviceLayoutRender {
 
                     ShapeWidgetUtil.shapeToWidget(shape, widget, true);
                     deviceLayoutWidget.addChild(widget);
+                    scene.validate();
+                    scene.paint();
                     
                     if (shape instanceof RectangleShape) {
                         if (((RectangleShape) shape).isSlot()) {
@@ -570,6 +576,8 @@ public class DeviceLayoutRender {
                         widget.setOpaque(false);
                         ShapeWidgetUtil.shapeToWidget(shape, widget, true);
                         deviceLayoutWidget.addChild(widget);
+                        scene.validate();
+                        scene.paint();
                     }
                 }
             } else {
@@ -582,27 +590,55 @@ public class DeviceLayoutRender {
                                         
                 } else if (LabelShape.SHAPE_TYPE.equals(type)) {                    
                     widget = new ResizableLabelWidget(deviceLayoutWidget.getScene());
-                    widget.setPreferredSize(new Dimension(shape.getWidth(), shape.getHeight()));
-                    ShapeWidgetUtil.shapeToWidget(shape, widget, true);
+                    
+                    widget.setPreferredLocation(new Point(shape.getX() - Shape.DEFAULT_BORDER_SIZE, shape.getY() - Shape.DEFAULT_BORDER_SIZE));
+                    widget.setBackground(shape.getColor());
+                    widget.setOpaque(shape.isOpaque());
+                    if (widget.isOpaque())
+                        widget.setBorder(BorderFactory.createLineBorder(0, shape.getBorderColor()));
+                    widget.setPreferredSize(new Dimension(shape.getWidth() - Shape.DEFAULT_BORDER_SIZE, shape.getHeight() - Shape.DEFAULT_BORDER_SIZE));
                                                             
                     ((LabelShape) shape).setFontSize((int) (((LabelShape) shape).getFontSize() * Math.abs(shape.getHeight() - 0.30)));
                     Font font = new Font(null, 0, ((LabelShape) shape).getFontSize());
                     ((ResizableLabelWidget) widget).setFont(font);
                     ((ResizableLabelWidget) widget).setLabel(((LabelShape) shape).getLabel());
                     ((ResizableLabelWidget) widget).setForeground(((LabelShape) shape).getTextColor());
-                    widget.revalidate();
-                    
+                    scene.validate();
+                    scene.paint();
+                                        
                 } else if (CircleShape.SHAPE_TYPE.equals(type)) {
-                    widget = new CircleShapeWidget(parentWidget.getScene(), (CircleShape) shape);
-                    widget.setPreferredSize(new Dimension(shape.getWidth(), shape.getHeight()));
-                    ShapeWidgetUtil.shapeToWidget(shape, widget, true);
+                    widget = new CircleShapeWidget(parentWidget.getScene(), (CircleShape) shape);                    
+                    
+                    widget.setPreferredLocation(new Point(shape.getX() - Shape.DEFAULT_BORDER_SIZE, shape.getY() - Shape.DEFAULT_BORDER_SIZE));
+                    widget.setBackground(shape.getColor());
+                    widget.setOpaque(shape.isOpaque());
+                    if (widget.isOpaque())
+                        widget.setBorder(BorderFactory.createLineBorder(0, shape.getBorderColor()));
+                    widget.setPreferredSize(new Dimension(shape.getWidth() - Shape.DEFAULT_BORDER_SIZE, shape.getHeight() - Shape.DEFAULT_BORDER_SIZE));
+                    scene.validate();
+                    scene.paint();
                     
                 } else if (PolygonShape.SHAPE_TYPE.equals(type)) {
                     widget = new PolygonShapeWidget(parentWidget.getScene(), (PolygonShape) shape);
-                    widget.setPreferredSize(new Dimension(shape.getWidth(), shape.getHeight()));
-                    ShapeWidgetUtil.shapeToWidget(shape, widget, true);
+                    
+                    widget.setPreferredLocation(new Point(shape.getX() - Shape.DEFAULT_BORDER_SIZE, shape.getY() - Shape.DEFAULT_BORDER_SIZE));
+                    widget.setBackground(shape.getColor());
+                    widget.setOpaque(shape.isOpaque());
+                    if (widget.isOpaque())
+                        widget.setBorder(BorderFactory.createLineBorder(0, shape.getBorderColor()));
+                    
+                    widget.setPreferredSize(new Dimension(shape.getWidth() - Shape.DEFAULT_BORDER_SIZE, shape.getHeight() - Shape.DEFAULT_BORDER_SIZE));
+                    scene.validate();
+                    scene.paint();
                 }
+                if (widget == null)
+                    continue;
                 deviceLayoutWidget.addChild(widget);
+                widget.revalidate();
+                widget.repaint();
+                
+                scene.validate();
+                scene.paint();
             }
         }
     }
