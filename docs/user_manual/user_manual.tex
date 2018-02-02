@@ -581,6 +581,79 @@
 		\label{fig:template_manager_select_template}
 	\end{figure}
 	
+	\subsection{Device Layout Editor} \label{sec:device_layout_editor}
+	A layout is a set of basic shapes and custom shapes that represent the look of a device, generally for the case of devices that are located in a rack, this look belongs to the back, where the slots, modules and ports are shown, for these cases the layout is used to build the rack view (see \textbf{\nameref{sec:rack_view}}).
+	\newpage
+	
+	To access in the device layout editor use the \textbf{\nameref{sec:template_manager}} selecting a template element and click Edit Layout \textbf{Figure~\ref{fig:device_layout_edit}}, if the attribute \textbf{model} is not fixed the action must be show disabled. To enable the Edit Layout action the attribute \textbf{model} must be created using the \textbf{\nameref{sec:data_model_manager}} the type of this attribute will be a list type, now create a list type item using \textbf{\nameref{sec:list_type_manager}} to set the model in the device and open the edit layout. \textbf{Figure~\ref{fig:device_layout_empty}}
+		
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.9\linewidth]{img/device_layout_edit.png}
+		\caption{Edit Device Layout}
+		\label{fig:device_layout_edit}
+	\end{figure}
+		
+	The first look of the device layout editor is an empty canvas \textbf{Figure~\ref{fig:device_layout_empty}} with a guide to draw devices that can be located in a rack like a Router, and the palette use to drag and drop shapes in the canvas to build the layout, also has a toolbar describe below.
+	
+	\begin{table}[h!]
+		\centering
+		\begin{tabular}[h!]{lp{10cm}}
+			\includegraphics[width=0.5cm]{img/device_layout_save.png} & Save the Device Layout\\
+			\midrule
+			\includegraphics[width=0.5cm]{img/device_layout_delete.png} & Delete a saved Device Layout\\
+			\midrule
+			\includegraphics[width=0.5cm]{img/device_layout_clean.png} & Clean the Device Layout canvas\\
+			\midrule
+			\includegraphics[width=0.5cm]{img/device_layout_group.png} & Create a shape to group shapes\\
+			\midrule
+			\includegraphics[width=0.5cm]{img/device_layout_guide.png} & Show a guide to define the layout of a device which can be located in a rack\\
+			\midrule
+			\includegraphics[width=0.5cm]{img/device_layout_custom_shapes.png} & Show the Custom Shapes layout manager\\
+			\midrule
+			\includegraphics[width=0.5cm]{img/device_layout_show_palette.png} & Show the palette of shapes\\
+			\midrule
+		\end{tabular}
+	\end{table}
+		
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.9\linewidth]{img/device_layout_empty.png}
+		\caption{Device Layout Editor}
+		\label{fig:device_layout_empty}
+	\end{figure}
+	\newpage	
+	
+	The basic shapes and custom shapes that you drop in the canvas has a set of general properties and a set of unique properties \textbf{Figure~\ref{fig:device_layout_edited}} as is shown which allow to modify the shape. Also you can resize and move the shape in the canvas, and use the actions of copy and paste, and bring to front and back to fix the shape.
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.9\linewidth]{img/device_layout_edited.png}
+		\caption{Editing Device Layout}
+		\label{fig:device_layout_edited}
+	\end{figure}
+	
+	If you see in the satellite view of the Device Layout Editor, there are two rectangles empty \textbf{Figure~\ref{fig:device_layout_edited}}, we call to this \textbf{slot} and inside can contain another device layouts. In the template element Cisco ASR 9001 has 2 slots the Slot-Module 0/0/0 and the Slot-Module 0/0/1, that slots are the two rectangles.
+	
+	The idea behind of slot is that you can replace layouts depending on the devices, for example the Slot-Module 0/0/0 has an A9K-MPA-20X1GE if you want render some layout this IPBoard must be has an attribute model assigned with a list type item, and a device layout edited \textbf{Figure~\ref{fig:device_layout_ipboard}}
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.9\linewidth]{img/device_layout_ipboard.png}
+		\caption{Editing IPBoard Layout}
+		\label{fig:device_layout_ipboard}
+	\end{figure}
+    \newpage
+	
+	Once defined the devices layout you can create a new object from template and use the action \textbf{Show $\rightarrow$ Device Layout} to see the render, for the case of the A9K-MPA-4X10GE IPBoard that no has layout, shown a default device layout \textbf{Figure~\ref{fig:device_layout_render}}.
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.9\linewidth]{img/device_layout_show.png}
+		\caption{Render of Cisco ASR 9001 Ninth Av}
+		\label{fig:device_layout_render}
+	\end{figure}
+			
 	\clearpage
 	\section{List Type Manager} \label{sec:list_type_manager}
 	Most of the attributes are primitive types (String, Integer, Booleans, etc), however, there are some more complex that are actually another object in the database. This is the case of attributes such as \textit{vendor}, which points to an object holding the information about the vendor of that equipment (support lines, account manager, etc) or \textit{state}, that refers to the current operational state of the equipment (Working, Not Working, Stored, etc) and the state itself is an object, because it may hold information about what are the next allowed states, for example. Many objects in the database will have the same \textit{vendor}, and many other will have the same \textit{state}. In short, list types are those kind of attributes that point to an element in a limited set of objects. In terms of relational databases, you can see it as a many-to-one kind of relationship. To manage the existing list types and its instances, use the \textbf{\nameref{sec:data_model_manager}} and the \textbf{\nameref{sec:list_type_manager}}. \newline
@@ -1028,7 +1101,7 @@
 		If all values are correct, the view should look like this:
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.7\linewidth]{img/rack_view_sample_view.png}
+			\includegraphics[width=0.9\linewidth]{img/rack_view_sample_view.png}
 			\caption{Sample rack view}
 			\label{fig:rack_view_sample_view}
 		\end{figure}
@@ -1037,7 +1110,7 @@
 		
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.1\linewidth]{img/rack_view_toolbar.png}
+			\includegraphics[width=0.3\linewidth]{img/rack_view_toolbar.png}
 			\caption{Rack View Toolbar}
 			\label{fig:rack_view_toolbar}
 		\end{figure}
@@ -1045,12 +1118,29 @@
 		\begin{table}[h!]
 			\centering
 			\begin{tabular}[h!]{lp{10cm}}
-				\includegraphics[width=0.5cm]{img/icon_export.png} & Export to image file\\
+				\includegraphics[width=0.5cm]{img/rack_view_export.png} & Export to image file\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/icon_refresh_view.png} & Refresh Rack View\\
+				\includegraphics[width=0.5cm]{img/rack_view_refresh.png} & Refresh Rack View\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/rack_view_select.png} & Select a device\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/rack_view_connect_ports.png} & Connects ports\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/rack_view_table.png} & Show a list of connections in the selected rack\\
+				\midrule
+				\includegraphics[width=0.5cm]{img/rack_view_show_connections.png} & Show the device layouts and connections\\
 				\midrule
 			\end{tabular}
 		\end{table}
+		
+		To see the connections in the rack click the button \includegraphics[width=0.7cm]{img/rack_view_show_connections.png} and a rack view is rendered using the devices layout or default layouts \textbf{Figure~\ref{fig:rack_view_connections}} (for more information about device layout see \textbf{\nameref{sec:device_layout_editor}})
+		
+		\begin{figure}[h!]
+			\centering
+			\includegraphics[width=0.9\linewidth]{img/rack_view_connections.png}
+			\caption{Show Connections in Rack}
+			\label{fig:rack_view_connections}
+		\end{figure}
 		
 	\clearpage
 	\section{Physical Connections} \label{sec:physical_connections}
@@ -1257,7 +1347,7 @@
 					\item There's still one last step: The ports 1-Front and 1-Back in each ODF are not yet bridged. To do this, we just have to right-click any of the two ports on each ODF and select the option \textit{Connect Mirror Port...}. A mirror port is basically a direct connection between two ports. A cable is a separate object in Kuwaiba, a mirror connection is not even an object, it is just a relationship between a port an another with the same parent (that is, a sibling). You can see it as a backplane connection.
 					\begin{figure}[h!]
 						\centering
-						\includegraphics[width=0.5\linewidth]{img/l1_example_2_mirror_connection_menu.png}
+						\includegraphics[width=0.7\linewidth]{img/l1_example_2_mirror_connection_menu.png}
 						\caption{Mirror connection menu}
 						\label{fig:l1_example_2_mirror_connection_menu}
 					\end{figure}
@@ -1281,7 +1371,7 @@
 					To release a mirror port, select the option from the context port's context menu.
 					\begin{figure}[h!]
 						\centering
-						\includegraphics[width=0.3\linewidth]{img/l1_example_2_mirror_connection_release.png}
+						\includegraphics[width=0.5\linewidth]{img/l1_example_2_mirror_connection_release.png}
 						\caption{Release mirror connection menu option}
 						\label{fig:l1_example_2_mirror_connection_release}
 					\end{figure}
@@ -1434,7 +1524,7 @@
 	    To associate a software license to an existing element, right click on it on the Navigation Tree and select Create software asset:
 		\begin{figure}[h!]
 	     	\centering
-	     	\includegraphics[width=0.5\linewidth]{img/software_asset_action.png}
+	     	\includegraphics[width=0.7\linewidth]{img/software_asset_action.png}
 	     	\caption{Adding a software license}
 	     	\label{fig:software_asset_action}
 		\end{figure}
@@ -1525,7 +1615,7 @@
 	
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.5\linewidth]{img/sm_release_from_service.png}
+		\includegraphics[width=0.9\linewidth]{img/sm_release_from_service.png}
 		\caption{Release an object from a service}
 		\label{fig:sm_release_from_service}
 	\end{figure}
@@ -1580,7 +1670,7 @@
 		Any inventory object can be subject to a contract. You can associate an element to an existing contract by right clicking on it and selecting the option \textit{Associate to contract...} and then selecting the desired one as shown in the figure~\ref{fig:contract_manager_contract_list}.
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.4\linewidth]{img/contract_manager_associate_option.png}
+			\includegraphics[width=0.8\linewidth]{img/contract_manager_associate_option.png}
 			\caption{Associate to contract option}
 			\label{fig:contract_manager_associate_option}
 		\end{figure}		
@@ -2340,7 +2430,7 @@
 						
 			\begin{figure}[h!]
 				\centering
-				\includegraphics[width=0.8\linewidth]{img/favorites_add_to.png}
+				\includegraphics[width=0.9\linewidth]{img/favorites_add_to.png}
 				\caption{Add to Favorites folder}
 				\label{fig:favorites_add_to}
 			\end{figure}
@@ -2386,7 +2476,7 @@
 		    		    		    
 		    \begin{figure}[h!]
 		    	\centering
-		    	\includegraphics[width=0.6\linewidth]{img/projects_relate_to.png}
+		    	\includegraphics[width=0.9\linewidth]{img/projects_relate_to.png}
 		    	\caption{Relate to Project Action}
 		    	\label{fig:projects_relate_to}
 		    \end{figure}
