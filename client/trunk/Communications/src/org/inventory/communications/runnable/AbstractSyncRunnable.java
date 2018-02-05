@@ -60,7 +60,7 @@ public abstract class AbstractSyncRunnable implements Runnable {
 
     @Override
     public final void run() {  
-        // This implementation is empty becouse this method is called by the 
+        // This implementation is empty because this method is called by the 
         // RequestProcessor and to avoid a null pointer exception was nescessary 
         // override it
     }

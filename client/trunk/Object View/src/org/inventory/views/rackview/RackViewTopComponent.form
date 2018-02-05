@@ -63,6 +63,7 @@
           </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnExportMouseClicked"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnExportActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnRefresh">
@@ -104,6 +105,7 @@
           </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnSelectMouseClicked"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSelectActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JToggleButton" name="btnConnect">
@@ -123,6 +125,7 @@
           </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnConnectMouseClicked"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnConnectActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JToolBar$Separator" name="jSeparator1">
@@ -144,6 +147,7 @@
           </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnRackTableViewMouseClicked"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRackTableViewActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JToggleButton" name="btnShowConnections">
@@ -163,6 +167,7 @@
           </Properties>
           <Events>
             <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="btnShowConnectionsMouseClicked"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnShowConnectionsActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JToolBar$Separator" name="jSeparator3">

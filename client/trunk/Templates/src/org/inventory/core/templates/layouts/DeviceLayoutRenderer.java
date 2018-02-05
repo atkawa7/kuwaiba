@@ -24,6 +24,8 @@ import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -62,15 +64,15 @@ import org.openide.util.Exceptions;
  * Class used to render a model type portWidget in any scene
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class DeviceLayoutRender {
+public class DeviceLayoutRenderer {
     /**
      * List of classes that has a default device layout
      */
-    private static final String[] classesWithDefaultDeviceLayout = new String [] {"GenericDistributionFrame", "GenericBoard", "GenericCommunicationsElement", "Slot"};
+    private static final String[] CLASSES_WITH_DEFAULT_DEVICE_LAYOUT = new String [] {"GenericDistributionFrame", "GenericBoard", "GenericCommunicationsElement", "Slot"};
     /**
      * List of classes of ports that can be shown in the layout
      */
-    private static final String[] portsEnabled = new String[] {"ElectricalPort", "OpticalPort"};
+    private static final String[] PORTS_ENABLED = new String[] {"ElectricalPort", "OpticalPort"};
     
     private String errorMessage;
     private final Widget parentWidget;
@@ -97,7 +99,7 @@ public class DeviceLayoutRender {
      */
     private final HashMap<LocalObjectLight, List<LocalObjectLight>> nodes = new HashMap();
         
-    public DeviceLayoutRender(LocalObjectLight deviceToRender, Widget parentWidget, Point location, Rectangle bounds) {
+    public DeviceLayoutRenderer(LocalObjectLight deviceToRender, Widget parentWidget, Point location, Rectangle bounds) {
         this.deviceToRender = deviceToRender;
         this.parentWidget = parentWidget;
         this.bounds = bounds;
@@ -187,15 +189,15 @@ public class DeviceLayoutRender {
     }
     
     private boolean hasDefaultDeviceLayout(LocalObjectLight device) {
-        for (String classes : classesWithDefaultDeviceLayout) {
+        for (String classes : CLASSES_WITH_DEFAULT_DEVICE_LAYOUT) {
             if (CommunicationsStub.getInstance().isSubclassOf(device.getClassName(), classes))
                 return true;
         }
         return false;
     }
     
-    private boolean isPortEnable(LocalObjectLight device) {
-        for (String portClass : portsEnabled) {
+    private boolean isPortEnabled(LocalObjectLight device) {
+        for (String portClass : PORTS_ENABLED) {
             if (CommunicationsStub.getInstance().isSubclassOf(device.getClassName(), portClass))
                 return true;
         }
@@ -203,7 +205,7 @@ public class DeviceLayoutRender {
     }
     
     private void findPortsEnabled(LocalObjectLight device, List<LocalObjectLight> result) {
-        if (isPortEnable(device))
+        if (isPortEnabled(device))
             result.add(device);
         
         for (LocalObjectLight child : nodes.get(device)) {
@@ -647,14 +649,22 @@ public class DeviceLayoutRender {
         List<LocalObjectLight> result = new ArrayList();
         
         for(LocalObjectLight node : nodes.keySet()) {
-            String name = node.getName();
-            
-            if (shape.getName().equals(name))
-                result.add(node);
+           // The shape name can be a regular expression. The procedure below are 
+           // used to verify if the node name match with the shape name
+            String shapeName = shape.getName();
+            String nodeName = node.getName();
+
+            Pattern pattern = Pattern.compile(shapeName);
+            Matcher matcher = pattern.matcher(nodeName);
+        
+            if (matcher.find()) {
+                if (nodeName.equals(matcher.group()))
+                    result.add(node);
+            }
         }
         return result;
     }
-    
+        
     public void renderSlot(LocalObjectLight slotObj, Widget widget) {
         List<LocalObjectLight> children = CommunicationsStub.getInstance().getObjectChildren(slotObj.getOid(), slotObj.getClassName());
         if (children == null) {
@@ -669,7 +679,7 @@ public class DeviceLayoutRender {
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 continue;
             }
-            DeviceLayoutRender render = new DeviceLayoutRender(child, widget, new Point(0, 0), widget.getPreferredBounds());
+            DeviceLayoutRenderer render = new DeviceLayoutRenderer(child, widget, new Point(0, 0), widget.getPreferredBounds());
             
             if (lcm.hasAttribute("model")) {
                 LocalObject localObj = CommunicationsStub.getInstance().getObjectInfo(child.getClassName(), child.getOid());

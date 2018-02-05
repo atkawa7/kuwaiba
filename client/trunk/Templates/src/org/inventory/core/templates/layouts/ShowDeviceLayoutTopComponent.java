@@ -188,7 +188,7 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        DeviceLayoutRender renderDeviceLayout = new DeviceLayoutRender(objectLight, scene, 
+        DeviceLayoutRenderer renderDeviceLayout = new DeviceLayoutRenderer(objectLight, scene, 
             new Point(0, 0), new Rectangle(0, 0, 7000, 1000));
         
         if (renderDeviceLayout.getEquipmentModelView() == null && !renderDeviceLayout.hasDefaultDeviceLayout()) {

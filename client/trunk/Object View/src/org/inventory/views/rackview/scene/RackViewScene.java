@@ -249,6 +249,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
             widget.createActions(AbstractScene.ACTION_SELECT);
             widget.getActions(ACTION_SELECT).addAction(createSelectAction());
         }
+        validate();
         return widget;
     }
 

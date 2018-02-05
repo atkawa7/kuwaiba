@@ -93,6 +93,7 @@ public class RackViewService {
                 }
             }
             ((RackWidget) scene.findWidget(rack)).resizeRackWidget();
+            scene.validate();
             scene.repaint();
         }
     }

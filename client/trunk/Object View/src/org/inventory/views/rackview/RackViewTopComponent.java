@@ -41,8 +41,11 @@ import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.core.services.event.CurrentKeyEventDispatcher;
 import org.inventory.core.services.i18n.I18N;
+import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
+import org.openide.util.RequestProcessor;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;
 
@@ -56,8 +59,8 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
     private RackViewService service;
     private JComponent satelliteView;
     
-    KeyEventDispatcher keyEventDispatcher;
-    
+    private KeyEventDispatcher keyEventDispatcher;
+        
     public RackViewTopComponent(LocalObjectLight rack) {
         this();
         this.rackLight = rack;
@@ -166,6 +169,11 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                 btnExportMouseClicked(evt);
             }
         });
+        btnExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportActionPerformed(evt);
+            }
+        });
         toolBarMain.add(btnExport);
 
         btnRefresh.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/refresh.png"))); // NOI18N
@@ -198,6 +206,11 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                 btnSelectMouseClicked(evt);
             }
         });
+        btnSelect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSelectActionPerformed(evt);
+            }
+        });
         toolBarMain.add(btnSelect);
 
         btnConnect.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/connect.png"))); // NOI18N
@@ -209,6 +222,11 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
         btnConnect.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnConnectMouseClicked(evt);
+            }
+        });
+        btnConnect.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConnectActionPerformed(evt);
             }
         });
         toolBarMain.add(btnConnect);
@@ -225,6 +243,11 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                 btnRackTableViewMouseClicked(evt);
             }
         });
+        btnRackTableView.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRackTableViewActionPerformed(evt);
+            }
+        });
         toolBarMain.add(btnRackTableView);
 
         btnShowConnections.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/views/rackview/res/show_connection.png"))); // NOI18N
@@ -238,6 +261,11 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                 btnShowConnectionsMouseClicked(evt);
             }
         });
+        btnShowConnections.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnShowConnectionsActionPerformed(evt);
+            }
+        });
         toolBarMain.add(btnShowConnections);
         toolBarMain.add(jSeparator3);
 
@@ -249,15 +277,140 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
     }//GEN-LAST:event_btnRefreshMouseClicked
 
     private void btnExportMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExportMouseClicked
-        ExportScenePanel exportPanel = new ExportScenePanel(
-            new SceneExportFilter[]{ImageFilter.getInstance()}, 
-            scene, rackLight.toString());
-                
-        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
-        DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+        
     }//GEN-LAST:event_btnExportMouseClicked
 
     private void btnRackTableViewMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnRackTableViewMouseClicked
+        
+    }//GEN-LAST:event_btnRackTableViewMouseClicked
+
+    private void btnShowConnectionsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnShowConnectionsMouseClicked
+        
+    }//GEN-LAST:event_btnShowConnectionsMouseClicked
+
+    private void btnConnectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnConnectMouseClicked
+        
+    }//GEN-LAST:event_btnConnectMouseClicked
+
+    private void btnSelectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSelectMouseClicked
+        
+    }//GEN-LAST:event_btnSelectMouseClicked
+
+    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
+        if (!isCompatible()) {
+            close();
+            return;
+        }
+        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading The Rack View to %s", rackLight.toString()));
+        
+        RequestProcessor.getDefault().post(new Runnable() {
+            
+            @Override
+            public void run() {
+                progressHandle.start();
+                
+                toolBarMain.setVisible(false);
+                pnlMainScrollPanel.setVisible(false);
+                
+                if (btnShowConnections.isSelected())
+                    remove(satelliteView);
+                
+                scene.clear();
+                service.shownRack();
+                scene.validate();
+                
+                if (btnShowConnections.isSelected())
+                    add(satelliteView, BorderLayout.EAST);
+                toolBarMain.setVisible(true);
+                pnlMainScrollPanel.setVisible(true);
+                
+                revalidate();  
+                progressHandle.finish();
+            }
+        });
+    }//GEN-LAST:event_btnRefreshActionPerformed
+
+    private void btnShowConnectionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowConnectionsActionPerformed
+        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading The Rack View to %s", rackLight.toString()));
+        
+        RequestProcessor.getDefault().post(new Runnable() {
+
+            @Override
+            public void run() {
+                progressHandle.start();
+                
+                toolBarMain.setVisible(false);
+                pnlMainScrollPanel.setVisible(false);
+                                
+                if (satelliteView == null)
+                    satelliteView = scene.createSatelliteView();
+
+                if (btnShowConnections.isSelected()) {
+                    scene.setShowConnections(true);            
+                    scene.clear();
+
+                    service.shownRack();
+                    scene.validate();
+                    
+                    btnSelect.setEnabled(true);
+                    btnConnect.setEnabled(true);
+                    btnRackTableView.setEnabled(true);
+                    
+                    add(satelliteView, BorderLayout.EAST);
+                    
+                } else {
+                    remove(satelliteView);
+                    
+                    scene.setShowConnections(false);
+                    scene.clear();
+                    
+                    service.shownRack();
+                    scene.validate();
+                    
+                    scene.setActiveTool(RackViewScene.ACTION_SELECT);
+                    btnSelect.setSelected(true);        
+                    btnConnect.setSelected(false);
+                    btnSelect.setEnabled(false);
+                    btnConnect.setEnabled(false);
+                    btnRackTableView.setEnabled(false);
+                }
+                toolBarMain.setVisible(true);
+                pnlMainScrollPanel.setVisible(true);
+                
+                revalidate();                
+                progressHandle.finish();
+            }
+        });
+        
+    }//GEN-LAST:event_btnShowConnectionsActionPerformed
+
+    private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
+        ExportScenePanel exportPanel = new ExportScenePanel(
+            new SceneExportFilter[]{ImageFilter.getInstance()}, 
+            scene, rackLight.toString());
+                        
+        DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
+        DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
+    }//GEN-LAST:event_btnExportActionPerformed
+
+    private void btnSelectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectActionPerformed
+        if (!btnSelect.isEnabled())
+            return;
+        btnSelect.setSelected(true);        
+        btnConnect.setSelected(false);
+        scene.setActiveTool(RackViewScene.ACTION_SELECT);
+    }//GEN-LAST:event_btnSelectActionPerformed
+
+    private void btnConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConnectActionPerformed
+        if (!btnConnect.isEnabled())
+            return;
+        
+        btnSelect.setSelected(false);
+        btnConnect.setSelected(true);
+        scene.setActiveTool(RackViewScene.ACTION_CONNECT);
+    }//GEN-LAST:event_btnConnectActionPerformed
+
+    private void btnRackTableViewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRackTableViewActionPerformed
         if (!btnRackTableView.isEnabled())
             return;
         
@@ -276,68 +429,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
             }
         }
         rackTable.requestActive();
-    }//GEN-LAST:event_btnRackTableViewMouseClicked
-
-    private void btnShowConnectionsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnShowConnectionsMouseClicked
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        if (satelliteView == null)
-            satelliteView = scene.createSatelliteView();
-        
-        if (isAncestorOf(satelliteView)) {
-            scene.setShowConnections(false);
-            scene.clear();
-            service.shownRack();
-            remove(satelliteView);
-            
-            scene.setActiveTool(RackViewScene.ACTION_SELECT);
-            btnSelect.setSelected(true);        
-            btnConnect.setSelected(false);
-            btnShowConnections.setToolTipText("Show Connections in Rack");
-            btnSelect.setEnabled(false);
-            btnConnect.setEnabled(false);
-            btnRackTableView.setEnabled(false);
-        } else {
-            add(satelliteView, BorderLayout.EAST);
-            scene.setShowConnections(true);            
-            scene.clear();
-            service.shownRack(); 
-            
-            btnShowConnections.setToolTipText("Show/Hide Connections");
-            btnSelect.setEnabled(true);
-            btnConnect.setEnabled(true);
-            btnRackTableView.setEnabled(true);
-        }
-        revalidate();
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_btnShowConnectionsMouseClicked
-
-    private void btnConnectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnConnectMouseClicked
-        if (!btnConnect.isEnabled())
-            return;
-        
-        btnSelect.setSelected(false);
-        btnConnect.setSelected(true);
-        scene.setActiveTool(RackViewScene.ACTION_CONNECT);
-    }//GEN-LAST:event_btnConnectMouseClicked
-
-    private void btnSelectMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnSelectMouseClicked
-        if (!btnSelect.isEnabled())
-            return;
-        btnSelect.setSelected(true);        
-        btnConnect.setSelected(false);
-        scene.setActiveTool(RackViewScene.ACTION_SELECT);
-    }//GEN-LAST:event_btnSelectMouseClicked
-
-    private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
-        if (!isCompatible()) {
-            close();
-            return;
-        }
-        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
-        scene.clear();
-        service.shownRack();
-        setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-    }//GEN-LAST:event_btnRefreshActionPerformed
+    }//GEN-LAST:event_btnRackTableViewActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton btnConnect;

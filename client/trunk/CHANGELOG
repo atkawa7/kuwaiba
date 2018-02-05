@@ -151,7 +151,7 @@
 * It is possible to create layouts for certain equipment brands/models. With this, the users will be able to see how the device actually looks like and how their children are arranged inside.
 * Re-added the "Binary" data type to manage the custom shape icon. This data type will remain hidden for this release in conventional inventory types, and will be enabled in coming versions
 * Added a refresh button to all views
-* All the frames that are used to select a value from a list (like those used in "Relate to..." actions) share a common code base and behave the same way. Double click now automatically accepts the selction.
+* All the frames that are used to select a value from a list (like those used in "Relate to..." actions) share a common code base and behave the same way. Double click now automatically accepts the selection.
 * Copy/cut and paste actions enabled in the Service Manager Module, Contract Manager Module and Pool Manager Module
 * Common context-aware actions have icons and similar actions were grouped to simplify the node's menu 
 * Added the Inventory Synchronization module
@@ -160,4 +160,6 @@
 * There are new actions that allow the user to put links into an existing container or putting them out of an existing container 
 * Added an action to fix the possible inconsistencies in links and containers that may happen when moving elements with connections attached to them. This is the seed for a diagnostics module that will be added in future versions.
 * A button that allows the user to display the container links inside a STMX in a service topology view was added.
+* Added action to delete connections in the rack view
+* Updated the management of patches in the server side
 * Multiple bug fixes and improvements
