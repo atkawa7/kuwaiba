@@ -72,7 +72,7 @@ public class ShapeNamePropertyEditor extends PropertyEditorSupport implements In
 
             @Override
             public Object getValue() {
-                return getRegex((String) cboName.getSelectedItem());
+                return (String) cboName.getSelectedItem();
             }
 
             @Override
