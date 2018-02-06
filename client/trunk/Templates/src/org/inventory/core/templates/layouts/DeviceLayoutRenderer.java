@@ -57,6 +57,7 @@ import org.inventory.core.templates.layouts.widgets.ResizableLabelWidget;
 import org.inventory.core.templates.layouts.widgets.ShapeWidgetUtil;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
+import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Exceptions;
 
@@ -222,12 +223,21 @@ public class DeviceLayoutRenderer {
         Widget deviceWidget = parentWidget.getScene() instanceof AbstractScene ? 
             ((AbstractScene) parentWidget.getScene()).addNode(device) : 
             new Widget(parentWidget.getScene());
-        deviceWidget.getScene().validate();
-        deviceWidget.getScene().paint();
         
-        if (device != deviceToRender)
-            parentWidget.setLayout(LayoutFactory.createHorizontalFlowLayout(LayoutFactory.SerialAlignment.LEFT_TOP, 2));
+        deviceWidget.setLayout(LayoutFactory.createVerticalFlowLayout());
+                
+        LabelWidget lblName = new LabelWidget(parentWidget.getScene());
+        lblName.setBorder(BorderFactory.createEmptyBorder(0, 5 ,0 , 5));
+        lblName.setLabel(device.getName());
+        lblName.setForeground(Color.WHITE);
         
+        Widget children = new Widget(parentWidget.getScene());
+        children.setBorder(BorderFactory.createEmptyBorder(5, 5 ,5 , 5));
+        children.setLayout(LayoutFactory.createHorizontalFlowLayout(LayoutFactory.SerialAlignment.LEFT_TOP, 5));
+        
+        deviceWidget.addChild(lblName);
+        deviceWidget.addChild(children);        
+        // Gets the class color to set the device widget background
         LocalClassMetadata deviceClass = CommunicationsStub.getInstance().getMetaForClass(device.getClassName(), false);
         if (deviceClass == null) {
             deviceWidget.setBackground(Color.BLACK);
@@ -238,77 +248,87 @@ public class DeviceLayoutRenderer {
         
         deviceWidget.setOpaque(true);
         deviceWidget.setToolTipText(device.getName());
+        
         deviceWidget.revalidate();
-                
-        parentWidget.addChild(deviceWidget);
-            parentWidget.getScene().validate();
-            parentWidget.getScene().repaint();
-        
-        initNodes(device, getObjectChildren(device));
-        
-        List<LocalObjectLight> ports = new ArrayList();
-        
-        findPortsEnabled(device, ports);     
-        
-        boolean addRow = false;
-        if (ports.size() > 6)
-            addRow = true;
-        
-        int numCols = ports.size();
-        int numRows = 1;
-        
-        if (addRow) {
-            numCols += - (int) Math.round(ports.size() / 2);
-            numRows = 2;
-        }                
-        int span = 8;
-        int portWidth = (int) Math.round(bounds.width / (numCols == 0 ? numCols = 1 : numCols)) - span;
-        int portHeight = (int) Math.round(bounds.height / numRows) - span;
-        
-        if (portWidth < portHeight)
-            portHeight = portWidth;
+        deviceWidget.getScene().validate();
+        deviceWidget.getScene().paint();
+        // Sets the children of the device
+        if (parentWidget.getChildren().size() >= 2 && device != deviceToRender)
+            parentWidget.getChildren().get(1).addChild(deviceWidget);
         else
-            portWidth = portHeight;
+            parentWidget.addChild(deviceWidget);
         
-        if (portWidth > 25) {
-            portWidth = 25;
-            portHeight = 25;
-        }
-        
-        for (int i = 0; i < numRows; i += 1) {
-            int y = 4 + (portHeight + span) * i;
-            
-            for (int j = 0; j < numCols; j += 1) {
-                int x = 4 + (portWidth + span) * j;
+        parentWidget.getScene().validate();
+        parentWidget.getScene().repaint();
                 
-                int idx = i * numCols + j;
-                
-                if (idx < ports.size()) {
-                    LocalObjectLight port = ports.get(idx);
-                    
-                    Widget portWidget = ((AbstractScene) deviceWidget.getScene()).addNode(port);
+        List<LocalObjectLight> ports = new ArrayList();
+        findPortsEnabled(device, ports);     
+        // If the device has ports then render
+        if (!ports.isEmpty()) {
+            boolean addRow = false;
+            // If has more than six ports, then create two rows
+            if (ports.size() > 6)
+                addRow = true;
 
-                    deviceWidget.getScene().validate();
-                    deviceWidget.getScene().paint();
+            int numCols = ports.size();
+            int numRows = 1;
 
-                    portWidget.setPreferredLocation(new Point(x, y));
-                    portWidget.setPreferredBounds(new Rectangle(0, 0, portWidth, portHeight));
-                                        
-                    LocalClassMetadata portClass = CommunicationsStub.getInstance().getMetaForClass(port.getClassName(), false);
-                    if (portClass == null) {
-                        portWidget.setBackground(Color.BLACK);
-                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                            NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                    } else
-                        portWidget.setBackground(portClass.getColor() == null ? Color.BLACK : portClass.getColor());
-                    portWidget.setOpaque(true);
-                    deviceWidget.setToolTipText(port.getName());
-                    
-                    portWidget.revalidate();
-                    deviceWidget.addChild(portWidget);
-                } else
-                    break;
+            if (addRow) {
+                numCols += - (int) Math.round(ports.size() / 2);
+                numRows = 2;
+            }                
+            int span = 8;
+            int portWidth = (int) Math.round(bounds.width / (numCols == 0 ? numCols = 1 : numCols)) - span;
+            int portHeight = (int) Math.round(bounds.height / numRows) - span;
+
+            if (portWidth < portHeight)
+                portHeight = portWidth;
+            else
+                portWidth = portHeight;
+
+            if (portWidth > 25) {
+                portWidth = 25;
+                portHeight = 25;
             }
+            // The ports widget is used to contain the set of port widget
+            Widget portsWidget = new Widget(parentWidget.getScene());
+            
+            for (int i = 0; i < numRows; i += 1) {
+                int y = 4 + (portHeight + span) * i;
+
+                for (int j = 0; j < numCols; j += 1) {
+                    int x = 4 + (portWidth + span) * j;
+
+                    int idx = i * numCols + j;
+
+                    if (idx < ports.size()) {
+                        LocalObjectLight port = ports.get(idx);
+
+                        Widget portWidget = ((AbstractScene) deviceWidget.getScene()).addNode(port);
+
+                        deviceWidget.getScene().validate();
+                        deviceWidget.getScene().paint();
+
+                        portWidget.setPreferredLocation(new Point(x, y));
+                        portWidget.setPreferredBounds(new Rectangle(0, 0, portWidth, portHeight));
+                        // Gets the class color to set the port widget background
+                        LocalClassMetadata portClass = CommunicationsStub.getInstance().getMetaForClass(port.getClassName(), false);
+                        if (portClass == null) {
+                            portWidget.setBackground(Color.BLACK);
+                            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                        } else
+                            portWidget.setBackground(portClass.getColor() == null ? Color.BLACK : portClass.getColor());
+                        portWidget.setOpaque(true);
+                        portWidget.setToolTipText(port.getName());
+                        
+                        portWidget.revalidate();
+                        portsWidget.addChild(portWidget);
+                    } else
+                        break;
+                }
+            }
+            children.addChild(portsWidget);
         }        
         for (LocalObjectLight child : nodes.get(device))
             renderDefaultDeviceLayout(child, deviceWidget);
@@ -317,6 +337,8 @@ public class DeviceLayoutRenderer {
     public void render() {
         if (deviceLayoutObj == null) {
             if (hasDefaultDeviceLayout) {
+                initNodes(deviceToRender, getObjectChildren(deviceToRender));
+                
                 renderDefaultDeviceLayout(deviceToRender, parentWidget);
                 
                 deviceLayoutWidget = ((AbstractScene) parentWidget.getScene()).findWidget(deviceToRender);
@@ -325,12 +347,11 @@ public class DeviceLayoutRenderer {
             }                
             return;
         }
-        
         byte[] structure = deviceLayoutObj.getStructure();
         
         if (structure == null)
             return;
-                
+        // Adding the device to render in the scene
         deviceLayoutWidget = parentWidget.getScene() instanceof AbstractScene ? 
             ((AbstractScene) parentWidget.getScene()).addNode(deviceToRender) : 
             new Widget(parentWidget.getScene());
@@ -340,19 +361,12 @@ public class DeviceLayoutRenderer {
         deviceLayoutWidget.setOpaque(false);
         deviceLayoutWidget.revalidate();
         parentWidget.addChild(deviceLayoutWidget);
-        
-        boolean isAbstractScene = false;
-        
-        if (parentWidget.getScene() instanceof AbstractScene)
-            isAbstractScene = true;
-        
-        if (isAbstractScene)
-            initNodes(deviceToRender, getObjectChildren(deviceToRender));
-        
+        // Loading the hierarchy of the object 
+        initNodes(deviceToRender, getObjectChildren(deviceToRender));
+        // Gets the set of shapes
         render(structure, originalSize, location, bounds);
-        
-        if (isAbstractScene)
-            addNodes();
+        // Comparing the names of shapes and object to render the layout
+        addNodes();
     }
     
     private void render(byte[] structure, boolean originalSize, Point renderPoint, Rectangle renderBounds) {
@@ -533,7 +547,6 @@ public class DeviceLayoutRenderer {
     }
     
     private void addNodes() {
-        
         AbstractScene scene = (AbstractScene) parentWidget.getScene();
         
         for (Shape shape : shapes) {

@@ -158,7 +158,7 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
         int rackUnitHeight = 100 * 3;
         int spanHeight = 15;
         
-        for (int i = 0; i < 5; i += 1) {
+        for (int i = 0; i < 8; i += 1) {
             Widget rackUnitGuide = new Widget(this);
             rackUnitGuide.setOpaque(true);
             rackUnitGuide.setBorder(BorderFactory.createDashedBorder(Color.LIGHT_GRAY, 
