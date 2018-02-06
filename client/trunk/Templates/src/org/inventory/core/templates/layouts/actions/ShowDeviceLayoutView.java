@@ -17,14 +17,18 @@ package org.inventory.core.templates.layouts.actions;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalAttributeMetadata;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.ShowDeviceLayoutTopComponent;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
+import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.WindowManager;
 
@@ -49,6 +53,39 @@ public class ShowDeviceLayoutView extends GenericObjectNodeAction {
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SYNC, LocalPrivilege.ACCESS_LEVEL_READ);
     }
+    
+    @Override
+    public boolean isEnabled() {
+        boolean isEnabled = super.isEnabled();
+        if (isEnabled) {
+            ObjectNode selectedNode = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
+            if (selectedNode == null)
+                return false;
+            LocalObjectLight selectedObject = selectedNode.getLookup().lookup(LocalObjectLight.class);
+            
+            if (selectedObject == null)
+                return false;
+        
+            LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(selectedObject.getClassName(), false);
+            if (lcm == null) {
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                return false;
+            }
+            if (lcm.hasAttribute("model")) {
+                
+                for (LocalAttributeMetadata attrMetadata : lcm.getAttributes()) {
+                    if (attrMetadata.getName().equals("model")) {
+                        if (CommunicationsStub.getInstance().isSubclassOf(
+                                attrMetadata.getListAttributeClassName(), Constants.CLASS_GENERICOBJECTLIST))
+                            return true;
+                    }
+                }
+            }
+            return false;            
+        }
+        return isEnabled;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {        
@@ -61,7 +98,7 @@ public class ShowDeviceLayoutView extends GenericObjectNodeAction {
         for (LocalObjectLight lol : selectedObjects) {
             ShowDeviceLayoutTopComponent devicelayoutView = ((ShowDeviceLayoutTopComponent) WindowManager.
                 getDefault().findTopComponent("ShowDeviceLayoutTopComponent_" + lol.getOid())); //NOI18N
-            
+
             if (devicelayoutView == null) {
                 devicelayoutView = new ShowDeviceLayoutTopComponent(lol);
                 devicelayoutView.open();
@@ -71,7 +108,6 @@ public class ShowDeviceLayoutView extends GenericObjectNodeAction {
                 else  //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
                        //so we will reuse the instance, refreshing the vierw first
                     devicelayoutView.open();
-                
             }
             devicelayoutView.requestActive();
         }
@@ -79,7 +115,7 @@ public class ShowDeviceLayoutView extends GenericObjectNodeAction {
 
     @Override
     public String[] appliesTo() {
-        return new String[] {Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, Constants.CLASS_GENERICDISTRIBUTIONFRAME};
+        return null; //Enable this action for any object
     }
     
     @Override

@@ -31,10 +31,13 @@ import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.core.templates.layouts.scene.ShowDeviceLayoutScene;
+import org.netbeans.api.progress.ProgressHandle;
+import org.netbeans.api.progress.ProgressHandleFactory;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
+import org.openide.util.RequestProcessor;
 import org.openide.windows.TopComponent;
 
 /**
@@ -188,7 +191,8 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        DeviceLayoutRenderer renderDeviceLayout = new DeviceLayoutRenderer(objectLight, scene, 
+
+        final DeviceLayoutRenderer renderDeviceLayout = new DeviceLayoutRenderer(objectLight, scene, 
             new Point(0, 0), new Rectangle(0, 0, 7000, 1000));
         
         if (renderDeviceLayout.getEquipmentModelView() == null && !renderDeviceLayout.hasDefaultDeviceLayout()) {
@@ -199,10 +203,27 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
             }
             return;
         }
-        renderDeviceLayout.setOriginalSize(true);
-        renderDeviceLayout.render();
-        scene.validate();
-        scene.paint();
+        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading the Device Layout for %s", objectLight.toString()));
+        RequestProcessor.getDefault().post(new Runnable() {
+            
+            @Override
+            public void run() {
+                progressHandle.start();
+                
+                barMain.setVisible(false);
+                pnlScrollPane.setVisible(false);
+                
+                renderDeviceLayout.setOriginalSize(true);
+                renderDeviceLayout.render();
+                scene.validate();
+                scene.paint();
+                
+                barMain.setVisible(true);
+                pnlScrollPane.setVisible(true);
+                
+                progressHandle.finish();
+            }
+        });
     }
 
     @Override

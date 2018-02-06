@@ -17,7 +17,6 @@ package org.inventory.views.rackview;
 
 import org.inventory.views.rackview.scene.RackViewScene;
 import java.awt.BorderLayout;
-import java.awt.Cursor;
 import java.awt.KeyEventDispatcher;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -331,7 +330,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnShowConnectionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowConnectionsActionPerformed
-        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading The Rack View to %s", rackLight.toString()));
+        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading the Rack View for %s", rackLight.toString()));
         
         RequestProcessor.getDefault().post(new Runnable() {
 
