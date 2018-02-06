@@ -639,17 +639,36 @@
 	
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.9\linewidth]{img/device_layout_ipboard.png}
+		\includegraphics[width=0.99\linewidth]{img/device_layout_ipboard.png}
 		\caption{Editing IPBoard Layout}
 		\label{fig:device_layout_ipboard}
 	\end{figure}
     \newpage
-	
-	Once defined the devices layout you can create a new object from template and use the action \textbf{Show $\rightarrow$ Device Layout} to see the render, for the case of the A9K-MPA-4X10GE IPBoard that no has layout, shown a default device layout \textbf{Figure~\ref{fig:device_layout_render}}.
+    
+	When creating a design for a IPBoard like the A9K-MPA-20X1GE, it is likely that you need the name of the ports to be dynamic, and in this way make the design independent of the location of the IPBoard on a device. To solve this, the name of the shape can be a regular expression \textbf{Figure~\ref{fig:device_layout_port_naming}}, where the user can define his own expression using the notation of Java (java.util.regex) or use the predefined ones such as the \textbf{Cisco Port Naming}, in the case that does not require using a regular expression simply type a name.
 	
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.9\linewidth]{img/device_layout_show.png}
+		\includegraphics[width=0.99\linewidth]{img/device_layout_port_naming.png}
+		\caption{Editing IPBoard Layout}
+		\label{fig:device_layout_port_naming}
+	\end{figure}
+    \newpage
+	
+	Once defined the devices layout you can create a new object from template and use the action \textbf{Show $\rightarrow$ Device Layout} to see the layout. If the device no has a defined a device layout for the model then show a default layout \textbf{Figure~\ref{fig:device_layout_default}}.
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.99\linewidth]{img/device_layout_default.png}
+		\caption{Render of Default Layout for Cisco ASR 9001 Ninth Av}
+		\label{fig:device_layout_default}
+	\end{figure}
+	
+	If the model has a layout assigned then render device layout created \textbf{Figure~\ref{fig:device_layout_render}}.
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.99\linewidth]{img/device_layout_show.png}
 		\caption{Render of Cisco ASR 9001 Ninth Av}
 		\label{fig:device_layout_render}
 	\end{figure}
@@ -1060,7 +1079,7 @@
 		This view works only with objects of class \textbf{Rack} or its subclasses. It shows how the elements contained within the selected object are organized, based on their positions and number of rack units used. It can be launched by selecting the option \textit{Show Rack View} in the object's context menu.
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.5\linewidth]{img/show_rack_view.png}
+			\includegraphics[width=0.6\linewidth]{img/show_rack_view.png}
 			\caption{How to show the rack view}
 			\label{fig:rack_view_combobox}
 		\end{figure}
@@ -1101,7 +1120,7 @@
 		If all values are correct, the view should look like this:
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.9\linewidth]{img/rack_view_sample_view.png}
+			\includegraphics[width=0.85\linewidth]{img/rack_view_sample_view.png}
 			\caption{Sample rack view}
 			\label{fig:rack_view_sample_view}
 		\end{figure}
@@ -1137,7 +1156,7 @@
 		
 		\begin{figure}[h!]
 			\centering
-			\includegraphics[width=0.9\linewidth]{img/rack_view_connections.png}
+			\includegraphics[width=0.95\linewidth]{img/rack_view_connections.png}
 			\caption{Show Connections in Rack}
 			\label{fig:rack_view_connections}
 		\end{figure}
