@@ -40,6 +40,7 @@ import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.scene.AbstractScene;
@@ -76,37 +77,57 @@ public class DeviceLayoutRenderer {
     private static final String[] PORTS_ENABLED = new String[] {"ElectricalPort", "OpticalPort"};
     
     private String errorMessage;
-    private final Widget parentWidget;
-    private final Rectangle bounds;
-    private final Point location;
     /**
-     * A portWidget that represent the device layout in the scene
+     * The widget that must contain the device layout
+     */
+    private final Widget parentWidget;
+    /**
+     * The device layout widget preferred bounds in the parent widget
+     */
+    private final Rectangle deviceLayoutBounds;
+    /**
+     * The device layout widget preferred location in the parent widget
+     */
+    private final Point deviceLayoutLocation;
+    /**
+     * A widget that represent the device layout in the scene
      */
     private Widget deviceLayoutWidget;
-    
+    /**
+     * Defines if the device to render has a default layout
+     */
     private boolean hasDefaultDeviceLayout = false;
     
     private final LocalObjectLight deviceToRender;
-    private LocalObjectListItem deviceModel;
-    private LocalObjectView deviceLayoutObj;
+    /**
+     * The value of the attribute model for the device to render
+     */
+    private LocalObjectListItem deviceModelValue;
+    /**
+     * The related view to the model for the device to render
+     */
+    private LocalObjectView deviceLayoutObjView;
     /**
      * List of shapes obtained from the xml structure
      */
     private final List<Shape> shapes = new ArrayList();
-    
+    /**
+     * Defines if the device layout widget has the size defined in the device layout editor
+     */
     private boolean originalSize = false;
     /**
      * Hierarchy of the device to render
      */
     private final HashMap<LocalObjectLight, List<LocalObjectLight>> nodes = new HashMap();
         
-    public DeviceLayoutRenderer(LocalObjectLight deviceToRender, Widget parentWidget, Point location, Rectangle bounds) {
+    public DeviceLayoutRenderer(LocalObjectLight deviceToRender, Widget parentWidget, Point deviceLayoutLocation, Rectangle deviceLayoutBounds) {
         this.deviceToRender = deviceToRender;
         this.parentWidget = parentWidget;
-        this.bounds = bounds;
+        this.deviceLayoutBounds = deviceLayoutBounds;
+        this.deviceLayoutLocation = deviceLayoutLocation;
         
-        this.location = location;
         errorMessage = null;
+        
         initializeRenderDeviceLayout();
     }
     
@@ -115,22 +136,22 @@ public class DeviceLayoutRenderer {
     }
     
     public boolean hasDeviceLayout() {
-        return deviceLayoutObj != null;
+        return deviceLayoutObjView != null;
     }
     
     public boolean hasDefaultDeviceLayout() {
         return hasDefaultDeviceLayout;
     }
     
-    public LocalObjectView getEquipmentModelView() {
-        return deviceLayoutObj;
+    public LocalObjectView getDeviceLayoutObjectView() {
+        return deviceLayoutObjView;
     }
     
     public String getErrorMessage() {
         return errorMessage;
     }
         
-    private LocalObjectListItem getEquipmentModel() {
+    private LocalObjectListItem getDeviceModelValue() {
         if (deviceToRender == null)
             return null;
         
@@ -142,77 +163,48 @@ public class DeviceLayoutRenderer {
                 I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             return null;            
         }
-        LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(deviceToRender.getClassName(), false);
-        if (lcm == null) {
-            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            errorMessage = String.format("The object %s does not have an attribute \"model\" or is not set", deviceToRender);
-            return null;
+        boolean hasDeviceLayout = false;
+        
+        try {
+            hasDeviceLayout = Utils.classMayHaveDeviceLayout(deviceToRender.getClassName());
+        } catch (Exception ex) {
+            errorMessage = ex.getMessage();
         }
-        if (lcm.hasAttribute("model")) {
+        if (hasDeviceLayout) {
             LocalObject localObj = CommunicationsStub.getInstance().getObjectInfo(deviceToRender.getClassName(), deviceToRender.getOid());
             if (localObj == null) {
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                errorMessage = String.format("The object %s does not have an attribute \"model\" or is not set", deviceToRender);
+                errorMessage = CommunicationsStub.getInstance().getError();
                 return null;
             }
-            Object model = localObj.getAttribute("model");
-            if (model instanceof LocalObjectListItem)
-                return (LocalObjectListItem) model;
-        }          
-        errorMessage = String.format("The object %s does not have an attribute \"model\" or is not set", deviceToRender);
+            LocalObjectListItem model = (LocalObjectListItem) localObj.getAttribute(Constants.ATTRIBUTE_MODEL);
+            if (model == null)
+                errorMessage = String.format("The object %s does not set the attribute \"model\"", deviceToRender);
+            return model;
+        } else {
+            errorMessage = String.format("The object %s does not have an attribute \"model\"", deviceToRender);
+        }
         return null;
     }
     
     private void initializeRenderDeviceLayout() {
-        deviceModel = getEquipmentModel();
+        deviceModelValue = getDeviceModelValue();
         
-        if (deviceModel == null)
+        if (deviceModelValue == null)
             return;
 
-        deviceLayoutObj = null;
-        List<LocalObjectViewLight> relatedViews = CommunicationsStub.getInstance().getListTypeItemRelatedViews(deviceModel.getId(), deviceModel.getClassName());
+        deviceLayoutObjView = null;
+        List<LocalObjectViewLight> relatedViews = CommunicationsStub.getInstance().getListTypeItemRelatedViews(deviceModelValue.getId(), deviceModelValue.getClassName());
         if (relatedViews == null) {
-            this.errorMessage = CommunicationsStub.getInstance().getError();
+            errorMessage = CommunicationsStub.getInstance().getError();
             return;
         }
         if (!relatedViews.isEmpty()) {
-            deviceLayoutObj = CommunicationsStub.getInstance().getListTypeItemRelatedView(deviceModel.getId(), deviceModel.getClassName(), relatedViews.get(0).getId());
-            if (deviceLayoutObj == null) {
-                this.errorMessage = CommunicationsStub.getInstance().getError();
+            deviceLayoutObjView = CommunicationsStub.getInstance().getListTypeItemRelatedView(deviceModelValue.getId(), deviceModelValue.getClassName(), relatedViews.get(0).getId());
+            if (deviceLayoutObjView == null) {
+                errorMessage = CommunicationsStub.getInstance().getError();
             }
         } else {
-            this.errorMessage = String.format("The EquipmentModel %s does not have a layout associated to it", deviceModel);
-        }
-        
-        
-    }
-    
-    private boolean hasDefaultDeviceLayout(LocalObjectLight device) {
-        for (String classes : CLASSES_WITH_DEFAULT_DEVICE_LAYOUT) {
-            if (CommunicationsStub.getInstance().isSubclassOf(device.getClassName(), classes))
-                return true;
-        }
-        return false;
-    }
-    
-    private boolean isPortEnabled(LocalObjectLight device) {
-        for (String portClass : PORTS_ENABLED) {
-            if (CommunicationsStub.getInstance().isSubclassOf(device.getClassName(), portClass))
-                return true;
-        }
-        return false;                
-    }
-    
-    private void findPortsEnabled(LocalObjectLight device, List<LocalObjectLight> result) {
-        if (isPortEnabled(device))
-            result.add(device);
-        
-        for (LocalObjectLight child : nodes.get(device)) {
-            
-            if (!hasDefaultDeviceLayout(child))
-                findPortsEnabled(child, result);
+            errorMessage = String.format("The device model %s does not have a layout associated to it", deviceModelValue);
         }
     }
     
@@ -278,8 +270,8 @@ public class DeviceLayoutRenderer {
                 numRows = 2;
             }                
             int span = 8;
-            int portWidth = (int) Math.round(bounds.width / (numCols == 0 ? numCols = 1 : numCols)) - span;
-            int portHeight = (int) Math.round(bounds.height / numRows) - span;
+            int portWidth = (int) Math.round(deviceLayoutBounds.width / (numCols == 0 ? numCols = 1 : numCols)) - span;
+            int portHeight = (int) Math.round(deviceLayoutBounds.height / numRows) - span;
 
             if (portWidth < portHeight)
                 portHeight = portWidth;
@@ -335,19 +327,19 @@ public class DeviceLayoutRenderer {
     }
     
     public void render() {
-        if (deviceLayoutObj == null) {
+        if (deviceLayoutObjView == null) {
             if (hasDefaultDeviceLayout) {
                 initNodes(deviceToRender, getObjectChildren(deviceToRender));
                 
                 renderDefaultDeviceLayout(deviceToRender, parentWidget);
                 
                 deviceLayoutWidget = ((AbstractScene) parentWidget.getScene()).findWidget(deviceToRender);
-                deviceLayoutWidget.setPreferredLocation(new Point(location));
-                deviceLayoutWidget.setPreferredBounds(new Rectangle(bounds));
-            }                
+                deviceLayoutWidget.setPreferredLocation(new Point(deviceLayoutLocation));
+                deviceLayoutWidget.setPreferredBounds(new Rectangle(deviceLayoutBounds));
+            }
             return;
         }
-        byte[] structure = deviceLayoutObj.getStructure();
+        byte[] structure = deviceLayoutObjView.getStructure();
         
         if (structure == null)
             return;
@@ -356,19 +348,22 @@ public class DeviceLayoutRenderer {
             ((AbstractScene) parentWidget.getScene()).addNode(deviceToRender) : 
             new Widget(parentWidget.getScene());
         
-        deviceLayoutWidget.setPreferredLocation(new Point(location));
-        deviceLayoutWidget.setPreferredBounds(new Rectangle(bounds));
+        deviceLayoutWidget.setPreferredLocation(new Point(deviceLayoutLocation));
+        deviceLayoutWidget.setPreferredBounds(new Rectangle(deviceLayoutBounds));
         deviceLayoutWidget.setOpaque(false);
         deviceLayoutWidget.revalidate();
         parentWidget.addChild(deviceLayoutWidget);
         // Loading the hierarchy of the object 
         initNodes(deviceToRender, getObjectChildren(deviceToRender));
         // Gets the set of shapes
-        render(structure, originalSize, location, bounds);
+        render(structure, originalSize, deviceLayoutLocation, deviceLayoutBounds);
         // Comparing the names of shapes and object to render the layout
         addNodes();
     }
     
+    /**
+     * Fixes the set of shapes
+     */
     private void render(byte[] structure, boolean originalSize, Point renderPoint, Rectangle renderBounds) {
         try {
             ByteArrayInputStream bais = new ByteArrayInputStream(structure);
@@ -533,19 +528,17 @@ public class DeviceLayoutRenderer {
                 }
             }
             reader.close();
-            
-            parentWidget.getScene().validate();
-            parentWidget.getScene().repaint();
-            
         } catch (XMLStreamException ex) {
             NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.ERROR_MESSAGE, "The view seems corrupted and could not be loaded");
             
             if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
             Exceptions.printStackTrace(ex);
         }
-        
     }
     
+    /**
+     * Adds the nodes that has a shape in the scene
+     */
     private void addNodes() {
         AbstractScene scene = (AbstractScene) parentWidget.getScene();
         
@@ -565,7 +558,6 @@ public class DeviceLayoutRenderer {
                     scene.paint();
                     continue;
                 }
-
                 LocalObjectLight node = nodesToShape.get(0);
 
                 if (scene.findWidget(node) == null) {
@@ -658,6 +650,23 @@ public class DeviceLayoutRenderer {
         }
     }
     
+    public void renderSlot(LocalObjectLight slotObj, Widget widget) {
+        List<LocalObjectLight> children = nodes.get(slotObj);
+        
+        if (children == null)
+            return;
+        
+        for (LocalObjectLight child : children) {
+            DeviceLayoutRenderer render = new DeviceLayoutRenderer(child, widget, new Point(0, 0), widget.getPreferredBounds());
+            render.render();
+        }
+    }
+    
+    /**
+     * Gets the list of nodes that match with the shape name
+     * @param shape The shape to compare
+     * @return list of nodes that match with the shape name
+     */
     private List<LocalObjectLight> compareObjectNameAndShapeName(Shape shape) {
         List<LocalObjectLight> result = new ArrayList();
         
@@ -677,66 +686,13 @@ public class DeviceLayoutRenderer {
         }
         return result;
     }
-        
-    public void renderSlot(LocalObjectLight slotObj, Widget widget) {
-        List<LocalObjectLight> children = CommunicationsStub.getInstance().getObjectChildren(slotObj.getOid(), slotObj.getClassName());
-        if (children == null) {
-            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            return;
-        }
-        for (LocalObjectLight child : children) {
-            LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(child.getClassName(), false);
-            if (lcm == null) {
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                continue;
-            }
-            DeviceLayoutRenderer render = new DeviceLayoutRenderer(child, widget, new Point(0, 0), widget.getPreferredBounds());
-            
-            if (lcm.hasAttribute("model")) {
-                LocalObject localObj = CommunicationsStub.getInstance().getObjectInfo(child.getClassName(), child.getOid());
-                if (localObj == null) {
-                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                    continue;
-                }
-                Object model = localObj.getAttribute("model");
-                
-                if (model instanceof LocalObjectListItem) {
-                    render.render();
-                    continue;
-                }
-            }
-            if (render.hasDefaultDeviceLayout()) {
-                render.render();
-            }          
-        }
-    }
     
-    public LocalObjectListItem getModel(LocalObjectLight device) {
-        LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(device.getClassName(), false);
-        
-        if (lcm == null) {
-            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            return null;
-        }                
-
-        if (lcm.hasAttribute("model")) {
-            LocalObject localObj = CommunicationsStub.getInstance().getObjectInfo(device.getClassName(), device.getOid());
-        
-            if (localObj == null) {
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                return null;
-            }
-            Object model = localObj.getAttribute("model");
-            
-            if (model instanceof LocalObjectListItem)
-                return (LocalObjectListItem) model;
-        }
-        return null;
+    /**
+     * Gets a widget that represent the device layout in the scene
+     * @return a widget that represent the device layout in the scene
+     */
+    public Widget getDeviceLayoutWidget() {
+        return deviceLayoutWidget;
     }
     
     private void initNodes(LocalObjectLight node, List<LocalObjectLight> nodeChildren) {
@@ -763,7 +719,30 @@ public class DeviceLayoutRenderer {
             return children;
     }
     
-    public Widget getDeviceLayoutWidget() {
-        return deviceLayoutWidget;
+    private boolean hasDefaultDeviceLayout(LocalObjectLight device) {
+        for (String classes : CLASSES_WITH_DEFAULT_DEVICE_LAYOUT) {
+            if (CommunicationsStub.getInstance().isSubclassOf(device.getClassName(), classes))
+                return true;
+        }
+        return false;
+    }
+    
+    private boolean isPortEnabled(LocalObjectLight device) {
+        for (String portClass : PORTS_ENABLED) {
+            if (CommunicationsStub.getInstance().isSubclassOf(device.getClassName(), portClass))
+                return true;
+        }
+        return false;                
+    }
+    
+    private void findPortsEnabled(LocalObjectLight device, List<LocalObjectLight> result) {
+        if (isPortEnabled(device))
+            result.add(device);
+        
+        for (LocalObjectLight child : nodes.get(device)) {
+            
+            if (!hasDefaultDeviceLayout(child))
+                findPortsEnabled(child, result);
+        }
     }
 }

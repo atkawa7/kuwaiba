@@ -265,9 +265,10 @@ public class Constants {
      */
     public static final String [] ATTRIBUTE_TYPES = new String[]{"String", "Integer", "Long", "Float", "Boolean", "Date", "Timestamp", 
         /*"Binary" //TODO: This attribute type will be supported in a future release. The current use of this attribute type are in the CustomShape class*/};
+    public static final String ATTRIBUTE_MODEL = "model";
     /**
      * Property name
-     */
+     */    
     public static final String PROPERTY_NAME = "name";
     
     /**

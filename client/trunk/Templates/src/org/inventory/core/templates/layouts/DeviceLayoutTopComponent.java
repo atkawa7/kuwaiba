@@ -40,7 +40,7 @@ import org.openide.windows.WindowManager;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public final class DeviceLayoutTopComponent extends TopComponent implements ActionListener, Refreshable {
-    public static String ID = "EquipmentTopComponent_";
+    public static String ID = "DeviceLayoutTopComponent_";
     private DeviceLayoutService service;
     
     private DeviceLayoutConfigurationObject configObject;
@@ -207,7 +207,6 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
                     topComponent.requestAttention(true);
                 else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
                        //so we will reuse the instance, refreshing the vierw first
-////                    topComponent.refresh();
                     topComponent.open();
                 }
             }
@@ -307,6 +306,8 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
 
     @Override
     public void componentClosed() {
+        checkForUnsavedView();
+        
         StatusUtil.getInstance().setStatusText("");
         
         service.getScene().removeAllListeners();

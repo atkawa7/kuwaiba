@@ -23,11 +23,13 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
+import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.DeviceLayoutTopComponent;
 import org.inventory.core.templates.nodes.TemplateElementNode;
+import org.openide.util.Exceptions;
 import org.openide.util.Utilities;
 import org.openide.windows.WindowManager;
 
@@ -56,24 +58,13 @@ public class EditLayoutAction extends GenericInventoryAction {
         if (selectedObject == null)
             return false;
         
-        LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(selectedObject.getClassName(), false);
-        if (lcm == null) {
+        try {
+            return Utils.classMayHaveDeviceLayout(selectedObject.getClassName());
+        } catch (Exception ex) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                NotificationUtil.ERROR_MESSAGE, ex.getMessage());
             return false;
         }
-        if (lcm.hasAttribute("model")) {
-            LocalObject localObj = CommunicationsStub.getInstance().getTemplateElement(selectedObject.getClassName(), selectedObject.getOid());
-            if (localObj == null) {
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                return false;
-            }
-            Object model = localObj.getAttribute("model");
-            if (model instanceof LocalObjectListItem)
-                return true;
-        }
-        return false;
     }
     
     @Override
@@ -83,43 +74,25 @@ public class EditLayoutAction extends GenericInventoryAction {
             JOptionPane.showMessageDialog(null, I18N.gm("patch_equipment_model_layout"), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
         TemplateElementNode selectedNode = Utilities.actionsGlobalContext().lookup(TemplateElementNode.class);
         LocalObjectLight selectedObject = selectedNode.getLookup().lookup(LocalObjectLight.class);
-        
+                
         LocalObject templateElement = CommunicationsStub.getInstance().getTemplateElement(selectedObject.getClassName(), selectedObject.getOid());
         if (templateElement == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
         }
-        
-        LocalObjectListItem model = null;
-                
-        for (String attributeKey : templateElement.getAttributes().keySet()) {            
-            if ("model".equals(attributeKey)) {
-                Object attributeValue = templateElement.getAttributes().get("model");
-                if (attributeValue instanceof LocalObjectListItem) {
-                    LocalObjectListItem listItem = (LocalObjectListItem) attributeValue;
-                    
-                    if (CommunicationsStub.getInstance().isSubclassOf(listItem.getClassName(), Constants.CLASS_GENERICOBJECTLIST)) {
-                        model = listItem;
-                        break;
-                    }
-                }
-            }
-        }        
+        LocalObjectListItem model = (LocalObjectListItem) templateElement.getAttributes().get(Constants.ATTRIBUTE_MODEL);
+
         if (model == null) {
-            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                NotificationUtil.ERROR_MESSAGE, "The property \"model\" is not set");
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
+                NotificationUtil.WARNING_MESSAGE, "The attribute \"model\" is not set");
             return;
         }
-        
-////        DeviceLayoutTopComponentOld topComponent = (DeviceLayoutTopComponentOld) WindowManager.getDefault().findTopComponent(DeviceLayoutTopComponentOld.ID + model.getId());
         DeviceLayoutTopComponent topComponent = (DeviceLayoutTopComponent) WindowManager.getDefault().findTopComponent(DeviceLayoutTopComponent.ID + model.getId());
-        
+
         if (topComponent == null) {
-////            topComponent = new DeviceLayoutTopComponentOld(model);
             topComponent = new DeviceLayoutTopComponent(model);
             topComponent.open();
         } else {
@@ -127,7 +100,7 @@ public class EditLayoutAction extends GenericInventoryAction {
                 topComponent.requestAttention(true);
             else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
                    //so we will reuse the instance, refreshing the vierw first
-////                topComponent.refresh();
+                topComponent.refresh();
                 topComponent.open();
             }
         }

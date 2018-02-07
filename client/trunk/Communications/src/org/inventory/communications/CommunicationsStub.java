@@ -1053,6 +1053,40 @@ public class CommunicationsStub {
     }
     
     /**
+     * Checks if a class has a attribute with a given name
+     * @param className Class name
+     * @param attributeName Attribute name
+     * @return True if the given class has the attribute
+     */
+    public boolean hasAttribute(String className, String attributeName) {
+        if (className == null || attributeName == null)
+            return false;
+        
+        try {
+            return service.hasAttribute(className, attributeName, session.getSessionId());
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    public LocalAttributeMetadata getAttribute(String className, String attributeName) {
+        try {
+            AttributeInfo attrInfo = service.getAttribute(className, attributeName, session.getSessionId());
+            
+            LocalAttributeMetadata lam = new LocalAttributeMetadata(
+                attrInfo.getId(), attrInfo.getName(), attrInfo.getType(), 
+                attrInfo.getDisplayName(), attrInfo.isVisible(), attrInfo.isMandatory(), 
+                attrInfo.isUnique(), attrInfo.getDescription());
+            
+            return lam;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
      * Gets the class hierarchy tree
      * @param showAll Return all classes
      * @return A byte array with an XML document representing the class hierarchy tree

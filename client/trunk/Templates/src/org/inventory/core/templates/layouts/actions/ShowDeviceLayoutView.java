@@ -17,11 +17,11 @@ package org.inventory.core.templates.layouts.actions;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalAttributeMetadata;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
+import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.ShowDeviceLayoutTopComponent;
@@ -55,34 +55,26 @@ public class ShowDeviceLayoutView extends GenericObjectNodeAction {
     }
     
     @Override
-    public boolean isEnabled() {
+    public boolean isEnabled() {        
         boolean isEnabled = super.isEnabled();
         if (isEnabled) {
             ObjectNode selectedNode = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
+            
             if (selectedNode == null)
                 return false;
+            
             LocalObjectLight selectedObject = selectedNode.getLookup().lookup(LocalObjectLight.class);
             
             if (selectedObject == null)
                 return false;
-        
-            LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(selectedObject.getClassName(), false);
-            if (lcm == null) {
+            
+            try {
+                return Utils.classMayHaveDeviceLayout(selectedObject.getClassName());
+            } catch (Exception ex) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                    NotificationUtil.ERROR_MESSAGE, ex.getMessage());
                 return false;
             }
-            if (lcm.hasAttribute("model")) {
-                
-                for (LocalAttributeMetadata attrMetadata : lcm.getAttributes()) {
-                    if (attrMetadata.getName().equals("model")) {
-                        if (CommunicationsStub.getInstance().isSubclassOf(
-                                attrMetadata.getListAttributeClassName(), Constants.CLASS_GENERICOBJECTLIST))
-                            return true;
-                    }
-                }
-            }
-            return false;            
         }
         return isEnabled;
     }

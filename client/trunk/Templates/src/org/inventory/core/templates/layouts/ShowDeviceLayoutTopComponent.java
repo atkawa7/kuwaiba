@@ -50,7 +50,7 @@ import org.openide.windows.TopComponent;
 )
 public final class ShowDeviceLayoutTopComponent extends TopComponent {
     private ShowDeviceLayoutScene scene;
-    private LocalObjectLight objectLight;
+    private LocalObjectLight deviceToReder;
     
     KeyEventDispatcher keyEventDispatcher;
         
@@ -60,7 +60,7 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
 
     public ShowDeviceLayoutTopComponent(LocalObjectLight objectLight) {
         this();
-        this.objectLight = objectLight;
+        this.deviceToReder = objectLight;
         
         setName(String.format("Device Layout for %s", objectLight.getName()));
         
@@ -105,7 +105,7 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
     
     @Override
     protected String preferredID() {
-        return "ShowDeviceLayoutTopComponent_" + objectLight.getOid(); //NOI18N
+        return "ShowDeviceLayoutTopComponent_" + deviceToReder.getOid(); //NOI18N
     }
     
     @Override
@@ -172,7 +172,7 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
     private void btnExportMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnExportMouseClicked
         ExportScenePanel exportPanel = new ExportScenePanel(
             new SceneExportFilter[]{ImageFilter.getInstance()}, 
-            scene, "DeviceLayoutTo" + objectLight.getName()); // NOI18N
+            scene, "DeviceLayoutTo" + deviceToReder.getName()); // NOI18N
                 
         DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
@@ -192,10 +192,10 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
     @Override
     public void componentOpened() {
 
-        final DeviceLayoutRenderer renderDeviceLayout = new DeviceLayoutRenderer(objectLight, scene, 
+        final DeviceLayoutRenderer renderDeviceLayout = new DeviceLayoutRenderer(deviceToReder, scene, 
             new Point(0, 0), new Rectangle(0, 0, 7000, 1000));
         
-        if (renderDeviceLayout.getEquipmentModelView() == null && !renderDeviceLayout.hasDefaultDeviceLayout()) {
+        if (renderDeviceLayout.getDeviceLayoutObjectView() == null && !renderDeviceLayout.hasDefaultDeviceLayout()) {
             close();
             if (renderDeviceLayout.getErrorMessage() != null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
@@ -203,7 +203,7 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
             }
             return;
         }
-        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading the Device Layout for %s", objectLight.toString()));
+        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading the Device Layout for %s", deviceToReder.toString()));
         RequestProcessor.getDefault().post(new Runnable() {
             
             @Override
