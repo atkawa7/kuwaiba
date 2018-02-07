@@ -3549,6 +3549,32 @@ public class KuwaibaService {
     }
     
     /**
+     * Checks if a class has a attribute with a given name
+     * @param className Class name
+     * @param attributeName Attribute name
+     * @param sessionId Session token
+     * @return True if the given class has the attribute
+     * @throws ServerSideException If there is no a class with such className
+     */
+    @WebMethod(operationName = "hasAttribute")
+    public boolean hasAttribute(
+        @WebParam(name = "className") String className, 
+        @WebParam(name = "attributeName") String attributeName, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        
+        try {
+            return wsBean.hasAttribute(className, attributeName, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in hasAttribute: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
      * Gets a class attribute, using the class name as key to find it
      * @param className the class name
      * @param attributeName

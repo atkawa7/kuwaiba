@@ -456,6 +456,18 @@ public class WebserviceBean implements WebserviceBeanRemote {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    
+    @Override
+    public boolean hasAttribute(String className, String attributeName, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null || mem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("hasAttribute", ipAddress, sessionId);
+            return mem.hasAttribute(className, attributeName);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
 
     @Override
     public AttributeInfo getAttribute(String className, String attributeName, String ipAddress, String sessionId) throws ServerSideException {

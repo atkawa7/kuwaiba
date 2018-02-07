@@ -694,6 +694,25 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             
         } 
     }
+    
+    @Override
+    public boolean hasAttribute(String className, String attributeName) throws MetadataObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
+            
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format(
+                    "Can not find a class with name %s", className));
+            
+            for (Relationship relationship : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE)) {
+                Node attrNode = relationship.getEndNode();
+                
+                if (String.valueOf(attrNode.getProperty(Constants.PROPERTY_NAME)).equals(attributeName))
+                    return true;
+            }
+            return false;
+        }
+    }
 
     @Override
     public AttributeMetadata getAttribute(String className, String attributeName) 

@@ -152,6 +152,15 @@ public interface MetadataEntityManager {
      * @throws InvalidArgumentException if any of the parameters to create the attribute has a wrong value
      */
     public void createAttribute(long classId, AttributeMetadata attributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Checks if a class has a attribute with a given name
+     * @param className Class name
+     * @param attributeName Attribute name
+     * @return True if the given class has the attribute
+     * @throws MetadataObjectNotFoundException If there is no a class with such className
+     */
+    public boolean hasAttribute(String className, String attributeName) throws MetadataObjectNotFoundException;
 
     /**
      * Gets an attribute belonging to a class

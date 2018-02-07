@@ -114,6 +114,8 @@ public interface WebserviceBeanRemote {
     public void createAttribute(String className, AttributeInfo attributeDefinition, String ipAddress, String sessionId) throws ServerSideException;
 
     public void createAttribute(long classId, AttributeInfo attributeDefinition, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public boolean hasAttribute(String className, String attributeName, String ipAddress, String sessionId) throws ServerSideException;
 
     public AttributeInfo getAttribute(String className, String attributeName, String ipAddress, String sessionId) throws ServerSideException;
 
