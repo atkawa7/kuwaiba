@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JPopupMenu;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -43,7 +44,10 @@ import org.inventory.core.visual.actions.CustomMoveControlPointAction;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.core.visual.scene.ObjectConnectionWidget;
 import org.inventory.core.visual.scene.ObjectNodeWidget;
+import org.kuwaiba.management.services.views.topology.actions.DisaggregateTransportLinkAction;
+import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
+import org.netbeans.api.visual.action.PopupMenuProvider;
 import org.netbeans.api.visual.anchor.PointShape;
 import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.LayerWidget;
@@ -58,7 +62,7 @@ import org.openide.util.Exceptions;
  */
 public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
     
-    protected static final String VIEW_CLASS = "ServiceTopologyView";
+    protected static final String VIEW_CLASS = "ServiceTopologyView"; //NOI18N
     /**
      * A map that contains the expanded transport links and their container links, so they can be collapsed when the user needs it (see {@link #expandTransportLinks() } and {@link #collapseTransportLinks() })
      */
@@ -79,7 +83,15 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
      */
     private CustomAddRemoveControlPointAction addRemoveControlPointAction =
             new CustomAddRemoveControlPointAction(this);
-
+    /**
+     * The disaggregate action instance used in all connection widget objects
+     */
+    private DisaggregateTransportLinkAction disaggregateTransportLinkAction = new DisaggregateTransportLinkAction(this);
+    /**
+     *  A simple pop menu provider for connection widgets
+     */
+    private PopupMenuProvider popupMenuProviderForConnections = new EdgePopupMenuProvider();
+    
     public TopologyViewScene() {
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
@@ -128,6 +140,10 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
             xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
             
             for (Widget edgeWidget : edgeLayer.getChildren()) {
+                //Ignore the expanded edges, that is the container links thet were created during the disaggregation of a transporlink
+                if (isExpandedEdge((LocalObjectLight)findObject(edgeWidget)))
+                    continue;
+                
                 LocalObjectLight lolEdge = (LocalObjectLight) findObject(edgeWidget);
                 ObjectConnectionWidget acwEdge = (ObjectConnectionWidget) edgeWidget;
                 
@@ -407,6 +423,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
         newWidget.getActions().addAction(createSelectAction());
         newWidget.getActions().addAction(moveControlPointAction);
         newWidget.getActions().addAction(addRemoveControlPointAction);
+        newWidget.getActions().addAction(ActionFactory.createPopupMenuAction(popupMenuProviderForConnections));
         newWidget.setRouter(RouterFactory.createFreeRouter());
         newWidget.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         newWidget.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
@@ -419,47 +436,34 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
         validate();
         return newWidget;
     }
-    
-    /**
-     * This method disaggregates the existing transport links (STMX) showing the container links that are carried by them. The transport links are hidden in the mean time
-     */
-    public void expandTransportLinks() {
-        ArrayList<LocalObjectLight> currentTransportLinks = new ArrayList<>(getEdges());
-        for (LocalObjectLight edge : currentTransportLinks) {
-            List<LocalObjectLight> containerLinks = com.getSpecialAttribute(edge.getClassName(), edge.getOid(), "sdhTransports"); //NOI18N
-            
-            if (containerLinks != null && !containerLinks.isEmpty()) {
-                expandedTransportLinks.put(edge, containerLinks); //This map will be use to gracefully collapse all the STMX that will be expanded in this operation
-                
-                for (LocalObjectLight containerLink : containerLinks) {
-                    if (findWidget(containerLink) == null) { //This validation should not be necessary, but just in case
-                        addEdge(containerLink);
-                        setEdgeSource(containerLink, getEdgeSource(edge));
-                        setEdgeTarget(containerLink, getEdgeTarget(edge));
-                    }
-                }
-                //The STMX is only set invisible if it transports something
-                findWidget(edge).setVisible(false);
-            }
-        }
-        validate();
+
+    public HashMap<LocalObjectLight, List<LocalObjectLight>> getExpandedTransportLinks() {
+        return expandedTransportLinks;
     }
     
     /**
-     * This method does the opposite as {@link #expandTransportLinks() }
+     * Tells if a given object is a container link product of expanding (a.k.a. disaggregating) a transport link (STMX)
+     * @param edge An object representing the container link
+     * @return A boolean saying if the edge is an expanded edge or not
      */
-    public void collapseTransportLinks() {
+    private boolean isExpandedEdge(LocalObjectLight edge) {
         for (LocalObjectLight expandedTransportLink : expandedTransportLinks.keySet()) {
-            Widget expandedTransportLinkWidget = findWidget(expandedTransportLink);
-            if (expandedTransportLinkWidget != null) {
-                for (LocalObjectLight containerLink : expandedTransportLinks.get(expandedTransportLink)) {
-                    if (findWidget(containerLink) != null) 
-                        removeEdge(containerLink);
-                }
-                expandedTransportLinkWidget.setVisible(true);
-            }
+            if (expandedTransportLinks.get(expandedTransportLink).contains(edge))
+                return true;
         }
-        validate();
-        expandedTransportLinks.clear();
+        return false;
+    }
+    
+    /**
+     * A simple pop menu provider for connection widgets
+     */
+    private class EdgePopupMenuProvider implements PopupMenuProvider {
+                
+        @Override
+            public JPopupMenu getPopupMenu(Widget arg0, Point arg1) {
+                JPopupMenu mnuActions = new JPopupMenu();
+                mnuActions.add(disaggregateTransportLinkAction);
+                return mnuActions;
+            }
     }
 }

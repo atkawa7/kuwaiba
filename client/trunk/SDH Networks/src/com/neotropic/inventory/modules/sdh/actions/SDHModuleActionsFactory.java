@@ -49,14 +49,14 @@ import org.openide.windows.TopComponent;
 public class SDHModuleActionsFactory {
     private PopupMenuProvider nodeMenu;
     private PopupMenuProvider connectionMenu;
-    private RemoveSDHBusinessObjectFromView removeSDHBusinessObjectFromViewAction;
+    private RemoveSDHBusinessObjectFromViewAction removeSDHBusinessObjectFromViewAction;
     private DeleteSDHTransportLink deleteSDHTransportLink;
     private ShowSDHContainersInTransportLink showSDHContainersInTransportLinkAction;
     private SDHModuleScene scene;
 
     public SDHModuleActionsFactory(SDHModuleScene scene) {
         this.scene = scene;
-        removeSDHBusinessObjectFromViewAction = new RemoveSDHBusinessObjectFromView();
+        removeSDHBusinessObjectFromViewAction = new RemoveSDHBusinessObjectFromViewAction();
         deleteSDHTransportLink = new DeleteSDHTransportLink();
         showSDHContainersInTransportLinkAction = new ShowSDHContainersInTransportLink();
     }
@@ -103,10 +103,10 @@ public class SDHModuleActionsFactory {
         return connectionMenu;
     }
     
-    public class RemoveSDHBusinessObjectFromView extends GenericInventoryAction {
+    public class RemoveSDHBusinessObjectFromViewAction extends GenericInventoryAction {
 
-        public RemoveSDHBusinessObjectFromView() {
-            this.putValue(NAME, "Remove From View"); 
+        public RemoveSDHBusinessObjectFromViewAction() {
+            this.putValue(NAME, "Remove from View"); 
         }
         
         @Override
@@ -120,7 +120,7 @@ public class SDHModuleActionsFactory {
                 else
                     scene.removeEdge(castedObject);
                 
-                scene.fireChangeEvent(new ActionEvent(selectedObject, AbstractScene.SCENE_CHANGE, "manualDelete"));
+                scene.fireChangeEvent(new ActionEvent(selectedObject, AbstractScene.SCENE_CHANGE, "manualDelete")); //NOI18N
             }         
         }
 

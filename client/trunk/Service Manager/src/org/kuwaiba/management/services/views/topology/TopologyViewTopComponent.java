@@ -23,8 +23,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
@@ -36,6 +34,7 @@ import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.core.visual.scene.AbstractScene;
+import org.netbeans.api.visual.widget.Widget;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.explorer.ExplorerManager;
@@ -48,6 +47,11 @@ import org.openide.windows.TopComponent;
 public class TopologyViewTopComponent extends TopComponent implements 
         ExplorerManager.Provider, ActionListener {
 
+    private final ImageIcon ICON_RESETTRANSPORTLINKS = new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/aggregate.png"));
+    private final ImageIcon ICON_REFRESHVIEW = new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/refresh.png"));
+    private final ImageIcon ICON_EXPORTVIEW = new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/export.png"));
+    private final ImageIcon ICON_SAVEVIEW = new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/save.png"));
+    
     private ExplorerManager em = new ExplorerManager();
     private TopologyViewScene scene;
     private LocalObjectLight currentService;
@@ -86,7 +90,7 @@ public class TopologyViewTopComponent extends TopComponent implements
 
             // <editor-fold defaultstate="collapsed" desc="Tool Bar Definition">
             JToolBar barMainToolBar = new JToolBar();
-            final JButton btnSave = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/save.png")));
+            final JButton btnSave = new JButton(ICON_SAVEVIEW);
             btnSave.setToolTipText("Save the current view");
             btnSave.addActionListener(new ActionListener() {
                 @Override
@@ -95,7 +99,7 @@ public class TopologyViewTopComponent extends TopComponent implements
                 }
             });
             
-            JButton btnExport = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/export.png")));
+            JButton btnExport = new JButton(ICON_EXPORTVIEW);
             btnExport.setToolTipText("Export to popular image formats");
             btnExport.addActionListener(new ActionListener() {
 
@@ -108,7 +112,7 @@ public class TopologyViewTopComponent extends TopComponent implements
                 }
             });
             
-            final JButton btnRefresh = new JButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/refresh.png")));
+            final JButton btnRefresh = new JButton(ICON_REFRESHVIEW);
             btnRefresh.setToolTipText("Refresh the current view");
             btnRefresh.addActionListener(new ActionListener() {
 
@@ -119,21 +123,27 @@ public class TopologyViewTopComponent extends TopComponent implements
                 }
             });
             
-            JToggleButton btnDisaggregate = new JToggleButton(new ImageIcon(getClass().getResource("/org/kuwaiba/management/services/res/disaggregate.png")));
-            btnDisaggregate.setToolTipText("Expand the contents of all STMX transporting container links");
-            btnDisaggregate.addActionListener(new ActionListener() {
+            JButton btnResetTransportLinks = new JButton(ICON_RESETTRANSPORTLINKS);
+            btnResetTransportLinks.setToolTipText("Reset all the disaggregated transport links to their initial state");
+            btnResetTransportLinks.addActionListener(new ActionListener() {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if (((JToggleButton)e.getSource()).isSelected()) {
-                        scene.expandTransportLinks();
-                        btnSave.setEnabled(false); //Saving and refreshing won't be supported while the transport links are expanded
-                        btnRefresh.setEnabled(false);
-                    }
+                    if (scene.getExpandedTransportLinks().isEmpty())
+                        JOptionPane.showMessageDialog(null, "There are no expanded transport links in the current view");
                     else {
-                        scene.collapseTransportLinks();
-                        btnSave.setEnabled(true);
-                        btnRefresh.setEnabled(true);
+                        for (LocalObjectLight expandedTransportLink : scene.getExpandedTransportLinks().keySet()) {
+                            Widget expandedTransportLinkWidget = scene.findWidget(expandedTransportLink);
+                            if (expandedTransportLinkWidget != null) {
+                                for (LocalObjectLight containerLink : scene.getExpandedTransportLinks().get(expandedTransportLink)) {
+                                    if (scene.findWidget(containerLink) != null) 
+                                        scene.removeEdge(containerLink);
+                                }
+                                expandedTransportLinkWidget.setVisible(true);
+                            }
+                        }
+                        scene.getExpandedTransportLinks().clear();
+                        scene.validate();
                     }
                 }
             });
@@ -141,7 +151,7 @@ public class TopologyViewTopComponent extends TopComponent implements
             barMainToolBar.add(btnSave);
             barMainToolBar.add(btnExport);
             barMainToolBar.add(btnRefresh);
-            barMainToolBar.add(btnDisaggregate);
+            barMainToolBar.add(btnResetTransportLinks);
             // </editor-fold>  
             add(barMainToolBar, BorderLayout.NORTH);
             associateLookup(scene.getLookup());
@@ -150,7 +160,7 @@ public class TopologyViewTopComponent extends TopComponent implements
     
     @Override
     public String getDisplayName() {
-        return String.format("Topology View for %s", currentService.toString());
+        return String.format("Topology View for %s", currentService);
     }
     
     @Override
