@@ -1,0 +1,10 @@
+This software makes use of the following third-party components and neither of them was modified, only linked:
+
+* Netbeans Platform (CDDL, http://opensource.org/licenses/CDDL-1.0) http://platform.netbeans.org/
+* JCalendar, which provides support to edit Date-like properties (LGPL, http://toedter.com/jcalendar/)
+* JTattoo, an extremely customizable look and feel (GPLv3/LGPL/APL, http://www.jtattoo.net/)
+* JSR 353 Reference Implementation (CDDL, http://opensource.org/licenses/CDDL-1.0) https://javaee.github.io/json-processing-spec/
+
+We want to thank all people that made possible this software possible.
+
+All copyrights and trademarks associated to these third party components correspond to their owners. We don't claim any ownership of any of them.
