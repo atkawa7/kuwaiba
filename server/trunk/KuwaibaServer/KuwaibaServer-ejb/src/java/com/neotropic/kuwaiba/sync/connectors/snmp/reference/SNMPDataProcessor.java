@@ -423,7 +423,7 @@ public class SNMPDataProcessor {
                             if (oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName)) {
                                 jObj = branch.get(w);
                                 if (hasSerialNumber) {
-                                    if (oldSerialNumber.equals(serialNumber)) {
+                                    if (oldSerialNumber.equals(serialNumber) || oldSerialNumber.trim().equals(serialNumber.trim())) {
                                         if(!attributeChanges.isEmpty()){
                                             jObj = jsonObjectToBuilder(jObj).add("deviceId", Long.toString(oldObj.getId())).build();
                                             jObj = jsonObjectToBuilder(jObj).add("type", "device").build();
@@ -828,18 +828,20 @@ public class SNMPDataProcessor {
             objectName = objectName.replace("GigabitEthernet", "Gi");
 
         attributes.put("name", objectName);
-        attributes.put("description", allData.get("entPhysicalDescr").get(index));
+        attributes.put("description", allData.get("entPhysicalDescr").get(index).trim());
         if (!allData.get("entPhysicalMfgName").get(index).isEmpty()) {
-            String vendor = findingListTypeId(index);
+            String vendor = findingListTypeId(index, "EquipmentVendor");
             if (vendor != null) 
                 attributes.put("vendor", vendor);
         }
         if (!allData.get("entPhysicalSerialNum").get(index).isEmpty()) 
-            attributes.put("serialNumber", allData.get("entPhysicalSerialNum").get(index));
+            attributes.put("serialNumber", allData.get("entPhysicalSerialNum").get(index).trim());
         
-        if (!allData.get("entPhysicalModelName").get(index).isEmpty()) 
-            attributes.put("modelName", allData.get("entPhysicalModelName").get(index));
-        
+        if (!allData.get("entPhysicalModelName").get(index).isEmpty()){ 
+            String model = findingListTypeId(index, "EquipmentModel");
+            if(model != null)
+                attributes.put("model", model);
+        }
         return attributes;
     }
 
@@ -1183,30 +1185,36 @@ public class SNMPDataProcessor {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException
      */
-    private String findingListTypeId(int i) throws MetadataObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException {
-
-        if (!allData.get("entPhysicalMfgName").get(i).isEmpty()) {
-            String vendor = "";
-            Long listTypeId = matchVendorNames(allData.get("entPhysicalMfgName").get(i));
-            if (listTypeId > 0) {
-                vendor = Long.toString(listTypeId);
+    private String findingListTypeId(int i, String listTypeClassName) throws MetadataObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException {
+        String SNMPoid = ""; 
+        if(listTypeClassName.equals("EquipmentVendor"))
+            SNMPoid = "entPhysicalMfgName";
+        else if(listTypeClassName.equals("EquipmentModel"))
+            SNMPoid = "entPhysicalModelName";
+        
+        if (!allData.get(SNMPoid).get(i).isEmpty()) {
+            String listTypeNameFromSNMP = allData.get(SNMPoid).get(i);
+            String listTypeId = "";
+            Long id_ = matchListTypeNames(listTypeNameFromSNMP, listTypeClassName);
+            if (id_ > 0) {
+                listTypeId = Long.toString(id_);
             } else {//The list type doesn't exist, we create a finding
-                if (!listTypeEvaluated.contains(allData.get("entPhysicalMfgName").get(i))) {
+                if (!listTypeEvaluated.contains(listTypeNameFromSNMP)) {
                     
-                    long createListTypeItem = aem.createListTypeItem("EquipmentVendor", allData.get("entPhysicalMfgName").get(i), allData.get("entPhysicalMfgName").get(i));
+                    long createListTypeItem = aem.createListTypeItem(listTypeClassName, listTypeNameFromSNMP.trim(), listTypeNameFromSNMP.trim());
 
                     findings.add(new SyncFinding(SyncFinding.EVENT_ERROR,
-                            "The list type: " + allData.get("entPhysicalMfgName").get(i) + "was created",
+                            "The list type: " + listTypeNameFromSNMP + " was created",
                             Json.createObjectBuilder()
                             .add("type", "listType")
-                            .add("name", allData.get("entPhysicalMfgName").get(i))
+                            .add("name", listTypeNameFromSNMP)
                             .build().toString()));
 
-                    listTypeEvaluated.add(allData.get("entPhysicalMfgName").get(i));
+                    listTypeEvaluated.add(listTypeNameFromSNMP);
                     return Long.toString(createListTypeItem);
                 }
             }
-            return vendor;
+            return listTypeId;
         }
         return null;
     }
@@ -1219,8 +1227,15 @@ public class SNMPDataProcessor {
      * @throws MetadataObjectNotFoundException if the list type doesn't exists
      * @throws InvalidArgumentException if the class name provided is not a list type
      */
-    private long matchVendorNames(String listTypeNameToLoad) throws MetadataObjectNotFoundException, InvalidArgumentException {
-        List<RemoteBusinessObjectLight> listTypeItems = aem.getListTypeItems("EquipmentVendor");
+    private long matchListTypeNames(String listTypeNameToLoad, String listTypeClassName) throws MetadataObjectNotFoundException, InvalidArgumentException {
+        List<RemoteBusinessObjectLight> listTypeItems = aem.getListTypeItems(listTypeClassName);
+        List<String> onlyNameListtypes = new ArrayList<>();
+        for(RemoteBusinessObjectLight createdLitType : listTypeItems)
+            onlyNameListtypes.add(createdLitType.getName());
+        
+        if(onlyNameListtypes.contains(listTypeNameToLoad))
+                return listTypeItems.get(onlyNameListtypes.indexOf(listTypeNameToLoad)).getId();
+        
         for (RemoteBusinessObjectLight createdLitType : listTypeItems) {
             int matches = 0;
             int maxLength = listTypeNameToLoad.length() > createdLitType.getName().length() ? listTypeNameToLoad.length() : createdLitType.getName().length();
@@ -1265,6 +1280,8 @@ public class SNMPDataProcessor {
         for (String attributeName : comparedAttributes.keySet()) {
             if(attributeName.equals("vendor"))
                 translatedAttributes.put(attributeName, aem.getListTypeItem("EquipmentVendor", Long.valueOf(comparedAttributes.get(attributeName))).getName());
+            else if(attributeName.equals("model"))
+                translatedAttributes.put(attributeName, aem.getListTypeItem("EquipmentModel", Long.valueOf(comparedAttributes.get(attributeName))).getName());
             else
                 translatedAttributes.put(attributeName, comparedAttributes.get(attributeName));
         }

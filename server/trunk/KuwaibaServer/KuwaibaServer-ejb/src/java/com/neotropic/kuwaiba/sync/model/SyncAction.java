@@ -195,8 +195,8 @@ public class SyncAction {
             attributes.put("serialNumber", jsonAttributes.getString("serialNumber"));
         if(jsonAttributes.get("vendor") != null)
             attributes.put("vendor", jsonAttributes.getString("vendor"));
-        if(jsonAttributes.get("modelName") != null)
-            attributes.put("modelName", jsonAttributes.getString("modelName")); 
+        if(jsonAttributes.get("model") != null)
+            attributes.put("model", jsonAttributes.getString("model")); 
         if (find.getType() == SyncFinding.EVENT_UPDATE){
             try{
                 bem.updateObject(deviceClassName, deviceId, attributes);
@@ -236,8 +236,8 @@ public class SyncAction {
                     attributes.put("serialNumber", jsonAttributes.getString("serialNumber"));
                 if(jsonAttributes.get("vendor") != null)
                     attributes.put("vendor", jsonAttributes.getString("vendor"));
-                if(jsonAttributes.get("modelName") != null)
-                    attributes.put("modelName", jsonAttributes.getString("modelName"));
+                if(jsonAttributes.get("model") != null)
+                    attributes.put("model", jsonAttributes.getString("model"));
                 //attributes.put("isLoadFromRegistry", "true");
 
                 if (find.getType() == SyncFinding.EVENT_NEW){
@@ -298,8 +298,6 @@ public class SyncAction {
         long[] ids = {childId} ;
         objectsToMove.put(className, ids);
         
-        
-        
         try {
             Long parentId = createdIdsToMap.get(tempParentId);
             if(parentId != null){
@@ -331,8 +329,8 @@ public class SyncAction {
                                 attributes.put("serialNumber", jsonAttributes.getString("serialNumber"));
                             if(jsonAttributes.get("vendor") != null)
                                 attributes.put("vendor", jsonAttributes.getString("vendor"));
-                            if(jsonAttributes.get("modelName") != null)
-                                attributes.put("modelName", jsonAttributes.getString("modelName"));
+                            if(jsonAttributes.get("model") != null)
+                                attributes.put("model", jsonAttributes.getString("model"));
                             
                             if(!className.contains("Port")){
                                 if(className.contains("Transceiver"))
@@ -371,8 +369,8 @@ public class SyncAction {
             attributes.put("serialNumber", jsonAttributes.getString("serialNumber"));
         if(jsonAttributes.get("vendor") != null)
             attributes.put("vendor", jsonAttributes.getString("vendor"));
-        if(jsonAttributes.get("modelName") != null)
-            attributes.put("modelName", jsonAttributes.getString("modelName"));
+        if(jsonAttributes.get("model") != null)
+            attributes.put("model", jsonAttributes.getString("model"));
         
         Long parentId = createdIdsToMap.get(tempParentId);
         if(parentId == null)
@@ -399,8 +397,8 @@ public class SyncAction {
                         attributes.put("serialNumber", jsonAttributes.getString("serialNumber"));
                     if(jsonAttributes.get("vendor") != null)
                         attributes.put("vendor", jsonAttributes.getString("vendor"));
-                    if(jsonAttributes.get("modelName") != null)
-                        attributes.put("modelName", jsonAttributes.getString("modelName"));
+                    if(jsonAttributes.get("model") != null)
+                        attributes.put("model", jsonAttributes.getString("model"));
                     try{
                         parentId = createdIdsToMap.get(tempParentId);
                         long createdObjectId = bem.createObject(className, parentClassName, parentId, attributes, -1);
