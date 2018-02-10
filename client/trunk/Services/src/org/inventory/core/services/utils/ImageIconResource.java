@@ -19,11 +19,19 @@ import javax.swing.ImageIcon;
 import org.openide.util.ImageUtilities;
 
 /**
- *
+ * The ImageIconResource groups the common icons used by the application modules
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ImageIconResource {
     private static final String WARNING_ICON_PATH = "org/inventory/core/services/res/icons/warning.png";
     public static ImageIcon WARNING_ICON = ImageUtilities.loadImageIcon(WARNING_ICON_PATH, false);
     
+    private static final String EXPORT_ICON_PATH = "org/inventory/core/services/res/icons/export.png";
+    public static ImageIcon EXPORT_ICON = ImageUtilities.loadImageIcon(EXPORT_ICON_PATH, false);
+    
+    private static final String IMPORT_ICON_PATH = "org/inventory/core/services/res/icons/import.png";
+    public static ImageIcon IMPORT_ICON = ImageUtilities.loadImageIcon(IMPORT_ICON_PATH, false);
+    
+    private static final String REFRESH_ICON_PATH = "org/inventory/core/services/res/icons/import.png";
+    public static ImageIcon REFRESH_ICON = ImageUtilities.loadImageIcon(REFRESH_ICON_PATH, false);
 }

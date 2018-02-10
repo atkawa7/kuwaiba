@@ -346,6 +346,7 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
 
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
+        clear();
         render(structure, null, null);
     }
 
@@ -372,7 +373,7 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
             int childrenSize = nodeLayer.getChildren().size();
             
             while (reader.hasNext()) {
-                int event = reader.next();
+                int event = reader.next();                
                 if (event == XMLStreamConstants.START_ELEMENT) {
                     if (reader.getName().equals(tagLayout)) {
                         int x = 0;
@@ -594,14 +595,11 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
                     if (structure != null) {
                         render(structure, customShape, containerShapeWidget);
                         return true;
-                    } else
-                        return false;
-                } else
-                    return false;
-            } else
-                return false;
-        } else
-            return false;
+                    }
+                }
+            }
+        }
+        return false;
     }
     
     @Override
@@ -658,6 +656,7 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
 
     @Override
     protected Widget attachEdgeWidget(String e) {
+        //ToReview: If in the future add edges in the device layout review the render and export/import classes
         return null;
     }
 

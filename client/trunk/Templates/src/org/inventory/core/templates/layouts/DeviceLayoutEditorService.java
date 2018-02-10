@@ -30,12 +30,12 @@ import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
  * The service class associated to the main device layout edition component
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class DeviceLayoutService {
+public class DeviceLayoutEditorService {
     private final LocalObjectListItem model;
     private final DeviceLayoutScene scene;
     private LocalObjectView deviceLayoutView;
         
-    public DeviceLayoutService(LocalObjectListItem model) {
+    public DeviceLayoutEditorService(LocalObjectListItem model) {
         this.model = model;
         this.scene = new DeviceLayoutScene(model);
     }

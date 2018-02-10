@@ -21,7 +21,7 @@ import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.core.templates.layouts.DeviceLayoutTopComponent;
+import org.inventory.core.templates.layouts.DeviceLayoutEditorTopComponent;
 import org.openide.util.Utilities;
 import org.openide.windows.WindowManager;
 
@@ -44,9 +44,9 @@ public class EditCustomShapeLayoutAction extends GenericInventoryAction {
         LocalObjectListItem customShape = Utilities.actionsGlobalContext().lookup(LocalObjectListItem.class);
         if (customShape == null)
             return;
-        DeviceLayoutTopComponent topComponent = (DeviceLayoutTopComponent) WindowManager.getDefault().findTopComponent(DeviceLayoutTopComponent.ID + customShape.getId());
+        DeviceLayoutEditorTopComponent topComponent = (DeviceLayoutEditorTopComponent) WindowManager.getDefault().findTopComponent(DeviceLayoutEditorTopComponent.ID + customShape.getId());
         if (topComponent == null) {
-            topComponent = new DeviceLayoutTopComponent(customShape);
+            topComponent = new DeviceLayoutEditorTopComponent(customShape);
             topComponent.open();
         } else {
             if (topComponent.isOpened())

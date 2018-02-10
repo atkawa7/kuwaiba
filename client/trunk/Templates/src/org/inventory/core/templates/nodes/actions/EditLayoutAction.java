@@ -27,9 +27,8 @@ import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.core.templates.layouts.DeviceLayoutTopComponent;
+import org.inventory.core.templates.layouts.DeviceLayoutEditorTopComponent;
 import org.inventory.core.templates.nodes.TemplateElementNode;
-import org.openide.util.Exceptions;
 import org.openide.util.Utilities;
 import org.openide.windows.WindowManager;
 
@@ -90,10 +89,10 @@ public class EditLayoutAction extends GenericInventoryAction {
                 NotificationUtil.WARNING_MESSAGE, "The attribute \"model\" is not set");
             return;
         }
-        DeviceLayoutTopComponent topComponent = (DeviceLayoutTopComponent) WindowManager.getDefault().findTopComponent(DeviceLayoutTopComponent.ID + model.getId());
+        DeviceLayoutEditorTopComponent topComponent = (DeviceLayoutEditorTopComponent) WindowManager.getDefault().findTopComponent(DeviceLayoutEditorTopComponent.ID + model.getId());
 
         if (topComponent == null) {
-            topComponent = new DeviceLayoutTopComponent(model);
+            topComponent = new DeviceLayoutEditorTopComponent(model);
             topComponent.open();
         } else {
             if (topComponent.isOpened())

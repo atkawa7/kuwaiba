@@ -16,17 +16,38 @@
  */
 package org.inventory.core.templates.layouts;
 
+import org.inventory.core.templates.layouts.transfer.ImportDeviceLayout;
+import org.inventory.core.templates.layouts.transfer.ExportDeviceLayout;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.filechooser.FileFilter;
 import org.inventory.communications.core.LocalObjectListItem;
+import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.api.notifications.StatusUtil;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.core.services.utils.ImageIconResource;
+import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.templates.layouts.customshapes.CustomShapesTopComponent;
 import org.inventory.core.templates.layouts.lookup.SharedContent;
 import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
@@ -39,23 +60,25 @@ import org.openide.windows.WindowManager;
  * Top Component used to define the Equipment Layouts
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public final class DeviceLayoutTopComponent extends TopComponent implements ActionListener, Refreshable {
-    public static String ID = "DeviceLayoutTopComponent_";
-    private DeviceLayoutService service;
+public final class DeviceLayoutEditorTopComponent extends TopComponent implements ActionListener, Refreshable {
+    public static String ID = "DeviceLayoutEditorTopComponent_";
+    private DeviceLayoutEditorService service;
     
     private DeviceLayoutConfigurationObject configObject;
 
-    public DeviceLayoutTopComponent() {
+    public DeviceLayoutEditorTopComponent() {
         initComponents();
+        btnExport.setIcon(ImageIconResource.EXPORT_ICON);
+        btnImport.setIcon(ImageIconResource.IMPORT_ICON);
     }
     
-    public DeviceLayoutTopComponent(LocalObjectListItem model) {
+    public DeviceLayoutEditorTopComponent(LocalObjectListItem model) {
         this();
         configObject = new DeviceLayoutConfigurationObject();
         configObject.setProperty("saved", true); //NOI18N
         
         setDisplayName(model.toString() + " "  + I18N.gm("layout"));
-        service = new DeviceLayoutService(model);
+        service = new DeviceLayoutEditorService(model);
         
         associateLookup(SharedContent.getInstance().getAbstractLookup());
         
@@ -95,6 +118,9 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         separator2 = new javax.swing.JToolBar.Separator();
         btnCustomShapes = new javax.swing.JButton();
         btnShowPalette = new javax.swing.JButton();
+        jSeparator1 = new javax.swing.JToolBar.Separator();
+        btnExport = new javax.swing.JButton();
+        btnImport = new javax.swing.JButton();
 
         setLayout(new java.awt.BorderLayout());
         add(pnlScroll, java.awt.BorderLayout.CENTER);
@@ -102,8 +128,8 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         barMain.setRollover(true);
 
         btnSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/save.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnSave.text_1")); // NOI18N
-        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnSave.toolTipText_1")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnSave, org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnSave.text_1")); // NOI18N
+        btnSave.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnSave.toolTipText_1")); // NOI18N
         btnSave.setFocusable(false);
         btnSave.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnSave.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -115,8 +141,8 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         barMain.add(btnSave);
 
         btnDelete.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/delete.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnDelete, org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnDelete.text_1")); // NOI18N
-        btnDelete.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnDelete.toolTipText_1")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnDelete, org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnDelete.text_1")); // NOI18N
+        btnDelete.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnDelete.toolTipText_1")); // NOI18N
         btnDelete.setFocusable(false);
         btnDelete.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnDelete.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -128,8 +154,8 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         barMain.add(btnDelete);
 
         btnClean.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/clean.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnClean, org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnClean.text_1")); // NOI18N
-        btnClean.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnClean.toolTipText_1")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnClean, org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnClean.text_1")); // NOI18N
+        btnClean.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnClean.toolTipText_1")); // NOI18N
         btnClean.setFocusable(false);
         btnClean.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnClean.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -142,8 +168,8 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         barMain.add(separator1);
 
         btnGroup.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/groupShapes.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnGroup, org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnGroup.text")); // NOI18N
-        btnGroup.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnGroup.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnGroup, org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnGroup.text")); // NOI18N
+        btnGroup.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnGroup.toolTipText")); // NOI18N
         btnGroup.setFocusable(false);
         btnGroup.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnGroup.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -155,8 +181,8 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         barMain.add(btnGroup);
 
         btnShowGuide.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/showGuide.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnShowGuide, org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnShowGuide.text")); // NOI18N
-        btnShowGuide.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnShowGuide.toolTipText")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnShowGuide, org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnShowGuide.text")); // NOI18N
+        btnShowGuide.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnShowGuide.toolTipText")); // NOI18N
         btnShowGuide.setFocusable(false);
         btnShowGuide.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnShowGuide.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -169,8 +195,8 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         barMain.add(separator2);
 
         btnCustomShapes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/custom_shapes.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnCustomShapes, org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnCustomShapes.text_1")); // NOI18N
-        btnCustomShapes.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnCustomShapes.toolTipText_1")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnCustomShapes, org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnCustomShapes.text_1")); // NOI18N
+        btnCustomShapes.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnCustomShapes.toolTipText_1")); // NOI18N
         btnCustomShapes.setFocusable(false);
         btnCustomShapes.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnCustomShapes.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -182,8 +208,8 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         barMain.add(btnCustomShapes);
 
         btnShowPalette.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/templates/res/show_palette.png"))); // NOI18N
-        org.openide.awt.Mnemonics.setLocalizedText(btnShowPalette, org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnShowPalette.text_1")); // NOI18N
-        btnShowPalette.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutTopComponent.class, "DeviceLayoutTopComponent.btnShowPalette.toolTipText_1")); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnShowPalette, org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnShowPalette.text_1")); // NOI18N
+        btnShowPalette.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnShowPalette.toolTipText_1")); // NOI18N
         btnShowPalette.setFocusable(false);
         btnShowPalette.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnShowPalette.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -193,6 +219,37 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
             }
         });
         barMain.add(btnShowPalette);
+        barMain.add(jSeparator1);
+
+        org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnExport.text_1")); // NOI18N
+        btnExport.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnExport.toolTipText")); // NOI18N
+        btnExport.setFocusable(false);
+        btnExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnExport.setMaximumSize(new java.awt.Dimension(34, 34));
+        btnExport.setMinimumSize(new java.awt.Dimension(34, 34));
+        btnExport.setPreferredSize(new java.awt.Dimension(34, 34));
+        btnExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExportActionPerformed(evt);
+            }
+        });
+        barMain.add(btnExport);
+
+        org.openide.awt.Mnemonics.setLocalizedText(btnImport, org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnImport.text")); // NOI18N
+        btnImport.setToolTipText(org.openide.util.NbBundle.getMessage(DeviceLayoutEditorTopComponent.class, "DeviceLayoutEditorTopComponent.btnImport.toolTipText")); // NOI18N
+        btnImport.setFocusable(false);
+        btnImport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnImport.setMaximumSize(new java.awt.Dimension(34, 34));
+        btnImport.setMinimumSize(new java.awt.Dimension(34, 34));
+        btnImport.setPreferredSize(new java.awt.Dimension(34, 34));
+        btnImport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnImport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnImportActionPerformed(evt);
+            }
+        });
+        barMain.add(btnImport);
 
         add(barMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
@@ -278,15 +335,119 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         }
     }//GEN-LAST:event_btnShowGuideActionPerformed
 
+    private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
+        final JTextField txtDeviceLayoutName = new JTextField();
+        txtDeviceLayoutName.setName("txtDeviceLayoutName");
+        txtDeviceLayoutName.setColumns(15);
+        
+        final String filePath = System.getProperty("user.home") + File.separator;
+        final String deviceLayoutName = "DeviceLayout" + 
+                                  Calendar.getInstance().get(Calendar.DAY_OF_YEAR) + "-" + Calendar.getInstance().get(Calendar.MINUTE) + 
+                                  ".xml";
+        txtDeviceLayoutName.setText(filePath + deviceLayoutName);
+        
+        final JFileChooser fChooser = new JFileChooser();
+        fChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        fChooser.setDialogTitle(I18N.gm("select_directory"));
+        
+        final JButton btnFileChooser = new JButton();
+        btnFileChooser.setAction(new AbstractAction() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String fileName = txtDeviceLayoutName.getText();
+                if (!fileName.isEmpty()) {
+                    if (!fileName.contains(".xml"))
+                        fileName += ".xml";
+                } else {
+                    fileName = deviceLayoutName;
+                }
+                if (fChooser.showSaveDialog(btnFileChooser) == JFileChooser.APPROVE_OPTION) {
+                    txtDeviceLayoutName.setText(fChooser.getSelectedFile().getAbsolutePath() + File.separator + fileName);
+                }
+            }
+        });
+        btnFileChooser.setText("...");
+        btnFileChooser.setToolTipText(I18N.gm("select_directory"));
+        btnFileChooser.setSize(34, 34);
+        
+        JPanel pnl = new JPanel();
+        pnl.add(txtDeviceLayoutName);
+        pnl.add(btnFileChooser);
+        
+        JComplexDialogPanel pnlExportDeviceLayout = new JComplexDialogPanel(new String[] {I18N.gm("name")}, new JComponent[] {pnl});
+        if (JOptionPane.showConfirmDialog(null, pnlExportDeviceLayout, I18N.gm("export_as_xml"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(txtDeviceLayoutName.getText()), "utf-8"))) {
+                
+                ExportDeviceLayout export = new ExportDeviceLayout(service.getScene());
+                
+                writer.write(export.getAsXMl());
+            } catch (Exception ex) {
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                    NotificationUtil.ERROR_MESSAGE, I18N.gm("can_not_read_file"));
+            }
+        }
+    }//GEN-LAST:event_btnExportActionPerformed
+
+    private void btnImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImportActionPerformed
+        JFileChooser fChooser = new JFileChooser();
+        fChooser.setAcceptAllFileFilterUsed(false);
+        
+        fChooser.setFileFilter(new FileFilter() {
+
+            @Override
+            public boolean accept(File f) {
+                if (f.isDirectory())
+                    return true;
+                
+                String functionPattern = "\\.xml$";
+
+                Pattern pattern = Pattern.compile(functionPattern);
+                Matcher matcher = pattern.matcher(f.getName());
+
+                return matcher.find();
+            }
+
+            @Override
+            public String getDescription() {
+                return "XML Device Layout Files";
+            }
+        });
+        
+        fChooser.setMultiSelectionEnabled(false);
+        
+        fChooser.setDialogTitle("Select an XML Device Layout definition file");
+        
+        if (fChooser.showSaveDialog(btnImport) == JFileChooser.APPROVE_OPTION) {
+            try {
+                byte[] structure = Utils.getByteArrayFromFile(fChooser.getSelectedFile());
+                
+                ImportDeviceLayout import_ = new ImportDeviceLayout(fChooser.getSelectedFile().getAbsolutePath(), structure, service.getModel(), service.getScene());
+                if(import_.importDeviceLayout()) {
+                    btnClean.setEnabled(true);
+                    btnDelete.setEnabled(true);
+                    btnExport.setEnabled(true);
+                }
+            } catch (IOException ex) {
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                    NotificationUtil.ERROR_MESSAGE, I18N.gm("can_not_read_file"));
+            }
+        }
+        
+    }//GEN-LAST:event_btnImportActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToolBar barMain;
     private javax.swing.JButton btnClean;
     private javax.swing.JButton btnCustomShapes;
     private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnExport;
     private javax.swing.JButton btnGroup;
+    private javax.swing.JButton btnImport;
     private javax.swing.JButton btnSave;
     private javax.swing.JToggleButton btnShowGuide;
     private javax.swing.JButton btnShowPalette;
+    private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JScrollPane pnlScroll;
     private javax.swing.JToolBar.Separator separator1;
     private javax.swing.JToolBar.Separator separator2;
@@ -298,8 +459,11 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         btnShowPaletteActionPerformed(null);
 
         service.renderLayout();      
-        if (service.getDeviceLayoutView()== null)
+        if (service.getDeviceLayoutView()== null) {
             btnDelete.setEnabled(false);
+            btnClean.setEnabled(false);
+            btnExport.setEnabled(false);
+        }
         
         service.getScene().addChangeListener(this);         
     }
@@ -352,6 +516,7 @@ public final class DeviceLayoutTopComponent extends TopComponent implements Acti
         switch (e.getID()){
             case DeviceLayoutScene.SCENE_CHANGE:
                 setSaved(false);
+                btnClean.setEnabled(true);
                 break;
             case DeviceLayoutScene.SCENE_CHANGEANDSAVE:
                 break;
