@@ -5,7 +5,7 @@
 %Metadata
 \title{Kuwaiba Open Network Inventory User's Manual}
 \author{Neotropic SAS}
-\date{15.01.2018}
+\date{15.02.2018}
 
 %Imports
 \usepackage{graphicx}
@@ -180,7 +180,7 @@
 		\begin{tabular}{cl}
 			\includegraphics[width=0.5cm]{img/icon_query_manager.png} & Search objects with the Query Manager\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_refresh_component.png} & Refresh the current view\\
+			\includegraphics[width=0.5cm]{img/icon_refresh_component.png} & Refresh the current active module window\\
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_refresh_cache.png} & Refresh local cache\\
 			\midrule
@@ -188,11 +188,11 @@
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_bookmarks.png} & Create and manage Favorite Folders and Favorites\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_pools_manager.png} & Create and manage objects that don't have a place in the Navigation Tree\\
+			\includegraphics[width=0.5cm]{img/icon_pools_manager.png} & Create and manage object Pools\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_relationship_explorer.png} & Explore an object's relationships\\
+			\includegraphics[width=0.5cm]{img/icon_relationship_explorer.png} & Explore the selected object's relationships\\
 			\midrule
-			\includegraphics[width=0.5cm]{img/icon_special_children_explorer.png} & Explore the containment hierarchy used in models such as the Physical Layer model.\\
+			\includegraphics[width=0.5cm]{img/icon_special_children_explorer.png} & Explore the special children of the selected (that is, the containment hierarchy used in models such as the Physical Layer model).\\
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_topology_designer.png} & Freely design network topologies\\
 			\midrule
@@ -356,7 +356,7 @@
 	\newpage
 	
 	\subsection{Special Containment Hierarchy} \label{sec:special_containment_hierarchy}
-	The special containment hierarchy (see figure~\ref{fig:special_containment_manager}) is used to define containment rules for complex models. Most of the times you won't have to touch this, unless you are modeling new technologies and want to use containment relationships in your model that express a concept, rather than an one-to-one representation of the real world (e.g. you can use the special containment to represent how wavelengths/lambdas travel inside a fiber strand). Unlike the standard containment hierarchy, special children can only be explored using the \textbf{\nameref{sec:extra_explorers_children_explorer}}. The Physical Layer model is a good example of how this feature can be used: A cable inside a conduit connecting two buildings: in this scenario to configure the hierarchy for a wire container, drag links like (ElectricalLink, OpticalLink, PowerLink, RadioLink or for simply used the GenericPhysicalLink) from the right panel to the WireContainer class in the left panel, and in this way using the \textbf{\nameref{sec:extra_explorers_children_explorer}} you can create special children for a conduit. This is preconfigured in new databases so you don't have to worry about it.
+	The special containment hierarchy (see figure~\ref{fig:special_containment_manager}) is used to define containment rules for complex models. It's highly unlikely that you have to change the default settings, unless you are modeling new technologies and want to use containment relationships in your model that express a concept, rather than an one-to-one representation of the real world (e.g. you can use the special containment to represent how wavelengths/lambdas travel inside a fiber strand). Unlike the standard containment hierarchy, special children can only be explored using the \textbf{\nameref{sec:extra_explorers_children_explorer}}. The Physical Layer model is a good example of how this feature can be used: A cable inside a conduit connecting two buildings: in this scenario to configure the hierarchy for a wire container, drag links like (ElectricalLink, OpticalLink, PowerLink, RadioLink or for simply used the GenericPhysicalLink) from the right panel to the WireContainer class in the left panel, and in this way using the \textbf{\nameref{sec:extra_explorers_children_explorer}} you can create special children for a conduit. This is preconfigured in new databases so you don't have to worry about it.
 	
 	\begin{figure}[h!]
 		\centering
@@ -450,7 +450,7 @@
 	Apart from the main navigation tree, there are also two explorers that are very useful to navigate through domain-specific models. Both explorers can be launched from the Tools $\rightarrow$ Navigation menu or using the icons \includegraphics[width=0.5cm]{img/icon_relationship_explorer.png} and \includegraphics[width=0.5cm]{img/icon_special_children_explorer.png}.
 
 	\subsubsection{Relationship Explorer} \label{sec:extra_explorers_relationship_explorer}
-		Allows to see the special relationships of the selected object. When an object makes part of a domain-specific model (SDH, Physical Connections, MPLS, Services, etc) there are special bounds to other objects called \textbf{relationships}. They have names documented on model-basis, and they can be seen using this explorer. In the figure~\ref{fig:navigation_tree_relationship_explorer}, it is depicted an \textbf{OpticalPort} with three relationships, one called \textbf{parent}, which all inventory objects has and is used to navigate upwards in the containment structure, the \textbf{endpointA} used in the Physical Connections model and it indicates that this port is the endpoint to a physical connection, probably a fiber optic. It also has a relationship called \textbf{uses}, which makes part of the Service management model. It indicates that the service called PDH Service-01 uses that port as a resource.
+		Allows to see the special relationships of the selected object. When an object makes part of a domain-specific model (SDH, Physical Connections, MPLS, Services, etc) there are special bounds to other objects called \textbf{relationships}. They have names documented on model-basis, and they can be seen using this explorer. In the figure~\ref{fig:navigation_tree_relationship_explorer}, it is depicted an \textbf{OpticalPort} with three relationships, one called \textbf{parent}, which all inventory objects has and is used to navigate upwards in the containment structure, the \textbf{endpointA} used in the Physical Connections model and it indicates that this port is the endpoint to a physical connection, probably a fiber strand. It also has a relationship called \textbf{uses}, which makes part of the Service management model. It indicates that the service called PDH Service-01 uses that port as a resource.
 		
 		\begin{figure}[h!]
 			\centering
@@ -581,17 +581,19 @@
 		\label{fig:template_manager_select_template}
 	\end{figure}
 
-	\subsection{Layouts} \label{sec:layouts}
-	In the template module the subclasses of  can have layout, this layout will be displayed in the rack view
-	\begin{figure}[h!]
-		\centering
-		\includegraphics[width=0.5\linewidth]{img/template_manager_edit_layout.png}
-		\caption{Edit a layout}
-		\label{fig:template_manager_edit_layout}
-	\end{figure}
+	\subsection{Device Layouts} \label{sec:layouts}
+	Layouts are used to show how elements look like in the real world. For example, you can design a layout of the front panel of a router model, with its slots, ports, lights, screws, etc. The layouts you design in Kuwaiba are dynamic, so what you do, is to create the graphic elements and name them after the expected children of the object, then the rendering algorithm matches everything and shows the view, either as a stand-alone one, or inside a conventional rack view. You can also create reusable shapes that can be shared across different layouts (like say, RJ45 ports). This shapes are called \textit{Custom Shapes}.
+	
+	It is important to note that the device layouts are only available for instances of subclasses of \textbf{GenericCommunicationElement} (routers, switches, servers, etc) and \textbf{GenericFrame} (ODFs and DDFs). Also, it's mandatory that the classes have a list type attribute called \textbf{model}.
+	%\begin{figure}[h!]
+	%	\centering
+	%	\includegraphics[width=0.5\linewidth]{img/template_manager_edit_layout.png}
+	%	\caption{Edit a layout}
+	%	\label{fig:template_manager_edit_layout}
+	%\end{figure}
 	
 	\subsection{Device Layout Editor} \label{sec:device_layout_editor}
-	A layout is a set of basic shapes and custom shapes that represent the look of a device, generally for the case of devices that are located in a rack, this look belongs to the back, where the slots, modules and ports are shown, for these cases the layout is used to build the rack view (see \textbf{\nameref{sec:rack_view}}).
+	A layout is a set of basic shapes (squares, circles, text, triangles, etc) and custom shapes (compositions of basic shapes) that represent the physical appearance of a device, and in most of the cases, devices that are are to be installed inside a rack. If the layout is designed correctly, it can be embedded in a\textbf{\nameref{sec:rack_view}}.
 	\newpage
 	
 	To access in the device layout editor use the \textbf{\nameref{sec:template_manager}} selecting a template element and click Edit Layout \textbf{Figure~\ref{fig:device_layout_edit}}, if the attribute \textbf{model} is not fixed the action must be show disabled. To enable the Edit Layout action the attribute \textbf{model} must be created using the \textbf{\nameref{sec:data_model_manager}} the type of this attribute will be a list type, now create a list type item using \textbf{\nameref{sec:list_type_manager}} to set the model in the device and open the edit layout. \textbf{Figure~\ref{fig:device_layout_empty}}
@@ -2053,8 +2055,8 @@
 				\begin{figure}[h!]
 					\centering
 					\includegraphics[width=0.4\linewidth]{img/sdh_module_core_classes.png}
-					\caption{Superclasses where the new structures should be created (zoom in to read better)}
-					\label{fig:sdh_module_tributary_link_report}
+					\caption{Superclasses where the new structures should be created (zoom in if needed)}
+					\label{fig:sdh_module_concatenation_superclasses}
 				\end{figure}
 				\item Create the structure (TributaryLink or ContainerLink) following this naming convention: \textbf{VC[4/3/12]-[02-N]TributaryLink} for TributaryLinks and \textbf{VC[4/3/12]-[02-N]} for ContainerLinks. For example, if you want to create an TributaryLink that represents five VC12 concatenated, you would have to create a class called \textbf{VC12-05TributaryLink} under \textbf{GenericSDHLowOrderTributaryLink}, or, if you were to create a ContainerLink to represent seven concatenated VC4 (enough to transport a 1 Gbps stream), the class should be called \textbf{VC4-07} under \textbf{GenericSDHHighOrderContainerLink}.
 				 
@@ -2062,7 +2064,7 @@
 					\centering
 					\includegraphics[width=0.4\linewidth]{img/sdh_module_concatenated_circuits.png}
 					\caption{Superclasses where the new structures should be created (zoom in to read better)}
-					\label{fig:sdh_module_tributary_link_report}
+					\label{fig:sdh_module_tributary_example_concatenated_vcs}
 				\end{figure}
 				\begin{framed} {\large \textbf{Important}}\\
 					\begin{itemize}
@@ -2076,13 +2078,13 @@
 				\centering
 				\includegraphics[width=0.7\linewidth]{img/sdh_module_wizard_concatenated_tributary.png}
 				\caption{SDH wizard with the new concatenated TributaryLink}
-				\label{fig:sdh_module_tributary_link_report}
+				\label{fig:sdh_module_new_concatenated_tributary_link}
 			\end{figure}
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.7\linewidth]{img/sdh_module_wizard_concatenated_container.png}
 				\caption{SDH wizard with the new concatenated ContainerLink}
-				\label{fig:sdh_module_tributary_link_report}
+				\label{fig:sdh_module_new_concatenated_container_link}
 			\end{figure}
 			
 		\end{enumerate}
