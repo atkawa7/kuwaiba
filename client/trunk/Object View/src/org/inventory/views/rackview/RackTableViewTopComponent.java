@@ -165,6 +165,7 @@ public final class RackTableViewTopComponent extends TopComponent implements Exp
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
+        aTable.setModel(buildTableModel(service.getRackTable()));
     }
 
     @Override

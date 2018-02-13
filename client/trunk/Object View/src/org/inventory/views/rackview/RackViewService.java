@@ -22,7 +22,6 @@ import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.core.LocalObjectLightList;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
@@ -81,15 +80,19 @@ public class RackViewService {
                         else
                             addNestedDevices(equipment);
                     }
+                    List<LocalObjectLight> specialChildren = CommunicationsStub.getInstance().getObjectSpecialChildren(rackLight.getClassName(), rackLight.getOid());
                     
-                    List<LocalObjectLightList> connections = CommunicationsStub.getInstance().getPhysicalConnectionsInObject(rack.getClassName(), rack.getOid());
-                    
-                    if (connections == null) {
+                    if (specialChildren == null) {
                         NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), //NOI18N
                             NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                    } else
+                    } else {
+                        List<LocalObjectLight> connections = new ArrayList();
+                        for (LocalObjectLight specialChild : specialChildren) {
+                            if (CommunicationsStub.getInstance().isSubclassOf(specialChild.getClassName(), Constants.CLASS_GENERICPHYSICALLINK))
+                                connections.add(specialChild);
+                        }
                         createConnections(connections);
-                            
+                    }
                 }
             }
             ((RackWidget) scene.findWidget(rack)).resizeRackWidget();
@@ -140,107 +143,122 @@ public class RackViewService {
         }
     }
     
-    public void createConnections(List<LocalObjectLightList> connections) {
-        List<LocalObjectLight> addedConnections = new ArrayList<>();
-        
-        for (LocalObjectLightList connection : connections) {
-            ObjectConnectionWidget lastConnectionWidget = null;
-            LocalObjectLight aSide = null;
-            LocalObjectLight bSide = null;        
-            LocalObjectLight linkLight = null;
-            for (LocalObjectLight object : connection) {
-                if(CommunicationsStub.getInstance().isSubclassOf(object.getClassName(), Constants.CLASS_GENERICPORT)) {
-                    if(aSide == null)
-                        aSide = object;
-                    else
-                        bSide = object;
-                }
-                else
-                    linkLight = object;
+    private void createConnections(List<LocalObjectLight> connections) {        
+        for (LocalObjectLight connection : connections) {
+            
+            List<LocalObjectLight> endpointsA = CommunicationsStub.getInstance().getSpecialAttribute(connection.getClassName(), connection.getOid(), "endpointA"); //NOI18N
+            if (endpointsA == null) {
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                continue;
             }
-            Widget aSideNode = scene.findWidget(aSide);
-            Widget bSideNode = scene.findWidget(bSide);            
-            //if the connection has both sides
-            if(aSideNode != null && bSideNode != null){
-                if (linkLight == null)
-                    continue;
-                                
-                if (!addedConnections.contains(linkLight)) {
-                    //The background for the connected ports is set to red.
-                    ((PortWidget) bSideNode).setFree(false);
-                    ((PortWidget) aSideNode).setFree(false);
-
-                    Widget findWidget = scene.findWidget(linkLight);
-
-                    if (findWidget != null)
-                        scene.removeEdge(linkLight);
-
-                    lastConnectionWidget = (ObjectConnectionWidget)scene.addEdge(linkLight);
-                    lastConnectionWidget.getLabelWidget().setLabel( 
-                            (aSide.getName() == null ? "" : aSide.getName()) + " ** " + (bSide.getName() == null ? "" : bSide.getName()));
-                    scene.setEdgeSource(linkLight, aSide);
-                    scene.setEdgeTarget(linkLight, bSide);
-                    addedConnections.add(linkLight);
-                }
-            } else {
-                if (aSideNode != null && linkLight != null)
-                    ((PortWidget) aSideNode).setFree(false);
                 
-                if (bSideNode != null && linkLight != null)
-                    ((PortWidget) bSideNode).setFree(false);
+            List<LocalObjectLight> endpointsB = CommunicationsStub.getInstance().getSpecialAttribute(connection.getClassName(), connection.getOid(), "endpointB"); //NOI18N
+            if (endpointsB == null) {
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                continue;
+            }
+            
+            if (endpointsA.isEmpty()) {
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
+                    NotificationUtil.WARNING_MESSAGE, String.format("Was removed the endpointA in the link %s", connection.toString()));
+                continue;
+            }
+            if (endpointsB.isEmpty()) {
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
+                    NotificationUtil.WARNING_MESSAGE, String.format("Was removed the endpointB in the link %s", connection.toString()));
+                continue;
+            }
+            LocalObjectLight aSide = endpointsA.get(0);
+            if (!CommunicationsStub.getInstance().isSubclassOf(aSide.getClassName(), Constants.CLASS_GENERICPORT)) {
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
+                    NotificationUtil.WARNING_MESSAGE, String.format("The endpointA in the link %s is not an %s", connection.toString(), Constants.CLASS_GENERICPORT));
+                continue;
+            }
+            LocalObjectLight bSide = endpointsB.get(0);
+            if (!CommunicationsStub.getInstance().isSubclassOf(bSide.getClassName(), Constants.CLASS_GENERICPORT)) {
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
+                    NotificationUtil.WARNING_MESSAGE, String.format("The endpointB in the link %s is not an %s", connection.toString(), Constants.CLASS_GENERICPORT));
+                continue;
+            }
+            
+            Widget aSideWidget = scene.findWidget(aSide);
+            Widget bSideWidget = scene.findWidget(bSide);
+            
+            if (aSideWidget != null && bSideWidget != null) { 
+                ObjectConnectionWidget lastConnectionWidget = (ObjectConnectionWidget)scene.addEdge(connection);
+                lastConnectionWidget.getLabelWidget().setLabel((aSide.getName() == null ? "" : aSide.getName()) + " ** " + (bSide.getName() == null ? "" : bSide.getName()));
+                scene.setEdgeSource(connection, aSide);
+                scene.setEdgeTarget(connection, bSide);
+                
+                if (aSideWidget instanceof PortWidget)
+                    ((PortWidget) aSideWidget).setFree(false);
+                
+                if (bSideWidget instanceof PortWidget)
+                    ((PortWidget) bSideWidget).setFree(false);
+            }
+            scene.validate();
+            scene.repaint();
+        }
+        // Marking as in use the ports which has connections outside the rack
+        for (LocalObjectLight node : scene.getNodes()) {
+            if (CommunicationsStub.getInstance().isSubclassOf(node.getClassName(), Constants.CLASS_GENERICPORT)) {
+                Widget widget = scene.findWidget(node);
+                if (widget instanceof PortWidget) {
+                    List<LocalObjectLight> endpointsA = CommunicationsStub.getInstance().getSpecialAttribute(node.getClassName(), node.getOid(), "endpointA"); //NOI18N
+                    if (endpointsA == null) {
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                            NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                        continue;
+                    }
+
+                    List<LocalObjectLight> endpointsB = CommunicationsStub.getInstance().getSpecialAttribute(node.getClassName(), node.getOid(), "endpointB"); //NOI18N
+                    if (endpointsB == null) {
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                            NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                        continue;
+                    }
+                    
+                    if (!endpointsA.isEmpty() || !endpointsB.isEmpty())
+                        ((PortWidget) widget).setFree(false);
+                }
             }
         }
-        scene.validate();
-        scene.repaint();
     }
     
     public List<List<LocalObjectLight>> getRackTable() {
-        List<LocalObjectLight> ports = new ArrayList<>();
-        for (LocalObjectLight node : scene.getNodes()) {
-            if (scene.findWidget(node) instanceof PortWidget)
-                ports.add(node);
-        }        
         List<List<LocalObjectLight>> result = new ArrayList<>();
-                
-        while (!ports.isEmpty()) {
-            LocalObjectLight port = ports.get(0);
+        
+        for (LocalObjectLight edge : scene.getEdges()) {
+            RackViewConnectionWidget conn = (RackViewConnectionWidget) scene.findWidget(edge);
             
-            LocalObjectLight[] edges = scene.findNodeEdges(port, true, true).toArray(new LocalObjectLight[] {});
-            if (edges.length == 1) {
-                LocalObjectLight edge = edges[0];
-                
-                RackViewConnectionWidget conn = (RackViewConnectionWidget) scene.findWidget(edge);
-                PortWidget sourcePort = (PortWidget) conn.getSourceAnchor().getRelatedWidget();
-                PortWidget targetPort = (PortWidget) conn.getTargetAnchor().getRelatedWidget();
-                
-                NestedDevice sourceEquipment = sourcePort;
-                while (sourceEquipment.getParent() != null)
-                    sourceEquipment = sourceEquipment.getParent();
-                
-                NestedDevice targetEquipment = targetPort;
-                while (targetEquipment.getParent() != null)
-                    targetEquipment = targetEquipment.getParent();
-                
-                EquipmentWidget sourceDevice = (EquipmentWidget) sourceEquipment;
-                EquipmentWidget targetDevice = (EquipmentWidget) targetEquipment;
-                
-                LocalObjectLight sourcePortObj = sourcePort.getLookup().lookup(LocalObjectLight.class);
-                LocalObjectLight targetPortObj = targetPort.getLookup().lookup(LocalObjectLight.class);
-                
-                List<LocalObjectLight> row = new ArrayList<>();
-                row.add(sourceDevice.getLookup().lookup(LocalObject.class));
-                row.add(sourcePortObj);
-                row.add(targetDevice.getLookup().lookup(LocalObject.class));
-                row.add(targetPortObj);
-                
-                ports.remove(sourcePortObj);
-                ports.remove(targetPortObj);
-                
-                result.add(row);
-            } else {
-                ports.remove(port);
-            }
+            PortWidget sourcePort = (PortWidget) conn.getSourceAnchor().getRelatedWidget();
+            PortWidget targetPort = (PortWidget) conn.getTargetAnchor().getRelatedWidget();
+
+            NestedDevice sourceEquipment = sourcePort;
+            while (sourceEquipment.getParent() != null)
+                sourceEquipment = sourceEquipment.getParent();
+
+            NestedDevice targetEquipment = targetPort;
+            while (targetEquipment.getParent() != null)
+                targetEquipment = targetEquipment.getParent();
+
+            EquipmentWidget sourceDevice = (EquipmentWidget) sourceEquipment;
+            EquipmentWidget targetDevice = (EquipmentWidget) targetEquipment;
+
+            LocalObjectLight sourcePortObj = sourcePort.getLookup().lookup(LocalObjectLight.class);
+            LocalObjectLight targetPortObj = targetPort.getLookup().lookup(LocalObjectLight.class);
+
+            List<LocalObjectLight> row = new ArrayList<>();
+            row.add(sourceDevice.getLookup().lookup(LocalObject.class));
+            row.add(sourcePortObj);
+            row.add(targetDevice.getLookup().lookup(LocalObject.class));
+            row.add(targetPortObj);
+            
+            result.add(row);
         }
+        
         return result;
     }
 }

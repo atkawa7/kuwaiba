@@ -112,10 +112,6 @@ public class Constants {
      */
     public static final String CLASS_GENERICDISTRIBUTIONFRAME = "GenericDistributionFrame";
     /**
-     * Class EquipmentModel
-     */
-    public static final String CLASS_EQUIPMENTMODEL = "EquipmentModel";
-    /**
      * Root class of all application list type (CustomShape)
      */
     public static final String CLASS_GENERICAPPLICATIONLISTTYPE = "GenericApplicationListType";

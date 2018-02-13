@@ -423,9 +423,9 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                 rackTable.requestAttention(true);
             else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
                    //so we will reuse the instance, refreshing the vierw first
-                rackTable.refresh();
                 rackTable.open();
             }
+            rackTable.refresh();
         }
         rackTable.requestActive();
     }//GEN-LAST:event_btnRackTableViewActionPerformed
