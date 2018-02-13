@@ -18,13 +18,16 @@ package org.kuwaiba.sync;
 
 import java.io.File;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 
 /**
  * Synchronization manager 
@@ -37,20 +40,13 @@ public class SyncManager{
     public String bulkUploadFromFile(byte [] uploadData, int commitSize, int dataType, 
             String IPAddress, String sessionId) {
          
-//        LoadDataFromFile ldf = new LoadDataFromFile(uploadData, commitSize, dataType, IPAddress, sessionId);
-//        try {
-//            return ldf.uploadFile();
-//        } catch (Exception ex) {
-//            Logger.getLogger(SyncManager.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//         return null;
-          LoadDataFromSNMP loadSNMPFile = new LoadDataFromSNMP("MPLSRouter", 33030, "ASR1006-LSB2-01.csv");
+        LoadDataFromFile ldf = new LoadDataFromFile(uploadData, commitSize, dataType, IPAddress, sessionId);
         try {
-            return loadSNMPFile.load();
-        } catch (MetadataObjectNotFoundException | ObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
+            return ldf.uploadFile();
+        } catch (ApplicationObjectNotFoundException | NotAuthorizedException | RemoteException | MetadataObjectNotFoundException | InvalidArgumentException | ObjectNotFoundException | OperationNotPermittedException | WrongMappingException ex) {
             Logger.getLogger(SyncManager.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+         return null;
     }
 
     public byte [] downloadBulkLoadLog(String fileName, String ipAddress, String sessionId) throws IOException{

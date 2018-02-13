@@ -30,12 +30,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
+import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -43,6 +45,8 @@ import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
+import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.beans.WebserviceBean;
 
@@ -191,20 +195,41 @@ public final class LoadDataFromFile{
 
                         attributes.put(attributeDefinition[0], attributeDefinition[1]);
                     }
+                    
+                    //if there are any list type value in the atributes we should find its ids in order to create the objects
+                    ClassMetadata aClass = mem.getClass(className);
+                    Set<AttributeMetadata> classAttributes = aClass.getAttributes();
+                    for (AttributeMetadata classAttribute : classAttributes) {
+                        if(!isPrimitive(classAttribute.getType())){
+                            String attributeValue = attributes.get(classAttribute.getName());
+                            List<RemoteBusinessObjectLight> listTypeItems = aem.getListTypeItems(classAttribute.getType());
+                            for (RemoteBusinessObjectLight listTypeItem : listTypeItems) {
+                                if(listTypeItem.getName().equals(attributeValue)){
+                                    attributes.put(classAttribute.getName(), Long.toString(listTypeItem.getId()));
+                                    break;
+                                }
+                            }
+                        }
+                    }
 
-                    long template = 0; //TODO Support for templates
+                    long template = -1; //TODO Support for templates
 
                     if (parentClass.equals(ROOT)){ //The parent is the navigation tree root
                         bem.createObject(className, null, -1, 
                                 attributes, 
                                 template);
                     }
-                    else
+                    else{
+                        
+                        
+                        
+                        
                          bem.createObject(className, 
                                 parentClass, 
                                 parentFilter[0] + ":"  + parentFilter[1], 
                                 attributes, 
                                 template);
+                    }
                 }catch(Exception ex){
                     errorsMsgs += String.format("ERROR\t%s\tUnexpected error: %s.\n", currentLine, ex.getMessage());
                     hasErrors = true;
@@ -319,30 +344,30 @@ public final class LoadDataFromFile{
     /**
      * Gets the bytes from a file
      * @param f File object
-     * @param format format to be read
      * @return The byte array
+     * @throws java.io.IOException
      */
     public static byte[] getByteArrayFromFile(File f) throws IOException{
-        InputStream is = new FileInputStream(f);
-        long length = f.length();
         byte[] bytes;
-        if (length < Integer.MAX_VALUE) { //checks if the file is too big
-            bytes = new byte[(int)length];
-            // Read in the bytes
-            int offset = 0;
-            int numRead = 0;
-            while (offset < bytes.length
-                   && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
-                offset += numRead;
+        try (InputStream is = new FileInputStream(f)) {
+            long length = f.length();
+            if (length < Integer.MAX_VALUE) { //checks if the file is too big
+                bytes = new byte[(int)length];
+                // Read in the bytes
+                int offset = 0;
+                int numRead = 0;
+                while (offset < bytes.length
+                        && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+                    offset += numRead;
+                }
+                // Ensure all the bytes have been read in
+                if (offset < bytes.length) {
+                    throw new IOException("Could not completely read file " + f.getName());
+                }
+            }else{
+                throw new IOException("File too big " + f.getName());
             }
-            // Ensure all the bytes have been read in
-            if (offset < bytes.length) {
-                throw new IOException("Could not completely read file " + f.getName());
-            }
-        }else{
-            throw new IOException("File too big " + f.getName());
         }
-        is.close();
         return bytes;
     }
 
