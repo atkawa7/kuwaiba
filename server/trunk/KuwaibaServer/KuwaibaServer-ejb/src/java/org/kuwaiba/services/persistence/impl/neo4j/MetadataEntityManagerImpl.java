@@ -776,16 +776,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         
         String affectedProperties = "", oldValues = "", newValues = "";
         
-        try(Transaction tx = graphDb.beginTx())
-        {
+        try(Transaction tx = graphDb.beginTx()) {
             Node classNode = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Can not find a class with id %s", classId));
 
             for (Relationship relationship : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE)) {
                 Node attrNode = relationship.getEndNode();
-                if (attrNode.getId() == newAttributeDefinition.getId()) 
-                {
+                if (attrNode.getId() == newAttributeDefinition.getId())  {
                     String currentAttributeName = (String)attrNode.getProperty(Constants.PROPERTY_NAME);
 
                     if (currentAttributeName.equals(Constants.PROPERTY_CREATION_DATE))
@@ -857,7 +855,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         oldValues = " ";
                         newValues = newAttributeDefinition.isNoCopy() + " ";
                     }
-                    if(newAttributeDefinition.isUnique() != null){
+                    if(newAttributeDefinition.isUnique() != null) {
                         if(newAttributeDefinition.isUnique()){//checks only if unique changed from false to true
                             if(canAttributeBeUnique((String)classNode.getProperty(Constants.PROPERTY_NAME), Util.getTypeOfAttribute(classNode, currentAttributeName), currentAttributeName))
                                 Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
@@ -1006,7 +1004,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                             if(objectsOfClassHasValueInMandatoryAttribute(className, currentAttributeName))
                                 Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
                             else
-                                throw new InvalidArgumentException(String.format("Before setting an attribute as mandatory, all instances of this class must have valid values for attribute %s", currentAttributeName));
+                                throw new InvalidArgumentException(String.format("Before setting it as mandatory, all instances of this class must have valid values for attribute %s", currentAttributeName));
                         }
                         else
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
