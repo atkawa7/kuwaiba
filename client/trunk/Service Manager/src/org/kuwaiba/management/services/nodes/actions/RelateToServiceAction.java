@@ -40,7 +40,7 @@ import org.openide.util.lookup.ServiceProvider;
 public class RelateToServiceAction extends GenericObjectNodeAction implements ComposedAction {
     
     public RelateToServiceAction() {
-        putValue(NAME, java.util.ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_RELATE_TO_SERVICE"));
+        putValue(NAME, I18N.gm("relate_to_service"));
     }
    
     @Override

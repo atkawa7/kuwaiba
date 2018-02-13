@@ -369,7 +369,6 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
             List<LocalObjectLight> nodesToBeDeleted = new ArrayList<>(getNodes()); 
-            
             try {
                 for (LocalObjectLight serviceResource : serviceResources) {
                     if (com.isSubclassOf(serviceResource.getClassName(), "GenericLogicalConnection")) {

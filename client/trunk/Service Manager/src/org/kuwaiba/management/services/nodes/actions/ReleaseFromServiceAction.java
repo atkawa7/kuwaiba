@@ -47,7 +47,7 @@ import org.openide.util.lookup.ServiceProvider;
 public class ReleaseFromServiceAction extends GenericObjectNodeAction implements ComposedAction {
     
     public ReleaseFromServiceAction() {
-        putValue(NAME, ResourceBundle.getBundle("org/kuwaiba/management/services/Bundle").getString("LBL_RELEASE_ELEMENT"));
+        putValue(NAME, I18N.gm("release_from_service"));
     }
     
     @Override
