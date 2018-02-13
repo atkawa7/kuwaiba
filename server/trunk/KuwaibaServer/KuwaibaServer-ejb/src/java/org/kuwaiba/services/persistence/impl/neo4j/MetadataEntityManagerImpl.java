@@ -857,14 +857,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     }
                     if(newAttributeDefinition.isUnique() != null) {
                         if(newAttributeDefinition.isUnique()){//checks only if unique changed from false to true
-                            if(canAttributeBeUnique((String)classNode.getProperty(Constants.PROPERTY_NAME), Util.getTypeOfAttribute(classNode, currentAttributeName), currentAttributeName))
+                            if(canAttributeBeUnique(classNode, Util.getTypeOfAttribute(classNode, currentAttributeName), currentAttributeName))
                                 Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
                             else
-                                 throw new InvalidArgumentException(String.format("In order to mark Attribute \"%s\" as unique it is necessary to set a unique value for every created object of this class and its subclasses", currentAttributeName));
+                                 throw new InvalidArgumentException(String.format("In order to mark attribute \"%s\" as unique it is necessary to set a unique value for every existing object of this class and its subclasses", currentAttributeName));
                         }
                         else{
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
-                            cm.removeUniqueAtribute(currentAttributeName, currentAttributeName);
+                            cm.removeUniqueAtribute((String)classNode.getProperty(Constants.PROPERTY_NAME), currentAttributeName);
                         }
                         affectedProperties = Constants.PROPERTY_UNIQUE + " ";
                         oldValues = " ";
@@ -888,12 +888,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     //Refresh cache for the affected classes
                     refreshCacheOn(classNode);
                     tx.success();                    
-                    return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.format("Set attributes to %s class", classNode.getProperty(Constants.PROPERTY_NAME)));
+                    return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.format("Update attributes properties in class %s", classNode.getProperty(Constants.PROPERTY_NAME)));
                 }
             }//end for
+            throw new MetadataObjectNotFoundException(String.format(
+                    "Can not find attribute %s in class %s", newAttributeDefinition.getName(), classNode.getProperty(Constants.PROPERTY_NAME)));
         } 
-        throw new MetadataObjectNotFoundException(String.format(
-                    "Can not find attribute %s in the class with id %s", newAttributeDefinition.getName(), classId));
     }
     
     @Override
@@ -984,10 +984,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     }
                     if(newAttributeDefinition.isUnique() != null){
                         if(newAttributeDefinition.isUnique()){//checks only if unique changed from false to true
-                            if(canAttributeBeUnique((String)classNode.getProperty(Constants.PROPERTY_NAME), Util.getTypeOfAttribute(classNode, currentAttributeName), currentAttributeName))
+                            if(canAttributeBeUnique(classNode, Util.getTypeOfAttribute(classNode, currentAttributeName), currentAttributeName))
                                 Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
                         else
-                             throw new InvalidArgumentException(String.format("In order to mark Attribute \"%s\" as unique it is necessary to set a unique value for every created object with this attribute name", currentAttributeName));
+                             throw new InvalidArgumentException(String.format("In order to mark attribute \"%s\" as unique it is necessary to set a unique value for every existing object with this attribute name", currentAttributeName));
                         }
                         else{
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
@@ -1016,12 +1016,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     //Refresh cache for the affected classes
                     refreshCacheOn(classNode);
                     tx.success();
-                    return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.format("Set attributes to %s class", classNode.getProperty(Constants.PROPERTY_NAME)));
+                    return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.format("Update attributes properties in class %s", classNode.getProperty(Constants.PROPERTY_NAME)));
                 }
             }//end for
-        }
-        throw new MetadataObjectNotFoundException(String.format(
+            throw new MetadataObjectNotFoundException(String.format(
                     "Can not find attribute %s in class %s", newAttributeDefinition.getName(), className));
+        }
     }
     
     @Override
@@ -1779,14 +1779,17 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException 
      */
-    private boolean canAttributeBeUnique(String className, String attributeType, String attributeName) 
+    private boolean canAttributeBeUnique(Node classNode, String attributeType, String attributeName) 
             throws MetadataObjectNotFoundException, InvalidArgumentException{
         
         List<String> values =  new ArrayList<>();
         String uniqueAttributeValue = null;
         HashMap<String, List<String>> uniqueValues = new HashMap<>();
+        String className = (String)classNode.getProperty(Constants.PROPERTY_NAME);
         
-        List<ClassMetadataLight> subClassesLight = getSubClassesLight(className, true, true);
+        //List<ClassMetadataLight> subClassesLight = getSubClassesLight(className, false, true);
+        List<ClassMetadataLight> subClassesLight = getSubClassesLight(classNode, false); //Uses this one to avoid the transaction
+        subClassesLight.add(Util.createClassMetadataLightFromNode(classNode)); //Add itself, since getSubClassesLight(Node, boolean) does not do it on its own
         
         for(ClassMetadataLight subClassLight : subClassesLight){
             Node subClassNode = classIndex.get(Constants.PROPERTY_NAME, subClassLight.getName()).getSingle();
@@ -1827,7 +1830,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         
         Node inventoryObject = classIndex.get(Constants.PROPERTY_NAME, Constants.CLASS_INVENTORYOBJECT).getSingle();
         
-        TraversalDescription td = new MonoDirectionalTraversalDescription(); //TODO revisar esto!
+        TraversalDescription td = new MonoDirectionalTraversalDescription(); //TODO Check this!
         td = td.breadthFirst();
         td = td.relationships(RelTypes.EXTENDS, Direction.INCOMING);
         org.neo4j.graphdb.traversal.Traverser traverse = td.traverse(inventoryObject);
@@ -1852,5 +1855,23 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 }
             }
         }//end for 
+    }
+    
+    /**
+     * Fetches recursively all the subclasses of a given class without using a transaction
+     * @param classNode The class node to start the search
+     * @param includeAbstractClasses should abstract classes be included in the result?
+     * @return The list of the recursive subclasses, given the filters <code>includeAbstractClasses</code>
+     */
+    private List<ClassMetadataLight> getSubClassesLight(Node classNode, boolean includeAbstractClasses) {
+        List<ClassMetadataLight> res = new ArrayList<>();
+        for (Relationship inheritanceRelationship : classNode.getRelationships(Direction.INCOMING, RelTypes.EXTENDS)) {
+            Node subClassNode = inheritanceRelationship.getStartNode();
+            if (subClassNode.hasProperty(Constants.PROPERTY_ABSTRACT) && includeAbstractClasses) {
+                res.add(Util.createClassMetadataLightFromNode(subClassNode));
+                res.addAll(getSubClassesLight(subClassNode, includeAbstractClasses));
+            }
+        }
+        return res;
     }
 }    
