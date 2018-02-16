@@ -45,10 +45,6 @@ public class CypherQueryBuilder {
      */
     public Map<String, List<String>> visibleAttributes = new HashMap<>();
     /**
-     * if has not selected attribute, name is taken as default visible attribute
-     */
-    private List<String> defaultVisibleAttributes = new ArrayList<>();
-    /**
      * match statements
      */
     private String match = "";
@@ -74,6 +70,7 @@ public class CypherQueryBuilder {
      * @param listTypeName
      * @param listTypeName2
      * @param query
+     * @throws InvalidArgumentException
      */
     public void readParent(String listTypeName, String listTypeName2, ExtendedQuery query) {
         Node classNode = classNodes.get(query.getClassName());
@@ -88,8 +85,8 @@ public class CypherQueryBuilder {
                         where = where.concat(cp.createParentWhere(query.getConditions().get(i), listTypeName,
                                                             query.getAttributeNames().get(i),
                                                             query.getAttributeValues().get(i),
-                                                            Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))).
-                                                                        concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : "  OR "));
+                                                            query.getAttributeNames().get(i).equals(Constants.PROPERTY_ID) ? Long.toString(classNode.getId()) : Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
+                                                            ).concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : "  OR "));
                     }
                     else{
                         readJoins(query.getAttributeNames().get(i)+"_P", listTypeName, query.getJoins().get(i));
@@ -103,6 +100,7 @@ public class CypherQueryBuilder {
      * @param listTypeName
      * @param listTypeName2
      * @param query
+     * @throws InvalidArgumentException an attribute can not be find in the class, which the query is being is made.
      */
     public void readJoins(String listTypeName, String listTypeName2, ExtendedQuery query) {
         
@@ -120,7 +118,7 @@ public class CypherQueryBuilder {
                             where = where.concat(cp.createJoinWhere(query.getConditions().get(i), listTypeName,
                                                                 query.getAttributeNames().get(i),
                                                                 query.getAttributeValues().get(i),
-                                                                Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
+                                                                query.getAttributeNames().get(i).equals(Constants.PROPERTY_ID) ? Long.toString(classNode.getId()) : Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
                                                                 ).concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : "  OR "));
                         }
                         else{
@@ -145,7 +143,7 @@ public class CypherQueryBuilder {
                     where = where.concat(cp.createJoinWhere(query.getConditions().get(i), listTypeName,
                                             query.getAttributeNames().get(i),
                                             query.getAttributeValues().get(i),
-                                            Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
+                                            query.getAttributeNames().get(i).equals(Constants.PROPERTY_ID) ? Long.toString(classNode.getId()) : Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
                                             ).concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : "  OR "));
                 }
                 else{
@@ -156,8 +154,9 @@ public class CypherQueryBuilder {
     }
 
     /**
-     * reads the query main recursively
+     * Reads the query main recursively
      * @param query
+     * @throws InvalidArgumentException
      */
     public void readQuery(ExtendedQuery query) {
         _return = cp.createReturn();
@@ -165,12 +164,13 @@ public class CypherQueryBuilder {
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
                 if(query.getAttributeValues().get(i) != null){
-                    if(query.getAttributeValues().get(i) != null) 
+                    if(query.getAttributeValues().get(i) != null){ 
                         where = where.concat(cp.createWhere(query.getConditions().get(i),
                                                             query.getAttributeNames().get(i),
                                                             query.getAttributeValues().get(i),
-                                                            Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
+                                                            query.getAttributeNames().get(i).equals(Constants.PROPERTY_ID) ? Long.toString(classNode.getId()) : Util.getTypeOfAttribute(classNode, query.getAttributeNames().get(i))
                                                             ).concat(query.getLogicalConnector() == ExtendedQuery.CONNECTOR_AND ? " AND " : "  OR "));
+                    }
                 }
                else{
                     if( query.getAttributeNames().get(i).equalsIgnoreCase(PARENT))
@@ -244,6 +244,7 @@ public class CypherQueryBuilder {
     /**
      * Creates the query
      * @param query 
+     * @throws InvalidArgumentException 
      */
     public void createQuery(ExtendedQuery query) {
         cp = new CypherParser();

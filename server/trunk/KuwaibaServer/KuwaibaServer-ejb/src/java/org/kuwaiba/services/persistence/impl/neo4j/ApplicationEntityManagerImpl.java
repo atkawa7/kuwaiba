@@ -1559,7 +1559,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         try(Transaction tx = graphDb.beginTx()) {
             CypherQueryBuilder cqb = new CypherQueryBuilder();
             cqb.setClassNodes(getNodesFromQuery(query));
-            cqb.createQuery(query);
+            try {
+                cqb.createQuery(query);
+            } catch (InvalidArgumentException ex) {
+                Logger.getLogger(ApplicationEntityManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            }
             return cqb.getResultList();
         }
     }
