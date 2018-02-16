@@ -57,7 +57,7 @@ public class MovePhysicalLinkOutOfContainerFrame extends JFrame{
         
         setLayout(new BorderLayout());
         setTitle(I18N.gm("move_links_into_container"));
-        setSize(450, 550);
+        setBounds(80, 80, 450, 550);
         
         JLabel lblInstructions = new JLabel(I18N.gm("instructions_to_move_links_out_of_container"));
         btnMoveLinks = new JButton(I18N.gm("move_links_out_of_container"));
