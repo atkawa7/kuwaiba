@@ -24,7 +24,6 @@ import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import com.neotropic.kuwaiba.sync.model.TableData;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +39,7 @@ import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.utils.i18n.I18N;
 import org.snmp4j.smi.OID;
 
@@ -72,96 +72,120 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
     }
 
     @Override
-    public PollResult mappedPoll(SynchronizationGroup syncGroup) {
-            SnmpManager snmpManager;
-            try {
-                snmpManager = SnmpManager.getInstance();
-            } catch (IOException ex) {                
-                throw new InternalError(String.format("The SNMP manager could not be started: ", ex.getMessage()));
-            }
-            PollResult pollResult = new PollResult();
-            
-            for (SyncDataSourceConfiguration agent : syncGroup.getSyncDataSourceConfigurations()) {
-                long id = -1L;
-                String className = null;                
-                String address = null;
-                String port = null;
-                String community = null;
-                
-                if (agent.getParameters().containsKey("deviceId")) //NOI18N
-                    id = Long.valueOf(agent.getParameters().get("deviceId")); //NOI18N
-                else 
-                    pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
-                        new InvalidArgumentException(String.format(I18N.gm("parameter_deviceId_no_defined"), syncGroup.getName(), syncGroup.getId())));
-                
-                if (agent.getParameters().containsKey("deviceClass")) //NOI18N
-                    className = agent.getParameters().get("deviceClass"); //NOI18N
-                else
-                    pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
-                        new InvalidArgumentException(String.format(I18N.gm("parameter_deviceClass_no_defined"), syncGroup.getName(), syncGroup.getId())));
-                                
-                if (agent.getParameters().containsKey("ipAddress")) //NOI18N
-                    address = agent.getParameters().get("ipAddress"); //NOI18N
-                else 
-                    pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
-                        new InvalidArgumentException(String.format(I18N.gm("parameter_ipAddress_no_defined"), syncGroup.getName(), syncGroup.getId())));
-                    
-                if (agent.getParameters().containsKey("port")) //NOI18N 
-                    port = agent.getParameters().get("port"); //NOI18N
-                else 
-                    pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
-                        new InvalidArgumentException(String.format(I18N.gm("parameter_port_no_defined"), syncGroup.getName(), syncGroup.getId())));
-                
-                if (agent.getParameters().containsKey("community")) //NOI18N
-                    community = agent.getParameters().get("community"); //NOI18N
-                else
+    public PollResult mappedPoll(SynchronizationGroup syncGroup) {            
+        PollResult pollResult = new PollResult();
+
+        for (SyncDataSourceConfiguration agent : syncGroup.getSyncDataSourceConfigurations()) {
+            long id = -1L;
+            String className = null;                
+            String address = null;
+            String port = null;
+            String community = null;
+
+            if (agent.getParameters().containsKey("deviceId")) //NOI18N
+                id = Long.valueOf(agent.getParameters().get("deviceId")); //NOI18N
+            else 
+                pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                    new InvalidArgumentException(String.format(I18N.gm("parameter_deviceId_no_defined"), syncGroup.getName(), syncGroup.getId())));
+
+            if (agent.getParameters().containsKey("deviceClass")) //NOI18N
+                className = agent.getParameters().get("deviceClass"); //NOI18N
+            else
+                pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                    new InvalidArgumentException(String.format(I18N.gm("parameter_deviceClass_no_defined"), syncGroup.getName(), syncGroup.getId())));
+
+            if (agent.getParameters().containsKey("ipAddress")) //NOI18N
+                address = agent.getParameters().get("ipAddress"); //NOI18N
+            else 
+                pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                    new InvalidArgumentException(String.format(I18N.gm("parameter_ipAddress_no_defined"), syncGroup.getName(), syncGroup.getId())));
+
+            if (agent.getParameters().containsKey("port")) //NOI18N 
+                port = agent.getParameters().get("port"); //NOI18N
+            else 
+                pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                    new InvalidArgumentException(String.format(I18N.gm("parameter_port_no_defined"), syncGroup.getName(), syncGroup.getId())));
+
+            String version = SnmpManager.VERSION_2c;
+            if (agent.getParameters().containsKey(Constants.PROPERTY_SNMP_VERSION))
+                version = agent.getParameters().get(Constants.PROPERTY_SNMP_VERSION);
+//            else
+//                pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+//                    new InvalidArgumentException(String.format(I18N.gm("parameter_snmp_version_no_defined"), syncGroup.getName(), syncGroup.getId())));
+
+            if (SnmpManager.VERSION_2c.equals(version)) {
+                if (!agent.getParameters().containsKey(Constants.PROPERTY_COMMUNITY))
                     pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
                         new InvalidArgumentException(String.format(I18N.gm("parameter_community_no_defined"), syncGroup.getName(), syncGroup.getId())));
+            }
+            if (SnmpManager.VERSION_3.equals(version)) {
+                if (!agent.getParameters().containsKey(Constants.PROPERTY_AUTH_PROTOCOL))
+                    pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                        new InvalidArgumentException(String.format(I18N.gm("parameter_auth_protocol_no_defined"), syncGroup.getName(), syncGroup.getId())));
                 
-                if (pollResult.getSyncDataSourceConfigurationExceptions(agent).isEmpty()) {
-                    
-                    RemoteBusinessObjectLight mappedObjLight = null;
+                if (!agent.getParameters().containsKey(Constants.PROPERTY_SECURITY_NAME))
+                    pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                        new InvalidArgumentException(String.format(I18N.gm("parameter_security_name_no_defined"), syncGroup.getName(), syncGroup.getId())));
+            }
 
-                    try {
-                        mappedObjLight = PersistenceService.getInstance().getBusinessEntityManager().getObjectLight(className, id);
-                    } catch(InventoryException ex) {
+            if (pollResult.getSyncDataSourceConfigurationExceptions(agent).isEmpty()) {
+
+                RemoteBusinessObjectLight mappedObjLight = null;
+
+                try {
+                    mappedObjLight = PersistenceService.getInstance().getBusinessEntityManager().getObjectLight(className, id);
+                } catch(InventoryException ex) {
+                    pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                        new InvalidArgumentException(String.format(I18N.gm("snmp_sync_object_not_found"), ex.getMessage())));
+                }
+                if (mappedObjLight != null) {
+                    SnmpManager snmpManager = SnmpManager.getInstance();
+
+                    snmpManager.setAddress(String.format("udp:%s/%s", address, port)); //NOI18N
+                    snmpManager.setVersion(version);
+
+                    if (SnmpManager.VERSION_2c.equals(version))
+                        snmpManager.setCommunity(agent.getParameters().get(Constants.PROPERTY_COMMUNITY));
+
+                    if (SnmpManager.VERSION_3.equals(version)) {
+                        snmpManager.setAuthProtocol(agent.getParameters().get(Constants.PROPERTY_AUTH_PROTOCOL));
+                        snmpManager.setAuthPass(agent.getParameters().get(Constants.PROPERTY_AUTH_PASS));
+                        snmpManager.setSecurityLevel(agent.getParameters().get(Constants.PROPERTY_SECURITY_LEVEL));
+                        snmpManager.setContextName(agent.getParameters().get(Constants.PROPERTY_CONTEXT_NAME));
+                        snmpManager.setSecurityName(agent.getParameters().get(Constants.PROPERTY_SECURITY_NAME));
+                        snmpManager.setPrivacyProtocol(agent.getParameters().get(Constants.PROPERTY_PRIVACY_PROTOCOL));
+                        snmpManager.setPrivacyPass(agent.getParameters().get(Constants.PROPERTY_PRIVACY_PASS));
+                    }
+                    ReferenceSnmpResourceDefinition entPhysicalTable = new ReferenceSnmpResourceDefinition();
+                    List<List<String>> tableAsString = snmpManager.getTableAsString(entPhysicalTable.values().toArray(new OID[0]));
+
+                    if (tableAsString == null) {
                         pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
-                            new InvalidArgumentException(String.format("The inventory object associated to sync group %s could not be retrived: ", ex.getMessage())));
+                            new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString())));
+                        return pollResult;
                     }
-                    if (mappedObjLight != null) {
-                        try {                
-                            snmpManager.setAddress("udp:" + address + "/" + port); //NOI18N
-                            snmpManager.setCommunity(community);
+                    HashMap<String, List<String>> value = new HashMap();
+                    int i = 0;
+                    for (String mibTreeNodeName : entPhysicalTable.keySet()) {                        
+                        List<String> currentColumn = new ArrayList();
 
-                            ReferenceSnmpResourceDefinition entPhysicalTable = new ReferenceSnmpResourceDefinition();
-                            List<List<String>> tableAsString = snmpManager.getTableAsString(entPhysicalTable.values().toArray(new OID[0]));
+                        for (List<String> cell : tableAsString)
+                            currentColumn.add(cell.get(i));
 
-                            HashMap<String, List<String>> value = new HashMap();
-                            int i = 0;
-                            for (String mibTreeNodeName : entPhysicalTable.keySet()) {                        
-                                List<String> currentColumn = new ArrayList();
-
-                                for (List<String> cell : tableAsString)
-                                    currentColumn.add(cell.get(i));
-
-                                value.put(mibTreeNodeName, currentColumn);
-                                i++;                            
-                            }
-                            int size = entPhysicalTable.keySet().size();
-                            List<String> instances = new ArrayList();
-                            for (List<String> cell : tableAsString)
-                                instances.add(cell.get(size));
-                            value.put("instance", instances); //NOI18N
-
-                            pollResult.getResult().put(mappedObjLight, new TableData("entPhysicalTable", value)); //NOI18N
-                        } catch(RuntimeException ex) {
-                            pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
-                                new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString())));
-                        }
+                        value.put(mibTreeNodeName, currentColumn);
+                        i++;                            
                     }
+                    int size = entPhysicalTable.keySet().size();
+                    List<String> instances = new ArrayList();
+                    for (List<String> cell : tableAsString)
+                        instances.add(cell.get(size));
+                    value.put("instance", instances); //NOI18N
+
+                    pollResult.getResult().put(mappedObjLight, new TableData("entPhysicalTable", value)); //NOI18N
                 }
             }
-            return pollResult;
+        }
+        return pollResult;
     }
     
     @Override
