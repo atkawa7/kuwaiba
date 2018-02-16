@@ -856,9 +856,8 @@ public class Util {
      * @param classNode
      * @param attributeName
      * @return A string with the type of the attribute
-     * @throws InvalidArgumentException If the attribute could not be found in the given class
      */
-    public static String getTypeOfAttribute(Node classNode, String attributeName) throws InvalidArgumentException {
+    public static String getTypeOfAttribute(Node classNode, String attributeName) {
         //get attribute type
         Iterable<Relationship> attributeRels = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE, Direction.OUTGOING);
         for (Relationship attrRel:  attributeRels) {
@@ -866,8 +865,7 @@ public class Util {
             if(attributeName.equals((String)endNode.getProperty(Constants.PROPERTY_NAME)))
                 return (String)endNode.getProperty(Constants.PROPERTY_TYPE);
         }
-        throw new InvalidArgumentException(String.format("Attribute %s could not be found in class %s", 
-                attributeName, classNode.getProperty(Constants.PROPERTY_NAME)));
+        return "";
     }
     
     /**

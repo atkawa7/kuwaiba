@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
-import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.services.persistence.util.Util;
 import org.neo4j.graphdb.Node;
@@ -76,7 +75,7 @@ public class CypherQueryBuilder {
      * @param listTypeName2
      * @param query
      */
-    public void readParent(String listTypeName, String listTypeName2, ExtendedQuery query) throws InvalidArgumentException {
+    public void readParent(String listTypeName, String listTypeName2, ExtendedQuery query) {
         Node classNode = classNodes.get(query.getClassName());
 
         match = match.concat(cp.createParentMatch());
@@ -105,7 +104,7 @@ public class CypherQueryBuilder {
      * @param listTypeName2
      * @param query
      */
-    public void readJoins(String listTypeName, String listTypeName2, ExtendedQuery query) throws InvalidArgumentException {
+    public void readJoins(String listTypeName, String listTypeName2, ExtendedQuery query) {
         
         if(query == null)
             where = where.concat(cp.createNoneWhere(listTypeName));
@@ -138,7 +137,7 @@ public class CypherQueryBuilder {
      * @param listTypeName2
      * @param query
      */
-    public void readJoinQuery(String listTypeName, String listTypeName2, ExtendedQuery query) throws InvalidArgumentException {
+    public void readJoinQuery(String listTypeName, String listTypeName2, ExtendedQuery query) {
         Node classNode = classNodes.get(query.getClassName());
         if(query.getAttributeNames() != null){
             for(int i=0; i<query.getAttributeNames().size(); i++){
@@ -160,7 +159,7 @@ public class CypherQueryBuilder {
      * reads the query main recursively
      * @param query
      */
-    public void readQuery(ExtendedQuery query) throws InvalidArgumentException {
+    public void readQuery(ExtendedQuery query) {
         _return = cp.createReturn();
         Node classNode = classNodes.get(query.getClassName());
         if(query.getAttributeNames() != null){
@@ -246,7 +245,7 @@ public class CypherQueryBuilder {
      * Creates the query
      * @param query 
      */
-    public void createQuery(ExtendedQuery query)  throws InvalidArgumentException {
+    public void createQuery(ExtendedQuery query) {
         cp = new CypherParser();
         Node classNode = classNodes.get(query.getClassName());
         try(Transaction tx = classNode.getGraphDatabase().beginTx()) {
