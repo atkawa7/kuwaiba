@@ -16,6 +16,8 @@
 package com.neotropic.inventory.modules.sync.nodes;
 
 import com.neotropic.inventory.modules.sync.nodes.actions.SyncManagerActionFactory;
+import com.neotropic.inventory.modules.sync.nodes.properties.DeviceTypeProperty;
+import com.neotropic.inventory.modules.sync.nodes.properties.NoneObject;
 import com.neotropic.inventory.modules.sync.nodes.properties.SyncConfigurationNativeTypeProperty;
 import java.awt.Image;
 import java.awt.datatransfer.Transferable;
@@ -97,52 +99,94 @@ public class SyncConfigurationNode extends AbstractNode implements PropertyChang
     protected Sheet createSheet() {
         Sheet sheet = Sheet.createDefault();
         Set generalPropertySet = Sheet.createPropertiesSet(); // General attributes category
+        Set snmpVersion2cPropertySet = Sheet.createPropertiesSet(); // SNMP Version 2c attributes category
+        Set snmpVersion3generalPropertySet = Sheet.createPropertiesSet(); // SNMP Version 3 attributes category
         
         LocalSyncDataSourceConfiguration localsyncDataSrcConfig = getLookup().lookup(LocalSyncDataSourceConfiguration.class);
                 
         HashMap<String, String> parameters = localsyncDataSrcConfig.getParameters(); 
         
         PropertySupport.ReadWrite propertyName = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_NAME, String.class, Constants.PROPERTY_NAME, Constants.PROPERTY_NAME, this, localsyncDataSrcConfig.getName());
-
-        PropertySupport.ReadWrite propertyDeviceId = new SyncConfigurationNativeTypeProperty("deviceId", String.class, "deviceId", "deviceId", this, 
-            !parameters.containsKey("deviceId") ? null : parameters.get("deviceId"));
-        
-        PropertySupport.ReadWrite propertyDeviceClass = new SyncConfigurationNativeTypeProperty("deviceClass", String.class, "deviceClass", "deviceClass", this, 
-            !parameters.containsKey("deviceClass") ? null : parameters.get("deviceClass"));
-                        
+                                
         PropertySupport.ReadWrite propertyIpAddress = new SyncConfigurationNativeTypeProperty("ipAddress", String.class, "ipAddress", "ipAddress", this, 
             !parameters.containsKey("ipAddress") ? null : parameters.get("ipAddress"));
         
         PropertySupport.ReadWrite propertyPort = new SyncConfigurationNativeTypeProperty("port", String.class, "port", "port", this, 
             !parameters.containsKey("port") ? null : parameters.get("port"));
         
-        PropertySupport.ReadWrite propertyCommunity = new SyncConfigurationNativeTypeProperty("community", String.class, "community", "community", this, 
-            !parameters.containsKey("community") ? null : parameters.get("community"));
+        PropertySupport.ReadWrite propertyVersion = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_VERSION, String.class, Constants.PROPERTY_VERSION, I18N.gm("snmp_version"), this, 
+            !parameters.containsKey(Constants.PROPERTY_VERSION) ? null : parameters.get(Constants.PROPERTY_VERSION));
+                        
+        PropertySupport.ReadWrite propertyCommunity = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_COMMUNITY, String.class, Constants.PROPERTY_COMMUNITY, I18N.gm("community"), this, 
+            !parameters.containsKey(Constants.PROPERTY_COMMUNITY) ? null : parameters.get(Constants.PROPERTY_COMMUNITY));
+                
+        PropertySupport.ReadWrite propertyAuthenticationProtocol = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_AUTH_PROTOCOL, String.class, Constants.PROPERTY_AUTH_PROTOCOL, I18N.gm("snmp_version_3_auth_protocol"), this, 
+            !parameters.containsKey(Constants.PROPERTY_AUTH_PROTOCOL) ? null : parameters.get(Constants.PROPERTY_AUTH_PROTOCOL));
         
+        PropertySupport.ReadWrite propertyAuthenticationProtocolPassPhrase = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_AUTH_PASS, String.class, Constants.PROPERTY_AUTH_PASS, I18N.gm("snmp_version_3_auth_pass"), this, 
+            !parameters.containsKey(Constants.PROPERTY_AUTH_PASS) ? null : parameters.get(Constants.PROPERTY_AUTH_PASS));
+        
+        PropertySupport.ReadWrite propertySecurityLevel = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_SECURITY_LEVEL, String.class, Constants.PROPERTY_SECURITY_LEVEL, I18N.gm("snmp_version_3_security_level"), this, 
+            !parameters.containsKey(Constants.PROPERTY_SECURITY_LEVEL) ? null : parameters.get(Constants.PROPERTY_SECURITY_LEVEL));
+        
+        PropertySupport.ReadWrite propertyContextName = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_CONTEXT_NAME, String.class, Constants.PROPERTY_CONTEXT_NAME, I18N.gm("snmp_version_3_context_name"), this, 
+            !parameters.containsKey(Constants.PROPERTY_CONTEXT_NAME) ? null : parameters.get(Constants.PROPERTY_CONTEXT_NAME));
+        
+        PropertySupport.ReadWrite propertySecurityName = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_SECURITY_NAME, String.class, Constants.PROPERTY_SECURITY_NAME, I18N.gm("snmp_version_3_security_name"), this, 
+            !parameters.containsKey(Constants.PROPERTY_SECURITY_NAME) ? null : parameters.get(Constants.PROPERTY_SECURITY_NAME));
+        
+        PropertySupport.ReadWrite propertyPrivacyProtocol = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_PRIVACY_PROTOCOL, String.class, Constants.PROPERTY_PRIVACY_PROTOCOL, I18N.gm("snmp_version_3_privacy_protocol"), this, 
+            !parameters.containsKey(Constants.PROPERTY_PRIVACY_PROTOCOL) ? null : parameters.get(Constants.PROPERTY_PRIVACY_PROTOCOL));
+        
+        PropertySupport.ReadWrite propertyPrivacyProtocolPassPhrase = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_PRIVACY_PASS, String.class, Constants.PROPERTY_PRIVACY_PASS, I18N.gm("snmp_version_3_privacy_pass"), this, 
+            !parameters.containsKey(Constants.PROPERTY_PRIVACY_PASS) ? null : parameters.get(Constants.PROPERTY_PRIVACY_PASS));
+                
         Long deviceId = parameters.containsKey("deviceId") ? Long.valueOf(parameters.get("deviceId")) : null;
         String deviceClass = parameters.containsKey("deviceClass") ? parameters.get("deviceClass") : null;
+        
+        PropertySupport.ReadWrite propertyDeviceId = new SyncConfigurationNativeTypeProperty("deviceId", String.class, "deviceId", "deviceId", this, null);
+        PropertySupport.ReadWrite propertyDevice = new DeviceTypeProperty(this, NoneObject.getInstance(), propertyDeviceId);
         
         generalPropertySet.put(propertyName);
         if (deviceClass != null && deviceId != null) {
             LocalObjectLight deviceObj = CommunicationsStub.getInstance().getObjectInfoLight(deviceClass, deviceId);
-            if (deviceObj == null) {
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                return null;
+            if (deviceObj != null) {
+                try {
+                    propertyDevice.setValue(deviceObj);
+                    propertyDeviceId.setValue(parameters.get("deviceId"));
+                } catch (Exception ex) {
+                }
             }
-            PropertySupport.ReadWrite propertyDeviceName = new SyncConfigurationNativeTypeProperty("deviceName", String.class, "deviceName", "deviceName", this, deviceObj.getName());
-            generalPropertySet.put(propertyDeviceName);
         }
+        generalPropertySet.put(propertyDevice);
         generalPropertySet.put(propertyDeviceId);
-        generalPropertySet.put(propertyDeviceClass);
+        
         generalPropertySet.put(propertyIpAddress);
         generalPropertySet.put(propertyPort);
-        generalPropertySet.put(propertyCommunity);
+        generalPropertySet.put(propertyVersion);
+        
+        snmpVersion2cPropertySet.put(propertyCommunity);
+        
+        snmpVersion3generalPropertySet.put(propertyAuthenticationProtocol);
+        snmpVersion3generalPropertySet.put(propertyAuthenticationProtocolPassPhrase);
+        snmpVersion3generalPropertySet.put(propertySecurityLevel);
+        snmpVersion3generalPropertySet.put(propertyContextName);
+        snmpVersion3generalPropertySet.put(propertySecurityName);
+        snmpVersion3generalPropertySet.put(propertyPrivacyProtocol);
+        snmpVersion3generalPropertySet.put(propertyPrivacyProtocolPassPhrase);
         
         generalPropertySet.setName(I18N.gm("general_information"));
         generalPropertySet.setDisplayName(I18N.gm("general_attributes"));
         
+        snmpVersion2cPropertySet.setName(I18N.gm("snmp_version_2c_info"));
+        snmpVersion2cPropertySet.setDisplayName(I18N.gm("snmp_version_2c_attr"));
+        
+        snmpVersion3generalPropertySet.setName(I18N.gm("snmp_version_3_info"));
+        snmpVersion3generalPropertySet.setDisplayName(I18N.gm("snmp_version_3_attr"));
+        
         sheet.put(generalPropertySet);
+        sheet.put(snmpVersion2cPropertySet);
+        sheet.put(snmpVersion3generalPropertySet);
         return sheet;        
     }
     

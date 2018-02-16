@@ -18,11 +18,14 @@ package com.neotropic.inventory.modules.sync.nodes.actions;
 import com.neotropic.inventory.modules.sync.nodes.SyncGroupNode;
 import com.neotropic.inventory.modules.sync.nodes.actions.windows.SyncActionsFrame;
 import java.awt.event.ActionEvent;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.core.LocalSyncDataSourceConfiguration;
 import org.inventory.communications.core.LocalSyncFinding;
 import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.runnable.AbstractSyncRunnable;
@@ -30,6 +33,7 @@ import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.netbeans.api.progress.ProgressHandleFactory;
+import org.openide.nodes.Node;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Utilities;
 
@@ -53,9 +57,34 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
         
         selectedNode = selectedNodes.next();
         
-        if (selectedNode.getChildren().getNodes().length == 0)
+        if (selectedNode.getChildren().getNodes().length == 0) {
             JOptionPane.showMessageDialog(null, I18N.gm("sync_no_configs"), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+        }
         else {
+            /*
+            for (Node child : selectedNode.getChildren().getNodes()) {
+                LocalSyncDataSourceConfiguration device = child.getLookup().lookup(LocalSyncDataSourceConfiguration.class);
+                if (device != null) {
+                    HashMap<String, String> parameters = device.getParameters();
+                    Long deviceId = parameters.containsKey("deviceId") ? Long.valueOf(parameters.get("deviceId")) : null;
+                    String deviceClass = parameters.containsKey("deviceClass") ? parameters.get("deviceClass") : null;
+                    if (deviceClass != null && deviceId != null) {
+                        LocalObjectLight deviceObj = CommunicationsStub.getInstance().getObjectInfoLight(deviceClass, deviceId);
+                        if (deviceObj == null) {
+                            JOptionPane.showMessageDialog(null,
+                                String.format("The inventory synchronization cannot be run because the device for the data source configuration %s is not assigned or was removed", device.toString()), 
+                                I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+                            return;
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null,
+                            String.format("The inventory synchronization cannot be run because the device for the data source configuration %s is not assigned or was removed", device.toString()), 
+                            I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+            }
+            */
             SyncRunnable myRun = new SyncRunnable();
             CommunicationsStub.getInstance().launchSupervisedSynchronizationTask(selectedNode.getLookup().lookup(LocalSyncGroup.class), myRun);
         }

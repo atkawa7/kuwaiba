@@ -17,6 +17,7 @@ package com.neotropic.inventory.modules.sync.nodes.properties;
 
 import com.neotropic.inventory.modules.sync.nodes.SyncConfigurationNode;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import org.inventory.communications.CommunicationsStub;
@@ -27,7 +28,7 @@ import org.inventory.core.services.i18n.I18N;
 import org.openide.nodes.PropertySupport;
 
 /**
- *
+ * Properties to Sync Configuration Nodes
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class SyncConfigurationNativeTypeProperty extends PropertySupport.ReadWrite {
@@ -47,7 +48,7 @@ public class SyncConfigurationNativeTypeProperty extends PropertySupport.ReadWri
 
     @Override
     public void setValue(Object val) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        HashMap<String, String> parameters = new HashMap();
+        HashMap<String, String> parameters = new HashMap();        
         parameters.put(getName(), (String) val);
         
         LocalSyncDataSourceConfiguration localSyncDataSrcConfig = syncConfigNode.getLookup().lookup(LocalSyncDataSourceConfiguration.class);
@@ -68,5 +69,17 @@ public class SyncConfigurationNativeTypeProperty extends PropertySupport.ReadWri
     @Override
     public boolean canWrite() {
         return !getName().equals("deviceName") && !getName().equals("deviceId") && !getName().equals("deviceClass");
+    }
+    
+    @Override
+    public PropertyEditor getPropertyEditor() {
+        if (Constants.PROPERTY_VERSION.equals(getName()) || 
+            Constants.PROPERTY_AUTH_PROTOCOL.equals(getName()) || 
+            Constants.PROPERTY_SECURITY_LEVEL.equals(getName()) || 
+            Constants.PROPERTY_PRIVACY_PROTOCOL.equals(getName())) {
+            
+            return new SyncDataSourceConfigPropertyEditor(getName());
+        }
+        return super.getPropertyEditor();
     }
 }

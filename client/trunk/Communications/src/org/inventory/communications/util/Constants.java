@@ -412,6 +412,42 @@ public class Constants {
      */
     public static final String PROPERTY_HOSTS = "hosts";
     /**
+     * Property version
+     */
+    public static final String PROPERTY_VERSION = "version";
+    /**
+     * SNMP version 2c property community
+     */
+    public static final String PROPERTY_COMMUNITY = "community";
+    /**
+     * SNMP version 3 property authentication protocol
+     */
+    public static final String PROPERTY_AUTH_PROTOCOL = "authProtocol";
+    /**
+     * SNMP version 3 property authentication protocol pass phrase
+     */
+    public static final String PROPERTY_AUTH_PASS = "authPass";    
+    /**
+     * SNMP version 3 property security Level
+     */
+    public static final String PROPERTY_SECURITY_LEVEL = "securityLevel";
+    /**
+     * SNMP version 3 property context Name
+     */
+    public static final String PROPERTY_CONTEXT_NAME = "contextName";
+    /**
+     * SNMP version 3 property security name
+     */
+    public static final String PROPERTY_SECURITY_NAME = "securityName";
+    /**
+     * SNMP version 3 property privacy Protocol
+     */
+    public static final String PROPERTY_PRIVACY_PROTOCOL = "privacyProtocol";
+    /**
+     * SNMP version 3 property privacy protocol pass phrase
+     */
+    public static final String PROPERTY_PRIVACY_PASS = "privacyPass";
+    /**
      * List type class for operational state
      */
     public static final String LIST_TYPE_OPERATIONAL_STATE = "OperationalState";

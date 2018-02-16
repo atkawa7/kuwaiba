@@ -22,6 +22,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.nodes.PropertySupport;
 
@@ -53,7 +54,7 @@ public class ListTypeProperty extends PropertySupport.ReadWrite<LocalObjectListI
                     new String[]{this.getName()}, new Object[]{t});
 
         if(!CommunicationsStub.getInstance().saveObject(update))
-            NotificationUtil.getInstance().showSimplePopup("Error", 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else
             value = t;
