@@ -582,9 +582,10 @@
 	\end{figure}
 
 	\subsection{Device Layouts} \label{sec:layouts}
-	Layouts are used to show how elements look like in the real world. For example, you can design a layout of the front panel of a router model, with its slots, ports, lights, screws, etc. The layouts you design in Kuwaiba are dynamic, so what you do, is to create the graphic elements and name them after the expected children of the object, then the rendering algorithm matches everything and shows the view, either as a stand-alone one, or inside a conventional rack view. You can also create reusable shapes that can be shared across different layouts (like say, RJ45 ports). This shapes are called \textit{Custom Shapes}.
+	Layouts are used to show how elements look like in the real world. For example, you can design a layout of the front panel of a router, with its slots, ports, lights, screws, etc. These layouts are dynamic, and designing one consists on putting together a bunch of geometrical shapes (rectangles, circles, etc) so they look like the real object, and name them after its expected children (slots, ports). Then, the rendering algorithm matches the shapes with the actual inventory objects and assembles a view that looks like the device you've got installed. You can also create reusable shapes that can be shared across different layouts (like say, RJ45 ports). This shapes are called \textit{Custom Shapes}.
 	
-	It is important to note that the device layouts are only available for instances of subclasses of \textbf{GenericCommunicationElement} (routers, switches, servers, etc) and \textbf{GenericFrame} (ODFs and DDFs). Also, it's mandatory that the classes have a list type attribute called \textbf{model}.
+	It is important to note that the device layouts are only available for instances of subclasses of \textbf{GenericCommunicationElement} (routers, switches, servers, etc) and \textbf{GenericDistributionFrame} (ODFs and DDFs). Also, it's mandatory that these classes have a list type attribute called \textbf{model}.
+	
 	%\begin{figure}[h!]
 	%	\centering
 	%	\includegraphics[width=0.5\linewidth]{img/template_manager_edit_layout.png}
@@ -593,19 +594,18 @@
 	%\end{figure}
 	
 	\subsection{Device Layout Editor} \label{sec:device_layout_editor}
-	A layout is a set of basic shapes (squares, circles, text, triangles, etc) and custom shapes (compositions of basic shapes) that represent the physical appearance of a device, and in most of the cases, devices that are are to be installed inside a rack. If the layout is designed correctly, it can be embedded in a\textbf{\nameref{sec:rack_view}}.
-	\newpage
-	
-	To access in the device layout editor use the \textbf{\nameref{sec:template_manager}} selecting a template element and click Edit Layout \textbf{Figure~\ref{fig:device_layout_edit}}, if the attribute \textbf{model} is not fixed the action must be show disabled. To enable the Edit Layout action the attribute \textbf{model} must be created using the \textbf{\nameref{sec:data_model_manager}} the type of this attribute will be a list type, now create a list type item using \textbf{\nameref{sec:list_type_manager}} to set the model in the device and open the edit layout. \textbf{Figure~\ref{fig:device_layout_empty}}
-		
+	So, a layout is a set of basic shapes (squares, circles, text, triangles, etc) and custom shapes (compositions of basic shapes) that resemble the physical appearance of a real-world device. If the layout belongs to a \textit{rackable} device and is designed correctly, it can be embedded in a \textbf{\nameref{sec:rack_view}}. In general terms, you should create a layout per model of the equipment you intent to represent, for example, a router Cisco ASR 9001, a 24-ports ODF, an HPE Apollo 4200 Gen9 Server, etc.
+	\\
+	To create or edit layouts, open the \textbf{\nameref{sec:template_manager}}, select (or create) a template of the class of your preference and make sure that you set the attribute \textbf{model}. Right-click on it and select Edit Layout (see  \textbf{Figure~\ref{fig:device_layout_edit}}), if the attribute \textbf{model} is not set, the action will be disabled. In the example below, we have used a list type called \textbf{EquipmentModel}, but you can use any other type.
+    
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.9\linewidth]{img/device_layout_edit.png}
-		\caption{Edit Device Layout}
+		\caption{Edit Device Layout Action}
 		\label{fig:device_layout_edit}
 	\end{figure}
-		
-	The first look of the device layout editor is an empty canvas \textbf{Figure~\ref{fig:device_layout_empty}} with a guide to draw devices that can be located in a rack like a Router, and the palette use to drag and drop shapes in the canvas to build the layout, also has a toolbar describe below.
+    
+	If the prerequisites are met, you should see something like \textbf{Figure~\ref{fig:device_layout_empty}}. Please note that the custom shape "Ethernet Port" might not be included in your database if you are upgrading from an old release. The editor is composed by three parts: A toolbar, explained in the \textbf{Table~\ref{tab:device_layout_editor_toolbar}}, a canvas, where you assemble the layout and a palette with the basic and custom shapes that you can drag and drop into the canvas. The standard Properties window is also used to edit the properties of the shapes.
 	
 	\begin{table}[h!]
 		\centering
@@ -625,6 +625,8 @@
 			\includegraphics[width=0.5cm]{img/device_layout_show_palette.png} & Show the palette of shapes\\
 			\midrule
 		\end{tabular}
+		\caption{Device Layout Editor Toolbar}
+		\label{tab:device_layout_editor_toolbar}
 	\end{table}
 		
 	\begin{figure}[h!]
@@ -635,52 +637,52 @@
 	\end{figure}
 	\newpage	
 	
-	The basic shapes and custom shapes that you drop in the canvas has a set of general properties and a set of unique properties \textbf{Figure~\ref{fig:device_layout_edited}} as is shown which allow to modify the shape. Also you can resize and move the shape in the canvas, and use the actions of copy and paste, and bring to front and back to fix the shape.
+	When you select a shape, the Properties window will display its properties. The shapes that represent dynamic spaces (that is, parts of the device that will be filled by a child of the object in the inventory) like slots (to be filled with boards) or ports \textbf{must} be named the same way they are expected to be named in the real object of the inventory. \textbf{Figure~\ref{fig:device_layout_edited}} shows a text shape, its contextual actions and its properties. The canvas has some guide lines to help you set the right aspect ratio for the first shape (which usually is the device's chassis itself) so it can be rendered correctly in a rack view.
 	
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.9\linewidth]{img/device_layout_edited.png}
-		\caption{Editing Device Layout}
+		\caption{The router layout}
 		\label{fig:device_layout_edited}
 	\end{figure}
-	
-	If you see in the satellite view of the Device Layout Editor, there are two rectangles empty \textbf{Figure~\ref{fig:device_layout_edited}}, we call to this \textbf{slot} and inside can contain another device layouts. In the template element Cisco ASR 9001 has 2 slots the Slot-Module 0/0/0 and the Slot-Module 0/0/1, that slots are the two rectangles.
-	
-	The idea behind of slot is that you can replace layouts depending on the devices, for example the Slot-Module 0/0/0 has an A9K-MPA-20X1GE if you want render some layout this IPBoard must be has an attribute model assigned with a list type item, and a device layout edited \textbf{Figure~\ref{fig:device_layout_ipboard}}
+	\newpage
+	If you look closely at the \textbf{Figure~\ref{fig:device_layout_edited}}, you will see that the satellite view (at the bottom of the image) shows the entire layout and that there are two empty rectangles. That example showcases a layout for a Cisco ASR9001 router, and the empty rectangles are slots. If you inspect the hardware structure of these routers using SNMP or other management tool, you will see that the slots containing communications boards are called \textit{slot0/0/0} and \textit{slot0/0/1} (this might change depending on your setup, with few variations). Those are the names to be used to tag the rectangle shapes. Now, if you create an object of class Router, set its \textbf{model} attribute to "Cisco ASR9001" (or whatever name you choose for the list type associated to the layout) and create two slots called \textit{slot0/0/0} and \textit{slot0/0/1} somewhere in the router, no matter what's inside those slots, it will be rendered when the layout is requested.\\
+	\newline
+	You can also create layouts for every module (board), so its ports are rendered correctly. In this example an A9K-MPA-20X1GE IP module will be used. It should look like the \textbf{Figure~\ref{fig:device_layout_ipboard}}. This board layout will be embedded into the router layout if A9K-MPA-20X1GE modules are found inside any of its slots.
 	
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.99\linewidth]{img/device_layout_ipboard.png}
-		\caption{Editing IPBoard Layout}
+		\caption{The module layout}
 		\label{fig:device_layout_ipboard}
 	\end{figure}
     \newpage
     
-	When creating a design for a IPBoard like the A9K-MPA-20X1GE, it is likely that you need the name of the ports to be dynamic, and in this way make the design independent of the location of the IPBoard on a device. To solve this, the name of the shape can be a regular expression \textbf{Figure~\ref{fig:device_layout_port_naming}}, where the user can define his own expression using the notation of Java (java.util.regex) or use the predefined ones such as the \textbf{Cisco Port Naming}, in the case that does not require using a regular expression simply type a name.
+	In most scenarios, the ports in a board have always the same name (usually a number), however in some cases, mostly in high-end routers, the name of the ports is directly related to the name of the slot where the board they belong to has been installed (in our example, if there are two boards of model A9K-MPA-20X1GE installed in the slots \textit{subslot 0/0/0} and \textit{subslot 0/1/0}, their ports will be named  Gi0/0/0/0 to Gi0/0/0/19 and  Gi0/0/1/0 al Gi0/0/1/19, respectively). This might confuse the layout rendering algorithm, as it expects that the names to remain constant for the same model of board no matter where it is installed. This problem is solved using regular expressions\footnote{Regular Expression: https://en.wikipedia.org/wiki/Regular\_expression}. You can write your own regex or use a predefined one such as the \textbf{Cisco Port Naming}, as shown in the \textbf{Figure~\ref{fig:device_layout_port_naming}}.
 	
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.99\linewidth]{img/device_layout_port_naming.png}
-		\caption{Editing IPBoard Layout}
+		\caption{Using a dynamic naming support}
 		\label{fig:device_layout_port_naming}
 	\end{figure}
     \newpage
 	
-	Once defined the devices layout you can create a new object from template and use the action \textbf{Show $\rightarrow$ Device Layout} to see the layout. If the device no has a defined a device layout for the model then show a default layout \textbf{Figure~\ref{fig:device_layout_default}}.
+	You can see the results by using the contextual action \textbf{Show $\rightarrow$ Device Layout} on a device whose \textbf{model} has a layout assigned. If there isn't any, the default one will be rendered. See \textbf{Figure~\ref{fig:device_layout_default}}.
 	
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.99\linewidth]{img/device_layout_default.png}
-		\caption{Render of Default Layout for Cisco ASR 9001 Ninth Av}
+		\caption{Default layout}
 		\label{fig:device_layout_default}
 	\end{figure}
 	
-	If the model has a layout assigned then render device layout created \textbf{Figure~\ref{fig:device_layout_render}}.
+	Otherwise, your design will be used (see \textbf{Figure~\ref{fig:device_layout_render}}). That layout will also be rendered in detailed rack views.
 	
 	\begin{figure}[h!]
 		\centering
 		\includegraphics[width=0.99\linewidth]{img/device_layout_show.png}
-		\caption{Render of Cisco ASR 9001 Ninth Av}
+		\caption{A fully functional device layout}
 		\label{fig:device_layout_render}
 	\end{figure}
 			
@@ -1069,7 +1071,7 @@
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_remove_background.png} & Remove the background image\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/icon_toggle_conn_labels.png} & Hide/show the labels next to the connections\\
+				\includegraphics[width=0.5cm]{img/icon_toggle_conn_labels.png} & Hide/show the connections labels\\
 				\midrule
 				\includegraphics[width=0.5cm]{img/object_view_high_contrast.png} & Show high contrast node labels (useful when the background is dark)\\
 				\midrule
@@ -1115,7 +1117,7 @@
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.4\linewidth]{img/rack_view_attributes_contained_element.png}
-				\caption{Attributes correctly set in a DDF contained inside a rack}
+				\caption{Attributes correctly set in a DDF installed inside a rack}
 				\label{fig:rack_view_attributes_contained_element}
 			\end{figure}
 		\end{itemize}
@@ -1128,7 +1130,7 @@
 			\end{itemize}
 		\end{framed}
 		\newpage		
-		If all values are correct, the view should look like this:
+		If all these values are consistent, the view should look like this:
 		\begin{figure}[h!]
 			\centering
 			\includegraphics[width=0.85\linewidth]{img/rack_view_sample_view.png}
@@ -1136,7 +1138,7 @@
 			\label{fig:rack_view_sample_view}
 		\end{figure}
 
-		In the Rack View you have a toolbar to export the view or refresh the last change in the view.
+		The toolbar has the following buttons:
 		
 		\begin{figure}[h!]
 			\centering
@@ -1148,22 +1150,22 @@
 		\begin{table}[h!]
 			\centering
 			\begin{tabular}[h!]{lp{10cm}}
-				\includegraphics[width=0.5cm]{img/rack_view_export.png} & Export to image file\\
+				\includegraphics[width=0.5cm]{img/rack_view_export.png} & Exports the canvas to an image file\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/rack_view_refresh.png} & Refresh Rack View\\
+				\includegraphics[width=0.5cm]{img/rack_view_refresh.png} & Refreshes the view\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/rack_view_select.png} & Select a device\\
+				\includegraphics[width=0.5cm]{img/rack_view_select.png} & Activates the Select mode\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/rack_view_connect_ports.png} & Connects ports\\
+				\includegraphics[width=0.5cm]{img/rack_view_connect_ports.png} & Activates the Connect mode (only available in the detailed rack view)\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/rack_view_table.png} & Show a list of connections in the selected rack\\
+				\includegraphics[width=0.5cm]{img/rack_view_table.png} & Shows the list of connections in the current rack and their endpoints in a table fashion (only available in the detailed rack view)\\
 				\midrule
-				\includegraphics[width=0.5cm]{img/rack_view_show_connections.png} & Show the device layouts and connections\\
+				\includegraphics[width=0.5cm]{img/rack_view_show_connections.png} & Switches to Detailed View mode, which renders the device layouts, ports and the existing connections\\
 				\midrule
 			\end{tabular}
 		\end{table}
-		
-		To see the connections in the rack click the button \includegraphics[width=0.7cm]{img/rack_view_show_connections.png} and a rack view is rendered using the devices layout or default layouts \textbf{Figure~\ref{fig:rack_view_connections}} (for more information about device layout see \textbf{\nameref{sec:device_layout_editor}})
+		\newpage
+		The detailed rack view (\includegraphics[width=0.7cm]{img/rack_view_show_connections.png}) shows the connections inside the rack  and uses the corresponding device layout of all elements that have one assigned (see  \textbf{Figure~\ref{fig:rack_view_connections}}). For the elements without layout, the default behavior is to render their ports.  For more information about how to create device layouts see \textbf{\nameref{sec:device_layout_editor}})
 		
 		\begin{figure}[h!]
 			\centering
@@ -1262,7 +1264,7 @@
 			\end{framed}
 			\clearpage	
 			\subsubsection{Moving Links in and out of containers} \label{sec:move_physical_links}
-				It is possible to move created links into a container, to move links into containers select the link or the links (using ctrl + click to select multiple links), then make right click in one of the links you want to move, this action will show you a new window to select one of the existing wire containers between de two end points of the selected links.
+				It is possible to move existing links into a container (assuming the links connect endpoints that are contained inside the endpoints of the container they're being moved into). To do this, select the link or links (use CTRL + click to select multiple links), then right-click on any of them and select \textbf{Move Links into Container}. This action will open a window to allow you select a valid container.
 				\begin{figure}[h!]
 					\centering
 					\includegraphics[width=0.6\linewidth]{img/l1_selected_links_to_move_into_container.png}
@@ -1277,7 +1279,7 @@
 					\label{fig:l1_list_of_existing_containers}
 				\end{figure}	
 	            \clearpage	
-				It is also possible move links out of a wire container, make right click in wire container, this action will show you a new window to select the link(s) inside the wire container, selected the link or the links(using ctrl + click to select multiple links).
+				It is also possible move links out of a container. Right-click on the container you want to modify and select \textbf{Move Links Out of Container}. This action will open a window to allow you select the link(s) inside the container, that will be moved out (use CTRL + click to select multiple objects).
 			
 				\begin{figure}[h!]
 					\centering
@@ -1881,7 +1883,7 @@
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_export.png} & Export topology to image file \\
 				\midrule
-				\includegraphics[width=0.5cm]{img/icon_toggle_conn_labels.png} & Hide/show the labels next to the connections\\
+				\includegraphics[width=0.5cm]{img/icon_toggle_conn_labels.png} & Hide/show the connections labels\\
 				\midrule
 				\includegraphics[width=0.5cm]{img/icon_select_tool.png} & Select tool \\
 				\midrule
