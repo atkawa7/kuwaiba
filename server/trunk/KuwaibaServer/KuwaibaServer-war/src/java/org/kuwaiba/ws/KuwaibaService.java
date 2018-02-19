@@ -48,6 +48,7 @@ import org.kuwaiba.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
 import org.kuwaiba.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.ws.toserialize.application.PrivilegeInfo;
+import org.kuwaiba.ws.toserialize.application.RemoteBackgroundJob;
 import org.kuwaiba.ws.toserialize.application.RemoteBusinessRule;
 import org.kuwaiba.ws.toserialize.application.RemoteFavoritesFolder;
 import org.kuwaiba.ws.toserialize.application.RemotePool;
@@ -5495,6 +5496,50 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in executeSyncActions: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets the current jobs which are executing
+     * @param sessionId the session id token
+     * @throws ServerSideException
+     * @return The list of the current jobs which are executing
+     */
+    @WebMethod(operationName = "getCurrentJobs")
+    public List<RemoteBackgroundJob> getCurrentJobs(
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getCurrentJobs(getIPAddress(), sessionId);            
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getCurrentJobs: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Kills a job given its id
+     * @param jobId id of job to kill
+     * @param sessionId the session id token
+     * @throws ServerSideException If the job cannot be found
+     */
+    @WebMethod(operationName = "killJob")
+    public void killJob(
+        @WebParam(name = "jobId") long jobId,
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+    
+        try {
+            wsBean.killJob(jobId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in killJob: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }

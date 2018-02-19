@@ -85,6 +85,7 @@ import org.kuwaiba.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.ws.toserialize.application.GroupInfo;
 import org.kuwaiba.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.ws.toserialize.application.PrivilegeInfo;
+import org.kuwaiba.ws.toserialize.application.RemoteBackgroundJob;
 import org.kuwaiba.ws.toserialize.application.RemoteBusinessRule;
 import org.kuwaiba.ws.toserialize.application.RemoteBusinessRuleConstraint;
 import org.kuwaiba.ws.toserialize.application.RemoteFavoritesFolder;
@@ -4569,6 +4570,46 @@ public class WebserviceBean implements WebserviceBeanRemote {
             aem.validateWebServiceCall("moveSyncDataSourceConfiguration", ipAddress, sessionId);
             aem.moveSyncDataSourceConfiguration(syncGroupId, syncDataSourceConfigurationIds);
             //TODO: audit entry
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public List<RemoteBackgroundJob> getCurrentJobs(String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null || bem == null || mem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("getCurrentJobs", ipAddress, sessionId);
+        
+            List<RemoteBackgroundJob> result = new ArrayList();
+            for (BackgroundJob job : JobManager.getInstance().getCurrentJobs()) {
+                
+                if (job.getStatus().equals(BackgroundJob.JOB_STATUS.RUNNNING)) {
+                    result.add(new RemoteBackgroundJob(
+                        job.getId(), job.getJobTag(), job.getProgress(), 
+                        job.allowConcurrence(), job.getStatus().toString(), 
+                        job.getStartTime(), job.getEndTime()));
+                }
+            }
+            return result;
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void killJob(long jobId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null || bem == null || mem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("getCurrentJobs", ipAddress, sessionId);
+        
+            JobManager.getInstance().kill(jobId);
+            
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

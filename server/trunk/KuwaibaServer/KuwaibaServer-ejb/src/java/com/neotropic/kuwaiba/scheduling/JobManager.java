@@ -52,6 +52,10 @@ public class JobManager {
         currentJobs = new ArrayList<>();
     } 
     
+    public List<BackgroundJob> getCurrentJobs() {
+        return currentJobs;                        
+    }
+    
     /**
      * Launches a job, previously configure with a set of parameters
      * @param job The job to be executed
@@ -106,13 +110,18 @@ public class JobManager {
      * (the job could not be found, there is a security restriction) 
      */
     public void kill(long jobId) throws InvalidArgumentException {
-        for (BackgroundJob currentJob : currentJobs) {
+        Iterator<BackgroundJob> bgJobIterator = currentJobs.iterator();
+        while (bgJobIterator.hasNext()) {
+            BackgroundJob currentJob = bgJobIterator.next();
             if (currentJob.getId() == jobId) {
                 try {
                     currentJob.kill();
+                    return;
                 }catch (JobSecurityException | NoSuchJobException | JobExecutionNotRunningException ex) {
                     System.out.println(String.format("[KUWAIBA] [%s] Unexpected error: %s", Calendar.getInstance().getTime(), ex.getMessage()));
                 }
+                currentJobs.remove(currentJob);
+                return;
             }
         }
         throw new InvalidArgumentException(String.format("A job with id %s could not be found", jobId));
