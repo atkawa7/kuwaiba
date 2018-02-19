@@ -37,6 +37,7 @@ import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
+import org.kuwaiba.utils.i18n.I18N;
 import org.kuwaiba.ws.todeserialize.StringPair;
 
 /**
@@ -54,7 +55,7 @@ public class SyncAction {
     private final static String ACTION_OBJECT_DELETED = "The object %s [%s] with id %s was deleted";
     private final static String ACTION_LISTTYPE_CREATED = "A list type %s was created";
     private final static String ACTION_PORT_NO_MATCH = "This %s has no match, please check it manually";
-    private final static String ACTION_ERROR = "Error";
+    
     
     private List<SyncFinding> findings;
     private List<SyncResult> results;
@@ -64,8 +65,7 @@ public class SyncAction {
    
     private HashMap<Long, List<String>> newCreatedPortsToCreate;
     private List<StringPair> nameOfCreatedPorts;
-    private HashMap<Long, List<String>> newTransceiverToCreate;
-    
+        
     public SyncAction(List<SyncFinding> findings) {
         this.findings = findings;
         PersistenceService persistenceService = PersistenceService.getInstance();
@@ -74,7 +74,6 @@ public class SyncAction {
         newCreatedPortsToCreate = new HashMap<>();
         results = new ArrayList<>();
         createdIdsToMap = new HashMap<>();
-        newTransceiverToCreate = new HashMap<>();
         nameOfCreatedPorts = new ArrayList<>();
     }
     
@@ -104,9 +103,6 @@ public class SyncAction {
                     case "branch":
                         manageObjectOfBranch(jsonObj, finding);
                         break;
-                    case "new-subranch":
-                        manageObjectOfBranch(jsonObj, finding);
-                        break;    
                     case "object_port_move":
                         migrateOldPortsIntoNewPosition(jsonObj, finding);
                         break;
@@ -114,18 +110,16 @@ public class SyncAction {
                         deleteOldStructure(jsonObj, finding);
                         break;
                     case "object_port_no_match":
-                        results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_PORT_NO_MATCH, jsonObj.toString()), "No match was found, please check"));
+                        results.add(new SyncResult(SyncResult.WARNING, String.format(ACTION_PORT_NO_MATCH, jsonObj.toString()), " There is nothing kuwaiba could do with this port, its name has no match with the data got it from SNMP, please check manually in order to move it or delete it"));
                         break;
                     case "object_port_no_match_new":
                         createNewPorts(jsonObj, finding);
-                        results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_PORT_NO_MATCH, jsonObj.toString()), "No match was found, please check"));
                         break;    
                 }
             } else {
                 if (finding.getType() == SyncFinding.EVENT_ERROR)
-                    results.add(new SyncResult(SyncResult.ERROR, finding.getDescription(), ACTION_ERROR));
+                    results.add(new SyncResult(SyncResult.ERROR, finding.getDescription(), I18N.gm("error")));
             }
-            //results.add(new SyncResult(SyncResult.SUCCESS, finding.getDescription() + " " + finding.getExtraInformation(), "No action was perfomed, the finding was skipped"));
         }
         return results;
     }
@@ -174,7 +168,7 @@ public class SyncAction {
                     results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_CONTAINMENT_HIERARCHY, key, possibleChildrenToAdd), ACTION_UPDATED));
             }
         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
-            Logger.getLogger(SyncAction.class.getName()).log(Level.SEVERE, null, ex);
+            results.add(new SyncResult(SyncResult.ERROR, "Updating the class hierarchy", "Possible cause: " + ex.getMessage() + "Please check and run the sync again"));
         }
     }
     
@@ -202,7 +196,7 @@ public class SyncAction {
                 bem.updateObject(deviceClassName, deviceId, attributes);
                 results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_UPDATED, attributes.get("name"), deviceClassName, Long.toString(deviceId)), ACTION_UPDATED));
             } catch (InvalidArgumentException | ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-                results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), ex.getMessage()));
+                results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), "Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
             }
         }
     }
@@ -211,9 +205,8 @@ public class SyncAction {
         JsonArray children = jsonObj.getJsonArray("children");
         List<String> portsToCreate = new ArrayList<>();
         long portId = -1;
-        boolean segmentDependsOfPort = false;String space = ""; boolean oldTransceiver = false;
+        boolean segmentDependsOfPort = false; 
         for (JsonValue jObj : children) {
-            space += " ";
             try (final JsonReader childReader = Json.createReader(new StringReader(jObj.toString()))) 
             {
                 JsonObject child = childReader.readObject();
@@ -268,7 +261,7 @@ public class SyncAction {
                             }
                            
                         } catch (InvalidArgumentException | ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-                            results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), ex.getMessage()));
+                            results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), "Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
                             break;
                         }
                     }
@@ -300,6 +293,10 @@ public class SyncAction {
         
         try {
             Long parentId = createdIdsToMap.get(tempParentId);
+            //we check if the parent of the port is already created in an old structure
+            if(parentId == null && jsonPort.get("deviceParentId") != null)
+                parentId = Long.valueOf(jsonPort.getString("deviceParentId"));
+                
             if(parentId != null){
                 //move the old port into the new location
                 bem.updateObject(className, childId, newAttributes);
@@ -343,12 +340,11 @@ public class SyncAction {
                         }
                     }
                 }
-                
             }
             else
-                results.add(new SyncResult(SyncResult.ERROR, find.getDescription() + "No valid parent found", ACTION_ERROR));
+                results.add(new SyncResult(SyncResult.WARNING, find.getDescription(), "Kuwaiba was not able to find the new parent to move the old port, please move it manually"));
         } catch (MetadataObjectNotFoundException | ObjectNotFoundException | OperationNotPermittedException ex) {
-            results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), ACTION_ERROR));
+            results.add(new SyncResult(SyncResult.ERROR, find.getDescription()," Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
         } catch (InvalidArgumentException ex) {
             Logger.getLogger(SyncAction.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -374,7 +370,14 @@ public class SyncAction {
         
         Long parentId = createdIdsToMap.get(tempParentId);
         if(parentId == null)
-            results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), "The port could not be created because something goes wrong trying to create the parent of the Port"));
+            results.add(new SyncResult(SyncResult.WARNING, find.getDescription(),  
+                    "The port could not be created because the parent doesn't "
+                            + "exists, please check if there is an error than "
+                            + "prevented the creation of some elements in the "
+                            + "synchronization process, maybe some attributes "
+                            + "are missing in the classes your are tryng to "
+                            + "load, please check the list of results and runs "
+                            + "the synchornization again. Please check and runs the sync again"));
         
         else{
             List<String> toCreate = newCreatedPortsToCreate.get(childId);
@@ -405,7 +408,7 @@ public class SyncAction {
                         createdIdsToMap.put(childId, createdObjectId);
                         results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), ACTION_CREATED));
                     } catch (InvalidArgumentException | ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-                        results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), ex.getMessage()));
+                        results.add(new SyncResult(SyncResult.WARNING, find.getDescription(), " Possible cause: " + ex.getMessage() + "Please check and run the sync again"));
                     }
                 }
             }
@@ -415,7 +418,7 @@ public class SyncAction {
                     createdIdsToMap.put(childId, createdObjectId);
                     results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), ACTION_CREATED));
                 } catch (InvalidArgumentException | ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-                    results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), ex.getMessage()));
+                    results.add(new SyncResult(SyncResult.WARNING, find.getDescription(), "Possible cause: " + ex.getMessage()));
                 }
             }
         }
@@ -429,7 +432,9 @@ public class SyncAction {
             results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_DELETED, jdevice.get("deviceName"), className, jdevice.getString("deviceId")), ACTION_DELETED));
 
         } catch (ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-            results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), ACTION_ERROR));
+            results.add(new SyncResult(SyncResult.WARNING, find.getDescription(), 
+                                        ex.getMessage() + "T his structure could not be deleted, because some elements has relationships (services, IP, links, etc), please check this structure and migrate ports manually.\n" +
+                    "Remeber kuwaiba is able to move the ports if they have a similiar name in the current navigation tree and the data got from the SNMP, otherwise is not possible to move the ports. Please check and run the sync again"));
         }
         
     }

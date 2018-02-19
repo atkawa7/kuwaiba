@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.json.Json;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
@@ -195,7 +196,9 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
         // Adding to findings list the not blocking execution exception found during the mapped poll
         for (SyncDataSourceConfiguration agent : pollResult.getExceptions().keySet()) {
             for (Exception exception : pollResult.getExceptions().get(agent))
-                findings.add(new SyncFinding(SyncFinding.EVENT_ERROR, exception.getMessage(), null));
+                findings.add(new SyncFinding(SyncFinding.EVENT_ERROR, 
+                        exception.getMessage(), 
+                        Json.createObjectBuilder().add("type","ex").build().toString()));
         }
         for (Map.Entry<RemoteBusinessObjectLight, AbstractDataEntity> entrySet : originalData.entrySet()) {
             TableData table = (TableData)entrySet.getValue();
