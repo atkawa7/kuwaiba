@@ -35,6 +35,7 @@ import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.soap.SOAPFaultException;
 import org.inventory.communications.core.LocalApplicationLogEntry;
 import org.inventory.communications.core.LocalAttributeMetadata;
+import org.inventory.communications.core.LocalBackgroundJob;
 import org.inventory.communications.core.LocalBusinessRule;
 import org.inventory.communications.core.LocalFavoritesFolder;
 import org.inventory.communications.core.LocalClassMetadata;
@@ -77,6 +78,7 @@ import org.inventory.communications.wsclient.KuwaibaService;
 import org.inventory.communications.wsclient.KuwaibaService_Service;
 import org.inventory.communications.wsclient.LaunchSupervisedSynchronizationTaskResponse;
 import org.inventory.communications.wsclient.PrivilegeInfo;
+import org.inventory.communications.wsclient.RemoteBackgroundJob;
 import org.inventory.communications.wsclient.RemoteFavoritesFolder;
 import org.inventory.communications.wsclient.RemoteBusinessObjectLight;
 import org.inventory.communications.wsclient.RemoteBusinessObjectLightList;
@@ -4806,6 +4808,41 @@ public class CommunicationsStub {
                 syncDataSrcConfigIds.add(syncDataSrcConfig.getId());
             
             service.moveSyncDataSourceConfiguration(syncGroupId, syncDataSrcConfigIds, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Gets the current jobs which are executing
+     * @return The list of the current jobs which are executing
+     */
+    public List<LocalBackgroundJob> getCurrentJobs() {
+        try {
+            List<RemoteBackgroundJob> remoteJobs = service.getCurrentJobs(session.getSessionId());
+            
+            List<LocalBackgroundJob> result = new ArrayList();
+            
+            for (RemoteBackgroundJob remoteJob : remoteJobs) {
+                result.add(new LocalBackgroundJob(remoteJob.getId(), remoteJob.getJobTag(), remoteJob.getProgress(), remoteJob.isAllowConcurrence(), remoteJob.getStatus(), remoteJob.getStartTime(), remoteJob.getEndTime()));
+            }
+            return result;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Kills a job given its id
+     * @param jobId id of job to kill
+     * @return True if the job was killed
+     */
+    public boolean killJob(long jobId) {
+        try {
+            service.killJob(jobId, session.getSessionId());
             return true;
         } catch (Exception ex) {
             this.error = ex.getMessage();

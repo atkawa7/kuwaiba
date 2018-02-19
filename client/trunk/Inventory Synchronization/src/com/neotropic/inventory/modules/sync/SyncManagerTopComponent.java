@@ -15,6 +15,7 @@
  */
 package com.neotropic.inventory.modules.sync;
 
+import com.neotropic.inventory.modules.sync.actions.KillJobAction;
 import com.neotropic.inventory.modules.sync.nodes.SyncGroupRootNode;
 import java.awt.event.KeyEvent;
 import javax.swing.InputMap;
@@ -93,10 +94,36 @@ public final class SyncManagerTopComponent extends TopComponent implements
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        toolMain = new javax.swing.JToolBar();
+        btnGetJobs = new javax.swing.JButton();
+
         setLayout(new java.awt.BorderLayout());
+
+        toolMain.setRollover(true);
+
+        org.openide.awt.Mnemonics.setLocalizedText(btnGetJobs, org.openide.util.NbBundle.getMessage(SyncManagerTopComponent.class, "SyncManagerTopComponent.btnGetJobs.text")); // NOI18N
+        btnGetJobs.setToolTipText(org.openide.util.NbBundle.getMessage(SyncManagerTopComponent.class, "SyncManagerTopComponent.btnGetJobs.toolTipText")); // NOI18N
+        btnGetJobs.setFocusable(false);
+        btnGetJobs.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnGetJobs.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnGetJobs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGetJobsActionPerformed(evt);
+            }
+        });
+        toolMain.add(btnGetJobs);
+        btnGetJobs.getAccessibleContext().setAccessibleName(org.openide.util.NbBundle.getMessage(SyncManagerTopComponent.class, "SyncManagerTopComponent.btnGetJobs.AccessibleContext.accessibleName")); // NOI18N
+
+        add(toolMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
+    private void btnGetJobsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGetJobsActionPerformed
+        new KillJobAction().actionPerformed(evt);
+    }//GEN-LAST:event_btnGetJobsActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnGetJobs;
+    private javax.swing.JToolBar toolMain;
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
