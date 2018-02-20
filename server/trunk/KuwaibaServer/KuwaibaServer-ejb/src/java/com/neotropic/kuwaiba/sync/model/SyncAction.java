@@ -223,15 +223,14 @@ public class SyncAction {
 
                 JsonObject jsonAttributes = child.getJsonObject("child").getJsonObject("attributes");
                 attributes.put("name", jsonAttributes.getString("name"));
-                attributes.put("description", jsonAttributes.getString("description"));
-
+                if(jsonAttributes.get("description") != null)
+                    attributes.put("description", jsonAttributes.getString("description"));
                 if(jsonAttributes.get("serialNumber") != null)
                     attributes.put("serialNumber", jsonAttributes.getString("serialNumber"));
                 if(jsonAttributes.get("vendor") != null)
                     attributes.put("vendor", jsonAttributes.getString("vendor"));
                 if(jsonAttributes.get("model") != null)
                     attributes.put("model", jsonAttributes.getString("model"));
-                //attributes.put("isLoadFromRegistry", "true");
 
                 if (find.getType() == SyncFinding.EVENT_NEW){
                     if(className.equals("OpticalPort") || segmentDependsOfPort){
@@ -239,7 +238,7 @@ public class SyncAction {
                             portId = childId;
                         
                         segmentDependsOfPort = true;
-                        portsToCreate.add(jObj.toString());
+                        portsToCreate.add(child.toString());
                         newCreatedPortsToCreate.put(portId, portsToCreate);
                         nameOfCreatedPorts.add(new StringPair(jsonAttributes.getString("name"), Long.toString(childId)));
                     }
@@ -277,7 +276,6 @@ public class SyncAction {
     }   
     
     public void migrateOldPortsIntoNewPosition(JsonObject jsonPort, SyncFinding find) throws ApplicationObjectNotFoundException{
-
         Long childId = Long.valueOf(jsonPort.getString("childId"));
         String className = jsonPort.getString("className");
         Long tempParentId = Long.valueOf(jsonPort.getString("parentId"));
@@ -285,7 +283,8 @@ public class SyncAction {
         JsonObject jsnPrtAttrs = jsonPort.getJsonObject("attributes");
         HashMap<String, String> newAttributes = new HashMap<>();
         newAttributes.put("name", jsnPrtAttrs.getString("name"));
-        newAttributes.put("description", jsnPrtAttrs.getString("description"));
+        if(jsnPrtAttrs.get("description") != null)
+            newAttributes.put("description", jsnPrtAttrs.getString("description"));
         
         HashMap<String, long[]> objectsToMove = new HashMap<>();
         long[] ids = {childId} ;
@@ -320,8 +319,8 @@ public class SyncAction {
 
                             JsonObject jsonAttributes = child.getJsonObject("attributes");
                             attributes.put("name", jsonAttributes.getString("name"));
-                            attributes.put("description", jsonAttributes.getString("description"));
-
+                            if(jsonAttributes.get("description") != null)
+                                attributes.put("description", jsonAttributes.getString("description"));
                             if(jsonAttributes.get("serialNumber") != null)
                                 attributes.put("serialNumber", jsonAttributes.getString("serialNumber"));
                             if(jsonAttributes.get("vendor") != null)
@@ -359,8 +358,8 @@ public class SyncAction {
 
         JsonObject jsonAttributes = json.getJsonObject("attributes");
         attributes.put("name", jsonAttributes.getString("name"));
-        attributes.put("description", jsonAttributes.getString("description"));
-
+        if(jsonAttributes.get("description") != null)
+            attributes.put("description", jsonAttributes.getString("description"));
         if(jsonAttributes.get("serialNumber") != null)
             attributes.put("serialNumber", jsonAttributes.getString("serialNumber"));
         if(jsonAttributes.get("vendor") != null)
@@ -368,9 +367,13 @@ public class SyncAction {
         if(jsonAttributes.get("model") != null)
             attributes.put("model", jsonAttributes.getString("model"));
         
-        Long parentId = createdIdsToMap.get(tempParentId);
-        if(parentId == null)
-            results.add(new SyncResult(SyncResult.WARNING, find.getDescription(),  
+        Long parentId;
+        if(json.get("deviceParentId") != null)
+            parentId = Long.valueOf(json.getString("deviceParentId"));
+        else
+            parentId = createdIdsToMap.get(tempParentId);
+        if(parentId == null){
+                results.add(new SyncResult(SyncResult.WARNING, find.getDescription(),  
                     "The port could not be created because the parent doesn't "
                             + "exists, please check if there is an error than "
                             + "prevented the creation of some elements in the "
@@ -378,7 +381,7 @@ public class SyncAction {
                             + "are missing in the classes your are tryng to "
                             + "load, please check the list of results and runs "
                             + "the synchornization again. Please check and runs the sync again"));
-        
+        }
         else{
             List<String> toCreate = newCreatedPortsToCreate.get(childId);
             if(toCreate != null){ //if the port has children
@@ -394,7 +397,8 @@ public class SyncAction {
 
                     jsonAttributes = child.getJsonObject("attributes");
                     attributes.put("name", jsonAttributes.getString("name"));
-                    attributes.put("description", jsonAttributes.getString("description"));
+                    if(jsonAttributes.get("description") != null)
+                        attributes.put("description", jsonAttributes.getString("description"));
 
                     if(jsonAttributes.get("serialNumber") != null)
                         attributes.put("serialNumber", jsonAttributes.getString("serialNumber"));
@@ -403,12 +407,13 @@ public class SyncAction {
                     if(jsonAttributes.get("model") != null)
                         attributes.put("model", jsonAttributes.getString("model"));
                     try{
-                        parentId = createdIdsToMap.get(tempParentId);
+                        if(child.get("deviceParentId") == null)
+                            parentId = createdIdsToMap.get(tempParentId);
                         long createdObjectId = bem.createObject(className, parentClassName, parentId, attributes, -1);
                         createdIdsToMap.put(childId, createdObjectId);
                         results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), ACTION_CREATED));
                     } catch (InvalidArgumentException | ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-                        results.add(new SyncResult(SyncResult.WARNING, find.getDescription(), " Possible cause: " + ex.getMessage() + "Please check and run the sync again"));
+                        results.add(new SyncResult(SyncResult.WARNING, find.getDescription(), " Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
                     }
                 }
             }
