@@ -18,44 +18,29 @@ package com.neotropic.inventory.modules.sync.nodes.actions;
 import com.neotropic.inventory.modules.sync.nodes.SyncConfigurationNode;
 import com.neotropic.inventory.modules.sync.nodes.SyncGroupNode.SyncGroupNodeChildren;
 import java.awt.event.ActionEvent;
-import static javax.swing.Action.NAME;
-import static javax.swing.Action.SMALL_ICON;
-import javax.swing.ImageIcon;
-import javax.swing.JMenuItem;
+import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalSyncDataSourceConfiguration;
-import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.core.services.utils.ImageIconResource;
 import org.openide.util.Utilities;
-import org.openide.util.actions.Presenter;
 
 /**
- *
+ * Abstract action executed by DeleteSyncAction to delete a sync data source 
+ * configuration.
+ * Is not a GenericInventoryAction
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class DeleteSyncDataSourceConfigurationAction extends GenericInventoryAction implements Presenter.Popup {
-    private final JMenuItem popupPresenter;
+public class DeleteSyncDataSourceConfigurationAction extends AbstractAction {
+    private static DeleteSyncDataSourceConfigurationAction instance;
     
-    public DeleteSyncDataSourceConfigurationAction() {
-        putValue(NAME, I18N.gm("delete"));
-        putValue(SMALL_ICON, ImageIconResource.WARNING_ICON);
-                
-        popupPresenter = new JMenuItem();
-        popupPresenter.setName((String) getValue(NAME));
-        popupPresenter.setText((String) getValue(NAME));
-        popupPresenter.setIcon((ImageIcon) getValue(SMALL_ICON));
-        popupPresenter.addActionListener(this);
+    private DeleteSyncDataSourceConfigurationAction() {}
+    
+    public static DeleteSyncDataSourceConfigurationAction getInstance() {
+        return instance == null ? instance = new DeleteSyncDataSourceConfigurationAction() : instance;
     }
-
-    @Override
-    public LocalPrivilege getPrivilege() {
-        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SYNC, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
-    }
-
+        
     @Override
     public void actionPerformed(ActionEvent e) {        
         if (JOptionPane.showConfirmDialog(null, I18N.gm("want_to_delete_sync_data_src_config"), 
@@ -75,11 +60,5 @@ public class DeleteSyncDataSourceConfigurationAction extends GenericInventoryAct
                         NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }
         }
-    }
-
-    @Override
-    public JMenuItem getPopupPresenter() {
-        return popupPresenter;
-    }
-    
+    }    
 }

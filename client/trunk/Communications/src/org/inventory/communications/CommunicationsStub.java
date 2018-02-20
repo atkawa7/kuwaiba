@@ -3497,9 +3497,71 @@ public class CommunicationsStub {
      * @return The id of the new special object.
      */
     public LocalObjectLight createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, long tsElementParentId, String tsElementName) {
-            try {
+        try {
             return new LocalObjectLight(service.createTemplateSpecialElement(tsElementClass, tsElementParentClassName, 
                     tsElementParentId, tsElementName, session.getSessionId()), tsElementName, tsElementClass);
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    /**
+     * Creates multiple template elements using a given name pattern
+     * @param templateElementClassName The class name of the new set of template elements
+     * @param templateElementParentClassName The parent class name of the new set of template elements
+     * @param templateElementParentId The parent id of the new set of template elements
+     * @param numberOfTemplateElements The number of template elements
+     * @param templateElementNamePattern Name pattern of the new set of template elements
+     * @return A list of new template elements or null 
+     *         If the parent class name or the template element class name cannot be found
+     *         If the given template element class cannot be a child of the given parent
+     *         If the parent class name cannot be found
+     *         If the given pattern to generate the name has less possibilities that the number of template elements to be created
+     */
+    public List<LocalObjectLight> createBulkTemplateElement(String templateElementClassName, String templateElementParentClassName, long templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern) {
+        try {
+            List<LocalObjectLight> result = new ArrayList();
+            List<Long> ids = service.createBulkTemplateElement(templateElementClassName, templateElementParentClassName, templateElementParentId, numberOfTemplateElements, templateElementNamePattern, session.getSessionId());
+            
+            for (Long id : ids) {
+                LocalObject templateElement = getTemplateElement(templateElementClassName, id);
+                if (templateElement == null)
+                    throw new Exception();
+                
+                result.add(templateElement);
+            }
+            return result;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    /**
+     * Creates multiple special template elements using a given name pattern
+     * @param stElementClass The class name of the new set of special template elements
+     * @param stElementParentClassName The parent class name of the new set of special template elements
+     * @param stElementParentId The parent id of the new set of special template elements
+     * @param numberOfTemplateElements The number of template elements
+     * @param stElementNamePattern Name pattern of the new set of special template elements
+     * @return A list of new special template elements or null
+     *         If the parent class name or the special template element class name cannot be found
+     *         If the given special template element class cannot be a child of the given parent
+     *         If the parent class name cannot be found
+     *         If the given pattern to generate the name has less possibilities that the number of special template elements to be created
+     */
+    public List<LocalObjectLight> createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, long stElementParentId, int numberOfTemplateElements, String stElementNamePattern) {
+        try {
+            List<LocalObjectLight> result = new ArrayList();
+            List<Long> ids = service.createBulkSpecialTemplateElement(stElementClass, stElementParentClassName, stElementParentId, numberOfTemplateElements, stElementNamePattern, session.getSessionId());
+            
+            for (Long id : ids) {
+                LocalObject specialTemplateElement = getTemplateElement(stElementClass, id);
+                if (specialTemplateElement == null)
+                    throw new Exception();
+                
+                result.add(specialTemplateElement);
+            }
+            return result;
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;

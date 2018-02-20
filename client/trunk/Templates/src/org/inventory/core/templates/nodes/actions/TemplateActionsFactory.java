@@ -23,10 +23,12 @@ import org.inventory.core.services.api.actions.GenericInventoryAction;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class TemplateActionsFactory {
-    static CreateTemplateAction createTemplateAction;
-    static CreateTemplateElementAction createTemplateElementAction;
-    static DeleteTemplateElementAction deleteTemplateElementAction;
-    static CreateTemplateElementSpecialAction createTemplateElementSpecialAction;
+    private static CreateTemplateAction createTemplateAction;
+    private static CreateTemplateElementAction createTemplateElementAction;
+    private static CreateMultipleTemplateElementAction createMultipleTemplateElementAction;
+    private static DeleteTemplateElementAction deleteTemplateElementAction;
+    private static CreateTemplateElementSpecialAction createTemplateElementSpecialAction;
+    private static CreateMultipleSpecialTemplateElementAction createMultipleSpecialTemplateElementAction;
     private static EditLayoutAction editLayoutAction;
     
     public static GenericInventoryAction getCreateTemplateAction() {
@@ -41,9 +43,15 @@ public class TemplateActionsFactory {
         return createTemplateElementAction;
     }
     
+    public static GenericInventoryAction getCreateMultipleTemplateElementAction() {
+        if (createMultipleTemplateElementAction == null)
+            createMultipleTemplateElementAction = new CreateMultipleTemplateElementAction();
+        return createMultipleTemplateElementAction;            
+    }
+    
     public static GenericInventoryAction getDeleteTemplateElementAction() {
         if (deleteTemplateElementAction == null)
-            deleteTemplateElementAction = new DeleteTemplateElementAction();
+            deleteTemplateElementAction = DeleteTemplateElementAction.getInstance();
         return deleteTemplateElementAction;
     }
     
@@ -53,6 +61,12 @@ public class TemplateActionsFactory {
         return createTemplateElementSpecialAction;
     }
     
+    public static GenericInventoryAction getCreateMultipleSpecialTemplateElementAction() {
+        if (createMultipleSpecialTemplateElementAction == null)
+            createMultipleSpecialTemplateElementAction = new CreateMultipleSpecialTemplateElementAction();
+        return createMultipleSpecialTemplateElementAction;
+    }
+            
     public static EditLayoutAction getEditLayoutAction() {
         return editLayoutAction == null ? editLayoutAction = new EditLayoutAction() : editLayoutAction;
     }

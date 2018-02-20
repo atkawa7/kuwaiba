@@ -18,44 +18,28 @@ package com.neotropic.inventory.modules.sync.nodes.actions;
 import com.neotropic.inventory.modules.sync.nodes.SyncGroupNode;
 import com.neotropic.inventory.modules.sync.nodes.SyncGroupRootNode.SyncGroupRootChildren;
 import java.awt.event.ActionEvent;
-import static javax.swing.Action.NAME;
-import static javax.swing.Action.SMALL_ICON;
-import javax.swing.ImageIcon;
-import javax.swing.JMenuItem;
+import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalSyncGroup;
-import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.core.services.utils.ImageIconResource;
 import org.openide.util.Utilities;
-import org.openide.util.actions.Presenter;
 
 /**
- *
+ * Abstract action executed by DeleteSyncAction to delete a sync group.
+ * Is not a GenericInventoryAction
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class DeleteSyncGroupAction extends GenericInventoryAction implements Presenter.Popup {
-    private final JMenuItem popupPresenter;
+public final class DeleteSyncGroupAction extends AbstractAction {
+    private static DeleteSyncGroupAction instance;
     
-    public DeleteSyncGroupAction() {        
-        putValue(NAME, I18N.gm("delete"));
-        putValue(SMALL_ICON, ImageIconResource.WARNING_ICON);
-                
-        popupPresenter = new JMenuItem();
-        popupPresenter.setName((String) getValue(NAME));
-        popupPresenter.setText((String) getValue(NAME));
-        popupPresenter.setIcon((ImageIcon) getValue(SMALL_ICON));
-        popupPresenter.addActionListener(this);
+    private DeleteSyncGroupAction() {}
+    
+    public static DeleteSyncGroupAction getInstance() {
+        return instance == null ? instance = new DeleteSyncGroupAction() : instance;
     }
-
-    @Override
-    public LocalPrivilege getPrivilege() {
-        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SYNC, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
-    }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         if (JOptionPane.showConfirmDialog(null, I18N.gm("want_to_delete_sync_group"), 
@@ -63,24 +47,17 @@ public class DeleteSyncGroupAction extends GenericInventoryAction implements Pre
             
             SyncGroupNode syncGroupNode = Utilities.actionsGlobalContext().lookup(SyncGroupNode.class);
             LocalSyncGroup localSyncGroup = Utilities.actionsGlobalContext().lookup(LocalSyncGroup.class);
-            
+
             if (localSyncGroup != null) {
                 if (CommunicationsStub.getInstance().deleteSyncGroup(localSyncGroup.getId())) {
                     ((SyncGroupRootChildren) syncGroupNode.getParentNode().getChildren()).addNotify();
-                    
+
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
                         NotificationUtil.INFO_MESSAGE, I18N.gm("sync_group_src_config_deleted_successfully"));
                 } else
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }
-            
         }
     }
-
-    @Override
-    public JMenuItem getPopupPresenter() {
-        return popupPresenter;
-    }
-    
 }

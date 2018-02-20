@@ -23,6 +23,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.JPopupMenu;
 import javax.xml.namespace.QName;
@@ -88,6 +89,10 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
     private final LocalObjectListItem model;
     
     private boolean addContainer = false;
+    /**
+     * Repository to storage the custom shapes layout structures
+     */
+    private HashMap<LocalObjectListItem, byte[]> structureRepository = new HashMap();
     
     public DeviceLayoutScene(LocalObjectListItem model) {
         this.model = model;
@@ -347,6 +352,7 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
         clear();
+        structureRepository.clear();
         render(structure, null, null);
     }
 
@@ -585,16 +591,21 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
             return false;
         
         LocalObjectListItem customShapeModel = customShape.getListItem();
-        
-        List<LocalObjectViewLight> relatedViews = CommunicationsStub.getInstance().getListTypeItemRelatedViews(customShapeModel.getId(), customShapeModel.getClassName());
-        if (relatedViews != null) {
-            if (!relatedViews.isEmpty()) {
-                LocalObjectView layoutView = CommunicationsStub.getInstance().getListTypeItemRelatedView(customShapeModel.getId(), customShapeModel.getClassName(), relatedViews.get(0).getId());
-                if (layoutView != null) {
-                    byte [] structure = layoutView.getStructure();
-                    if (structure != null) {
-                        render(structure, customShape, containerShapeWidget);
-                        return true;
+        if (structureRepository.containsKey(customShapeModel)) {
+            render(structureRepository.get(customShapeModel), customShape, containerShapeWidget);            
+            return true;
+        } else {
+            List<LocalObjectViewLight> relatedViews = CommunicationsStub.getInstance().getListTypeItemRelatedViews(customShapeModel.getId(), customShapeModel.getClassName());
+            if (relatedViews != null) {
+                if (!relatedViews.isEmpty()) {
+                    LocalObjectView layoutView = CommunicationsStub.getInstance().getListTypeItemRelatedView(customShapeModel.getId(), customShapeModel.getClassName(), relatedViews.get(0).getId());
+                    if (layoutView != null) {
+                        byte [] structure = layoutView.getStructure();
+                        if (structure != null) {  
+                            structureRepository.put(customShapeModel, structure);
+                            render(structure, customShape, containerShapeWidget);
+                            return true;
+                        }
                     }
                 }
             }

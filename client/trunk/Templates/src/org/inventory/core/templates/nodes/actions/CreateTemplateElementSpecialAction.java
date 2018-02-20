@@ -27,6 +27,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.core.templates.nodes.TemplateElementNode;
@@ -82,7 +83,7 @@ public class CreateTemplateElementSpecialAction extends GenericInventoryAction i
         List<LocalClassMetadataLight> items = com.getPossibleSpecialChildren(selectedObject.getClassName(), false);
         
         if (items == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE,
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.INFO_MESSAGE,
                 com.getError());
             mnuPossibleChildren.setEnabled(false);
         }

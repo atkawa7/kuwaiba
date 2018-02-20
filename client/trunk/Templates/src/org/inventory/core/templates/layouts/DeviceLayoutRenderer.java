@@ -119,6 +119,10 @@ public class DeviceLayoutRenderer {
      * Hierarchy of the device to render
      */
     private final HashMap<LocalObjectLight, List<LocalObjectLight>> nodes = new HashMap();
+    /**
+     * Repository to storage the custom shapes layout structures
+     */
+    private HashMap<LocalObjectListItem, LocalObjectView> structureRepository = new HashMap();
         
     public DeviceLayoutRenderer(LocalObjectLight deviceToRender, Widget parentWidget, Point deviceLayoutLocation, Rectangle deviceLayoutBounds) {
         this.deviceToRender = deviceToRender;
@@ -339,6 +343,7 @@ public class DeviceLayoutRenderer {
             }
             return;
         }
+        structureRepository.clear();
         byte[] structure = deviceLayoutObjView.getStructure();
         
         if (structure == null)
@@ -458,25 +463,32 @@ public class DeviceLayoutRenderer {
                             if (ContainerShape.SHAPE_TYPE.equals(shapeType)) {
                             } else if (CustomShape.SHAPE_TYPE.equals(shapeType)) {
                                 LocalObjectListItem customShapeModel = ((CustomShape) shape).getListItem();
-
-                                List<LocalObjectViewLight> relatedViews = CommunicationsStub.getInstance().getListTypeItemRelatedViews(customShapeModel.getId(), customShapeModel.getClassName());
-                                if (relatedViews != null) {
-                                    if (!relatedViews.isEmpty()) {
-                                        LocalObjectView layoutView = CommunicationsStub.getInstance().getListTypeItemRelatedView(customShapeModel.getId(), customShapeModel.getClassName(), relatedViews.get(0).getId());
-                                        if (layoutView != null) {
-                                            byte [] customShapeStructure = layoutView.getStructure();
-                                            if (customShapeStructure != null) {
-                                                render(customShapeStructure, false, 
-                                                    new Point(shape.getX(), shape.getY()), 
-                                                    new Rectangle(-Shape.DEFAULT_BORDER_SIZE, -Shape.DEFAULT_BORDER_SIZE, shape.getWidth(), shape.getHeight())
-                                                    );
-                                            }
-                                            shapes.add(shape);
+                                LocalObjectView layoutView = null;
+                                if (structureRepository.containsKey(customShapeModel))
+                                    layoutView = structureRepository.get(customShapeModel);
+                                else {
+                                    List<LocalObjectViewLight> relatedViews = CommunicationsStub.getInstance().getListTypeItemRelatedViews(customShapeModel.getId(), customShapeModel.getClassName());
+                                    if (relatedViews != null) {
+                                        if (!relatedViews.isEmpty()) {
+                                            layoutView = CommunicationsStub.getInstance().getListTypeItemRelatedView(customShapeModel.getId(), customShapeModel.getClassName(), relatedViews.get(0).getId());
+                                            
+                                            if (layoutView != null)
+                                                structureRepository.put(customShapeModel, layoutView);
                                         }
+                                    } else {
+                                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                                            NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                                     }
-                                } else {
-                                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                                }
+                                if (layoutView != null) {
+                                    byte [] customShapeStructure = layoutView.getStructure();
+                                    if (customShapeStructure != null) {
+                                        render(customShapeStructure, false, 
+                                            new Point(shape.getX(), shape.getY()), 
+                                            new Rectangle(-Shape.DEFAULT_BORDER_SIZE, -Shape.DEFAULT_BORDER_SIZE, shape.getWidth(), shape.getHeight())
+                                            );
+                                    }
+                                    shapes.add(shape);
                                 }
                             } else {
                                 attrValue = reader.getAttributeValue(null, Shape.PROPERTY_COLOR);

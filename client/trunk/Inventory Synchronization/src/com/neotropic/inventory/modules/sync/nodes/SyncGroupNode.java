@@ -15,6 +15,7 @@
  */
 package com.neotropic.inventory.modules.sync.nodes;
 
+import com.neotropic.inventory.modules.sync.nodes.actions.DeleteSyncAction;
 import com.neotropic.inventory.modules.sync.nodes.actions.SyncManagerActionFactory;
 import com.neotropic.inventory.modules.sync.nodes.properties.SyncGroupNativeTypeProperty;
 import java.util.Collections;
@@ -106,7 +107,7 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
             cutAction, 
             pasteAction, 
             null, 
-            SyncManagerActionFactory.getDeleteSyncGroupAction()
+            DeleteSyncAction.getInstance()
         };
     }
     

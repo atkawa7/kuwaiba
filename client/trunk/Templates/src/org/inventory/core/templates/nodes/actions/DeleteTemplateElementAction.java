@@ -16,41 +16,72 @@
 package org.inventory.core.templates.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.Iterator;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
+import org.inventory.core.services.utils.ImageIconResource;
 import org.inventory.core.templates.nodes.TemplateElementNode;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.openide.util.Utilities;
+import org.openide.util.actions.Presenter;
 
 /**
  * Deletes a template element or a template itself
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class DeleteTemplateElementAction extends GenericInventoryAction {
+public class DeleteTemplateElementAction extends GenericInventoryAction implements Presenter.Popup{
+    public static String ACTION_MAP_KEY = "DeleteTemplateElementAction"; //NOI18N
+    private static DeleteTemplateElementAction instance;
+    private final JMenuItem popupPresenter;
     
-    private CommunicationsStub com = CommunicationsStub.getInstance();
+    private final CommunicationsStub com = CommunicationsStub.getInstance();
     
-    DeleteTemplateElementAction() {
+    private DeleteTemplateElementAction() {
         putValue(NAME, "Delete Template Element");
+        popupPresenter = new JMenuItem((String) getValue(NAME), ImageIconResource.WARNING_ICON);
+        popupPresenter.addActionListener(this);
+    }
+        
+    public static DeleteTemplateElementAction getInstance() {
+        return instance == null ? instance = new DeleteTemplateElementAction() : instance;
+    }
+    
+    @Override
+    public JMenuItem getPopupPresenter() {
+        return popupPresenter;
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {       
         if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this template element? All its children will be deleted as well.", 
-                "Warning", JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
-            TemplateElementNode selectedNode = Utilities.actionsGlobalContext().lookup(TemplateElementNode.class);
+                I18N.gm("warning"), JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
             
-            if (CommunicationsStub.getInstance().deleteTemplateElement(
-                    selectedNode.getLookup().lookup(LocalObjectLight.class).getClassName(), 
-                    selectedNode.getLookup().lookup(LocalObjectLight.class).getOid())) {
-                ((AbstractChildren)selectedNode.getParentNode().getChildren()).addNotify();
-                NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Template element deleted successfully");
-            } else
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            Iterator<? extends TemplateElementNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(TemplateElementNode.class).allInstances().iterator();
+            
+            if (!selectedNodes.hasNext())
+                return;
+            
+            while (selectedNodes.hasNext()) {
+                TemplateElementNode selectedNode = selectedNodes.next();
+                
+                if (CommunicationsStub.getInstance().deleteTemplateElement(
+                        selectedNode.getLookup().lookup(LocalObjectLight.class).getClassName(), 
+                        selectedNode.getLookup().lookup(LocalObjectLight.class).getOid())) {
+                    ((AbstractChildren)selectedNode.getParentNode().getChildren()).addNotify();                    
+                } else {
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                    return;
+                }
+            }
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), 
+                NotificationUtil.INFO_MESSAGE, "Template element deleted successfully");
         }
     }
 

@@ -22,6 +22,7 @@ import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.core.templates.nodes.actions.DeleteTemplateElementAction;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -78,11 +79,13 @@ public final class TemplatesTopComponent extends TopComponent implements Explore
         ActionMap map = getActionMap();
         map.put(DefaultEditorKit.copyAction, ExplorerUtils.actionCopy(em));
         map.put(DefaultEditorKit.pasteAction, ExplorerUtils.actionPaste(em));
+        map.put(DeleteTemplateElementAction.ACTION_MAP_KEY, DeleteTemplateElementAction.getInstance());
         
         //Now the keystrokes
         InputMap keys = getInputMap(WHEN_IN_FOCUSED_WINDOW);
         keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.copyAction);
         keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.pasteAction);
+        keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), DeleteTemplateElementAction.ACTION_MAP_KEY);
         
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
         

@@ -15,7 +15,7 @@
  */
 package com.neotropic.inventory.modules.sync.nodes;
 
-import com.neotropic.inventory.modules.sync.nodes.actions.SyncManagerActionFactory;
+import com.neotropic.inventory.modules.sync.nodes.actions.DeleteSyncAction;
 import com.neotropic.inventory.modules.sync.nodes.properties.DeviceTypeProperty;
 import com.neotropic.inventory.modules.sync.nodes.properties.NoneObject;
 import com.neotropic.inventory.modules.sync.nodes.properties.SyncConfigurationNativeTypeProperty;
@@ -202,7 +202,7 @@ public class SyncConfigurationNode extends AbstractNode implements PropertyChang
             copyAction, 
             cutAction, 
             null, 
-            SyncManagerActionFactory.getDeleteSyncDataSourceConfigurationAction()};
+            DeleteSyncAction.getInstance()};
     }
 
     @Override

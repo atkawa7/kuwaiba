@@ -31,188 +31,57 @@ public interface KuwaibaService {
 
     /**
      * 
-     * @param username
-     * @param password
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateSessionResponse>
-     */
-    @WebMethod(operationName = "createSession")
-    @RequestWrapper(localName = "createSession", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSession")
-    @ResponseWrapper(localName = "createSessionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSessionResponse")
-    public Response<CreateSessionResponse> createSessionAsync(
-        @WebParam(name = "username", targetNamespace = "")
-        String username,
-        @WebParam(name = "password", targetNamespace = "")
-        String password);
-
-    /**
-     * 
-     * @param username
-     * @param asyncHandler
-     * @param password
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "createSession")
-    @RequestWrapper(localName = "createSession", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSession")
-    @ResponseWrapper(localName = "createSessionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSessionResponse")
-    public Future<?> createSessionAsync(
-        @WebParam(name = "username", targetNamespace = "")
-        String username,
-        @WebParam(name = "password", targetNamespace = "")
-        String password,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CreateSessionResponse> asyncHandler);
-
-    /**
-     * 
-     * @param username
-     * @param password
-     * @return
-     *     returns org.inventory.communications.wsclient.RemoteSession
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createSession", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSession")
-    @ResponseWrapper(localName = "createSessionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSessionResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createSessionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createSessionResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createSession/Fault/ServerSideException")
-    })
-    public RemoteSession createSession(
-        @WebParam(name = "username", targetNamespace = "")
-        String username,
-        @WebParam(name = "password", targetNamespace = "")
-        String password)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
      * @param sessionId
-     * @param reportId
+     * @param query
      * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteReportResponse>
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.ExecuteQueryResponse>
      */
-    @WebMethod(operationName = "deleteReport")
-    @RequestWrapper(localName = "deleteReport", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteReport")
-    @ResponseWrapper(localName = "deleteReportResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteReportResponse")
-    public Response<DeleteReportResponse> deleteReportAsync(
-        @WebParam(name = "reportId", targetNamespace = "")
-        long reportId,
+    @WebMethod(operationName = "executeQuery")
+    @RequestWrapper(localName = "executeQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteQuery")
+    @ResponseWrapper(localName = "executeQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteQueryResponse")
+    public Response<ExecuteQueryResponse> executeQueryAsync(
+        @WebParam(name = "query", targetNamespace = "")
+        TransientQuery query,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId);
 
     /**
      * 
      * @param sessionId
+     * @param query
      * @param asyncHandler
-     * @param reportId
      * @return
      *     returns java.util.concurrent.Future<? extends java.lang.Object>
      */
-    @WebMethod(operationName = "deleteReport")
-    @RequestWrapper(localName = "deleteReport", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteReport")
-    @ResponseWrapper(localName = "deleteReportResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteReportResponse")
-    public Future<?> deleteReportAsync(
-        @WebParam(name = "reportId", targetNamespace = "")
-        long reportId,
+    @WebMethod(operationName = "executeQuery")
+    @RequestWrapper(localName = "executeQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteQuery")
+    @ResponseWrapper(localName = "executeQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteQueryResponse")
+    public Future<?> executeQueryAsync(
+        @WebParam(name = "query", targetNamespace = "")
+        TransientQuery query,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId,
         @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<DeleteReportResponse> asyncHandler);
+        AsyncHandler<ExecuteQueryResponse> asyncHandler);
 
     /**
      * 
      * @param sessionId
-     * @param reportId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteReport", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteReport")
-    @ResponseWrapper(localName = "deleteReportResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteReportResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteReportRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteReportResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteReport/Fault/ServerSideException")
-    })
-    public void deleteReport(
-        @WebParam(name = "reportId", targetNamespace = "")
-        long reportId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param maxResults
-     * @param objectClassId
+     * @param query
      * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetObjectChildrenForClassWithIdResponse>
-     */
-    @WebMethod(operationName = "getObjectChildrenForClassWithId")
-    @RequestWrapper(localName = "getObjectChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenForClassWithId")
-    @ResponseWrapper(localName = "getObjectChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenForClassWithIdResponse")
-    public Response<GetObjectChildrenForClassWithIdResponse> getObjectChildrenForClassWithIdAsync(
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "objectClassId", targetNamespace = "")
-        long objectClassId,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param asyncHandler
-     * @param maxResults
-     * @param objectClassId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getObjectChildrenForClassWithId")
-    @RequestWrapper(localName = "getObjectChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenForClassWithId")
-    @ResponseWrapper(localName = "getObjectChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenForClassWithIdResponse")
-    public Future<?> getObjectChildrenForClassWithIdAsync(
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "objectClassId", targetNamespace = "")
-        long objectClassId,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetObjectChildrenForClassWithIdResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param maxResults
-     * @param objectClassId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     *     returns java.util.List<org.inventory.communications.wsclient.ResultRecord>
      * @throws ServerSideException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getObjectChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenForClassWithId")
-    @ResponseWrapper(localName = "getObjectChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenForClassWithIdResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenForClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenForClassWithIdResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenForClassWithId/Fault/ServerSideException")
+    @RequestWrapper(localName = "executeQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteQuery")
+    @ResponseWrapper(localName = "executeQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteQueryResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/executeQueryRequest", output = "http://ws.kuwaiba.org/KuwaibaService/executeQueryResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/executeQuery/Fault/ServerSideException")
     })
-    public List<RemoteObjectLight> getObjectChildrenForClassWithId(
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "objectClassId", targetNamespace = "")
-        long objectClassId,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
+    public List<ResultRecord> executeQuery(
+        @WebParam(name = "query", targetNamespace = "")
+        TransientQuery query,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
@@ -329,221 +198,147 @@ public interface KuwaibaService {
 
     /**
      * 
-     * @param poolItemId
+     * @param icon
+     * @param smallIcon
+     * @param isAbstract
      * @param sessionId
-     * @param poolItemClassName
-     * @param poolId
+     * @param color
+     * @param isCountable
+     * @param parentClassName
+     * @param description
+     * @param className
+     * @param displayName
+     * @param isInDesign
+     * @param isCustom
      * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.MovePoolItemToPoolResponse>
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateClassResponse>
      */
-    @WebMethod(operationName = "movePoolItemToPool")
-    @RequestWrapper(localName = "movePoolItemToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MovePoolItemToPool")
-    @ResponseWrapper(localName = "movePoolItemToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MovePoolItemToPoolResponse")
-    public Response<MovePoolItemToPoolResponse> movePoolItemToPoolAsync(
-        @WebParam(name = "poolId", targetNamespace = "")
-        long poolId,
-        @WebParam(name = "poolItemClassName", targetNamespace = "")
-        String poolItemClassName,
-        @WebParam(name = "poolItemId", targetNamespace = "")
-        long poolItemId,
+    @WebMethod(operationName = "createClass")
+    @RequestWrapper(localName = "createClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateClass")
+    @ResponseWrapper(localName = "createClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateClassResponse")
+    public Response<CreateClassResponse> createClassAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "displayName", targetNamespace = "")
+        String displayName,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "isAbstract", targetNamespace = "")
+        boolean isAbstract,
+        @WebParam(name = "isCustom", targetNamespace = "")
+        boolean isCustom,
+        @WebParam(name = "isCountable", targetNamespace = "")
+        boolean isCountable,
+        @WebParam(name = "isInDesign", targetNamespace = "")
+        boolean isInDesign,
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "icon", targetNamespace = "")
+        byte[] icon,
+        @WebParam(name = "smallIcon", targetNamespace = "")
+        byte[] smallIcon,
+        @WebParam(name = "color", targetNamespace = "")
+        int color,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId);
 
     /**
      * 
-     * @param poolItemId
+     * @param icon
+     * @param smallIcon
+     * @param isAbstract
      * @param sessionId
+     * @param color
+     * @param isCountable
+     * @param parentClassName
+     * @param description
      * @param asyncHandler
-     * @param poolItemClassName
-     * @param poolId
+     * @param className
+     * @param displayName
+     * @param isInDesign
+     * @param isCustom
      * @return
      *     returns java.util.concurrent.Future<? extends java.lang.Object>
      */
-    @WebMethod(operationName = "movePoolItemToPool")
-    @RequestWrapper(localName = "movePoolItemToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MovePoolItemToPool")
-    @ResponseWrapper(localName = "movePoolItemToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MovePoolItemToPoolResponse")
-    public Future<?> movePoolItemToPoolAsync(
-        @WebParam(name = "poolId", targetNamespace = "")
-        long poolId,
-        @WebParam(name = "poolItemClassName", targetNamespace = "")
-        String poolItemClassName,
-        @WebParam(name = "poolItemId", targetNamespace = "")
-        long poolItemId,
+    @WebMethod(operationName = "createClass")
+    @RequestWrapper(localName = "createClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateClass")
+    @ResponseWrapper(localName = "createClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateClassResponse")
+    public Future<?> createClassAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "displayName", targetNamespace = "")
+        String displayName,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "isAbstract", targetNamespace = "")
+        boolean isAbstract,
+        @WebParam(name = "isCustom", targetNamespace = "")
+        boolean isCustom,
+        @WebParam(name = "isCountable", targetNamespace = "")
+        boolean isCountable,
+        @WebParam(name = "isInDesign", targetNamespace = "")
+        boolean isInDesign,
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "icon", targetNamespace = "")
+        byte[] icon,
+        @WebParam(name = "smallIcon", targetNamespace = "")
+        byte[] smallIcon,
+        @WebParam(name = "color", targetNamespace = "")
+        int color,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId,
         @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<MovePoolItemToPoolResponse> asyncHandler);
+        AsyncHandler<CreateClassResponse> asyncHandler);
 
     /**
      * 
-     * @param poolItemId
+     * @param icon
+     * @param smallIcon
+     * @param isAbstract
      * @param sessionId
-     * @param poolItemClassName
-     * @param poolId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "movePoolItemToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MovePoolItemToPool")
-    @ResponseWrapper(localName = "movePoolItemToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MovePoolItemToPoolResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/movePoolItemToPoolRequest", output = "http://ws.kuwaiba.org/KuwaibaService/movePoolItemToPoolResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/movePoolItemToPool/Fault/ServerSideException")
-    })
-    public void movePoolItemToPool(
-        @WebParam(name = "poolId", targetNamespace = "")
-        long poolId,
-        @WebParam(name = "poolItemClassName", targetNamespace = "")
-        String poolItemClassName,
-        @WebParam(name = "poolItemId", targetNamespace = "")
-        long poolItemId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param poolItemId
-     * @param sessionId
-     * @param recursive
-     * @param poolItemClassName
-     * @param poolId
+     * @param color
+     * @param isCountable
+     * @param parentClassName
+     * @param description
+     * @param className
+     * @param displayName
+     * @param isInDesign
+     * @param isCustom
      * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CopyPoolItemToPoolResponse>
-     */
-    @WebMethod(operationName = "copyPoolItemToPool")
-    @RequestWrapper(localName = "copyPoolItemToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyPoolItemToPool")
-    @ResponseWrapper(localName = "copyPoolItemToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyPoolItemToPoolResponse")
-    public Response<CopyPoolItemToPoolResponse> copyPoolItemToPoolAsync(
-        @WebParam(name = "poolId", targetNamespace = "")
-        long poolId,
-        @WebParam(name = "poolItemClassName", targetNamespace = "")
-        String poolItemClassName,
-        @WebParam(name = "poolItemId", targetNamespace = "")
-        long poolItemId,
-        @WebParam(name = "recursive", targetNamespace = "")
-        boolean recursive,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param poolItemId
-     * @param sessionId
-     * @param recursive
-     * @param asyncHandler
-     * @param poolItemClassName
-     * @param poolId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "copyPoolItemToPool")
-    @RequestWrapper(localName = "copyPoolItemToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyPoolItemToPool")
-    @ResponseWrapper(localName = "copyPoolItemToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyPoolItemToPoolResponse")
-    public Future<?> copyPoolItemToPoolAsync(
-        @WebParam(name = "poolId", targetNamespace = "")
-        long poolId,
-        @WebParam(name = "poolItemClassName", targetNamespace = "")
-        String poolItemClassName,
-        @WebParam(name = "poolItemId", targetNamespace = "")
-        long poolItemId,
-        @WebParam(name = "recursive", targetNamespace = "")
-        boolean recursive,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CopyPoolItemToPoolResponse> asyncHandler);
-
-    /**
-     * 
-     * @param poolItemId
-     * @param sessionId
-     * @param recursive
-     * @param poolItemClassName
-     * @param poolId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "copyPoolItemToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyPoolItemToPool")
-    @ResponseWrapper(localName = "copyPoolItemToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyPoolItemToPoolResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/copyPoolItemToPoolRequest", output = "http://ws.kuwaiba.org/KuwaibaService/copyPoolItemToPoolResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/copyPoolItemToPool/Fault/ServerSideException")
-    })
-    public void copyPoolItemToPool(
-        @WebParam(name = "poolId", targetNamespace = "")
-        long poolId,
-        @WebParam(name = "poolItemClassName", targetNamespace = "")
-        String poolItemClassName,
-        @WebParam(name = "poolItemId", targetNamespace = "")
-        long poolItemId,
-        @WebParam(name = "recursive", targetNamespace = "")
-        boolean recursive,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param attributeName
-     * @param sessionId
-     * @param classId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetAttributeForClassWithIdResponse>
-     */
-    @WebMethod(operationName = "getAttributeForClassWithId")
-    @RequestWrapper(localName = "getAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAttributeForClassWithId")
-    @ResponseWrapper(localName = "getAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAttributeForClassWithIdResponse")
-    public Response<GetAttributeForClassWithIdResponse> getAttributeForClassWithIdAsync(
-        @WebParam(name = "classId", targetNamespace = "")
-        String classId,
-        @WebParam(name = "attributeName", targetNamespace = "")
-        String attributeName,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param attributeName
-     * @param sessionId
-     * @param classId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getAttributeForClassWithId")
-    @RequestWrapper(localName = "getAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAttributeForClassWithId")
-    @ResponseWrapper(localName = "getAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAttributeForClassWithIdResponse")
-    public Future<?> getAttributeForClassWithIdAsync(
-        @WebParam(name = "classId", targetNamespace = "")
-        String classId,
-        @WebParam(name = "attributeName", targetNamespace = "")
-        String attributeName,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetAttributeForClassWithIdResponse> asyncHandler);
-
-    /**
-     * 
-     * @param attributeName
-     * @param sessionId
-     * @param classId
-     * @return
-     *     returns org.inventory.communications.wsclient.AttributeInfo
+     *     returns long
      * @throws ServerSideException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAttributeForClassWithId")
-    @ResponseWrapper(localName = "getAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAttributeForClassWithIdResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getAttributeForClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getAttributeForClassWithIdResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getAttributeForClassWithId/Fault/ServerSideException")
+    @RequestWrapper(localName = "createClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateClass")
+    @ResponseWrapper(localName = "createClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateClassResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createClassResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createClass/Fault/ServerSideException")
     })
-    public AttributeInfo getAttributeForClassWithId(
-        @WebParam(name = "classId", targetNamespace = "")
-        String classId,
-        @WebParam(name = "attributeName", targetNamespace = "")
-        String attributeName,
+    public long createClass(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "displayName", targetNamespace = "")
+        String displayName,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "isAbstract", targetNamespace = "")
+        boolean isAbstract,
+        @WebParam(name = "isCustom", targetNamespace = "")
+        boolean isCustom,
+        @WebParam(name = "isCountable", targetNamespace = "")
+        boolean isCountable,
+        @WebParam(name = "isInDesign", targetNamespace = "")
+        boolean isInDesign,
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "icon", targetNamespace = "")
+        byte[] icon,
+        @WebParam(name = "smallIcon", targetNamespace = "")
+        byte[] smallIcon,
+        @WebParam(name = "color", targetNamespace = "")
+        int color,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
@@ -551,362 +346,54 @@ public interface KuwaibaService {
 
     /**
      * 
-     * @param unique
-     * @param readOnly
-     * @param visible
      * @param sessionId
-     * @param noCopy
-     * @param classId
-     * @param description
-     * @param mandatory
-     * @param name
-     * @param administrative
-     * @param type
-     * @param displayName
+     * @param className
      * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateAttributeForClassWithIdResponse>
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteClassResponse>
      */
-    @WebMethod(operationName = "createAttributeForClassWithId")
-    @RequestWrapper(localName = "createAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateAttributeForClassWithId")
-    @ResponseWrapper(localName = "createAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateAttributeForClassWithIdResponse")
-    public Response<CreateAttributeForClassWithIdResponse> createAttributeForClassWithIdAsync(
-        @WebParam(name = "classId", targetNamespace = "")
-        long classId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "displayName", targetNamespace = "")
-        String displayName,
-        @WebParam(name = "type", targetNamespace = "")
-        String type,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "administrative", targetNamespace = "")
-        boolean administrative,
-        @WebParam(name = "visible", targetNamespace = "")
-        boolean visible,
-        @WebParam(name = "readOnly", targetNamespace = "")
-        boolean readOnly,
-        @WebParam(name = "noCopy", targetNamespace = "")
-        boolean noCopy,
-        @WebParam(name = "unique", targetNamespace = "")
-        boolean unique,
-        @WebParam(name = "mandatory", targetNamespace = "")
-        boolean mandatory,
+    @WebMethod(operationName = "deleteClass")
+    @RequestWrapper(localName = "deleteClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClass")
+    @ResponseWrapper(localName = "deleteClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassResponse")
+    public Response<DeleteClassResponse> deleteClassAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId);
 
     /**
      * 
-     * @param unique
-     * @param readOnly
-     * @param visible
      * @param sessionId
-     * @param noCopy
-     * @param classId
-     * @param description
-     * @param mandatory
-     * @param name
      * @param asyncHandler
-     * @param administrative
-     * @param type
-     * @param displayName
+     * @param className
      * @return
      *     returns java.util.concurrent.Future<? extends java.lang.Object>
      */
-    @WebMethod(operationName = "createAttributeForClassWithId")
-    @RequestWrapper(localName = "createAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateAttributeForClassWithId")
-    @ResponseWrapper(localName = "createAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateAttributeForClassWithIdResponse")
-    public Future<?> createAttributeForClassWithIdAsync(
-        @WebParam(name = "classId", targetNamespace = "")
-        long classId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "displayName", targetNamespace = "")
-        String displayName,
-        @WebParam(name = "type", targetNamespace = "")
-        String type,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "administrative", targetNamespace = "")
-        boolean administrative,
-        @WebParam(name = "visible", targetNamespace = "")
-        boolean visible,
-        @WebParam(name = "readOnly", targetNamespace = "")
-        boolean readOnly,
-        @WebParam(name = "noCopy", targetNamespace = "")
-        boolean noCopy,
-        @WebParam(name = "unique", targetNamespace = "")
-        boolean unique,
-        @WebParam(name = "mandatory", targetNamespace = "")
-        boolean mandatory,
+    @WebMethod(operationName = "deleteClass")
+    @RequestWrapper(localName = "deleteClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClass")
+    @ResponseWrapper(localName = "deleteClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassResponse")
+    public Future<?> deleteClassAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId,
         @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CreateAttributeForClassWithIdResponse> asyncHandler);
+        AsyncHandler<DeleteClassResponse> asyncHandler);
 
     /**
      * 
-     * @param unique
-     * @param readOnly
-     * @param visible
      * @param sessionId
-     * @param noCopy
-     * @param classId
-     * @param description
-     * @param mandatory
-     * @param name
-     * @param administrative
-     * @param type
-     * @param displayName
+     * @param className
      * @throws ServerSideException_Exception
      */
     @WebMethod
-    @RequestWrapper(localName = "createAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateAttributeForClassWithId")
-    @ResponseWrapper(localName = "createAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateAttributeForClassWithIdResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createAttributeForClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createAttributeForClassWithIdResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createAttributeForClassWithId/Fault/ServerSideException")
+    @RequestWrapper(localName = "deleteClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClass")
+    @ResponseWrapper(localName = "deleteClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteClassResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteClass/Fault/ServerSideException")
     })
-    public void createAttributeForClassWithId(
-        @WebParam(name = "classId", targetNamespace = "")
-        long classId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "displayName", targetNamespace = "")
-        String displayName,
-        @WebParam(name = "type", targetNamespace = "")
-        String type,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "administrative", targetNamespace = "")
-        boolean administrative,
-        @WebParam(name = "visible", targetNamespace = "")
-        boolean visible,
-        @WebParam(name = "readOnly", targetNamespace = "")
-        boolean readOnly,
-        @WebParam(name = "noCopy", targetNamespace = "")
-        boolean noCopy,
-        @WebParam(name = "unique", targetNamespace = "")
-        boolean unique,
-        @WebParam(name = "mandatory", targetNamespace = "")
-        boolean mandatory,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param unique
-     * @param visible
-     * @param classId
-     * @param mandatory
-     * @param attributeId
-     * @param type
-     * @param readOnly
-     * @param sessionId
-     * @param noCopy
-     * @param description
-     * @param name
-     * @param administrative
-     * @param displayName
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.SetAttributePropertiesForClassWithIdResponse>
-     */
-    @WebMethod(operationName = "setAttributePropertiesForClassWithId")
-    @RequestWrapper(localName = "setAttributePropertiesForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetAttributePropertiesForClassWithId")
-    @ResponseWrapper(localName = "setAttributePropertiesForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetAttributePropertiesForClassWithIdResponse")
-    public Response<SetAttributePropertiesForClassWithIdResponse> setAttributePropertiesForClassWithIdAsync(
-        @WebParam(name = "classId", targetNamespace = "")
-        long classId,
-        @WebParam(name = "attributeId", targetNamespace = "")
-        long attributeId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "displayName", targetNamespace = "")
-        String displayName,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "type", targetNamespace = "")
-        String type,
-        @WebParam(name = "administrative", targetNamespace = "")
-        Boolean administrative,
-        @WebParam(name = "mandatory", targetNamespace = "")
-        Boolean mandatory,
-        @WebParam(name = "noCopy", targetNamespace = "")
-        Boolean noCopy,
-        @WebParam(name = "readOnly", targetNamespace = "")
-        Boolean readOnly,
-        @WebParam(name = "unique", targetNamespace = "")
-        Boolean unique,
-        @WebParam(name = "visible", targetNamespace = "")
-        Boolean visible,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param unique
-     * @param visible
-     * @param classId
-     * @param mandatory
-     * @param asyncHandler
-     * @param attributeId
-     * @param type
-     * @param readOnly
-     * @param sessionId
-     * @param noCopy
-     * @param description
-     * @param name
-     * @param administrative
-     * @param displayName
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "setAttributePropertiesForClassWithId")
-    @RequestWrapper(localName = "setAttributePropertiesForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetAttributePropertiesForClassWithId")
-    @ResponseWrapper(localName = "setAttributePropertiesForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetAttributePropertiesForClassWithIdResponse")
-    public Future<?> setAttributePropertiesForClassWithIdAsync(
-        @WebParam(name = "classId", targetNamespace = "")
-        long classId,
-        @WebParam(name = "attributeId", targetNamespace = "")
-        long attributeId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "displayName", targetNamespace = "")
-        String displayName,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "type", targetNamespace = "")
-        String type,
-        @WebParam(name = "administrative", targetNamespace = "")
-        Boolean administrative,
-        @WebParam(name = "mandatory", targetNamespace = "")
-        Boolean mandatory,
-        @WebParam(name = "noCopy", targetNamespace = "")
-        Boolean noCopy,
-        @WebParam(name = "readOnly", targetNamespace = "")
-        Boolean readOnly,
-        @WebParam(name = "unique", targetNamespace = "")
-        Boolean unique,
-        @WebParam(name = "visible", targetNamespace = "")
-        Boolean visible,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<SetAttributePropertiesForClassWithIdResponse> asyncHandler);
-
-    /**
-     * 
-     * @param unique
-     * @param visible
-     * @param classId
-     * @param mandatory
-     * @param attributeId
-     * @param type
-     * @param readOnly
-     * @param sessionId
-     * @param noCopy
-     * @param description
-     * @param name
-     * @param administrative
-     * @param displayName
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "setAttributePropertiesForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetAttributePropertiesForClassWithId")
-    @ResponseWrapper(localName = "setAttributePropertiesForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetAttributePropertiesForClassWithIdResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/setAttributePropertiesForClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/setAttributePropertiesForClassWithIdResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/setAttributePropertiesForClassWithId/Fault/ServerSideException")
-    })
-    public void setAttributePropertiesForClassWithId(
-        @WebParam(name = "classId", targetNamespace = "")
-        long classId,
-        @WebParam(name = "attributeId", targetNamespace = "")
-        long attributeId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "displayName", targetNamespace = "")
-        String displayName,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "type", targetNamespace = "")
-        String type,
-        @WebParam(name = "administrative", targetNamespace = "")
-        Boolean administrative,
-        @WebParam(name = "mandatory", targetNamespace = "")
-        Boolean mandatory,
-        @WebParam(name = "noCopy", targetNamespace = "")
-        Boolean noCopy,
-        @WebParam(name = "readOnly", targetNamespace = "")
-        Boolean readOnly,
-        @WebParam(name = "unique", targetNamespace = "")
-        Boolean unique,
-        @WebParam(name = "visible", targetNamespace = "")
-        Boolean visible,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param attributeName
-     * @param sessionId
-     * @param classId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteAttributeForClassWithIdResponse>
-     */
-    @WebMethod(operationName = "deleteAttributeForClassWithId")
-    @RequestWrapper(localName = "deleteAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteAttributeForClassWithId")
-    @ResponseWrapper(localName = "deleteAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteAttributeForClassWithIdResponse")
-    public Response<DeleteAttributeForClassWithIdResponse> deleteAttributeForClassWithIdAsync(
-        @WebParam(name = "classId", targetNamespace = "")
-        long classId,
-        @WebParam(name = "attributeName", targetNamespace = "")
-        String attributeName,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param attributeName
-     * @param sessionId
-     * @param classId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "deleteAttributeForClassWithId")
-    @RequestWrapper(localName = "deleteAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteAttributeForClassWithId")
-    @ResponseWrapper(localName = "deleteAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteAttributeForClassWithIdResponse")
-    public Future<?> deleteAttributeForClassWithIdAsync(
-        @WebParam(name = "classId", targetNamespace = "")
-        long classId,
-        @WebParam(name = "attributeName", targetNamespace = "")
-        String attributeName,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<DeleteAttributeForClassWithIdResponse> asyncHandler);
-
-    /**
-     * 
-     * @param attributeName
-     * @param sessionId
-     * @param classId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteAttributeForClassWithId")
-    @ResponseWrapper(localName = "deleteAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteAttributeForClassWithIdResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteAttributeForClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteAttributeForClassWithIdResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteAttributeForClassWithId/Fault/ServerSideException")
-    })
-    public void deleteAttributeForClassWithId(
-        @WebParam(name = "classId", targetNamespace = "")
-        long classId,
-        @WebParam(name = "attributeName", targetNamespace = "")
-        String attributeName,
+    public void deleteClass(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
@@ -915,56 +402,56 @@ public interface KuwaibaService {
     /**
      * 
      * @param sessionId
-     * @param classId
+     * @param includeListTypes
      * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetClassWithIdResponse>
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetAllClassesLightResponse>
      */
-    @WebMethod(operationName = "getClassWithId")
-    @RequestWrapper(localName = "getClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassWithId")
-    @ResponseWrapper(localName = "getClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassWithIdResponse")
-    public Response<GetClassWithIdResponse> getClassWithIdAsync(
-        @WebParam(name = "classId", targetNamespace = "")
-        long classId,
+    @WebMethod(operationName = "getAllClassesLight")
+    @RequestWrapper(localName = "getAllClassesLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesLight")
+    @ResponseWrapper(localName = "getAllClassesLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesLightResponse")
+    public Response<GetAllClassesLightResponse> getAllClassesLightAsync(
+        @WebParam(name = "includeListTypes", targetNamespace = "")
+        boolean includeListTypes,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId);
 
     /**
      * 
      * @param sessionId
-     * @param classId
      * @param asyncHandler
+     * @param includeListTypes
      * @return
      *     returns java.util.concurrent.Future<? extends java.lang.Object>
      */
-    @WebMethod(operationName = "getClassWithId")
-    @RequestWrapper(localName = "getClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassWithId")
-    @ResponseWrapper(localName = "getClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassWithIdResponse")
-    public Future<?> getClassWithIdAsync(
-        @WebParam(name = "classId", targetNamespace = "")
-        long classId,
+    @WebMethod(operationName = "getAllClassesLight")
+    @RequestWrapper(localName = "getAllClassesLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesLight")
+    @ResponseWrapper(localName = "getAllClassesLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesLightResponse")
+    public Future<?> getAllClassesLightAsync(
+        @WebParam(name = "includeListTypes", targetNamespace = "")
+        boolean includeListTypes,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId,
         @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetClassWithIdResponse> asyncHandler);
+        AsyncHandler<GetAllClassesLightResponse> asyncHandler);
 
     /**
      * 
      * @param sessionId
-     * @param classId
+     * @param includeListTypes
      * @return
-     *     returns org.inventory.communications.wsclient.ClassInfo
+     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
      * @throws ServerSideException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassWithId")
-    @ResponseWrapper(localName = "getClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassWithIdResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getClassWithIdResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getClassWithId/Fault/ServerSideException")
+    @RequestWrapper(localName = "getAllClassesLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesLight")
+    @ResponseWrapper(localName = "getAllClassesLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesLightResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getAllClassesLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getAllClassesLightResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getAllClassesLight/Fault/ServerSideException")
     })
-    public ClassInfo getClassWithId(
-        @WebParam(name = "classId", targetNamespace = "")
-        long classId,
+    public List<ClassInfoLight> getAllClassesLight(
+        @WebParam(name = "includeListTypes", targetNamespace = "")
+        boolean includeListTypes,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
@@ -972,295 +459,75 @@ public interface KuwaibaService {
 
     /**
      * 
+     * @param includeSelf
+     * @param includeAbstractClasses
      * @param sessionId
-     * @param classId
+     * @param className
      * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteClassWithIdResponse>
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetSubClassesLightResponse>
      */
-    @WebMethod(operationName = "deleteClassWithId")
-    @RequestWrapper(localName = "deleteClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassWithId")
-    @ResponseWrapper(localName = "deleteClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassWithIdResponse")
-    public Response<DeleteClassWithIdResponse> deleteClassWithIdAsync(
-        @WebParam(name = "classId", targetNamespace = "")
-        long classId,
+    @WebMethod(operationName = "getSubClassesLight")
+    @RequestWrapper(localName = "getSubClassesLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLight")
+    @ResponseWrapper(localName = "getSubClassesLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLightResponse")
+    public Response<GetSubClassesLightResponse> getSubClassesLightAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "includeAbstractClasses", targetNamespace = "")
+        boolean includeAbstractClasses,
+        @WebParam(name = "includeSelf", targetNamespace = "")
+        boolean includeSelf,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId);
 
     /**
      * 
+     * @param includeSelf
+     * @param includeAbstractClasses
      * @param sessionId
-     * @param classId
      * @param asyncHandler
+     * @param className
      * @return
      *     returns java.util.concurrent.Future<? extends java.lang.Object>
      */
-    @WebMethod(operationName = "deleteClassWithId")
-    @RequestWrapper(localName = "deleteClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassWithId")
-    @ResponseWrapper(localName = "deleteClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassWithIdResponse")
-    public Future<?> deleteClassWithIdAsync(
-        @WebParam(name = "classId", targetNamespace = "")
-        long classId,
+    @WebMethod(operationName = "getSubClassesLight")
+    @RequestWrapper(localName = "getSubClassesLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLight")
+    @ResponseWrapper(localName = "getSubClassesLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLightResponse")
+    public Future<?> getSubClassesLightAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "includeAbstractClasses", targetNamespace = "")
+        boolean includeAbstractClasses,
+        @WebParam(name = "includeSelf", targetNamespace = "")
+        boolean includeSelf,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId,
         @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<DeleteClassWithIdResponse> asyncHandler);
+        AsyncHandler<GetSubClassesLightResponse> asyncHandler);
 
     /**
      * 
+     * @param includeSelf
+     * @param includeAbstractClasses
      * @param sessionId
-     * @param classId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassWithId")
-    @ResponseWrapper(localName = "deleteClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassWithIdResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteClassWithIdResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteClassWithId/Fault/ServerSideException")
-    })
-    public void deleteClassWithId(
-        @WebParam(name = "classId", targetNamespace = "")
-        long classId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param parentClassId
-     * @param sessionId
-     * @param childrenToBeAdded
+     * @param className
      * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.AddPossibleChildrenForClassWithIdResponse>
-     */
-    @WebMethod(operationName = "addPossibleChildrenForClassWithId")
-    @RequestWrapper(localName = "addPossibleChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleChildrenForClassWithId")
-    @ResponseWrapper(localName = "addPossibleChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleChildrenForClassWithIdResponse")
-    public Response<AddPossibleChildrenForClassWithIdResponse> addPossibleChildrenForClassWithIdAsync(
-        @WebParam(name = "parentClassId", targetNamespace = "")
-        long parentClassId,
-        @WebParam(name = "childrenToBeAdded", targetNamespace = "")
-        List<Long> childrenToBeAdded,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param parentClassId
-     * @param sessionId
-     * @param childrenToBeAdded
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "addPossibleChildrenForClassWithId")
-    @RequestWrapper(localName = "addPossibleChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleChildrenForClassWithId")
-    @ResponseWrapper(localName = "addPossibleChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleChildrenForClassWithIdResponse")
-    public Future<?> addPossibleChildrenForClassWithIdAsync(
-        @WebParam(name = "parentClassId", targetNamespace = "")
-        long parentClassId,
-        @WebParam(name = "childrenToBeAdded", targetNamespace = "")
-        List<Long> childrenToBeAdded,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<AddPossibleChildrenForClassWithIdResponse> asyncHandler);
-
-    /**
-     * 
-     * @param parentClassId
-     * @param sessionId
-     * @param childrenToBeAdded
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "addPossibleChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleChildrenForClassWithId")
-    @ResponseWrapper(localName = "addPossibleChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleChildrenForClassWithIdResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/addPossibleChildrenForClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/addPossibleChildrenForClassWithIdResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/addPossibleChildrenForClassWithId/Fault/ServerSideException")
-    })
-    public void addPossibleChildrenForClassWithId(
-        @WebParam(name = "parentClassId", targetNamespace = "")
-        long parentClassId,
-        @WebParam(name = "childrenToBeAdded", targetNamespace = "")
-        List<Long> childrenToBeAdded,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param parentClassId
-     * @param possibleSpecialChildren
-     * @param sessionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.AddPossibleSpecialChildrenWithIdResponse>
-     */
-    @WebMethod(operationName = "addPossibleSpecialChildrenWithId")
-    @RequestWrapper(localName = "addPossibleSpecialChildrenWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleSpecialChildrenWithId")
-    @ResponseWrapper(localName = "addPossibleSpecialChildrenWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleSpecialChildrenWithIdResponse")
-    public Response<AddPossibleSpecialChildrenWithIdResponse> addPossibleSpecialChildrenWithIdAsync(
-        @WebParam(name = "parentClassId", targetNamespace = "")
-        long parentClassId,
-        @WebParam(name = "possibleSpecialChildren", targetNamespace = "")
-        List<Long> possibleSpecialChildren,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param parentClassId
-     * @param possibleSpecialChildren
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "addPossibleSpecialChildrenWithId")
-    @RequestWrapper(localName = "addPossibleSpecialChildrenWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleSpecialChildrenWithId")
-    @ResponseWrapper(localName = "addPossibleSpecialChildrenWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleSpecialChildrenWithIdResponse")
-    public Future<?> addPossibleSpecialChildrenWithIdAsync(
-        @WebParam(name = "parentClassId", targetNamespace = "")
-        long parentClassId,
-        @WebParam(name = "possibleSpecialChildren", targetNamespace = "")
-        List<Long> possibleSpecialChildren,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<AddPossibleSpecialChildrenWithIdResponse> asyncHandler);
-
-    /**
-     * 
-     * @param parentClassId
-     * @param possibleSpecialChildren
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "addPossibleSpecialChildrenWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleSpecialChildrenWithId")
-    @ResponseWrapper(localName = "addPossibleSpecialChildrenWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleSpecialChildrenWithIdResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/addPossibleSpecialChildrenWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/addPossibleSpecialChildrenWithIdResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/addPossibleSpecialChildrenWithId/Fault/ServerSideException")
-    })
-    public void addPossibleSpecialChildrenWithId(
-        @WebParam(name = "parentClassId", targetNamespace = "")
-        long parentClassId,
-        @WebParam(name = "possibleSpecialChildren", targetNamespace = "")
-        List<Long> possibleSpecialChildren,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param parentClassId
-     * @param sessionId
-     * @param childrenToBeRemoved
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.RemovePossibleChildrenForClassWithIdResponse>
-     */
-    @WebMethod(operationName = "removePossibleChildrenForClassWithId")
-    @RequestWrapper(localName = "removePossibleChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePossibleChildrenForClassWithId")
-    @ResponseWrapper(localName = "removePossibleChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePossibleChildrenForClassWithIdResponse")
-    public Response<RemovePossibleChildrenForClassWithIdResponse> removePossibleChildrenForClassWithIdAsync(
-        @WebParam(name = "parentClassId", targetNamespace = "")
-        long parentClassId,
-        @WebParam(name = "childrenToBeRemoved", targetNamespace = "")
-        List<Long> childrenToBeRemoved,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param parentClassId
-     * @param sessionId
-     * @param asyncHandler
-     * @param childrenToBeRemoved
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "removePossibleChildrenForClassWithId")
-    @RequestWrapper(localName = "removePossibleChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePossibleChildrenForClassWithId")
-    @ResponseWrapper(localName = "removePossibleChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePossibleChildrenForClassWithIdResponse")
-    public Future<?> removePossibleChildrenForClassWithIdAsync(
-        @WebParam(name = "parentClassId", targetNamespace = "")
-        long parentClassId,
-        @WebParam(name = "childrenToBeRemoved", targetNamespace = "")
-        List<Long> childrenToBeRemoved,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<RemovePossibleChildrenForClassWithIdResponse> asyncHandler);
-
-    /**
-     * 
-     * @param parentClassId
-     * @param sessionId
-     * @param childrenToBeRemoved
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "removePossibleChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePossibleChildrenForClassWithId")
-    @ResponseWrapper(localName = "removePossibleChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePossibleChildrenForClassWithIdResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/removePossibleChildrenForClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/removePossibleChildrenForClassWithIdResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/removePossibleChildrenForClassWithId/Fault/ServerSideException")
-    })
-    public void removePossibleChildrenForClassWithId(
-        @WebParam(name = "parentClassId", targetNamespace = "")
-        long parentClassId,
-        @WebParam(name = "childrenToBeRemoved", targetNamespace = "")
-        List<Long> childrenToBeRemoved,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetCurrentJobsResponse>
-     */
-    @WebMethod(operationName = "getCurrentJobs")
-    @RequestWrapper(localName = "getCurrentJobs", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCurrentJobs")
-    @ResponseWrapper(localName = "getCurrentJobsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCurrentJobsResponse")
-    public Response<GetCurrentJobsResponse> getCurrentJobsAsync(
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getCurrentJobs")
-    @RequestWrapper(localName = "getCurrentJobs", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCurrentJobs")
-    @ResponseWrapper(localName = "getCurrentJobsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCurrentJobsResponse")
-    public Future<?> getCurrentJobsAsync(
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetCurrentJobsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteBackgroundJob>
+     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
      * @throws ServerSideException_Exception
      */
     @WebMethod
     @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getCurrentJobs", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCurrentJobs")
-    @ResponseWrapper(localName = "getCurrentJobsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCurrentJobsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getCurrentJobsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getCurrentJobsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getCurrentJobs/Fault/ServerSideException")
+    @RequestWrapper(localName = "getSubClassesLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLight")
+    @ResponseWrapper(localName = "getSubClassesLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLightResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLightResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLight/Fault/ServerSideException")
     })
-    public List<RemoteBackgroundJob> getCurrentJobs(
+    public List<ClassInfoLight> getSubClassesLight(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "includeAbstractClasses", targetNamespace = "")
+        boolean includeAbstractClasses,
+        @WebParam(name = "includeSelf", targetNamespace = "")
+        boolean includeSelf,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
@@ -2531,6 +1798,7480 @@ public interface KuwaibaService {
     /**
      * 
      * @param sessionId
+     * @param showAll
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetClassHierarchyResponse>
+     */
+    @WebMethod(operationName = "getClassHierarchy")
+    @RequestWrapper(localName = "getClassHierarchy", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassHierarchy")
+    @ResponseWrapper(localName = "getClassHierarchyResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassHierarchyResponse")
+    public Response<GetClassHierarchyResponse> getClassHierarchyAsync(
+        @WebParam(name = "showAll", targetNamespace = "")
+        boolean showAll,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param showAll
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getClassHierarchy")
+    @RequestWrapper(localName = "getClassHierarchy", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassHierarchy")
+    @ResponseWrapper(localName = "getClassHierarchyResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassHierarchyResponse")
+    public Future<?> getClassHierarchyAsync(
+        @WebParam(name = "showAll", targetNamespace = "")
+        boolean showAll,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetClassHierarchyResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param showAll
+     * @return
+     *     returns byte[]
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getClassHierarchy", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassHierarchy")
+    @ResponseWrapper(localName = "getClassHierarchyResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassHierarchyResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getClassHierarchyRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getClassHierarchyResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getClassHierarchy/Fault/ServerSideException")
+    })
+    public byte[] getClassHierarchy(
+        @WebParam(name = "showAll", targetNamespace = "")
+        boolean showAll,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param username
+     * @param password
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateSessionResponse>
+     */
+    @WebMethod(operationName = "createSession")
+    @RequestWrapper(localName = "createSession", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSession")
+    @ResponseWrapper(localName = "createSessionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSessionResponse")
+    public Response<CreateSessionResponse> createSessionAsync(
+        @WebParam(name = "username", targetNamespace = "")
+        String username,
+        @WebParam(name = "password", targetNamespace = "")
+        String password);
+
+    /**
+     * 
+     * @param username
+     * @param asyncHandler
+     * @param password
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createSession")
+    @RequestWrapper(localName = "createSession", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSession")
+    @ResponseWrapper(localName = "createSessionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSessionResponse")
+    public Future<?> createSessionAsync(
+        @WebParam(name = "username", targetNamespace = "")
+        String username,
+        @WebParam(name = "password", targetNamespace = "")
+        String password,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreateSessionResponse> asyncHandler);
+
+    /**
+     * 
+     * @param username
+     * @param password
+     * @return
+     *     returns org.inventory.communications.wsclient.RemoteSession
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createSession", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSession")
+    @ResponseWrapper(localName = "createSessionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSessionResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createSessionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createSessionResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createSession/Fault/ServerSideException")
+    })
+    public RemoteSession createSession(
+        @WebParam(name = "username", targetNamespace = "")
+        String username,
+        @WebParam(name = "password", targetNamespace = "")
+        String password)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CloseSessionResponse>
+     */
+    @WebMethod(operationName = "closeSession")
+    @RequestWrapper(localName = "closeSession", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CloseSession")
+    @ResponseWrapper(localName = "closeSessionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CloseSessionResponse")
+    public Response<CloseSessionResponse> closeSessionAsync(
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "closeSession")
+    @RequestWrapper(localName = "closeSession", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CloseSession")
+    @ResponseWrapper(localName = "closeSessionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CloseSessionResponse")
+    public Future<?> closeSessionAsync(
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CloseSessionResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "closeSession", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CloseSession")
+    @ResponseWrapper(localName = "closeSessionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CloseSessionResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/closeSessionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/closeSessionResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/closeSession/Fault/ServerSideException")
+    })
+    public void closeSession(
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectClassName
+     * @param sessionId
+     * @param oid
+     * @param maxResults
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetObjectChildrenResponse>
+     */
+    @WebMethod(operationName = "getObjectChildren")
+    @RequestWrapper(localName = "getObjectChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildren")
+    @ResponseWrapper(localName = "getObjectChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenResponse")
+    public Response<GetObjectChildrenResponse> getObjectChildrenAsync(
+        @WebParam(name = "objectClassName", targetNamespace = "")
+        String objectClassName,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param objectClassName
+     * @param sessionId
+     * @param oid
+     * @param asyncHandler
+     * @param maxResults
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getObjectChildren")
+    @RequestWrapper(localName = "getObjectChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildren")
+    @ResponseWrapper(localName = "getObjectChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenResponse")
+    public Future<?> getObjectChildrenAsync(
+        @WebParam(name = "objectClassName", targetNamespace = "")
+        String objectClassName,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetObjectChildrenResponse> asyncHandler);
+
+    /**
+     * 
+     * @param objectClassName
+     * @param sessionId
+     * @param oid
+     * @param maxResults
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getObjectChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildren")
+    @ResponseWrapper(localName = "getObjectChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildren/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getObjectChildren(
+        @WebParam(name = "objectClassName", targetNamespace = "")
+        String objectClassName,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectClassName
+     * @param sessionId
+     * @param oid
+     * @param maxResults
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetSiblingsResponse>
+     */
+    @WebMethod(operationName = "getSiblings")
+    @RequestWrapper(localName = "getSiblings", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSiblings")
+    @ResponseWrapper(localName = "getSiblingsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSiblingsResponse")
+    public Response<GetSiblingsResponse> getSiblingsAsync(
+        @WebParam(name = "objectClassName", targetNamespace = "")
+        String objectClassName,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param objectClassName
+     * @param sessionId
+     * @param oid
+     * @param asyncHandler
+     * @param maxResults
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getSiblings")
+    @RequestWrapper(localName = "getSiblings", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSiblings")
+    @ResponseWrapper(localName = "getSiblingsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSiblingsResponse")
+    public Future<?> getSiblingsAsync(
+        @WebParam(name = "objectClassName", targetNamespace = "")
+        String objectClassName,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetSiblingsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param objectClassName
+     * @param sessionId
+     * @param oid
+     * @param maxResults
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getSiblings", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSiblings")
+    @ResponseWrapper(localName = "getSiblingsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSiblingsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSiblingsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSiblingsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSiblings/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getSiblings(
+        @WebParam(name = "objectClassName", targetNamespace = "")
+        String objectClassName,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param parentClass
+     * @param parentOid
+     * @param childrenClass
+     * @param maxResults
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetChildrenOfClassResponse>
+     */
+    @WebMethod(operationName = "getChildrenOfClass")
+    @RequestWrapper(localName = "getChildrenOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClass")
+    @ResponseWrapper(localName = "getChildrenOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassResponse")
+    public Response<GetChildrenOfClassResponse> getChildrenOfClassAsync(
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "childrenClass", targetNamespace = "")
+        String childrenClass,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param parentClass
+     * @param asyncHandler
+     * @param parentOid
+     * @param childrenClass
+     * @param maxResults
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getChildrenOfClass")
+    @RequestWrapper(localName = "getChildrenOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClass")
+    @ResponseWrapper(localName = "getChildrenOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassResponse")
+    public Future<?> getChildrenOfClassAsync(
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "childrenClass", targetNamespace = "")
+        String childrenClass,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetChildrenOfClassResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param parentClass
+     * @param parentOid
+     * @param childrenClass
+     * @param maxResults
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObject>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getChildrenOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClass")
+    @ResponseWrapper(localName = "getChildrenOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClass/Fault/ServerSideException")
+    })
+    public List<RemoteObject> getChildrenOfClass(
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "childrenClass", targetNamespace = "")
+        String childrenClass,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param parentClass
+     * @param parentOid
+     * @param childrenClass
+     * @param maxResults
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetChildrenOfClassLightResponse>
+     */
+    @WebMethod(operationName = "getChildrenOfClassLight")
+    @RequestWrapper(localName = "getChildrenOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLight")
+    @ResponseWrapper(localName = "getChildrenOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightResponse")
+    public Response<GetChildrenOfClassLightResponse> getChildrenOfClassLightAsync(
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "childrenClass", targetNamespace = "")
+        String childrenClass,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param parentClass
+     * @param asyncHandler
+     * @param parentOid
+     * @param childrenClass
+     * @param maxResults
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getChildrenOfClassLight")
+    @RequestWrapper(localName = "getChildrenOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLight")
+    @ResponseWrapper(localName = "getChildrenOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightResponse")
+    public Future<?> getChildrenOfClassLightAsync(
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "childrenClass", targetNamespace = "")
+        String childrenClass,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetChildrenOfClassLightResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param parentClass
+     * @param parentOid
+     * @param childrenClass
+     * @param maxResults
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getChildrenOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLight")
+    @ResponseWrapper(localName = "getChildrenOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLight/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getChildrenOfClassLight(
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "childrenClass", targetNamespace = "")
+        String childrenClass,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param parentClass
+     * @param parentOid
+     * @param classToFilter
+     * @param maxResults
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetSpecialChildrenOfClassLightResponse>
+     */
+    @WebMethod(operationName = "getSpecialChildrenOfClassLight")
+    @RequestWrapper(localName = "getSpecialChildrenOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialChildrenOfClassLight")
+    @ResponseWrapper(localName = "getSpecialChildrenOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialChildrenOfClassLightResponse")
+    public Response<GetSpecialChildrenOfClassLightResponse> getSpecialChildrenOfClassLightAsync(
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "classToFilter", targetNamespace = "")
+        String classToFilter,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param parentClass
+     * @param asyncHandler
+     * @param parentOid
+     * @param classToFilter
+     * @param maxResults
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getSpecialChildrenOfClassLight")
+    @RequestWrapper(localName = "getSpecialChildrenOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialChildrenOfClassLight")
+    @ResponseWrapper(localName = "getSpecialChildrenOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialChildrenOfClassLightResponse")
+    public Future<?> getSpecialChildrenOfClassLightAsync(
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "classToFilter", targetNamespace = "")
+        String classToFilter,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetSpecialChildrenOfClassLightResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param parentClass
+     * @param parentOid
+     * @param classToFilter
+     * @param maxResults
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getSpecialChildrenOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialChildrenOfClassLight")
+    @ResponseWrapper(localName = "getSpecialChildrenOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialChildrenOfClassLightResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSpecialChildrenOfClassLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSpecialChildrenOfClassLightResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSpecialChildrenOfClassLight/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getSpecialChildrenOfClassLight(
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "classToFilter", targetNamespace = "")
+        String classToFilter,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param parentClass
+     * @param parentOid
+     * @param childrenClass
+     * @param maxResults
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetChildrenOfClassLightRecursiveResponse>
+     */
+    @WebMethod(operationName = "getChildrenOfClassLightRecursive")
+    @RequestWrapper(localName = "getChildrenOfClassLightRecursive", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightRecursive")
+    @ResponseWrapper(localName = "getChildrenOfClassLightRecursiveResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightRecursiveResponse")
+    public Response<GetChildrenOfClassLightRecursiveResponse> getChildrenOfClassLightRecursiveAsync(
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "childrenClass", targetNamespace = "")
+        String childrenClass,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param parentClass
+     * @param asyncHandler
+     * @param parentOid
+     * @param childrenClass
+     * @param maxResults
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getChildrenOfClassLightRecursive")
+    @RequestWrapper(localName = "getChildrenOfClassLightRecursive", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightRecursive")
+    @ResponseWrapper(localName = "getChildrenOfClassLightRecursiveResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightRecursiveResponse")
+    public Future<?> getChildrenOfClassLightRecursiveAsync(
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "childrenClass", targetNamespace = "")
+        String childrenClass,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetChildrenOfClassLightRecursiveResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param parentClass
+     * @param parentOid
+     * @param childrenClass
+     * @param maxResults
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getChildrenOfClassLightRecursive", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightRecursive")
+    @ResponseWrapper(localName = "getChildrenOfClassLightRecursiveResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightRecursiveResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRecursiveRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRecursiveResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRecursive/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getChildrenOfClassLightRecursive(
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "childrenClass", targetNamespace = "")
+        String childrenClass,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param oid
+     * @param objectclass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetObjectLightResponse>
+     */
+    @WebMethod(operationName = "getObjectLight")
+    @RequestWrapper(localName = "getObjectLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectLight")
+    @ResponseWrapper(localName = "getObjectLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectLightResponse")
+    public Response<GetObjectLightResponse> getObjectLightAsync(
+        @WebParam(name = "objectclass", targetNamespace = "")
+        String objectclass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param oid
+     * @param asyncHandler
+     * @param objectclass
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getObjectLight")
+    @RequestWrapper(localName = "getObjectLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectLight")
+    @ResponseWrapper(localName = "getObjectLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectLightResponse")
+    public Future<?> getObjectLightAsync(
+        @WebParam(name = "objectclass", targetNamespace = "")
+        String objectclass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetObjectLightResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param oid
+     * @param objectclass
+     * @return
+     *     returns org.inventory.communications.wsclient.RemoteObjectLight
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getObjectLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectLight")
+    @ResponseWrapper(localName = "getObjectLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectLightResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectLightResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectLight/Fault/ServerSideException")
+    })
+    public RemoteObjectLight getObjectLight(
+        @WebParam(name = "objectclass", targetNamespace = "")
+        String objectclass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param aObjectClass
+     * @param sessionId
+     * @param aOid
+     * @param bOid
+     * @param bObjectClass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetCommonParentResponse>
+     */
+    @WebMethod(operationName = "getCommonParent")
+    @RequestWrapper(localName = "getCommonParent", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCommonParent")
+    @ResponseWrapper(localName = "getCommonParentResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCommonParentResponse")
+    public Response<GetCommonParentResponse> getCommonParentAsync(
+        @WebParam(name = "aObjectClass", targetNamespace = "")
+        String aObjectClass,
+        @WebParam(name = "aOid", targetNamespace = "")
+        long aOid,
+        @WebParam(name = "bObjectClass", targetNamespace = "")
+        String bObjectClass,
+        @WebParam(name = "bOid", targetNamespace = "")
+        long bOid,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param aObjectClass
+     * @param sessionId
+     * @param aOid
+     * @param asyncHandler
+     * @param bOid
+     * @param bObjectClass
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getCommonParent")
+    @RequestWrapper(localName = "getCommonParent", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCommonParent")
+    @ResponseWrapper(localName = "getCommonParentResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCommonParentResponse")
+    public Future<?> getCommonParentAsync(
+        @WebParam(name = "aObjectClass", targetNamespace = "")
+        String aObjectClass,
+        @WebParam(name = "aOid", targetNamespace = "")
+        long aOid,
+        @WebParam(name = "bObjectClass", targetNamespace = "")
+        String bObjectClass,
+        @WebParam(name = "bOid", targetNamespace = "")
+        long bOid,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetCommonParentResponse> asyncHandler);
+
+    /**
+     * 
+     * @param aObjectClass
+     * @param sessionId
+     * @param aOid
+     * @param bOid
+     * @param bObjectClass
+     * @return
+     *     returns org.inventory.communications.wsclient.RemoteObjectLight
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getCommonParent", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCommonParent")
+    @ResponseWrapper(localName = "getCommonParentResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCommonParentResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getCommonParentRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getCommonParentResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getCommonParent/Fault/ServerSideException")
+    })
+    public RemoteObjectLight getCommonParent(
+        @WebParam(name = "aObjectClass", targetNamespace = "")
+        String aObjectClass,
+        @WebParam(name = "aOid", targetNamespace = "")
+        long aOid,
+        @WebParam(name = "bObjectClass", targetNamespace = "")
+        String bObjectClass,
+        @WebParam(name = "bOid", targetNamespace = "")
+        long bOid,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param attributename
+     * @param sessionId
+     * @param oid
+     * @param objectclass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetSpecialAttributeResponse>
+     */
+    @WebMethod(operationName = "getSpecialAttribute")
+    @RequestWrapper(localName = "getSpecialAttribute", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttribute")
+    @ResponseWrapper(localName = "getSpecialAttributeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributeResponse")
+    public Response<GetSpecialAttributeResponse> getSpecialAttributeAsync(
+        @WebParam(name = "objectclass", targetNamespace = "")
+        String objectclass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "attributename", targetNamespace = "")
+        String attributename,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param attributename
+     * @param sessionId
+     * @param oid
+     * @param asyncHandler
+     * @param objectclass
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getSpecialAttribute")
+    @RequestWrapper(localName = "getSpecialAttribute", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttribute")
+    @ResponseWrapper(localName = "getSpecialAttributeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributeResponse")
+    public Future<?> getSpecialAttributeAsync(
+        @WebParam(name = "objectclass", targetNamespace = "")
+        String objectclass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "attributename", targetNamespace = "")
+        String attributename,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetSpecialAttributeResponse> asyncHandler);
+
+    /**
+     * 
+     * @param attributename
+     * @param sessionId
+     * @param oid
+     * @param objectclass
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getSpecialAttribute", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttribute")
+    @ResponseWrapper(localName = "getSpecialAttributeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributeResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributeRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributeResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttribute/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getSpecialAttribute(
+        @WebParam(name = "objectclass", targetNamespace = "")
+        String objectclass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "attributename", targetNamespace = "")
+        String attributename,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param oid
+     * @param objectClass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetSpecialAttributesResponse>
+     */
+    @WebMethod(operationName = "getSpecialAttributes")
+    @RequestWrapper(localName = "getSpecialAttributes", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributes")
+    @ResponseWrapper(localName = "getSpecialAttributesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributesResponse")
+    public Response<GetSpecialAttributesResponse> getSpecialAttributesAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param oid
+     * @param asyncHandler
+     * @param objectClass
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getSpecialAttributes")
+    @RequestWrapper(localName = "getSpecialAttributes", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributes")
+    @ResponseWrapper(localName = "getSpecialAttributesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributesResponse")
+    public Future<?> getSpecialAttributesAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetSpecialAttributesResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param oid
+     * @param objectClass
+     * @return
+     *     returns org.inventory.communications.wsclient.RemoteObjectSpecialRelationships
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getSpecialAttributes", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributes")
+    @ResponseWrapper(localName = "getSpecialAttributesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributesResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributesResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributes/Fault/ServerSideException")
+    })
+    public RemoteObjectSpecialRelationships getSpecialAttributes(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param arg3
+     * @param arg2
+     * @param arg1
+     * @param arg0
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetParentsUntilFirstOfClassResponse>
+     */
+    @WebMethod(operationName = "getParentsUntilFirstOfClass")
+    @RequestWrapper(localName = "getParentsUntilFirstOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentsUntilFirstOfClass")
+    @ResponseWrapper(localName = "getParentsUntilFirstOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentsUntilFirstOfClassResponse")
+    public Response<GetParentsUntilFirstOfClassResponse> getParentsUntilFirstOfClassAsync(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0,
+        @WebParam(name = "arg1", targetNamespace = "")
+        long arg1,
+        @WebParam(name = "arg2", targetNamespace = "")
+        String arg2,
+        @WebParam(name = "arg3", targetNamespace = "")
+        String arg3);
+
+    /**
+     * 
+     * @param arg3
+     * @param arg2
+     * @param arg1
+     * @param arg0
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getParentsUntilFirstOfClass")
+    @RequestWrapper(localName = "getParentsUntilFirstOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentsUntilFirstOfClass")
+    @ResponseWrapper(localName = "getParentsUntilFirstOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentsUntilFirstOfClassResponse")
+    public Future<?> getParentsUntilFirstOfClassAsync(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0,
+        @WebParam(name = "arg1", targetNamespace = "")
+        long arg1,
+        @WebParam(name = "arg2", targetNamespace = "")
+        String arg2,
+        @WebParam(name = "arg3", targetNamespace = "")
+        String arg3,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetParentsUntilFirstOfClassResponse> asyncHandler);
+
+    /**
+     * 
+     * @param arg3
+     * @param arg2
+     * @param arg1
+     * @param arg0
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getParentsUntilFirstOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentsUntilFirstOfClass")
+    @ResponseWrapper(localName = "getParentsUntilFirstOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentsUntilFirstOfClassResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getParentsUntilFirstOfClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getParentsUntilFirstOfClassResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getParentsUntilFirstOfClass/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getParentsUntilFirstOfClass(
+        @WebParam(name = "arg0", targetNamespace = "")
+        String arg0,
+        @WebParam(name = "arg1", targetNamespace = "")
+        long arg1,
+        @WebParam(name = "arg2", targetNamespace = "")
+        String arg2,
+        @WebParam(name = "arg3", targetNamespace = "")
+        String arg3)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectToMatchClassName
+     * @param sessionId
+     * @param oid
+     * @param objectClass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetFirstParentOfClassResponse>
+     */
+    @WebMethod(operationName = "getFirstParentOfClass")
+    @RequestWrapper(localName = "getFirstParentOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetFirstParentOfClass")
+    @ResponseWrapper(localName = "getFirstParentOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetFirstParentOfClassResponse")
+    public Response<GetFirstParentOfClassResponse> getFirstParentOfClassAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "objectToMatchClassName", targetNamespace = "")
+        String objectToMatchClassName,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param objectToMatchClassName
+     * @param sessionId
+     * @param oid
+     * @param asyncHandler
+     * @param objectClass
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getFirstParentOfClass")
+    @RequestWrapper(localName = "getFirstParentOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetFirstParentOfClass")
+    @ResponseWrapper(localName = "getFirstParentOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetFirstParentOfClassResponse")
+    public Future<?> getFirstParentOfClassAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "objectToMatchClassName", targetNamespace = "")
+        String objectToMatchClassName,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetFirstParentOfClassResponse> asyncHandler);
+
+    /**
+     * 
+     * @param objectToMatchClassName
+     * @param sessionId
+     * @param oid
+     * @param objectClass
+     * @return
+     *     returns org.inventory.communications.wsclient.RemoteObjectLight
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getFirstParentOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetFirstParentOfClass")
+    @ResponseWrapper(localName = "getFirstParentOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetFirstParentOfClassResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getFirstParentOfClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getFirstParentOfClassResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getFirstParentOfClass/Fault/ServerSideException")
+    })
+    public RemoteObjectLight getFirstParentOfClass(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "objectToMatchClassName", targetNamespace = "")
+        String objectToMatchClassName,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param parentClass
+     * @param oid
+     * @param objectClass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetParentOfClassResponse>
+     */
+    @WebMethod(operationName = "getParentOfClass")
+    @RequestWrapper(localName = "getParentOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentOfClass")
+    @ResponseWrapper(localName = "getParentOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentOfClassResponse")
+    public Response<GetParentOfClassResponse> getParentOfClassAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param parentClass
+     * @param oid
+     * @param asyncHandler
+     * @param objectClass
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getParentOfClass")
+    @RequestWrapper(localName = "getParentOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentOfClass")
+    @ResponseWrapper(localName = "getParentOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentOfClassResponse")
+    public Future<?> getParentOfClassAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetParentOfClassResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param parentClass
+     * @param oid
+     * @param objectClass
+     * @return
+     *     returns org.inventory.communications.wsclient.RemoteObject
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getParentOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentOfClass")
+    @ResponseWrapper(localName = "getParentOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentOfClassResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getParentOfClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getParentOfClassResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getParentOfClass/Fault/ServerSideException")
+    })
+    public RemoteObject getParentOfClass(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param objectId
+     * @param objectclass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetObjectSpecialChildrenResponse>
+     */
+    @WebMethod(operationName = "getObjectSpecialChildren")
+    @RequestWrapper(localName = "getObjectSpecialChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectSpecialChildren")
+    @ResponseWrapper(localName = "getObjectSpecialChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectSpecialChildrenResponse")
+    public Response<GetObjectSpecialChildrenResponse> getObjectSpecialChildrenAsync(
+        @WebParam(name = "objectclass", targetNamespace = "")
+        String objectclass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param objectId
+     * @param asyncHandler
+     * @param objectclass
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getObjectSpecialChildren")
+    @RequestWrapper(localName = "getObjectSpecialChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectSpecialChildren")
+    @ResponseWrapper(localName = "getObjectSpecialChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectSpecialChildrenResponse")
+    public Future<?> getObjectSpecialChildrenAsync(
+        @WebParam(name = "objectclass", targetNamespace = "")
+        String objectclass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetObjectSpecialChildrenResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param objectId
+     * @param objectclass
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getObjectSpecialChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectSpecialChildren")
+    @ResponseWrapper(localName = "getObjectSpecialChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectSpecialChildrenResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildrenResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildren/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getObjectSpecialChildren(
+        @WebParam(name = "objectclass", targetNamespace = "")
+        String objectclass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param className
+     * @param maxResults
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetObjectsOfClassLightResponse>
+     */
+    @WebMethod(operationName = "getObjectsOfClassLight")
+    @RequestWrapper(localName = "getObjectsOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectsOfClassLight")
+    @ResponseWrapper(localName = "getObjectsOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectsOfClassLightResponse")
+    public Response<GetObjectsOfClassLightResponse> getObjectsOfClassLightAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param asyncHandler
+     * @param className
+     * @param maxResults
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getObjectsOfClassLight")
+    @RequestWrapper(localName = "getObjectsOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectsOfClassLight")
+    @ResponseWrapper(localName = "getObjectsOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectsOfClassLightResponse")
+    public Future<?> getObjectsOfClassLightAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetObjectsOfClassLightResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param className
+     * @param maxResults
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getObjectsOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectsOfClassLight")
+    @ResponseWrapper(localName = "getObjectsOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectsOfClassLightResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectsOfClassLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectsOfClassLightResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectsOfClassLight/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getObjectsOfClassLight(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetInstanceableListTypesResponse>
+     */
+    @WebMethod(operationName = "getInstanceableListTypes")
+    @RequestWrapper(localName = "getInstanceableListTypes", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetInstanceableListTypes")
+    @ResponseWrapper(localName = "getInstanceableListTypesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetInstanceableListTypesResponse")
+    public Response<GetInstanceableListTypesResponse> getInstanceableListTypesAsync(
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getInstanceableListTypes")
+    @RequestWrapper(localName = "getInstanceableListTypes", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetInstanceableListTypes")
+    @ResponseWrapper(localName = "getInstanceableListTypesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetInstanceableListTypesResponse")
+    public Future<?> getInstanceableListTypesAsync(
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetInstanceableListTypesResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getInstanceableListTypes", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetInstanceableListTypes")
+    @ResponseWrapper(localName = "getInstanceableListTypesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetInstanceableListTypesResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypesResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypes/Fault/ServerSideException")
+    })
+    public List<ClassInfoLight> getInstanceableListTypes(
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param templateId
+     * @param attributeNames
+     * @param attributeValues
+     * @param parentObjectClassName
+     * @param sessionId
+     * @param parentOid
+     * @param className
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateSpecialObjectResponse>
+     */
+    @WebMethod(operationName = "createSpecialObject")
+    @RequestWrapper(localName = "createSpecialObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSpecialObject")
+    @ResponseWrapper(localName = "createSpecialObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSpecialObjectResponse")
+    public Response<CreateSpecialObjectResponse> createSpecialObjectAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "parentObjectClassName", targetNamespace = "")
+        String parentObjectClassName,
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "attributeNames", targetNamespace = "")
+        List<String> attributeNames,
+        @WebParam(name = "attributeValues", targetNamespace = "")
+        List<String> attributeValues,
+        @WebParam(name = "templateId", targetNamespace = "")
+        long templateId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param templateId
+     * @param attributeNames
+     * @param attributeValues
+     * @param parentObjectClassName
+     * @param sessionId
+     * @param asyncHandler
+     * @param parentOid
+     * @param className
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createSpecialObject")
+    @RequestWrapper(localName = "createSpecialObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSpecialObject")
+    @ResponseWrapper(localName = "createSpecialObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSpecialObjectResponse")
+    public Future<?> createSpecialObjectAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "parentObjectClassName", targetNamespace = "")
+        String parentObjectClassName,
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "attributeNames", targetNamespace = "")
+        List<String> attributeNames,
+        @WebParam(name = "attributeValues", targetNamespace = "")
+        List<String> attributeValues,
+        @WebParam(name = "templateId", targetNamespace = "")
+        long templateId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreateSpecialObjectResponse> asyncHandler);
+
+    /**
+     * 
+     * @param templateId
+     * @param attributeNames
+     * @param attributeValues
+     * @param parentObjectClassName
+     * @param sessionId
+     * @param parentOid
+     * @param className
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createSpecialObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSpecialObject")
+    @ResponseWrapper(localName = "createSpecialObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSpecialObjectResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createSpecialObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createSpecialObjectResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createSpecialObject/Fault/ServerSideException")
+    })
+    public long createSpecialObject(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "parentObjectClassName", targetNamespace = "")
+        String parentObjectClassName,
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "attributeNames", targetNamespace = "")
+        List<String> attributeNames,
+        @WebParam(name = "attributeValues", targetNamespace = "")
+        List<String> attributeValues,
+        @WebParam(name = "templateId", targetNamespace = "")
+        long templateId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param oid
+     * @param className
+     * @param releaseRelationships
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteObjectResponse>
+     */
+    @WebMethod(operationName = "deleteObject")
+    @RequestWrapper(localName = "deleteObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObject")
+    @ResponseWrapper(localName = "deleteObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjectResponse")
+    public Response<DeleteObjectResponse> deleteObjectAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "releaseRelationships", targetNamespace = "")
+        boolean releaseRelationships,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param oid
+     * @param asyncHandler
+     * @param className
+     * @param releaseRelationships
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "deleteObject")
+    @RequestWrapper(localName = "deleteObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObject")
+    @ResponseWrapper(localName = "deleteObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjectResponse")
+    public Future<?> deleteObjectAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "releaseRelationships", targetNamespace = "")
+        boolean releaseRelationships,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<DeleteObjectResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param oid
+     * @param className
+     * @param releaseRelationships
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObject")
+    @ResponseWrapper(localName = "deleteObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjectResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteObjectResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteObject/Fault/ServerSideException")
+    })
+    public void deleteObject(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "releaseRelationships", targetNamespace = "")
+        boolean releaseRelationships,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param oid
+     * @param classNames
+     * @param releaseRelationships
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteObjectsResponse>
+     */
+    @WebMethod(operationName = "deleteObjects")
+    @RequestWrapper(localName = "deleteObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjects")
+    @ResponseWrapper(localName = "deleteObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjectsResponse")
+    public Response<DeleteObjectsResponse> deleteObjectsAsync(
+        @WebParam(name = "classNames", targetNamespace = "")
+        List<String> classNames,
+        @WebParam(name = "oid", targetNamespace = "")
+        List<Long> oid,
+        @WebParam(name = "releaseRelationships", targetNamespace = "")
+        boolean releaseRelationships,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param oid
+     * @param asyncHandler
+     * @param classNames
+     * @param releaseRelationships
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "deleteObjects")
+    @RequestWrapper(localName = "deleteObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjects")
+    @ResponseWrapper(localName = "deleteObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjectsResponse")
+    public Future<?> deleteObjectsAsync(
+        @WebParam(name = "classNames", targetNamespace = "")
+        List<String> classNames,
+        @WebParam(name = "oid", targetNamespace = "")
+        List<Long> oid,
+        @WebParam(name = "releaseRelationships", targetNamespace = "")
+        boolean releaseRelationships,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<DeleteObjectsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param oid
+     * @param classNames
+     * @param releaseRelationships
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjects")
+    @ResponseWrapper(localName = "deleteObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjectsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteObjectsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteObjects/Fault/ServerSideException")
+    })
+    public void deleteObjects(
+        @WebParam(name = "classNames", targetNamespace = "")
+        List<String> classNames,
+        @WebParam(name = "oid", targetNamespace = "")
+        List<Long> oid,
+        @WebParam(name = "releaseRelationships", targetNamespace = "")
+        boolean releaseRelationships,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectsClasses
+     * @param sessionId
+     * @param objectsOids
+     * @param targetClass
+     * @param targetOid
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.MoveObjectsToPoolResponse>
+     */
+    @WebMethod(operationName = "moveObjectsToPool")
+    @RequestWrapper(localName = "moveObjectsToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsToPool")
+    @ResponseWrapper(localName = "moveObjectsToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsToPoolResponse")
+    public Response<MoveObjectsToPoolResponse> moveObjectsToPoolAsync(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "objectsClasses", targetNamespace = "")
+        List<String> objectsClasses,
+        @WebParam(name = "objectsOids", targetNamespace = "")
+        List<Long> objectsOids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param objectsClasses
+     * @param sessionId
+     * @param asyncHandler
+     * @param objectsOids
+     * @param targetClass
+     * @param targetOid
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "moveObjectsToPool")
+    @RequestWrapper(localName = "moveObjectsToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsToPool")
+    @ResponseWrapper(localName = "moveObjectsToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsToPoolResponse")
+    public Future<?> moveObjectsToPoolAsync(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "objectsClasses", targetNamespace = "")
+        List<String> objectsClasses,
+        @WebParam(name = "objectsOids", targetNamespace = "")
+        List<Long> objectsOids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<MoveObjectsToPoolResponse> asyncHandler);
+
+    /**
+     * 
+     * @param objectsClasses
+     * @param sessionId
+     * @param objectsOids
+     * @param targetClass
+     * @param targetOid
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "moveObjectsToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsToPool")
+    @ResponseWrapper(localName = "moveObjectsToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsToPoolResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsToPoolRequest", output = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsToPoolResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsToPool/Fault/ServerSideException")
+    })
+    public void moveObjectsToPool(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "objectsClasses", targetNamespace = "")
+        List<String> objectsClasses,
+        @WebParam(name = "objectsOids", targetNamespace = "")
+        List<Long> objectsOids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectsClasses
+     * @param sessionId
+     * @param objectsOids
+     * @param targetClass
+     * @param targetOid
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.MoveObjectsResponse>
+     */
+    @WebMethod(operationName = "moveObjects")
+    @RequestWrapper(localName = "moveObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjects")
+    @ResponseWrapper(localName = "moveObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsResponse")
+    public Response<MoveObjectsResponse> moveObjectsAsync(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "objectsClasses", targetNamespace = "")
+        List<String> objectsClasses,
+        @WebParam(name = "objectsOids", targetNamespace = "")
+        List<Long> objectsOids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param objectsClasses
+     * @param sessionId
+     * @param asyncHandler
+     * @param objectsOids
+     * @param targetClass
+     * @param targetOid
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "moveObjects")
+    @RequestWrapper(localName = "moveObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjects")
+    @ResponseWrapper(localName = "moveObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsResponse")
+    public Future<?> moveObjectsAsync(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "objectsClasses", targetNamespace = "")
+        List<String> objectsClasses,
+        @WebParam(name = "objectsOids", targetNamespace = "")
+        List<Long> objectsOids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<MoveObjectsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param objectsClasses
+     * @param sessionId
+     * @param objectsOids
+     * @param targetClass
+     * @param targetOid
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "moveObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjects")
+    @ResponseWrapper(localName = "moveObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/moveObjects/Fault/ServerSideException")
+    })
+    public void moveObjects(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "objectsClasses", targetNamespace = "")
+        List<String> objectsClasses,
+        @WebParam(name = "objectsOids", targetNamespace = "")
+        List<Long> objectsOids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectsClasses
+     * @param sessionId
+     * @param objectsOids
+     * @param targetClass
+     * @param targetOid
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.MoveSpecialObjectsResponse>
+     */
+    @WebMethod(operationName = "moveSpecialObjects")
+    @RequestWrapper(localName = "moveSpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveSpecialObjects")
+    @ResponseWrapper(localName = "moveSpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveSpecialObjectsResponse")
+    public Response<MoveSpecialObjectsResponse> moveSpecialObjectsAsync(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "objectsClasses", targetNamespace = "")
+        List<String> objectsClasses,
+        @WebParam(name = "objectsOids", targetNamespace = "")
+        List<Long> objectsOids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param objectsClasses
+     * @param sessionId
+     * @param asyncHandler
+     * @param objectsOids
+     * @param targetClass
+     * @param targetOid
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "moveSpecialObjects")
+    @RequestWrapper(localName = "moveSpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveSpecialObjects")
+    @ResponseWrapper(localName = "moveSpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveSpecialObjectsResponse")
+    public Future<?> moveSpecialObjectsAsync(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "objectsClasses", targetNamespace = "")
+        List<String> objectsClasses,
+        @WebParam(name = "objectsOids", targetNamespace = "")
+        List<Long> objectsOids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<MoveSpecialObjectsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param objectsClasses
+     * @param sessionId
+     * @param objectsOids
+     * @param targetClass
+     * @param targetOid
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "moveSpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveSpecialObjects")
+    @ResponseWrapper(localName = "moveSpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveSpecialObjectsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/moveSpecialObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/moveSpecialObjectsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/moveSpecialObjects/Fault/ServerSideException")
+    })
+    public void moveSpecialObjects(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "objectsClasses", targetNamespace = "")
+        List<String> objectsClasses,
+        @WebParam(name = "objectsOids", targetNamespace = "")
+        List<Long> objectsOids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param recursive
+     * @param templateOids
+     * @param targetClass
+     * @param targetOid
+     * @param templateClases
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CopyObjectsResponse>
+     */
+    @WebMethod(operationName = "copyObjects")
+    @RequestWrapper(localName = "copyObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyObjects")
+    @ResponseWrapper(localName = "copyObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyObjectsResponse")
+    public Response<CopyObjectsResponse> copyObjectsAsync(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "templateClases", targetNamespace = "")
+        List<String> templateClases,
+        @WebParam(name = "templateOids", targetNamespace = "")
+        List<Long> templateOids,
+        @WebParam(name = "recursive", targetNamespace = "")
+        boolean recursive,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param recursive
+     * @param templateOids
+     * @param asyncHandler
+     * @param targetClass
+     * @param targetOid
+     * @param templateClases
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "copyObjects")
+    @RequestWrapper(localName = "copyObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyObjects")
+    @ResponseWrapper(localName = "copyObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyObjectsResponse")
+    public Future<?> copyObjectsAsync(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "templateClases", targetNamespace = "")
+        List<String> templateClases,
+        @WebParam(name = "templateOids", targetNamespace = "")
+        List<Long> templateOids,
+        @WebParam(name = "recursive", targetNamespace = "")
+        boolean recursive,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CopyObjectsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param recursive
+     * @param templateOids
+     * @param targetClass
+     * @param targetOid
+     * @param templateClases
+     * @return
+     *     returns java.util.List<java.lang.Long>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "copyObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyObjects")
+    @ResponseWrapper(localName = "copyObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyObjectsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/copyObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/copyObjectsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/copyObjects/Fault/ServerSideException")
+    })
+    public List<Long> copyObjects(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "templateClases", targetNamespace = "")
+        List<String> templateClases,
+        @WebParam(name = "templateOids", targetNamespace = "")
+        List<Long> templateOids,
+        @WebParam(name = "recursive", targetNamespace = "")
+        boolean recursive,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param recursive
+     * @param templateOids
+     * @param targetClass
+     * @param targetOid
+     * @param templateClases
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CopySpecialObjectsResponse>
+     */
+    @WebMethod(operationName = "copySpecialObjects")
+    @RequestWrapper(localName = "copySpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopySpecialObjects")
+    @ResponseWrapper(localName = "copySpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopySpecialObjectsResponse")
+    public Response<CopySpecialObjectsResponse> copySpecialObjectsAsync(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "templateClases", targetNamespace = "")
+        List<String> templateClases,
+        @WebParam(name = "templateOids", targetNamespace = "")
+        List<Long> templateOids,
+        @WebParam(name = "recursive", targetNamespace = "")
+        boolean recursive,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param recursive
+     * @param templateOids
+     * @param asyncHandler
+     * @param targetClass
+     * @param targetOid
+     * @param templateClases
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "copySpecialObjects")
+    @RequestWrapper(localName = "copySpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopySpecialObjects")
+    @ResponseWrapper(localName = "copySpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopySpecialObjectsResponse")
+    public Future<?> copySpecialObjectsAsync(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "templateClases", targetNamespace = "")
+        List<String> templateClases,
+        @WebParam(name = "templateOids", targetNamespace = "")
+        List<Long> templateOids,
+        @WebParam(name = "recursive", targetNamespace = "")
+        boolean recursive,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CopySpecialObjectsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param recursive
+     * @param templateOids
+     * @param targetClass
+     * @param targetOid
+     * @param templateClases
+     * @return
+     *     returns java.util.List<java.lang.Long>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "copySpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopySpecialObjects")
+    @ResponseWrapper(localName = "copySpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopySpecialObjectsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/copySpecialObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/copySpecialObjectsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/copySpecialObjects/Fault/ServerSideException")
+    })
+    public List<Long> copySpecialObjects(
+        @WebParam(name = "targetClass", targetNamespace = "")
+        String targetClass,
+        @WebParam(name = "targetOid", targetNamespace = "")
+        long targetOid,
+        @WebParam(name = "templateClases", targetNamespace = "")
+        List<String> templateClases,
+        @WebParam(name = "templateOids", targetNamespace = "")
+        List<Long> templateOids,
+        @WebParam(name = "recursive", targetNamespace = "")
+        boolean recursive,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param attributeNames
+     * @param attributeValues
+     * @param sessionId
+     * @param oid
+     * @param className
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.UpdateObjectResponse>
+     */
+    @WebMethod(operationName = "updateObject")
+    @RequestWrapper(localName = "updateObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObject")
+    @ResponseWrapper(localName = "updateObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectResponse")
+    public Response<UpdateObjectResponse> updateObjectAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "attributeNames", targetNamespace = "")
+        List<String> attributeNames,
+        @WebParam(name = "attributeValues", targetNamespace = "")
+        List<String> attributeValues,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param attributeNames
+     * @param attributeValues
+     * @param sessionId
+     * @param oid
+     * @param asyncHandler
+     * @param className
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "updateObject")
+    @RequestWrapper(localName = "updateObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObject")
+    @ResponseWrapper(localName = "updateObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectResponse")
+    public Future<?> updateObjectAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "attributeNames", targetNamespace = "")
+        List<String> attributeNames,
+        @WebParam(name = "attributeValues", targetNamespace = "")
+        List<String> attributeValues,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<UpdateObjectResponse> asyncHandler);
+
+    /**
+     * 
+     * @param attributeNames
+     * @param attributeValues
+     * @param sessionId
+     * @param oid
+     * @param className
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "updateObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObject")
+    @ResponseWrapper(localName = "updateObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateObjectResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateObject/Fault/ServerSideException")
+    })
+    public void updateObject(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "attributeNames", targetNamespace = "")
+        List<String> attributeNames,
+        @WebParam(name = "attributeValues", targetNamespace = "")
+        List<String> attributeValues,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param className
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetMandatoryAttributesInClassResponse>
+     */
+    @WebMethod(operationName = "getMandatoryAttributesInClass")
+    @RequestWrapper(localName = "getMandatoryAttributesInClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetMandatoryAttributesInClass")
+    @ResponseWrapper(localName = "getMandatoryAttributesInClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetMandatoryAttributesInClassResponse")
+    public Response<GetMandatoryAttributesInClassResponse> getMandatoryAttributesInClassAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param asyncHandler
+     * @param className
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getMandatoryAttributesInClass")
+    @RequestWrapper(localName = "getMandatoryAttributesInClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetMandatoryAttributesInClass")
+    @ResponseWrapper(localName = "getMandatoryAttributesInClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetMandatoryAttributesInClassResponse")
+    public Future<?> getMandatoryAttributesInClassAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetMandatoryAttributesInClassResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param className
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.AttributeInfo>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getMandatoryAttributesInClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetMandatoryAttributesInClass")
+    @ResponseWrapper(localName = "getMandatoryAttributesInClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetMandatoryAttributesInClassResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getMandatoryAttributesInClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getMandatoryAttributesInClassResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getMandatoryAttributesInClass/Fault/ServerSideException")
+    })
+    public List<AttributeInfo> getMandatoryAttributesInClass(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param namePattern
+     * @param sessionId
+     * @param parentClassName
+     * @param parentOid
+     * @param className
+     * @param numberOfObjects
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateBulkObjectsResponse>
+     */
+    @WebMethod(operationName = "createBulkObjects")
+    @RequestWrapper(localName = "createBulkObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkObjects")
+    @ResponseWrapper(localName = "createBulkObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkObjectsResponse")
+    public Response<CreateBulkObjectsResponse> createBulkObjectsAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "numberOfObjects", targetNamespace = "")
+        int numberOfObjects,
+        @WebParam(name = "namePattern", targetNamespace = "")
+        String namePattern,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param namePattern
+     * @param sessionId
+     * @param parentClassName
+     * @param asyncHandler
+     * @param parentOid
+     * @param className
+     * @param numberOfObjects
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createBulkObjects")
+    @RequestWrapper(localName = "createBulkObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkObjects")
+    @ResponseWrapper(localName = "createBulkObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkObjectsResponse")
+    public Future<?> createBulkObjectsAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "numberOfObjects", targetNamespace = "")
+        int numberOfObjects,
+        @WebParam(name = "namePattern", targetNamespace = "")
+        String namePattern,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreateBulkObjectsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param namePattern
+     * @param sessionId
+     * @param parentClassName
+     * @param parentOid
+     * @param className
+     * @param numberOfObjects
+     * @return
+     *     returns java.util.List<java.lang.Long>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createBulkObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkObjects")
+    @ResponseWrapper(localName = "createBulkObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkObjectsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createBulkObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createBulkObjectsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createBulkObjects/Fault/ServerSideException")
+    })
+    public List<Long> createBulkObjects(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "parentOid", targetNamespace = "")
+        long parentOid,
+        @WebParam(name = "numberOfObjects", targetNamespace = "")
+        int numberOfObjects,
+        @WebParam(name = "namePattern", targetNamespace = "")
+        String namePattern,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param namePattern
+     * @param parentId
+     * @param sessionId
+     * @param parentClassName
+     * @param numberOfSpecialObjects
+     * @param className
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateBulkSpecialObjectsResponse>
+     */
+    @WebMethod(operationName = "createBulkSpecialObjects")
+    @RequestWrapper(localName = "createBulkSpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialObjects")
+    @ResponseWrapper(localName = "createBulkSpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialObjectsResponse")
+    public Response<CreateBulkSpecialObjectsResponse> createBulkSpecialObjectsAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "parentId", targetNamespace = "")
+        long parentId,
+        @WebParam(name = "numberOfSpecialObjects", targetNamespace = "")
+        int numberOfSpecialObjects,
+        @WebParam(name = "namePattern", targetNamespace = "")
+        String namePattern,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param namePattern
+     * @param parentId
+     * @param sessionId
+     * @param parentClassName
+     * @param numberOfSpecialObjects
+     * @param asyncHandler
+     * @param className
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createBulkSpecialObjects")
+    @RequestWrapper(localName = "createBulkSpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialObjects")
+    @ResponseWrapper(localName = "createBulkSpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialObjectsResponse")
+    public Future<?> createBulkSpecialObjectsAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "parentId", targetNamespace = "")
+        long parentId,
+        @WebParam(name = "numberOfSpecialObjects", targetNamespace = "")
+        int numberOfSpecialObjects,
+        @WebParam(name = "namePattern", targetNamespace = "")
+        String namePattern,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreateBulkSpecialObjectsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param namePattern
+     * @param parentId
+     * @param sessionId
+     * @param parentClassName
+     * @param numberOfSpecialObjects
+     * @param className
+     * @return
+     *     returns java.util.List<java.lang.Long>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createBulkSpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialObjects")
+    @ResponseWrapper(localName = "createBulkSpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialObjectsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createBulkSpecialObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createBulkSpecialObjectsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createBulkSpecialObjects/Fault/ServerSideException")
+    })
+    public List<Long> createBulkSpecialObjects(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "parentId", targetNamespace = "")
+        long parentId,
+        @WebParam(name = "numberOfSpecialObjects", targetNamespace = "")
+        int numberOfSpecialObjects,
+        @WebParam(name = "namePattern", targetNamespace = "")
+        String namePattern,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param templateElementParentClassName
+     * @param templateElementParentId
+     * @param templateElementClass
+     * @param templateElementNamePattern
+     * @param numberOfTemplateElements
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateBulkTemplateElementResponse>
+     */
+    @WebMethod(operationName = "createBulkTemplateElement")
+    @RequestWrapper(localName = "createBulkTemplateElement", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkTemplateElement")
+    @ResponseWrapper(localName = "createBulkTemplateElementResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkTemplateElementResponse")
+    public Response<CreateBulkTemplateElementResponse> createBulkTemplateElementAsync(
+        @WebParam(name = "templateElementClass", targetNamespace = "")
+        String templateElementClass,
+        @WebParam(name = "templateElementParentClassName", targetNamespace = "")
+        String templateElementParentClassName,
+        @WebParam(name = "templateElementParentId", targetNamespace = "")
+        long templateElementParentId,
+        @WebParam(name = "numberOfTemplateElements", targetNamespace = "")
+        int numberOfTemplateElements,
+        @WebParam(name = "templateElementNamePattern", targetNamespace = "")
+        String templateElementNamePattern,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param templateElementParentClassName
+     * @param templateElementParentId
+     * @param templateElementClass
+     * @param asyncHandler
+     * @param templateElementNamePattern
+     * @param numberOfTemplateElements
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createBulkTemplateElement")
+    @RequestWrapper(localName = "createBulkTemplateElement", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkTemplateElement")
+    @ResponseWrapper(localName = "createBulkTemplateElementResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkTemplateElementResponse")
+    public Future<?> createBulkTemplateElementAsync(
+        @WebParam(name = "templateElementClass", targetNamespace = "")
+        String templateElementClass,
+        @WebParam(name = "templateElementParentClassName", targetNamespace = "")
+        String templateElementParentClassName,
+        @WebParam(name = "templateElementParentId", targetNamespace = "")
+        long templateElementParentId,
+        @WebParam(name = "numberOfTemplateElements", targetNamespace = "")
+        int numberOfTemplateElements,
+        @WebParam(name = "templateElementNamePattern", targetNamespace = "")
+        String templateElementNamePattern,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreateBulkTemplateElementResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param templateElementParentClassName
+     * @param templateElementParentId
+     * @param templateElementClass
+     * @param templateElementNamePattern
+     * @param numberOfTemplateElements
+     * @return
+     *     returns java.util.List<java.lang.Long>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createBulkTemplateElement", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkTemplateElement")
+    @ResponseWrapper(localName = "createBulkTemplateElementResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkTemplateElementResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createBulkTemplateElementRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createBulkTemplateElementResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createBulkTemplateElement/Fault/ServerSideException")
+    })
+    public List<Long> createBulkTemplateElement(
+        @WebParam(name = "templateElementClass", targetNamespace = "")
+        String templateElementClass,
+        @WebParam(name = "templateElementParentClassName", targetNamespace = "")
+        String templateElementParentClassName,
+        @WebParam(name = "templateElementParentId", targetNamespace = "")
+        long templateElementParentId,
+        @WebParam(name = "numberOfTemplateElements", targetNamespace = "")
+        int numberOfTemplateElements,
+        @WebParam(name = "templateElementNamePattern", targetNamespace = "")
+        String templateElementNamePattern,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param aObjectClass
+     * @param sessionId
+     * @param bObjectId
+     * @param bObjectClass
+     * @param aObjectId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.ConnectMirrorPortResponse>
+     */
+    @WebMethod(operationName = "connectMirrorPort")
+    @RequestWrapper(localName = "connectMirrorPort", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectMirrorPort")
+    @ResponseWrapper(localName = "connectMirrorPortResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectMirrorPortResponse")
+    public Response<ConnectMirrorPortResponse> connectMirrorPortAsync(
+        @WebParam(name = "aObjectClass", targetNamespace = "")
+        List<String> aObjectClass,
+        @WebParam(name = "aObjectId", targetNamespace = "")
+        List<Long> aObjectId,
+        @WebParam(name = "bObjectClass", targetNamespace = "")
+        List<String> bObjectClass,
+        @WebParam(name = "bObjectId", targetNamespace = "")
+        List<Long> bObjectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param aObjectClass
+     * @param sessionId
+     * @param bObjectId
+     * @param asyncHandler
+     * @param bObjectClass
+     * @param aObjectId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "connectMirrorPort")
+    @RequestWrapper(localName = "connectMirrorPort", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectMirrorPort")
+    @ResponseWrapper(localName = "connectMirrorPortResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectMirrorPortResponse")
+    public Future<?> connectMirrorPortAsync(
+        @WebParam(name = "aObjectClass", targetNamespace = "")
+        List<String> aObjectClass,
+        @WebParam(name = "aObjectId", targetNamespace = "")
+        List<Long> aObjectId,
+        @WebParam(name = "bObjectClass", targetNamespace = "")
+        List<String> bObjectClass,
+        @WebParam(name = "bObjectId", targetNamespace = "")
+        List<Long> bObjectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<ConnectMirrorPortResponse> asyncHandler);
+
+    /**
+     * 
+     * @param aObjectClass
+     * @param sessionId
+     * @param bObjectId
+     * @param bObjectClass
+     * @param aObjectId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "connectMirrorPort", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectMirrorPort")
+    @ResponseWrapper(localName = "connectMirrorPortResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectMirrorPortResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/connectMirrorPortRequest", output = "http://ws.kuwaiba.org/KuwaibaService/connectMirrorPortResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/connectMirrorPort/Fault/ServerSideException")
+    })
+    public void connectMirrorPort(
+        @WebParam(name = "aObjectClass", targetNamespace = "")
+        List<String> aObjectClass,
+        @WebParam(name = "aObjectId", targetNamespace = "")
+        List<Long> aObjectId,
+        @WebParam(name = "bObjectClass", targetNamespace = "")
+        List<String> bObjectClass,
+        @WebParam(name = "bObjectId", targetNamespace = "")
+        List<Long> bObjectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param objectId
+     * @param objectClass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.ReleaseMirrorPortResponse>
+     */
+    @WebMethod(operationName = "releaseMirrorPort")
+    @RequestWrapper(localName = "releaseMirrorPort", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseMirrorPort")
+    @ResponseWrapper(localName = "releaseMirrorPortResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseMirrorPortResponse")
+    public Response<ReleaseMirrorPortResponse> releaseMirrorPortAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param objectId
+     * @param asyncHandler
+     * @param objectClass
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "releaseMirrorPort")
+    @RequestWrapper(localName = "releaseMirrorPort", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseMirrorPort")
+    @ResponseWrapper(localName = "releaseMirrorPortResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseMirrorPortResponse")
+    public Future<?> releaseMirrorPortAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<ReleaseMirrorPortResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param objectId
+     * @param objectClass
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "releaseMirrorPort", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseMirrorPort")
+    @ResponseWrapper(localName = "releaseMirrorPortResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseMirrorPortResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/releaseMirrorPortRequest", output = "http://ws.kuwaiba.org/KuwaibaService/releaseMirrorPortResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/releaseMirrorPort/Fault/ServerSideException")
+    })
+    public void releaseMirrorPort(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param templateId
+     * @param parentId
+     * @param connectionClass
+     * @param aObjectClass
+     * @param sessionId
+     * @param parentClass
+     * @param name
+     * @param bObjectId
+     * @param bObjectClass
+     * @param aObjectId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreatePhysicalConnectionResponse>
+     */
+    @WebMethod(operationName = "createPhysicalConnection")
+    @RequestWrapper(localName = "createPhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePhysicalConnection")
+    @ResponseWrapper(localName = "createPhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePhysicalConnectionResponse")
+    public Response<CreatePhysicalConnectionResponse> createPhysicalConnectionAsync(
+        @WebParam(name = "aObjectClass", targetNamespace = "")
+        String aObjectClass,
+        @WebParam(name = "aObjectId", targetNamespace = "")
+        long aObjectId,
+        @WebParam(name = "bObjectClass", targetNamespace = "")
+        String bObjectClass,
+        @WebParam(name = "bObjectId", targetNamespace = "")
+        long bObjectId,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "parentId", targetNamespace = "")
+        long parentId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "connectionClass", targetNamespace = "")
+        String connectionClass,
+        @WebParam(name = "templateId", targetNamespace = "")
+        long templateId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param templateId
+     * @param parentId
+     * @param connectionClass
+     * @param aObjectClass
+     * @param sessionId
+     * @param parentClass
+     * @param name
+     * @param bObjectId
+     * @param asyncHandler
+     * @param bObjectClass
+     * @param aObjectId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createPhysicalConnection")
+    @RequestWrapper(localName = "createPhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePhysicalConnection")
+    @ResponseWrapper(localName = "createPhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePhysicalConnectionResponse")
+    public Future<?> createPhysicalConnectionAsync(
+        @WebParam(name = "aObjectClass", targetNamespace = "")
+        String aObjectClass,
+        @WebParam(name = "aObjectId", targetNamespace = "")
+        long aObjectId,
+        @WebParam(name = "bObjectClass", targetNamespace = "")
+        String bObjectClass,
+        @WebParam(name = "bObjectId", targetNamespace = "")
+        long bObjectId,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "parentId", targetNamespace = "")
+        long parentId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "connectionClass", targetNamespace = "")
+        String connectionClass,
+        @WebParam(name = "templateId", targetNamespace = "")
+        long templateId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreatePhysicalConnectionResponse> asyncHandler);
+
+    /**
+     * 
+     * @param templateId
+     * @param parentId
+     * @param connectionClass
+     * @param aObjectClass
+     * @param sessionId
+     * @param parentClass
+     * @param name
+     * @param bObjectId
+     * @param bObjectClass
+     * @param aObjectId
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createPhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePhysicalConnection")
+    @ResponseWrapper(localName = "createPhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePhysicalConnectionResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createPhysicalConnectionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createPhysicalConnectionResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createPhysicalConnection/Fault/ServerSideException")
+    })
+    public long createPhysicalConnection(
+        @WebParam(name = "aObjectClass", targetNamespace = "")
+        String aObjectClass,
+        @WebParam(name = "aObjectId", targetNamespace = "")
+        long aObjectId,
+        @WebParam(name = "bObjectClass", targetNamespace = "")
+        String bObjectClass,
+        @WebParam(name = "bObjectId", targetNamespace = "")
+        long bObjectId,
+        @WebParam(name = "parentClass", targetNamespace = "")
+        String parentClass,
+        @WebParam(name = "parentId", targetNamespace = "")
+        long parentId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "connectionClass", targetNamespace = "")
+        String connectionClass,
+        @WebParam(name = "templateId", targetNamespace = "")
+        long templateId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param connectionClass
+     * @param sessionId
+     * @param connectionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetPhysicalConnectionEndpointsResponse>
+     */
+    @WebMethod(operationName = "getPhysicalConnectionEndpoints")
+    @RequestWrapper(localName = "getPhysicalConnectionEndpoints", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionEndpoints")
+    @ResponseWrapper(localName = "getPhysicalConnectionEndpointsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionEndpointsResponse")
+    public Response<GetPhysicalConnectionEndpointsResponse> getPhysicalConnectionEndpointsAsync(
+        @WebParam(name = "connectionClass", targetNamespace = "")
+        String connectionClass,
+        @WebParam(name = "connectionId", targetNamespace = "")
+        long connectionId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param connectionClass
+     * @param sessionId
+     * @param connectionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getPhysicalConnectionEndpoints")
+    @RequestWrapper(localName = "getPhysicalConnectionEndpoints", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionEndpoints")
+    @ResponseWrapper(localName = "getPhysicalConnectionEndpointsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionEndpointsResponse")
+    public Future<?> getPhysicalConnectionEndpointsAsync(
+        @WebParam(name = "connectionClass", targetNamespace = "")
+        String connectionClass,
+        @WebParam(name = "connectionId", targetNamespace = "")
+        long connectionId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetPhysicalConnectionEndpointsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param connectionClass
+     * @param sessionId
+     * @param connectionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getPhysicalConnectionEndpoints", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionEndpoints")
+    @ResponseWrapper(localName = "getPhysicalConnectionEndpointsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionEndpointsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionEndpointsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionEndpointsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionEndpoints/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getPhysicalConnectionEndpoints(
+        @WebParam(name = "connectionClass", targetNamespace = "")
+        String connectionClass,
+        @WebParam(name = "connectionId", targetNamespace = "")
+        long connectionId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sideBIds
+     * @param linksIds
+     * @param sessionId
+     * @param linksClassNames
+     * @param sideAIds
+     * @param sideBClassNames
+     * @param sideAClassNames
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.ConnectPhysicalLinksResponse>
+     */
+    @WebMethod(operationName = "connectPhysicalLinks")
+    @RequestWrapper(localName = "connectPhysicalLinks", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalLinks")
+    @ResponseWrapper(localName = "connectPhysicalLinksResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalLinksResponse")
+    public Response<ConnectPhysicalLinksResponse> connectPhysicalLinksAsync(
+        @WebParam(name = "sideAClassNames", targetNamespace = "")
+        List<String> sideAClassNames,
+        @WebParam(name = "sideAIds", targetNamespace = "")
+        List<Long> sideAIds,
+        @WebParam(name = "linksClassNames", targetNamespace = "")
+        List<String> linksClassNames,
+        @WebParam(name = "linksIds", targetNamespace = "")
+        List<Long> linksIds,
+        @WebParam(name = "sideBClassNames", targetNamespace = "")
+        List<String> sideBClassNames,
+        @WebParam(name = "sideBIds", targetNamespace = "")
+        List<Long> sideBIds,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sideBIds
+     * @param linksIds
+     * @param sessionId
+     * @param linksClassNames
+     * @param asyncHandler
+     * @param sideAIds
+     * @param sideBClassNames
+     * @param sideAClassNames
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "connectPhysicalLinks")
+    @RequestWrapper(localName = "connectPhysicalLinks", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalLinks")
+    @ResponseWrapper(localName = "connectPhysicalLinksResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalLinksResponse")
+    public Future<?> connectPhysicalLinksAsync(
+        @WebParam(name = "sideAClassNames", targetNamespace = "")
+        List<String> sideAClassNames,
+        @WebParam(name = "sideAIds", targetNamespace = "")
+        List<Long> sideAIds,
+        @WebParam(name = "linksClassNames", targetNamespace = "")
+        List<String> linksClassNames,
+        @WebParam(name = "linksIds", targetNamespace = "")
+        List<Long> linksIds,
+        @WebParam(name = "sideBClassNames", targetNamespace = "")
+        List<String> sideBClassNames,
+        @WebParam(name = "sideBIds", targetNamespace = "")
+        List<Long> sideBIds,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<ConnectPhysicalLinksResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sideBIds
+     * @param linksIds
+     * @param sessionId
+     * @param linksClassNames
+     * @param sideAIds
+     * @param sideBClassNames
+     * @param sideAClassNames
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "connectPhysicalLinks", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalLinks")
+    @ResponseWrapper(localName = "connectPhysicalLinksResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalLinksResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalLinksRequest", output = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalLinksResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalLinks/Fault/ServerSideException")
+    })
+    public void connectPhysicalLinks(
+        @WebParam(name = "sideAClassNames", targetNamespace = "")
+        List<String> sideAClassNames,
+        @WebParam(name = "sideAIds", targetNamespace = "")
+        List<Long> sideAIds,
+        @WebParam(name = "linksClassNames", targetNamespace = "")
+        List<String> linksClassNames,
+        @WebParam(name = "linksIds", targetNamespace = "")
+        List<Long> linksIds,
+        @WebParam(name = "sideBClassNames", targetNamespace = "")
+        List<String> sideBClassNames,
+        @WebParam(name = "sideBIds", targetNamespace = "")
+        List<Long> sideBIds,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sideBIds
+     * @param containersIds
+     * @param sessionId
+     * @param sideAIds
+     * @param containersClassNames
+     * @param sideBClassNames
+     * @param sideAClassNames
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.ConnectPhysicalContainersResponse>
+     */
+    @WebMethod(operationName = "connectPhysicalContainers")
+    @RequestWrapper(localName = "connectPhysicalContainers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalContainers")
+    @ResponseWrapper(localName = "connectPhysicalContainersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalContainersResponse")
+    public Response<ConnectPhysicalContainersResponse> connectPhysicalContainersAsync(
+        @WebParam(name = "sideAClassNames", targetNamespace = "")
+        List<String> sideAClassNames,
+        @WebParam(name = "sideAIds", targetNamespace = "")
+        List<Long> sideAIds,
+        @WebParam(name = "containersClassNames", targetNamespace = "")
+        List<String> containersClassNames,
+        @WebParam(name = "containersIds", targetNamespace = "")
+        List<Long> containersIds,
+        @WebParam(name = "sideBClassNames", targetNamespace = "")
+        List<String> sideBClassNames,
+        @WebParam(name = "sideBIds", targetNamespace = "")
+        List<Long> sideBIds,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sideBIds
+     * @param containersIds
+     * @param sessionId
+     * @param asyncHandler
+     * @param sideAIds
+     * @param containersClassNames
+     * @param sideBClassNames
+     * @param sideAClassNames
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "connectPhysicalContainers")
+    @RequestWrapper(localName = "connectPhysicalContainers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalContainers")
+    @ResponseWrapper(localName = "connectPhysicalContainersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalContainersResponse")
+    public Future<?> connectPhysicalContainersAsync(
+        @WebParam(name = "sideAClassNames", targetNamespace = "")
+        List<String> sideAClassNames,
+        @WebParam(name = "sideAIds", targetNamespace = "")
+        List<Long> sideAIds,
+        @WebParam(name = "containersClassNames", targetNamespace = "")
+        List<String> containersClassNames,
+        @WebParam(name = "containersIds", targetNamespace = "")
+        List<Long> containersIds,
+        @WebParam(name = "sideBClassNames", targetNamespace = "")
+        List<String> sideBClassNames,
+        @WebParam(name = "sideBIds", targetNamespace = "")
+        List<Long> sideBIds,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<ConnectPhysicalContainersResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sideBIds
+     * @param containersIds
+     * @param sessionId
+     * @param sideAIds
+     * @param containersClassNames
+     * @param sideBClassNames
+     * @param sideAClassNames
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "connectPhysicalContainers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalContainers")
+    @ResponseWrapper(localName = "connectPhysicalContainersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalContainersResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalContainersRequest", output = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalContainersResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalContainers/Fault/ServerSideException")
+    })
+    public void connectPhysicalContainers(
+        @WebParam(name = "sideAClassNames", targetNamespace = "")
+        List<String> sideAClassNames,
+        @WebParam(name = "sideAIds", targetNamespace = "")
+        List<Long> sideAIds,
+        @WebParam(name = "containersClassNames", targetNamespace = "")
+        List<String> containersClassNames,
+        @WebParam(name = "containersIds", targetNamespace = "")
+        List<Long> containersIds,
+        @WebParam(name = "sideBClassNames", targetNamespace = "")
+        List<String> sideBClassNames,
+        @WebParam(name = "sideBIds", targetNamespace = "")
+        List<Long> sideBIds,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sideToDisconnect
+     * @param connectionClass
+     * @param sessionId
+     * @param connectionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DisconnectPhysicalConnectionResponse>
+     */
+    @WebMethod(operationName = "disconnectPhysicalConnection")
+    @RequestWrapper(localName = "disconnectPhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DisconnectPhysicalConnection")
+    @ResponseWrapper(localName = "disconnectPhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DisconnectPhysicalConnectionResponse")
+    public Response<DisconnectPhysicalConnectionResponse> disconnectPhysicalConnectionAsync(
+        @WebParam(name = "connectionClass", targetNamespace = "")
+        String connectionClass,
+        @WebParam(name = "connectionId", targetNamespace = "")
+        long connectionId,
+        @WebParam(name = "sideToDisconnect", targetNamespace = "")
+        int sideToDisconnect,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sideToDisconnect
+     * @param connectionClass
+     * @param sessionId
+     * @param connectionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "disconnectPhysicalConnection")
+    @RequestWrapper(localName = "disconnectPhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DisconnectPhysicalConnection")
+    @ResponseWrapper(localName = "disconnectPhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DisconnectPhysicalConnectionResponse")
+    public Future<?> disconnectPhysicalConnectionAsync(
+        @WebParam(name = "connectionClass", targetNamespace = "")
+        String connectionClass,
+        @WebParam(name = "connectionId", targetNamespace = "")
+        long connectionId,
+        @WebParam(name = "sideToDisconnect", targetNamespace = "")
+        int sideToDisconnect,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<DisconnectPhysicalConnectionResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sideToDisconnect
+     * @param connectionClass
+     * @param sessionId
+     * @param connectionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "disconnectPhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DisconnectPhysicalConnection")
+    @ResponseWrapper(localName = "disconnectPhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DisconnectPhysicalConnectionResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/disconnectPhysicalConnectionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/disconnectPhysicalConnectionResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/disconnectPhysicalConnection/Fault/ServerSideException")
+    })
+    public void disconnectPhysicalConnection(
+        @WebParam(name = "connectionClass", targetNamespace = "")
+        String connectionClass,
+        @WebParam(name = "connectionId", targetNamespace = "")
+        long connectionId,
+        @WebParam(name = "sideToDisconnect", targetNamespace = "")
+        int sideToDisconnect,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param objectId
+     * @param objectClass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetPhysicalPathResponse>
+     */
+    @WebMethod(operationName = "getPhysicalPath")
+    @RequestWrapper(localName = "getPhysicalPath", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalPath")
+    @ResponseWrapper(localName = "getPhysicalPathResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalPathResponse")
+    public Response<GetPhysicalPathResponse> getPhysicalPathAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param objectId
+     * @param asyncHandler
+     * @param objectClass
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getPhysicalPath")
+    @RequestWrapper(localName = "getPhysicalPath", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalPath")
+    @ResponseWrapper(localName = "getPhysicalPathResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalPathResponse")
+    public Future<?> getPhysicalPathAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetPhysicalPathResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param objectId
+     * @param objectClass
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getPhysicalPath", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalPath")
+    @ResponseWrapper(localName = "getPhysicalPathResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalPathResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalPathRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalPathResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalPath/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getPhysicalPath(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param linkId
+     * @param linkClass
+     * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetLogicalLinkDetailsResponse>
+     */
+    @WebMethod(operationName = "getLogicalLinkDetails")
+    @RequestWrapper(localName = "getLogicalLinkDetails", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetLogicalLinkDetails")
+    @ResponseWrapper(localName = "getLogicalLinkDetailsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetLogicalLinkDetailsResponse")
+    public Response<GetLogicalLinkDetailsResponse> getLogicalLinkDetailsAsync(
+        @WebParam(name = "linkClass", targetNamespace = "")
+        String linkClass,
+        @WebParam(name = "linkId", targetNamespace = "")
+        long linkId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param linkId
+     * @param linkClass
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getLogicalLinkDetails")
+    @RequestWrapper(localName = "getLogicalLinkDetails", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetLogicalLinkDetails")
+    @ResponseWrapper(localName = "getLogicalLinkDetailsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetLogicalLinkDetailsResponse")
+    public Future<?> getLogicalLinkDetailsAsync(
+        @WebParam(name = "linkClass", targetNamespace = "")
+        String linkClass,
+        @WebParam(name = "linkId", targetNamespace = "")
+        long linkId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetLogicalLinkDetailsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param linkId
+     * @param linkClass
+     * @param sessionId
+     * @return
+     *     returns org.inventory.communications.wsclient.RemoteLogicalConnectionDetails
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getLogicalLinkDetails", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetLogicalLinkDetails")
+    @ResponseWrapper(localName = "getLogicalLinkDetailsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetLogicalLinkDetailsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getLogicalLinkDetailsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getLogicalLinkDetailsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getLogicalLinkDetails/Fault/ServerSideException")
+    })
+    public RemoteLogicalConnectionDetails getLogicalLinkDetails(
+        @WebParam(name = "linkClass", targetNamespace = "")
+        String linkClass,
+        @WebParam(name = "linkId", targetNamespace = "")
+        long linkId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectAClass
+     * @param sessionId
+     * @param containerClass
+     * @param objectBClass
+     * @param objectBId
+     * @param objectAId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetContainersBetweenObjectsResponse>
+     */
+    @WebMethod(operationName = "getContainersBetweenObjects")
+    @RequestWrapper(localName = "getContainersBetweenObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetContainersBetweenObjects")
+    @ResponseWrapper(localName = "getContainersBetweenObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetContainersBetweenObjectsResponse")
+    public Response<GetContainersBetweenObjectsResponse> getContainersBetweenObjectsAsync(
+        @WebParam(name = "objectAClass", targetNamespace = "")
+        String objectAClass,
+        @WebParam(name = "objectAId", targetNamespace = "")
+        long objectAId,
+        @WebParam(name = "objectBClass", targetNamespace = "")
+        String objectBClass,
+        @WebParam(name = "objectBId", targetNamespace = "")
+        long objectBId,
+        @WebParam(name = "containerClass", targetNamespace = "")
+        String containerClass,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param objectAClass
+     * @param sessionId
+     * @param containerClass
+     * @param asyncHandler
+     * @param objectBClass
+     * @param objectBId
+     * @param objectAId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getContainersBetweenObjects")
+    @RequestWrapper(localName = "getContainersBetweenObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetContainersBetweenObjects")
+    @ResponseWrapper(localName = "getContainersBetweenObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetContainersBetweenObjectsResponse")
+    public Future<?> getContainersBetweenObjectsAsync(
+        @WebParam(name = "objectAClass", targetNamespace = "")
+        String objectAClass,
+        @WebParam(name = "objectAId", targetNamespace = "")
+        long objectAId,
+        @WebParam(name = "objectBClass", targetNamespace = "")
+        String objectBClass,
+        @WebParam(name = "objectBId", targetNamespace = "")
+        long objectBId,
+        @WebParam(name = "containerClass", targetNamespace = "")
+        String containerClass,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetContainersBetweenObjectsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param objectAClass
+     * @param sessionId
+     * @param containerClass
+     * @param objectBClass
+     * @param objectBId
+     * @param objectAId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getContainersBetweenObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetContainersBetweenObjects")
+    @ResponseWrapper(localName = "getContainersBetweenObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetContainersBetweenObjectsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getContainersBetweenObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getContainersBetweenObjectsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getContainersBetweenObjects/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getContainersBetweenObjects(
+        @WebParam(name = "objectAClass", targetNamespace = "")
+        String objectAClass,
+        @WebParam(name = "objectAId", targetNamespace = "")
+        long objectAId,
+        @WebParam(name = "objectBClass", targetNamespace = "")
+        String objectBClass,
+        @WebParam(name = "objectBId", targetNamespace = "")
+        long objectBId,
+        @WebParam(name = "containerClass", targetNamespace = "")
+        String containerClass,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param objectId
+     * @param objectClass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetPhysicalConnectionsInObjectResponse>
+     */
+    @WebMethod(operationName = "getPhysicalConnectionsInObject")
+    @RequestWrapper(localName = "getPhysicalConnectionsInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionsInObject")
+    @ResponseWrapper(localName = "getPhysicalConnectionsInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionsInObjectResponse")
+    public Response<GetPhysicalConnectionsInObjectResponse> getPhysicalConnectionsInObjectAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param objectId
+     * @param asyncHandler
+     * @param objectClass
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getPhysicalConnectionsInObject")
+    @RequestWrapper(localName = "getPhysicalConnectionsInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionsInObject")
+    @ResponseWrapper(localName = "getPhysicalConnectionsInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionsInObjectResponse")
+    public Future<?> getPhysicalConnectionsInObjectAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetPhysicalConnectionsInObjectResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param objectId
+     * @param objectClass
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLightList>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getPhysicalConnectionsInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionsInObject")
+    @ResponseWrapper(localName = "getPhysicalConnectionsInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionsInObjectResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionsInObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionsInObjectResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionsInObject/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLightList> getPhysicalConnectionsInObject(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param objectId
+     * @param objectClass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeletePhysicalConnectionResponse>
+     */
+    @WebMethod(operationName = "deletePhysicalConnection")
+    @RequestWrapper(localName = "deletePhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePhysicalConnection")
+    @ResponseWrapper(localName = "deletePhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePhysicalConnectionResponse")
+    public Response<DeletePhysicalConnectionResponse> deletePhysicalConnectionAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param objectId
+     * @param asyncHandler
+     * @param objectClass
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "deletePhysicalConnection")
+    @RequestWrapper(localName = "deletePhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePhysicalConnection")
+    @ResponseWrapper(localName = "deletePhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePhysicalConnectionResponse")
+    public Future<?> deletePhysicalConnectionAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<DeletePhysicalConnectionResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param objectId
+     * @param objectClass
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deletePhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePhysicalConnection")
+    @ResponseWrapper(localName = "deletePhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePhysicalConnectionResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deletePhysicalConnectionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deletePhysicalConnectionResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deletePhysicalConnection/Fault/ServerSideException")
+    })
+    public void deletePhysicalConnection(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param serviceClass
+     * @param serviceId
+     * @param sessionId
+     * @param objectId
+     * @param objectClass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.AssociateObjectToServiceResponse>
+     */
+    @WebMethod(operationName = "associateObjectToService")
+    @RequestWrapper(localName = "associateObjectToService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectToService")
+    @ResponseWrapper(localName = "associateObjectToServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectToServiceResponse")
+    public Response<AssociateObjectToServiceResponse> associateObjectToServiceAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "serviceClass", targetNamespace = "")
+        String serviceClass,
+        @WebParam(name = "serviceId", targetNamespace = "")
+        long serviceId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param serviceClass
+     * @param serviceId
+     * @param sessionId
+     * @param objectId
+     * @param asyncHandler
+     * @param objectClass
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "associateObjectToService")
+    @RequestWrapper(localName = "associateObjectToService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectToService")
+    @ResponseWrapper(localName = "associateObjectToServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectToServiceResponse")
+    public Future<?> associateObjectToServiceAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "serviceClass", targetNamespace = "")
+        String serviceClass,
+        @WebParam(name = "serviceId", targetNamespace = "")
+        long serviceId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<AssociateObjectToServiceResponse> asyncHandler);
+
+    /**
+     * 
+     * @param serviceClass
+     * @param serviceId
+     * @param sessionId
+     * @param objectId
+     * @param objectClass
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "associateObjectToService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectToService")
+    @ResponseWrapper(localName = "associateObjectToServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectToServiceResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/associateObjectToServiceRequest", output = "http://ws.kuwaiba.org/KuwaibaService/associateObjectToServiceResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/associateObjectToService/Fault/ServerSideException")
+    })
+    public void associateObjectToService(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "serviceClass", targetNamespace = "")
+        String serviceClass,
+        @WebParam(name = "serviceId", targetNamespace = "")
+        long serviceId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param serviceClass
+     * @param serviceId
+     * @param sessionId
+     * @param objectId
+     * @param objectClass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.AssociateObjectsToServiceResponse>
+     */
+    @WebMethod(operationName = "associateObjectsToService")
+    @RequestWrapper(localName = "associateObjectsToService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectsToService")
+    @ResponseWrapper(localName = "associateObjectsToServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectsToServiceResponse")
+    public Response<AssociateObjectsToServiceResponse> associateObjectsToServiceAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        List<String> objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        List<Long> objectId,
+        @WebParam(name = "serviceClass", targetNamespace = "")
+        String serviceClass,
+        @WebParam(name = "serviceId", targetNamespace = "")
+        long serviceId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param serviceClass
+     * @param serviceId
+     * @param sessionId
+     * @param objectId
+     * @param asyncHandler
+     * @param objectClass
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "associateObjectsToService")
+    @RequestWrapper(localName = "associateObjectsToService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectsToService")
+    @ResponseWrapper(localName = "associateObjectsToServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectsToServiceResponse")
+    public Future<?> associateObjectsToServiceAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        List<String> objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        List<Long> objectId,
+        @WebParam(name = "serviceClass", targetNamespace = "")
+        String serviceClass,
+        @WebParam(name = "serviceId", targetNamespace = "")
+        long serviceId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<AssociateObjectsToServiceResponse> asyncHandler);
+
+    /**
+     * 
+     * @param serviceClass
+     * @param serviceId
+     * @param sessionId
+     * @param objectId
+     * @param objectClass
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "associateObjectsToService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectsToService")
+    @ResponseWrapper(localName = "associateObjectsToServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectsToServiceResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/associateObjectsToServiceRequest", output = "http://ws.kuwaiba.org/KuwaibaService/associateObjectsToServiceResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/associateObjectsToService/Fault/ServerSideException")
+    })
+    public void associateObjectsToService(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        List<String> objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        List<Long> objectId,
+        @WebParam(name = "serviceClass", targetNamespace = "")
+        String serviceClass,
+        @WebParam(name = "serviceId", targetNamespace = "")
+        long serviceId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param serviceClass
+     * @param serviceId
+     * @param sessionId
+     * @param targetId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.ReleaseObjectFromServiceResponse>
+     */
+    @WebMethod(operationName = "releaseObjectFromService")
+    @RequestWrapper(localName = "releaseObjectFromService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseObjectFromService")
+    @ResponseWrapper(localName = "releaseObjectFromServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseObjectFromServiceResponse")
+    public Response<ReleaseObjectFromServiceResponse> releaseObjectFromServiceAsync(
+        @WebParam(name = "serviceClass", targetNamespace = "")
+        String serviceClass,
+        @WebParam(name = "serviceId", targetNamespace = "")
+        long serviceId,
+        @WebParam(name = "targetId", targetNamespace = "")
+        long targetId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param serviceClass
+     * @param serviceId
+     * @param sessionId
+     * @param asyncHandler
+     * @param targetId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "releaseObjectFromService")
+    @RequestWrapper(localName = "releaseObjectFromService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseObjectFromService")
+    @ResponseWrapper(localName = "releaseObjectFromServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseObjectFromServiceResponse")
+    public Future<?> releaseObjectFromServiceAsync(
+        @WebParam(name = "serviceClass", targetNamespace = "")
+        String serviceClass,
+        @WebParam(name = "serviceId", targetNamespace = "")
+        long serviceId,
+        @WebParam(name = "targetId", targetNamespace = "")
+        long targetId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<ReleaseObjectFromServiceResponse> asyncHandler);
+
+    /**
+     * 
+     * @param serviceClass
+     * @param serviceId
+     * @param sessionId
+     * @param targetId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "releaseObjectFromService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseObjectFromService")
+    @ResponseWrapper(localName = "releaseObjectFromServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseObjectFromServiceResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/releaseObjectFromServiceRequest", output = "http://ws.kuwaiba.org/KuwaibaService/releaseObjectFromServiceResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/releaseObjectFromService/Fault/ServerSideException")
+    })
+    public void releaseObjectFromService(
+        @WebParam(name = "serviceClass", targetNamespace = "")
+        String serviceClass,
+        @WebParam(name = "serviceId", targetNamespace = "")
+        long serviceId,
+        @WebParam(name = "targetId", targetNamespace = "")
+        long targetId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param serviceClass
+     * @param serviceId
+     * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetServiceResourcesResponse>
+     */
+    @WebMethod(operationName = "getServiceResources")
+    @RequestWrapper(localName = "getServiceResources", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetServiceResources")
+    @ResponseWrapper(localName = "getServiceResourcesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetServiceResourcesResponse")
+    public Response<GetServiceResourcesResponse> getServiceResourcesAsync(
+        @WebParam(name = "serviceClass", targetNamespace = "")
+        String serviceClass,
+        @WebParam(name = "serviceId", targetNamespace = "")
+        long serviceId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param serviceClass
+     * @param serviceId
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getServiceResources")
+    @RequestWrapper(localName = "getServiceResources", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetServiceResources")
+    @ResponseWrapper(localName = "getServiceResourcesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetServiceResourcesResponse")
+    public Future<?> getServiceResourcesAsync(
+        @WebParam(name = "serviceClass", targetNamespace = "")
+        String serviceClass,
+        @WebParam(name = "serviceId", targetNamespace = "")
+        long serviceId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetServiceResourcesResponse> asyncHandler);
+
+    /**
+     * 
+     * @param serviceClass
+     * @param serviceId
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getServiceResources", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetServiceResources")
+    @ResponseWrapper(localName = "getServiceResourcesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetServiceResourcesResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getServiceResourcesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getServiceResourcesResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getServiceResources/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getServiceResources(
+        @WebParam(name = "serviceClass", targetNamespace = "")
+        String serviceClass,
+        @WebParam(name = "serviceId", targetNamespace = "")
+        long serviceId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetUsersResponse>
+     */
+    @WebMethod(operationName = "getUsers")
+    @RequestWrapper(localName = "getUsers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsers")
+    @ResponseWrapper(localName = "getUsersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersResponse")
+    public Response<GetUsersResponse> getUsersAsync(
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getUsers")
+    @RequestWrapper(localName = "getUsers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsers")
+    @ResponseWrapper(localName = "getUsersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersResponse")
+    public Future<?> getUsersAsync(
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetUsersResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.UserInfo>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getUsers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsers")
+    @ResponseWrapper(localName = "getUsersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getUsersRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getUsersResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getUsers/Fault/ServerSideException")
+    })
+    public List<UserInfo> getUsers(
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param groupId
+     * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetUsersInGroupResponse>
+     */
+    @WebMethod(operationName = "getUsersInGroup")
+    @RequestWrapper(localName = "getUsersInGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersInGroup")
+    @ResponseWrapper(localName = "getUsersInGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersInGroupResponse")
+    public Response<GetUsersInGroupResponse> getUsersInGroupAsync(
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param groupId
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getUsersInGroup")
+    @RequestWrapper(localName = "getUsersInGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersInGroup")
+    @ResponseWrapper(localName = "getUsersInGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersInGroupResponse")
+    public Future<?> getUsersInGroupAsync(
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetUsersInGroupResponse> asyncHandler);
+
+    /**
+     * 
+     * @param groupId
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.UserInfo>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getUsersInGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersInGroup")
+    @ResponseWrapper(localName = "getUsersInGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersInGroupResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getUsersInGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getUsersInGroupResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getUsersInGroup/Fault/ServerSideException")
+    })
+    public List<UserInfo> getUsersInGroup(
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param userId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetGroupsForUserResponse>
+     */
+    @WebMethod(operationName = "getGroupsForUser")
+    @RequestWrapper(localName = "getGroupsForUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGroupsForUser")
+    @ResponseWrapper(localName = "getGroupsForUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGroupsForUserResponse")
+    public Response<GetGroupsForUserResponse> getGroupsForUserAsync(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param userId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getGroupsForUser")
+    @RequestWrapper(localName = "getGroupsForUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGroupsForUser")
+    @ResponseWrapper(localName = "getGroupsForUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGroupsForUserResponse")
+    public Future<?> getGroupsForUserAsync(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetGroupsForUserResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param userId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.GroupInfoLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getGroupsForUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGroupsForUser")
+    @ResponseWrapper(localName = "getGroupsForUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGroupsForUserResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getGroupsForUserRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getGroupsForUserResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getGroupsForUser/Fault/ServerSideException")
+    })
+    public List<GroupInfoLight> getGroupsForUser(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param groupId
+     * @param sessionId
+     * @param userId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.AddUserToGroupResponse>
+     */
+    @WebMethod(operationName = "addUserToGroup")
+    @RequestWrapper(localName = "addUserToGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddUserToGroup")
+    @ResponseWrapper(localName = "addUserToGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddUserToGroupResponse")
+    public Response<AddUserToGroupResponse> addUserToGroupAsync(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param groupId
+     * @param sessionId
+     * @param userId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "addUserToGroup")
+    @RequestWrapper(localName = "addUserToGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddUserToGroup")
+    @ResponseWrapper(localName = "addUserToGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddUserToGroupResponse")
+    public Future<?> addUserToGroupAsync(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<AddUserToGroupResponse> asyncHandler);
+
+    /**
+     * 
+     * @param groupId
+     * @param sessionId
+     * @param userId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "addUserToGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddUserToGroup")
+    @ResponseWrapper(localName = "addUserToGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddUserToGroupResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/addUserToGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/addUserToGroupResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/addUserToGroup/Fault/ServerSideException")
+    })
+    public void addUserToGroup(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param groupId
+     * @param sessionId
+     * @param userId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.RemoveUserFromGroupResponse>
+     */
+    @WebMethod(operationName = "removeUserFromGroup")
+    @RequestWrapper(localName = "removeUserFromGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemoveUserFromGroup")
+    @ResponseWrapper(localName = "removeUserFromGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemoveUserFromGroupResponse")
+    public Response<RemoveUserFromGroupResponse> removeUserFromGroupAsync(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param groupId
+     * @param sessionId
+     * @param userId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "removeUserFromGroup")
+    @RequestWrapper(localName = "removeUserFromGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemoveUserFromGroup")
+    @ResponseWrapper(localName = "removeUserFromGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemoveUserFromGroupResponse")
+    public Future<?> removeUserFromGroupAsync(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<RemoveUserFromGroupResponse> asyncHandler);
+
+    /**
+     * 
+     * @param groupId
+     * @param sessionId
+     * @param userId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "removeUserFromGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemoveUserFromGroup")
+    @ResponseWrapper(localName = "removeUserFromGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemoveUserFromGroupResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/removeUserFromGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/removeUserFromGroupResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/removeUserFromGroup/Fault/ServerSideException")
+    })
+    public void removeUserFromGroup(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param featureToken
+     * @param sessionId
+     * @param userId
+     * @param accessLevel
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.SetPrivilegeToUserResponse>
+     */
+    @WebMethod(operationName = "setPrivilegeToUser")
+    @RequestWrapper(localName = "setPrivilegeToUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToUser")
+    @ResponseWrapper(localName = "setPrivilegeToUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToUserResponse")
+    public Response<SetPrivilegeToUserResponse> setPrivilegeToUserAsync(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "featureToken", targetNamespace = "")
+        String featureToken,
+        @WebParam(name = "accessLevel", targetNamespace = "")
+        int accessLevel,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param featureToken
+     * @param sessionId
+     * @param userId
+     * @param asyncHandler
+     * @param accessLevel
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "setPrivilegeToUser")
+    @RequestWrapper(localName = "setPrivilegeToUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToUser")
+    @ResponseWrapper(localName = "setPrivilegeToUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToUserResponse")
+    public Future<?> setPrivilegeToUserAsync(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "featureToken", targetNamespace = "")
+        String featureToken,
+        @WebParam(name = "accessLevel", targetNamespace = "")
+        int accessLevel,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<SetPrivilegeToUserResponse> asyncHandler);
+
+    /**
+     * 
+     * @param featureToken
+     * @param sessionId
+     * @param userId
+     * @param accessLevel
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "setPrivilegeToUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToUser")
+    @ResponseWrapper(localName = "setPrivilegeToUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToUserResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToUserRequest", output = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToUserResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToUser/Fault/ServerSideException")
+    })
+    public void setPrivilegeToUser(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "featureToken", targetNamespace = "")
+        String featureToken,
+        @WebParam(name = "accessLevel", targetNamespace = "")
+        int accessLevel,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param featureToken
+     * @param groupId
+     * @param sessionId
+     * @param accessLevel
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.SetPrivilegeToGroupResponse>
+     */
+    @WebMethod(operationName = "setPrivilegeToGroup")
+    @RequestWrapper(localName = "setPrivilegeToGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToGroup")
+    @ResponseWrapper(localName = "setPrivilegeToGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToGroupResponse")
+    public Response<SetPrivilegeToGroupResponse> setPrivilegeToGroupAsync(
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "featureToken", targetNamespace = "")
+        String featureToken,
+        @WebParam(name = "accessLevel", targetNamespace = "")
+        int accessLevel,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param featureToken
+     * @param groupId
+     * @param sessionId
+     * @param asyncHandler
+     * @param accessLevel
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "setPrivilegeToGroup")
+    @RequestWrapper(localName = "setPrivilegeToGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToGroup")
+    @ResponseWrapper(localName = "setPrivilegeToGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToGroupResponse")
+    public Future<?> setPrivilegeToGroupAsync(
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "featureToken", targetNamespace = "")
+        String featureToken,
+        @WebParam(name = "accessLevel", targetNamespace = "")
+        int accessLevel,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<SetPrivilegeToGroupResponse> asyncHandler);
+
+    /**
+     * 
+     * @param featureToken
+     * @param groupId
+     * @param sessionId
+     * @param accessLevel
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "setPrivilegeToGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToGroup")
+    @ResponseWrapper(localName = "setPrivilegeToGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToGroupResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToGroupResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToGroup/Fault/ServerSideException")
+    })
+    public void setPrivilegeToGroup(
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "featureToken", targetNamespace = "")
+        String featureToken,
+        @WebParam(name = "accessLevel", targetNamespace = "")
+        int accessLevel,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param featureToken
+     * @param sessionId
+     * @param userId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.RemovePrivilegeFromUserResponse>
+     */
+    @WebMethod(operationName = "removePrivilegeFromUser")
+    @RequestWrapper(localName = "removePrivilegeFromUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromUser")
+    @ResponseWrapper(localName = "removePrivilegeFromUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromUserResponse")
+    public Response<RemovePrivilegeFromUserResponse> removePrivilegeFromUserAsync(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "featureToken", targetNamespace = "")
+        String featureToken,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param featureToken
+     * @param sessionId
+     * @param userId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "removePrivilegeFromUser")
+    @RequestWrapper(localName = "removePrivilegeFromUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromUser")
+    @ResponseWrapper(localName = "removePrivilegeFromUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromUserResponse")
+    public Future<?> removePrivilegeFromUserAsync(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "featureToken", targetNamespace = "")
+        String featureToken,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<RemovePrivilegeFromUserResponse> asyncHandler);
+
+    /**
+     * 
+     * @param featureToken
+     * @param sessionId
+     * @param userId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "removePrivilegeFromUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromUser")
+    @ResponseWrapper(localName = "removePrivilegeFromUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromUserResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromUserRequest", output = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromUserResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromUser/Fault/ServerSideException")
+    })
+    public void removePrivilegeFromUser(
+        @WebParam(name = "userId", targetNamespace = "")
+        long userId,
+        @WebParam(name = "featureToken", targetNamespace = "")
+        String featureToken,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param featureToken
+     * @param groupId
+     * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.RemovePrivilegeFromGroupResponse>
+     */
+    @WebMethod(operationName = "removePrivilegeFromGroup")
+    @RequestWrapper(localName = "removePrivilegeFromGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromGroup")
+    @ResponseWrapper(localName = "removePrivilegeFromGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromGroupResponse")
+    public Response<RemovePrivilegeFromGroupResponse> removePrivilegeFromGroupAsync(
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "featureToken", targetNamespace = "")
+        String featureToken,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param featureToken
+     * @param groupId
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "removePrivilegeFromGroup")
+    @RequestWrapper(localName = "removePrivilegeFromGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromGroup")
+    @ResponseWrapper(localName = "removePrivilegeFromGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromGroupResponse")
+    public Future<?> removePrivilegeFromGroupAsync(
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "featureToken", targetNamespace = "")
+        String featureToken,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<RemovePrivilegeFromGroupResponse> asyncHandler);
+
+    /**
+     * 
+     * @param featureToken
+     * @param groupId
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "removePrivilegeFromGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromGroup")
+    @ResponseWrapper(localName = "removePrivilegeFromGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromGroupResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromGroupResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromGroup/Fault/ServerSideException")
+    })
+    public void removePrivilegeFromGroup(
+        @WebParam(name = "groupId", targetNamespace = "")
+        long groupId,
+        @WebParam(name = "featureToken", targetNamespace = "")
+        String featureToken,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param enabled
+     * @param lastName
+     * @param username
+     * @param sessionId
+     * @param privileges
+     * @param type
+     * @param firstName
+     * @param password
+     * @param defaultGroupId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateUserResponse>
+     */
+    @WebMethod(operationName = "createUser")
+    @RequestWrapper(localName = "createUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateUser")
+    @ResponseWrapper(localName = "createUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateUserResponse")
+    public Response<CreateUserResponse> createUserAsync(
+        @WebParam(name = "username", targetNamespace = "")
+        String username,
+        @WebParam(name = "password", targetNamespace = "")
+        String password,
+        @WebParam(name = "firstName", targetNamespace = "")
+        String firstName,
+        @WebParam(name = "LastName", targetNamespace = "")
+        String lastName,
+        @WebParam(name = "enabled", targetNamespace = "")
+        boolean enabled,
+        @WebParam(name = "type", targetNamespace = "")
+        int type,
+        @WebParam(name = "privileges", targetNamespace = "")
+        List<PrivilegeInfo> privileges,
+        @WebParam(name = "defaultGroupId", targetNamespace = "")
+        long defaultGroupId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param enabled
+     * @param lastName
+     * @param username
+     * @param sessionId
+     * @param asyncHandler
+     * @param privileges
+     * @param type
+     * @param firstName
+     * @param password
+     * @param defaultGroupId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createUser")
+    @RequestWrapper(localName = "createUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateUser")
+    @ResponseWrapper(localName = "createUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateUserResponse")
+    public Future<?> createUserAsync(
+        @WebParam(name = "username", targetNamespace = "")
+        String username,
+        @WebParam(name = "password", targetNamespace = "")
+        String password,
+        @WebParam(name = "firstName", targetNamespace = "")
+        String firstName,
+        @WebParam(name = "LastName", targetNamespace = "")
+        String lastName,
+        @WebParam(name = "enabled", targetNamespace = "")
+        boolean enabled,
+        @WebParam(name = "type", targetNamespace = "")
+        int type,
+        @WebParam(name = "privileges", targetNamespace = "")
+        List<PrivilegeInfo> privileges,
+        @WebParam(name = "defaultGroupId", targetNamespace = "")
+        long defaultGroupId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreateUserResponse> asyncHandler);
+
+    /**
+     * 
+     * @param enabled
+     * @param lastName
+     * @param username
+     * @param sessionId
+     * @param privileges
+     * @param type
+     * @param firstName
+     * @param password
+     * @param defaultGroupId
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateUser")
+    @ResponseWrapper(localName = "createUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateUserResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createUserRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createUserResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createUser/Fault/ServerSideException")
+    })
+    public long createUser(
+        @WebParam(name = "username", targetNamespace = "")
+        String username,
+        @WebParam(name = "password", targetNamespace = "")
+        String password,
+        @WebParam(name = "firstName", targetNamespace = "")
+        String firstName,
+        @WebParam(name = "LastName", targetNamespace = "")
+        String lastName,
+        @WebParam(name = "enabled", targetNamespace = "")
+        boolean enabled,
+        @WebParam(name = "type", targetNamespace = "")
+        int type,
+        @WebParam(name = "privileges", targetNamespace = "")
+        List<PrivilegeInfo> privileges,
+        @WebParam(name = "defaultGroupId", targetNamespace = "")
+        long defaultGroupId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param groupName
+     * @param sessionId
+     * @param description
+     * @param oid
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.SetGroupPropertiesResponse>
+     */
+    @WebMethod(operationName = "setGroupProperties")
+    @RequestWrapper(localName = "setGroupProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetGroupProperties")
+    @ResponseWrapper(localName = "setGroupPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetGroupPropertiesResponse")
+    public Response<SetGroupPropertiesResponse> setGroupPropertiesAsync(
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "groupName", targetNamespace = "")
+        String groupName,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param groupName
+     * @param sessionId
+     * @param description
+     * @param oid
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "setGroupProperties")
+    @RequestWrapper(localName = "setGroupProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetGroupProperties")
+    @ResponseWrapper(localName = "setGroupPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetGroupPropertiesResponse")
+    public Future<?> setGroupPropertiesAsync(
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "groupName", targetNamespace = "")
+        String groupName,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<SetGroupPropertiesResponse> asyncHandler);
+
+    /**
+     * 
+     * @param groupName
+     * @param sessionId
+     * @param description
+     * @param oid
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "setGroupProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetGroupProperties")
+    @ResponseWrapper(localName = "setGroupPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetGroupPropertiesResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/setGroupPropertiesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/setGroupPropertiesResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/setGroupProperties/Fault/ServerSideException")
+    })
+    public void setGroupProperties(
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "groupName", targetNamespace = "")
+        String groupName,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param oids
+     * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteUsersResponse>
+     */
+    @WebMethod(operationName = "deleteUsers")
+    @RequestWrapper(localName = "deleteUsers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteUsers")
+    @ResponseWrapper(localName = "deleteUsersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteUsersResponse")
+    public Response<DeleteUsersResponse> deleteUsersAsync(
+        @WebParam(name = "oids", targetNamespace = "")
+        List<Long> oids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param oids
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "deleteUsers")
+    @RequestWrapper(localName = "deleteUsers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteUsers")
+    @ResponseWrapper(localName = "deleteUsersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteUsersResponse")
+    public Future<?> deleteUsersAsync(
+        @WebParam(name = "oids", targetNamespace = "")
+        List<Long> oids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<DeleteUsersResponse> asyncHandler);
+
+    /**
+     * 
+     * @param oids
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteUsers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteUsers")
+    @ResponseWrapper(localName = "deleteUsersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteUsersResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteUsersRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteUsersResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteUsers/Fault/ServerSideException")
+    })
+    public void deleteUsers(
+        @WebParam(name = "oids", targetNamespace = "")
+        List<Long> oids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param oids
+     * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteGroupsResponse>
+     */
+    @WebMethod(operationName = "deleteGroups")
+    @RequestWrapper(localName = "deleteGroups", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGroups")
+    @ResponseWrapper(localName = "deleteGroupsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGroupsResponse")
+    public Response<DeleteGroupsResponse> deleteGroupsAsync(
+        @WebParam(name = "oids", targetNamespace = "")
+        List<Long> oids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param oids
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "deleteGroups")
+    @RequestWrapper(localName = "deleteGroups", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGroups")
+    @ResponseWrapper(localName = "deleteGroupsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGroupsResponse")
+    public Future<?> deleteGroupsAsync(
+        @WebParam(name = "oids", targetNamespace = "")
+        List<Long> oids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<DeleteGroupsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param oids
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteGroups", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGroups")
+    @ResponseWrapper(localName = "deleteGroupsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGroupsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteGroupsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteGroupsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteGroups/Fault/ServerSideException")
+    })
+    public void deleteGroups(
+        @WebParam(name = "oids", targetNamespace = "")
+        List<Long> oids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param structure
+     * @param sessionId
+     * @param viewClassName
+     * @param description
+     * @param background
+     * @param name
+     * @param listTypeItemClassName
+     * @param listTypeItemId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateListTypeItemRelateViewResponse>
+     */
+    @WebMethod(operationName = "createListTypeItemRelateView")
+    @RequestWrapper(localName = "createListTypeItemRelateView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemRelateView")
+    @ResponseWrapper(localName = "createListTypeItemRelateViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemRelateViewResponse")
+    public Response<CreateListTypeItemRelateViewResponse> createListTypeItemRelateViewAsync(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClassName", targetNamespace = "")
+        String listTypeItemClassName,
+        @WebParam(name = "viewClassName", targetNamespace = "")
+        String viewClassName,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param structure
+     * @param sessionId
+     * @param viewClassName
+     * @param description
+     * @param background
+     * @param name
+     * @param listTypeItemClassName
+     * @param asyncHandler
+     * @param listTypeItemId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createListTypeItemRelateView")
+    @RequestWrapper(localName = "createListTypeItemRelateView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemRelateView")
+    @ResponseWrapper(localName = "createListTypeItemRelateViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemRelateViewResponse")
+    public Future<?> createListTypeItemRelateViewAsync(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClassName", targetNamespace = "")
+        String listTypeItemClassName,
+        @WebParam(name = "viewClassName", targetNamespace = "")
+        String viewClassName,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreateListTypeItemRelateViewResponse> asyncHandler);
+
+    /**
+     * 
+     * @param structure
+     * @param sessionId
+     * @param viewClassName
+     * @param description
+     * @param background
+     * @param name
+     * @param listTypeItemClassName
+     * @param listTypeItemId
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createListTypeItemRelateView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemRelateView")
+    @ResponseWrapper(localName = "createListTypeItemRelateViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemRelateViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItemRelateViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItemRelateViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItemRelateView/Fault/ServerSideException")
+    })
+    public long createListTypeItemRelateView(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClassName", targetNamespace = "")
+        String listTypeItemClassName,
+        @WebParam(name = "viewClassName", targetNamespace = "")
+        String viewClassName,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param structure
+     * @param sessionId
+     * @param description
+     * @param background
+     * @param name
+     * @param listTypeItemClass
+     * @param listTypeItemId
+     * @param viewId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.UpdateListTypeItemRelatedViewResponse>
+     */
+    @WebMethod(operationName = "updateListTypeItemRelatedView")
+    @RequestWrapper(localName = "updateListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateListTypeItemRelatedView")
+    @ResponseWrapper(localName = "updateListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateListTypeItemRelatedViewResponse")
+    public Response<UpdateListTypeItemRelatedViewResponse> updateListTypeItemRelatedViewAsync(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClass", targetNamespace = "")
+        String listTypeItemClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param structure
+     * @param sessionId
+     * @param description
+     * @param background
+     * @param name
+     * @param asyncHandler
+     * @param listTypeItemClass
+     * @param listTypeItemId
+     * @param viewId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "updateListTypeItemRelatedView")
+    @RequestWrapper(localName = "updateListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateListTypeItemRelatedView")
+    @ResponseWrapper(localName = "updateListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateListTypeItemRelatedViewResponse")
+    public Future<?> updateListTypeItemRelatedViewAsync(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClass", targetNamespace = "")
+        String listTypeItemClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<UpdateListTypeItemRelatedViewResponse> asyncHandler);
+
+    /**
+     * 
+     * @param structure
+     * @param sessionId
+     * @param description
+     * @param background
+     * @param name
+     * @param listTypeItemClass
+     * @param listTypeItemId
+     * @param viewId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "updateListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateListTypeItemRelatedView")
+    @ResponseWrapper(localName = "updateListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateListTypeItemRelatedViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateListTypeItemRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateListTypeItemRelatedViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateListTypeItemRelatedView/Fault/ServerSideException")
+    })
+    public void updateListTypeItemRelatedView(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClass", targetNamespace = "")
+        String listTypeItemClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param listTypeItemClass
+     * @param listTypeItemId
+     * @param viewId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetListTypeItemRelatedViewResponse>
+     */
+    @WebMethod(operationName = "getListTypeItemRelatedView")
+    @RequestWrapper(localName = "getListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedView")
+    @ResponseWrapper(localName = "getListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViewResponse")
+    public Response<GetListTypeItemRelatedViewResponse> getListTypeItemRelatedViewAsync(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClass", targetNamespace = "")
+        String listTypeItemClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param asyncHandler
+     * @param listTypeItemClass
+     * @param listTypeItemId
+     * @param viewId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getListTypeItemRelatedView")
+    @RequestWrapper(localName = "getListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedView")
+    @ResponseWrapper(localName = "getListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViewResponse")
+    public Future<?> getListTypeItemRelatedViewAsync(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClass", targetNamespace = "")
+        String listTypeItemClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetListTypeItemRelatedViewResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param listTypeItemClass
+     * @param listTypeItemId
+     * @param viewId
+     * @return
+     *     returns org.inventory.communications.wsclient.ViewInfo
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedView")
+    @ResponseWrapper(localName = "getListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedView/Fault/ServerSideException")
+    })
+    public ViewInfo getListTypeItemRelatedView(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClass", targetNamespace = "")
+        String listTypeItemClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param limit
+     * @param sessionId
+     * @param listTypeItemClass
+     * @param listTypeItemId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetListTypeItemRelatedViewsResponse>
+     */
+    @WebMethod(operationName = "getListTypeItemRelatedViews")
+    @RequestWrapper(localName = "getListTypeItemRelatedViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViews")
+    @ResponseWrapper(localName = "getListTypeItemRelatedViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViewsResponse")
+    public Response<GetListTypeItemRelatedViewsResponse> getListTypeItemRelatedViewsAsync(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClass", targetNamespace = "")
+        String listTypeItemClass,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param limit
+     * @param sessionId
+     * @param asyncHandler
+     * @param listTypeItemClass
+     * @param listTypeItemId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getListTypeItemRelatedViews")
+    @RequestWrapper(localName = "getListTypeItemRelatedViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViews")
+    @ResponseWrapper(localName = "getListTypeItemRelatedViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViewsResponse")
+    public Future<?> getListTypeItemRelatedViewsAsync(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClass", targetNamespace = "")
+        String listTypeItemClass,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetListTypeItemRelatedViewsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param limit
+     * @param sessionId
+     * @param listTypeItemClass
+     * @param listTypeItemId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ViewInfoLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getListTypeItemRelatedViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViews")
+    @ResponseWrapper(localName = "getListTypeItemRelatedViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViewsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViewsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViewsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViews/Fault/ServerSideException")
+    })
+    public List<ViewInfoLight> getListTypeItemRelatedViews(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClass", targetNamespace = "")
+        String listTypeItemClass,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param listTypeItemClass
+     * @param listTypeItemId
+     * @param viewId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteListTypeItemRelatedViewResponse>
+     */
+    @WebMethod(operationName = "deleteListTypeItemRelatedView")
+    @RequestWrapper(localName = "deleteListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemRelatedView")
+    @ResponseWrapper(localName = "deleteListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemRelatedViewResponse")
+    public Response<DeleteListTypeItemRelatedViewResponse> deleteListTypeItemRelatedViewAsync(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClass", targetNamespace = "")
+        String listTypeItemClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param asyncHandler
+     * @param listTypeItemClass
+     * @param listTypeItemId
+     * @param viewId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "deleteListTypeItemRelatedView")
+    @RequestWrapper(localName = "deleteListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemRelatedView")
+    @ResponseWrapper(localName = "deleteListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemRelatedViewResponse")
+    public Future<?> deleteListTypeItemRelatedViewAsync(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClass", targetNamespace = "")
+        String listTypeItemClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<DeleteListTypeItemRelatedViewResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param listTypeItemClass
+     * @param listTypeItemId
+     * @param viewId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemRelatedView")
+    @ResponseWrapper(localName = "deleteListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemRelatedViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItemRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItemRelatedViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItemRelatedView/Fault/ServerSideException")
+    })
+    public void deleteListTypeItemRelatedView(
+        @WebParam(name = "listTypeItemId", targetNamespace = "")
+        long listTypeItemId,
+        @WebParam(name = "listTypeItemClass", targetNamespace = "")
+        String listTypeItemClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param structure
+     * @param sessionId
+     * @param viewClassName
+     * @param description
+     * @param objectId
+     * @param background
+     * @param name
+     * @param objectClass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateObjectRelatedViewResponse>
+     */
+    @WebMethod(operationName = "createObjectRelatedView")
+    @RequestWrapper(localName = "createObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateObjectRelatedView")
+    @ResponseWrapper(localName = "createObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateObjectRelatedViewResponse")
+    public Response<CreateObjectRelatedViewResponse> createObjectRelatedViewAsync(
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "viewClassName", targetNamespace = "")
+        String viewClassName,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param structure
+     * @param sessionId
+     * @param viewClassName
+     * @param description
+     * @param objectId
+     * @param background
+     * @param name
+     * @param asyncHandler
+     * @param objectClass
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createObjectRelatedView")
+    @RequestWrapper(localName = "createObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateObjectRelatedView")
+    @ResponseWrapper(localName = "createObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateObjectRelatedViewResponse")
+    public Future<?> createObjectRelatedViewAsync(
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "viewClassName", targetNamespace = "")
+        String viewClassName,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreateObjectRelatedViewResponse> asyncHandler);
+
+    /**
+     * 
+     * @param structure
+     * @param sessionId
+     * @param viewClassName
+     * @param description
+     * @param objectId
+     * @param background
+     * @param name
+     * @param objectClass
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateObjectRelatedView")
+    @ResponseWrapper(localName = "createObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateObjectRelatedViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createObjectRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createObjectRelatedViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createObjectRelatedView/Fault/ServerSideException")
+    })
+    public long createObjectRelatedView(
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "viewClassName", targetNamespace = "")
+        String viewClassName,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param structure
+     * @param viewClass
+     * @param sessionId
+     * @param description
+     * @param background
+     * @param name
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateGeneralViewResponse>
+     */
+    @WebMethod(operationName = "createGeneralView")
+    @RequestWrapper(localName = "createGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateGeneralView")
+    @ResponseWrapper(localName = "createGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateGeneralViewResponse")
+    public Response<CreateGeneralViewResponse> createGeneralViewAsync(
+        @WebParam(name = "viewClass", targetNamespace = "")
+        String viewClass,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param structure
+     * @param viewClass
+     * @param sessionId
+     * @param description
+     * @param background
+     * @param name
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createGeneralView")
+    @RequestWrapper(localName = "createGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateGeneralView")
+    @ResponseWrapper(localName = "createGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateGeneralViewResponse")
+    public Future<?> createGeneralViewAsync(
+        @WebParam(name = "viewClass", targetNamespace = "")
+        String viewClass,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreateGeneralViewResponse> asyncHandler);
+
+    /**
+     * 
+     * @param structure
+     * @param viewClass
+     * @param sessionId
+     * @param description
+     * @param background
+     * @param name
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateGeneralView")
+    @ResponseWrapper(localName = "createGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateGeneralViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createGeneralViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createGeneralViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createGeneralView/Fault/ServerSideException")
+    })
+    public long createGeneralView(
+        @WebParam(name = "viewClass", targetNamespace = "")
+        String viewClass,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param oid
+     * @param objectClass
+     * @param viewId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetObjectRelatedViewResponse>
+     */
+    @WebMethod(operationName = "getObjectRelatedView")
+    @RequestWrapper(localName = "getObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedView")
+    @ResponseWrapper(localName = "getObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViewResponse")
+    public Response<GetObjectRelatedViewResponse> getObjectRelatedViewAsync(
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param oid
+     * @param asyncHandler
+     * @param objectClass
+     * @param viewId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getObjectRelatedView")
+    @RequestWrapper(localName = "getObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedView")
+    @ResponseWrapper(localName = "getObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViewResponse")
+    public Future<?> getObjectRelatedViewAsync(
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetObjectRelatedViewResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param oid
+     * @param objectClass
+     * @param viewId
+     * @return
+     *     returns org.inventory.communications.wsclient.ViewInfo
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedView")
+    @ResponseWrapper(localName = "getObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedView/Fault/ServerSideException")
+    })
+    public ViewInfo getObjectRelatedView(
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param limit
+     * @param sessionId
+     * @param oid
+     * @param objectClass
+     * @param viewType
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetObjectRelatedViewsResponse>
+     */
+    @WebMethod(operationName = "getObjectRelatedViews")
+    @RequestWrapper(localName = "getObjectRelatedViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViews")
+    @ResponseWrapper(localName = "getObjectRelatedViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViewsResponse")
+    public Response<GetObjectRelatedViewsResponse> getObjectRelatedViewsAsync(
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "viewType", targetNamespace = "")
+        int viewType,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param limit
+     * @param sessionId
+     * @param oid
+     * @param asyncHandler
+     * @param objectClass
+     * @param viewType
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getObjectRelatedViews")
+    @RequestWrapper(localName = "getObjectRelatedViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViews")
+    @ResponseWrapper(localName = "getObjectRelatedViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViewsResponse")
+    public Future<?> getObjectRelatedViewsAsync(
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "viewType", targetNamespace = "")
+        int viewType,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetObjectRelatedViewsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param limit
+     * @param sessionId
+     * @param oid
+     * @param objectClass
+     * @param viewType
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ViewInfoLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getObjectRelatedViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViews")
+    @ResponseWrapper(localName = "getObjectRelatedViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViewsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViews/Fault/ServerSideException")
+    })
+    public List<ViewInfoLight> getObjectRelatedViews(
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "viewType", targetNamespace = "")
+        int viewType,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param viewId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetGeneralViewResponse>
+     */
+    @WebMethod(operationName = "getGeneralView")
+    @RequestWrapper(localName = "getGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralView")
+    @ResponseWrapper(localName = "getGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViewResponse")
+    public Response<GetGeneralViewResponse> getGeneralViewAsync(
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param asyncHandler
+     * @param viewId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getGeneralView")
+    @RequestWrapper(localName = "getGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralView")
+    @ResponseWrapper(localName = "getGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViewResponse")
+    public Future<?> getGeneralViewAsync(
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetGeneralViewResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param viewId
+     * @return
+     *     returns org.inventory.communications.wsclient.ViewInfo
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralView")
+    @ResponseWrapper(localName = "getGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getGeneralView/Fault/ServerSideException")
+    })
+    public ViewInfo getGeneralView(
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param limit
+     * @param viewClass
+     * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetGeneralViewsResponse>
+     */
+    @WebMethod(operationName = "getGeneralViews")
+    @RequestWrapper(localName = "getGeneralViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViews")
+    @ResponseWrapper(localName = "getGeneralViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViewsResponse")
+    public Response<GetGeneralViewsResponse> getGeneralViewsAsync(
+        @WebParam(name = "viewClass", targetNamespace = "")
+        String viewClass,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param limit
+     * @param viewClass
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getGeneralViews")
+    @RequestWrapper(localName = "getGeneralViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViews")
+    @ResponseWrapper(localName = "getGeneralViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViewsResponse")
+    public Future<?> getGeneralViewsAsync(
+        @WebParam(name = "viewClass", targetNamespace = "")
+        String viewClass,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetGeneralViewsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param limit
+     * @param viewClass
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ViewInfoLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getGeneralViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViews")
+    @ResponseWrapper(localName = "getGeneralViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViewsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViewsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViewsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViews/Fault/ServerSideException")
+    })
+    public List<ViewInfoLight> getGeneralViews(
+        @WebParam(name = "viewClass", targetNamespace = "")
+        String viewClass,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param structure
+     * @param viewDescription
+     * @param objectOid
+     * @param viewName
+     * @param sessionId
+     * @param background
+     * @param objectClass
+     * @param viewId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.UpdateObjectRelatedViewResponse>
+     */
+    @WebMethod(operationName = "updateObjectRelatedView")
+    @RequestWrapper(localName = "updateObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectRelatedView")
+    @ResponseWrapper(localName = "updateObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectRelatedViewResponse")
+    public Response<UpdateObjectRelatedViewResponse> updateObjectRelatedViewAsync(
+        @WebParam(name = "objectOid", targetNamespace = "")
+        long objectOid,
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "viewName", targetNamespace = "")
+        String viewName,
+        @WebParam(name = "viewDescription", targetNamespace = "")
+        String viewDescription,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param structure
+     * @param viewDescription
+     * @param objectOid
+     * @param viewName
+     * @param sessionId
+     * @param background
+     * @param asyncHandler
+     * @param objectClass
+     * @param viewId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "updateObjectRelatedView")
+    @RequestWrapper(localName = "updateObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectRelatedView")
+    @ResponseWrapper(localName = "updateObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectRelatedViewResponse")
+    public Future<?> updateObjectRelatedViewAsync(
+        @WebParam(name = "objectOid", targetNamespace = "")
+        long objectOid,
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "viewName", targetNamespace = "")
+        String viewName,
+        @WebParam(name = "viewDescription", targetNamespace = "")
+        String viewDescription,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<UpdateObjectRelatedViewResponse> asyncHandler);
+
+    /**
+     * 
+     * @param structure
+     * @param viewDescription
+     * @param objectOid
+     * @param viewName
+     * @param sessionId
+     * @param background
+     * @param objectClass
+     * @param viewId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "updateObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectRelatedView")
+    @ResponseWrapper(localName = "updateObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectRelatedViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateObjectRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateObjectRelatedViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateObjectRelatedView/Fault/ServerSideException")
+    })
+    public void updateObjectRelatedView(
+        @WebParam(name = "objectOid", targetNamespace = "")
+        long objectOid,
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "viewName", targetNamespace = "")
+        String viewName,
+        @WebParam(name = "viewDescription", targetNamespace = "")
+        String viewDescription,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param structure
+     * @param viewDescription
+     * @param viewName
+     * @param sessionId
+     * @param background
+     * @param viewId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.UpdateGeneralViewResponse>
+     */
+    @WebMethod(operationName = "updateGeneralView")
+    @RequestWrapper(localName = "updateGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateGeneralView")
+    @ResponseWrapper(localName = "updateGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateGeneralViewResponse")
+    public Response<UpdateGeneralViewResponse> updateGeneralViewAsync(
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "viewName", targetNamespace = "")
+        String viewName,
+        @WebParam(name = "viewDescription", targetNamespace = "")
+        String viewDescription,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param structure
+     * @param viewDescription
+     * @param viewName
+     * @param sessionId
+     * @param background
+     * @param asyncHandler
+     * @param viewId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "updateGeneralView")
+    @RequestWrapper(localName = "updateGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateGeneralView")
+    @ResponseWrapper(localName = "updateGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateGeneralViewResponse")
+    public Future<?> updateGeneralViewAsync(
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "viewName", targetNamespace = "")
+        String viewName,
+        @WebParam(name = "viewDescription", targetNamespace = "")
+        String viewDescription,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<UpdateGeneralViewResponse> asyncHandler);
+
+    /**
+     * 
+     * @param structure
+     * @param viewDescription
+     * @param viewName
+     * @param sessionId
+     * @param background
+     * @param viewId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "updateGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateGeneralView")
+    @ResponseWrapper(localName = "updateGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateGeneralViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateGeneralViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateGeneralViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateGeneralView/Fault/ServerSideException")
+    })
+    public void updateGeneralView(
+        @WebParam(name = "viewId", targetNamespace = "")
+        long viewId,
+        @WebParam(name = "viewName", targetNamespace = "")
+        String viewName,
+        @WebParam(name = "viewDescription", targetNamespace = "")
+        String viewDescription,
+        @WebParam(name = "structure", targetNamespace = "")
+        byte[] structure,
+        @WebParam(name = "background", targetNamespace = "")
+        byte[] background,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param oids
+     * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteGeneralViewResponse>
+     */
+    @WebMethod(operationName = "deleteGeneralView")
+    @RequestWrapper(localName = "deleteGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGeneralView")
+    @ResponseWrapper(localName = "deleteGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGeneralViewResponse")
+    public Response<DeleteGeneralViewResponse> deleteGeneralViewAsync(
+        @WebParam(name = "oids", targetNamespace = "")
+        List<Long> oids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param oids
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "deleteGeneralView")
+    @RequestWrapper(localName = "deleteGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGeneralView")
+    @ResponseWrapper(localName = "deleteGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGeneralViewResponse")
+    public Future<?> deleteGeneralViewAsync(
+        @WebParam(name = "oids", targetNamespace = "")
+        List<Long> oids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<DeleteGeneralViewResponse> asyncHandler);
+
+    /**
+     * 
+     * @param oids
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGeneralView")
+    @ResponseWrapper(localName = "deleteGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGeneralViewResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteGeneralViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteGeneralViewResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteGeneralView/Fault/ServerSideException")
+    })
+    public void deleteGeneralView(
+        @WebParam(name = "oids", targetNamespace = "")
+        List<Long> oids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param queryStructure
+     * @param sessionId
+     * @param queryName
+     * @param description
+     * @param ownerOid
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateQueryResponse>
+     */
+    @WebMethod(operationName = "createQuery")
+    @RequestWrapper(localName = "createQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateQuery")
+    @ResponseWrapper(localName = "createQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateQueryResponse")
+    public Response<CreateQueryResponse> createQueryAsync(
+        @WebParam(name = "queryName", targetNamespace = "")
+        String queryName,
+        @WebParam(name = "ownerOid", targetNamespace = "")
+        long ownerOid,
+        @WebParam(name = "queryStructure", targetNamespace = "")
+        byte[] queryStructure,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param queryStructure
+     * @param sessionId
+     * @param queryName
+     * @param description
+     * @param asyncHandler
+     * @param ownerOid
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createQuery")
+    @RequestWrapper(localName = "createQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateQuery")
+    @ResponseWrapper(localName = "createQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateQueryResponse")
+    public Future<?> createQueryAsync(
+        @WebParam(name = "queryName", targetNamespace = "")
+        String queryName,
+        @WebParam(name = "ownerOid", targetNamespace = "")
+        long ownerOid,
+        @WebParam(name = "queryStructure", targetNamespace = "")
+        byte[] queryStructure,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreateQueryResponse> asyncHandler);
+
+    /**
+     * 
+     * @param queryStructure
+     * @param sessionId
+     * @param queryName
+     * @param description
+     * @param ownerOid
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateQuery")
+    @ResponseWrapper(localName = "createQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateQueryResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createQueryRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createQueryResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createQuery/Fault/ServerSideException")
+    })
+    public long createQuery(
+        @WebParam(name = "queryName", targetNamespace = "")
+        String queryName,
+        @WebParam(name = "ownerOid", targetNamespace = "")
+        long ownerOid,
+        @WebParam(name = "queryStructure", targetNamespace = "")
+        byte[] queryStructure,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param queryStructure
+     * @param queryOid
+     * @param sessionId
+     * @param queryName
+     * @param description
+     * @param ownerOid
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.SaveQueryResponse>
+     */
+    @WebMethod(operationName = "saveQuery")
+    @RequestWrapper(localName = "saveQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SaveQuery")
+    @ResponseWrapper(localName = "saveQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SaveQueryResponse")
+    public Response<SaveQueryResponse> saveQueryAsync(
+        @WebParam(name = "queryOid", targetNamespace = "")
+        long queryOid,
+        @WebParam(name = "queryName", targetNamespace = "")
+        String queryName,
+        @WebParam(name = "ownerOid", targetNamespace = "")
+        long ownerOid,
+        @WebParam(name = "queryStructure", targetNamespace = "")
+        byte[] queryStructure,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param queryStructure
+     * @param queryOid
+     * @param sessionId
+     * @param queryName
+     * @param description
+     * @param asyncHandler
+     * @param ownerOid
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "saveQuery")
+    @RequestWrapper(localName = "saveQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SaveQuery")
+    @ResponseWrapper(localName = "saveQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SaveQueryResponse")
+    public Future<?> saveQueryAsync(
+        @WebParam(name = "queryOid", targetNamespace = "")
+        long queryOid,
+        @WebParam(name = "queryName", targetNamespace = "")
+        String queryName,
+        @WebParam(name = "ownerOid", targetNamespace = "")
+        long ownerOid,
+        @WebParam(name = "queryStructure", targetNamespace = "")
+        byte[] queryStructure,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<SaveQueryResponse> asyncHandler);
+
+    /**
+     * 
+     * @param queryStructure
+     * @param queryOid
+     * @param sessionId
+     * @param queryName
+     * @param description
+     * @param ownerOid
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "saveQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SaveQuery")
+    @ResponseWrapper(localName = "saveQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SaveQueryResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/saveQueryRequest", output = "http://ws.kuwaiba.org/KuwaibaService/saveQueryResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/saveQuery/Fault/ServerSideException")
+    })
+    public void saveQuery(
+        @WebParam(name = "queryOid", targetNamespace = "")
+        long queryOid,
+        @WebParam(name = "queryName", targetNamespace = "")
+        String queryName,
+        @WebParam(name = "ownerOid", targetNamespace = "")
+        long ownerOid,
+        @WebParam(name = "queryStructure", targetNamespace = "")
+        byte[] queryStructure,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param queryOid
+     * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteQueryResponse>
+     */
+    @WebMethod(operationName = "deleteQuery")
+    @RequestWrapper(localName = "deleteQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteQuery")
+    @ResponseWrapper(localName = "deleteQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteQueryResponse")
+    public Response<DeleteQueryResponse> deleteQueryAsync(
+        @WebParam(name = "queryOid", targetNamespace = "")
+        long queryOid,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param queryOid
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "deleteQuery")
+    @RequestWrapper(localName = "deleteQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteQuery")
+    @ResponseWrapper(localName = "deleteQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteQueryResponse")
+    public Future<?> deleteQueryAsync(
+        @WebParam(name = "queryOid", targetNamespace = "")
+        long queryOid,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<DeleteQueryResponse> asyncHandler);
+
+    /**
+     * 
+     * @param queryOid
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteQuery")
+    @ResponseWrapper(localName = "deleteQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteQueryResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteQueryRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteQueryResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteQuery/Fault/ServerSideException")
+    })
+    public void deleteQuery(
+        @WebParam(name = "queryOid", targetNamespace = "")
+        long queryOid,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param showPublic
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetQueriesResponse>
+     */
+    @WebMethod(operationName = "getQueries")
+    @RequestWrapper(localName = "getQueries", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetQueries")
+    @ResponseWrapper(localName = "getQueriesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetQueriesResponse")
+    public Response<GetQueriesResponse> getQueriesAsync(
+        @WebParam(name = "showPublic", targetNamespace = "")
+        boolean showPublic,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param asyncHandler
+     * @param showPublic
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getQueries")
+    @RequestWrapper(localName = "getQueries", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetQueries")
+    @ResponseWrapper(localName = "getQueriesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetQueriesResponse")
+    public Future<?> getQueriesAsync(
+        @WebParam(name = "showPublic", targetNamespace = "")
+        boolean showPublic,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetQueriesResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param showPublic
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteQueryLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getQueries", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetQueries")
+    @ResponseWrapper(localName = "getQueriesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetQueriesResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getQueriesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getQueriesResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getQueries/Fault/ServerSideException")
+    })
+    public List<RemoteQueryLight> getQueries(
+        @WebParam(name = "showPublic", targetNamespace = "")
+        boolean showPublic,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param description
+     * @param name
+     * @param type
+     * @param instancesOfClass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateRootPoolResponse>
+     */
+    @WebMethod(operationName = "createRootPool")
+    @RequestWrapper(localName = "createRootPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateRootPool")
+    @ResponseWrapper(localName = "createRootPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateRootPoolResponse")
+    public Response<CreateRootPoolResponse> createRootPoolAsync(
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "instancesOfClass", targetNamespace = "")
+        String instancesOfClass,
+        @WebParam(name = "type", targetNamespace = "")
+        int type,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param description
+     * @param name
+     * @param asyncHandler
+     * @param type
+     * @param instancesOfClass
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createRootPool")
+    @RequestWrapper(localName = "createRootPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateRootPool")
+    @ResponseWrapper(localName = "createRootPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateRootPoolResponse")
+    public Future<?> createRootPoolAsync(
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "instancesOfClass", targetNamespace = "")
+        String instancesOfClass,
+        @WebParam(name = "type", targetNamespace = "")
+        int type,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreateRootPoolResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param description
+     * @param name
+     * @param type
+     * @param instancesOfClass
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createRootPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateRootPool")
+    @ResponseWrapper(localName = "createRootPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateRootPoolResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createRootPoolRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createRootPoolResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createRootPool/Fault/ServerSideException")
+    })
+    public long createRootPool(
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "instancesOfClass", targetNamespace = "")
+        String instancesOfClass,
+        @WebParam(name = "type", targetNamespace = "")
+        int type,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param parentId
+     * @param sessionId
+     * @param description
+     * @param name
+     * @param type
+     * @param instancesOfClass
+     * @param parentClassname
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreatePoolInObjectResponse>
+     */
+    @WebMethod(operationName = "createPoolInObject")
+    @RequestWrapper(localName = "createPoolInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInObject")
+    @ResponseWrapper(localName = "createPoolInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInObjectResponse")
+    public Response<CreatePoolInObjectResponse> createPoolInObjectAsync(
+        @WebParam(name = "parentClassname", targetNamespace = "")
+        String parentClassname,
+        @WebParam(name = "parentId", targetNamespace = "")
+        long parentId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "instancesOfClass", targetNamespace = "")
+        String instancesOfClass,
+        @WebParam(name = "type", targetNamespace = "")
+        int type,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param parentId
+     * @param sessionId
+     * @param description
+     * @param name
+     * @param asyncHandler
+     * @param type
+     * @param instancesOfClass
+     * @param parentClassname
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createPoolInObject")
+    @RequestWrapper(localName = "createPoolInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInObject")
+    @ResponseWrapper(localName = "createPoolInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInObjectResponse")
+    public Future<?> createPoolInObjectAsync(
+        @WebParam(name = "parentClassname", targetNamespace = "")
+        String parentClassname,
+        @WebParam(name = "parentId", targetNamespace = "")
+        long parentId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "instancesOfClass", targetNamespace = "")
+        String instancesOfClass,
+        @WebParam(name = "type", targetNamespace = "")
+        int type,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreatePoolInObjectResponse> asyncHandler);
+
+    /**
+     * 
+     * @param parentId
+     * @param sessionId
+     * @param description
+     * @param name
+     * @param type
+     * @param instancesOfClass
+     * @param parentClassname
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createPoolInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInObject")
+    @ResponseWrapper(localName = "createPoolInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInObjectResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createPoolInObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createPoolInObjectResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createPoolInObject/Fault/ServerSideException")
+    })
+    public long createPoolInObject(
+        @WebParam(name = "parentClassname", targetNamespace = "")
+        String parentClassname,
+        @WebParam(name = "parentId", targetNamespace = "")
+        long parentId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "instancesOfClass", targetNamespace = "")
+        String instancesOfClass,
+        @WebParam(name = "type", targetNamespace = "")
+        int type,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param parentId
+     * @param sessionId
+     * @param description
+     * @param name
+     * @param type
+     * @param instancesOfClass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreatePoolInPoolResponse>
+     */
+    @WebMethod(operationName = "createPoolInPool")
+    @RequestWrapper(localName = "createPoolInPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInPool")
+    @ResponseWrapper(localName = "createPoolInPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInPoolResponse")
+    public Response<CreatePoolInPoolResponse> createPoolInPoolAsync(
+        @WebParam(name = "parentId", targetNamespace = "")
+        long parentId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "instancesOfClass", targetNamespace = "")
+        String instancesOfClass,
+        @WebParam(name = "type", targetNamespace = "")
+        int type,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param parentId
+     * @param sessionId
+     * @param description
+     * @param name
+     * @param asyncHandler
+     * @param type
+     * @param instancesOfClass
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createPoolInPool")
+    @RequestWrapper(localName = "createPoolInPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInPool")
+    @ResponseWrapper(localName = "createPoolInPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInPoolResponse")
+    public Future<?> createPoolInPoolAsync(
+        @WebParam(name = "parentId", targetNamespace = "")
+        long parentId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "instancesOfClass", targetNamespace = "")
+        String instancesOfClass,
+        @WebParam(name = "type", targetNamespace = "")
+        int type,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreatePoolInPoolResponse> asyncHandler);
+
+    /**
+     * 
+     * @param parentId
+     * @param sessionId
+     * @param description
+     * @param name
+     * @param type
+     * @param instancesOfClass
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createPoolInPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInPool")
+    @ResponseWrapper(localName = "createPoolInPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInPoolResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createPoolInPoolRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createPoolInPoolResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createPoolInPool/Fault/ServerSideException")
+    })
+    public long createPoolInPool(
+        @WebParam(name = "parentId", targetNamespace = "")
+        long parentId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "instancesOfClass", targetNamespace = "")
+        String instancesOfClass,
+        @WebParam(name = "type", targetNamespace = "")
+        int type,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param templateId
+     * @param attributeNames
+     * @param attributeValues
+     * @param sessionId
+     * @param className
+     * @param poolId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreatePoolItemResponse>
+     */
+    @WebMethod(operationName = "createPoolItem")
+    @RequestWrapper(localName = "createPoolItem", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolItem")
+    @ResponseWrapper(localName = "createPoolItemResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolItemResponse")
+    public Response<CreatePoolItemResponse> createPoolItemAsync(
+        @WebParam(name = "poolId", targetNamespace = "")
+        long poolId,
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "attributeNames", targetNamespace = "")
+        List<String> attributeNames,
+        @WebParam(name = "attributeValues", targetNamespace = "")
+        List<String> attributeValues,
+        @WebParam(name = "templateId", targetNamespace = "")
+        long templateId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param templateId
+     * @param attributeNames
+     * @param attributeValues
+     * @param sessionId
+     * @param asyncHandler
+     * @param className
+     * @param poolId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createPoolItem")
+    @RequestWrapper(localName = "createPoolItem", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolItem")
+    @ResponseWrapper(localName = "createPoolItemResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolItemResponse")
+    public Future<?> createPoolItemAsync(
+        @WebParam(name = "poolId", targetNamespace = "")
+        long poolId,
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "attributeNames", targetNamespace = "")
+        List<String> attributeNames,
+        @WebParam(name = "attributeValues", targetNamespace = "")
+        List<String> attributeValues,
+        @WebParam(name = "templateId", targetNamespace = "")
+        long templateId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreatePoolItemResponse> asyncHandler);
+
+    /**
+     * 
+     * @param templateId
+     * @param attributeNames
+     * @param attributeValues
+     * @param sessionId
+     * @param className
+     * @param poolId
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createPoolItem", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolItem")
+    @ResponseWrapper(localName = "createPoolItemResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolItemResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createPoolItemRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createPoolItemResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createPoolItem/Fault/ServerSideException")
+    })
+    public long createPoolItem(
+        @WebParam(name = "poolId", targetNamespace = "")
+        long poolId,
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "attributeNames", targetNamespace = "")
+        List<String> attributeNames,
+        @WebParam(name = "attributeValues", targetNamespace = "")
+        List<String> attributeValues,
+        @WebParam(name = "templateId", targetNamespace = "")
+        long templateId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param ids
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeletePoolsResponse>
+     */
+    @WebMethod(operationName = "deletePools")
+    @RequestWrapper(localName = "deletePools", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePools")
+    @ResponseWrapper(localName = "deletePoolsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePoolsResponse")
+    public Response<DeletePoolsResponse> deletePoolsAsync(
+        @WebParam(name = "ids", targetNamespace = "")
+        List<Long> ids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param ids
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "deletePools")
+    @RequestWrapper(localName = "deletePools", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePools")
+    @ResponseWrapper(localName = "deletePoolsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePoolsResponse")
+    public Future<?> deletePoolsAsync(
+        @WebParam(name = "ids", targetNamespace = "")
+        List<Long> ids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<DeletePoolsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param ids
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deletePools", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePools")
+    @ResponseWrapper(localName = "deletePoolsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePoolsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deletePoolsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deletePoolsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deletePools/Fault/ServerSideException")
+    })
+    public void deletePools(
+        @WebParam(name = "ids", targetNamespace = "")
+        List<Long> ids,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param description
+     * @param name
+     * @param poolId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.SetPoolPropertiesResponse>
+     */
+    @WebMethod(operationName = "setPoolProperties")
+    @RequestWrapper(localName = "setPoolProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPoolProperties")
+    @ResponseWrapper(localName = "setPoolPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPoolPropertiesResponse")
+    public Response<SetPoolPropertiesResponse> setPoolPropertiesAsync(
+        @WebParam(name = "poolId", targetNamespace = "")
+        long poolId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param description
+     * @param name
+     * @param asyncHandler
+     * @param poolId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "setPoolProperties")
+    @RequestWrapper(localName = "setPoolProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPoolProperties")
+    @ResponseWrapper(localName = "setPoolPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPoolPropertiesResponse")
+    public Future<?> setPoolPropertiesAsync(
+        @WebParam(name = "poolId", targetNamespace = "")
+        long poolId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<SetPoolPropertiesResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param description
+     * @param name
+     * @param poolId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "setPoolProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPoolProperties")
+    @ResponseWrapper(localName = "setPoolPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPoolPropertiesResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/setPoolPropertiesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/setPoolPropertiesResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/setPoolProperties/Fault/ServerSideException")
+    })
+    public void setPoolProperties(
+        @WebParam(name = "poolId", targetNamespace = "")
+        long poolId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param includeSubclasses
+     * @param className
+     * @param type
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetRootPoolsResponse>
+     */
+    @WebMethod(operationName = "getRootPools")
+    @RequestWrapper(localName = "getRootPools", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetRootPools")
+    @ResponseWrapper(localName = "getRootPoolsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetRootPoolsResponse")
+    public Response<GetRootPoolsResponse> getRootPoolsAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "type", targetNamespace = "")
+        int type,
+        @WebParam(name = "includeSubclasses", targetNamespace = "")
+        boolean includeSubclasses,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param includeSubclasses
+     * @param asyncHandler
+     * @param className
+     * @param type
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getRootPools")
+    @RequestWrapper(localName = "getRootPools", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetRootPools")
+    @ResponseWrapper(localName = "getRootPoolsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetRootPoolsResponse")
+    public Future<?> getRootPoolsAsync(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "type", targetNamespace = "")
+        int type,
+        @WebParam(name = "includeSubclasses", targetNamespace = "")
+        boolean includeSubclasses,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetRootPoolsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param includeSubclasses
+     * @param className
+     * @param type
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemotePool>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getRootPools", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetRootPools")
+    @ResponseWrapper(localName = "getRootPoolsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetRootPoolsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getRootPoolsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getRootPoolsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getRootPools/Fault/ServerSideException")
+    })
+    public List<RemotePool> getRootPools(
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "type", targetNamespace = "")
+        int type,
+        @WebParam(name = "includeSubclasses", targetNamespace = "")
+        boolean includeSubclasses,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param objectClassName
+     * @param sessionId
+     * @param poolClass
+     * @param objectId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetPoolsInObjectResponse>
+     */
+    @WebMethod(operationName = "getPoolsInObject")
+    @RequestWrapper(localName = "getPoolsInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInObject")
+    @ResponseWrapper(localName = "getPoolsInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInObjectResponse")
+    public Response<GetPoolsInObjectResponse> getPoolsInObjectAsync(
+        @WebParam(name = "objectClassName", targetNamespace = "")
+        String objectClassName,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "poolClass", targetNamespace = "")
+        String poolClass,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param objectClassName
+     * @param sessionId
+     * @param poolClass
+     * @param objectId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getPoolsInObject")
+    @RequestWrapper(localName = "getPoolsInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInObject")
+    @ResponseWrapper(localName = "getPoolsInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInObjectResponse")
+    public Future<?> getPoolsInObjectAsync(
+        @WebParam(name = "objectClassName", targetNamespace = "")
+        String objectClassName,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "poolClass", targetNamespace = "")
+        String poolClass,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetPoolsInObjectResponse> asyncHandler);
+
+    /**
+     * 
+     * @param objectClassName
+     * @param sessionId
+     * @param poolClass
+     * @param objectId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemotePool>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getPoolsInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInObject")
+    @ResponseWrapper(localName = "getPoolsInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInObjectResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPoolsInObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPoolsInObjectResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPoolsInObject/Fault/ServerSideException")
+    })
+    public List<RemotePool> getPoolsInObject(
+        @WebParam(name = "objectClassName", targetNamespace = "")
+        String objectClassName,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "poolClass", targetNamespace = "")
+        String poolClass,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param parentPoolId
+     * @param sessionId
+     * @param poolClass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetPoolsInPoolResponse>
+     */
+    @WebMethod(operationName = "getPoolsInPool")
+    @RequestWrapper(localName = "getPoolsInPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInPool")
+    @ResponseWrapper(localName = "getPoolsInPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInPoolResponse")
+    public Response<GetPoolsInPoolResponse> getPoolsInPoolAsync(
+        @WebParam(name = "parentPoolId", targetNamespace = "")
+        long parentPoolId,
+        @WebParam(name = "poolClass", targetNamespace = "")
+        String poolClass,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param parentPoolId
+     * @param sessionId
+     * @param poolClass
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getPoolsInPool")
+    @RequestWrapper(localName = "getPoolsInPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInPool")
+    @ResponseWrapper(localName = "getPoolsInPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInPoolResponse")
+    public Future<?> getPoolsInPoolAsync(
+        @WebParam(name = "parentPoolId", targetNamespace = "")
+        long parentPoolId,
+        @WebParam(name = "poolClass", targetNamespace = "")
+        String poolClass,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetPoolsInPoolResponse> asyncHandler);
+
+    /**
+     * 
+     * @param parentPoolId
+     * @param sessionId
+     * @param poolClass
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemotePool>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getPoolsInPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInPool")
+    @ResponseWrapper(localName = "getPoolsInPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInPoolResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPoolsInPoolRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPoolsInPoolResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPoolsInPool/Fault/ServerSideException")
+    })
+    public List<RemotePool> getPoolsInPool(
+        @WebParam(name = "parentPoolId", targetNamespace = "")
+        long parentPoolId,
+        @WebParam(name = "poolClass", targetNamespace = "")
+        String poolClass,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param limit
+     * @param sessionId
+     * @param poolId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetPoolItemsResponse>
+     */
+    @WebMethod(operationName = "getPoolItems")
+    @RequestWrapper(localName = "getPoolItems", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolItems")
+    @ResponseWrapper(localName = "getPoolItemsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolItemsResponse")
+    public Response<GetPoolItemsResponse> getPoolItemsAsync(
+        @WebParam(name = "poolId", targetNamespace = "")
+        long poolId,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param limit
+     * @param sessionId
+     * @param asyncHandler
+     * @param poolId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getPoolItems")
+    @RequestWrapper(localName = "getPoolItems", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolItems")
+    @ResponseWrapper(localName = "getPoolItemsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolItemsResponse")
+    public Future<?> getPoolItemsAsync(
+        @WebParam(name = "poolId", targetNamespace = "")
+        long poolId,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetPoolItemsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param limit
+     * @param sessionId
+     * @param poolId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getPoolItems", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolItems")
+    @ResponseWrapper(localName = "getPoolItemsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolItemsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPoolItemsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPoolItemsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPoolItems/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getPoolItems(
+        @WebParam(name = "poolId", targetNamespace = "")
+        long poolId,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param limit
+     * @param sessionId
+     * @param objectId
+     * @param objectClass
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetBusinessObjectAuditTrailResponse>
+     */
+    @WebMethod(operationName = "getBusinessObjectAuditTrail")
+    @RequestWrapper(localName = "getBusinessObjectAuditTrail", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetBusinessObjectAuditTrail")
+    @ResponseWrapper(localName = "getBusinessObjectAuditTrailResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetBusinessObjectAuditTrailResponse")
+    public Response<GetBusinessObjectAuditTrailResponse> getBusinessObjectAuditTrailAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param limit
+     * @param sessionId
+     * @param objectId
+     * @param asyncHandler
+     * @param objectClass
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getBusinessObjectAuditTrail")
+    @RequestWrapper(localName = "getBusinessObjectAuditTrail", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetBusinessObjectAuditTrail")
+    @ResponseWrapper(localName = "getBusinessObjectAuditTrailResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetBusinessObjectAuditTrailResponse")
+    public Future<?> getBusinessObjectAuditTrailAsync(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetBusinessObjectAuditTrailResponse> asyncHandler);
+
+    /**
+     * 
+     * @param limit
+     * @param sessionId
+     * @param objectId
+     * @param objectClass
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ApplicationLogEntry>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getBusinessObjectAuditTrail", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetBusinessObjectAuditTrail")
+    @ResponseWrapper(localName = "getBusinessObjectAuditTrailResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetBusinessObjectAuditTrailResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getBusinessObjectAuditTrailRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getBusinessObjectAuditTrailResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getBusinessObjectAuditTrail/Fault/ServerSideException")
+    })
+    public List<ApplicationLogEntry> getBusinessObjectAuditTrail(
+        @WebParam(name = "objectClass", targetNamespace = "")
+        String objectClass,
+        @WebParam(name = "objectId", targetNamespace = "")
+        long objectId,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param limit
+     * @param sessionId
+     * @param page
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetGeneralActivityAuditTrailResponse>
+     */
+    @WebMethod(operationName = "getGeneralActivityAuditTrail")
+    @RequestWrapper(localName = "getGeneralActivityAuditTrail", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralActivityAuditTrail")
+    @ResponseWrapper(localName = "getGeneralActivityAuditTrailResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralActivityAuditTrailResponse")
+    public Response<GetGeneralActivityAuditTrailResponse> getGeneralActivityAuditTrailAsync(
+        @WebParam(name = "page", targetNamespace = "")
+        int page,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param limit
+     * @param sessionId
+     * @param page
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getGeneralActivityAuditTrail")
+    @RequestWrapper(localName = "getGeneralActivityAuditTrail", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralActivityAuditTrail")
+    @ResponseWrapper(localName = "getGeneralActivityAuditTrailResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralActivityAuditTrailResponse")
+    public Future<?> getGeneralActivityAuditTrailAsync(
+        @WebParam(name = "page", targetNamespace = "")
+        int page,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetGeneralActivityAuditTrailResponse> asyncHandler);
+
+    /**
+     * 
+     * @param limit
+     * @param sessionId
+     * @param page
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.ApplicationLogEntry>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getGeneralActivityAuditTrail", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralActivityAuditTrail")
+    @ResponseWrapper(localName = "getGeneralActivityAuditTrailResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralActivityAuditTrailResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getGeneralActivityAuditTrailRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getGeneralActivityAuditTrailResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getGeneralActivityAuditTrail/Fault/ServerSideException")
+    })
+    public List<ApplicationLogEntry> getGeneralActivityAuditTrail(
+        @WebParam(name = "page", targetNamespace = "")
+        int page,
+        @WebParam(name = "limit", targetNamespace = "")
+        int limit,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param enabled
+     * @param schedule
+     * @param sessionId
+     * @param notificationType
+     * @param description
+     * @param name
+     * @param parameters
+     * @param script
+     * @param commitOnExecute
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateTaskResponse>
+     */
+    @WebMethod(operationName = "createTask")
+    @RequestWrapper(localName = "createTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateTask")
+    @ResponseWrapper(localName = "createTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateTaskResponse")
+    public Response<CreateTaskResponse> createTaskAsync(
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "enabled", targetNamespace = "")
+        boolean enabled,
+        @WebParam(name = "commitOnExecute", targetNamespace = "")
+        boolean commitOnExecute,
+        @WebParam(name = "script", targetNamespace = "")
+        String script,
+        @WebParam(name = "parameters", targetNamespace = "")
+        List<StringPair> parameters,
+        @WebParam(name = "schedule", targetNamespace = "")
+        TaskScheduleDescriptor schedule,
+        @WebParam(name = "notificationType", targetNamespace = "")
+        TaskNotificationDescriptor notificationType,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param enabled
+     * @param schedule
+     * @param sessionId
+     * @param notificationType
+     * @param description
+     * @param name
+     * @param asyncHandler
+     * @param parameters
+     * @param script
+     * @param commitOnExecute
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createTask")
+    @RequestWrapper(localName = "createTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateTask")
+    @ResponseWrapper(localName = "createTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateTaskResponse")
+    public Future<?> createTaskAsync(
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "enabled", targetNamespace = "")
+        boolean enabled,
+        @WebParam(name = "commitOnExecute", targetNamespace = "")
+        boolean commitOnExecute,
+        @WebParam(name = "script", targetNamespace = "")
+        String script,
+        @WebParam(name = "parameters", targetNamespace = "")
+        List<StringPair> parameters,
+        @WebParam(name = "schedule", targetNamespace = "")
+        TaskScheduleDescriptor schedule,
+        @WebParam(name = "notificationType", targetNamespace = "")
+        TaskNotificationDescriptor notificationType,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreateTaskResponse> asyncHandler);
+
+    /**
+     * 
+     * @param enabled
+     * @param schedule
+     * @param sessionId
+     * @param notificationType
+     * @param description
+     * @param name
+     * @param parameters
+     * @param script
+     * @param commitOnExecute
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateTask")
+    @ResponseWrapper(localName = "createTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateTaskResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createTaskRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createTaskResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createTask/Fault/ServerSideException")
+    })
+    public long createTask(
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "enabled", targetNamespace = "")
+        boolean enabled,
+        @WebParam(name = "commitOnExecute", targetNamespace = "")
+        boolean commitOnExecute,
+        @WebParam(name = "script", targetNamespace = "")
+        String script,
+        @WebParam(name = "parameters", targetNamespace = "")
+        List<StringPair> parameters,
+        @WebParam(name = "schedule", targetNamespace = "")
+        TaskScheduleDescriptor schedule,
+        @WebParam(name = "notificationType", targetNamespace = "")
+        TaskNotificationDescriptor notificationType,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param propertyName
+     * @param taskId
+     * @param sessionId
+     * @param propertyValue
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.UpdateTaskPropertiesResponse>
+     */
+    @WebMethod(operationName = "updateTaskProperties")
+    @RequestWrapper(localName = "updateTaskProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskProperties")
+    @ResponseWrapper(localName = "updateTaskPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskPropertiesResponse")
+    public Response<UpdateTaskPropertiesResponse> updateTaskPropertiesAsync(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "propertyName", targetNamespace = "")
+        String propertyName,
+        @WebParam(name = "propertyValue", targetNamespace = "")
+        String propertyValue,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param propertyName
+     * @param taskId
+     * @param sessionId
+     * @param propertyValue
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "updateTaskProperties")
+    @RequestWrapper(localName = "updateTaskProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskProperties")
+    @ResponseWrapper(localName = "updateTaskPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskPropertiesResponse")
+    public Future<?> updateTaskPropertiesAsync(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "propertyName", targetNamespace = "")
+        String propertyName,
+        @WebParam(name = "propertyValue", targetNamespace = "")
+        String propertyValue,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<UpdateTaskPropertiesResponse> asyncHandler);
+
+    /**
+     * 
+     * @param propertyName
+     * @param taskId
+     * @param sessionId
+     * @param propertyValue
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "updateTaskProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskProperties")
+    @ResponseWrapper(localName = "updateTaskPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskPropertiesResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateTaskPropertiesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateTaskPropertiesResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateTaskProperties/Fault/ServerSideException")
+    })
+    public void updateTaskProperties(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "propertyName", targetNamespace = "")
+        String propertyName,
+        @WebParam(name = "propertyValue", targetNamespace = "")
+        String propertyValue,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param taskId
+     * @param sessionId
+     * @param parameters
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.UpdateTaskParametersResponse>
+     */
+    @WebMethod(operationName = "updateTaskParameters")
+    @RequestWrapper(localName = "updateTaskParameters", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskParameters")
+    @ResponseWrapper(localName = "updateTaskParametersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskParametersResponse")
+    public Response<UpdateTaskParametersResponse> updateTaskParametersAsync(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "parameters", targetNamespace = "")
+        List<StringPair> parameters,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param taskId
+     * @param sessionId
+     * @param asyncHandler
+     * @param parameters
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "updateTaskParameters")
+    @RequestWrapper(localName = "updateTaskParameters", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskParameters")
+    @ResponseWrapper(localName = "updateTaskParametersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskParametersResponse")
+    public Future<?> updateTaskParametersAsync(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "parameters", targetNamespace = "")
+        List<StringPair> parameters,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<UpdateTaskParametersResponse> asyncHandler);
+
+    /**
+     * 
+     * @param taskId
+     * @param sessionId
+     * @param parameters
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "updateTaskParameters", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskParameters")
+    @ResponseWrapper(localName = "updateTaskParametersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskParametersResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateTaskParametersRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateTaskParametersResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateTaskParameters/Fault/ServerSideException")
+    })
+    public void updateTaskParameters(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "parameters", targetNamespace = "")
+        List<StringPair> parameters,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param taskId
+     * @param schedule
+     * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.UpdateTaskScheduleResponse>
+     */
+    @WebMethod(operationName = "updateTaskSchedule")
+    @RequestWrapper(localName = "updateTaskSchedule", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskSchedule")
+    @ResponseWrapper(localName = "updateTaskScheduleResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskScheduleResponse")
+    public Response<UpdateTaskScheduleResponse> updateTaskScheduleAsync(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "schedule", targetNamespace = "")
+        TaskScheduleDescriptor schedule,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param taskId
+     * @param schedule
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "updateTaskSchedule")
+    @RequestWrapper(localName = "updateTaskSchedule", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskSchedule")
+    @ResponseWrapper(localName = "updateTaskScheduleResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskScheduleResponse")
+    public Future<?> updateTaskScheduleAsync(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "schedule", targetNamespace = "")
+        TaskScheduleDescriptor schedule,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<UpdateTaskScheduleResponse> asyncHandler);
+
+    /**
+     * 
+     * @param taskId
+     * @param schedule
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "updateTaskSchedule", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskSchedule")
+    @ResponseWrapper(localName = "updateTaskScheduleResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskScheduleResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateTaskScheduleRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateTaskScheduleResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateTaskSchedule/Fault/ServerSideException")
+    })
+    public void updateTaskSchedule(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "schedule", targetNamespace = "")
+        TaskScheduleDescriptor schedule,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param taskId
+     * @param sessionId
+     * @param notificationType
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.UpdateTaskNotificationTypeResponse>
+     */
+    @WebMethod(operationName = "updateTaskNotificationType")
+    @RequestWrapper(localName = "updateTaskNotificationType", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskNotificationType")
+    @ResponseWrapper(localName = "updateTaskNotificationTypeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskNotificationTypeResponse")
+    public Response<UpdateTaskNotificationTypeResponse> updateTaskNotificationTypeAsync(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "notificationType", targetNamespace = "")
+        TaskNotificationDescriptor notificationType,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param taskId
+     * @param sessionId
+     * @param notificationType
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "updateTaskNotificationType")
+    @RequestWrapper(localName = "updateTaskNotificationType", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskNotificationType")
+    @ResponseWrapper(localName = "updateTaskNotificationTypeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskNotificationTypeResponse")
+    public Future<?> updateTaskNotificationTypeAsync(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "notificationType", targetNamespace = "")
+        TaskNotificationDescriptor notificationType,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<UpdateTaskNotificationTypeResponse> asyncHandler);
+
+    /**
+     * 
+     * @param taskId
+     * @param sessionId
+     * @param notificationType
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "updateTaskNotificationType", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskNotificationType")
+    @ResponseWrapper(localName = "updateTaskNotificationTypeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskNotificationTypeResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateTaskNotificationTypeRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateTaskNotificationTypeResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateTaskNotificationType/Fault/ServerSideException")
+    })
+    public void updateTaskNotificationType(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "notificationType", targetNamespace = "")
+        TaskNotificationDescriptor notificationType,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param taskId
+     * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetSubscribersForTaskResponse>
+     */
+    @WebMethod(operationName = "getSubscribersForTask")
+    @RequestWrapper(localName = "getSubscribersForTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubscribersForTask")
+    @ResponseWrapper(localName = "getSubscribersForTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubscribersForTaskResponse")
+    public Response<GetSubscribersForTaskResponse> getSubscribersForTaskAsync(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param taskId
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getSubscribersForTask")
+    @RequestWrapper(localName = "getSubscribersForTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubscribersForTask")
+    @ResponseWrapper(localName = "getSubscribersForTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubscribersForTaskResponse")
+    public Future<?> getSubscribersForTaskAsync(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetSubscribersForTaskResponse> asyncHandler);
+
+    /**
+     * 
+     * @param taskId
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.UserInfoLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getSubscribersForTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubscribersForTask")
+    @ResponseWrapper(localName = "getSubscribersForTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubscribersForTaskResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSubscribersForTaskRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSubscribersForTaskResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSubscribersForTask/Fault/ServerSideException")
+    })
+    public List<UserInfoLight> getSubscribersForTask(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
      * @return
      *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetTasksResponse>
      */
@@ -2811,6 +9552,64 @@ public interface KuwaibaService {
     public void unsubscribeUserFromTask(
         @WebParam(name = "userId", targetNamespace = "")
         long userId,
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param taskId
+     * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.ExecuteTaskResponse>
+     */
+    @WebMethod(operationName = "executeTask")
+    @RequestWrapper(localName = "executeTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteTask")
+    @ResponseWrapper(localName = "executeTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteTaskResponse")
+    public Response<ExecuteTaskResponse> executeTaskAsync(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param taskId
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "executeTask")
+    @RequestWrapper(localName = "executeTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteTask")
+    @ResponseWrapper(localName = "executeTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteTaskResponse")
+    public Future<?> executeTaskAsync(
+        @WebParam(name = "taskId", targetNamespace = "")
+        long taskId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<ExecuteTaskResponse> asyncHandler);
+
+    /**
+     * 
+     * @param taskId
+     * @param sessionId
+     * @return
+     *     returns org.inventory.communications.wsclient.RemoteTaskResult
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "executeTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteTask")
+    @ResponseWrapper(localName = "executeTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteTaskResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/executeTaskRequest", output = "http://ws.kuwaiba.org/KuwaibaService/executeTaskResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/executeTask/Fault/ServerSideException")
+    })
+    public RemoteTaskResult executeTask(
         @WebParam(name = "taskId", targetNamespace = "")
         long taskId,
         @WebParam(name = "sessionId", targetNamespace = "")
@@ -3184,6 +9983,100 @@ public interface KuwaibaService {
         long tsElementParentId,
         @WebParam(name = "tsElementName", targetNamespace = "")
         String tsElementName,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param stElementParentClassName
+     * @param stElementNamePattern
+     * @param sessionId
+     * @param stElementClass
+     * @param numberOfTemplateElements
+     * @param stElementParentId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateBulkSpecialTemplateElementResponse>
+     */
+    @WebMethod(operationName = "createBulkSpecialTemplateElement")
+    @RequestWrapper(localName = "createBulkSpecialTemplateElement", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialTemplateElement")
+    @ResponseWrapper(localName = "createBulkSpecialTemplateElementResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialTemplateElementResponse")
+    public Response<CreateBulkSpecialTemplateElementResponse> createBulkSpecialTemplateElementAsync(
+        @WebParam(name = "stElementClass", targetNamespace = "")
+        String stElementClass,
+        @WebParam(name = "stElementParentClassName", targetNamespace = "")
+        String stElementParentClassName,
+        @WebParam(name = "stElementParentId", targetNamespace = "")
+        long stElementParentId,
+        @WebParam(name = "numberOfTemplateElements", targetNamespace = "")
+        int numberOfTemplateElements,
+        @WebParam(name = "stElementNamePattern", targetNamespace = "")
+        String stElementNamePattern,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param stElementParentClassName
+     * @param stElementNamePattern
+     * @param sessionId
+     * @param stElementClass
+     * @param asyncHandler
+     * @param numberOfTemplateElements
+     * @param stElementParentId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createBulkSpecialTemplateElement")
+    @RequestWrapper(localName = "createBulkSpecialTemplateElement", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialTemplateElement")
+    @ResponseWrapper(localName = "createBulkSpecialTemplateElementResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialTemplateElementResponse")
+    public Future<?> createBulkSpecialTemplateElementAsync(
+        @WebParam(name = "stElementClass", targetNamespace = "")
+        String stElementClass,
+        @WebParam(name = "stElementParentClassName", targetNamespace = "")
+        String stElementParentClassName,
+        @WebParam(name = "stElementParentId", targetNamespace = "")
+        long stElementParentId,
+        @WebParam(name = "numberOfTemplateElements", targetNamespace = "")
+        int numberOfTemplateElements,
+        @WebParam(name = "stElementNamePattern", targetNamespace = "")
+        String stElementNamePattern,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreateBulkSpecialTemplateElementResponse> asyncHandler);
+
+    /**
+     * 
+     * @param stElementParentClassName
+     * @param stElementNamePattern
+     * @param sessionId
+     * @param stElementClass
+     * @param numberOfTemplateElements
+     * @param stElementParentId
+     * @return
+     *     returns java.util.List<java.lang.Long>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "createBulkSpecialTemplateElement", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialTemplateElement")
+    @ResponseWrapper(localName = "createBulkSpecialTemplateElementResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialTemplateElementResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createBulkSpecialTemplateElementRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createBulkSpecialTemplateElementResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createBulkSpecialTemplateElement/Fault/ServerSideException")
+    })
+    public List<Long> createBulkSpecialTemplateElement(
+        @WebParam(name = "stElementClass", targetNamespace = "")
+        String stElementClass,
+        @WebParam(name = "stElementParentClassName", targetNamespace = "")
+        String stElementParentClassName,
+        @WebParam(name = "stElementParentId", targetNamespace = "")
+        long stElementParentId,
+        @WebParam(name = "numberOfTemplateElements", targetNamespace = "")
+        int numberOfTemplateElements,
+        @WebParam(name = "stElementNamePattern", targetNamespace = "")
+        String stElementNamePattern,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
@@ -3965,6 +10858,61 @@ public interface KuwaibaService {
         boolean enabled,
         @WebParam(name = "parameters", targetNamespace = "")
         List<StringPair> parameters,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param reportId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteReportResponse>
+     */
+    @WebMethod(operationName = "deleteReport")
+    @RequestWrapper(localName = "deleteReport", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteReport")
+    @ResponseWrapper(localName = "deleteReportResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteReportResponse")
+    public Response<DeleteReportResponse> deleteReportAsync(
+        @WebParam(name = "reportId", targetNamespace = "")
+        long reportId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param asyncHandler
+     * @param reportId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "deleteReport")
+    @RequestWrapper(localName = "deleteReport", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteReport")
+    @ResponseWrapper(localName = "deleteReportResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteReportResponse")
+    public Future<?> deleteReportAsync(
+        @WebParam(name = "reportId", targetNamespace = "")
+        long reportId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<DeleteReportResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param reportId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteReport", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteReport")
+    @ResponseWrapper(localName = "deleteReportResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteReportResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteReportRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteReportResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteReport/Fault/ServerSideException")
+    })
+    public void deleteReport(
+        @WebParam(name = "reportId", targetNamespace = "")
+        long reportId,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
@@ -7319,6 +14267,100 @@ public interface KuwaibaService {
 
     /**
      * 
+     * @param attributeNames
+     * @param parentId
+     * @param attributeValues
+     * @param sessionId
+     * @param parentClassName
+     * @param className
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.AddActivityResponse>
+     */
+    @WebMethod(operationName = "addActivity")
+    @RequestWrapper(localName = "addActivity", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddActivity")
+    @ResponseWrapper(localName = "addActivityResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddActivityResponse")
+    public Response<AddActivityResponse> addActivityAsync(
+        @WebParam(name = "parentId", targetNamespace = "")
+        long parentId,
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "attributeNames", targetNamespace = "")
+        List<String> attributeNames,
+        @WebParam(name = "attributeValues", targetNamespace = "")
+        List<String> attributeValues,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param attributeNames
+     * @param parentId
+     * @param attributeValues
+     * @param sessionId
+     * @param parentClassName
+     * @param asyncHandler
+     * @param className
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "addActivity")
+    @RequestWrapper(localName = "addActivity", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddActivity")
+    @ResponseWrapper(localName = "addActivityResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddActivityResponse")
+    public Future<?> addActivityAsync(
+        @WebParam(name = "parentId", targetNamespace = "")
+        long parentId,
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "attributeNames", targetNamespace = "")
+        List<String> attributeNames,
+        @WebParam(name = "attributeValues", targetNamespace = "")
+        List<String> attributeValues,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<AddActivityResponse> asyncHandler);
+
+    /**
+     * 
+     * @param attributeNames
+     * @param parentId
+     * @param attributeValues
+     * @param sessionId
+     * @param parentClassName
+     * @param className
+     * @return
+     *     returns long
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "addActivity", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddActivity")
+    @ResponseWrapper(localName = "addActivityResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddActivityResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/addActivityRequest", output = "http://ws.kuwaiba.org/KuwaibaService/addActivityResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/addActivity/Fault/ServerSideException")
+    })
+    public long addActivity(
+        @WebParam(name = "parentId", targetNamespace = "")
+        long parentId,
+        @WebParam(name = "parentClassName", targetNamespace = "")
+        String parentClassName,
+        @WebParam(name = "className", targetNamespace = "")
+        String className,
+        @WebParam(name = "attributeNames", targetNamespace = "")
+        List<String> attributeNames,
+        @WebParam(name = "attributeValues", targetNamespace = "")
+        List<String> attributeValues,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
      * @param releaseReltationships
      * @param sessionId
      * @param oid
@@ -8814,6 +15856,110 @@ public interface KuwaibaService {
     /**
      * 
      * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetCurrentJobsResponse>
+     */
+    @WebMethod(operationName = "getCurrentJobs")
+    @RequestWrapper(localName = "getCurrentJobs", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCurrentJobs")
+    @ResponseWrapper(localName = "getCurrentJobsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCurrentJobsResponse")
+    public Response<GetCurrentJobsResponse> getCurrentJobsAsync(
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getCurrentJobs")
+    @RequestWrapper(localName = "getCurrentJobs", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCurrentJobs")
+    @ResponseWrapper(localName = "getCurrentJobsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCurrentJobsResponse")
+    public Future<?> getCurrentJobsAsync(
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetCurrentJobsResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteBackgroundJob>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getCurrentJobs", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCurrentJobs")
+    @ResponseWrapper(localName = "getCurrentJobsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCurrentJobsResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getCurrentJobsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getCurrentJobsResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getCurrentJobs/Fault/ServerSideException")
+    })
+    public List<RemoteBackgroundJob> getCurrentJobs(
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param jobId
+     * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.KillJobResponse>
+     */
+    @WebMethod(operationName = "killJob")
+    @RequestWrapper(localName = "killJob", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.KillJob")
+    @ResponseWrapper(localName = "killJobResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.KillJobResponse")
+    public Response<KillJobResponse> killJobAsync(
+        @WebParam(name = "jobId", targetNamespace = "")
+        long jobId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param jobId
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "killJob")
+    @RequestWrapper(localName = "killJob", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.KillJob")
+    @ResponseWrapper(localName = "killJobResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.KillJobResponse")
+    public Future<?> killJobAsync(
+        @WebParam(name = "jobId", targetNamespace = "")
+        long jobId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<KillJobResponse> asyncHandler);
+
+    /**
+     * 
+     * @param jobId
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "killJob", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.KillJob")
+    @ResponseWrapper(localName = "killJobResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.KillJobResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/killJobRequest", output = "http://ws.kuwaiba.org/KuwaibaService/killJobResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/killJob/Fault/ServerSideException")
+    })
+    public void killJob(
+        @WebParam(name = "jobId", targetNamespace = "")
+        long jobId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
      * @param resourceDefinition
      * @param resourceType
      * @return
@@ -9751,6 +16897,972 @@ public interface KuwaibaService {
     /**
      * 
      * @param sessionId
+     * @param oid
+     * @param maxResults
+     * @param objectClassId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetObjectChildrenForClassWithIdResponse>
+     */
+    @WebMethod(operationName = "getObjectChildrenForClassWithId")
+    @RequestWrapper(localName = "getObjectChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenForClassWithId")
+    @ResponseWrapper(localName = "getObjectChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenForClassWithIdResponse")
+    public Response<GetObjectChildrenForClassWithIdResponse> getObjectChildrenForClassWithIdAsync(
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "objectClassId", targetNamespace = "")
+        long objectClassId,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param oid
+     * @param asyncHandler
+     * @param maxResults
+     * @param objectClassId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getObjectChildrenForClassWithId")
+    @RequestWrapper(localName = "getObjectChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenForClassWithId")
+    @ResponseWrapper(localName = "getObjectChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenForClassWithIdResponse")
+    public Future<?> getObjectChildrenForClassWithIdAsync(
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "objectClassId", targetNamespace = "")
+        long objectClassId,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetObjectChildrenForClassWithIdResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param oid
+     * @param maxResults
+     * @param objectClassId
+     * @return
+     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getObjectChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenForClassWithId")
+    @ResponseWrapper(localName = "getObjectChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenForClassWithIdResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenForClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenForClassWithIdResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenForClassWithId/Fault/ServerSideException")
+    })
+    public List<RemoteObjectLight> getObjectChildrenForClassWithId(
+        @WebParam(name = "oid", targetNamespace = "")
+        long oid,
+        @WebParam(name = "objectClassId", targetNamespace = "")
+        long objectClassId,
+        @WebParam(name = "maxResults", targetNamespace = "")
+        int maxResults,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param poolItemId
+     * @param sessionId
+     * @param poolItemClassName
+     * @param poolId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.MovePoolItemToPoolResponse>
+     */
+    @WebMethod(operationName = "movePoolItemToPool")
+    @RequestWrapper(localName = "movePoolItemToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MovePoolItemToPool")
+    @ResponseWrapper(localName = "movePoolItemToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MovePoolItemToPoolResponse")
+    public Response<MovePoolItemToPoolResponse> movePoolItemToPoolAsync(
+        @WebParam(name = "poolId", targetNamespace = "")
+        long poolId,
+        @WebParam(name = "poolItemClassName", targetNamespace = "")
+        String poolItemClassName,
+        @WebParam(name = "poolItemId", targetNamespace = "")
+        long poolItemId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param poolItemId
+     * @param sessionId
+     * @param asyncHandler
+     * @param poolItemClassName
+     * @param poolId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "movePoolItemToPool")
+    @RequestWrapper(localName = "movePoolItemToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MovePoolItemToPool")
+    @ResponseWrapper(localName = "movePoolItemToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MovePoolItemToPoolResponse")
+    public Future<?> movePoolItemToPoolAsync(
+        @WebParam(name = "poolId", targetNamespace = "")
+        long poolId,
+        @WebParam(name = "poolItemClassName", targetNamespace = "")
+        String poolItemClassName,
+        @WebParam(name = "poolItemId", targetNamespace = "")
+        long poolItemId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<MovePoolItemToPoolResponse> asyncHandler);
+
+    /**
+     * 
+     * @param poolItemId
+     * @param sessionId
+     * @param poolItemClassName
+     * @param poolId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "movePoolItemToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MovePoolItemToPool")
+    @ResponseWrapper(localName = "movePoolItemToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MovePoolItemToPoolResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/movePoolItemToPoolRequest", output = "http://ws.kuwaiba.org/KuwaibaService/movePoolItemToPoolResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/movePoolItemToPool/Fault/ServerSideException")
+    })
+    public void movePoolItemToPool(
+        @WebParam(name = "poolId", targetNamespace = "")
+        long poolId,
+        @WebParam(name = "poolItemClassName", targetNamespace = "")
+        String poolItemClassName,
+        @WebParam(name = "poolItemId", targetNamespace = "")
+        long poolItemId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param poolItemId
+     * @param sessionId
+     * @param recursive
+     * @param poolItemClassName
+     * @param poolId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CopyPoolItemToPoolResponse>
+     */
+    @WebMethod(operationName = "copyPoolItemToPool")
+    @RequestWrapper(localName = "copyPoolItemToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyPoolItemToPool")
+    @ResponseWrapper(localName = "copyPoolItemToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyPoolItemToPoolResponse")
+    public Response<CopyPoolItemToPoolResponse> copyPoolItemToPoolAsync(
+        @WebParam(name = "poolId", targetNamespace = "")
+        long poolId,
+        @WebParam(name = "poolItemClassName", targetNamespace = "")
+        String poolItemClassName,
+        @WebParam(name = "poolItemId", targetNamespace = "")
+        long poolItemId,
+        @WebParam(name = "recursive", targetNamespace = "")
+        boolean recursive,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param poolItemId
+     * @param sessionId
+     * @param recursive
+     * @param asyncHandler
+     * @param poolItemClassName
+     * @param poolId
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "copyPoolItemToPool")
+    @RequestWrapper(localName = "copyPoolItemToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyPoolItemToPool")
+    @ResponseWrapper(localName = "copyPoolItemToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyPoolItemToPoolResponse")
+    public Future<?> copyPoolItemToPoolAsync(
+        @WebParam(name = "poolId", targetNamespace = "")
+        long poolId,
+        @WebParam(name = "poolItemClassName", targetNamespace = "")
+        String poolItemClassName,
+        @WebParam(name = "poolItemId", targetNamespace = "")
+        long poolItemId,
+        @WebParam(name = "recursive", targetNamespace = "")
+        boolean recursive,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CopyPoolItemToPoolResponse> asyncHandler);
+
+    /**
+     * 
+     * @param poolItemId
+     * @param sessionId
+     * @param recursive
+     * @param poolItemClassName
+     * @param poolId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "copyPoolItemToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyPoolItemToPool")
+    @ResponseWrapper(localName = "copyPoolItemToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyPoolItemToPoolResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/copyPoolItemToPoolRequest", output = "http://ws.kuwaiba.org/KuwaibaService/copyPoolItemToPoolResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/copyPoolItemToPool/Fault/ServerSideException")
+    })
+    public void copyPoolItemToPool(
+        @WebParam(name = "poolId", targetNamespace = "")
+        long poolId,
+        @WebParam(name = "poolItemClassName", targetNamespace = "")
+        String poolItemClassName,
+        @WebParam(name = "poolItemId", targetNamespace = "")
+        long poolItemId,
+        @WebParam(name = "recursive", targetNamespace = "")
+        boolean recursive,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param attributeName
+     * @param sessionId
+     * @param classId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetAttributeForClassWithIdResponse>
+     */
+    @WebMethod(operationName = "getAttributeForClassWithId")
+    @RequestWrapper(localName = "getAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAttributeForClassWithId")
+    @ResponseWrapper(localName = "getAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAttributeForClassWithIdResponse")
+    public Response<GetAttributeForClassWithIdResponse> getAttributeForClassWithIdAsync(
+        @WebParam(name = "classId", targetNamespace = "")
+        String classId,
+        @WebParam(name = "attributeName", targetNamespace = "")
+        String attributeName,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param attributeName
+     * @param sessionId
+     * @param classId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getAttributeForClassWithId")
+    @RequestWrapper(localName = "getAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAttributeForClassWithId")
+    @ResponseWrapper(localName = "getAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAttributeForClassWithIdResponse")
+    public Future<?> getAttributeForClassWithIdAsync(
+        @WebParam(name = "classId", targetNamespace = "")
+        String classId,
+        @WebParam(name = "attributeName", targetNamespace = "")
+        String attributeName,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetAttributeForClassWithIdResponse> asyncHandler);
+
+    /**
+     * 
+     * @param attributeName
+     * @param sessionId
+     * @param classId
+     * @return
+     *     returns org.inventory.communications.wsclient.AttributeInfo
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAttributeForClassWithId")
+    @ResponseWrapper(localName = "getAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAttributeForClassWithIdResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getAttributeForClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getAttributeForClassWithIdResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getAttributeForClassWithId/Fault/ServerSideException")
+    })
+    public AttributeInfo getAttributeForClassWithId(
+        @WebParam(name = "classId", targetNamespace = "")
+        String classId,
+        @WebParam(name = "attributeName", targetNamespace = "")
+        String attributeName,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param unique
+     * @param readOnly
+     * @param visible
+     * @param sessionId
+     * @param noCopy
+     * @param classId
+     * @param description
+     * @param mandatory
+     * @param name
+     * @param administrative
+     * @param type
+     * @param displayName
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateAttributeForClassWithIdResponse>
+     */
+    @WebMethod(operationName = "createAttributeForClassWithId")
+    @RequestWrapper(localName = "createAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateAttributeForClassWithId")
+    @ResponseWrapper(localName = "createAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateAttributeForClassWithIdResponse")
+    public Response<CreateAttributeForClassWithIdResponse> createAttributeForClassWithIdAsync(
+        @WebParam(name = "classId", targetNamespace = "")
+        long classId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "displayName", targetNamespace = "")
+        String displayName,
+        @WebParam(name = "type", targetNamespace = "")
+        String type,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "administrative", targetNamespace = "")
+        boolean administrative,
+        @WebParam(name = "visible", targetNamespace = "")
+        boolean visible,
+        @WebParam(name = "readOnly", targetNamespace = "")
+        boolean readOnly,
+        @WebParam(name = "noCopy", targetNamespace = "")
+        boolean noCopy,
+        @WebParam(name = "unique", targetNamespace = "")
+        boolean unique,
+        @WebParam(name = "mandatory", targetNamespace = "")
+        boolean mandatory,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param unique
+     * @param readOnly
+     * @param visible
+     * @param sessionId
+     * @param noCopy
+     * @param classId
+     * @param description
+     * @param mandatory
+     * @param name
+     * @param asyncHandler
+     * @param administrative
+     * @param type
+     * @param displayName
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "createAttributeForClassWithId")
+    @RequestWrapper(localName = "createAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateAttributeForClassWithId")
+    @ResponseWrapper(localName = "createAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateAttributeForClassWithIdResponse")
+    public Future<?> createAttributeForClassWithIdAsync(
+        @WebParam(name = "classId", targetNamespace = "")
+        long classId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "displayName", targetNamespace = "")
+        String displayName,
+        @WebParam(name = "type", targetNamespace = "")
+        String type,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "administrative", targetNamespace = "")
+        boolean administrative,
+        @WebParam(name = "visible", targetNamespace = "")
+        boolean visible,
+        @WebParam(name = "readOnly", targetNamespace = "")
+        boolean readOnly,
+        @WebParam(name = "noCopy", targetNamespace = "")
+        boolean noCopy,
+        @WebParam(name = "unique", targetNamespace = "")
+        boolean unique,
+        @WebParam(name = "mandatory", targetNamespace = "")
+        boolean mandatory,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<CreateAttributeForClassWithIdResponse> asyncHandler);
+
+    /**
+     * 
+     * @param unique
+     * @param readOnly
+     * @param visible
+     * @param sessionId
+     * @param noCopy
+     * @param classId
+     * @param description
+     * @param mandatory
+     * @param name
+     * @param administrative
+     * @param type
+     * @param displayName
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "createAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateAttributeForClassWithId")
+    @ResponseWrapper(localName = "createAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateAttributeForClassWithIdResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createAttributeForClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createAttributeForClassWithIdResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createAttributeForClassWithId/Fault/ServerSideException")
+    })
+    public void createAttributeForClassWithId(
+        @WebParam(name = "classId", targetNamespace = "")
+        long classId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "displayName", targetNamespace = "")
+        String displayName,
+        @WebParam(name = "type", targetNamespace = "")
+        String type,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "administrative", targetNamespace = "")
+        boolean administrative,
+        @WebParam(name = "visible", targetNamespace = "")
+        boolean visible,
+        @WebParam(name = "readOnly", targetNamespace = "")
+        boolean readOnly,
+        @WebParam(name = "noCopy", targetNamespace = "")
+        boolean noCopy,
+        @WebParam(name = "unique", targetNamespace = "")
+        boolean unique,
+        @WebParam(name = "mandatory", targetNamespace = "")
+        boolean mandatory,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param unique
+     * @param visible
+     * @param classId
+     * @param mandatory
+     * @param attributeId
+     * @param type
+     * @param readOnly
+     * @param sessionId
+     * @param noCopy
+     * @param description
+     * @param name
+     * @param administrative
+     * @param displayName
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.SetAttributePropertiesForClassWithIdResponse>
+     */
+    @WebMethod(operationName = "setAttributePropertiesForClassWithId")
+    @RequestWrapper(localName = "setAttributePropertiesForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetAttributePropertiesForClassWithId")
+    @ResponseWrapper(localName = "setAttributePropertiesForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetAttributePropertiesForClassWithIdResponse")
+    public Response<SetAttributePropertiesForClassWithIdResponse> setAttributePropertiesForClassWithIdAsync(
+        @WebParam(name = "classId", targetNamespace = "")
+        long classId,
+        @WebParam(name = "attributeId", targetNamespace = "")
+        long attributeId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "displayName", targetNamespace = "")
+        String displayName,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "type", targetNamespace = "")
+        String type,
+        @WebParam(name = "administrative", targetNamespace = "")
+        Boolean administrative,
+        @WebParam(name = "mandatory", targetNamespace = "")
+        Boolean mandatory,
+        @WebParam(name = "noCopy", targetNamespace = "")
+        Boolean noCopy,
+        @WebParam(name = "readOnly", targetNamespace = "")
+        Boolean readOnly,
+        @WebParam(name = "unique", targetNamespace = "")
+        Boolean unique,
+        @WebParam(name = "visible", targetNamespace = "")
+        Boolean visible,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param unique
+     * @param visible
+     * @param classId
+     * @param mandatory
+     * @param asyncHandler
+     * @param attributeId
+     * @param type
+     * @param readOnly
+     * @param sessionId
+     * @param noCopy
+     * @param description
+     * @param name
+     * @param administrative
+     * @param displayName
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "setAttributePropertiesForClassWithId")
+    @RequestWrapper(localName = "setAttributePropertiesForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetAttributePropertiesForClassWithId")
+    @ResponseWrapper(localName = "setAttributePropertiesForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetAttributePropertiesForClassWithIdResponse")
+    public Future<?> setAttributePropertiesForClassWithIdAsync(
+        @WebParam(name = "classId", targetNamespace = "")
+        long classId,
+        @WebParam(name = "attributeId", targetNamespace = "")
+        long attributeId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "displayName", targetNamespace = "")
+        String displayName,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "type", targetNamespace = "")
+        String type,
+        @WebParam(name = "administrative", targetNamespace = "")
+        Boolean administrative,
+        @WebParam(name = "mandatory", targetNamespace = "")
+        Boolean mandatory,
+        @WebParam(name = "noCopy", targetNamespace = "")
+        Boolean noCopy,
+        @WebParam(name = "readOnly", targetNamespace = "")
+        Boolean readOnly,
+        @WebParam(name = "unique", targetNamespace = "")
+        Boolean unique,
+        @WebParam(name = "visible", targetNamespace = "")
+        Boolean visible,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<SetAttributePropertiesForClassWithIdResponse> asyncHandler);
+
+    /**
+     * 
+     * @param unique
+     * @param visible
+     * @param classId
+     * @param mandatory
+     * @param attributeId
+     * @param type
+     * @param readOnly
+     * @param sessionId
+     * @param noCopy
+     * @param description
+     * @param name
+     * @param administrative
+     * @param displayName
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "setAttributePropertiesForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetAttributePropertiesForClassWithId")
+    @ResponseWrapper(localName = "setAttributePropertiesForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetAttributePropertiesForClassWithIdResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/setAttributePropertiesForClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/setAttributePropertiesForClassWithIdResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/setAttributePropertiesForClassWithId/Fault/ServerSideException")
+    })
+    public void setAttributePropertiesForClassWithId(
+        @WebParam(name = "classId", targetNamespace = "")
+        long classId,
+        @WebParam(name = "attributeId", targetNamespace = "")
+        long attributeId,
+        @WebParam(name = "name", targetNamespace = "")
+        String name,
+        @WebParam(name = "displayName", targetNamespace = "")
+        String displayName,
+        @WebParam(name = "description", targetNamespace = "")
+        String description,
+        @WebParam(name = "type", targetNamespace = "")
+        String type,
+        @WebParam(name = "administrative", targetNamespace = "")
+        Boolean administrative,
+        @WebParam(name = "mandatory", targetNamespace = "")
+        Boolean mandatory,
+        @WebParam(name = "noCopy", targetNamespace = "")
+        Boolean noCopy,
+        @WebParam(name = "readOnly", targetNamespace = "")
+        Boolean readOnly,
+        @WebParam(name = "unique", targetNamespace = "")
+        Boolean unique,
+        @WebParam(name = "visible", targetNamespace = "")
+        Boolean visible,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param attributeName
+     * @param sessionId
+     * @param classId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteAttributeForClassWithIdResponse>
+     */
+    @WebMethod(operationName = "deleteAttributeForClassWithId")
+    @RequestWrapper(localName = "deleteAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteAttributeForClassWithId")
+    @ResponseWrapper(localName = "deleteAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteAttributeForClassWithIdResponse")
+    public Response<DeleteAttributeForClassWithIdResponse> deleteAttributeForClassWithIdAsync(
+        @WebParam(name = "classId", targetNamespace = "")
+        long classId,
+        @WebParam(name = "attributeName", targetNamespace = "")
+        String attributeName,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param attributeName
+     * @param sessionId
+     * @param classId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "deleteAttributeForClassWithId")
+    @RequestWrapper(localName = "deleteAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteAttributeForClassWithId")
+    @ResponseWrapper(localName = "deleteAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteAttributeForClassWithIdResponse")
+    public Future<?> deleteAttributeForClassWithIdAsync(
+        @WebParam(name = "classId", targetNamespace = "")
+        long classId,
+        @WebParam(name = "attributeName", targetNamespace = "")
+        String attributeName,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<DeleteAttributeForClassWithIdResponse> asyncHandler);
+
+    /**
+     * 
+     * @param attributeName
+     * @param sessionId
+     * @param classId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteAttributeForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteAttributeForClassWithId")
+    @ResponseWrapper(localName = "deleteAttributeForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteAttributeForClassWithIdResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteAttributeForClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteAttributeForClassWithIdResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteAttributeForClassWithId/Fault/ServerSideException")
+    })
+    public void deleteAttributeForClassWithId(
+        @WebParam(name = "classId", targetNamespace = "")
+        long classId,
+        @WebParam(name = "attributeName", targetNamespace = "")
+        String attributeName,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param classId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetClassWithIdResponse>
+     */
+    @WebMethod(operationName = "getClassWithId")
+    @RequestWrapper(localName = "getClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassWithId")
+    @ResponseWrapper(localName = "getClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassWithIdResponse")
+    public Response<GetClassWithIdResponse> getClassWithIdAsync(
+        @WebParam(name = "classId", targetNamespace = "")
+        long classId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param classId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "getClassWithId")
+    @RequestWrapper(localName = "getClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassWithId")
+    @ResponseWrapper(localName = "getClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassWithIdResponse")
+    public Future<?> getClassWithIdAsync(
+        @WebParam(name = "classId", targetNamespace = "")
+        long classId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<GetClassWithIdResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param classId
+     * @return
+     *     returns org.inventory.communications.wsclient.ClassInfo
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @WebResult(targetNamespace = "")
+    @RequestWrapper(localName = "getClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassWithId")
+    @ResponseWrapper(localName = "getClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassWithIdResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getClassWithIdResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getClassWithId/Fault/ServerSideException")
+    })
+    public ClassInfo getClassWithId(
+        @WebParam(name = "classId", targetNamespace = "")
+        long classId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
+     * @param classId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteClassWithIdResponse>
+     */
+    @WebMethod(operationName = "deleteClassWithId")
+    @RequestWrapper(localName = "deleteClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassWithId")
+    @ResponseWrapper(localName = "deleteClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassWithIdResponse")
+    public Response<DeleteClassWithIdResponse> deleteClassWithIdAsync(
+        @WebParam(name = "classId", targetNamespace = "")
+        long classId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param sessionId
+     * @param classId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "deleteClassWithId")
+    @RequestWrapper(localName = "deleteClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassWithId")
+    @ResponseWrapper(localName = "deleteClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassWithIdResponse")
+    public Future<?> deleteClassWithIdAsync(
+        @WebParam(name = "classId", targetNamespace = "")
+        long classId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<DeleteClassWithIdResponse> asyncHandler);
+
+    /**
+     * 
+     * @param sessionId
+     * @param classId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "deleteClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassWithId")
+    @ResponseWrapper(localName = "deleteClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassWithIdResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteClassWithIdResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteClassWithId/Fault/ServerSideException")
+    })
+    public void deleteClassWithId(
+        @WebParam(name = "classId", targetNamespace = "")
+        long classId,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param parentClassId
+     * @param sessionId
+     * @param childrenToBeAdded
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.AddPossibleChildrenForClassWithIdResponse>
+     */
+    @WebMethod(operationName = "addPossibleChildrenForClassWithId")
+    @RequestWrapper(localName = "addPossibleChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleChildrenForClassWithId")
+    @ResponseWrapper(localName = "addPossibleChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleChildrenForClassWithIdResponse")
+    public Response<AddPossibleChildrenForClassWithIdResponse> addPossibleChildrenForClassWithIdAsync(
+        @WebParam(name = "parentClassId", targetNamespace = "")
+        long parentClassId,
+        @WebParam(name = "childrenToBeAdded", targetNamespace = "")
+        List<Long> childrenToBeAdded,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param parentClassId
+     * @param sessionId
+     * @param childrenToBeAdded
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "addPossibleChildrenForClassWithId")
+    @RequestWrapper(localName = "addPossibleChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleChildrenForClassWithId")
+    @ResponseWrapper(localName = "addPossibleChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleChildrenForClassWithIdResponse")
+    public Future<?> addPossibleChildrenForClassWithIdAsync(
+        @WebParam(name = "parentClassId", targetNamespace = "")
+        long parentClassId,
+        @WebParam(name = "childrenToBeAdded", targetNamespace = "")
+        List<Long> childrenToBeAdded,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<AddPossibleChildrenForClassWithIdResponse> asyncHandler);
+
+    /**
+     * 
+     * @param parentClassId
+     * @param sessionId
+     * @param childrenToBeAdded
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "addPossibleChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleChildrenForClassWithId")
+    @ResponseWrapper(localName = "addPossibleChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleChildrenForClassWithIdResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/addPossibleChildrenForClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/addPossibleChildrenForClassWithIdResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/addPossibleChildrenForClassWithId/Fault/ServerSideException")
+    })
+    public void addPossibleChildrenForClassWithId(
+        @WebParam(name = "parentClassId", targetNamespace = "")
+        long parentClassId,
+        @WebParam(name = "childrenToBeAdded", targetNamespace = "")
+        List<Long> childrenToBeAdded,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param parentClassId
+     * @param possibleSpecialChildren
+     * @param sessionId
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.AddPossibleSpecialChildrenWithIdResponse>
+     */
+    @WebMethod(operationName = "addPossibleSpecialChildrenWithId")
+    @RequestWrapper(localName = "addPossibleSpecialChildrenWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleSpecialChildrenWithId")
+    @ResponseWrapper(localName = "addPossibleSpecialChildrenWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleSpecialChildrenWithIdResponse")
+    public Response<AddPossibleSpecialChildrenWithIdResponse> addPossibleSpecialChildrenWithIdAsync(
+        @WebParam(name = "parentClassId", targetNamespace = "")
+        long parentClassId,
+        @WebParam(name = "possibleSpecialChildren", targetNamespace = "")
+        List<Long> possibleSpecialChildren,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param parentClassId
+     * @param possibleSpecialChildren
+     * @param sessionId
+     * @param asyncHandler
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "addPossibleSpecialChildrenWithId")
+    @RequestWrapper(localName = "addPossibleSpecialChildrenWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleSpecialChildrenWithId")
+    @ResponseWrapper(localName = "addPossibleSpecialChildrenWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleSpecialChildrenWithIdResponse")
+    public Future<?> addPossibleSpecialChildrenWithIdAsync(
+        @WebParam(name = "parentClassId", targetNamespace = "")
+        long parentClassId,
+        @WebParam(name = "possibleSpecialChildren", targetNamespace = "")
+        List<Long> possibleSpecialChildren,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<AddPossibleSpecialChildrenWithIdResponse> asyncHandler);
+
+    /**
+     * 
+     * @param parentClassId
+     * @param possibleSpecialChildren
+     * @param sessionId
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "addPossibleSpecialChildrenWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleSpecialChildrenWithId")
+    @ResponseWrapper(localName = "addPossibleSpecialChildrenWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddPossibleSpecialChildrenWithIdResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/addPossibleSpecialChildrenWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/addPossibleSpecialChildrenWithIdResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/addPossibleSpecialChildrenWithId/Fault/ServerSideException")
+    })
+    public void addPossibleSpecialChildrenWithId(
+        @WebParam(name = "parentClassId", targetNamespace = "")
+        long parentClassId,
+        @WebParam(name = "possibleSpecialChildren", targetNamespace = "")
+        List<Long> possibleSpecialChildren,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param parentClassId
+     * @param sessionId
+     * @param childrenToBeRemoved
+     * @return
+     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.RemovePossibleChildrenForClassWithIdResponse>
+     */
+    @WebMethod(operationName = "removePossibleChildrenForClassWithId")
+    @RequestWrapper(localName = "removePossibleChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePossibleChildrenForClassWithId")
+    @ResponseWrapper(localName = "removePossibleChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePossibleChildrenForClassWithIdResponse")
+    public Response<RemovePossibleChildrenForClassWithIdResponse> removePossibleChildrenForClassWithIdAsync(
+        @WebParam(name = "parentClassId", targetNamespace = "")
+        long parentClassId,
+        @WebParam(name = "childrenToBeRemoved", targetNamespace = "")
+        List<Long> childrenToBeRemoved,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId);
+
+    /**
+     * 
+     * @param parentClassId
+     * @param sessionId
+     * @param asyncHandler
+     * @param childrenToBeRemoved
+     * @return
+     *     returns java.util.concurrent.Future<? extends java.lang.Object>
+     */
+    @WebMethod(operationName = "removePossibleChildrenForClassWithId")
+    @RequestWrapper(localName = "removePossibleChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePossibleChildrenForClassWithId")
+    @ResponseWrapper(localName = "removePossibleChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePossibleChildrenForClassWithIdResponse")
+    public Future<?> removePossibleChildrenForClassWithIdAsync(
+        @WebParam(name = "parentClassId", targetNamespace = "")
+        long parentClassId,
+        @WebParam(name = "childrenToBeRemoved", targetNamespace = "")
+        List<Long> childrenToBeRemoved,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId,
+        @WebParam(name = "asyncHandler", targetNamespace = "")
+        AsyncHandler<RemovePossibleChildrenForClassWithIdResponse> asyncHandler);
+
+    /**
+     * 
+     * @param parentClassId
+     * @param sessionId
+     * @param childrenToBeRemoved
+     * @throws ServerSideException_Exception
+     */
+    @WebMethod
+    @RequestWrapper(localName = "removePossibleChildrenForClassWithId", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePossibleChildrenForClassWithId")
+    @ResponseWrapper(localName = "removePossibleChildrenForClassWithIdResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePossibleChildrenForClassWithIdResponse")
+    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/removePossibleChildrenForClassWithIdRequest", output = "http://ws.kuwaiba.org/KuwaibaService/removePossibleChildrenForClassWithIdResponse", fault = {
+        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/removePossibleChildrenForClassWithId/Fault/ServerSideException")
+    })
+    public void removePossibleChildrenForClassWithId(
+        @WebParam(name = "parentClassId", targetNamespace = "")
+        long parentClassId,
+        @WebParam(name = "childrenToBeRemoved", targetNamespace = "")
+        List<Long> childrenToBeRemoved,
+        @WebParam(name = "sessionId", targetNamespace = "")
+        String sessionId)
+        throws ServerSideException_Exception
+    ;
+
+    /**
+     * 
+     * @param sessionId
      * @param projectClass
      * @param objectId
      * @param objectClass
@@ -9825,7638 +17937,6 @@ public interface KuwaibaService {
         String projectClass,
         @WebParam(name = "projectId", targetNamespace = "")
         long projectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CloseSessionResponse>
-     */
-    @WebMethod(operationName = "closeSession")
-    @RequestWrapper(localName = "closeSession", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CloseSession")
-    @ResponseWrapper(localName = "closeSessionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CloseSessionResponse")
-    public Response<CloseSessionResponse> closeSessionAsync(
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "closeSession")
-    @RequestWrapper(localName = "closeSession", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CloseSession")
-    @ResponseWrapper(localName = "closeSessionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CloseSessionResponse")
-    public Future<?> closeSessionAsync(
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CloseSessionResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "closeSession", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CloseSession")
-    @ResponseWrapper(localName = "closeSessionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CloseSessionResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/closeSessionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/closeSessionResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/closeSession/Fault/ServerSideException")
-    })
-    public void closeSession(
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectClassName
-     * @param sessionId
-     * @param oid
-     * @param maxResults
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetObjectChildrenResponse>
-     */
-    @WebMethod(operationName = "getObjectChildren")
-    @RequestWrapper(localName = "getObjectChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildren")
-    @ResponseWrapper(localName = "getObjectChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenResponse")
-    public Response<GetObjectChildrenResponse> getObjectChildrenAsync(
-        @WebParam(name = "objectClassName", targetNamespace = "")
-        String objectClassName,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param objectClassName
-     * @param sessionId
-     * @param oid
-     * @param asyncHandler
-     * @param maxResults
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getObjectChildren")
-    @RequestWrapper(localName = "getObjectChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildren")
-    @ResponseWrapper(localName = "getObjectChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenResponse")
-    public Future<?> getObjectChildrenAsync(
-        @WebParam(name = "objectClassName", targetNamespace = "")
-        String objectClassName,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetObjectChildrenResponse> asyncHandler);
-
-    /**
-     * 
-     * @param objectClassName
-     * @param sessionId
-     * @param oid
-     * @param maxResults
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getObjectChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildren")
-    @ResponseWrapper(localName = "getObjectChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectChildrenResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildrenResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectChildren/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getObjectChildren(
-        @WebParam(name = "objectClassName", targetNamespace = "")
-        String objectClassName,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectClassName
-     * @param sessionId
-     * @param oid
-     * @param maxResults
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetSiblingsResponse>
-     */
-    @WebMethod(operationName = "getSiblings")
-    @RequestWrapper(localName = "getSiblings", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSiblings")
-    @ResponseWrapper(localName = "getSiblingsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSiblingsResponse")
-    public Response<GetSiblingsResponse> getSiblingsAsync(
-        @WebParam(name = "objectClassName", targetNamespace = "")
-        String objectClassName,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param objectClassName
-     * @param sessionId
-     * @param oid
-     * @param asyncHandler
-     * @param maxResults
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getSiblings")
-    @RequestWrapper(localName = "getSiblings", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSiblings")
-    @ResponseWrapper(localName = "getSiblingsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSiblingsResponse")
-    public Future<?> getSiblingsAsync(
-        @WebParam(name = "objectClassName", targetNamespace = "")
-        String objectClassName,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetSiblingsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param objectClassName
-     * @param sessionId
-     * @param oid
-     * @param maxResults
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getSiblings", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSiblings")
-    @ResponseWrapper(localName = "getSiblingsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSiblingsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSiblingsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSiblingsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSiblings/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getSiblings(
-        @WebParam(name = "objectClassName", targetNamespace = "")
-        String objectClassName,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param parentClass
-     * @param parentOid
-     * @param childrenClass
-     * @param maxResults
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetChildrenOfClassResponse>
-     */
-    @WebMethod(operationName = "getChildrenOfClass")
-    @RequestWrapper(localName = "getChildrenOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClass")
-    @ResponseWrapper(localName = "getChildrenOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassResponse")
-    public Response<GetChildrenOfClassResponse> getChildrenOfClassAsync(
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "childrenClass", targetNamespace = "")
-        String childrenClass,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param parentClass
-     * @param asyncHandler
-     * @param parentOid
-     * @param childrenClass
-     * @param maxResults
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getChildrenOfClass")
-    @RequestWrapper(localName = "getChildrenOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClass")
-    @ResponseWrapper(localName = "getChildrenOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassResponse")
-    public Future<?> getChildrenOfClassAsync(
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "childrenClass", targetNamespace = "")
-        String childrenClass,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetChildrenOfClassResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param parentClass
-     * @param parentOid
-     * @param childrenClass
-     * @param maxResults
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObject>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getChildrenOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClass")
-    @ResponseWrapper(localName = "getChildrenOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClass/Fault/ServerSideException")
-    })
-    public List<RemoteObject> getChildrenOfClass(
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "childrenClass", targetNamespace = "")
-        String childrenClass,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param parentClass
-     * @param parentOid
-     * @param childrenClass
-     * @param maxResults
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetChildrenOfClassLightResponse>
-     */
-    @WebMethod(operationName = "getChildrenOfClassLight")
-    @RequestWrapper(localName = "getChildrenOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLight")
-    @ResponseWrapper(localName = "getChildrenOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightResponse")
-    public Response<GetChildrenOfClassLightResponse> getChildrenOfClassLightAsync(
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "childrenClass", targetNamespace = "")
-        String childrenClass,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param parentClass
-     * @param asyncHandler
-     * @param parentOid
-     * @param childrenClass
-     * @param maxResults
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getChildrenOfClassLight")
-    @RequestWrapper(localName = "getChildrenOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLight")
-    @ResponseWrapper(localName = "getChildrenOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightResponse")
-    public Future<?> getChildrenOfClassLightAsync(
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "childrenClass", targetNamespace = "")
-        String childrenClass,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetChildrenOfClassLightResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param parentClass
-     * @param parentOid
-     * @param childrenClass
-     * @param maxResults
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getChildrenOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLight")
-    @ResponseWrapper(localName = "getChildrenOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLight/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getChildrenOfClassLight(
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "childrenClass", targetNamespace = "")
-        String childrenClass,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param parentClass
-     * @param parentOid
-     * @param classToFilter
-     * @param maxResults
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetSpecialChildrenOfClassLightResponse>
-     */
-    @WebMethod(operationName = "getSpecialChildrenOfClassLight")
-    @RequestWrapper(localName = "getSpecialChildrenOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialChildrenOfClassLight")
-    @ResponseWrapper(localName = "getSpecialChildrenOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialChildrenOfClassLightResponse")
-    public Response<GetSpecialChildrenOfClassLightResponse> getSpecialChildrenOfClassLightAsync(
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "classToFilter", targetNamespace = "")
-        String classToFilter,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param parentClass
-     * @param asyncHandler
-     * @param parentOid
-     * @param classToFilter
-     * @param maxResults
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getSpecialChildrenOfClassLight")
-    @RequestWrapper(localName = "getSpecialChildrenOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialChildrenOfClassLight")
-    @ResponseWrapper(localName = "getSpecialChildrenOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialChildrenOfClassLightResponse")
-    public Future<?> getSpecialChildrenOfClassLightAsync(
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "classToFilter", targetNamespace = "")
-        String classToFilter,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetSpecialChildrenOfClassLightResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param parentClass
-     * @param parentOid
-     * @param classToFilter
-     * @param maxResults
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getSpecialChildrenOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialChildrenOfClassLight")
-    @ResponseWrapper(localName = "getSpecialChildrenOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialChildrenOfClassLightResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSpecialChildrenOfClassLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSpecialChildrenOfClassLightResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSpecialChildrenOfClassLight/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getSpecialChildrenOfClassLight(
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "classToFilter", targetNamespace = "")
-        String classToFilter,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param parentClass
-     * @param parentOid
-     * @param childrenClass
-     * @param maxResults
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetChildrenOfClassLightRecursiveResponse>
-     */
-    @WebMethod(operationName = "getChildrenOfClassLightRecursive")
-    @RequestWrapper(localName = "getChildrenOfClassLightRecursive", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightRecursive")
-    @ResponseWrapper(localName = "getChildrenOfClassLightRecursiveResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightRecursiveResponse")
-    public Response<GetChildrenOfClassLightRecursiveResponse> getChildrenOfClassLightRecursiveAsync(
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "childrenClass", targetNamespace = "")
-        String childrenClass,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param parentClass
-     * @param asyncHandler
-     * @param parentOid
-     * @param childrenClass
-     * @param maxResults
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getChildrenOfClassLightRecursive")
-    @RequestWrapper(localName = "getChildrenOfClassLightRecursive", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightRecursive")
-    @ResponseWrapper(localName = "getChildrenOfClassLightRecursiveResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightRecursiveResponse")
-    public Future<?> getChildrenOfClassLightRecursiveAsync(
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "childrenClass", targetNamespace = "")
-        String childrenClass,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetChildrenOfClassLightRecursiveResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param parentClass
-     * @param parentOid
-     * @param childrenClass
-     * @param maxResults
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getChildrenOfClassLightRecursive", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightRecursive")
-    @ResponseWrapper(localName = "getChildrenOfClassLightRecursiveResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetChildrenOfClassLightRecursiveResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRecursiveRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRecursiveResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getChildrenOfClassLightRecursive/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getChildrenOfClassLightRecursive(
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "childrenClass", targetNamespace = "")
-        String childrenClass,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param objectclass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetObjectLightResponse>
-     */
-    @WebMethod(operationName = "getObjectLight")
-    @RequestWrapper(localName = "getObjectLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectLight")
-    @ResponseWrapper(localName = "getObjectLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectLightResponse")
-    public Response<GetObjectLightResponse> getObjectLightAsync(
-        @WebParam(name = "objectclass", targetNamespace = "")
-        String objectclass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param asyncHandler
-     * @param objectclass
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getObjectLight")
-    @RequestWrapper(localName = "getObjectLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectLight")
-    @ResponseWrapper(localName = "getObjectLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectLightResponse")
-    public Future<?> getObjectLightAsync(
-        @WebParam(name = "objectclass", targetNamespace = "")
-        String objectclass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetObjectLightResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param objectclass
-     * @return
-     *     returns org.inventory.communications.wsclient.RemoteObjectLight
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getObjectLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectLight")
-    @ResponseWrapper(localName = "getObjectLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectLightResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectLightResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectLight/Fault/ServerSideException")
-    })
-    public RemoteObjectLight getObjectLight(
-        @WebParam(name = "objectclass", targetNamespace = "")
-        String objectclass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param aObjectClass
-     * @param sessionId
-     * @param aOid
-     * @param bOid
-     * @param bObjectClass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetCommonParentResponse>
-     */
-    @WebMethod(operationName = "getCommonParent")
-    @RequestWrapper(localName = "getCommonParent", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCommonParent")
-    @ResponseWrapper(localName = "getCommonParentResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCommonParentResponse")
-    public Response<GetCommonParentResponse> getCommonParentAsync(
-        @WebParam(name = "aObjectClass", targetNamespace = "")
-        String aObjectClass,
-        @WebParam(name = "aOid", targetNamespace = "")
-        long aOid,
-        @WebParam(name = "bObjectClass", targetNamespace = "")
-        String bObjectClass,
-        @WebParam(name = "bOid", targetNamespace = "")
-        long bOid,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param aObjectClass
-     * @param sessionId
-     * @param aOid
-     * @param asyncHandler
-     * @param bOid
-     * @param bObjectClass
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getCommonParent")
-    @RequestWrapper(localName = "getCommonParent", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCommonParent")
-    @ResponseWrapper(localName = "getCommonParentResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCommonParentResponse")
-    public Future<?> getCommonParentAsync(
-        @WebParam(name = "aObjectClass", targetNamespace = "")
-        String aObjectClass,
-        @WebParam(name = "aOid", targetNamespace = "")
-        long aOid,
-        @WebParam(name = "bObjectClass", targetNamespace = "")
-        String bObjectClass,
-        @WebParam(name = "bOid", targetNamespace = "")
-        long bOid,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetCommonParentResponse> asyncHandler);
-
-    /**
-     * 
-     * @param aObjectClass
-     * @param sessionId
-     * @param aOid
-     * @param bOid
-     * @param bObjectClass
-     * @return
-     *     returns org.inventory.communications.wsclient.RemoteObjectLight
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getCommonParent", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCommonParent")
-    @ResponseWrapper(localName = "getCommonParentResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetCommonParentResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getCommonParentRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getCommonParentResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getCommonParent/Fault/ServerSideException")
-    })
-    public RemoteObjectLight getCommonParent(
-        @WebParam(name = "aObjectClass", targetNamespace = "")
-        String aObjectClass,
-        @WebParam(name = "aOid", targetNamespace = "")
-        long aOid,
-        @WebParam(name = "bObjectClass", targetNamespace = "")
-        String bObjectClass,
-        @WebParam(name = "bOid", targetNamespace = "")
-        long bOid,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param attributename
-     * @param sessionId
-     * @param oid
-     * @param objectclass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetSpecialAttributeResponse>
-     */
-    @WebMethod(operationName = "getSpecialAttribute")
-    @RequestWrapper(localName = "getSpecialAttribute", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttribute")
-    @ResponseWrapper(localName = "getSpecialAttributeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributeResponse")
-    public Response<GetSpecialAttributeResponse> getSpecialAttributeAsync(
-        @WebParam(name = "objectclass", targetNamespace = "")
-        String objectclass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "attributename", targetNamespace = "")
-        String attributename,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param attributename
-     * @param sessionId
-     * @param oid
-     * @param asyncHandler
-     * @param objectclass
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getSpecialAttribute")
-    @RequestWrapper(localName = "getSpecialAttribute", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttribute")
-    @ResponseWrapper(localName = "getSpecialAttributeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributeResponse")
-    public Future<?> getSpecialAttributeAsync(
-        @WebParam(name = "objectclass", targetNamespace = "")
-        String objectclass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "attributename", targetNamespace = "")
-        String attributename,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetSpecialAttributeResponse> asyncHandler);
-
-    /**
-     * 
-     * @param attributename
-     * @param sessionId
-     * @param oid
-     * @param objectclass
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getSpecialAttribute", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttribute")
-    @ResponseWrapper(localName = "getSpecialAttributeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributeResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributeRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributeResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttribute/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getSpecialAttribute(
-        @WebParam(name = "objectclass", targetNamespace = "")
-        String objectclass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "attributename", targetNamespace = "")
-        String attributename,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param objectClass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetSpecialAttributesResponse>
-     */
-    @WebMethod(operationName = "getSpecialAttributes")
-    @RequestWrapper(localName = "getSpecialAttributes", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributes")
-    @ResponseWrapper(localName = "getSpecialAttributesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributesResponse")
-    public Response<GetSpecialAttributesResponse> getSpecialAttributesAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param asyncHandler
-     * @param objectClass
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getSpecialAttributes")
-    @RequestWrapper(localName = "getSpecialAttributes", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributes")
-    @ResponseWrapper(localName = "getSpecialAttributesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributesResponse")
-    public Future<?> getSpecialAttributesAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetSpecialAttributesResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param objectClass
-     * @return
-     *     returns org.inventory.communications.wsclient.RemoteObjectSpecialRelationships
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getSpecialAttributes", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributes")
-    @ResponseWrapper(localName = "getSpecialAttributesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSpecialAttributesResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributesResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSpecialAttributes/Fault/ServerSideException")
-    })
-    public RemoteObjectSpecialRelationships getSpecialAttributes(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param arg3
-     * @param arg2
-     * @param arg1
-     * @param arg0
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetParentsUntilFirstOfClassResponse>
-     */
-    @WebMethod(operationName = "getParentsUntilFirstOfClass")
-    @RequestWrapper(localName = "getParentsUntilFirstOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentsUntilFirstOfClass")
-    @ResponseWrapper(localName = "getParentsUntilFirstOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentsUntilFirstOfClassResponse")
-    public Response<GetParentsUntilFirstOfClassResponse> getParentsUntilFirstOfClassAsync(
-        @WebParam(name = "arg0", targetNamespace = "")
-        String arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        long arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        String arg2,
-        @WebParam(name = "arg3", targetNamespace = "")
-        String arg3);
-
-    /**
-     * 
-     * @param arg3
-     * @param arg2
-     * @param arg1
-     * @param arg0
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getParentsUntilFirstOfClass")
-    @RequestWrapper(localName = "getParentsUntilFirstOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentsUntilFirstOfClass")
-    @ResponseWrapper(localName = "getParentsUntilFirstOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentsUntilFirstOfClassResponse")
-    public Future<?> getParentsUntilFirstOfClassAsync(
-        @WebParam(name = "arg0", targetNamespace = "")
-        String arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        long arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        String arg2,
-        @WebParam(name = "arg3", targetNamespace = "")
-        String arg3,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetParentsUntilFirstOfClassResponse> asyncHandler);
-
-    /**
-     * 
-     * @param arg3
-     * @param arg2
-     * @param arg1
-     * @param arg0
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getParentsUntilFirstOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentsUntilFirstOfClass")
-    @ResponseWrapper(localName = "getParentsUntilFirstOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentsUntilFirstOfClassResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getParentsUntilFirstOfClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getParentsUntilFirstOfClassResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getParentsUntilFirstOfClass/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getParentsUntilFirstOfClass(
-        @WebParam(name = "arg0", targetNamespace = "")
-        String arg0,
-        @WebParam(name = "arg1", targetNamespace = "")
-        long arg1,
-        @WebParam(name = "arg2", targetNamespace = "")
-        String arg2,
-        @WebParam(name = "arg3", targetNamespace = "")
-        String arg3)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectToMatchClassName
-     * @param sessionId
-     * @param oid
-     * @param objectClass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetFirstParentOfClassResponse>
-     */
-    @WebMethod(operationName = "getFirstParentOfClass")
-    @RequestWrapper(localName = "getFirstParentOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetFirstParentOfClass")
-    @ResponseWrapper(localName = "getFirstParentOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetFirstParentOfClassResponse")
-    public Response<GetFirstParentOfClassResponse> getFirstParentOfClassAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "objectToMatchClassName", targetNamespace = "")
-        String objectToMatchClassName,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param objectToMatchClassName
-     * @param sessionId
-     * @param oid
-     * @param asyncHandler
-     * @param objectClass
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getFirstParentOfClass")
-    @RequestWrapper(localName = "getFirstParentOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetFirstParentOfClass")
-    @ResponseWrapper(localName = "getFirstParentOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetFirstParentOfClassResponse")
-    public Future<?> getFirstParentOfClassAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "objectToMatchClassName", targetNamespace = "")
-        String objectToMatchClassName,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetFirstParentOfClassResponse> asyncHandler);
-
-    /**
-     * 
-     * @param objectToMatchClassName
-     * @param sessionId
-     * @param oid
-     * @param objectClass
-     * @return
-     *     returns org.inventory.communications.wsclient.RemoteObjectLight
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getFirstParentOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetFirstParentOfClass")
-    @ResponseWrapper(localName = "getFirstParentOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetFirstParentOfClassResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getFirstParentOfClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getFirstParentOfClassResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getFirstParentOfClass/Fault/ServerSideException")
-    })
-    public RemoteObjectLight getFirstParentOfClass(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "objectToMatchClassName", targetNamespace = "")
-        String objectToMatchClassName,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param parentClass
-     * @param oid
-     * @param objectClass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetParentOfClassResponse>
-     */
-    @WebMethod(operationName = "getParentOfClass")
-    @RequestWrapper(localName = "getParentOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentOfClass")
-    @ResponseWrapper(localName = "getParentOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentOfClassResponse")
-    public Response<GetParentOfClassResponse> getParentOfClassAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param parentClass
-     * @param oid
-     * @param asyncHandler
-     * @param objectClass
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getParentOfClass")
-    @RequestWrapper(localName = "getParentOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentOfClass")
-    @ResponseWrapper(localName = "getParentOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentOfClassResponse")
-    public Future<?> getParentOfClassAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetParentOfClassResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param parentClass
-     * @param oid
-     * @param objectClass
-     * @return
-     *     returns org.inventory.communications.wsclient.RemoteObject
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getParentOfClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentOfClass")
-    @ResponseWrapper(localName = "getParentOfClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetParentOfClassResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getParentOfClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getParentOfClassResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getParentOfClass/Fault/ServerSideException")
-    })
-    public RemoteObject getParentOfClass(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param objectId
-     * @param objectclass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetObjectSpecialChildrenResponse>
-     */
-    @WebMethod(operationName = "getObjectSpecialChildren")
-    @RequestWrapper(localName = "getObjectSpecialChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectSpecialChildren")
-    @ResponseWrapper(localName = "getObjectSpecialChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectSpecialChildrenResponse")
-    public Response<GetObjectSpecialChildrenResponse> getObjectSpecialChildrenAsync(
-        @WebParam(name = "objectclass", targetNamespace = "")
-        String objectclass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param objectId
-     * @param asyncHandler
-     * @param objectclass
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getObjectSpecialChildren")
-    @RequestWrapper(localName = "getObjectSpecialChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectSpecialChildren")
-    @ResponseWrapper(localName = "getObjectSpecialChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectSpecialChildrenResponse")
-    public Future<?> getObjectSpecialChildrenAsync(
-        @WebParam(name = "objectclass", targetNamespace = "")
-        String objectclass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetObjectSpecialChildrenResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param objectId
-     * @param objectclass
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getObjectSpecialChildren", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectSpecialChildren")
-    @ResponseWrapper(localName = "getObjectSpecialChildrenResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectSpecialChildrenResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildrenRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildrenResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectSpecialChildren/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getObjectSpecialChildren(
-        @WebParam(name = "objectclass", targetNamespace = "")
-        String objectclass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param className
-     * @param maxResults
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetObjectsOfClassLightResponse>
-     */
-    @WebMethod(operationName = "getObjectsOfClassLight")
-    @RequestWrapper(localName = "getObjectsOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectsOfClassLight")
-    @ResponseWrapper(localName = "getObjectsOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectsOfClassLightResponse")
-    public Response<GetObjectsOfClassLightResponse> getObjectsOfClassLightAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param asyncHandler
-     * @param className
-     * @param maxResults
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getObjectsOfClassLight")
-    @RequestWrapper(localName = "getObjectsOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectsOfClassLight")
-    @ResponseWrapper(localName = "getObjectsOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectsOfClassLightResponse")
-    public Future<?> getObjectsOfClassLightAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetObjectsOfClassLightResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param className
-     * @param maxResults
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getObjectsOfClassLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectsOfClassLight")
-    @ResponseWrapper(localName = "getObjectsOfClassLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectsOfClassLightResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectsOfClassLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectsOfClassLightResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectsOfClassLight/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getObjectsOfClassLight(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "maxResults", targetNamespace = "")
-        int maxResults,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetInstanceableListTypesResponse>
-     */
-    @WebMethod(operationName = "getInstanceableListTypes")
-    @RequestWrapper(localName = "getInstanceableListTypes", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetInstanceableListTypes")
-    @ResponseWrapper(localName = "getInstanceableListTypesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetInstanceableListTypesResponse")
-    public Response<GetInstanceableListTypesResponse> getInstanceableListTypesAsync(
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getInstanceableListTypes")
-    @RequestWrapper(localName = "getInstanceableListTypes", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetInstanceableListTypes")
-    @ResponseWrapper(localName = "getInstanceableListTypesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetInstanceableListTypesResponse")
-    public Future<?> getInstanceableListTypesAsync(
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetInstanceableListTypesResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getInstanceableListTypes", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetInstanceableListTypes")
-    @ResponseWrapper(localName = "getInstanceableListTypesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetInstanceableListTypesResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypesResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getInstanceableListTypes/Fault/ServerSideException")
-    })
-    public List<ClassInfoLight> getInstanceableListTypes(
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param templateId
-     * @param attributeNames
-     * @param attributeValues
-     * @param parentObjectClassName
-     * @param sessionId
-     * @param parentOid
-     * @param className
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateSpecialObjectResponse>
-     */
-    @WebMethod(operationName = "createSpecialObject")
-    @RequestWrapper(localName = "createSpecialObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSpecialObject")
-    @ResponseWrapper(localName = "createSpecialObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSpecialObjectResponse")
-    public Response<CreateSpecialObjectResponse> createSpecialObjectAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "parentObjectClassName", targetNamespace = "")
-        String parentObjectClassName,
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "attributeNames", targetNamespace = "")
-        List<String> attributeNames,
-        @WebParam(name = "attributeValues", targetNamespace = "")
-        List<String> attributeValues,
-        @WebParam(name = "templateId", targetNamespace = "")
-        long templateId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param templateId
-     * @param attributeNames
-     * @param attributeValues
-     * @param parentObjectClassName
-     * @param sessionId
-     * @param asyncHandler
-     * @param parentOid
-     * @param className
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "createSpecialObject")
-    @RequestWrapper(localName = "createSpecialObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSpecialObject")
-    @ResponseWrapper(localName = "createSpecialObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSpecialObjectResponse")
-    public Future<?> createSpecialObjectAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "parentObjectClassName", targetNamespace = "")
-        String parentObjectClassName,
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "attributeNames", targetNamespace = "")
-        List<String> attributeNames,
-        @WebParam(name = "attributeValues", targetNamespace = "")
-        List<String> attributeValues,
-        @WebParam(name = "templateId", targetNamespace = "")
-        long templateId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CreateSpecialObjectResponse> asyncHandler);
-
-    /**
-     * 
-     * @param templateId
-     * @param attributeNames
-     * @param attributeValues
-     * @param parentObjectClassName
-     * @param sessionId
-     * @param parentOid
-     * @param className
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createSpecialObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSpecialObject")
-    @ResponseWrapper(localName = "createSpecialObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateSpecialObjectResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createSpecialObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createSpecialObjectResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createSpecialObject/Fault/ServerSideException")
-    })
-    public long createSpecialObject(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "parentObjectClassName", targetNamespace = "")
-        String parentObjectClassName,
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "attributeNames", targetNamespace = "")
-        List<String> attributeNames,
-        @WebParam(name = "attributeValues", targetNamespace = "")
-        List<String> attributeValues,
-        @WebParam(name = "templateId", targetNamespace = "")
-        long templateId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param classNames
-     * @param releaseRelationships
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteObjectsResponse>
-     */
-    @WebMethod(operationName = "deleteObjects")
-    @RequestWrapper(localName = "deleteObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjects")
-    @ResponseWrapper(localName = "deleteObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjectsResponse")
-    public Response<DeleteObjectsResponse> deleteObjectsAsync(
-        @WebParam(name = "classNames", targetNamespace = "")
-        List<String> classNames,
-        @WebParam(name = "oid", targetNamespace = "")
-        List<Long> oid,
-        @WebParam(name = "releaseRelationships", targetNamespace = "")
-        boolean releaseRelationships,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param asyncHandler
-     * @param classNames
-     * @param releaseRelationships
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "deleteObjects")
-    @RequestWrapper(localName = "deleteObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjects")
-    @ResponseWrapper(localName = "deleteObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjectsResponse")
-    public Future<?> deleteObjectsAsync(
-        @WebParam(name = "classNames", targetNamespace = "")
-        List<String> classNames,
-        @WebParam(name = "oid", targetNamespace = "")
-        List<Long> oid,
-        @WebParam(name = "releaseRelationships", targetNamespace = "")
-        boolean releaseRelationships,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<DeleteObjectsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param classNames
-     * @param releaseRelationships
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjects")
-    @ResponseWrapper(localName = "deleteObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjectsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteObjectsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteObjects/Fault/ServerSideException")
-    })
-    public void deleteObjects(
-        @WebParam(name = "classNames", targetNamespace = "")
-        List<String> classNames,
-        @WebParam(name = "oid", targetNamespace = "")
-        List<Long> oid,
-        @WebParam(name = "releaseRelationships", targetNamespace = "")
-        boolean releaseRelationships,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectsClasses
-     * @param sessionId
-     * @param objectsOids
-     * @param targetClass
-     * @param targetOid
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.MoveObjectsToPoolResponse>
-     */
-    @WebMethod(operationName = "moveObjectsToPool")
-    @RequestWrapper(localName = "moveObjectsToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsToPool")
-    @ResponseWrapper(localName = "moveObjectsToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsToPoolResponse")
-    public Response<MoveObjectsToPoolResponse> moveObjectsToPoolAsync(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "objectsClasses", targetNamespace = "")
-        List<String> objectsClasses,
-        @WebParam(name = "objectsOids", targetNamespace = "")
-        List<Long> objectsOids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param objectsClasses
-     * @param sessionId
-     * @param asyncHandler
-     * @param objectsOids
-     * @param targetClass
-     * @param targetOid
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "moveObjectsToPool")
-    @RequestWrapper(localName = "moveObjectsToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsToPool")
-    @ResponseWrapper(localName = "moveObjectsToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsToPoolResponse")
-    public Future<?> moveObjectsToPoolAsync(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "objectsClasses", targetNamespace = "")
-        List<String> objectsClasses,
-        @WebParam(name = "objectsOids", targetNamespace = "")
-        List<Long> objectsOids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<MoveObjectsToPoolResponse> asyncHandler);
-
-    /**
-     * 
-     * @param objectsClasses
-     * @param sessionId
-     * @param objectsOids
-     * @param targetClass
-     * @param targetOid
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "moveObjectsToPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsToPool")
-    @ResponseWrapper(localName = "moveObjectsToPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsToPoolResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsToPoolRequest", output = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsToPoolResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsToPool/Fault/ServerSideException")
-    })
-    public void moveObjectsToPool(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "objectsClasses", targetNamespace = "")
-        List<String> objectsClasses,
-        @WebParam(name = "objectsOids", targetNamespace = "")
-        List<Long> objectsOids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectsClasses
-     * @param sessionId
-     * @param objectsOids
-     * @param targetClass
-     * @param targetOid
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.MoveObjectsResponse>
-     */
-    @WebMethod(operationName = "moveObjects")
-    @RequestWrapper(localName = "moveObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjects")
-    @ResponseWrapper(localName = "moveObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsResponse")
-    public Response<MoveObjectsResponse> moveObjectsAsync(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "objectsClasses", targetNamespace = "")
-        List<String> objectsClasses,
-        @WebParam(name = "objectsOids", targetNamespace = "")
-        List<Long> objectsOids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param objectsClasses
-     * @param sessionId
-     * @param asyncHandler
-     * @param objectsOids
-     * @param targetClass
-     * @param targetOid
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "moveObjects")
-    @RequestWrapper(localName = "moveObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjects")
-    @ResponseWrapper(localName = "moveObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsResponse")
-    public Future<?> moveObjectsAsync(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "objectsClasses", targetNamespace = "")
-        List<String> objectsClasses,
-        @WebParam(name = "objectsOids", targetNamespace = "")
-        List<Long> objectsOids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<MoveObjectsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param objectsClasses
-     * @param sessionId
-     * @param objectsOids
-     * @param targetClass
-     * @param targetOid
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "moveObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjects")
-    @ResponseWrapper(localName = "moveObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveObjectsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/moveObjectsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/moveObjects/Fault/ServerSideException")
-    })
-    public void moveObjects(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "objectsClasses", targetNamespace = "")
-        List<String> objectsClasses,
-        @WebParam(name = "objectsOids", targetNamespace = "")
-        List<Long> objectsOids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectsClasses
-     * @param sessionId
-     * @param objectsOids
-     * @param targetClass
-     * @param targetOid
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.MoveSpecialObjectsResponse>
-     */
-    @WebMethod(operationName = "moveSpecialObjects")
-    @RequestWrapper(localName = "moveSpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveSpecialObjects")
-    @ResponseWrapper(localName = "moveSpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveSpecialObjectsResponse")
-    public Response<MoveSpecialObjectsResponse> moveSpecialObjectsAsync(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "objectsClasses", targetNamespace = "")
-        List<String> objectsClasses,
-        @WebParam(name = "objectsOids", targetNamespace = "")
-        List<Long> objectsOids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param objectsClasses
-     * @param sessionId
-     * @param asyncHandler
-     * @param objectsOids
-     * @param targetClass
-     * @param targetOid
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "moveSpecialObjects")
-    @RequestWrapper(localName = "moveSpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveSpecialObjects")
-    @ResponseWrapper(localName = "moveSpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveSpecialObjectsResponse")
-    public Future<?> moveSpecialObjectsAsync(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "objectsClasses", targetNamespace = "")
-        List<String> objectsClasses,
-        @WebParam(name = "objectsOids", targetNamespace = "")
-        List<Long> objectsOids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<MoveSpecialObjectsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param objectsClasses
-     * @param sessionId
-     * @param objectsOids
-     * @param targetClass
-     * @param targetOid
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "moveSpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveSpecialObjects")
-    @ResponseWrapper(localName = "moveSpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.MoveSpecialObjectsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/moveSpecialObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/moveSpecialObjectsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/moveSpecialObjects/Fault/ServerSideException")
-    })
-    public void moveSpecialObjects(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "objectsClasses", targetNamespace = "")
-        List<String> objectsClasses,
-        @WebParam(name = "objectsOids", targetNamespace = "")
-        List<Long> objectsOids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param recursive
-     * @param templateOids
-     * @param targetClass
-     * @param targetOid
-     * @param templateClases
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CopySpecialObjectsResponse>
-     */
-    @WebMethod(operationName = "copySpecialObjects")
-    @RequestWrapper(localName = "copySpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopySpecialObjects")
-    @ResponseWrapper(localName = "copySpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopySpecialObjectsResponse")
-    public Response<CopySpecialObjectsResponse> copySpecialObjectsAsync(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "templateClases", targetNamespace = "")
-        List<String> templateClases,
-        @WebParam(name = "templateOids", targetNamespace = "")
-        List<Long> templateOids,
-        @WebParam(name = "recursive", targetNamespace = "")
-        boolean recursive,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param recursive
-     * @param templateOids
-     * @param asyncHandler
-     * @param targetClass
-     * @param targetOid
-     * @param templateClases
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "copySpecialObjects")
-    @RequestWrapper(localName = "copySpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopySpecialObjects")
-    @ResponseWrapper(localName = "copySpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopySpecialObjectsResponse")
-    public Future<?> copySpecialObjectsAsync(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "templateClases", targetNamespace = "")
-        List<String> templateClases,
-        @WebParam(name = "templateOids", targetNamespace = "")
-        List<Long> templateOids,
-        @WebParam(name = "recursive", targetNamespace = "")
-        boolean recursive,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CopySpecialObjectsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param recursive
-     * @param templateOids
-     * @param targetClass
-     * @param targetOid
-     * @param templateClases
-     * @return
-     *     returns java.util.List<java.lang.Long>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "copySpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopySpecialObjects")
-    @ResponseWrapper(localName = "copySpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopySpecialObjectsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/copySpecialObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/copySpecialObjectsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/copySpecialObjects/Fault/ServerSideException")
-    })
-    public List<Long> copySpecialObjects(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "templateClases", targetNamespace = "")
-        List<String> templateClases,
-        @WebParam(name = "templateOids", targetNamespace = "")
-        List<Long> templateOids,
-        @WebParam(name = "recursive", targetNamespace = "")
-        boolean recursive,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param attributeNames
-     * @param attributeValues
-     * @param sessionId
-     * @param oid
-     * @param className
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.UpdateObjectResponse>
-     */
-    @WebMethod(operationName = "updateObject")
-    @RequestWrapper(localName = "updateObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObject")
-    @ResponseWrapper(localName = "updateObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectResponse")
-    public Response<UpdateObjectResponse> updateObjectAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "attributeNames", targetNamespace = "")
-        List<String> attributeNames,
-        @WebParam(name = "attributeValues", targetNamespace = "")
-        List<String> attributeValues,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param attributeNames
-     * @param attributeValues
-     * @param sessionId
-     * @param oid
-     * @param asyncHandler
-     * @param className
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "updateObject")
-    @RequestWrapper(localName = "updateObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObject")
-    @ResponseWrapper(localName = "updateObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectResponse")
-    public Future<?> updateObjectAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "attributeNames", targetNamespace = "")
-        List<String> attributeNames,
-        @WebParam(name = "attributeValues", targetNamespace = "")
-        List<String> attributeValues,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<UpdateObjectResponse> asyncHandler);
-
-    /**
-     * 
-     * @param attributeNames
-     * @param attributeValues
-     * @param sessionId
-     * @param oid
-     * @param className
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "updateObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObject")
-    @ResponseWrapper(localName = "updateObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateObjectResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateObject/Fault/ServerSideException")
-    })
-    public void updateObject(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "attributeNames", targetNamespace = "")
-        List<String> attributeNames,
-        @WebParam(name = "attributeValues", targetNamespace = "")
-        List<String> attributeValues,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param className
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetMandatoryAttributesInClassResponse>
-     */
-    @WebMethod(operationName = "getMandatoryAttributesInClass")
-    @RequestWrapper(localName = "getMandatoryAttributesInClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetMandatoryAttributesInClass")
-    @ResponseWrapper(localName = "getMandatoryAttributesInClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetMandatoryAttributesInClassResponse")
-    public Response<GetMandatoryAttributesInClassResponse> getMandatoryAttributesInClassAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param asyncHandler
-     * @param className
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getMandatoryAttributesInClass")
-    @RequestWrapper(localName = "getMandatoryAttributesInClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetMandatoryAttributesInClass")
-    @ResponseWrapper(localName = "getMandatoryAttributesInClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetMandatoryAttributesInClassResponse")
-    public Future<?> getMandatoryAttributesInClassAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetMandatoryAttributesInClassResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param className
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.AttributeInfo>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getMandatoryAttributesInClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetMandatoryAttributesInClass")
-    @ResponseWrapper(localName = "getMandatoryAttributesInClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetMandatoryAttributesInClassResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getMandatoryAttributesInClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getMandatoryAttributesInClassResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getMandatoryAttributesInClass/Fault/ServerSideException")
-    })
-    public List<AttributeInfo> getMandatoryAttributesInClass(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param namePattern
-     * @param sessionId
-     * @param parentClassName
-     * @param parentOid
-     * @param className
-     * @param numberOfObjects
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateBulkObjectsResponse>
-     */
-    @WebMethod(operationName = "createBulkObjects")
-    @RequestWrapper(localName = "createBulkObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkObjects")
-    @ResponseWrapper(localName = "createBulkObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkObjectsResponse")
-    public Response<CreateBulkObjectsResponse> createBulkObjectsAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "numberOfObjects", targetNamespace = "")
-        int numberOfObjects,
-        @WebParam(name = "namePattern", targetNamespace = "")
-        String namePattern,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param namePattern
-     * @param sessionId
-     * @param parentClassName
-     * @param asyncHandler
-     * @param parentOid
-     * @param className
-     * @param numberOfObjects
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "createBulkObjects")
-    @RequestWrapper(localName = "createBulkObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkObjects")
-    @ResponseWrapper(localName = "createBulkObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkObjectsResponse")
-    public Future<?> createBulkObjectsAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "numberOfObjects", targetNamespace = "")
-        int numberOfObjects,
-        @WebParam(name = "namePattern", targetNamespace = "")
-        String namePattern,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CreateBulkObjectsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param namePattern
-     * @param sessionId
-     * @param parentClassName
-     * @param parentOid
-     * @param className
-     * @param numberOfObjects
-     * @return
-     *     returns java.util.List<java.lang.Long>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createBulkObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkObjects")
-    @ResponseWrapper(localName = "createBulkObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkObjectsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createBulkObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createBulkObjectsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createBulkObjects/Fault/ServerSideException")
-    })
-    public List<Long> createBulkObjects(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "parentOid", targetNamespace = "")
-        long parentOid,
-        @WebParam(name = "numberOfObjects", targetNamespace = "")
-        int numberOfObjects,
-        @WebParam(name = "namePattern", targetNamespace = "")
-        String namePattern,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param namePattern
-     * @param parentId
-     * @param sessionId
-     * @param parentClassName
-     * @param numberOfSpecialObjects
-     * @param className
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateBulkSpecialObjectsResponse>
-     */
-    @WebMethod(operationName = "createBulkSpecialObjects")
-    @RequestWrapper(localName = "createBulkSpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialObjects")
-    @ResponseWrapper(localName = "createBulkSpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialObjectsResponse")
-    public Response<CreateBulkSpecialObjectsResponse> createBulkSpecialObjectsAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "parentId", targetNamespace = "")
-        long parentId,
-        @WebParam(name = "numberOfSpecialObjects", targetNamespace = "")
-        int numberOfSpecialObjects,
-        @WebParam(name = "namePattern", targetNamespace = "")
-        String namePattern,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param namePattern
-     * @param parentId
-     * @param sessionId
-     * @param parentClassName
-     * @param numberOfSpecialObjects
-     * @param asyncHandler
-     * @param className
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "createBulkSpecialObjects")
-    @RequestWrapper(localName = "createBulkSpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialObjects")
-    @ResponseWrapper(localName = "createBulkSpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialObjectsResponse")
-    public Future<?> createBulkSpecialObjectsAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "parentId", targetNamespace = "")
-        long parentId,
-        @WebParam(name = "numberOfSpecialObjects", targetNamespace = "")
-        int numberOfSpecialObjects,
-        @WebParam(name = "namePattern", targetNamespace = "")
-        String namePattern,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CreateBulkSpecialObjectsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param namePattern
-     * @param parentId
-     * @param sessionId
-     * @param parentClassName
-     * @param numberOfSpecialObjects
-     * @param className
-     * @return
-     *     returns java.util.List<java.lang.Long>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createBulkSpecialObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialObjects")
-    @ResponseWrapper(localName = "createBulkSpecialObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateBulkSpecialObjectsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createBulkSpecialObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createBulkSpecialObjectsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createBulkSpecialObjects/Fault/ServerSideException")
-    })
-    public List<Long> createBulkSpecialObjects(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "parentId", targetNamespace = "")
-        long parentId,
-        @WebParam(name = "numberOfSpecialObjects", targetNamespace = "")
-        int numberOfSpecialObjects,
-        @WebParam(name = "namePattern", targetNamespace = "")
-        String namePattern,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param aObjectClass
-     * @param sessionId
-     * @param bObjectId
-     * @param bObjectClass
-     * @param aObjectId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.ConnectMirrorPortResponse>
-     */
-    @WebMethod(operationName = "connectMirrorPort")
-    @RequestWrapper(localName = "connectMirrorPort", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectMirrorPort")
-    @ResponseWrapper(localName = "connectMirrorPortResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectMirrorPortResponse")
-    public Response<ConnectMirrorPortResponse> connectMirrorPortAsync(
-        @WebParam(name = "aObjectClass", targetNamespace = "")
-        List<String> aObjectClass,
-        @WebParam(name = "aObjectId", targetNamespace = "")
-        List<Long> aObjectId,
-        @WebParam(name = "bObjectClass", targetNamespace = "")
-        List<String> bObjectClass,
-        @WebParam(name = "bObjectId", targetNamespace = "")
-        List<Long> bObjectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param aObjectClass
-     * @param sessionId
-     * @param bObjectId
-     * @param asyncHandler
-     * @param bObjectClass
-     * @param aObjectId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "connectMirrorPort")
-    @RequestWrapper(localName = "connectMirrorPort", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectMirrorPort")
-    @ResponseWrapper(localName = "connectMirrorPortResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectMirrorPortResponse")
-    public Future<?> connectMirrorPortAsync(
-        @WebParam(name = "aObjectClass", targetNamespace = "")
-        List<String> aObjectClass,
-        @WebParam(name = "aObjectId", targetNamespace = "")
-        List<Long> aObjectId,
-        @WebParam(name = "bObjectClass", targetNamespace = "")
-        List<String> bObjectClass,
-        @WebParam(name = "bObjectId", targetNamespace = "")
-        List<Long> bObjectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<ConnectMirrorPortResponse> asyncHandler);
-
-    /**
-     * 
-     * @param aObjectClass
-     * @param sessionId
-     * @param bObjectId
-     * @param bObjectClass
-     * @param aObjectId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "connectMirrorPort", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectMirrorPort")
-    @ResponseWrapper(localName = "connectMirrorPortResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectMirrorPortResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/connectMirrorPortRequest", output = "http://ws.kuwaiba.org/KuwaibaService/connectMirrorPortResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/connectMirrorPort/Fault/ServerSideException")
-    })
-    public void connectMirrorPort(
-        @WebParam(name = "aObjectClass", targetNamespace = "")
-        List<String> aObjectClass,
-        @WebParam(name = "aObjectId", targetNamespace = "")
-        List<Long> aObjectId,
-        @WebParam(name = "bObjectClass", targetNamespace = "")
-        List<String> bObjectClass,
-        @WebParam(name = "bObjectId", targetNamespace = "")
-        List<Long> bObjectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param objectId
-     * @param objectClass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.ReleaseMirrorPortResponse>
-     */
-    @WebMethod(operationName = "releaseMirrorPort")
-    @RequestWrapper(localName = "releaseMirrorPort", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseMirrorPort")
-    @ResponseWrapper(localName = "releaseMirrorPortResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseMirrorPortResponse")
-    public Response<ReleaseMirrorPortResponse> releaseMirrorPortAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param objectId
-     * @param asyncHandler
-     * @param objectClass
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "releaseMirrorPort")
-    @RequestWrapper(localName = "releaseMirrorPort", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseMirrorPort")
-    @ResponseWrapper(localName = "releaseMirrorPortResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseMirrorPortResponse")
-    public Future<?> releaseMirrorPortAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<ReleaseMirrorPortResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param objectId
-     * @param objectClass
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "releaseMirrorPort", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseMirrorPort")
-    @ResponseWrapper(localName = "releaseMirrorPortResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseMirrorPortResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/releaseMirrorPortRequest", output = "http://ws.kuwaiba.org/KuwaibaService/releaseMirrorPortResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/releaseMirrorPort/Fault/ServerSideException")
-    })
-    public void releaseMirrorPort(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param templateId
-     * @param parentId
-     * @param connectionClass
-     * @param aObjectClass
-     * @param sessionId
-     * @param parentClass
-     * @param name
-     * @param bObjectId
-     * @param bObjectClass
-     * @param aObjectId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreatePhysicalConnectionResponse>
-     */
-    @WebMethod(operationName = "createPhysicalConnection")
-    @RequestWrapper(localName = "createPhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePhysicalConnection")
-    @ResponseWrapper(localName = "createPhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePhysicalConnectionResponse")
-    public Response<CreatePhysicalConnectionResponse> createPhysicalConnectionAsync(
-        @WebParam(name = "aObjectClass", targetNamespace = "")
-        String aObjectClass,
-        @WebParam(name = "aObjectId", targetNamespace = "")
-        long aObjectId,
-        @WebParam(name = "bObjectClass", targetNamespace = "")
-        String bObjectClass,
-        @WebParam(name = "bObjectId", targetNamespace = "")
-        long bObjectId,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "parentId", targetNamespace = "")
-        long parentId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "connectionClass", targetNamespace = "")
-        String connectionClass,
-        @WebParam(name = "templateId", targetNamespace = "")
-        long templateId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param templateId
-     * @param parentId
-     * @param connectionClass
-     * @param aObjectClass
-     * @param sessionId
-     * @param parentClass
-     * @param name
-     * @param bObjectId
-     * @param asyncHandler
-     * @param bObjectClass
-     * @param aObjectId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "createPhysicalConnection")
-    @RequestWrapper(localName = "createPhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePhysicalConnection")
-    @ResponseWrapper(localName = "createPhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePhysicalConnectionResponse")
-    public Future<?> createPhysicalConnectionAsync(
-        @WebParam(name = "aObjectClass", targetNamespace = "")
-        String aObjectClass,
-        @WebParam(name = "aObjectId", targetNamespace = "")
-        long aObjectId,
-        @WebParam(name = "bObjectClass", targetNamespace = "")
-        String bObjectClass,
-        @WebParam(name = "bObjectId", targetNamespace = "")
-        long bObjectId,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "parentId", targetNamespace = "")
-        long parentId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "connectionClass", targetNamespace = "")
-        String connectionClass,
-        @WebParam(name = "templateId", targetNamespace = "")
-        long templateId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CreatePhysicalConnectionResponse> asyncHandler);
-
-    /**
-     * 
-     * @param templateId
-     * @param parentId
-     * @param connectionClass
-     * @param aObjectClass
-     * @param sessionId
-     * @param parentClass
-     * @param name
-     * @param bObjectId
-     * @param bObjectClass
-     * @param aObjectId
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createPhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePhysicalConnection")
-    @ResponseWrapper(localName = "createPhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePhysicalConnectionResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createPhysicalConnectionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createPhysicalConnectionResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createPhysicalConnection/Fault/ServerSideException")
-    })
-    public long createPhysicalConnection(
-        @WebParam(name = "aObjectClass", targetNamespace = "")
-        String aObjectClass,
-        @WebParam(name = "aObjectId", targetNamespace = "")
-        long aObjectId,
-        @WebParam(name = "bObjectClass", targetNamespace = "")
-        String bObjectClass,
-        @WebParam(name = "bObjectId", targetNamespace = "")
-        long bObjectId,
-        @WebParam(name = "parentClass", targetNamespace = "")
-        String parentClass,
-        @WebParam(name = "parentId", targetNamespace = "")
-        long parentId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "connectionClass", targetNamespace = "")
-        String connectionClass,
-        @WebParam(name = "templateId", targetNamespace = "")
-        long templateId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param connectionClass
-     * @param sessionId
-     * @param connectionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetPhysicalConnectionEndpointsResponse>
-     */
-    @WebMethod(operationName = "getPhysicalConnectionEndpoints")
-    @RequestWrapper(localName = "getPhysicalConnectionEndpoints", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionEndpoints")
-    @ResponseWrapper(localName = "getPhysicalConnectionEndpointsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionEndpointsResponse")
-    public Response<GetPhysicalConnectionEndpointsResponse> getPhysicalConnectionEndpointsAsync(
-        @WebParam(name = "connectionClass", targetNamespace = "")
-        String connectionClass,
-        @WebParam(name = "connectionId", targetNamespace = "")
-        long connectionId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param connectionClass
-     * @param sessionId
-     * @param connectionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getPhysicalConnectionEndpoints")
-    @RequestWrapper(localName = "getPhysicalConnectionEndpoints", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionEndpoints")
-    @ResponseWrapper(localName = "getPhysicalConnectionEndpointsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionEndpointsResponse")
-    public Future<?> getPhysicalConnectionEndpointsAsync(
-        @WebParam(name = "connectionClass", targetNamespace = "")
-        String connectionClass,
-        @WebParam(name = "connectionId", targetNamespace = "")
-        long connectionId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetPhysicalConnectionEndpointsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param connectionClass
-     * @param sessionId
-     * @param connectionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPhysicalConnectionEndpoints", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionEndpoints")
-    @ResponseWrapper(localName = "getPhysicalConnectionEndpointsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionEndpointsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionEndpointsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionEndpointsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionEndpoints/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getPhysicalConnectionEndpoints(
-        @WebParam(name = "connectionClass", targetNamespace = "")
-        String connectionClass,
-        @WebParam(name = "connectionId", targetNamespace = "")
-        long connectionId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sideBIds
-     * @param linksIds
-     * @param sessionId
-     * @param linksClassNames
-     * @param sideAIds
-     * @param sideBClassNames
-     * @param sideAClassNames
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.ConnectPhysicalLinksResponse>
-     */
-    @WebMethod(operationName = "connectPhysicalLinks")
-    @RequestWrapper(localName = "connectPhysicalLinks", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalLinks")
-    @ResponseWrapper(localName = "connectPhysicalLinksResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalLinksResponse")
-    public Response<ConnectPhysicalLinksResponse> connectPhysicalLinksAsync(
-        @WebParam(name = "sideAClassNames", targetNamespace = "")
-        List<String> sideAClassNames,
-        @WebParam(name = "sideAIds", targetNamespace = "")
-        List<Long> sideAIds,
-        @WebParam(name = "linksClassNames", targetNamespace = "")
-        List<String> linksClassNames,
-        @WebParam(name = "linksIds", targetNamespace = "")
-        List<Long> linksIds,
-        @WebParam(name = "sideBClassNames", targetNamespace = "")
-        List<String> sideBClassNames,
-        @WebParam(name = "sideBIds", targetNamespace = "")
-        List<Long> sideBIds,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sideBIds
-     * @param linksIds
-     * @param sessionId
-     * @param linksClassNames
-     * @param asyncHandler
-     * @param sideAIds
-     * @param sideBClassNames
-     * @param sideAClassNames
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "connectPhysicalLinks")
-    @RequestWrapper(localName = "connectPhysicalLinks", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalLinks")
-    @ResponseWrapper(localName = "connectPhysicalLinksResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalLinksResponse")
-    public Future<?> connectPhysicalLinksAsync(
-        @WebParam(name = "sideAClassNames", targetNamespace = "")
-        List<String> sideAClassNames,
-        @WebParam(name = "sideAIds", targetNamespace = "")
-        List<Long> sideAIds,
-        @WebParam(name = "linksClassNames", targetNamespace = "")
-        List<String> linksClassNames,
-        @WebParam(name = "linksIds", targetNamespace = "")
-        List<Long> linksIds,
-        @WebParam(name = "sideBClassNames", targetNamespace = "")
-        List<String> sideBClassNames,
-        @WebParam(name = "sideBIds", targetNamespace = "")
-        List<Long> sideBIds,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<ConnectPhysicalLinksResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sideBIds
-     * @param linksIds
-     * @param sessionId
-     * @param linksClassNames
-     * @param sideAIds
-     * @param sideBClassNames
-     * @param sideAClassNames
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "connectPhysicalLinks", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalLinks")
-    @ResponseWrapper(localName = "connectPhysicalLinksResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalLinksResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalLinksRequest", output = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalLinksResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalLinks/Fault/ServerSideException")
-    })
-    public void connectPhysicalLinks(
-        @WebParam(name = "sideAClassNames", targetNamespace = "")
-        List<String> sideAClassNames,
-        @WebParam(name = "sideAIds", targetNamespace = "")
-        List<Long> sideAIds,
-        @WebParam(name = "linksClassNames", targetNamespace = "")
-        List<String> linksClassNames,
-        @WebParam(name = "linksIds", targetNamespace = "")
-        List<Long> linksIds,
-        @WebParam(name = "sideBClassNames", targetNamespace = "")
-        List<String> sideBClassNames,
-        @WebParam(name = "sideBIds", targetNamespace = "")
-        List<Long> sideBIds,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sideBIds
-     * @param containersIds
-     * @param sessionId
-     * @param sideAIds
-     * @param containersClassNames
-     * @param sideBClassNames
-     * @param sideAClassNames
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.ConnectPhysicalContainersResponse>
-     */
-    @WebMethod(operationName = "connectPhysicalContainers")
-    @RequestWrapper(localName = "connectPhysicalContainers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalContainers")
-    @ResponseWrapper(localName = "connectPhysicalContainersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalContainersResponse")
-    public Response<ConnectPhysicalContainersResponse> connectPhysicalContainersAsync(
-        @WebParam(name = "sideAClassNames", targetNamespace = "")
-        List<String> sideAClassNames,
-        @WebParam(name = "sideAIds", targetNamespace = "")
-        List<Long> sideAIds,
-        @WebParam(name = "containersClassNames", targetNamespace = "")
-        List<String> containersClassNames,
-        @WebParam(name = "containersIds", targetNamespace = "")
-        List<Long> containersIds,
-        @WebParam(name = "sideBClassNames", targetNamespace = "")
-        List<String> sideBClassNames,
-        @WebParam(name = "sideBIds", targetNamespace = "")
-        List<Long> sideBIds,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sideBIds
-     * @param containersIds
-     * @param sessionId
-     * @param asyncHandler
-     * @param sideAIds
-     * @param containersClassNames
-     * @param sideBClassNames
-     * @param sideAClassNames
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "connectPhysicalContainers")
-    @RequestWrapper(localName = "connectPhysicalContainers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalContainers")
-    @ResponseWrapper(localName = "connectPhysicalContainersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalContainersResponse")
-    public Future<?> connectPhysicalContainersAsync(
-        @WebParam(name = "sideAClassNames", targetNamespace = "")
-        List<String> sideAClassNames,
-        @WebParam(name = "sideAIds", targetNamespace = "")
-        List<Long> sideAIds,
-        @WebParam(name = "containersClassNames", targetNamespace = "")
-        List<String> containersClassNames,
-        @WebParam(name = "containersIds", targetNamespace = "")
-        List<Long> containersIds,
-        @WebParam(name = "sideBClassNames", targetNamespace = "")
-        List<String> sideBClassNames,
-        @WebParam(name = "sideBIds", targetNamespace = "")
-        List<Long> sideBIds,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<ConnectPhysicalContainersResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sideBIds
-     * @param containersIds
-     * @param sessionId
-     * @param sideAIds
-     * @param containersClassNames
-     * @param sideBClassNames
-     * @param sideAClassNames
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "connectPhysicalContainers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalContainers")
-    @ResponseWrapper(localName = "connectPhysicalContainersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ConnectPhysicalContainersResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalContainersRequest", output = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalContainersResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/connectPhysicalContainers/Fault/ServerSideException")
-    })
-    public void connectPhysicalContainers(
-        @WebParam(name = "sideAClassNames", targetNamespace = "")
-        List<String> sideAClassNames,
-        @WebParam(name = "sideAIds", targetNamespace = "")
-        List<Long> sideAIds,
-        @WebParam(name = "containersClassNames", targetNamespace = "")
-        List<String> containersClassNames,
-        @WebParam(name = "containersIds", targetNamespace = "")
-        List<Long> containersIds,
-        @WebParam(name = "sideBClassNames", targetNamespace = "")
-        List<String> sideBClassNames,
-        @WebParam(name = "sideBIds", targetNamespace = "")
-        List<Long> sideBIds,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sideToDisconnect
-     * @param connectionClass
-     * @param sessionId
-     * @param connectionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DisconnectPhysicalConnectionResponse>
-     */
-    @WebMethod(operationName = "disconnectPhysicalConnection")
-    @RequestWrapper(localName = "disconnectPhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DisconnectPhysicalConnection")
-    @ResponseWrapper(localName = "disconnectPhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DisconnectPhysicalConnectionResponse")
-    public Response<DisconnectPhysicalConnectionResponse> disconnectPhysicalConnectionAsync(
-        @WebParam(name = "connectionClass", targetNamespace = "")
-        String connectionClass,
-        @WebParam(name = "connectionId", targetNamespace = "")
-        long connectionId,
-        @WebParam(name = "sideToDisconnect", targetNamespace = "")
-        int sideToDisconnect,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sideToDisconnect
-     * @param connectionClass
-     * @param sessionId
-     * @param connectionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "disconnectPhysicalConnection")
-    @RequestWrapper(localName = "disconnectPhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DisconnectPhysicalConnection")
-    @ResponseWrapper(localName = "disconnectPhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DisconnectPhysicalConnectionResponse")
-    public Future<?> disconnectPhysicalConnectionAsync(
-        @WebParam(name = "connectionClass", targetNamespace = "")
-        String connectionClass,
-        @WebParam(name = "connectionId", targetNamespace = "")
-        long connectionId,
-        @WebParam(name = "sideToDisconnect", targetNamespace = "")
-        int sideToDisconnect,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<DisconnectPhysicalConnectionResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sideToDisconnect
-     * @param connectionClass
-     * @param sessionId
-     * @param connectionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "disconnectPhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DisconnectPhysicalConnection")
-    @ResponseWrapper(localName = "disconnectPhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DisconnectPhysicalConnectionResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/disconnectPhysicalConnectionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/disconnectPhysicalConnectionResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/disconnectPhysicalConnection/Fault/ServerSideException")
-    })
-    public void disconnectPhysicalConnection(
-        @WebParam(name = "connectionClass", targetNamespace = "")
-        String connectionClass,
-        @WebParam(name = "connectionId", targetNamespace = "")
-        long connectionId,
-        @WebParam(name = "sideToDisconnect", targetNamespace = "")
-        int sideToDisconnect,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param objectId
-     * @param objectClass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetPhysicalPathResponse>
-     */
-    @WebMethod(operationName = "getPhysicalPath")
-    @RequestWrapper(localName = "getPhysicalPath", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalPath")
-    @ResponseWrapper(localName = "getPhysicalPathResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalPathResponse")
-    public Response<GetPhysicalPathResponse> getPhysicalPathAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param objectId
-     * @param asyncHandler
-     * @param objectClass
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getPhysicalPath")
-    @RequestWrapper(localName = "getPhysicalPath", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalPath")
-    @ResponseWrapper(localName = "getPhysicalPathResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalPathResponse")
-    public Future<?> getPhysicalPathAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetPhysicalPathResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param objectId
-     * @param objectClass
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPhysicalPath", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalPath")
-    @ResponseWrapper(localName = "getPhysicalPathResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalPathResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalPathRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalPathResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalPath/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getPhysicalPath(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param linkId
-     * @param linkClass
-     * @param sessionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetLogicalLinkDetailsResponse>
-     */
-    @WebMethod(operationName = "getLogicalLinkDetails")
-    @RequestWrapper(localName = "getLogicalLinkDetails", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetLogicalLinkDetails")
-    @ResponseWrapper(localName = "getLogicalLinkDetailsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetLogicalLinkDetailsResponse")
-    public Response<GetLogicalLinkDetailsResponse> getLogicalLinkDetailsAsync(
-        @WebParam(name = "linkClass", targetNamespace = "")
-        String linkClass,
-        @WebParam(name = "linkId", targetNamespace = "")
-        long linkId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param linkId
-     * @param linkClass
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getLogicalLinkDetails")
-    @RequestWrapper(localName = "getLogicalLinkDetails", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetLogicalLinkDetails")
-    @ResponseWrapper(localName = "getLogicalLinkDetailsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetLogicalLinkDetailsResponse")
-    public Future<?> getLogicalLinkDetailsAsync(
-        @WebParam(name = "linkClass", targetNamespace = "")
-        String linkClass,
-        @WebParam(name = "linkId", targetNamespace = "")
-        long linkId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetLogicalLinkDetailsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param linkId
-     * @param linkClass
-     * @param sessionId
-     * @return
-     *     returns org.inventory.communications.wsclient.RemoteLogicalConnectionDetails
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getLogicalLinkDetails", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetLogicalLinkDetails")
-    @ResponseWrapper(localName = "getLogicalLinkDetailsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetLogicalLinkDetailsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getLogicalLinkDetailsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getLogicalLinkDetailsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getLogicalLinkDetails/Fault/ServerSideException")
-    })
-    public RemoteLogicalConnectionDetails getLogicalLinkDetails(
-        @WebParam(name = "linkClass", targetNamespace = "")
-        String linkClass,
-        @WebParam(name = "linkId", targetNamespace = "")
-        long linkId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectAClass
-     * @param sessionId
-     * @param containerClass
-     * @param objectBClass
-     * @param objectBId
-     * @param objectAId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetContainersBetweenObjectsResponse>
-     */
-    @WebMethod(operationName = "getContainersBetweenObjects")
-    @RequestWrapper(localName = "getContainersBetweenObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetContainersBetweenObjects")
-    @ResponseWrapper(localName = "getContainersBetweenObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetContainersBetweenObjectsResponse")
-    public Response<GetContainersBetweenObjectsResponse> getContainersBetweenObjectsAsync(
-        @WebParam(name = "objectAClass", targetNamespace = "")
-        String objectAClass,
-        @WebParam(name = "objectAId", targetNamespace = "")
-        long objectAId,
-        @WebParam(name = "objectBClass", targetNamespace = "")
-        String objectBClass,
-        @WebParam(name = "objectBId", targetNamespace = "")
-        long objectBId,
-        @WebParam(name = "containerClass", targetNamespace = "")
-        String containerClass,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param objectAClass
-     * @param sessionId
-     * @param containerClass
-     * @param asyncHandler
-     * @param objectBClass
-     * @param objectBId
-     * @param objectAId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getContainersBetweenObjects")
-    @RequestWrapper(localName = "getContainersBetweenObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetContainersBetweenObjects")
-    @ResponseWrapper(localName = "getContainersBetweenObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetContainersBetweenObjectsResponse")
-    public Future<?> getContainersBetweenObjectsAsync(
-        @WebParam(name = "objectAClass", targetNamespace = "")
-        String objectAClass,
-        @WebParam(name = "objectAId", targetNamespace = "")
-        long objectAId,
-        @WebParam(name = "objectBClass", targetNamespace = "")
-        String objectBClass,
-        @WebParam(name = "objectBId", targetNamespace = "")
-        long objectBId,
-        @WebParam(name = "containerClass", targetNamespace = "")
-        String containerClass,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetContainersBetweenObjectsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param objectAClass
-     * @param sessionId
-     * @param containerClass
-     * @param objectBClass
-     * @param objectBId
-     * @param objectAId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getContainersBetweenObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetContainersBetweenObjects")
-    @ResponseWrapper(localName = "getContainersBetweenObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetContainersBetweenObjectsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getContainersBetweenObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getContainersBetweenObjectsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getContainersBetweenObjects/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getContainersBetweenObjects(
-        @WebParam(name = "objectAClass", targetNamespace = "")
-        String objectAClass,
-        @WebParam(name = "objectAId", targetNamespace = "")
-        long objectAId,
-        @WebParam(name = "objectBClass", targetNamespace = "")
-        String objectBClass,
-        @WebParam(name = "objectBId", targetNamespace = "")
-        long objectBId,
-        @WebParam(name = "containerClass", targetNamespace = "")
-        String containerClass,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param objectId
-     * @param objectClass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetPhysicalConnectionsInObjectResponse>
-     */
-    @WebMethod(operationName = "getPhysicalConnectionsInObject")
-    @RequestWrapper(localName = "getPhysicalConnectionsInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionsInObject")
-    @ResponseWrapper(localName = "getPhysicalConnectionsInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionsInObjectResponse")
-    public Response<GetPhysicalConnectionsInObjectResponse> getPhysicalConnectionsInObjectAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param objectId
-     * @param asyncHandler
-     * @param objectClass
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getPhysicalConnectionsInObject")
-    @RequestWrapper(localName = "getPhysicalConnectionsInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionsInObject")
-    @ResponseWrapper(localName = "getPhysicalConnectionsInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionsInObjectResponse")
-    public Future<?> getPhysicalConnectionsInObjectAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetPhysicalConnectionsInObjectResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param objectId
-     * @param objectClass
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLightList>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPhysicalConnectionsInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionsInObject")
-    @ResponseWrapper(localName = "getPhysicalConnectionsInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPhysicalConnectionsInObjectResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionsInObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionsInObjectResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPhysicalConnectionsInObject/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLightList> getPhysicalConnectionsInObject(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param objectId
-     * @param objectClass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeletePhysicalConnectionResponse>
-     */
-    @WebMethod(operationName = "deletePhysicalConnection")
-    @RequestWrapper(localName = "deletePhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePhysicalConnection")
-    @ResponseWrapper(localName = "deletePhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePhysicalConnectionResponse")
-    public Response<DeletePhysicalConnectionResponse> deletePhysicalConnectionAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param objectId
-     * @param asyncHandler
-     * @param objectClass
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "deletePhysicalConnection")
-    @RequestWrapper(localName = "deletePhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePhysicalConnection")
-    @ResponseWrapper(localName = "deletePhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePhysicalConnectionResponse")
-    public Future<?> deletePhysicalConnectionAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<DeletePhysicalConnectionResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param objectId
-     * @param objectClass
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deletePhysicalConnection", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePhysicalConnection")
-    @ResponseWrapper(localName = "deletePhysicalConnectionResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePhysicalConnectionResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deletePhysicalConnectionRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deletePhysicalConnectionResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deletePhysicalConnection/Fault/ServerSideException")
-    })
-    public void deletePhysicalConnection(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param serviceClass
-     * @param serviceId
-     * @param sessionId
-     * @param objectId
-     * @param objectClass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.AssociateObjectToServiceResponse>
-     */
-    @WebMethod(operationName = "associateObjectToService")
-    @RequestWrapper(localName = "associateObjectToService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectToService")
-    @ResponseWrapper(localName = "associateObjectToServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectToServiceResponse")
-    public Response<AssociateObjectToServiceResponse> associateObjectToServiceAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "serviceClass", targetNamespace = "")
-        String serviceClass,
-        @WebParam(name = "serviceId", targetNamespace = "")
-        long serviceId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param serviceClass
-     * @param serviceId
-     * @param sessionId
-     * @param objectId
-     * @param asyncHandler
-     * @param objectClass
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "associateObjectToService")
-    @RequestWrapper(localName = "associateObjectToService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectToService")
-    @ResponseWrapper(localName = "associateObjectToServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectToServiceResponse")
-    public Future<?> associateObjectToServiceAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "serviceClass", targetNamespace = "")
-        String serviceClass,
-        @WebParam(name = "serviceId", targetNamespace = "")
-        long serviceId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<AssociateObjectToServiceResponse> asyncHandler);
-
-    /**
-     * 
-     * @param serviceClass
-     * @param serviceId
-     * @param sessionId
-     * @param objectId
-     * @param objectClass
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "associateObjectToService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectToService")
-    @ResponseWrapper(localName = "associateObjectToServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectToServiceResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/associateObjectToServiceRequest", output = "http://ws.kuwaiba.org/KuwaibaService/associateObjectToServiceResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/associateObjectToService/Fault/ServerSideException")
-    })
-    public void associateObjectToService(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "serviceClass", targetNamespace = "")
-        String serviceClass,
-        @WebParam(name = "serviceId", targetNamespace = "")
-        long serviceId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param serviceClass
-     * @param serviceId
-     * @param sessionId
-     * @param objectId
-     * @param objectClass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.AssociateObjectsToServiceResponse>
-     */
-    @WebMethod(operationName = "associateObjectsToService")
-    @RequestWrapper(localName = "associateObjectsToService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectsToService")
-    @ResponseWrapper(localName = "associateObjectsToServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectsToServiceResponse")
-    public Response<AssociateObjectsToServiceResponse> associateObjectsToServiceAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        List<String> objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        List<Long> objectId,
-        @WebParam(name = "serviceClass", targetNamespace = "")
-        String serviceClass,
-        @WebParam(name = "serviceId", targetNamespace = "")
-        long serviceId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param serviceClass
-     * @param serviceId
-     * @param sessionId
-     * @param objectId
-     * @param asyncHandler
-     * @param objectClass
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "associateObjectsToService")
-    @RequestWrapper(localName = "associateObjectsToService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectsToService")
-    @ResponseWrapper(localName = "associateObjectsToServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectsToServiceResponse")
-    public Future<?> associateObjectsToServiceAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        List<String> objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        List<Long> objectId,
-        @WebParam(name = "serviceClass", targetNamespace = "")
-        String serviceClass,
-        @WebParam(name = "serviceId", targetNamespace = "")
-        long serviceId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<AssociateObjectsToServiceResponse> asyncHandler);
-
-    /**
-     * 
-     * @param serviceClass
-     * @param serviceId
-     * @param sessionId
-     * @param objectId
-     * @param objectClass
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "associateObjectsToService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectsToService")
-    @ResponseWrapper(localName = "associateObjectsToServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AssociateObjectsToServiceResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/associateObjectsToServiceRequest", output = "http://ws.kuwaiba.org/KuwaibaService/associateObjectsToServiceResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/associateObjectsToService/Fault/ServerSideException")
-    })
-    public void associateObjectsToService(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        List<String> objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        List<Long> objectId,
-        @WebParam(name = "serviceClass", targetNamespace = "")
-        String serviceClass,
-        @WebParam(name = "serviceId", targetNamespace = "")
-        long serviceId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param serviceClass
-     * @param serviceId
-     * @param sessionId
-     * @param targetId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.ReleaseObjectFromServiceResponse>
-     */
-    @WebMethod(operationName = "releaseObjectFromService")
-    @RequestWrapper(localName = "releaseObjectFromService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseObjectFromService")
-    @ResponseWrapper(localName = "releaseObjectFromServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseObjectFromServiceResponse")
-    public Response<ReleaseObjectFromServiceResponse> releaseObjectFromServiceAsync(
-        @WebParam(name = "serviceClass", targetNamespace = "")
-        String serviceClass,
-        @WebParam(name = "serviceId", targetNamespace = "")
-        long serviceId,
-        @WebParam(name = "targetId", targetNamespace = "")
-        long targetId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param serviceClass
-     * @param serviceId
-     * @param sessionId
-     * @param asyncHandler
-     * @param targetId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "releaseObjectFromService")
-    @RequestWrapper(localName = "releaseObjectFromService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseObjectFromService")
-    @ResponseWrapper(localName = "releaseObjectFromServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseObjectFromServiceResponse")
-    public Future<?> releaseObjectFromServiceAsync(
-        @WebParam(name = "serviceClass", targetNamespace = "")
-        String serviceClass,
-        @WebParam(name = "serviceId", targetNamespace = "")
-        long serviceId,
-        @WebParam(name = "targetId", targetNamespace = "")
-        long targetId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<ReleaseObjectFromServiceResponse> asyncHandler);
-
-    /**
-     * 
-     * @param serviceClass
-     * @param serviceId
-     * @param sessionId
-     * @param targetId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "releaseObjectFromService", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseObjectFromService")
-    @ResponseWrapper(localName = "releaseObjectFromServiceResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ReleaseObjectFromServiceResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/releaseObjectFromServiceRequest", output = "http://ws.kuwaiba.org/KuwaibaService/releaseObjectFromServiceResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/releaseObjectFromService/Fault/ServerSideException")
-    })
-    public void releaseObjectFromService(
-        @WebParam(name = "serviceClass", targetNamespace = "")
-        String serviceClass,
-        @WebParam(name = "serviceId", targetNamespace = "")
-        long serviceId,
-        @WebParam(name = "targetId", targetNamespace = "")
-        long targetId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param serviceClass
-     * @param serviceId
-     * @param sessionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetServiceResourcesResponse>
-     */
-    @WebMethod(operationName = "getServiceResources")
-    @RequestWrapper(localName = "getServiceResources", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetServiceResources")
-    @ResponseWrapper(localName = "getServiceResourcesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetServiceResourcesResponse")
-    public Response<GetServiceResourcesResponse> getServiceResourcesAsync(
-        @WebParam(name = "serviceClass", targetNamespace = "")
-        String serviceClass,
-        @WebParam(name = "serviceId", targetNamespace = "")
-        long serviceId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param serviceClass
-     * @param serviceId
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getServiceResources")
-    @RequestWrapper(localName = "getServiceResources", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetServiceResources")
-    @ResponseWrapper(localName = "getServiceResourcesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetServiceResourcesResponse")
-    public Future<?> getServiceResourcesAsync(
-        @WebParam(name = "serviceClass", targetNamespace = "")
-        String serviceClass,
-        @WebParam(name = "serviceId", targetNamespace = "")
-        long serviceId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetServiceResourcesResponse> asyncHandler);
-
-    /**
-     * 
-     * @param serviceClass
-     * @param serviceId
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getServiceResources", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetServiceResources")
-    @ResponseWrapper(localName = "getServiceResourcesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetServiceResourcesResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getServiceResourcesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getServiceResourcesResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getServiceResources/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getServiceResources(
-        @WebParam(name = "serviceClass", targetNamespace = "")
-        String serviceClass,
-        @WebParam(name = "serviceId", targetNamespace = "")
-        long serviceId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetUsersResponse>
-     */
-    @WebMethod(operationName = "getUsers")
-    @RequestWrapper(localName = "getUsers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsers")
-    @ResponseWrapper(localName = "getUsersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersResponse")
-    public Response<GetUsersResponse> getUsersAsync(
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getUsers")
-    @RequestWrapper(localName = "getUsers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsers")
-    @ResponseWrapper(localName = "getUsersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersResponse")
-    public Future<?> getUsersAsync(
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetUsersResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.UserInfo>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getUsers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsers")
-    @ResponseWrapper(localName = "getUsersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getUsersRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getUsersResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getUsers/Fault/ServerSideException")
-    })
-    public List<UserInfo> getUsers(
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param groupId
-     * @param sessionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetUsersInGroupResponse>
-     */
-    @WebMethod(operationName = "getUsersInGroup")
-    @RequestWrapper(localName = "getUsersInGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersInGroup")
-    @ResponseWrapper(localName = "getUsersInGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersInGroupResponse")
-    public Response<GetUsersInGroupResponse> getUsersInGroupAsync(
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param groupId
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getUsersInGroup")
-    @RequestWrapper(localName = "getUsersInGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersInGroup")
-    @ResponseWrapper(localName = "getUsersInGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersInGroupResponse")
-    public Future<?> getUsersInGroupAsync(
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetUsersInGroupResponse> asyncHandler);
-
-    /**
-     * 
-     * @param groupId
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.UserInfo>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getUsersInGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersInGroup")
-    @ResponseWrapper(localName = "getUsersInGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetUsersInGroupResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getUsersInGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getUsersInGroupResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getUsersInGroup/Fault/ServerSideException")
-    })
-    public List<UserInfo> getUsersInGroup(
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param userId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetGroupsForUserResponse>
-     */
-    @WebMethod(operationName = "getGroupsForUser")
-    @RequestWrapper(localName = "getGroupsForUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGroupsForUser")
-    @ResponseWrapper(localName = "getGroupsForUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGroupsForUserResponse")
-    public Response<GetGroupsForUserResponse> getGroupsForUserAsync(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param userId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getGroupsForUser")
-    @RequestWrapper(localName = "getGroupsForUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGroupsForUser")
-    @ResponseWrapper(localName = "getGroupsForUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGroupsForUserResponse")
-    public Future<?> getGroupsForUserAsync(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetGroupsForUserResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param userId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.GroupInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getGroupsForUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGroupsForUser")
-    @ResponseWrapper(localName = "getGroupsForUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGroupsForUserResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getGroupsForUserRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getGroupsForUserResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getGroupsForUser/Fault/ServerSideException")
-    })
-    public List<GroupInfoLight> getGroupsForUser(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param groupId
-     * @param sessionId
-     * @param userId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.AddUserToGroupResponse>
-     */
-    @WebMethod(operationName = "addUserToGroup")
-    @RequestWrapper(localName = "addUserToGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddUserToGroup")
-    @ResponseWrapper(localName = "addUserToGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddUserToGroupResponse")
-    public Response<AddUserToGroupResponse> addUserToGroupAsync(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param groupId
-     * @param sessionId
-     * @param userId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "addUserToGroup")
-    @RequestWrapper(localName = "addUserToGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddUserToGroup")
-    @ResponseWrapper(localName = "addUserToGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddUserToGroupResponse")
-    public Future<?> addUserToGroupAsync(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<AddUserToGroupResponse> asyncHandler);
-
-    /**
-     * 
-     * @param groupId
-     * @param sessionId
-     * @param userId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "addUserToGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddUserToGroup")
-    @ResponseWrapper(localName = "addUserToGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddUserToGroupResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/addUserToGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/addUserToGroupResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/addUserToGroup/Fault/ServerSideException")
-    })
-    public void addUserToGroup(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param groupId
-     * @param sessionId
-     * @param userId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.RemoveUserFromGroupResponse>
-     */
-    @WebMethod(operationName = "removeUserFromGroup")
-    @RequestWrapper(localName = "removeUserFromGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemoveUserFromGroup")
-    @ResponseWrapper(localName = "removeUserFromGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemoveUserFromGroupResponse")
-    public Response<RemoveUserFromGroupResponse> removeUserFromGroupAsync(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param groupId
-     * @param sessionId
-     * @param userId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "removeUserFromGroup")
-    @RequestWrapper(localName = "removeUserFromGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemoveUserFromGroup")
-    @ResponseWrapper(localName = "removeUserFromGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemoveUserFromGroupResponse")
-    public Future<?> removeUserFromGroupAsync(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<RemoveUserFromGroupResponse> asyncHandler);
-
-    /**
-     * 
-     * @param groupId
-     * @param sessionId
-     * @param userId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "removeUserFromGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemoveUserFromGroup")
-    @ResponseWrapper(localName = "removeUserFromGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemoveUserFromGroupResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/removeUserFromGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/removeUserFromGroupResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/removeUserFromGroup/Fault/ServerSideException")
-    })
-    public void removeUserFromGroup(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param featureToken
-     * @param sessionId
-     * @param userId
-     * @param accessLevel
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.SetPrivilegeToUserResponse>
-     */
-    @WebMethod(operationName = "setPrivilegeToUser")
-    @RequestWrapper(localName = "setPrivilegeToUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToUser")
-    @ResponseWrapper(localName = "setPrivilegeToUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToUserResponse")
-    public Response<SetPrivilegeToUserResponse> setPrivilegeToUserAsync(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "featureToken", targetNamespace = "")
-        String featureToken,
-        @WebParam(name = "accessLevel", targetNamespace = "")
-        int accessLevel,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param featureToken
-     * @param sessionId
-     * @param userId
-     * @param asyncHandler
-     * @param accessLevel
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "setPrivilegeToUser")
-    @RequestWrapper(localName = "setPrivilegeToUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToUser")
-    @ResponseWrapper(localName = "setPrivilegeToUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToUserResponse")
-    public Future<?> setPrivilegeToUserAsync(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "featureToken", targetNamespace = "")
-        String featureToken,
-        @WebParam(name = "accessLevel", targetNamespace = "")
-        int accessLevel,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<SetPrivilegeToUserResponse> asyncHandler);
-
-    /**
-     * 
-     * @param featureToken
-     * @param sessionId
-     * @param userId
-     * @param accessLevel
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "setPrivilegeToUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToUser")
-    @ResponseWrapper(localName = "setPrivilegeToUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToUserResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToUserRequest", output = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToUserResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToUser/Fault/ServerSideException")
-    })
-    public void setPrivilegeToUser(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "featureToken", targetNamespace = "")
-        String featureToken,
-        @WebParam(name = "accessLevel", targetNamespace = "")
-        int accessLevel,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param featureToken
-     * @param groupId
-     * @param sessionId
-     * @param accessLevel
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.SetPrivilegeToGroupResponse>
-     */
-    @WebMethod(operationName = "setPrivilegeToGroup")
-    @RequestWrapper(localName = "setPrivilegeToGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToGroup")
-    @ResponseWrapper(localName = "setPrivilegeToGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToGroupResponse")
-    public Response<SetPrivilegeToGroupResponse> setPrivilegeToGroupAsync(
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "featureToken", targetNamespace = "")
-        String featureToken,
-        @WebParam(name = "accessLevel", targetNamespace = "")
-        int accessLevel,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param featureToken
-     * @param groupId
-     * @param sessionId
-     * @param asyncHandler
-     * @param accessLevel
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "setPrivilegeToGroup")
-    @RequestWrapper(localName = "setPrivilegeToGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToGroup")
-    @ResponseWrapper(localName = "setPrivilegeToGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToGroupResponse")
-    public Future<?> setPrivilegeToGroupAsync(
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "featureToken", targetNamespace = "")
-        String featureToken,
-        @WebParam(name = "accessLevel", targetNamespace = "")
-        int accessLevel,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<SetPrivilegeToGroupResponse> asyncHandler);
-
-    /**
-     * 
-     * @param featureToken
-     * @param groupId
-     * @param sessionId
-     * @param accessLevel
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "setPrivilegeToGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToGroup")
-    @ResponseWrapper(localName = "setPrivilegeToGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPrivilegeToGroupResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToGroupResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/setPrivilegeToGroup/Fault/ServerSideException")
-    })
-    public void setPrivilegeToGroup(
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "featureToken", targetNamespace = "")
-        String featureToken,
-        @WebParam(name = "accessLevel", targetNamespace = "")
-        int accessLevel,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param featureToken
-     * @param sessionId
-     * @param userId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.RemovePrivilegeFromUserResponse>
-     */
-    @WebMethod(operationName = "removePrivilegeFromUser")
-    @RequestWrapper(localName = "removePrivilegeFromUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromUser")
-    @ResponseWrapper(localName = "removePrivilegeFromUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromUserResponse")
-    public Response<RemovePrivilegeFromUserResponse> removePrivilegeFromUserAsync(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "featureToken", targetNamespace = "")
-        String featureToken,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param featureToken
-     * @param sessionId
-     * @param userId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "removePrivilegeFromUser")
-    @RequestWrapper(localName = "removePrivilegeFromUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromUser")
-    @ResponseWrapper(localName = "removePrivilegeFromUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromUserResponse")
-    public Future<?> removePrivilegeFromUserAsync(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "featureToken", targetNamespace = "")
-        String featureToken,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<RemovePrivilegeFromUserResponse> asyncHandler);
-
-    /**
-     * 
-     * @param featureToken
-     * @param sessionId
-     * @param userId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "removePrivilegeFromUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromUser")
-    @ResponseWrapper(localName = "removePrivilegeFromUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromUserResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromUserRequest", output = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromUserResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromUser/Fault/ServerSideException")
-    })
-    public void removePrivilegeFromUser(
-        @WebParam(name = "userId", targetNamespace = "")
-        long userId,
-        @WebParam(name = "featureToken", targetNamespace = "")
-        String featureToken,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param featureToken
-     * @param groupId
-     * @param sessionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.RemovePrivilegeFromGroupResponse>
-     */
-    @WebMethod(operationName = "removePrivilegeFromGroup")
-    @RequestWrapper(localName = "removePrivilegeFromGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromGroup")
-    @ResponseWrapper(localName = "removePrivilegeFromGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromGroupResponse")
-    public Response<RemovePrivilegeFromGroupResponse> removePrivilegeFromGroupAsync(
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "featureToken", targetNamespace = "")
-        String featureToken,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param featureToken
-     * @param groupId
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "removePrivilegeFromGroup")
-    @RequestWrapper(localName = "removePrivilegeFromGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromGroup")
-    @ResponseWrapper(localName = "removePrivilegeFromGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromGroupResponse")
-    public Future<?> removePrivilegeFromGroupAsync(
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "featureToken", targetNamespace = "")
-        String featureToken,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<RemovePrivilegeFromGroupResponse> asyncHandler);
-
-    /**
-     * 
-     * @param featureToken
-     * @param groupId
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "removePrivilegeFromGroup", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromGroup")
-    @ResponseWrapper(localName = "removePrivilegeFromGroupResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.RemovePrivilegeFromGroupResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromGroupRequest", output = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromGroupResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/removePrivilegeFromGroup/Fault/ServerSideException")
-    })
-    public void removePrivilegeFromGroup(
-        @WebParam(name = "groupId", targetNamespace = "")
-        long groupId,
-        @WebParam(name = "featureToken", targetNamespace = "")
-        String featureToken,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param enabled
-     * @param lastName
-     * @param username
-     * @param sessionId
-     * @param privileges
-     * @param type
-     * @param firstName
-     * @param password
-     * @param defaultGroupId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateUserResponse>
-     */
-    @WebMethod(operationName = "createUser")
-    @RequestWrapper(localName = "createUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateUser")
-    @ResponseWrapper(localName = "createUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateUserResponse")
-    public Response<CreateUserResponse> createUserAsync(
-        @WebParam(name = "username", targetNamespace = "")
-        String username,
-        @WebParam(name = "password", targetNamespace = "")
-        String password,
-        @WebParam(name = "firstName", targetNamespace = "")
-        String firstName,
-        @WebParam(name = "LastName", targetNamespace = "")
-        String lastName,
-        @WebParam(name = "enabled", targetNamespace = "")
-        boolean enabled,
-        @WebParam(name = "type", targetNamespace = "")
-        int type,
-        @WebParam(name = "privileges", targetNamespace = "")
-        List<PrivilegeInfo> privileges,
-        @WebParam(name = "defaultGroupId", targetNamespace = "")
-        long defaultGroupId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param enabled
-     * @param lastName
-     * @param username
-     * @param sessionId
-     * @param asyncHandler
-     * @param privileges
-     * @param type
-     * @param firstName
-     * @param password
-     * @param defaultGroupId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "createUser")
-    @RequestWrapper(localName = "createUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateUser")
-    @ResponseWrapper(localName = "createUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateUserResponse")
-    public Future<?> createUserAsync(
-        @WebParam(name = "username", targetNamespace = "")
-        String username,
-        @WebParam(name = "password", targetNamespace = "")
-        String password,
-        @WebParam(name = "firstName", targetNamespace = "")
-        String firstName,
-        @WebParam(name = "LastName", targetNamespace = "")
-        String lastName,
-        @WebParam(name = "enabled", targetNamespace = "")
-        boolean enabled,
-        @WebParam(name = "type", targetNamespace = "")
-        int type,
-        @WebParam(name = "privileges", targetNamespace = "")
-        List<PrivilegeInfo> privileges,
-        @WebParam(name = "defaultGroupId", targetNamespace = "")
-        long defaultGroupId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CreateUserResponse> asyncHandler);
-
-    /**
-     * 
-     * @param enabled
-     * @param lastName
-     * @param username
-     * @param sessionId
-     * @param privileges
-     * @param type
-     * @param firstName
-     * @param password
-     * @param defaultGroupId
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createUser", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateUser")
-    @ResponseWrapper(localName = "createUserResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateUserResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createUserRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createUserResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createUser/Fault/ServerSideException")
-    })
-    public long createUser(
-        @WebParam(name = "username", targetNamespace = "")
-        String username,
-        @WebParam(name = "password", targetNamespace = "")
-        String password,
-        @WebParam(name = "firstName", targetNamespace = "")
-        String firstName,
-        @WebParam(name = "LastName", targetNamespace = "")
-        String lastName,
-        @WebParam(name = "enabled", targetNamespace = "")
-        boolean enabled,
-        @WebParam(name = "type", targetNamespace = "")
-        int type,
-        @WebParam(name = "privileges", targetNamespace = "")
-        List<PrivilegeInfo> privileges,
-        @WebParam(name = "defaultGroupId", targetNamespace = "")
-        long defaultGroupId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param groupName
-     * @param sessionId
-     * @param description
-     * @param oid
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.SetGroupPropertiesResponse>
-     */
-    @WebMethod(operationName = "setGroupProperties")
-    @RequestWrapper(localName = "setGroupProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetGroupProperties")
-    @ResponseWrapper(localName = "setGroupPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetGroupPropertiesResponse")
-    public Response<SetGroupPropertiesResponse> setGroupPropertiesAsync(
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "groupName", targetNamespace = "")
-        String groupName,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param groupName
-     * @param sessionId
-     * @param description
-     * @param oid
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "setGroupProperties")
-    @RequestWrapper(localName = "setGroupProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetGroupProperties")
-    @ResponseWrapper(localName = "setGroupPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetGroupPropertiesResponse")
-    public Future<?> setGroupPropertiesAsync(
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "groupName", targetNamespace = "")
-        String groupName,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<SetGroupPropertiesResponse> asyncHandler);
-
-    /**
-     * 
-     * @param groupName
-     * @param sessionId
-     * @param description
-     * @param oid
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "setGroupProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetGroupProperties")
-    @ResponseWrapper(localName = "setGroupPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetGroupPropertiesResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/setGroupPropertiesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/setGroupPropertiesResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/setGroupProperties/Fault/ServerSideException")
-    })
-    public void setGroupProperties(
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "groupName", targetNamespace = "")
-        String groupName,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param oids
-     * @param sessionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteUsersResponse>
-     */
-    @WebMethod(operationName = "deleteUsers")
-    @RequestWrapper(localName = "deleteUsers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteUsers")
-    @ResponseWrapper(localName = "deleteUsersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteUsersResponse")
-    public Response<DeleteUsersResponse> deleteUsersAsync(
-        @WebParam(name = "oids", targetNamespace = "")
-        List<Long> oids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param oids
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "deleteUsers")
-    @RequestWrapper(localName = "deleteUsers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteUsers")
-    @ResponseWrapper(localName = "deleteUsersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteUsersResponse")
-    public Future<?> deleteUsersAsync(
-        @WebParam(name = "oids", targetNamespace = "")
-        List<Long> oids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<DeleteUsersResponse> asyncHandler);
-
-    /**
-     * 
-     * @param oids
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteUsers", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteUsers")
-    @ResponseWrapper(localName = "deleteUsersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteUsersResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteUsersRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteUsersResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteUsers/Fault/ServerSideException")
-    })
-    public void deleteUsers(
-        @WebParam(name = "oids", targetNamespace = "")
-        List<Long> oids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param oids
-     * @param sessionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteGroupsResponse>
-     */
-    @WebMethod(operationName = "deleteGroups")
-    @RequestWrapper(localName = "deleteGroups", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGroups")
-    @ResponseWrapper(localName = "deleteGroupsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGroupsResponse")
-    public Response<DeleteGroupsResponse> deleteGroupsAsync(
-        @WebParam(name = "oids", targetNamespace = "")
-        List<Long> oids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param oids
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "deleteGroups")
-    @RequestWrapper(localName = "deleteGroups", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGroups")
-    @ResponseWrapper(localName = "deleteGroupsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGroupsResponse")
-    public Future<?> deleteGroupsAsync(
-        @WebParam(name = "oids", targetNamespace = "")
-        List<Long> oids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<DeleteGroupsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param oids
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteGroups", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGroups")
-    @ResponseWrapper(localName = "deleteGroupsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGroupsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteGroupsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteGroupsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteGroups/Fault/ServerSideException")
-    })
-    public void deleteGroups(
-        @WebParam(name = "oids", targetNamespace = "")
-        List<Long> oids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param structure
-     * @param sessionId
-     * @param viewClassName
-     * @param description
-     * @param background
-     * @param name
-     * @param listTypeItemClassName
-     * @param listTypeItemId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateListTypeItemRelateViewResponse>
-     */
-    @WebMethod(operationName = "createListTypeItemRelateView")
-    @RequestWrapper(localName = "createListTypeItemRelateView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemRelateView")
-    @ResponseWrapper(localName = "createListTypeItemRelateViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemRelateViewResponse")
-    public Response<CreateListTypeItemRelateViewResponse> createListTypeItemRelateViewAsync(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClassName", targetNamespace = "")
-        String listTypeItemClassName,
-        @WebParam(name = "viewClassName", targetNamespace = "")
-        String viewClassName,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param structure
-     * @param sessionId
-     * @param viewClassName
-     * @param description
-     * @param background
-     * @param name
-     * @param listTypeItemClassName
-     * @param asyncHandler
-     * @param listTypeItemId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "createListTypeItemRelateView")
-    @RequestWrapper(localName = "createListTypeItemRelateView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemRelateView")
-    @ResponseWrapper(localName = "createListTypeItemRelateViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemRelateViewResponse")
-    public Future<?> createListTypeItemRelateViewAsync(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClassName", targetNamespace = "")
-        String listTypeItemClassName,
-        @WebParam(name = "viewClassName", targetNamespace = "")
-        String viewClassName,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CreateListTypeItemRelateViewResponse> asyncHandler);
-
-    /**
-     * 
-     * @param structure
-     * @param sessionId
-     * @param viewClassName
-     * @param description
-     * @param background
-     * @param name
-     * @param listTypeItemClassName
-     * @param listTypeItemId
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createListTypeItemRelateView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemRelateView")
-    @ResponseWrapper(localName = "createListTypeItemRelateViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateListTypeItemRelateViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItemRelateViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItemRelateViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createListTypeItemRelateView/Fault/ServerSideException")
-    })
-    public long createListTypeItemRelateView(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClassName", targetNamespace = "")
-        String listTypeItemClassName,
-        @WebParam(name = "viewClassName", targetNamespace = "")
-        String viewClassName,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param structure
-     * @param sessionId
-     * @param description
-     * @param background
-     * @param name
-     * @param listTypeItemClass
-     * @param listTypeItemId
-     * @param viewId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.UpdateListTypeItemRelatedViewResponse>
-     */
-    @WebMethod(operationName = "updateListTypeItemRelatedView")
-    @RequestWrapper(localName = "updateListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateListTypeItemRelatedView")
-    @ResponseWrapper(localName = "updateListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateListTypeItemRelatedViewResponse")
-    public Response<UpdateListTypeItemRelatedViewResponse> updateListTypeItemRelatedViewAsync(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClass", targetNamespace = "")
-        String listTypeItemClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param structure
-     * @param sessionId
-     * @param description
-     * @param background
-     * @param name
-     * @param asyncHandler
-     * @param listTypeItemClass
-     * @param listTypeItemId
-     * @param viewId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "updateListTypeItemRelatedView")
-    @RequestWrapper(localName = "updateListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateListTypeItemRelatedView")
-    @ResponseWrapper(localName = "updateListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateListTypeItemRelatedViewResponse")
-    public Future<?> updateListTypeItemRelatedViewAsync(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClass", targetNamespace = "")
-        String listTypeItemClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<UpdateListTypeItemRelatedViewResponse> asyncHandler);
-
-    /**
-     * 
-     * @param structure
-     * @param sessionId
-     * @param description
-     * @param background
-     * @param name
-     * @param listTypeItemClass
-     * @param listTypeItemId
-     * @param viewId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "updateListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateListTypeItemRelatedView")
-    @ResponseWrapper(localName = "updateListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateListTypeItemRelatedViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateListTypeItemRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateListTypeItemRelatedViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateListTypeItemRelatedView/Fault/ServerSideException")
-    })
-    public void updateListTypeItemRelatedView(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClass", targetNamespace = "")
-        String listTypeItemClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param listTypeItemClass
-     * @param listTypeItemId
-     * @param viewId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetListTypeItemRelatedViewResponse>
-     */
-    @WebMethod(operationName = "getListTypeItemRelatedView")
-    @RequestWrapper(localName = "getListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedView")
-    @ResponseWrapper(localName = "getListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViewResponse")
-    public Response<GetListTypeItemRelatedViewResponse> getListTypeItemRelatedViewAsync(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClass", targetNamespace = "")
-        String listTypeItemClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param asyncHandler
-     * @param listTypeItemClass
-     * @param listTypeItemId
-     * @param viewId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getListTypeItemRelatedView")
-    @RequestWrapper(localName = "getListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedView")
-    @ResponseWrapper(localName = "getListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViewResponse")
-    public Future<?> getListTypeItemRelatedViewAsync(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClass", targetNamespace = "")
-        String listTypeItemClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetListTypeItemRelatedViewResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param listTypeItemClass
-     * @param listTypeItemId
-     * @param viewId
-     * @return
-     *     returns org.inventory.communications.wsclient.ViewInfo
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedView")
-    @ResponseWrapper(localName = "getListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedView/Fault/ServerSideException")
-    })
-    public ViewInfo getListTypeItemRelatedView(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClass", targetNamespace = "")
-        String listTypeItemClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param limit
-     * @param sessionId
-     * @param listTypeItemClass
-     * @param listTypeItemId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetListTypeItemRelatedViewsResponse>
-     */
-    @WebMethod(operationName = "getListTypeItemRelatedViews")
-    @RequestWrapper(localName = "getListTypeItemRelatedViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViews")
-    @ResponseWrapper(localName = "getListTypeItemRelatedViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViewsResponse")
-    public Response<GetListTypeItemRelatedViewsResponse> getListTypeItemRelatedViewsAsync(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClass", targetNamespace = "")
-        String listTypeItemClass,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param limit
-     * @param sessionId
-     * @param asyncHandler
-     * @param listTypeItemClass
-     * @param listTypeItemId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getListTypeItemRelatedViews")
-    @RequestWrapper(localName = "getListTypeItemRelatedViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViews")
-    @ResponseWrapper(localName = "getListTypeItemRelatedViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViewsResponse")
-    public Future<?> getListTypeItemRelatedViewsAsync(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClass", targetNamespace = "")
-        String listTypeItemClass,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetListTypeItemRelatedViewsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param limit
-     * @param sessionId
-     * @param listTypeItemClass
-     * @param listTypeItemId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ViewInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getListTypeItemRelatedViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViews")
-    @ResponseWrapper(localName = "getListTypeItemRelatedViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetListTypeItemRelatedViewsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViewsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViewsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getListTypeItemRelatedViews/Fault/ServerSideException")
-    })
-    public List<ViewInfoLight> getListTypeItemRelatedViews(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClass", targetNamespace = "")
-        String listTypeItemClass,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param listTypeItemClass
-     * @param listTypeItemId
-     * @param viewId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteListTypeItemRelatedViewResponse>
-     */
-    @WebMethod(operationName = "deleteListTypeItemRelatedView")
-    @RequestWrapper(localName = "deleteListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemRelatedView")
-    @ResponseWrapper(localName = "deleteListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemRelatedViewResponse")
-    public Response<DeleteListTypeItemRelatedViewResponse> deleteListTypeItemRelatedViewAsync(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClass", targetNamespace = "")
-        String listTypeItemClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param asyncHandler
-     * @param listTypeItemClass
-     * @param listTypeItemId
-     * @param viewId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "deleteListTypeItemRelatedView")
-    @RequestWrapper(localName = "deleteListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemRelatedView")
-    @ResponseWrapper(localName = "deleteListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemRelatedViewResponse")
-    public Future<?> deleteListTypeItemRelatedViewAsync(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClass", targetNamespace = "")
-        String listTypeItemClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<DeleteListTypeItemRelatedViewResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param listTypeItemClass
-     * @param listTypeItemId
-     * @param viewId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteListTypeItemRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemRelatedView")
-    @ResponseWrapper(localName = "deleteListTypeItemRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteListTypeItemRelatedViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItemRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItemRelatedViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteListTypeItemRelatedView/Fault/ServerSideException")
-    })
-    public void deleteListTypeItemRelatedView(
-        @WebParam(name = "listTypeItemId", targetNamespace = "")
-        long listTypeItemId,
-        @WebParam(name = "listTypeItemClass", targetNamespace = "")
-        String listTypeItemClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param structure
-     * @param sessionId
-     * @param viewClassName
-     * @param description
-     * @param objectId
-     * @param background
-     * @param name
-     * @param objectClass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateObjectRelatedViewResponse>
-     */
-    @WebMethod(operationName = "createObjectRelatedView")
-    @RequestWrapper(localName = "createObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateObjectRelatedView")
-    @ResponseWrapper(localName = "createObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateObjectRelatedViewResponse")
-    public Response<CreateObjectRelatedViewResponse> createObjectRelatedViewAsync(
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "viewClassName", targetNamespace = "")
-        String viewClassName,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param structure
-     * @param sessionId
-     * @param viewClassName
-     * @param description
-     * @param objectId
-     * @param background
-     * @param name
-     * @param asyncHandler
-     * @param objectClass
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "createObjectRelatedView")
-    @RequestWrapper(localName = "createObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateObjectRelatedView")
-    @ResponseWrapper(localName = "createObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateObjectRelatedViewResponse")
-    public Future<?> createObjectRelatedViewAsync(
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "viewClassName", targetNamespace = "")
-        String viewClassName,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CreateObjectRelatedViewResponse> asyncHandler);
-
-    /**
-     * 
-     * @param structure
-     * @param sessionId
-     * @param viewClassName
-     * @param description
-     * @param objectId
-     * @param background
-     * @param name
-     * @param objectClass
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateObjectRelatedView")
-    @ResponseWrapper(localName = "createObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateObjectRelatedViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createObjectRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createObjectRelatedViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createObjectRelatedView/Fault/ServerSideException")
-    })
-    public long createObjectRelatedView(
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "viewClassName", targetNamespace = "")
-        String viewClassName,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param structure
-     * @param viewClass
-     * @param sessionId
-     * @param description
-     * @param background
-     * @param name
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateGeneralViewResponse>
-     */
-    @WebMethod(operationName = "createGeneralView")
-    @RequestWrapper(localName = "createGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateGeneralView")
-    @ResponseWrapper(localName = "createGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateGeneralViewResponse")
-    public Response<CreateGeneralViewResponse> createGeneralViewAsync(
-        @WebParam(name = "viewClass", targetNamespace = "")
-        String viewClass,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param structure
-     * @param viewClass
-     * @param sessionId
-     * @param description
-     * @param background
-     * @param name
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "createGeneralView")
-    @RequestWrapper(localName = "createGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateGeneralView")
-    @ResponseWrapper(localName = "createGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateGeneralViewResponse")
-    public Future<?> createGeneralViewAsync(
-        @WebParam(name = "viewClass", targetNamespace = "")
-        String viewClass,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CreateGeneralViewResponse> asyncHandler);
-
-    /**
-     * 
-     * @param structure
-     * @param viewClass
-     * @param sessionId
-     * @param description
-     * @param background
-     * @param name
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateGeneralView")
-    @ResponseWrapper(localName = "createGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateGeneralViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createGeneralViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createGeneralViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createGeneralView/Fault/ServerSideException")
-    })
-    public long createGeneralView(
-        @WebParam(name = "viewClass", targetNamespace = "")
-        String viewClass,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param objectClass
-     * @param viewId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetObjectRelatedViewResponse>
-     */
-    @WebMethod(operationName = "getObjectRelatedView")
-    @RequestWrapper(localName = "getObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedView")
-    @ResponseWrapper(localName = "getObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViewResponse")
-    public Response<GetObjectRelatedViewResponse> getObjectRelatedViewAsync(
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param asyncHandler
-     * @param objectClass
-     * @param viewId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getObjectRelatedView")
-    @RequestWrapper(localName = "getObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedView")
-    @ResponseWrapper(localName = "getObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViewResponse")
-    public Future<?> getObjectRelatedViewAsync(
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetObjectRelatedViewResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param objectClass
-     * @param viewId
-     * @return
-     *     returns org.inventory.communications.wsclient.ViewInfo
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedView")
-    @ResponseWrapper(localName = "getObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedView/Fault/ServerSideException")
-    })
-    public ViewInfo getObjectRelatedView(
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param limit
-     * @param sessionId
-     * @param oid
-     * @param objectClass
-     * @param viewType
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetObjectRelatedViewsResponse>
-     */
-    @WebMethod(operationName = "getObjectRelatedViews")
-    @RequestWrapper(localName = "getObjectRelatedViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViews")
-    @ResponseWrapper(localName = "getObjectRelatedViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViewsResponse")
-    public Response<GetObjectRelatedViewsResponse> getObjectRelatedViewsAsync(
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "viewType", targetNamespace = "")
-        int viewType,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param limit
-     * @param sessionId
-     * @param oid
-     * @param asyncHandler
-     * @param objectClass
-     * @param viewType
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getObjectRelatedViews")
-    @RequestWrapper(localName = "getObjectRelatedViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViews")
-    @ResponseWrapper(localName = "getObjectRelatedViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViewsResponse")
-    public Future<?> getObjectRelatedViewsAsync(
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "viewType", targetNamespace = "")
-        int viewType,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetObjectRelatedViewsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param limit
-     * @param sessionId
-     * @param oid
-     * @param objectClass
-     * @param viewType
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ViewInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getObjectRelatedViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViews")
-    @ResponseWrapper(localName = "getObjectRelatedViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetObjectRelatedViewsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViewsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getObjectRelatedViews/Fault/ServerSideException")
-    })
-    public List<ViewInfoLight> getObjectRelatedViews(
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "viewType", targetNamespace = "")
-        int viewType,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param viewId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetGeneralViewResponse>
-     */
-    @WebMethod(operationName = "getGeneralView")
-    @RequestWrapper(localName = "getGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralView")
-    @ResponseWrapper(localName = "getGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViewResponse")
-    public Response<GetGeneralViewResponse> getGeneralViewAsync(
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param asyncHandler
-     * @param viewId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getGeneralView")
-    @RequestWrapper(localName = "getGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralView")
-    @ResponseWrapper(localName = "getGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViewResponse")
-    public Future<?> getGeneralViewAsync(
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetGeneralViewResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param viewId
-     * @return
-     *     returns org.inventory.communications.wsclient.ViewInfo
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralView")
-    @ResponseWrapper(localName = "getGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getGeneralView/Fault/ServerSideException")
-    })
-    public ViewInfo getGeneralView(
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param limit
-     * @param viewClass
-     * @param sessionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetGeneralViewsResponse>
-     */
-    @WebMethod(operationName = "getGeneralViews")
-    @RequestWrapper(localName = "getGeneralViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViews")
-    @ResponseWrapper(localName = "getGeneralViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViewsResponse")
-    public Response<GetGeneralViewsResponse> getGeneralViewsAsync(
-        @WebParam(name = "viewClass", targetNamespace = "")
-        String viewClass,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param limit
-     * @param viewClass
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getGeneralViews")
-    @RequestWrapper(localName = "getGeneralViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViews")
-    @ResponseWrapper(localName = "getGeneralViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViewsResponse")
-    public Future<?> getGeneralViewsAsync(
-        @WebParam(name = "viewClass", targetNamespace = "")
-        String viewClass,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetGeneralViewsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param limit
-     * @param viewClass
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ViewInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getGeneralViews", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViews")
-    @ResponseWrapper(localName = "getGeneralViewsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralViewsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViewsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViewsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getGeneralViews/Fault/ServerSideException")
-    })
-    public List<ViewInfoLight> getGeneralViews(
-        @WebParam(name = "viewClass", targetNamespace = "")
-        String viewClass,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param structure
-     * @param viewDescription
-     * @param objectOid
-     * @param viewName
-     * @param sessionId
-     * @param background
-     * @param objectClass
-     * @param viewId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.UpdateObjectRelatedViewResponse>
-     */
-    @WebMethod(operationName = "updateObjectRelatedView")
-    @RequestWrapper(localName = "updateObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectRelatedView")
-    @ResponseWrapper(localName = "updateObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectRelatedViewResponse")
-    public Response<UpdateObjectRelatedViewResponse> updateObjectRelatedViewAsync(
-        @WebParam(name = "objectOid", targetNamespace = "")
-        long objectOid,
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "viewName", targetNamespace = "")
-        String viewName,
-        @WebParam(name = "viewDescription", targetNamespace = "")
-        String viewDescription,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param structure
-     * @param viewDescription
-     * @param objectOid
-     * @param viewName
-     * @param sessionId
-     * @param background
-     * @param asyncHandler
-     * @param objectClass
-     * @param viewId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "updateObjectRelatedView")
-    @RequestWrapper(localName = "updateObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectRelatedView")
-    @ResponseWrapper(localName = "updateObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectRelatedViewResponse")
-    public Future<?> updateObjectRelatedViewAsync(
-        @WebParam(name = "objectOid", targetNamespace = "")
-        long objectOid,
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "viewName", targetNamespace = "")
-        String viewName,
-        @WebParam(name = "viewDescription", targetNamespace = "")
-        String viewDescription,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<UpdateObjectRelatedViewResponse> asyncHandler);
-
-    /**
-     * 
-     * @param structure
-     * @param viewDescription
-     * @param objectOid
-     * @param viewName
-     * @param sessionId
-     * @param background
-     * @param objectClass
-     * @param viewId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "updateObjectRelatedView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectRelatedView")
-    @ResponseWrapper(localName = "updateObjectRelatedViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateObjectRelatedViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateObjectRelatedViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateObjectRelatedViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateObjectRelatedView/Fault/ServerSideException")
-    })
-    public void updateObjectRelatedView(
-        @WebParam(name = "objectOid", targetNamespace = "")
-        long objectOid,
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "viewName", targetNamespace = "")
-        String viewName,
-        @WebParam(name = "viewDescription", targetNamespace = "")
-        String viewDescription,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param structure
-     * @param viewDescription
-     * @param viewName
-     * @param sessionId
-     * @param background
-     * @param viewId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.UpdateGeneralViewResponse>
-     */
-    @WebMethod(operationName = "updateGeneralView")
-    @RequestWrapper(localName = "updateGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateGeneralView")
-    @ResponseWrapper(localName = "updateGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateGeneralViewResponse")
-    public Response<UpdateGeneralViewResponse> updateGeneralViewAsync(
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "viewName", targetNamespace = "")
-        String viewName,
-        @WebParam(name = "viewDescription", targetNamespace = "")
-        String viewDescription,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param structure
-     * @param viewDescription
-     * @param viewName
-     * @param sessionId
-     * @param background
-     * @param asyncHandler
-     * @param viewId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "updateGeneralView")
-    @RequestWrapper(localName = "updateGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateGeneralView")
-    @ResponseWrapper(localName = "updateGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateGeneralViewResponse")
-    public Future<?> updateGeneralViewAsync(
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "viewName", targetNamespace = "")
-        String viewName,
-        @WebParam(name = "viewDescription", targetNamespace = "")
-        String viewDescription,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<UpdateGeneralViewResponse> asyncHandler);
-
-    /**
-     * 
-     * @param structure
-     * @param viewDescription
-     * @param viewName
-     * @param sessionId
-     * @param background
-     * @param viewId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "updateGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateGeneralView")
-    @ResponseWrapper(localName = "updateGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateGeneralViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateGeneralViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateGeneralViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateGeneralView/Fault/ServerSideException")
-    })
-    public void updateGeneralView(
-        @WebParam(name = "viewId", targetNamespace = "")
-        long viewId,
-        @WebParam(name = "viewName", targetNamespace = "")
-        String viewName,
-        @WebParam(name = "viewDescription", targetNamespace = "")
-        String viewDescription,
-        @WebParam(name = "structure", targetNamespace = "")
-        byte[] structure,
-        @WebParam(name = "background", targetNamespace = "")
-        byte[] background,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param oids
-     * @param sessionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteGeneralViewResponse>
-     */
-    @WebMethod(operationName = "deleteGeneralView")
-    @RequestWrapper(localName = "deleteGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGeneralView")
-    @ResponseWrapper(localName = "deleteGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGeneralViewResponse")
-    public Response<DeleteGeneralViewResponse> deleteGeneralViewAsync(
-        @WebParam(name = "oids", targetNamespace = "")
-        List<Long> oids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param oids
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "deleteGeneralView")
-    @RequestWrapper(localName = "deleteGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGeneralView")
-    @ResponseWrapper(localName = "deleteGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGeneralViewResponse")
-    public Future<?> deleteGeneralViewAsync(
-        @WebParam(name = "oids", targetNamespace = "")
-        List<Long> oids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<DeleteGeneralViewResponse> asyncHandler);
-
-    /**
-     * 
-     * @param oids
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteGeneralView", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGeneralView")
-    @ResponseWrapper(localName = "deleteGeneralViewResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteGeneralViewResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteGeneralViewRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteGeneralViewResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteGeneralView/Fault/ServerSideException")
-    })
-    public void deleteGeneralView(
-        @WebParam(name = "oids", targetNamespace = "")
-        List<Long> oids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param queryStructure
-     * @param queryOid
-     * @param sessionId
-     * @param queryName
-     * @param description
-     * @param ownerOid
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.SaveQueryResponse>
-     */
-    @WebMethod(operationName = "saveQuery")
-    @RequestWrapper(localName = "saveQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SaveQuery")
-    @ResponseWrapper(localName = "saveQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SaveQueryResponse")
-    public Response<SaveQueryResponse> saveQueryAsync(
-        @WebParam(name = "queryOid", targetNamespace = "")
-        long queryOid,
-        @WebParam(name = "queryName", targetNamespace = "")
-        String queryName,
-        @WebParam(name = "ownerOid", targetNamespace = "")
-        long ownerOid,
-        @WebParam(name = "queryStructure", targetNamespace = "")
-        byte[] queryStructure,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param queryStructure
-     * @param queryOid
-     * @param sessionId
-     * @param queryName
-     * @param description
-     * @param asyncHandler
-     * @param ownerOid
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "saveQuery")
-    @RequestWrapper(localName = "saveQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SaveQuery")
-    @ResponseWrapper(localName = "saveQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SaveQueryResponse")
-    public Future<?> saveQueryAsync(
-        @WebParam(name = "queryOid", targetNamespace = "")
-        long queryOid,
-        @WebParam(name = "queryName", targetNamespace = "")
-        String queryName,
-        @WebParam(name = "ownerOid", targetNamespace = "")
-        long ownerOid,
-        @WebParam(name = "queryStructure", targetNamespace = "")
-        byte[] queryStructure,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<SaveQueryResponse> asyncHandler);
-
-    /**
-     * 
-     * @param queryStructure
-     * @param queryOid
-     * @param sessionId
-     * @param queryName
-     * @param description
-     * @param ownerOid
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "saveQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SaveQuery")
-    @ResponseWrapper(localName = "saveQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SaveQueryResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/saveQueryRequest", output = "http://ws.kuwaiba.org/KuwaibaService/saveQueryResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/saveQuery/Fault/ServerSideException")
-    })
-    public void saveQuery(
-        @WebParam(name = "queryOid", targetNamespace = "")
-        long queryOid,
-        @WebParam(name = "queryName", targetNamespace = "")
-        String queryName,
-        @WebParam(name = "ownerOid", targetNamespace = "")
-        long ownerOid,
-        @WebParam(name = "queryStructure", targetNamespace = "")
-        byte[] queryStructure,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param showPublic
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetQueriesResponse>
-     */
-    @WebMethod(operationName = "getQueries")
-    @RequestWrapper(localName = "getQueries", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetQueries")
-    @ResponseWrapper(localName = "getQueriesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetQueriesResponse")
-    public Response<GetQueriesResponse> getQueriesAsync(
-        @WebParam(name = "showPublic", targetNamespace = "")
-        boolean showPublic,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param asyncHandler
-     * @param showPublic
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getQueries")
-    @RequestWrapper(localName = "getQueries", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetQueries")
-    @ResponseWrapper(localName = "getQueriesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetQueriesResponse")
-    public Future<?> getQueriesAsync(
-        @WebParam(name = "showPublic", targetNamespace = "")
-        boolean showPublic,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetQueriesResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param showPublic
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteQueryLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getQueries", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetQueries")
-    @ResponseWrapper(localName = "getQueriesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetQueriesResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getQueriesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getQueriesResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getQueries/Fault/ServerSideException")
-    })
-    public List<RemoteQueryLight> getQueries(
-        @WebParam(name = "showPublic", targetNamespace = "")
-        boolean showPublic,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param description
-     * @param name
-     * @param type
-     * @param instancesOfClass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateRootPoolResponse>
-     */
-    @WebMethod(operationName = "createRootPool")
-    @RequestWrapper(localName = "createRootPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateRootPool")
-    @ResponseWrapper(localName = "createRootPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateRootPoolResponse")
-    public Response<CreateRootPoolResponse> createRootPoolAsync(
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "instancesOfClass", targetNamespace = "")
-        String instancesOfClass,
-        @WebParam(name = "type", targetNamespace = "")
-        int type,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param description
-     * @param name
-     * @param asyncHandler
-     * @param type
-     * @param instancesOfClass
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "createRootPool")
-    @RequestWrapper(localName = "createRootPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateRootPool")
-    @ResponseWrapper(localName = "createRootPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateRootPoolResponse")
-    public Future<?> createRootPoolAsync(
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "instancesOfClass", targetNamespace = "")
-        String instancesOfClass,
-        @WebParam(name = "type", targetNamespace = "")
-        int type,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CreateRootPoolResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param description
-     * @param name
-     * @param type
-     * @param instancesOfClass
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createRootPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateRootPool")
-    @ResponseWrapper(localName = "createRootPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateRootPoolResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createRootPoolRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createRootPoolResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createRootPool/Fault/ServerSideException")
-    })
-    public long createRootPool(
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "instancesOfClass", targetNamespace = "")
-        String instancesOfClass,
-        @WebParam(name = "type", targetNamespace = "")
-        int type,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param parentId
-     * @param sessionId
-     * @param description
-     * @param name
-     * @param type
-     * @param instancesOfClass
-     * @param parentClassname
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreatePoolInObjectResponse>
-     */
-    @WebMethod(operationName = "createPoolInObject")
-    @RequestWrapper(localName = "createPoolInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInObject")
-    @ResponseWrapper(localName = "createPoolInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInObjectResponse")
-    public Response<CreatePoolInObjectResponse> createPoolInObjectAsync(
-        @WebParam(name = "parentClassname", targetNamespace = "")
-        String parentClassname,
-        @WebParam(name = "parentId", targetNamespace = "")
-        long parentId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "instancesOfClass", targetNamespace = "")
-        String instancesOfClass,
-        @WebParam(name = "type", targetNamespace = "")
-        int type,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param parentId
-     * @param sessionId
-     * @param description
-     * @param name
-     * @param asyncHandler
-     * @param type
-     * @param instancesOfClass
-     * @param parentClassname
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "createPoolInObject")
-    @RequestWrapper(localName = "createPoolInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInObject")
-    @ResponseWrapper(localName = "createPoolInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInObjectResponse")
-    public Future<?> createPoolInObjectAsync(
-        @WebParam(name = "parentClassname", targetNamespace = "")
-        String parentClassname,
-        @WebParam(name = "parentId", targetNamespace = "")
-        long parentId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "instancesOfClass", targetNamespace = "")
-        String instancesOfClass,
-        @WebParam(name = "type", targetNamespace = "")
-        int type,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CreatePoolInObjectResponse> asyncHandler);
-
-    /**
-     * 
-     * @param parentId
-     * @param sessionId
-     * @param description
-     * @param name
-     * @param type
-     * @param instancesOfClass
-     * @param parentClassname
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createPoolInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInObject")
-    @ResponseWrapper(localName = "createPoolInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInObjectResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createPoolInObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createPoolInObjectResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createPoolInObject/Fault/ServerSideException")
-    })
-    public long createPoolInObject(
-        @WebParam(name = "parentClassname", targetNamespace = "")
-        String parentClassname,
-        @WebParam(name = "parentId", targetNamespace = "")
-        long parentId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "instancesOfClass", targetNamespace = "")
-        String instancesOfClass,
-        @WebParam(name = "type", targetNamespace = "")
-        int type,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param parentId
-     * @param sessionId
-     * @param description
-     * @param name
-     * @param type
-     * @param instancesOfClass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreatePoolInPoolResponse>
-     */
-    @WebMethod(operationName = "createPoolInPool")
-    @RequestWrapper(localName = "createPoolInPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInPool")
-    @ResponseWrapper(localName = "createPoolInPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInPoolResponse")
-    public Response<CreatePoolInPoolResponse> createPoolInPoolAsync(
-        @WebParam(name = "parentId", targetNamespace = "")
-        long parentId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "instancesOfClass", targetNamespace = "")
-        String instancesOfClass,
-        @WebParam(name = "type", targetNamespace = "")
-        int type,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param parentId
-     * @param sessionId
-     * @param description
-     * @param name
-     * @param asyncHandler
-     * @param type
-     * @param instancesOfClass
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "createPoolInPool")
-    @RequestWrapper(localName = "createPoolInPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInPool")
-    @ResponseWrapper(localName = "createPoolInPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInPoolResponse")
-    public Future<?> createPoolInPoolAsync(
-        @WebParam(name = "parentId", targetNamespace = "")
-        long parentId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "instancesOfClass", targetNamespace = "")
-        String instancesOfClass,
-        @WebParam(name = "type", targetNamespace = "")
-        int type,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CreatePoolInPoolResponse> asyncHandler);
-
-    /**
-     * 
-     * @param parentId
-     * @param sessionId
-     * @param description
-     * @param name
-     * @param type
-     * @param instancesOfClass
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createPoolInPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInPool")
-    @ResponseWrapper(localName = "createPoolInPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolInPoolResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createPoolInPoolRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createPoolInPoolResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createPoolInPool/Fault/ServerSideException")
-    })
-    public long createPoolInPool(
-        @WebParam(name = "parentId", targetNamespace = "")
-        long parentId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "instancesOfClass", targetNamespace = "")
-        String instancesOfClass,
-        @WebParam(name = "type", targetNamespace = "")
-        int type,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param templateId
-     * @param attributeNames
-     * @param attributeValues
-     * @param sessionId
-     * @param className
-     * @param poolId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreatePoolItemResponse>
-     */
-    @WebMethod(operationName = "createPoolItem")
-    @RequestWrapper(localName = "createPoolItem", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolItem")
-    @ResponseWrapper(localName = "createPoolItemResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolItemResponse")
-    public Response<CreatePoolItemResponse> createPoolItemAsync(
-        @WebParam(name = "poolId", targetNamespace = "")
-        long poolId,
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "attributeNames", targetNamespace = "")
-        List<String> attributeNames,
-        @WebParam(name = "attributeValues", targetNamespace = "")
-        List<String> attributeValues,
-        @WebParam(name = "templateId", targetNamespace = "")
-        long templateId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param templateId
-     * @param attributeNames
-     * @param attributeValues
-     * @param sessionId
-     * @param asyncHandler
-     * @param className
-     * @param poolId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "createPoolItem")
-    @RequestWrapper(localName = "createPoolItem", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolItem")
-    @ResponseWrapper(localName = "createPoolItemResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolItemResponse")
-    public Future<?> createPoolItemAsync(
-        @WebParam(name = "poolId", targetNamespace = "")
-        long poolId,
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "attributeNames", targetNamespace = "")
-        List<String> attributeNames,
-        @WebParam(name = "attributeValues", targetNamespace = "")
-        List<String> attributeValues,
-        @WebParam(name = "templateId", targetNamespace = "")
-        long templateId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CreatePoolItemResponse> asyncHandler);
-
-    /**
-     * 
-     * @param templateId
-     * @param attributeNames
-     * @param attributeValues
-     * @param sessionId
-     * @param className
-     * @param poolId
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createPoolItem", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolItem")
-    @ResponseWrapper(localName = "createPoolItemResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreatePoolItemResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createPoolItemRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createPoolItemResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createPoolItem/Fault/ServerSideException")
-    })
-    public long createPoolItem(
-        @WebParam(name = "poolId", targetNamespace = "")
-        long poolId,
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "attributeNames", targetNamespace = "")
-        List<String> attributeNames,
-        @WebParam(name = "attributeValues", targetNamespace = "")
-        List<String> attributeValues,
-        @WebParam(name = "templateId", targetNamespace = "")
-        long templateId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param ids
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeletePoolsResponse>
-     */
-    @WebMethod(operationName = "deletePools")
-    @RequestWrapper(localName = "deletePools", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePools")
-    @ResponseWrapper(localName = "deletePoolsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePoolsResponse")
-    public Response<DeletePoolsResponse> deletePoolsAsync(
-        @WebParam(name = "ids", targetNamespace = "")
-        List<Long> ids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param ids
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "deletePools")
-    @RequestWrapper(localName = "deletePools", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePools")
-    @ResponseWrapper(localName = "deletePoolsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePoolsResponse")
-    public Future<?> deletePoolsAsync(
-        @WebParam(name = "ids", targetNamespace = "")
-        List<Long> ids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<DeletePoolsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param ids
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deletePools", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePools")
-    @ResponseWrapper(localName = "deletePoolsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeletePoolsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deletePoolsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deletePoolsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deletePools/Fault/ServerSideException")
-    })
-    public void deletePools(
-        @WebParam(name = "ids", targetNamespace = "")
-        List<Long> ids,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param description
-     * @param name
-     * @param poolId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.SetPoolPropertiesResponse>
-     */
-    @WebMethod(operationName = "setPoolProperties")
-    @RequestWrapper(localName = "setPoolProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPoolProperties")
-    @ResponseWrapper(localName = "setPoolPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPoolPropertiesResponse")
-    public Response<SetPoolPropertiesResponse> setPoolPropertiesAsync(
-        @WebParam(name = "poolId", targetNamespace = "")
-        long poolId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param description
-     * @param name
-     * @param asyncHandler
-     * @param poolId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "setPoolProperties")
-    @RequestWrapper(localName = "setPoolProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPoolProperties")
-    @ResponseWrapper(localName = "setPoolPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPoolPropertiesResponse")
-    public Future<?> setPoolPropertiesAsync(
-        @WebParam(name = "poolId", targetNamespace = "")
-        long poolId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<SetPoolPropertiesResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param description
-     * @param name
-     * @param poolId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "setPoolProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPoolProperties")
-    @ResponseWrapper(localName = "setPoolPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.SetPoolPropertiesResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/setPoolPropertiesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/setPoolPropertiesResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/setPoolProperties/Fault/ServerSideException")
-    })
-    public void setPoolProperties(
-        @WebParam(name = "poolId", targetNamespace = "")
-        long poolId,
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param includeSubclasses
-     * @param className
-     * @param type
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetRootPoolsResponse>
-     */
-    @WebMethod(operationName = "getRootPools")
-    @RequestWrapper(localName = "getRootPools", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetRootPools")
-    @ResponseWrapper(localName = "getRootPoolsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetRootPoolsResponse")
-    public Response<GetRootPoolsResponse> getRootPoolsAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "type", targetNamespace = "")
-        int type,
-        @WebParam(name = "includeSubclasses", targetNamespace = "")
-        boolean includeSubclasses,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param includeSubclasses
-     * @param asyncHandler
-     * @param className
-     * @param type
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getRootPools")
-    @RequestWrapper(localName = "getRootPools", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetRootPools")
-    @ResponseWrapper(localName = "getRootPoolsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetRootPoolsResponse")
-    public Future<?> getRootPoolsAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "type", targetNamespace = "")
-        int type,
-        @WebParam(name = "includeSubclasses", targetNamespace = "")
-        boolean includeSubclasses,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetRootPoolsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param includeSubclasses
-     * @param className
-     * @param type
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemotePool>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getRootPools", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetRootPools")
-    @ResponseWrapper(localName = "getRootPoolsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetRootPoolsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getRootPoolsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getRootPoolsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getRootPools/Fault/ServerSideException")
-    })
-    public List<RemotePool> getRootPools(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "type", targetNamespace = "")
-        int type,
-        @WebParam(name = "includeSubclasses", targetNamespace = "")
-        boolean includeSubclasses,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param objectClassName
-     * @param sessionId
-     * @param poolClass
-     * @param objectId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetPoolsInObjectResponse>
-     */
-    @WebMethod(operationName = "getPoolsInObject")
-    @RequestWrapper(localName = "getPoolsInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInObject")
-    @ResponseWrapper(localName = "getPoolsInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInObjectResponse")
-    public Response<GetPoolsInObjectResponse> getPoolsInObjectAsync(
-        @WebParam(name = "objectClassName", targetNamespace = "")
-        String objectClassName,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "poolClass", targetNamespace = "")
-        String poolClass,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param objectClassName
-     * @param sessionId
-     * @param poolClass
-     * @param objectId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getPoolsInObject")
-    @RequestWrapper(localName = "getPoolsInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInObject")
-    @ResponseWrapper(localName = "getPoolsInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInObjectResponse")
-    public Future<?> getPoolsInObjectAsync(
-        @WebParam(name = "objectClassName", targetNamespace = "")
-        String objectClassName,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "poolClass", targetNamespace = "")
-        String poolClass,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetPoolsInObjectResponse> asyncHandler);
-
-    /**
-     * 
-     * @param objectClassName
-     * @param sessionId
-     * @param poolClass
-     * @param objectId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemotePool>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPoolsInObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInObject")
-    @ResponseWrapper(localName = "getPoolsInObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInObjectResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPoolsInObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPoolsInObjectResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPoolsInObject/Fault/ServerSideException")
-    })
-    public List<RemotePool> getPoolsInObject(
-        @WebParam(name = "objectClassName", targetNamespace = "")
-        String objectClassName,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "poolClass", targetNamespace = "")
-        String poolClass,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param parentPoolId
-     * @param sessionId
-     * @param poolClass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetPoolsInPoolResponse>
-     */
-    @WebMethod(operationName = "getPoolsInPool")
-    @RequestWrapper(localName = "getPoolsInPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInPool")
-    @ResponseWrapper(localName = "getPoolsInPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInPoolResponse")
-    public Response<GetPoolsInPoolResponse> getPoolsInPoolAsync(
-        @WebParam(name = "parentPoolId", targetNamespace = "")
-        long parentPoolId,
-        @WebParam(name = "poolClass", targetNamespace = "")
-        String poolClass,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param parentPoolId
-     * @param sessionId
-     * @param poolClass
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getPoolsInPool")
-    @RequestWrapper(localName = "getPoolsInPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInPool")
-    @ResponseWrapper(localName = "getPoolsInPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInPoolResponse")
-    public Future<?> getPoolsInPoolAsync(
-        @WebParam(name = "parentPoolId", targetNamespace = "")
-        long parentPoolId,
-        @WebParam(name = "poolClass", targetNamespace = "")
-        String poolClass,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetPoolsInPoolResponse> asyncHandler);
-
-    /**
-     * 
-     * @param parentPoolId
-     * @param sessionId
-     * @param poolClass
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemotePool>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPoolsInPool", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInPool")
-    @ResponseWrapper(localName = "getPoolsInPoolResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolsInPoolResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPoolsInPoolRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPoolsInPoolResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPoolsInPool/Fault/ServerSideException")
-    })
-    public List<RemotePool> getPoolsInPool(
-        @WebParam(name = "parentPoolId", targetNamespace = "")
-        long parentPoolId,
-        @WebParam(name = "poolClass", targetNamespace = "")
-        String poolClass,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param limit
-     * @param sessionId
-     * @param poolId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetPoolItemsResponse>
-     */
-    @WebMethod(operationName = "getPoolItems")
-    @RequestWrapper(localName = "getPoolItems", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolItems")
-    @ResponseWrapper(localName = "getPoolItemsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolItemsResponse")
-    public Response<GetPoolItemsResponse> getPoolItemsAsync(
-        @WebParam(name = "poolId", targetNamespace = "")
-        long poolId,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param limit
-     * @param sessionId
-     * @param asyncHandler
-     * @param poolId
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getPoolItems")
-    @RequestWrapper(localName = "getPoolItems", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolItems")
-    @ResponseWrapper(localName = "getPoolItemsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolItemsResponse")
-    public Future<?> getPoolItemsAsync(
-        @WebParam(name = "poolId", targetNamespace = "")
-        long poolId,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetPoolItemsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param limit
-     * @param sessionId
-     * @param poolId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.RemoteObjectLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getPoolItems", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolItems")
-    @ResponseWrapper(localName = "getPoolItemsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetPoolItemsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getPoolItemsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getPoolItemsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getPoolItems/Fault/ServerSideException")
-    })
-    public List<RemoteObjectLight> getPoolItems(
-        @WebParam(name = "poolId", targetNamespace = "")
-        long poolId,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param limit
-     * @param sessionId
-     * @param objectId
-     * @param objectClass
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetBusinessObjectAuditTrailResponse>
-     */
-    @WebMethod(operationName = "getBusinessObjectAuditTrail")
-    @RequestWrapper(localName = "getBusinessObjectAuditTrail", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetBusinessObjectAuditTrail")
-    @ResponseWrapper(localName = "getBusinessObjectAuditTrailResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetBusinessObjectAuditTrailResponse")
-    public Response<GetBusinessObjectAuditTrailResponse> getBusinessObjectAuditTrailAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param limit
-     * @param sessionId
-     * @param objectId
-     * @param asyncHandler
-     * @param objectClass
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getBusinessObjectAuditTrail")
-    @RequestWrapper(localName = "getBusinessObjectAuditTrail", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetBusinessObjectAuditTrail")
-    @ResponseWrapper(localName = "getBusinessObjectAuditTrailResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetBusinessObjectAuditTrailResponse")
-    public Future<?> getBusinessObjectAuditTrailAsync(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetBusinessObjectAuditTrailResponse> asyncHandler);
-
-    /**
-     * 
-     * @param limit
-     * @param sessionId
-     * @param objectId
-     * @param objectClass
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ApplicationLogEntry>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getBusinessObjectAuditTrail", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetBusinessObjectAuditTrail")
-    @ResponseWrapper(localName = "getBusinessObjectAuditTrailResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetBusinessObjectAuditTrailResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getBusinessObjectAuditTrailRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getBusinessObjectAuditTrailResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getBusinessObjectAuditTrail/Fault/ServerSideException")
-    })
-    public List<ApplicationLogEntry> getBusinessObjectAuditTrail(
-        @WebParam(name = "objectClass", targetNamespace = "")
-        String objectClass,
-        @WebParam(name = "objectId", targetNamespace = "")
-        long objectId,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param limit
-     * @param sessionId
-     * @param page
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetGeneralActivityAuditTrailResponse>
-     */
-    @WebMethod(operationName = "getGeneralActivityAuditTrail")
-    @RequestWrapper(localName = "getGeneralActivityAuditTrail", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralActivityAuditTrail")
-    @ResponseWrapper(localName = "getGeneralActivityAuditTrailResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralActivityAuditTrailResponse")
-    public Response<GetGeneralActivityAuditTrailResponse> getGeneralActivityAuditTrailAsync(
-        @WebParam(name = "page", targetNamespace = "")
-        int page,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param limit
-     * @param sessionId
-     * @param page
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getGeneralActivityAuditTrail")
-    @RequestWrapper(localName = "getGeneralActivityAuditTrail", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralActivityAuditTrail")
-    @ResponseWrapper(localName = "getGeneralActivityAuditTrailResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralActivityAuditTrailResponse")
-    public Future<?> getGeneralActivityAuditTrailAsync(
-        @WebParam(name = "page", targetNamespace = "")
-        int page,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetGeneralActivityAuditTrailResponse> asyncHandler);
-
-    /**
-     * 
-     * @param limit
-     * @param sessionId
-     * @param page
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ApplicationLogEntry>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getGeneralActivityAuditTrail", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralActivityAuditTrail")
-    @ResponseWrapper(localName = "getGeneralActivityAuditTrailResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetGeneralActivityAuditTrailResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getGeneralActivityAuditTrailRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getGeneralActivityAuditTrailResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getGeneralActivityAuditTrail/Fault/ServerSideException")
-    })
-    public List<ApplicationLogEntry> getGeneralActivityAuditTrail(
-        @WebParam(name = "page", targetNamespace = "")
-        int page,
-        @WebParam(name = "limit", targetNamespace = "")
-        int limit,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param enabled
-     * @param schedule
-     * @param sessionId
-     * @param notificationType
-     * @param description
-     * @param name
-     * @param parameters
-     * @param script
-     * @param commitOnExecute
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateTaskResponse>
-     */
-    @WebMethod(operationName = "createTask")
-    @RequestWrapper(localName = "createTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateTask")
-    @ResponseWrapper(localName = "createTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateTaskResponse")
-    public Response<CreateTaskResponse> createTaskAsync(
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "enabled", targetNamespace = "")
-        boolean enabled,
-        @WebParam(name = "commitOnExecute", targetNamespace = "")
-        boolean commitOnExecute,
-        @WebParam(name = "script", targetNamespace = "")
-        String script,
-        @WebParam(name = "parameters", targetNamespace = "")
-        List<StringPair> parameters,
-        @WebParam(name = "schedule", targetNamespace = "")
-        TaskScheduleDescriptor schedule,
-        @WebParam(name = "notificationType", targetNamespace = "")
-        TaskNotificationDescriptor notificationType,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param enabled
-     * @param schedule
-     * @param sessionId
-     * @param notificationType
-     * @param description
-     * @param name
-     * @param asyncHandler
-     * @param parameters
-     * @param script
-     * @param commitOnExecute
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "createTask")
-    @RequestWrapper(localName = "createTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateTask")
-    @ResponseWrapper(localName = "createTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateTaskResponse")
-    public Future<?> createTaskAsync(
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "enabled", targetNamespace = "")
-        boolean enabled,
-        @WebParam(name = "commitOnExecute", targetNamespace = "")
-        boolean commitOnExecute,
-        @WebParam(name = "script", targetNamespace = "")
-        String script,
-        @WebParam(name = "parameters", targetNamespace = "")
-        List<StringPair> parameters,
-        @WebParam(name = "schedule", targetNamespace = "")
-        TaskScheduleDescriptor schedule,
-        @WebParam(name = "notificationType", targetNamespace = "")
-        TaskNotificationDescriptor notificationType,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CreateTaskResponse> asyncHandler);
-
-    /**
-     * 
-     * @param enabled
-     * @param schedule
-     * @param sessionId
-     * @param notificationType
-     * @param description
-     * @param name
-     * @param parameters
-     * @param script
-     * @param commitOnExecute
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateTask")
-    @ResponseWrapper(localName = "createTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateTaskResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createTaskRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createTaskResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createTask/Fault/ServerSideException")
-    })
-    public long createTask(
-        @WebParam(name = "name", targetNamespace = "")
-        String name,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "enabled", targetNamespace = "")
-        boolean enabled,
-        @WebParam(name = "commitOnExecute", targetNamespace = "")
-        boolean commitOnExecute,
-        @WebParam(name = "script", targetNamespace = "")
-        String script,
-        @WebParam(name = "parameters", targetNamespace = "")
-        List<StringPair> parameters,
-        @WebParam(name = "schedule", targetNamespace = "")
-        TaskScheduleDescriptor schedule,
-        @WebParam(name = "notificationType", targetNamespace = "")
-        TaskNotificationDescriptor notificationType,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param propertyName
-     * @param taskId
-     * @param sessionId
-     * @param propertyValue
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.UpdateTaskPropertiesResponse>
-     */
-    @WebMethod(operationName = "updateTaskProperties")
-    @RequestWrapper(localName = "updateTaskProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskProperties")
-    @ResponseWrapper(localName = "updateTaskPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskPropertiesResponse")
-    public Response<UpdateTaskPropertiesResponse> updateTaskPropertiesAsync(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "propertyName", targetNamespace = "")
-        String propertyName,
-        @WebParam(name = "propertyValue", targetNamespace = "")
-        String propertyValue,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param propertyName
-     * @param taskId
-     * @param sessionId
-     * @param propertyValue
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "updateTaskProperties")
-    @RequestWrapper(localName = "updateTaskProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskProperties")
-    @ResponseWrapper(localName = "updateTaskPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskPropertiesResponse")
-    public Future<?> updateTaskPropertiesAsync(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "propertyName", targetNamespace = "")
-        String propertyName,
-        @WebParam(name = "propertyValue", targetNamespace = "")
-        String propertyValue,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<UpdateTaskPropertiesResponse> asyncHandler);
-
-    /**
-     * 
-     * @param propertyName
-     * @param taskId
-     * @param sessionId
-     * @param propertyValue
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "updateTaskProperties", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskProperties")
-    @ResponseWrapper(localName = "updateTaskPropertiesResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskPropertiesResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateTaskPropertiesRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateTaskPropertiesResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateTaskProperties/Fault/ServerSideException")
-    })
-    public void updateTaskProperties(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "propertyName", targetNamespace = "")
-        String propertyName,
-        @WebParam(name = "propertyValue", targetNamespace = "")
-        String propertyValue,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param taskId
-     * @param sessionId
-     * @param parameters
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.UpdateTaskParametersResponse>
-     */
-    @WebMethod(operationName = "updateTaskParameters")
-    @RequestWrapper(localName = "updateTaskParameters", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskParameters")
-    @ResponseWrapper(localName = "updateTaskParametersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskParametersResponse")
-    public Response<UpdateTaskParametersResponse> updateTaskParametersAsync(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "parameters", targetNamespace = "")
-        List<StringPair> parameters,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param taskId
-     * @param sessionId
-     * @param asyncHandler
-     * @param parameters
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "updateTaskParameters")
-    @RequestWrapper(localName = "updateTaskParameters", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskParameters")
-    @ResponseWrapper(localName = "updateTaskParametersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskParametersResponse")
-    public Future<?> updateTaskParametersAsync(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "parameters", targetNamespace = "")
-        List<StringPair> parameters,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<UpdateTaskParametersResponse> asyncHandler);
-
-    /**
-     * 
-     * @param taskId
-     * @param sessionId
-     * @param parameters
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "updateTaskParameters", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskParameters")
-    @ResponseWrapper(localName = "updateTaskParametersResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskParametersResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateTaskParametersRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateTaskParametersResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateTaskParameters/Fault/ServerSideException")
-    })
-    public void updateTaskParameters(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "parameters", targetNamespace = "")
-        List<StringPair> parameters,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param taskId
-     * @param schedule
-     * @param sessionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.UpdateTaskScheduleResponse>
-     */
-    @WebMethod(operationName = "updateTaskSchedule")
-    @RequestWrapper(localName = "updateTaskSchedule", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskSchedule")
-    @ResponseWrapper(localName = "updateTaskScheduleResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskScheduleResponse")
-    public Response<UpdateTaskScheduleResponse> updateTaskScheduleAsync(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "schedule", targetNamespace = "")
-        TaskScheduleDescriptor schedule,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param taskId
-     * @param schedule
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "updateTaskSchedule")
-    @RequestWrapper(localName = "updateTaskSchedule", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskSchedule")
-    @ResponseWrapper(localName = "updateTaskScheduleResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskScheduleResponse")
-    public Future<?> updateTaskScheduleAsync(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "schedule", targetNamespace = "")
-        TaskScheduleDescriptor schedule,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<UpdateTaskScheduleResponse> asyncHandler);
-
-    /**
-     * 
-     * @param taskId
-     * @param schedule
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "updateTaskSchedule", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskSchedule")
-    @ResponseWrapper(localName = "updateTaskScheduleResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskScheduleResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateTaskScheduleRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateTaskScheduleResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateTaskSchedule/Fault/ServerSideException")
-    })
-    public void updateTaskSchedule(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "schedule", targetNamespace = "")
-        TaskScheduleDescriptor schedule,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param taskId
-     * @param sessionId
-     * @param notificationType
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.UpdateTaskNotificationTypeResponse>
-     */
-    @WebMethod(operationName = "updateTaskNotificationType")
-    @RequestWrapper(localName = "updateTaskNotificationType", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskNotificationType")
-    @ResponseWrapper(localName = "updateTaskNotificationTypeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskNotificationTypeResponse")
-    public Response<UpdateTaskNotificationTypeResponse> updateTaskNotificationTypeAsync(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "notificationType", targetNamespace = "")
-        TaskNotificationDescriptor notificationType,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param taskId
-     * @param sessionId
-     * @param notificationType
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "updateTaskNotificationType")
-    @RequestWrapper(localName = "updateTaskNotificationType", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskNotificationType")
-    @ResponseWrapper(localName = "updateTaskNotificationTypeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskNotificationTypeResponse")
-    public Future<?> updateTaskNotificationTypeAsync(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "notificationType", targetNamespace = "")
-        TaskNotificationDescriptor notificationType,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<UpdateTaskNotificationTypeResponse> asyncHandler);
-
-    /**
-     * 
-     * @param taskId
-     * @param sessionId
-     * @param notificationType
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "updateTaskNotificationType", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskNotificationType")
-    @ResponseWrapper(localName = "updateTaskNotificationTypeResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.UpdateTaskNotificationTypeResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/updateTaskNotificationTypeRequest", output = "http://ws.kuwaiba.org/KuwaibaService/updateTaskNotificationTypeResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/updateTaskNotificationType/Fault/ServerSideException")
-    })
-    public void updateTaskNotificationType(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "notificationType", targetNamespace = "")
-        TaskNotificationDescriptor notificationType,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param taskId
-     * @param sessionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetSubscribersForTaskResponse>
-     */
-    @WebMethod(operationName = "getSubscribersForTask")
-    @RequestWrapper(localName = "getSubscribersForTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubscribersForTask")
-    @ResponseWrapper(localName = "getSubscribersForTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubscribersForTaskResponse")
-    public Response<GetSubscribersForTaskResponse> getSubscribersForTaskAsync(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param taskId
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getSubscribersForTask")
-    @RequestWrapper(localName = "getSubscribersForTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubscribersForTask")
-    @ResponseWrapper(localName = "getSubscribersForTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubscribersForTaskResponse")
-    public Future<?> getSubscribersForTaskAsync(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetSubscribersForTaskResponse> asyncHandler);
-
-    /**
-     * 
-     * @param taskId
-     * @param sessionId
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.UserInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getSubscribersForTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubscribersForTask")
-    @ResponseWrapper(localName = "getSubscribersForTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubscribersForTaskResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSubscribersForTaskRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSubscribersForTaskResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSubscribersForTask/Fault/ServerSideException")
-    })
-    public List<UserInfoLight> getSubscribersForTask(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param className
-     * @param releaseRelationships
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteObjectResponse>
-     */
-    @WebMethod(operationName = "deleteObject")
-    @RequestWrapper(localName = "deleteObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObject")
-    @ResponseWrapper(localName = "deleteObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjectResponse")
-    public Response<DeleteObjectResponse> deleteObjectAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "releaseRelationships", targetNamespace = "")
-        boolean releaseRelationships,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param asyncHandler
-     * @param className
-     * @param releaseRelationships
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "deleteObject")
-    @RequestWrapper(localName = "deleteObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObject")
-    @ResponseWrapper(localName = "deleteObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjectResponse")
-    public Future<?> deleteObjectAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "releaseRelationships", targetNamespace = "")
-        boolean releaseRelationships,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<DeleteObjectResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param oid
-     * @param className
-     * @param releaseRelationships
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteObject", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObject")
-    @ResponseWrapper(localName = "deleteObjectResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteObjectResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteObjectRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteObjectResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteObject/Fault/ServerSideException")
-    })
-    public void deleteObject(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "oid", targetNamespace = "")
-        long oid,
-        @WebParam(name = "releaseRelationships", targetNamespace = "")
-        boolean releaseRelationships,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param attributeNames
-     * @param parentId
-     * @param attributeValues
-     * @param sessionId
-     * @param parentClassName
-     * @param className
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.AddActivityResponse>
-     */
-    @WebMethod(operationName = "addActivity")
-    @RequestWrapper(localName = "addActivity", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddActivity")
-    @ResponseWrapper(localName = "addActivityResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddActivityResponse")
-    public Response<AddActivityResponse> addActivityAsync(
-        @WebParam(name = "parentId", targetNamespace = "")
-        long parentId,
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "attributeNames", targetNamespace = "")
-        List<String> attributeNames,
-        @WebParam(name = "attributeValues", targetNamespace = "")
-        List<String> attributeValues,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param attributeNames
-     * @param parentId
-     * @param attributeValues
-     * @param sessionId
-     * @param parentClassName
-     * @param asyncHandler
-     * @param className
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "addActivity")
-    @RequestWrapper(localName = "addActivity", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddActivity")
-    @ResponseWrapper(localName = "addActivityResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddActivityResponse")
-    public Future<?> addActivityAsync(
-        @WebParam(name = "parentId", targetNamespace = "")
-        long parentId,
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "attributeNames", targetNamespace = "")
-        List<String> attributeNames,
-        @WebParam(name = "attributeValues", targetNamespace = "")
-        List<String> attributeValues,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<AddActivityResponse> asyncHandler);
-
-    /**
-     * 
-     * @param attributeNames
-     * @param parentId
-     * @param attributeValues
-     * @param sessionId
-     * @param parentClassName
-     * @param className
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "addActivity", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddActivity")
-    @ResponseWrapper(localName = "addActivityResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.AddActivityResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/addActivityRequest", output = "http://ws.kuwaiba.org/KuwaibaService/addActivityResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/addActivity/Fault/ServerSideException")
-    })
-    public long addActivity(
-        @WebParam(name = "parentId", targetNamespace = "")
-        long parentId,
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "attributeNames", targetNamespace = "")
-        List<String> attributeNames,
-        @WebParam(name = "attributeValues", targetNamespace = "")
-        List<String> attributeValues,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param icon
-     * @param smallIcon
-     * @param isAbstract
-     * @param sessionId
-     * @param color
-     * @param isCountable
-     * @param parentClassName
-     * @param description
-     * @param className
-     * @param displayName
-     * @param isInDesign
-     * @param isCustom
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateClassResponse>
-     */
-    @WebMethod(operationName = "createClass")
-    @RequestWrapper(localName = "createClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateClass")
-    @ResponseWrapper(localName = "createClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateClassResponse")
-    public Response<CreateClassResponse> createClassAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "displayName", targetNamespace = "")
-        String displayName,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "isAbstract", targetNamespace = "")
-        boolean isAbstract,
-        @WebParam(name = "isCustom", targetNamespace = "")
-        boolean isCustom,
-        @WebParam(name = "isCountable", targetNamespace = "")
-        boolean isCountable,
-        @WebParam(name = "isInDesign", targetNamespace = "")
-        boolean isInDesign,
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "icon", targetNamespace = "")
-        byte[] icon,
-        @WebParam(name = "smallIcon", targetNamespace = "")
-        byte[] smallIcon,
-        @WebParam(name = "color", targetNamespace = "")
-        int color,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param icon
-     * @param smallIcon
-     * @param isAbstract
-     * @param sessionId
-     * @param color
-     * @param isCountable
-     * @param parentClassName
-     * @param description
-     * @param asyncHandler
-     * @param className
-     * @param displayName
-     * @param isInDesign
-     * @param isCustom
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "createClass")
-    @RequestWrapper(localName = "createClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateClass")
-    @ResponseWrapper(localName = "createClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateClassResponse")
-    public Future<?> createClassAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "displayName", targetNamespace = "")
-        String displayName,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "isAbstract", targetNamespace = "")
-        boolean isAbstract,
-        @WebParam(name = "isCustom", targetNamespace = "")
-        boolean isCustom,
-        @WebParam(name = "isCountable", targetNamespace = "")
-        boolean isCountable,
-        @WebParam(name = "isInDesign", targetNamespace = "")
-        boolean isInDesign,
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "icon", targetNamespace = "")
-        byte[] icon,
-        @WebParam(name = "smallIcon", targetNamespace = "")
-        byte[] smallIcon,
-        @WebParam(name = "color", targetNamespace = "")
-        int color,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CreateClassResponse> asyncHandler);
-
-    /**
-     * 
-     * @param icon
-     * @param smallIcon
-     * @param isAbstract
-     * @param sessionId
-     * @param color
-     * @param isCountable
-     * @param parentClassName
-     * @param description
-     * @param className
-     * @param displayName
-     * @param isInDesign
-     * @param isCustom
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateClass")
-    @ResponseWrapper(localName = "createClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateClassResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createClassResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createClass/Fault/ServerSideException")
-    })
-    public long createClass(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "displayName", targetNamespace = "")
-        String displayName,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "isAbstract", targetNamespace = "")
-        boolean isAbstract,
-        @WebParam(name = "isCustom", targetNamespace = "")
-        boolean isCustom,
-        @WebParam(name = "isCountable", targetNamespace = "")
-        boolean isCountable,
-        @WebParam(name = "isInDesign", targetNamespace = "")
-        boolean isInDesign,
-        @WebParam(name = "parentClassName", targetNamespace = "")
-        String parentClassName,
-        @WebParam(name = "icon", targetNamespace = "")
-        byte[] icon,
-        @WebParam(name = "smallIcon", targetNamespace = "")
-        byte[] smallIcon,
-        @WebParam(name = "color", targetNamespace = "")
-        int color,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param className
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteClassResponse>
-     */
-    @WebMethod(operationName = "deleteClass")
-    @RequestWrapper(localName = "deleteClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClass")
-    @ResponseWrapper(localName = "deleteClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassResponse")
-    public Response<DeleteClassResponse> deleteClassAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param asyncHandler
-     * @param className
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "deleteClass")
-    @RequestWrapper(localName = "deleteClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClass")
-    @ResponseWrapper(localName = "deleteClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassResponse")
-    public Future<?> deleteClassAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<DeleteClassResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param className
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteClass", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClass")
-    @ResponseWrapper(localName = "deleteClassResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteClassResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteClassRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteClassResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteClass/Fault/ServerSideException")
-    })
-    public void deleteClass(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param includeListTypes
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetAllClassesLightResponse>
-     */
-    @WebMethod(operationName = "getAllClassesLight")
-    @RequestWrapper(localName = "getAllClassesLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesLight")
-    @ResponseWrapper(localName = "getAllClassesLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesLightResponse")
-    public Response<GetAllClassesLightResponse> getAllClassesLightAsync(
-        @WebParam(name = "includeListTypes", targetNamespace = "")
-        boolean includeListTypes,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param asyncHandler
-     * @param includeListTypes
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getAllClassesLight")
-    @RequestWrapper(localName = "getAllClassesLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesLight")
-    @ResponseWrapper(localName = "getAllClassesLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesLightResponse")
-    public Future<?> getAllClassesLightAsync(
-        @WebParam(name = "includeListTypes", targetNamespace = "")
-        boolean includeListTypes,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetAllClassesLightResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param includeListTypes
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getAllClassesLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesLight")
-    @ResponseWrapper(localName = "getAllClassesLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetAllClassesLightResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getAllClassesLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getAllClassesLightResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getAllClassesLight/Fault/ServerSideException")
-    })
-    public List<ClassInfoLight> getAllClassesLight(
-        @WebParam(name = "includeListTypes", targetNamespace = "")
-        boolean includeListTypes,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param includeSelf
-     * @param includeAbstractClasses
-     * @param sessionId
-     * @param className
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetSubClassesLightResponse>
-     */
-    @WebMethod(operationName = "getSubClassesLight")
-    @RequestWrapper(localName = "getSubClassesLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLight")
-    @ResponseWrapper(localName = "getSubClassesLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLightResponse")
-    public Response<GetSubClassesLightResponse> getSubClassesLightAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "includeAbstractClasses", targetNamespace = "")
-        boolean includeAbstractClasses,
-        @WebParam(name = "includeSelf", targetNamespace = "")
-        boolean includeSelf,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param includeSelf
-     * @param includeAbstractClasses
-     * @param sessionId
-     * @param asyncHandler
-     * @param className
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getSubClassesLight")
-    @RequestWrapper(localName = "getSubClassesLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLight")
-    @ResponseWrapper(localName = "getSubClassesLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLightResponse")
-    public Future<?> getSubClassesLightAsync(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "includeAbstractClasses", targetNamespace = "")
-        boolean includeAbstractClasses,
-        @WebParam(name = "includeSelf", targetNamespace = "")
-        boolean includeSelf,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetSubClassesLightResponse> asyncHandler);
-
-    /**
-     * 
-     * @param includeSelf
-     * @param includeAbstractClasses
-     * @param sessionId
-     * @param className
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ClassInfoLight>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getSubClassesLight", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLight")
-    @ResponseWrapper(localName = "getSubClassesLightResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetSubClassesLightResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLightRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLightResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getSubClassesLight/Fault/ServerSideException")
-    })
-    public List<ClassInfoLight> getSubClassesLight(
-        @WebParam(name = "className", targetNamespace = "")
-        String className,
-        @WebParam(name = "includeAbstractClasses", targetNamespace = "")
-        boolean includeAbstractClasses,
-        @WebParam(name = "includeSelf", targetNamespace = "")
-        boolean includeSelf,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param jobId
-     * @param sessionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.KillJobResponse>
-     */
-    @WebMethod(operationName = "killJob")
-    @RequestWrapper(localName = "killJob", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.KillJob")
-    @ResponseWrapper(localName = "killJobResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.KillJobResponse")
-    public Response<KillJobResponse> killJobAsync(
-        @WebParam(name = "jobId", targetNamespace = "")
-        long jobId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param jobId
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "killJob")
-    @RequestWrapper(localName = "killJob", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.KillJob")
-    @ResponseWrapper(localName = "killJobResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.KillJobResponse")
-    public Future<?> killJobAsync(
-        @WebParam(name = "jobId", targetNamespace = "")
-        long jobId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<KillJobResponse> asyncHandler);
-
-    /**
-     * 
-     * @param jobId
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "killJob", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.KillJob")
-    @ResponseWrapper(localName = "killJobResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.KillJobResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/killJobRequest", output = "http://ws.kuwaiba.org/KuwaibaService/killJobResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/killJob/Fault/ServerSideException")
-    })
-    public void killJob(
-        @WebParam(name = "jobId", targetNamespace = "")
-        long jobId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param query
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.ExecuteQueryResponse>
-     */
-    @WebMethod(operationName = "executeQuery")
-    @RequestWrapper(localName = "executeQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteQuery")
-    @ResponseWrapper(localName = "executeQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteQueryResponse")
-    public Response<ExecuteQueryResponse> executeQueryAsync(
-        @WebParam(name = "query", targetNamespace = "")
-        TransientQuery query,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param query
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "executeQuery")
-    @RequestWrapper(localName = "executeQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteQuery")
-    @ResponseWrapper(localName = "executeQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteQueryResponse")
-    public Future<?> executeQueryAsync(
-        @WebParam(name = "query", targetNamespace = "")
-        TransientQuery query,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<ExecuteQueryResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param query
-     * @return
-     *     returns java.util.List<org.inventory.communications.wsclient.ResultRecord>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "executeQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteQuery")
-    @ResponseWrapper(localName = "executeQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteQueryResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/executeQueryRequest", output = "http://ws.kuwaiba.org/KuwaibaService/executeQueryResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/executeQuery/Fault/ServerSideException")
-    })
-    public List<ResultRecord> executeQuery(
-        @WebParam(name = "query", targetNamespace = "")
-        TransientQuery query,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param showAll
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetClassHierarchyResponse>
-     */
-    @WebMethod(operationName = "getClassHierarchy")
-    @RequestWrapper(localName = "getClassHierarchy", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassHierarchy")
-    @ResponseWrapper(localName = "getClassHierarchyResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassHierarchyResponse")
-    public Response<GetClassHierarchyResponse> getClassHierarchyAsync(
-        @WebParam(name = "showAll", targetNamespace = "")
-        boolean showAll,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param showAll
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "getClassHierarchy")
-    @RequestWrapper(localName = "getClassHierarchy", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassHierarchy")
-    @ResponseWrapper(localName = "getClassHierarchyResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassHierarchyResponse")
-    public Future<?> getClassHierarchyAsync(
-        @WebParam(name = "showAll", targetNamespace = "")
-        boolean showAll,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<GetClassHierarchyResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param showAll
-     * @return
-     *     returns byte[]
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "getClassHierarchy", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassHierarchy")
-    @ResponseWrapper(localName = "getClassHierarchyResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.GetClassHierarchyResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/getClassHierarchyRequest", output = "http://ws.kuwaiba.org/KuwaibaService/getClassHierarchyResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/getClassHierarchy/Fault/ServerSideException")
-    })
-    public byte[] getClassHierarchy(
-        @WebParam(name = "showAll", targetNamespace = "")
-        boolean showAll,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception
@@ -17786,64 +18266,6 @@ public interface KuwaibaService {
      * @param taskId
      * @param sessionId
      * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.ExecuteTaskResponse>
-     */
-    @WebMethod(operationName = "executeTask")
-    @RequestWrapper(localName = "executeTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteTask")
-    @ResponseWrapper(localName = "executeTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteTaskResponse")
-    public Response<ExecuteTaskResponse> executeTaskAsync(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param taskId
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "executeTask")
-    @RequestWrapper(localName = "executeTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteTask")
-    @ResponseWrapper(localName = "executeTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteTaskResponse")
-    public Future<?> executeTaskAsync(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<ExecuteTaskResponse> asyncHandler);
-
-    /**
-     * 
-     * @param taskId
-     * @param sessionId
-     * @return
-     *     returns org.inventory.communications.wsclient.RemoteTaskResult
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "executeTask", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteTask")
-    @ResponseWrapper(localName = "executeTaskResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.ExecuteTaskResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/executeTaskRequest", output = "http://ws.kuwaiba.org/KuwaibaService/executeTaskResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/executeTask/Fault/ServerSideException")
-    })
-    public RemoteTaskResult executeTask(
-        @WebParam(name = "taskId", targetNamespace = "")
-        long taskId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param taskId
-     * @param sessionId
-     * @return
      *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.GetTaskResponse>
      */
     @WebMethod(operationName = "getTask")
@@ -17892,240 +18314,6 @@ public interface KuwaibaService {
     public RemoteTask getTask(
         @WebParam(name = "taskId", targetNamespace = "")
         long taskId,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param sessionId
-     * @param recursive
-     * @param templateOids
-     * @param targetClass
-     * @param targetOid
-     * @param templateClases
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CopyObjectsResponse>
-     */
-    @WebMethod(operationName = "copyObjects")
-    @RequestWrapper(localName = "copyObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyObjects")
-    @ResponseWrapper(localName = "copyObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyObjectsResponse")
-    public Response<CopyObjectsResponse> copyObjectsAsync(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "templateClases", targetNamespace = "")
-        List<String> templateClases,
-        @WebParam(name = "templateOids", targetNamespace = "")
-        List<Long> templateOids,
-        @WebParam(name = "recursive", targetNamespace = "")
-        boolean recursive,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param sessionId
-     * @param recursive
-     * @param templateOids
-     * @param asyncHandler
-     * @param targetClass
-     * @param targetOid
-     * @param templateClases
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "copyObjects")
-    @RequestWrapper(localName = "copyObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyObjects")
-    @ResponseWrapper(localName = "copyObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyObjectsResponse")
-    public Future<?> copyObjectsAsync(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "templateClases", targetNamespace = "")
-        List<String> templateClases,
-        @WebParam(name = "templateOids", targetNamespace = "")
-        List<Long> templateOids,
-        @WebParam(name = "recursive", targetNamespace = "")
-        boolean recursive,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CopyObjectsResponse> asyncHandler);
-
-    /**
-     * 
-     * @param sessionId
-     * @param recursive
-     * @param templateOids
-     * @param targetClass
-     * @param targetOid
-     * @param templateClases
-     * @return
-     *     returns java.util.List<java.lang.Long>
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "copyObjects", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyObjects")
-    @ResponseWrapper(localName = "copyObjectsResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CopyObjectsResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/copyObjectsRequest", output = "http://ws.kuwaiba.org/KuwaibaService/copyObjectsResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/copyObjects/Fault/ServerSideException")
-    })
-    public List<Long> copyObjects(
-        @WebParam(name = "targetClass", targetNamespace = "")
-        String targetClass,
-        @WebParam(name = "targetOid", targetNamespace = "")
-        long targetOid,
-        @WebParam(name = "templateClases", targetNamespace = "")
-        List<String> templateClases,
-        @WebParam(name = "templateOids", targetNamespace = "")
-        List<Long> templateOids,
-        @WebParam(name = "recursive", targetNamespace = "")
-        boolean recursive,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param queryStructure
-     * @param sessionId
-     * @param queryName
-     * @param description
-     * @param ownerOid
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.CreateQueryResponse>
-     */
-    @WebMethod(operationName = "createQuery")
-    @RequestWrapper(localName = "createQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateQuery")
-    @ResponseWrapper(localName = "createQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateQueryResponse")
-    public Response<CreateQueryResponse> createQueryAsync(
-        @WebParam(name = "queryName", targetNamespace = "")
-        String queryName,
-        @WebParam(name = "ownerOid", targetNamespace = "")
-        long ownerOid,
-        @WebParam(name = "queryStructure", targetNamespace = "")
-        byte[] queryStructure,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param queryStructure
-     * @param sessionId
-     * @param queryName
-     * @param description
-     * @param asyncHandler
-     * @param ownerOid
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "createQuery")
-    @RequestWrapper(localName = "createQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateQuery")
-    @ResponseWrapper(localName = "createQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateQueryResponse")
-    public Future<?> createQueryAsync(
-        @WebParam(name = "queryName", targetNamespace = "")
-        String queryName,
-        @WebParam(name = "ownerOid", targetNamespace = "")
-        long ownerOid,
-        @WebParam(name = "queryStructure", targetNamespace = "")
-        byte[] queryStructure,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<CreateQueryResponse> asyncHandler);
-
-    /**
-     * 
-     * @param queryStructure
-     * @param sessionId
-     * @param queryName
-     * @param description
-     * @param ownerOid
-     * @return
-     *     returns long
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @WebResult(targetNamespace = "")
-    @RequestWrapper(localName = "createQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateQuery")
-    @ResponseWrapper(localName = "createQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.CreateQueryResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/createQueryRequest", output = "http://ws.kuwaiba.org/KuwaibaService/createQueryResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/createQuery/Fault/ServerSideException")
-    })
-    public long createQuery(
-        @WebParam(name = "queryName", targetNamespace = "")
-        String queryName,
-        @WebParam(name = "ownerOid", targetNamespace = "")
-        long ownerOid,
-        @WebParam(name = "queryStructure", targetNamespace = "")
-        byte[] queryStructure,
-        @WebParam(name = "description", targetNamespace = "")
-        String description,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId)
-        throws ServerSideException_Exception
-    ;
-
-    /**
-     * 
-     * @param queryOid
-     * @param sessionId
-     * @return
-     *     returns javax.xml.ws.Response<org.inventory.communications.wsclient.DeleteQueryResponse>
-     */
-    @WebMethod(operationName = "deleteQuery")
-    @RequestWrapper(localName = "deleteQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteQuery")
-    @ResponseWrapper(localName = "deleteQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteQueryResponse")
-    public Response<DeleteQueryResponse> deleteQueryAsync(
-        @WebParam(name = "queryOid", targetNamespace = "")
-        long queryOid,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId);
-
-    /**
-     * 
-     * @param queryOid
-     * @param sessionId
-     * @param asyncHandler
-     * @return
-     *     returns java.util.concurrent.Future<? extends java.lang.Object>
-     */
-    @WebMethod(operationName = "deleteQuery")
-    @RequestWrapper(localName = "deleteQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteQuery")
-    @ResponseWrapper(localName = "deleteQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteQueryResponse")
-    public Future<?> deleteQueryAsync(
-        @WebParam(name = "queryOid", targetNamespace = "")
-        long queryOid,
-        @WebParam(name = "sessionId", targetNamespace = "")
-        String sessionId,
-        @WebParam(name = "asyncHandler", targetNamespace = "")
-        AsyncHandler<DeleteQueryResponse> asyncHandler);
-
-    /**
-     * 
-     * @param queryOid
-     * @param sessionId
-     * @throws ServerSideException_Exception
-     */
-    @WebMethod
-    @RequestWrapper(localName = "deleteQuery", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteQuery")
-    @ResponseWrapper(localName = "deleteQueryResponse", targetNamespace = "http://ws.kuwaiba.org/", className = "org.inventory.communications.wsclient.DeleteQueryResponse")
-    @Action(input = "http://ws.kuwaiba.org/KuwaibaService/deleteQueryRequest", output = "http://ws.kuwaiba.org/KuwaibaService/deleteQueryResponse", fault = {
-        @FaultAction(className = ServerSideException_Exception.class, value = "http://ws.kuwaiba.org/KuwaibaService/deleteQuery/Fault/ServerSideException")
-    })
-    public void deleteQuery(
-        @WebParam(name = "queryOid", targetNamespace = "")
-        long queryOid,
         @WebParam(name = "sessionId", targetNamespace = "")
         String sessionId)
         throws ServerSideException_Exception

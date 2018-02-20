@@ -17,6 +17,7 @@ package com.neotropic.inventory.modules.sync;
 
 import com.neotropic.inventory.modules.sync.actions.KillJobAction;
 import com.neotropic.inventory.modules.sync.nodes.SyncGroupRootNode;
+import com.neotropic.inventory.modules.sync.nodes.actions.DeleteSyncAction;
 import java.awt.event.KeyEvent;
 import javax.swing.InputMap;
 import javax.swing.KeyStroke;
@@ -75,11 +76,13 @@ public final class SyncManagerTopComponent extends TopComponent implements
         getActionMap().put(DefaultEditorKit.copyAction, ExplorerUtils.actionCopy(em));
         getActionMap().put(DefaultEditorKit.cutAction, ExplorerUtils.actionCut(em));
         getActionMap().put(DefaultEditorKit.pasteAction, ExplorerUtils.actionPaste(em));
+        getActionMap().put(DeleteSyncAction.ACTION_MAP_KEY, DeleteSyncAction.getInstance());
         
         InputMap keys = getInputMap(WHEN_IN_FOCUSED_WINDOW);
         keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_C, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.copyAction);
         keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_X, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.cutAction);
         keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_V, KeyEvent.CTRL_DOWN_MASK), DefaultEditorKit.pasteAction);
+        keys.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), DeleteSyncAction.ACTION_MAP_KEY);
         
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
         treeMain = new BeanTreeView();

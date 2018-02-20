@@ -29,6 +29,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
@@ -115,11 +116,11 @@ class NewSyncDataSourceConfigurationAction extends GenericInventoryAction {
         cboAuthProtocol.setName("cboAuthenticationProtocol");
         cboAuthProtocol.addItem(none);
         cboAuthProtocol.addItem("MD5"); // NOI18N
-        cboAuthProtocol.addItem("SHA"); // NOI18N
+        //cboAuthProtocol.addItem("SHA"); // NOI18N Not supported yet
         cboAuthProtocol.setSelectedItem(none);        
         cboAuthProtocol.setEnabled(false);
         
-        final JTextField txtAuthPass = (JTextField) setSize(new JTextField());
+        final JPasswordField txtAuthPass = (JPasswordField) setSize(new JPasswordField());
         txtAuthPass.setName("txtAuthenticationProtocolPassPhrase");
         txtAuthPass.setEditable(false);
         
@@ -164,11 +165,11 @@ class NewSyncDataSourceConfigurationAction extends GenericInventoryAction {
         cboPrivacyProtocol.setName("cboPrivacyProtocol");
         cboPrivacyProtocol.addItem(none);
         cboPrivacyProtocol.addItem("DES"); // NOI18N
-        cboPrivacyProtocol.addItem("AES"); // NOI18N
+        //cboPrivacyProtocol.addItem("AES"); // NOI18N Not supported yet
         cboPrivacyProtocol.setSelectedItem(none);
         cboPrivacyProtocol.setEnabled(false);        
         
-        final JTextField txtPrivacyPass = (JTextField) setSize(new JTextField());
+        final JPasswordField txtPrivacyPass = (JPasswordField) setSize(new JPasswordField());
         txtPrivacyPass.setName("txtPrivacyProtocolPassPhrase");
         txtPrivacyPass.setEditable(false);
         
@@ -189,6 +190,7 @@ class NewSyncDataSourceConfigurationAction extends GenericInventoryAction {
         JPanel pnlCommunity = new JPanel();
         pnlCommunity.setName(Constants.PROPERTY_COMMUNITY);
         final JTextField txtCommunity = (JTextField) pnlCommunity.add(setSize(new JTextField("public")));
+        txtCommunity.setToolTipText("Default value \"public\"");
         txtCommunity.setName("txtcomunity");
         txtCommunity.setForeground(Color.GRAY);
         txtCommunity.setEditable(false);        

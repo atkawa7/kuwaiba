@@ -28,6 +28,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.core.services.utils.MenuScroller;
 import org.inventory.core.templates.nodes.TemplateElementNode;
@@ -66,10 +67,10 @@ class CreateTemplateElementAction extends GenericInventoryAction implements Pres
                     selectedObject.getOid(), ((JTextField)pnlGeneralInfo.getComponent("txtTemplateElementName")).getText());
             
             if (newTemplateElement == null)
-                NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
             else {
                 ((AbstractChildren)selectedNode.getChildren()).addNotify();
-                NotificationUtil.getInstance().showSimplePopup("Information", NotificationUtil.INFO_MESSAGE, "Template element created successfully");
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "Template element created successfully");
             }
         }
     }
@@ -83,7 +84,7 @@ class CreateTemplateElementAction extends GenericInventoryAction implements Pres
         List<LocalClassMetadataLight> items = com.getPossibleChildren(selectedObject.getClassName(), true);
         
         if (items == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE,
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.INFO_MESSAGE,
                 com.getError());
             mnuPossibleChildren.setEnabled(false);
         }

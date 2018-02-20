@@ -20,6 +20,7 @@ import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.nodes.Node;
@@ -38,7 +39,8 @@ public class SpecialChildren extends AbstractChildren {
                 getObjectSpecialChildren(parentObject.getClassName(), parentObject.getOid());
        
         if (specialChildren == null){
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             setKeys(Collections.EMPTY_SET);
         } else {
             Collections.sort(specialChildren);

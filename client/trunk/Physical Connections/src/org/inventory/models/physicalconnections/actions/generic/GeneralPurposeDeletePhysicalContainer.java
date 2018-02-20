@@ -17,6 +17,7 @@
 package org.inventory.models.physicalconnections.actions.generic;
 
 import java.awt.event.ActionEvent;
+import java.util.Iterator;
 import static javax.swing.Action.NAME;
 import static javax.swing.Action.SMALL_ICON;
 import javax.swing.ImageIcon;
@@ -61,14 +62,17 @@ public class GeneralPurposeDeletePhysicalContainer extends GenericObjectNodeActi
 
     @Override
     public void actionPerformed(ActionEvent ae) {
+        Iterator<? extends ObjectNode> selectedNodes = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class).allInstances().iterator();
         
-        ObjectNode selectedNode = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
-        if (selectedNode == null)
+        if (!selectedNodes.hasNext()) {
             JOptionPane.showMessageDialog(null, "You must select a node first");
-        else {
-            
-            if (JOptionPane.showConfirmDialog(null, "This will delete the connection and all its existing children. Are you sure you want to do it?", 
-                    "Delete Container", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            return;
+        }        
+        if (JOptionPane.showConfirmDialog(null, "This will delete the connection and all its existing children. Are you sure you want to do it?", 
+                "Delete Container", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+                
+            while (selectedNodes.hasNext()) {
+                ObjectNode selectedNode = selectedNodes.next();
             
                 if (CommunicationsStub.getInstance().deletePhysicalConnection(selectedNode.getObject().getClassName(), 
                         selectedNode.getObject().getOid())) {
@@ -76,12 +80,14 @@ public class GeneralPurposeDeletePhysicalContainer extends GenericObjectNodeActi
                     //If the node is in a tree, update the list
                     if (selectedNode.getParentNode() != null && AbstractChildren.class.isInstance(selectedNode.getParentNode().getChildren()))
                         ((AbstractChildren)selectedNode.getParentNode().getChildren()).addNotify();
-                    
-                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "Container deleted successfully");
+                } else {
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                    return;
                 }
-                else
-                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
+                NotificationUtil.INFO_MESSAGE, "Container deleted successfully");
         }
     }
 

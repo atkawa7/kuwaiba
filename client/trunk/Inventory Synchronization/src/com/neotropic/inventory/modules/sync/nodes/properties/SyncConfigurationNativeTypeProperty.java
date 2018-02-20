@@ -43,6 +43,13 @@ public class SyncConfigurationNativeTypeProperty extends PropertySupport.ReadWri
 
     @Override
     public Object getValue() throws IllegalAccessException, InvocationTargetException {
+        if (Constants.PROPERTY_AUTH_PASS.equals(getName()) || 
+            Constants.PROPERTY_PRIVACY_PASS.equals(getName())
+            ) {
+            
+            if (value != null && value instanceof String && !((String) value).isEmpty())
+                return "********"; //NOI18N
+        }
         return value;
     }
 

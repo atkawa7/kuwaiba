@@ -34,11 +34,7 @@ public class SyncManagerActionFactory {
      * Action that adds data source configurations to a given sync group
      */
     private static NewSyncDataSourceConfigurationAction newSyncDataSourceConfigurationAction;
-    
-    private static DeleteSyncDataSourceConfigurationAction deleteSyncDataSourceConfigurationAction;
-    
-    private static DeleteSyncGroupAction deleteSyncGroupAction;
-    
+        
     public static GenericInventoryAction getNewSyncGroupAction() {
         return newSyncGroupAction == null ? newSyncGroupAction = new NewSyncGroupAction() : newSyncGroupAction;
     }
@@ -49,13 +45,5 @@ public class SyncManagerActionFactory {
     
     public static GenericInventoryAction getNewSyncDataSourceConfigurationAction() {
         return newSyncDataSourceConfigurationAction == null ? newSyncDataSourceConfigurationAction = new NewSyncDataSourceConfigurationAction() : newSyncDataSourceConfigurationAction;
-    }
-    
-    public static DeleteSyncDataSourceConfigurationAction getDeleteSyncDataSourceConfigurationAction() {
-        return deleteSyncDataSourceConfigurationAction == null ? deleteSyncDataSourceConfigurationAction = new DeleteSyncDataSourceConfigurationAction() : deleteSyncDataSourceConfigurationAction;
-    }
-    
-    public static DeleteSyncGroupAction getDeleteSyncGroupAction() {
-        return deleteSyncGroupAction == null ? deleteSyncGroupAction = new DeleteSyncGroupAction() : deleteSyncGroupAction;
     }
 }
