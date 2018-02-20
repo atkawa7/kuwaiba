@@ -339,15 +339,17 @@ public class SNMPDataProcessor {
             if (!descr.contains("Disk")) //NOI18N
                 return "Slot";//NOI18N
             
-        } else if (classId == 6 && name.contains("Power") && !name.contains("Module")) 
+        } else if (classId == 6 && name.toLowerCase().contains("power") && !name.toLowerCase().contains("module") || classId == 6 && descr.toLowerCase().contains("power")) 
             return "PowerPort";//NOI18N
         else if (classId == 6 && name.contains("Module")) //NOI18N
             return "HybridBoard"; //NOI18N
-        else if (classId == 9) { //module                                    listToJson(branch, "branch").toString()));
-            if (name.contains("transceiver") || descr.contains("transceiver") || descr.toLowerCase().contains("sfp") 
-                    || descr.toLowerCase().contains("xfp") || descr.toLowerCase().contains("cpak") || descr.toLowerCase().equals("ge t")) 
+        else if (classId == 9) { //module      
+            if (!name.toLowerCase().contains("transceiver") || !descr.toLowerCase().contains("transceiver"))
+                return "IPBoard"; //NOI18N      
+            else if (name.toLowerCase().contains("transceiver") || descr.toLowerCase().contains("transceiver") || (descr.toLowerCase().contains("sfp") 
+                    || descr.toLowerCase().contains("xfp") || descr.toLowerCase().contains("cpak") || descr.toLowerCase().equals("ge t")))
                 return "Transceiver"; //NOI18N
-            
+
             return "IPBoard"; //NOI18N
         }
         else if(classId == 1 && descr.contains("switch processor"))
@@ -489,7 +491,7 @@ public class SNMPDataProcessor {
                     findings.add(new SyncFinding(SyncFinding.EVENT_ERROR,
                                 I18N.gm("empty_fields_in_the_data"),
                                 Json.createObjectBuilder().add("type","error")
-                                        .add("className", mappedClass)
+                                        .add("className", allData.get("entPhysicalClass").get(i))
                                         .add("InstanceId", childId)
                                         .add("attributes", newAttributes.toString()).build().toString()));
                 else{
@@ -976,12 +978,14 @@ public class SNMPDataProcessor {
         
         //If the 
         if (!allData.get("entPhysicalModelName").get(index).isEmpty()){ 
-            String mappedClass = parseClass(allData.get("entPhysicalClass").get(index), objectName, allData.get("entPhysicalDescr").get(index)); //NOI18N
-            AttributeMetadata modelAttribute = mem.getClass(mappedClass).getAttribute("model");
-            if(modelAttribute != null){
-                String model = findingListTypeId(index, modelAttribute.getType());//NOI18N
-                if(model != null)
-                    attributes.put("model", model);//NOI18N
+            String mappedClass = parseClass(allData.get("entPhysicalClass").get(index), objectName, allData.get("entPhysicalDescr").get(index));//NOI18N
+            if(mappedClass != null){
+                AttributeMetadata modelAttribute = mem.getClass(mappedClass).getAttribute("model");
+                if(modelAttribute != null){
+                    String model = findingListTypeId(index, modelAttribute.getType());//NOI18N
+                    if(model != null)
+                        attributes.put("model", model);//NOI18N
+                }
             }
         }
         return attributes;
