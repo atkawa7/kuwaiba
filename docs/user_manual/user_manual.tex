@@ -2382,51 +2382,53 @@
 		If you want to delete a user or a group, just right click the element and choose \textit{Delete}. Deleting a group will delete the users within (unless related to another group).
 		
 		\clearpage
-		\section{Synchronization}\label{sec:sync}
-			The Kuwaiba synchronization module allows you to obtain data from network elements that support Simple Network Management Protocol (SNMP), with this data kuwaiba can update created objects that represent that network element from where the data was obtain it.\\
+		\section{Inventory Synchronization}\label{sec:sync}
+			The Inventory Synchronization module allows you to fetch data from network elements, EMS/NMS or legacy systems and update the information stored in Kuwaiba accordingly. \textbf{To properly understand the components described in this section, you should grasp the concepts explained in the Synchronization Framework Overview}. The truth is that there isn't a one-size-fits-all solution when it comes to keeping your inventory system up-to-date. For example, how you retrieve information from the network depends on many factors, such as the protocols supported, the equipment vendors, etc. Also, some users may want to supervise the actions to be performed during the sync process (this process may lead to deleting or moving objects) rather than relying on an automated task. But most importantly, what to do with the information you fetch (e.g. if new elements are found -like boards, network interfaces, installed programs-, should the sync process create new objects in Kuwaiba, or search in the spare pool and move them from there to the new location? Should this action trigger automated notifications like emails or web service calls to third-party applications?, etc). The business rules that govern the synchronization process may vary significantly from one operator to another. Kuwaiba provides a reference implementation that takes information from the devices' \textbf{Entity-MIB} via SNMP and keeps the synchronized objects within the inventory updated with hardware information from the \textit{entPhysicalTable} table, but you can extend the capabilities of the synchronization module by programming new connectors (also known as Synchronization Providers) depending on your network and your own business rules.\\
 
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.8\linewidth]{img/sync_menu_open_sync_module.png}
-				\caption{To lunch the sync module, go to the main menu /tools/advanced/Inventory Synchronization}
+				\caption{To launch the sync module, go to the menu Tools $\rightarrow$ Advanced $\rightarrow$ Inventory Synchronization}
 				\label{fig:sync_menu_open_sync_module}
 			\end{figure}
 		
-			To use the synchronization module, first, you must create synchronization groups. Synchronization groups are the set of one or more data source configurations of elements of the network, one data source conifg per network element, a sync group must have at least one data source configuration or as many as you want.\\
-			
-			As we said before, you can create a synchronization group to contain the data source configuration of a single network element or they can be used to group the data sources configuration of several network elements; they could be grouped by model or geographical location.
-			
-			e.g. a group for routers 9001, another group for routers 1002, or a group for all routers of city X and another group for all routers of a city Y, etc.
+			First, you must create synchronization groups. A Synchronization Group is a set of Synchronization Data Source Configurations, which contain the information necessary to connect to the device/application you want to sync and fetch the relevant data. A sync group must have at least one data source configuration and as many as you want. The criteria to group data sources under the same sync group is a personal choice. The rule of thumb is that you should place all the data sources that use the same Synchronization Provider under the same group, however if there are many data sources, you might get a long list of differences to check upon and confirm, so in that case, you might want to create sync groups by geographical location, equipment type, vendor, etc so it's easier to manage. When you run the sync group, all the devices inside that group will be sequentially contacted and their information retrieved at once.\\
 			
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.8\linewidth]{img/sync_new_sync_group.png}
-				\caption{Create a new synchronization group}
+				\caption{New synchronization group action}
 				\label{fig:sync_new_sync_group}
 			\end{figure}
 
-			To create a new synchronization group, it only required to set the name of the new group
+			To create a new synchronization group, it's only required to input its name. The other parameter is the Sync Provider you want to use. The default Kuwaiba distribution comes with a single reference implementation (\textit{DefaultSnmpSyncProvider}), but you can make your own and pick it from a list.
 
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.4\linewidth]{img/sync_sync_group_properties.png}
-				\caption{Properties to create a new synchronization group}
+				\caption{New synchronization group parameters}
 				\label{fig:sync_sync_group_properties}
 			\end{figure}
 
-			Besides a synchronization groups there is also necessary create a data source configuration, a data source configuration contains the necessary information to allow kuwaiba to be able to connect to the network element and obtain the data to start the synchronization process.\\
+			Now create data source configurations. As explained at the beginning of the chapter, a data source configuration contains the necessary information to let Kuwaiba know to connect to the device/NMS/third-party system and obtain the data to start the synchronization process.\\
 			
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.8\linewidth]{img/sync_new_data_src_config.png}
-				\caption{Create a new data source configuration}
+				\caption{New data source configuration action}
 				\label{fig:sync_new_data_src_config}
 			\end{figure}
 		
 			\clearpage		
 			
-			The properties to create a data source configuration are:
-			a name to identify the new data source configuration, the object that will be synchronized in Kuwaiba (must be previously created), the IP address of the element of the network, the port, and the SNMP community.\\
+			The parameters required to create a data source configuration depend on the Sync Provider associated to the group. In the reference provider, you will need to provide these ones:
+			\begin{enumerate}
+				\item \textbf{Name:} A string to identify the new DSC, typically, the name of the device to be synchronized.
+				\item \textbf{Device:} The object in Kuwaiba that will be used to map the information retrieved from the actual device. 
+				\item \textbf{IP Address:} The IP address of the SNMP-enabled device.
+				\item \textbf{Port:} The port the device's SNMP agent is listening to for new connections.
+				\item \textbf{Community:} The SNMP community use to retrieve the information. Since this value is stored in plain text is \textbf{strongly} recommended that you use a read-only community here.
+			\end{enumerate}
 			
 			\begin{figure}[h!]
 				\centering
