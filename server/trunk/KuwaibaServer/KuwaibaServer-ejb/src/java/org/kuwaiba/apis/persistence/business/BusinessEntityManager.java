@@ -141,7 +141,7 @@ public interface BusinessEntityManager {
      */
     public long[] createBulkSpecialObjects(String className, String parentClassName, long parentId, int numberOfSpecialObjects, String namePattern) 
         throws MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException, InvalidArgumentException;
-        
+    
     /**
      * Gets the detailed information about an object
      * @param className Object class name

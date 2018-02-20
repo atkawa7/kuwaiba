@@ -4567,6 +4567,77 @@ public class KuwaibaService {
     }
     
     /**
+     * Creates multiple template elements using a given name pattern
+     * @param templateElementClassName The class name of the new set of template elements
+     * @param templateElementParentClassName The parent class name of the new set of template elements
+     * @param templateElementParentId The parent id of the new set of template elements
+     * @param numberOfTemplateElements The number of template elements
+     * @param templateElementNamePattern Name pattern of the new set of template elements
+     * @param sessionId Session id token
+     * @return An array of ids for the new template elements
+     * @throws ServerSideException If the parent class name or the template element class name cannot be found
+     *                             If the given template element class cannot be a child of the given parent
+     *                             If the parent class name cannot be found
+     *                             If the given pattern to generate the name has less possibilities that the number of template elements to be created
+     */
+    @WebMethod(operationName = "createBulkTemplateElement")
+    public long[] createBulkTemplateElement(
+        @WebParam(name = "templateElementClass") String templateElementClassName, 
+        @WebParam(name = "templateElementParentClassName") String templateElementParentClassName, 
+        @WebParam(name = "templateElementParentId") long templateElementParentId, 
+        @WebParam(name = "numberOfTemplateElements") int numberOfTemplateElements, 
+        @WebParam(name = "templateElementNamePattern") String templateElementNamePattern, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createBulkTemplateElement(templateElementClassName, templateElementParentClassName, 
+                templateElementParentId, numberOfTemplateElements, templateElementNamePattern, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createBulkTemplateElement: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Creates multiple special template elements using a given name pattern
+     * @param stElementClass The class name of the new set of special template elements
+     * @param stElementParentClassName The parent class name of the new set of special template elements
+     * @param stElementParentId The parent id of the new set of special template elements
+     * @param numberOfTemplateElements The number of template elements
+     * @param stElementNamePattern Name pattern of the new set of special template elements
+     * @param sessionId Session id token
+     * @return An array if ids for the new special template elements
+     * @throws ServerSideException If the parent class name or the special template element class name cannot be found
+     *                             If the given special template element class cannot be a child of the given parent
+     *                             If the parent class name cannot be found
+     *                             If the given pattern to generate the name has less possibilities that the number of special template elements to be created
+     */
+    @WebMethod(operationName = "createBulkSpecialTemplateElement")
+    public long[] createBulkSpecialTemplateElement(
+        @WebParam(name = "stElementClass") String stElementClass, 
+        @WebParam(name = "stElementParentClassName") String stElementParentClassName, 
+        @WebParam(name = "stElementParentId") long stElementParentId, 
+        @WebParam(name = "numberOfTemplateElements") int numberOfTemplateElements, 
+        @WebParam(name = "stElementNamePattern") String stElementNamePattern, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createBulkSpecialTemplateElement(stElementClass, stElementParentClassName, 
+                stElementParentId, numberOfTemplateElements, stElementNamePattern, getIPAddress(), sessionId);
+            
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createBulkSpecialTemplateElement: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
      * Updates the value of an attribute of a template element.
      * @param templateElementClass Class of the element you want to update.
      * @param templateElementId Id of the element you want to update.

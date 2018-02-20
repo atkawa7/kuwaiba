@@ -958,6 +958,38 @@ public interface ApplicationEntityManager {
      */
     public long createTemplateSpecialElement(String tsElementClass, String tsElementParentClassName, long tsElementParentId, String tsElementName) 
         throws OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException;
+    
+    /**
+     * Creates multiple template elements using a given name pattern
+     * @param templateElementClassName The class name of the new set of template elements
+     * @param templateElementParentClassName The parent class name of the new set of template elements
+     * @param templateElementParentId The parent id of the new set of template elements
+     * @param numberOfTemplateElements The number of template elements
+     * @param templateElementNamePattern Name pattern of the new set of template elements
+     * @return An array of ids for the new template elements
+     * @throws MetadataObjectNotFoundException If the parent class name or the template element class name cannot be found
+     * @throws OperationNotPermittedException If the given template element class cannot be a child of the given parent
+     * @throws ApplicationObjectNotFoundException If the parent class name cannot be found
+     * @throws InvalidArgumentException If the given pattern to generate the name has less possibilities that the number of template elements to be created
+     */
+    public long[] createBulkTemplateElement(String templateElementClassName, String templateElementParentClassName, long templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern)
+        throws MetadataObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Creates multiple special template elements using a given name pattern
+     * @param stElementClass The class name of the new set of special template elements
+     * @param stElementParentClassName The parent class name of the new set of special template elements
+     * @param stElementParentId The parent id of the new set of special template elements
+     * @param numberOfTemplateElements The number of template elements
+     * @param stElementNamePattern Name pattern of the new set of special template elements
+     * @return An array if ids for the new special template elements
+     * @throws OperationNotPermittedException If the parent class name or the special template element class name cannot be found
+     * @throws MetadataObjectNotFoundException If the given special template element class cannot be a child of the given parent
+     * @throws ApplicationObjectNotFoundException If the parent class name cannot be found
+     * @throws InvalidArgumentException If the given pattern to generate the name has less possibilities that the number of special template elements to be created
+     */
+    public long[] createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, long stElementParentId, int numberOfTemplateElements, String stElementNamePattern) 
+        throws OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
      * Updates the value of an attribute of a template element.
      * @param templateElementClass Class of the element you want to update.

@@ -81,6 +81,7 @@ import org.kuwaiba.services.persistence.cache.CacheManager;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.services.persistence.util.Util;
 import org.kuwaiba.util.ChangeDescriptor;
+import org.kuwaiba.util.dynamicname.DynamicName;
 import org.kuwaiba.ws.todeserialize.StringPair;
 import org.kuwaiba.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.ws.toserialize.application.TaskScheduleDescriptor;
@@ -2652,6 +2653,133 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
     }
     
+    @Override
+    public long[] createBulkTemplateElement(String templateElementClassName, String templateElementParentClassName, long templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern) 
+        throws MetadataObjectNotFoundException, OperationNotPermittedException, ApplicationObjectNotFoundException, InvalidArgumentException {
+        
+        boolean isPossibleChildren = false;
+        for (ClassMetadataLight possibleChildren : mem.getPossibleChildren(templateElementParentClassName)) {
+            if (possibleChildren.getName().equals(templateElementClassName)) {
+                isPossibleChildren = true;
+                break;
+            }
+        }
+        if (!isPossibleChildren) 
+            throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as child of %s", templateElementClassName, templateElementParentClassName == null ? Constants.NODE_DUMMYROOT : templateElementParentClassName));
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            Node classNode = classIndex.get(Constants.PROPERTY_NAME, templateElementClassName).getSingle();
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", templateElementClassName));
+            
+            Node parentClassNode = classIndex.get(Constants.PROPERTY_NAME, templateElementParentClassName).getSingle();
+            if (parentClassNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Parent class %s can not be found", templateElementParentClassName));
+            
+            if (classNode.hasProperty(Constants.PROPERTY_ABSTRACT) && (boolean)classNode.getProperty(Constants.PROPERTY_ABSTRACT))
+                throw new OperationNotPermittedException(String.format("Abstract class %s can not be instantiated", templateElementClassName));
+            
+            Node parentNode = null;
+            
+            for(Relationship instanceOfSpecialRelationship : parentClassNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF_SPECIAL)) {
+                if (instanceOfSpecialRelationship.getStartNode().getId() == templateElementParentId) {
+                    parentNode = instanceOfSpecialRelationship.getStartNode();
+                    break;
+                }
+            }
+            if (parentNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Parent object %s of class %s not found", templateElementParentId, templateElementParentClassName));
+            
+            DynamicName dynamicName = new DynamicName(templateElementNamePattern);
+            if (dynamicName.getNumberOfDynamicNames() < numberOfTemplateElements) {
+                throw new InvalidArgumentException("The given pattern to generate the name has "
+                        + "less possibilities that the number of objects to be created");
+            }            
+            long res[] = new long[numberOfTemplateElements];
+            
+            for (int i = 0; i < numberOfTemplateElements; i += 1) {
+                String templateElementName = dynamicName.getDynamicNames().get(i);
+                
+                Node templateObjectNode = graphDb.createNode();
+                templateObjectNode.setProperty(Constants.PROPERTY_NAME, templateElementName == null ? "" : templateElementName);
+
+                templateObjectNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF);
+
+                Relationship specialInstanceRelationship = templateObjectNode.createRelationshipTo(classNode, RelTypes.INSTANCE_OF_SPECIAL);
+                specialInstanceRelationship.setProperty(Constants.PROPERTY_NAME, "template"); //NOI18N 
+                
+                res[i] = templateObjectNode.getId();
+            }            
+            tx.success();
+            return res;
+        }
+    }
+        
+    @Override
+    public long[] createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, long stElementParentId, int numberOfTemplateElements, String stElementNamePattern) 
+        throws OperationNotPermittedException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
+        
+        boolean isPossibleSpecialChildren = false;
+        for (ClassMetadataLight  possibleSpecialChildren : mem.getPossibleSpecialChildren(stElementParentClassName)) {
+            if (possibleSpecialChildren.getName().equals(stElementClass)) {
+                isPossibleSpecialChildren = true;
+                break;
+            }
+        }
+        if (!isPossibleSpecialChildren)
+            throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as special child of %s", stElementClass, stElementParentClassName == null ? Constants.NODE_DUMMYROOT : stElementParentClassName));
+            
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            Node classNode = classIndex.get(Constants.PROPERTY_NAME, stElementClass).getSingle();
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", stElementClass));
+            
+            Node parentClassNode = classIndex.get(Constants.PROPERTY_NAME, stElementParentClassName).getSingle();
+            if (parentClassNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Parent class %s can not be found", stElementParentClassName));
+            
+            if (classNode.hasProperty(Constants.PROPERTY_ABSTRACT) && (boolean)classNode.getProperty(Constants.PROPERTY_ABSTRACT))
+                throw new OperationNotPermittedException(String.format("Abstract class %s can not be instantiated", stElementClass));
+            
+            Node parentNode = null;
+            
+            for(Relationship instanceOfSpecialRelationship : parentClassNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF_SPECIAL)) {
+                if (instanceOfSpecialRelationship.getStartNode().getId() == stElementParentId) {
+                    parentNode = instanceOfSpecialRelationship.getStartNode();
+                    break;
+                }
+            }
+            
+            if (parentNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Parent object %s of class %s not found", stElementParentId, stElementParentClassName));
+            
+            DynamicName dynamicName = new DynamicName(stElementNamePattern);
+            if (dynamicName.getNumberOfDynamicNames() < numberOfTemplateElements) {
+                throw new InvalidArgumentException("The given pattern to generate the name has "
+                        + "less possibilities that the number of objects to be created");
+            }            
+            long res[] = new long[numberOfTemplateElements];
+            
+            for (int i = 0; i < numberOfTemplateElements; i += 1) {
+                String stElementName = dynamicName.getDynamicNames().get(i);
+
+                Node templateObjectNode = graphDb.createNode();
+                templateObjectNode.setProperty(Constants.PROPERTY_NAME, stElementName == null ? "" : stElementName);
+
+                templateObjectNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
+
+                Relationship specialInstanceRelationship = templateObjectNode.createRelationshipTo(classNode, RelTypes.INSTANCE_OF_SPECIAL);
+                specialInstanceRelationship.setProperty(Constants.PROPERTY_NAME, "template"); //NOI18N 
+                
+                res[i] = templateObjectNode.getId();
+            }
+            tx.success();
+            return res;
+        }
+    }
+        
     @Override
     public ChangeDescriptor updateTemplateElement(String templateElementClass, long templateElementId, String[] attributeNames, 
             String[] attributeValues) throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
