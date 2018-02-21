@@ -2383,7 +2383,9 @@
 		
 		\clearpage
 		\section{Inventory Synchronization}\label{sec:sync}
-			The Inventory Synchronization module allows you to fetch data from network elements, EMS/NMS or legacy systems and update the information stored in Kuwaiba accordingly. \textbf{To properly understand the components described in this section, you should grasp the concepts explained in the Synchronization Framework Overview}. The truth is that there isn't a one-size-fits-all solution when it comes to keeping your inventory system up-to-date. For example, how you retrieve information from the network depends on many factors, such as the protocols supported, the equipment vendors, etc. Also, some users may want to supervise the actions to be performed during the sync process (this process may lead to deleting or moving objects) rather than relying on an automated task. But most importantly, what to do with the information you fetch (e.g. if new elements are found -like boards, network interfaces, installed programs-, should the sync process create new objects in Kuwaiba, or search in the spare pool and move them from there to the new location? Should this action trigger automated notifications like emails or web service calls to third-party applications?, etc). The business rules that govern the synchronization process may vary significantly from one operator to another. Kuwaiba provides a reference implementation that takes information from the devices' \textbf{Entity-MIB} via SNMP and keeps the synchronized objects within the inventory updated with hardware information from the \textit{entPhysicalTable} table, but you can extend the capabilities of the synchronization module by programming new connectors (also known as Synchronization Providers) depending on your network and your own business rules.\\
+			The Inventory Synchronization module allows you to fetch data from network elements, EMS/NMS or legacy systems and update the information stored in Kuwaiba accordingly. \textbf{To properly understand the components described in this section, it's strongly recommended that you Synchronization Framework Overview}. \\
+			\newline
+			There isn't a one-size-fits-all solution when it comes to keeping your inventory system up-to-date. For example, how you retrieve information from the network depends on many factors, such as the protocols supported, the equipment vendors, etc. Also, some users may want to supervise the actions to be performed during the sync process (as it may lead to deleting or moving objects or require that a human operator to fix some information manually) rather than relying on an automated task. But most importantly, what to do with the information you fetch (e.g. if new elements are found -like boards, network interfaces, installed programs-, should the sync process create new objects in Kuwaiba, or search in the spare pool and move them from there to the new location? Should this action trigger automated notifications like emails or web service calls to third-party applications?, etc). The business rules that govern the synchronization process may vary significantly from one operator to another. Kuwaiba provides a reference implementation that takes information from the devices' \textbf{Entity-MIB} via SNMP and keeps the synchronized objects within the inventory updated with hardware information from the \textit{entPhysicalTable} table, but you can extend the capabilities of the synchronization module by programming new connectors (also known as Synchronization Providers) depending on your network and your own business rules.\\
 
 			\begin{figure}[h!]
 				\centering
@@ -2392,7 +2394,7 @@
 				\label{fig:sync_menu_open_sync_module}
 			\end{figure}
 		
-			First, you must create synchronization groups. A Synchronization Group is a set of Synchronization Data Source Configurations, which contain the information necessary to connect to the device/application you want to sync and fetch the relevant data. A sync group must have at least one data source configuration and as many as you want. The criteria to group data sources under the same sync group is a personal choice. The rule of thumb is that you should place all the data sources that use the same Synchronization Provider under the same group, however if there are many data sources, you might get a long list of differences to check upon and confirm, so in that case, you might want to create sync groups by geographical location, equipment type, vendor, etc so it's easier to manage. When you run the sync group, all the devices inside that group will be sequentially contacted and their information retrieved at once.\\
+			First, you must create synchronization groups. A Synchronization Group is a set of Synchronization Data Source Configurations, which contain the information necessary to connect to the device/application you want to sync and fetch the relevant data. A sync group must have at least one data source configuration. The criteria to group data sources under the same sync group is a personal choice. The rule of thumb is that you should place all the data sources that use the same Synchronization Provider under the same group, however if there are many data sources, you might get a long list of differences to check upon and confirm, so in that case, you might want to create sync groups by geographical location, equipment type, vendor, etc so the findings are easier to manage. When you run the sync group, all the devices inside that group will be sequentially contacted and their information retrieved one by one.\\
 			
 			\begin{figure}[h!]
 				\centering
@@ -2400,8 +2402,8 @@
 				\caption{New synchronization group action}
 				\label{fig:sync_new_sync_group}
 			\end{figure}
-
-			To create a new synchronization group, it's only required to input its name. The other parameter is the Sync Provider you want to use. The default Kuwaiba distribution comes with a single reference implementation (\textit{DefaultSnmpSyncProvider}), but you can make your own and pick it from a list.
+			\newpage
+			To create a new synchronization group, it's only required to provide its name. The other parameter is the Sync Provider you want to use. The default Kuwaiba distribution comes with a single reference implementation (\textit{DefaultSnmpSyncProvider}), but you can make your own and pick it from a list.
 
 			\begin{figure}[h!]
 				\centering
@@ -2410,7 +2412,7 @@
 				\label{fig:sync_sync_group_properties}
 			\end{figure}
 
-			Now create data source configurations. As explained at the beginning of the chapter, a data source configuration contains the necessary information to let Kuwaiba know to connect to the device/NMS/third-party system and obtain the data to start the synchronization process.\\
+			Now, create data source configurations. As explained at the beginning of the chapter, a data source configuration contains the necessary information to let Kuwaiba know how to connect to the device/NMS/third-party system and obtain the data to start the synchronization process.\\
 			
 			\begin{figure}[h!]
 				\centering
@@ -2437,17 +2439,17 @@
 				\label{fig:sync_data_src_confg_properties}
 			\end{figure}
 			
-			The properties of data source configuration can be edited any time in the property sheet, except the object that will be synchronized in Kuwaiba.
+			Properties of data source configurations can be edited at any time using the standard the Properties window.\\
 			
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.8\linewidth]{img/sync_data_src_confg_property_sheet.png}
-				\caption{Property sheet of a data source configuration}
+				\caption{Editing properties of a data source configuration}
 				\label{fig:sync_data_src_confg_property_sheet}
 			\end{figure}
 		
-			To start the synchronization you must right click on the group.  This will initiate a connection with each of the network elements that have a data source configuration within the synchronization group that was run.	When data is obtained from the network element, the differences between the SNMP data and the objects created in Kuwaiba will be searched.
-			
+			Once you've configured the access to the network devices you want to sync, everything is ready to launch the inventory synchronization process. To do this, right-click on the group you just created and select \textit{Run Synchronization Process}. This will start a job that may take between a few seconds to minutes to complete, depending on the amount of devices involved and how many differences were found.
+			\newpage
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.6\linewidth]{img/sync_run_sync_group.png}
@@ -2455,26 +2457,30 @@
 				\label{fig:sync_run_sync_group.png}
 			\end{figure}
 			
-			\clearpage
-			
-			After finishing evaluating all the differences between the data obtained from the network element through SNMP and the object created in kuwiaba, all the differences found will be shown one by one to take a decision (accept or skip the synchronization).\\
+			After evaluating all the differences between the data obtained from the network elements (in the reference implementation via SNMP) and the objects selected to map those devices in Kuwaiba, the user is prompted to take a decision about what to do next. You can either \textit{accept} the proposed action (and add it to the execution list) or simply \textit{skip} it.\\
 			
 			\begin{figure}[h!]
 				\centering
 				\includegraphics[width=0.6\linewidth]{img/sync_possible_actions_2.png}
-				\caption{Possible actions to synchronize an inventory object}
+				\caption{Findings and actions}
 				\label{fig:sync_possible_actions_2}
 			\end{figure}
 		
-			At the end of the synchronization process, a summary will be shown with the results of the executed actions\\
+			At the end of the synchronization process, a summary will be displayed with the results.\\
 			
 			\begin{figure}[h!]
 				\centering
-				\includegraphics[width=0.6\linewidth]{img/sync_results.png}
-				\caption{summary after synchronization}
+				\includegraphics[width=0.5\linewidth]{img/sync_results.png}
+				\caption{Summary presented at the end of the sync process}
 				\label{fig:sync_results}
 			\end{figure}
-								
+		    
+		    \begin{framed} {\large \textbf{Important}}
+		    	\begin{itemize}
+		    		\item You can run only one process at a time to avoid conflicts. 
+		    		\item If you happen to delete an object in Kuwaiba that's being used by a data source configuration, that particular element will fail to synchronize.
+		    	\end{itemize}
+		    \end{framed}	
 		\clearpage
 		\section{Bulk import}\label{sec:bulk_import}
 			Kuwaiba  provides a  way  to  import  objects  and  list  types  from CVS text files with a defined format.  This  module  can be  found at \textit{Tools} $\rightarrow$ \textit{Bulk Import}. Examples of these files are included in the client installer bundle under the directory \textit{Samples}.
