@@ -169,7 +169,7 @@
 	Once you are logged in, you will see only the dashboard page and a toolbar (figure~\ref{fig:main_toolbar}).\\
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.7\linewidth]{img/main_toolbar.png}
+		\includegraphics[width=0.8\linewidth]{img/main_toolbar.png}
 		\caption{Main toolbar}
 		\label{fig:main_toolbar}
 	\end{figure}
@@ -201,6 +201,8 @@
 			\includegraphics[width=0.5cm]{img/icon_containment_manager.png} & Manage how objects can be created inside others\\
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_list_type_manager.png} & Create new list types\\
+			\midrule
+			\includegraphics[width=0.5cm]{img/icon_devices_layouts.png} & Shows the devices layouts existing\\
 			\midrule
 			\includegraphics[width=0.5cm]{img/icon_template_manager.png} & Create and manage templates\\
 			\midrule
@@ -555,6 +557,15 @@
 		\label{fig:template_with_special_objects}
 	\end{figure}
 	
+	If you no want create one by one template elements and special template elements use the action New multiple or New multiple special figure~\ref{fig:template_manager_new_multiple}, assigning a name pattern and the number of elements (see \textbf{\nameref{app:AppendixA}})
+		
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.9\linewidth]{img/template_manager_new_multiple.png}
+		\caption{New multiple special template elements}
+		\label{fig:template_manager_new_multiple}
+	\end{figure}
+		
 	Now you can create containment structures as complex as you want.\\
 	
 	\begin{figure}[h!]
@@ -584,15 +595,8 @@
 	\subsection{Device Layouts} \label{sec:layouts}
 	Layouts are used to show how elements look like in the real world. For example, you can design a layout of the front panel of a router, with its slots, ports, lights, screws, etc. These layouts are dynamic, and designing one consists on putting together a bunch of geometrical shapes (rectangles, circles, etc) so they look like the real object, and name them after its expected children (slots, ports). Then, the rendering algorithm matches the shapes with the actual inventory objects and assembles a view that looks like the device you've got installed. You can also create reusable shapes that can be shared across different layouts (like say, RJ45 ports). This shapes are called \textit{Custom Shapes}.
 	
-	It is important to note that the device layouts are only available for instances of subclasses of \textbf{GenericCommunicationElement} (routers, switches, servers, etc) and \textbf{GenericDistributionFrame} (ODFs and DDFs). Also, it's mandatory that these classes have a list type attribute called \textbf{model}.
-	
-	%\begin{figure}[h!]
-	%	\centering
-	%	\includegraphics[width=0.5\linewidth]{img/template_manager_edit_layout.png}
-	%	\caption{Edit a layout}
-	%	\label{fig:template_manager_edit_layout}
-	%\end{figure}
-	
+	It is important to note that the device layouts are only available for instances which has an attribute called \textbf{model} and it's mandatory that the type be a list type attribute.
+		
 	\subsection{Device Layout Editor} \label{sec:device_layout_editor}
 	So, a layout is a set of basic shapes (squares, circles, text, triangles, etc) and custom shapes (compositions of basic shapes) that resemble the physical appearance of a real-world device. If the layout belongs to a \textit{rackable} device and is designed correctly, it can be embedded in a \textbf{\nameref{sec:rack_view}}. In general terms, you should create a layout per model of the equipment you intent to represent, for example, a router Cisco ASR 9001, a 24-ports ODF, an HPE Apollo 4200 Gen9 Server, etc.
 	\\
@@ -624,6 +628,10 @@
 			\midrule
 			\includegraphics[width=0.5cm]{img/device_layout_show_palette.png} & Show the palette of shapes\\
 			\midrule
+			\includegraphics[width=0.5cm]{img/device_layout_export.png} & Export device layout definition file to xml\\
+			\midrule
+			\includegraphics[width=0.5cm]{img/device_layout_import.png} & Import a device layout definition xml file\\
+			\midrule
 		\end{tabular}
 		\caption{Device Layout Editor Toolbar}
 		\label{tab:device_layout_editor_toolbar}
@@ -631,7 +639,7 @@
 		
 	\begin{figure}[h!]
 		\centering
-		\includegraphics[width=0.9\linewidth]{img/device_layout_empty.png}
+		\includegraphics[width=0.99\linewidth]{img/device_layout_empty.png}
 		\caption{Device Layout Editor}
 		\label{fig:device_layout_empty}
 	\end{figure}
@@ -684,6 +692,79 @@
 		\includegraphics[width=0.99\linewidth]{img/device_layout_show.png}
 		\caption{A fully functional device layout}
 		\label{fig:device_layout_render}
+	\end{figure}
+	
+	To not search in the template manager which devices has defined a layout use the tool \includegraphics[width=0.5cm]{img/icon_devices_layouts.png} in the main toolbar to see the template elements that has associated a device layout. See \textbf{Figure~\ref{fig:device_layout_all}}.
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.4\linewidth]{img/device_layout_all.png}
+		\caption{Defined devices layout}
+		\label{fig:device_layout_all}
+	\end{figure}
+	\newpage
+			
+	\subsection{Custom shapes} \label{sec:custom_shapes}
+	
+	A custom shape is a set of reusable shapes in a device layout, for example, an Ethernet port that can be used in different devices such as routers, switches, hubs, etc. Therefore, to avoid the work of drawing the ethernet port to each device, we use a custom shape, which has an icon and a layout associated. See \textbf{Figure~\ref{fig:custom_shapes_main}}.
+	
+	To open the list of custom shapes use the icon \includegraphics[width=0.5cm]{img/device_layout_custom_shapes.png} in the \textbf{\nameref{sec:device_layout_editor}}.
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.4\linewidth]{img/custom_shapes_main.png}
+		\caption{Custom shapes list}
+		\label{fig:custom_shapes_main}
+	\end{figure}
+	
+	Now when create a custom shape this are loaded in the palette to be used for the device layout or on another custom shapes. In this way the number of custom shapes in the tree in the right side of the figure~\ref{fig:custom_shape_ethernet_port} must be the same that the shown in the palette on the category of custom shapes in the left side of the figure~\ref{fig:custom_shape_ethernet_port}.
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.9\linewidth]{img/custom_shape_ethernet_port.png}
+		\caption{Custom shapes in context}
+		\label{fig:custom_shape_ethernet_port}
+	\end{figure}
+	
+	If the number does not match then click over the layout and click on the refresh button. See \textbf{Figure~\ref{fig:custom_shape_update_palette}}
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.4\linewidth]{img/custom_shape_update_palette.png}
+		\caption{Update palette}
+		\label{fig:custom_shape_update_palette}
+	\end{figure}
+	\newpage
+	
+	\subsection{Export/Import Device layout} \label{sec:import_export_device_layout}
+	
+	The defined devices layout and custom shapes can be imported and exported use the icons \includegraphics[width=0.5cm]{img/device_layout_export.png} and 	\includegraphics[width=0.5cm]{img/device_layout_import.png} respectively in the \textbf{\nameref{sec:device_layout_editor}}.
+	
+	When export the only action is select the location of the device layout definition file. In the import select the file to be load and appear a window with the options to import \textbf{Figure~\ref{fig:device_layout_first_import}}.
+		
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.6\linewidth]{img/device_layout_first_import.png}
+		\caption{First import of a device layout}
+		\label{fig:device_layout_first_import}
+	\end{figure}
+	
+	The first time when load a device layout definition file, meanwhile no exist custom shapes all this must be imported, the next time can be replaced with the local custom shapes \textbf{Figure~\ref{fig:device_layout_next_import}}.
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.6\linewidth]{img/device_layout_next_import.png}
+		\caption{Next import of a device layout}
+		\label{fig:device_layout_next_import}
+	\end{figure}
+	
+	Click in the ok button and the device layout is imported, in the \textbf{Figure~\ref{fig:device_layout_imported}}  show the first load of a device layout in a data base without custom shapes and without devices layouts predefined
+	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=0.9\linewidth]{img/device_layout_imported.png}
+		\caption{Device Layout Imported}
+		\label{fig:device_layout_imported}
 	\end{figure}
 			
 	\clearpage
