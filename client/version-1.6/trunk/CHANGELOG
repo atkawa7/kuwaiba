@@ -1,0 +1,165 @@
+0.1 Beta
+* Fixed the support for abstract classes
+* Internationalization of server log messages
+* Corrections to the initialization script
+* Container Manager now uses Children.Array
+
+0.1 Stable
+* Added a List type attributes manager
+* Added a class manager to customize the icons and display names for available classes
+* Added an attribute manager to customize descriptions, visibility and display names for available attributes
+* Added many classes and attributes to the data model
+* More methods on the server side were migrated to used the Criteria API
+* New icons in the test db
+
+0.1.1
+* Added preliminary User/Groups management (You can create users and groups and relate them, but there's no privileges scheme yet)
+* The server and the client can reside in diferent computers. At login time you can choose a different WSDL location
+* Added tool bars and in general, the elements were rearranged
+* In-line edition for object nodes names
+* Built on top of NBP included in NetBeans IDE 6.9 (Build 201006101454)
+* Multiple bugfixes
+
+0.2 alpha
+* Basic support for physical views including physical containers only (see documentation for details). Zoom, pan, background actions
+* New splashscreen
+
+0.2 Beta
+* Complete support for physical connections
+* Support for user sessions
+* New error handling mechanism
+* New element icons
+* Performance improvements
+* General code cleanup
+
+0.2.1 Maintenance Release (23122010)
+* Support for basic views (children of an object, physical connections, backcground, etc)
+* Support for physical connections thru wizards
+* Fixed authentication issues
+* Fixed bugs related to copy and cut operations
+* Improved stability in object views
+* New element icons
+* General code clean up
+* Several bugfixes
+
+0.3 Alpha (17012011)
+* Export views to PNG/JPG formats
+* Preliminary support for graphical query design
+
+0.3. Beta (31012011)
+* Search results can be exported to CSV and XML formats
+* Searches can be saved and restored
+* Logging methods enhanced
+
+0.3 Beta2 (13032011)
+* Support for a new data model
+* Support for text formatting in views
+* Multiple bugfixes
+
+0.3 Stable (16052011)
+* New Menu scroller for the possible children menu
+* Multiple bugfixes (see tracker for details)
+
+0.4 Stable
+* Multiple bug fixes
+
+0.5 Alpha (23092012)
+* Support for GIS views
+* Support for topology views
+0.5.1 (12122013)
+* Support for Pools
+* Support for bulk data uploads
+* Multiple bug fixes
+* Data model manager
+0.6 (20022014)
+* Rack View
+* Audit Trail
+* Improvements to physical connections capabilities
+* Multiple bugfixes
+* Removed references to SwingX and NimROD L&F due to licensing issues
+0.7 (24072014)
+* ObjectView and Services modules rewritten
+* Support for software assets
+* Support for Customers and Services Pools
+* Lots of bugfixes
+* Special Relationships window improved and moved
+* Full JRE 1.7 compatibility
+
+0.7.1 (06112015)
+* Bulk upload interface improved.
+* Bug fix in the physical trail graphical view
+* Misc bug fixes
+* Object View renamed to "Physical View" to be consistent with the docs
+
+1.0 (03112016)
+* Bug fixes: When a node in the data model hierarchy tree was collapsed and a subclass was created, the subclass node was duplicated. An "Object not found" exception appeared if a pool node was selected and the Special Relationships and Special Children navigators were opened
+* Keyboard shortcuts for copying, cutting, pasting and deleting work now
+* Client support for HTTPS connections
+* In the service manager, all customers and services must be in a customer/service pool
+* Icon set updated
+* Multiple fixes to views and performance improvements
+* Most of the deprecated calls to add(Node[]) and remove(Node[]) to update the children of a node were fixed
+* Pool properties are now editable
+* Date fields can be edited
+* Data Model Manager has been improved, adding a graphical view and means to search for classes
+* Added modules to managing SDH networks, and IPAddress Manager, a Contract Manager and a Dashboard
+* Relationship explorer improved
+* Query results are selection-aware
+* Topology designer was rewritten
+
+1.1 (01122016)
+* WAX dependency removed
+* Added support for templates
+* It's possible to create reports from scripts
+
+1.1.1
+* Releasing relationships triggers an "Are you sure?" warning.
+* The connection and node labels can now be hidden/shown in topology views
+* Added various actions to IPs and subnets in the IPAM
+
+1.5
+* User Management module rewritten
+* Web service client component rewritten and simplified
+* The Relationship Explorer shows also the "parent" relationship
+* A graphical explorer was added to the Relationship Explorer
+* Added a module to manage favorites
+* Rack views now allow ascending and descending children positioning and also support children that don't need to be displayed.
+* Rack views are now accessed via object's context menu
+* A simple support for projects was added
+* Support for updates using an Update Center was added
+* Removed "Show/Hide Node Labels" button
+* Changed license from GPLv2 to GPLv3
+* Added JTattoo's Fast as default look and feel
+* Added a warning in the window title if the connection is not secure
+* The connections wizard was improved and now it is possible to create other links apart from Electrical, Optical and Power ones
+* The color of the connections is no longer hardcoded. It is now taken from the class color (configured with the data model manager)
+* Object View is no longer selection-sensitive. You can access it via context menu
+* It is possible to create multiple normal and special objects at once and name them using a dynamic expression
+* It is possible to edit the connections inside a container (changing or disconnecting endpoints)
+* The icons were rearranged to make easier to open modules
+* It is now possible to select to arbitrary nodes from any tree and start the physical connections wizard
+* Except for the "New Object" actions, all other node actions with submenus have changed the submenus for separate windows to optimized the load of the node menus 
+* Added support to create physical connector mappings 
+* End-to-end view for services with logical segments added
+* Now you can access the details of a list type directly (that is without having to open the List Type Manager)by clicking on the "..." button next to the list type value in the Properties window.
+* Multiple bugfixes and improvements
+
+1.6
+* Multiple objects can now be dragged and dropped at the same time to a view
+* It's possible to create SDH links that use concatenated containers. This way, the user can create SDH connections with arbitrary capacities to support services such as Ethernet/IP over SDH
+* "Show Rack View" and "Show Connections in Rack" actions were merged
+* It is possible to create layouts for certain equipment brands/models. With this, the users will be able to see how the device actually looks like and how their children are arranged inside.
+* Re-added the "Binary" data type to manage the custom shape icon. This data type will remain hidden for this release in conventional inventory types, and will be enabled in coming versions
+* Added a refresh button to all views
+* All the frames that are used to select a value from a list (like those used in "Relate to..." actions) share a common code base and behave the same way. Double click now automatically accepts the selection.
+* Copy/cut and paste actions enabled in the Service Manager Module, Contract Manager Module and Pool Manager Module
+* Common context-aware actions have icons and similar actions were grouped to simplify the node's menu 
+* Added the Inventory Synchronization module
+* Shortcuts added to the most frequently used actions in scenes
+* The class nodes in the Data Model Manager are colored with the color assigned to the class
+* There are new actions that allow the user to put links into an existing container or putting them out of an existing container 
+* Added an action to fix the possible inconsistencies in links and containers that may happen when moving elements with connections attached to them. This is the seed for a diagnostics module that will be added in future versions.
+* A contextual action that allows the user to display the container links inside a STMX in a service topology view was added.
+* Added action to create and delete connections in the rack view
+* It's now possible to create multiple template elements and delete multiple special children at once
+* Multiple bug fixes and improvements
