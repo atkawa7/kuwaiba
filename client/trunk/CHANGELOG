@@ -160,5 +160,6 @@
 * There are new actions that allow the user to put links into an existing container or putting them out of an existing container 
 * Added an action to fix the possible inconsistencies in links and containers that may happen when moving elements with connections attached to them. This is the seed for a diagnostics module that will be added in future versions.
 * A contextual action that allows the user to display the container links inside a STMX in a service topology view was added.
-* Added action to delete connections in the rack view
+* Added action to create and delete connections in the rack view
+* It's now possible to create multiple template elements and delete multiple special children at once
 * Multiple bug fixes and improvements
