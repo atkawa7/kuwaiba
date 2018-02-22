@@ -16,8 +16,6 @@
  */
 package org.inventory.core.templates.layouts;
 
-import org.inventory.core.templates.layouts.transfer.DeviceLayoutImporter;
-import org.inventory.core.templates.layouts.transfer.DeviceLayoutExporter;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;

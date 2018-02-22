@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.inventory.core.templates.layouts.transfer;
+package org.inventory.core.templates.layouts;
 
 import java.util.HashMap;
 import java.util.List;

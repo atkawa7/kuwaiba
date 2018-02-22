@@ -162,24 +162,24 @@ public class RackViewService {
             
             if (endpointsA.isEmpty()) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
-                    NotificationUtil.WARNING_MESSAGE, String.format("Was removed the endpointA in the link %s", connection.toString()));
+                    NotificationUtil.WARNING_MESSAGE, String.format("The endpointA was removed in the link %s", connection.toString()));
                 continue;
             }
             if (endpointsB.isEmpty()) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
-                    NotificationUtil.WARNING_MESSAGE, String.format("Was removed the endpointB in the link %s", connection.toString()));
+                    NotificationUtil.WARNING_MESSAGE, String.format("The Endpoint B was removed in the link %s", connection.toString()));
                 continue;
             }
             LocalObjectLight aSide = endpointsA.get(0);
             if (!CommunicationsStub.getInstance().isSubclassOf(aSide.getClassName(), Constants.CLASS_GENERICPORT)) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
-                    NotificationUtil.WARNING_MESSAGE, String.format("The endpointA in the link %s is not an %s", connection.toString(), Constants.CLASS_GENERICPORT));
+                    NotificationUtil.WARNING_MESSAGE, String.format("The endpointA in link %s is not a %s", connection.toString(), Constants.CLASS_GENERICPORT));
                 continue;
             }
             LocalObjectLight bSide = endpointsB.get(0);
             if (!CommunicationsStub.getInstance().isSubclassOf(bSide.getClassName(), Constants.CLASS_GENERICPORT)) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
-                    NotificationUtil.WARNING_MESSAGE, String.format("The endpointB in the link %s is not an %s", connection.toString(), Constants.CLASS_GENERICPORT));
+                    NotificationUtil.WARNING_MESSAGE, String.format("The endpointB in link %s is not a %s", connection.toString(), Constants.CLASS_GENERICPORT));
                 continue;
             }
             

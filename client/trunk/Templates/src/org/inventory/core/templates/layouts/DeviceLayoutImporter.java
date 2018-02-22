@@ -14,7 +14,7 @@
  *  limitations under the License.
  *
  */
-package org.inventory.core.templates.layouts.transfer;
+package org.inventory.core.templates.layouts;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -106,7 +106,7 @@ public class DeviceLayoutImporter {
                 
         labels.add("");
         JPanel pnlMessage = new JPanel();
-        pnlMessage.add(new JLabel("The following custom shapes were found on the import file"));
+        pnlMessage.add(new JLabel("The following custom shapes were found in the import file"));
         components.add(pnlMessage);
                 
         for (LocalObjectLight customShape : customShapes) {
