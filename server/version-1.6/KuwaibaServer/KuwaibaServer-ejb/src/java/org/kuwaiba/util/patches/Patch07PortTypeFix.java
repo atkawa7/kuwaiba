@@ -167,4 +167,10 @@ public class Patch07PortTypeFix extends GenericPatch {
         }
         return result;
     }
+    
+    @Override
+    public String getMandatory() {
+        return "[Mandatory] ";
+    }
+    
 }

@@ -35,6 +35,7 @@ import org.kuwaiba.util.patches.Patch05RackViews;
 import org.kuwaiba.util.patches.Patch06ConnectorMatching;
 import org.kuwaiba.util.patches.Patch07PortTypeFix;
 import org.kuwaiba.util.patches.Patch08DeviceLayout;
+import org.kuwaiba.util.patches.Patch09EquipmentModel;
 
 /**
  * Simple bean used to perform administrative tasks
@@ -91,6 +92,7 @@ public class ToolsBean implements ToolsBeanRemote {
             patches.add(new Patch06ConnectorMatching());
             patches.add(new Patch07PortTypeFix());
             patches.add(new Patch08DeviceLayout());
+            patches.add(new Patch09EquipmentModel());
         }
         return patches;
     }
