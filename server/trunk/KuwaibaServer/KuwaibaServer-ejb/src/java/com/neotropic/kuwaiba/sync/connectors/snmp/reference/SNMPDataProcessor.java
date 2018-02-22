@@ -31,7 +31,6 @@ import javax.json.JsonValue;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -465,7 +464,7 @@ public class SNMPDataProcessor {
             InvalidArgumentException, ApplicationObjectNotFoundException 
     {
         if(mapOfFile.isEmpty())
-            throw new InvalidArgumentException("The model of Router you are trying to synchronize are not yet supported, contact your administrator");
+            throw new InvalidArgumentException("The router model you are trying to synchronize is not yet supported. Contact your administrator");
         
         if (Long.valueOf(parentId) == id)//If is the first element
             parentId = INITAL_ID;
@@ -627,8 +626,9 @@ public class SNMPDataProcessor {
                             matchesToDelete++;
                         }
                     }
-                    for (int m=0; m<matchesToDelete; m++)
+                    for (int m = 0; m < matchesToDelete; m++)
                         branch.remove(0);
+                    
                     return false;
                 }
             }
@@ -642,7 +642,7 @@ public class SNMPDataProcessor {
                         .build();
 
                 findings.add(new SyncFinding(SyncFinding.EVENT_DELETE,
-                        String.format("The object %s WILL BE DELETED, it seems that has been removed physically from the element that is being synchronized, if you are not sure select \"skip\"", 
+                        String.format("The object %s WILL BE DELETED, perhaps it was removed physically from the device. If you are not sure, SKIP this action", 
                                 removedObj.toString()),
                         jdevice.toString()));
             }
@@ -1059,7 +1059,7 @@ public class SNMPDataProcessor {
                 
                 json = jsonObjectToBuilder(json).add("device", jdevice).build();
                 findings.add(new SyncFinding(SyncFinding.EVENT_DELETE,
-                            String.format("The %s - %s and all its children WILL BE DELETED, please OPEN The NavigationTree an double check before delete this object, if you are not sure select \"skip\"", 
+                            String.format("The %s - %s and all its children WILL BE DELETED. Perhaps it was removed physically from the device. If you are not sure select SKIP this action", 
                                     actualChildFirstLevel.toString(), Long.toString(actualChildFirstLevel.getId())),
                             json.toString()));
             }
@@ -1090,7 +1090,7 @@ public class SNMPDataProcessor {
                     
                     if(tParent.getClassName().contains("Port"))
                         findings.add(new SyncFinding(SyncFinding.EVENT_DELETE,
-                           String.format("This device %s was child of %s, but it should be its parent, a new one was moved and updated, would you like to delete this old device?, this operations its totally safe", 
+                           String.format("This device %s was child of %s, but it should be its parent. A new one was place correctly. Would you like to delete the old element? This operations is completely safe", 
                                    deviceToDelete.toString(), tParent.toString()), jsont.toString()));
                     
                     } catch (ObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
@@ -1161,7 +1161,7 @@ public class SNMPDataProcessor {
                         portFound = jsonObjectToBuilder(portFound).add("deviceParentId", Long.toString(parentId)).build();
                     
                     findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
-                            String.format("This port %s, with id: %s will be relocated to a new location in the tree according to the SNMP sync, procced?", oldPort.toString(), oldPort.getId()),
+                            String.format("The port %s with id: %s will be moved to a new location to match the structure reported by the SNMP agent, do you want to proceed?", oldPort.toString(), oldPort.getId()),
                             portFound.toString()));
                 }
                 else{
@@ -1175,7 +1175,7 @@ public class SNMPDataProcessor {
                         portFound = jsonObjectToBuilder(portFound).add("attributes", newAttributes).build();
                         portFound = jsonObjectToBuilder(portFound).add("deviceId", Long.toString(oldPort.getId())).build();
                         findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
-                            String.format("Would you like to overwrite the attributes in port %s, with id: %s?", oldPort.toString(), oldPort.getId()),
+                            String.format("Would you like to overwrite the attributes in port %s, with those in port with id %s?", oldPort.toString(), oldPort.getId()),
                             portFound.toString()));
                     }
                 }
@@ -1397,7 +1397,7 @@ public class SNMPDataProcessor {
 
     /**
      * Compare the names from the SNMP file in order to find one that match with
-     * a created list types in kuwaiba
+     * a created list types in Kuwaiba
      * @param listTypeNameToLoad the list type name
      * @return the kuwaiba's list type item id
      * @throws MetadataObjectNotFoundException if the list type doesn't exists

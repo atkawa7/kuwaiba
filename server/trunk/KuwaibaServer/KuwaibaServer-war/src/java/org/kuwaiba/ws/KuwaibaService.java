@@ -2246,7 +2246,7 @@ public class KuwaibaService {
      * @param objectClass Object class
      * @param oid Object id
      * @param sessionId Session token
-     * @return
+     * @return An object comprising the list of special relationships of the given object and the other end of such relationship
      * @throws ServerSideException If case something goes wrong
      */
     @WebMethod(operationName = "getSpecialAttributes")
@@ -5476,7 +5476,7 @@ public class KuwaibaService {
      * Please note that the execution might take some time, so it is expected that the client to implement an asynchronous call
      * @param syncGroupId The sync group id
      * @param sessionId The session token
-     * @return A list of differences that require the authorization of a user to be reconciliated
+     * @return A list of differences that require the authorization of a user to be resolved
      * @throws ServerSideException If the sync group could not be found or if
      * @throws InterruptedException
      */
