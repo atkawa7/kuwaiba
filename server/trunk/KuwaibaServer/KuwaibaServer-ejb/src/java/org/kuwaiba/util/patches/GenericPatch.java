@@ -57,7 +57,11 @@ public abstract class GenericPatch implements Serializable {
      * @return The result of the execution
      */
     public abstract PatchResult executePatch();
-    
+    /**
+     * Defines if a patch is mandatory
+     * @return True if the patch is mandatory
+     */
+    public abstract String getMandatory();
     
     public class PatchResult {
         /**

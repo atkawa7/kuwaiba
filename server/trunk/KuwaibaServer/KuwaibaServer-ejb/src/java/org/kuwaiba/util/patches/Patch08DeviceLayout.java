@@ -55,14 +55,7 @@ public class Patch08DeviceLayout extends GenericPatch {
 
     @Override
     public String getDescription() {
-        return "This patch will create the attribute <i>model</i> of type <i>EquipmentModel</i> in the class <i>GenericCommunicationsElement</i> and its subclasses "
-                + "and adds the classes <i>GenericApplicationListType</i> and <i>CustomShape</i>."
-                + "<br /><b>Warning: this patch will fail if any subclass of <i>GenericCommunicationsElement</i> already has an attribute called <i>model</i></b> and won't migrate the old values to the new model."
-                + "<br /><i>What to do?</i>:"
-                + "<br />1. Delete the attribute <i>model</i> in the said subclass."
-                + "<br />2. Run the patch."
-                + "<br />3. Create an <i>EquipmentModel</i> instance for each <i>model</i> value you already had prior to the execution of the patch."
-                + "<br />4. Manually set the <i>model</i> attribute to the respective value using the the enumeration you just populated in the instances that might have been affected";
+        return "Creates the class <i>GenericApplicationListType</i> and its subclass <i>CustomShape</i> to allow that the Devices Layout to work correctly";
     }
 
     @Override
@@ -87,7 +80,6 @@ public class Patch08DeviceLayout extends GenericPatch {
             result.setResultType(PatchResult.RESULT_ERROR);
             return result;
         }
-        
         try {
             ClassMetadata customShapeClassMetadata = mem.getClass("PredefinedShape"); //NOI18N
 
@@ -104,134 +96,7 @@ public class Patch08DeviceLayout extends GenericPatch {
             return result;
         } catch (MetadataObjectNotFoundException | ApplicationObjectNotFoundException 
             | InvalidArgumentException | ObjectNotFoundException ex) {}
-
-        String equipmentModelClassName = "EquipmentModel"; //NOI18N
-        ClassMetadata equipmentTypeClass;
-
-        try {
-            equipmentTypeClass = mem.getClass(equipmentModelClassName); 
-        } catch (MetadataObjectNotFoundException ex) {
-            equipmentTypeClass = null;
-        }
-        if (equipmentTypeClass == null) {                                            
-            try {
-                ClassMetadata cm = new ClassMetadata();                    
-                cm.setDisplayName("");
-                cm.setDescription("");                    
-                cm.setAbstract(false);
-                cm.setColor(0);
-                cm.setCountable(false);
-                cm.setCreationDate(Calendar.getInstance().getTimeInMillis());
-                cm.setIcon(null);
-                cm.setSmallIcon(null);
-                cm.setCustom(false);
-                cm.setViewable(true);
-                cm.setInDesign(false);
-                cm.setName(equipmentModelClassName);
-                cm.setParentClassName("GenericType"); //NOI18N
-
-                mem.createClass(cm);
-
-                aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
-                    ActivityLogEntry.ACTIVITY_TYPE_CREATE_METADATA_OBJECT,
-                    String.format("Created class %s", cm.getName()));
-
-            } catch (DatabaseException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
-                result.getMessages().add(" * " + ex.getMessage());
-            }
-        }                    
-        List<RemoteBusinessObjectLight> equipments;
-
-        try {
-            equipments = bem.getObjectsOfClassLight("GenericCommunicationsElement", 0); //NOI18N
-        } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
-            result.getMessages().add(" * " + ex.getMessage());
-            result.setResultType(PatchResult.RESULT_ERROR);
-            return result;
-        }
-        List<String> classesToRemoveModelAttr = new ArrayList();
-        // Search the classes that cannot be applied the patch and need remove the model attribute
-        for (RemoteBusinessObjectLight equipment : equipments) {
-            ClassMetadata equipmentClass;
-            try {
-                equipmentClass = mem.getClass(equipment.getClassName());
-            } catch (MetadataObjectNotFoundException ex) {
-                result.getMessages().add(" * " + ex.getMessage());
-                result.setResultType(PatchResult.RESULT_ERROR);
-                return result;
-            }
-            AttributeMetadata attrMetadataModel = equipmentClass.getAttribute("model"); //NOI18N
-            try {
-                if (attrMetadataModel != null && mem.isSubClass("GenericType", attrMetadataModel.getType())/*equipmentModelClassName.equals(attrMetadataModel.getType())*/)
-                    continue;
-            } catch (MetadataObjectNotFoundException ex) {
-                result.getMessages().add(" * " + ex.getMessage());
-                result.setResultType(PatchResult.RESULT_ERROR);
-                return result;
-            }
-
-            RemoteBusinessObject object;
-            try {
-                object = bem.getObject(equipment.getClassName(), equipment.getId());
-            } catch (MetadataObjectNotFoundException | ObjectNotFoundException | InvalidArgumentException ex) {
-                result.getMessages().add(" * " + ex.getMessage());
-                result.setResultType(PatchResult.RESULT_ERROR);
-                return result;
-            }
-            if (object.getAttributes().containsKey("model")) { //NOI18N
-                String currentModel = object.getAttributes().get("model").get(0); //NOI18N
-
-                result.getMessages().add(" * Fail reason: 2 for object with id = " + object.getName() + " class = " + object.getClassName() + " model = " + "\"" + currentModel + "\"" + " see patch description");
-                classesToRemoveModelAttr.add(object.getClassName());
-            }
-        }
-        if (classesToRemoveModelAttr.isEmpty()) {
-            ClassMetadata genericComElementClass;
-            ClassMetadata genericDistributionFrame;
-            try {
-                genericComElementClass = mem.getClass("GenericCommunicationsElement"); //NOI18N
-                genericDistributionFrame = mem.getClass("GenericDistributionFrame"); //NOI18N
-            } catch (MetadataObjectNotFoundException ex) {
-                result.getMessages().add(" * " + ex.getMessage());
-                result.setResultType(PatchResult.RESULT_ERROR);
-                return result;
-            }
-            AttributeMetadata attributeModel = new AttributeMetadata();
-            attributeModel.setDescription("");
-            attributeModel.setReadOnly(false);                    
-            attributeModel.setUnique(false);
-            attributeModel.setVisible(true);
-            attributeModel.setNoCopy(false);
-            attributeModel.setName("model"); //NOI18N
-            attributeModel.setDisplayName("model"); //NOI18N
-            attributeModel.setType(equipmentModelClassName);
-
-            if (!genericComElementClass.hasAttribute("model")) { //NOI18N
-
-                try {
-                    mem.createAttribute("GenericCommunicationsElement", attributeModel, false); //NOI18N
-                    aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
-                    ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
-                    String.format("Added attributes to class %s", "GenericCommunicationsElement")); //NOI18N
-                } catch (MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
-                    result.getMessages().add(" * Fail reason: 1 " + ex.getMessage() + " see the patch description");
-                    result.setResultType(PatchResult.RESULT_ERROR);
-                    return result;
-                }
-            }
-            if (!genericDistributionFrame.hasAttribute("model")) { //NOI18N
-                try {
-                    mem.createAttribute("GenericDistributionFrame", attributeModel, false); //NOI18N
-                    aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN, 
-                    ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT, 
-                    String.format("Added attributes to class %s", "GenericDistributionFrame")); //NOI18N
-                } catch (MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
-                    result.getMessages().add(" * Fail reason: 1 " + ex.getMessage() + " see the patch description");
-                    result.setResultType(PatchResult.RESULT_ERROR);
-                    return result;
-                }                                                
-            }
-        }                                        
+        
         ClassMetadata classMetadata = new ClassMetadata();
         classMetadata.setDisplayName("");
         classMetadata.setDescription("");
@@ -313,4 +178,10 @@ public class Patch08DeviceLayout extends GenericPatch {
         }
         return result;
     }
+    
+    @Override
+    public String getMandatory() {
+        return "[Mandatory] ";
+    }
+    
 }

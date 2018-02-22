@@ -19,7 +19,7 @@
             </p>
             <h:form id="form">
                 <h:selectManyCheckbox value="#{Tools.patchesIds}" layout="pageDirection">
-                    <f:selectItems itemLabelEscaped="false" value="#{Tools.patches}" var="patch" itemLabel="&lt;b&gt;[#{patch.sourceVersion} &#8594; #{patch.targetVersion}] #{patch.title}.&lt;/b&gt; #{patch.description}" itemValue="#{patch.id}" />
+                    <f:selectItems itemLabelEscaped="false" value="#{Tools.patches}" var="patch" itemLabel="&lt;b&gt;[#{patch.sourceVersion} &#8594; #{patch.targetVersion}] #{patch.mandatory}#{patch.title}.&lt;/b&gt; #{patch.description}" itemValue="#{patch.id}" />
                 </h:selectManyCheckbox>
                 <br />
                 <h:commandButton class="button" action="#{Tools.applyPatches}" value="#{bundle.ApplyPatchesApply}" />

@@ -171,5 +171,11 @@ public class Patch02MigrateHardCodedReports extends GenericPatch {
             result.getMessages().add(ex.getMessage());
         }
         return result;
-    }    
+    }  
+    
+    @Override
+    public String getMandatory() {
+        return "[Mandatory] ";
+    }
+    
 }

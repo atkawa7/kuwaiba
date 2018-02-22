@@ -442,4 +442,10 @@ public class Patch04ProjectsModuleSupport extends GenericPatch {
         }
         return result;
     }
+    
+    @Override
+    public String getMandatory() {
+        return "[Mandatory] ";
+    }
+    
 }

@@ -151,4 +151,9 @@ public class Patch06ConnectorMatching extends GenericPatch {
         return result;
     }
     
+    @Override
+    public String getMandatory() {
+        return "[Mandatory] ";
+    }
+    
 }

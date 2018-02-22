@@ -93,4 +93,10 @@ public class Patch05RackViews extends GenericPatch {
         }
         return result;
     }
+    
+    @Override
+    public String getMandatory() {
+        return "[Mandatory] ";
+    }
+    
 }
