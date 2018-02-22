@@ -16,8 +16,8 @@
  */
 package org.inventory.core.templates.layouts;
 
-import org.inventory.core.templates.layouts.transfer.ImportDeviceLayout;
-import org.inventory.core.templates.layouts.transfer.ExportDeviceLayout;
+import org.inventory.core.templates.layouts.transfer.DeviceLayoutImporter;
+import org.inventory.core.templates.layouts.transfer.DeviceLayoutExporter;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -379,7 +379,7 @@ public final class DeviceLayoutEditorTopComponent extends TopComponent implement
         if (JOptionPane.showConfirmDialog(null, pnlExportDeviceLayout, I18N.gm("export_as_xml"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             try (Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(txtDeviceLayoutName.getText()), "utf-8"))) {
                 
-                ExportDeviceLayout export = new ExportDeviceLayout(service.getScene());
+                DeviceLayoutExporter export = new DeviceLayoutExporter(service.getScene());
                 
                 writer.write(export.getAsXMl());
             } catch (Exception ex) {
@@ -422,7 +422,7 @@ public final class DeviceLayoutEditorTopComponent extends TopComponent implement
             try {
                 byte[] structure = Utils.getByteArrayFromFile(fChooser.getSelectedFile());
                 
-                ImportDeviceLayout import_ = new ImportDeviceLayout(fChooser.getSelectedFile().getAbsolutePath(), structure, service.getModel(), service.getScene());
+                DeviceLayoutImporter import_ = new DeviceLayoutImporter(fChooser.getSelectedFile().getAbsolutePath(), structure, service.getModel(), service.getScene());
                 if(import_.importDeviceLayout()) {
                     btnClean.setEnabled(true);
                     btnDelete.setEnabled(true);

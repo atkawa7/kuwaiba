@@ -52,7 +52,7 @@ import org.openide.util.Exceptions;
  * Class to manage the import of device layout files
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ImportDeviceLayout {
+public class DeviceLayoutImporter {
     private final String path;
     private final byte[] structure;
     private final List<String> layouts;
@@ -62,7 +62,7 @@ public class ImportDeviceLayout {
     private final LocalObjectListItem deviceModel;
     private final DeviceLayoutScene scene;
     
-    public ImportDeviceLayout(String path, byte[] structure, LocalObjectListItem deviceModel, DeviceLayoutScene scene) {
+    public DeviceLayoutImporter(String path, byte[] structure, LocalObjectListItem deviceModel, DeviceLayoutScene scene) {
         this.path = path;
         this.structure = structure;        
         this.layouts = new ArrayList();

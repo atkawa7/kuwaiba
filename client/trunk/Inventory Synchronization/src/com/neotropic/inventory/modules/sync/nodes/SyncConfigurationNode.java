@@ -97,6 +97,7 @@ public class SyncConfigurationNode extends AbstractNode implements PropertyChang
     
     @Override
     protected Sheet createSheet() {
+        final String none = "None";
         Sheet sheet = Sheet.createDefault();
         Set generalPropertySet = Sheet.createPropertiesSet(); // General attributes category
         Set snmpVersion2cPropertySet = Sheet.createPropertiesSet(); // SNMP Version 2c attributes category
@@ -115,19 +116,19 @@ public class SyncConfigurationNode extends AbstractNode implements PropertyChang
             !parameters.containsKey("port") ? null : parameters.get("port"));
         
         PropertySupport.ReadWrite propertyVersion = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_VERSION, String.class, Constants.PROPERTY_VERSION, I18N.gm("snmp_version"), this, 
-            !parameters.containsKey(Constants.PROPERTY_VERSION) ? null : parameters.get(Constants.PROPERTY_VERSION));
+            !parameters.containsKey(Constants.PROPERTY_VERSION) ? none : parameters.get(Constants.PROPERTY_VERSION));
                         
         PropertySupport.ReadWrite propertyCommunity = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_COMMUNITY, String.class, Constants.PROPERTY_COMMUNITY, I18N.gm("community"), this, 
             !parameters.containsKey(Constants.PROPERTY_COMMUNITY) ? null : parameters.get(Constants.PROPERTY_COMMUNITY));
                 
         PropertySupport.ReadWrite propertyAuthenticationProtocol = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_AUTH_PROTOCOL, String.class, Constants.PROPERTY_AUTH_PROTOCOL, I18N.gm("snmp_version_3_auth_protocol"), this, 
-            !parameters.containsKey(Constants.PROPERTY_AUTH_PROTOCOL) ? null : parameters.get(Constants.PROPERTY_AUTH_PROTOCOL));
+            !parameters.containsKey(Constants.PROPERTY_AUTH_PROTOCOL) ? none : parameters.get(Constants.PROPERTY_AUTH_PROTOCOL));
         
         PropertySupport.ReadWrite propertyAuthenticationProtocolPassPhrase = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_AUTH_PASS, String.class, Constants.PROPERTY_AUTH_PASS, I18N.gm("snmp_version_3_auth_pass"), this, 
             !parameters.containsKey(Constants.PROPERTY_AUTH_PASS) ? null : parameters.get(Constants.PROPERTY_AUTH_PASS));
         
         PropertySupport.ReadWrite propertySecurityLevel = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_SECURITY_LEVEL, String.class, Constants.PROPERTY_SECURITY_LEVEL, I18N.gm("snmp_version_3_security_level"), this, 
-            !parameters.containsKey(Constants.PROPERTY_SECURITY_LEVEL) ? null : parameters.get(Constants.PROPERTY_SECURITY_LEVEL));
+            !parameters.containsKey(Constants.PROPERTY_SECURITY_LEVEL) ? none : parameters.get(Constants.PROPERTY_SECURITY_LEVEL));
         
         PropertySupport.ReadWrite propertyContextName = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_CONTEXT_NAME, String.class, Constants.PROPERTY_CONTEXT_NAME, I18N.gm("snmp_version_3_context_name"), this, 
             !parameters.containsKey(Constants.PROPERTY_CONTEXT_NAME) ? null : parameters.get(Constants.PROPERTY_CONTEXT_NAME));
@@ -136,7 +137,7 @@ public class SyncConfigurationNode extends AbstractNode implements PropertyChang
             !parameters.containsKey(Constants.PROPERTY_SECURITY_NAME) ? null : parameters.get(Constants.PROPERTY_SECURITY_NAME));
         
         PropertySupport.ReadWrite propertyPrivacyProtocol = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_PRIVACY_PROTOCOL, String.class, Constants.PROPERTY_PRIVACY_PROTOCOL, I18N.gm("snmp_version_3_privacy_protocol"), this, 
-            !parameters.containsKey(Constants.PROPERTY_PRIVACY_PROTOCOL) ? null : parameters.get(Constants.PROPERTY_PRIVACY_PROTOCOL));
+            !parameters.containsKey(Constants.PROPERTY_PRIVACY_PROTOCOL) ? none : parameters.get(Constants.PROPERTY_PRIVACY_PROTOCOL));
         
         PropertySupport.ReadWrite propertyPrivacyProtocolPassPhrase = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_PRIVACY_PASS, String.class, Constants.PROPERTY_PRIVACY_PASS, I18N.gm("snmp_version_3_privacy_pass"), this, 
             !parameters.containsKey(Constants.PROPERTY_PRIVACY_PASS) ? null : parameters.get(Constants.PROPERTY_PRIVACY_PASS));
