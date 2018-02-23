@@ -576,6 +576,9 @@ public class DeviceLayoutRenderer {
                     Widget widget = scene.addNode(node);
                     widget.getScene().validate();
                     widget.getScene().paint();
+                    
+                    if (CommunicationsStub.getInstance().isSubclassOf(node.getClassName(), Constants.CLASS_GENERICPORT))
+                        widget.setToolTipText(node.toString());
 
                     ShapeWidgetUtil.shapeToWidget(shape, widget, true);
                     deviceLayoutWidget.addChild(widget);

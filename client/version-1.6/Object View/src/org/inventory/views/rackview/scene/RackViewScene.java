@@ -26,6 +26,7 @@ import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.scene.AbstractScene;
 import org.inventory.models.physicalconnections.wizards.NewLinkWizard;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
@@ -51,6 +52,7 @@ import org.netbeans.api.visual.widget.Widget;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
+    public static int STROKE_WIDTH = 3;
     private boolean addingNestedDevice = true;
     private boolean showConnections = false;
     private LocalObjectLight rack;
@@ -256,13 +258,14 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         RackViewConnectionWidget newWidget = new RackViewConnectionWidget(this, edge);
+        newWidget.setStroke(new BasicStroke(STROKE_WIDTH));
         newWidget.getLabelWidget().setVisible(false);
         newWidget.getActions().addAction(ActionFactory.createSelectAction(new RackConnectionSelectProvider()));
         newWidget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
         
         LocalClassMetadata edgeClass = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
         if (edgeClass == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return null;
         }        
