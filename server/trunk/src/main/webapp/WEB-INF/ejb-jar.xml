@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar xmlns = "http://java.sun.com/xml/ns/javaee" 
+         version = "3.1"
+         xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance" 
+         xsi:schemaLocation = "http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd">
+<enterprise-beans>
+    <session>
+        <ejb-name>StartupBean</ejb-name>
+        <!-- Persistence -->
+        <env-entry>
+           <description>Database user name, if applicable</description>
+           <env-entry-name>dbUsername</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>N/A</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Database password, if applicable</description>
+           <env-entry-name>dbPassword</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>N/A</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Database path</description>
+           <env-entry-name>dbPath</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>/data/db/kuwaiba.db</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Database host, if applicable</description>
+           <env-entry-name>dbHost</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>N/A</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Database port, if applicable</description>
+           <env-entry-name>dbPort</env-entry-name>
+           <env-entry-type>java.lang.Integer</env-entry-type>
+           <env-entry-value>0</env-entry-value>
+        </env-entry>
+        <!-- Outside Plant -->
+        <env-entry>
+           <description>Google Maps API Key</description>
+           <env-entry-name>googleMapsApiKey</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value></env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Language used for the maps</description>
+           <env-entry-name>mapLanguage</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>english</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Default latitude of the center of a map</description>
+           <env-entry-name>defaultCenterLatitude</env-entry-name>
+           <env-entry-type>java.lang.Double</env-entry-type>
+           <env-entry-value>2.441916</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Default longitude of the center of a map</description>
+           <env-entry-name>defaultCenterLongitude</env-entry-name>
+           <env-entry-type>java.lang.Double</env-entry-type>
+           <env-entry-value>-76.6063356</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Default zoom of a map</description>
+           <env-entry-name>defaultZoom</env-entry-name>
+           <env-entry-type>java.lang.Integer</env-entry-type>
+           <env-entry-value>17</env-entry-value>
+        </env-entry>
+        <!-- Business rules -->
+        <env-entry>
+           <description>Check defined business rules before performing any action</description>
+           <env-entry-name>enforceBusinessRules</env-entry-name>
+           <env-entry-type>java.lang.Boolean</env-entry-type>
+           <env-entry-value>false</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Max number of routes to be return by the findRoutesThroughSpecialRelationships method</description>
+           <env-entry-name>maxRoutes</env-entry-name>
+           <env-entry-type>java.lang.Integer</env-entry-type>
+           <env-entry-value>20</env-entry-value>
+        </env-entry>
+
+        <!-- Other -->
+        <env-entry>
+           <description>Background path</description>
+           <env-entry-name>backgroundsPath</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>/data/img/backgrounds</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Corporate Logo</description>
+           <env-entry-name>corporateLogo</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>http://neotropic.co/img/logo_small.png</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Global locale. Use a hifen to separate the language from the region. E.g. en-US, es-CO, pt-BR</description>
+           <env-entry-name>locale</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>en-US</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Enable the default security manager</description>
+           <env-entry-name>enableSecurityManager</env-entry-name>
+           <env-entry-type>java.lang.Boolean</env-entry-type>
+           <env-entry-value>false</env-entry-value>
+        </env-entry>
+     </session>
+</enterprise-beans>
+</ejb-jar>
