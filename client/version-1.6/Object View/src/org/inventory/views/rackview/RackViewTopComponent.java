@@ -24,8 +24,10 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
@@ -40,8 +42,11 @@ import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.core.services.event.CurrentKeyEventDispatcher;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.core.visual.scene.AbstractScene;
+import org.inventory.views.rackview.scene.RackConnectionSelectProvider;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
+import org.netbeans.api.visual.widget.Widget;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.util.RequestProcessor;
@@ -148,6 +153,10 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
         btnRackTableView = new javax.swing.JButton();
         btnShowConnections = new javax.swing.JToggleButton();
         jSeparator3 = new javax.swing.JToolBar.Separator();
+        paneConnections = new javax.swing.JLayeredPane();
+        lblConnections = new javax.swing.JLabel();
+        paneCboConnections = new javax.swing.JLayeredPane();
+        cboConnections = new javax.swing.JComboBox();
 
         setLayout(new java.awt.BorderLayout());
         add(pnlMainScrollPanel, java.awt.BorderLayout.CENTER);
@@ -268,6 +277,27 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
         toolBarMain.add(btnShowConnections);
         toolBarMain.add(jSeparator3);
 
+        paneConnections.setLayout(new java.awt.BorderLayout());
+
+        lblConnections.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        org.openide.awt.Mnemonics.setLocalizedText(lblConnections, org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.lblConnections.text")); // NOI18N
+        lblConnections.setToolTipText(org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.lblConnections.toolTipText")); // NOI18N
+        paneConnections.add(lblConnections, java.awt.BorderLayout.CENTER);
+
+        toolBarMain.add(paneConnections);
+
+        paneCboConnections.setLayout(new java.awt.BorderLayout());
+
+        cboConnections.setToolTipText(org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.cboConnections.toolTipText")); // NOI18N
+        cboConnections.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboConnectionsActionPerformed(evt);
+            }
+        });
+        paneCboConnections.add(cboConnections, java.awt.BorderLayout.CENTER);
+
+        toolBarMain.add(paneCboConnections);
+
         add(toolBarMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -357,6 +387,11 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                     
                     add(satelliteView, BorderLayout.EAST);
                     
+                    lblConnections.setVisible(true);
+                    cboConnections.setVisible(true);
+                                        
+                    for (LocalObjectLight connection : getConnectionsInScene())
+                        cboConnections.addItem(connection);
                 } else {
                     remove(satelliteView);
                     
@@ -372,6 +407,10 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                     btnSelect.setEnabled(false);
                     btnConnect.setEnabled(false);
                     btnRackTableView.setEnabled(false);
+                    
+                    lblConnections.setVisible(false);
+                    cboConnections.removeAllItems();
+                    cboConnections.setVisible(false);
                 }
                 toolBarMain.setVisible(true);
                 pnlMainScrollPanel.setVisible(true);
@@ -430,6 +469,19 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
         rackTable.requestActive();
     }//GEN-LAST:event_btnRackTableViewActionPerformed
 
+    private void cboConnectionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboConnectionsActionPerformed
+        LocalObjectLight selectedItem = (LocalObjectLight) ((JComboBox) evt.getSource()).getSelectedItem();
+
+        Widget widget = scene.findWidget(selectedItem);
+        if (widget != null) {
+            //See: https://netbeans.org/projects/platform/lists/graph/archive/2007-09/message/5
+            scene.getView().scrollRectToVisible(widget.getScene().convertSceneToView(widget.convertLocalToScene(widget.getBounds())));
+            new RackConnectionSelectProvider().select(widget, widget.convertLocalToScene(widget.getLocation()), true);
+            //Updates the lookup so that other modules are aware of this selection
+            ((AbstractScene.SceneLookup)scene.getLookup()).updateLookup(scene.findWidget(selectedItem).getLookup());
+        }
+    }//GEN-LAST:event_cboConnectionsActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton btnConnect;
     private javax.swing.JButton btnExport;
@@ -437,9 +489,13 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
     private javax.swing.JButton btnRefresh;
     private javax.swing.JToggleButton btnSelect;
     private javax.swing.JToggleButton btnShowConnections;
+    private javax.swing.JComboBox cboConnections;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
+    private javax.swing.JLabel lblConnections;
+    private javax.swing.JLayeredPane paneCboConnections;
+    private javax.swing.JLayeredPane paneConnections;
     private javax.swing.JScrollPane pnlMainScrollPanel;
     private javax.swing.JToolBar toolBarMain;
     // End of variables declaration//GEN-END:variables
@@ -450,11 +506,33 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
             return;
         }        
         service.shownRack();
+        lblConnections.setVisible(false);
+        cboConnections.setVisible(false);
+    }
+    
+    private List<LocalObjectLight> getConnectionsInScene() {
+        List<LocalObjectLight> connections = new ArrayList(scene.getEdges());
+        Collections.sort(connections);
+        return connections;
     }
 
     @Override
     public void componentClosed() {
+        btnShowConnections.setSelected(false);
+        remove(satelliteView);
+        scene.setShowConnections(false);
         scene.clear();
+        
+        scene.setActiveTool(RackViewScene.ACTION_SELECT);
+        btnSelect.setSelected(true);        
+        btnConnect.setSelected(false);
+        btnSelect.setEnabled(false);
+        btnConnect.setEnabled(false);
+        btnRackTableView.setEnabled(false);
+
+        lblConnections.setVisible(false);
+        cboConnections.removeAllItems();
+        cboConnections.setVisible(false);
     }
 
     void writeProperties(java.util.Properties p) {
