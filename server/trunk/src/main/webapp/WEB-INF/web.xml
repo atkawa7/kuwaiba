@@ -17,8 +17,10 @@
             <param-value>org.kuwaiba.web.IndexUI</param-value>
         </init-param>
     </servlet>
+    
     <servlet-mapping>
         <servlet-name>UI</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
+    
 </web-app>

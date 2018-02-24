@@ -27,6 +27,7 @@ import com.neotropic.kuwaiba.sync.model.SyncResult;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
+import javax.ejb.Singleton;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -76,6 +77,7 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
  * Main web service
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
+@Singleton
 @WebService (serviceName = "KuwaibaService")
 public class KuwaibaService {
     /**
