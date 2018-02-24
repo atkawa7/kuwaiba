@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="conditions" type="{http://www.w3.org/2001/XMLSchema}int" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="join" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="joins" type="{http://ws.kuwaiba.org/}transientQuery" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="joins" type="{http://ws.interfaces.kuwaiba.org/}transientQuery" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="logicalConnector" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="page" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="parent" type="{http://ws.kuwaiba.org/}transientQuery" minOccurs="0"/>
+ *         &lt;element name="parent" type="{http://ws.interfaces.kuwaiba.org/}transientQuery" minOccurs="0"/>
  *         &lt;element name="visibleAttributeNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>

@@ -17,10 +17,10 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="remoteReport">
  *   &lt;complexContent>
- *     &lt;extension base="{http://ws.kuwaiba.org/}remoteReportLight">
+ *     &lt;extension base="{http://ws.interfaces.kuwaiba.org/}remoteReportLight">
  *       &lt;sequence>
  *         &lt;element name="script" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="parameters" type="{http://ws.kuwaiba.org/}stringPair" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="parameters" type="{http://ws.interfaces.kuwaiba.org/}stringPair" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>

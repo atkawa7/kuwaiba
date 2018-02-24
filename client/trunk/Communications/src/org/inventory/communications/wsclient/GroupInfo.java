@@ -17,10 +17,10 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="groupInfo">
  *   &lt;complexContent>
- *     &lt;extension base="{http://ws.kuwaiba.org/}groupInfoLight">
+ *     &lt;extension base="{http://ws.interfaces.kuwaiba.org/}groupInfoLight">
  *       &lt;sequence>
- *         &lt;element name="users" type="{http://ws.kuwaiba.org/}userInfo" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="privileges" type="{http://ws.kuwaiba.org/}privilegeInfo" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="users" type="{http://ws.interfaces.kuwaiba.org/}userInfo" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="privileges" type="{http://ws.interfaces.kuwaiba.org/}privilegeInfo" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>

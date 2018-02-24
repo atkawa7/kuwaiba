@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="custom" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="inDesign" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="listType" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
- *         &lt;element name="validators" type="{http://ws.kuwaiba.org/}validator" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="validators" type="{http://ws.interfaces.kuwaiba.org/}validator" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="displayName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="parentClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>

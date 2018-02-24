@@ -17,9 +17,9 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="userInfo">
  *   &lt;complexContent>
- *     &lt;extension base="{http://ws.kuwaiba.org/}userInfoLight">
+ *     &lt;extension base="{http://ws.interfaces.kuwaiba.org/}userInfoLight">
  *       &lt;sequence>
- *         &lt;element name="privileges" type="{http://ws.kuwaiba.org/}privilegeInfo" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="privileges" type="{http://ws.interfaces.kuwaiba.org/}privilegeInfo" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>

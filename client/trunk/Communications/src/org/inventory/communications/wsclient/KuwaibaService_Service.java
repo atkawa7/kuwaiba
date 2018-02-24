@@ -17,14 +17,14 @@ import javax.xml.ws.WebServiceFeature;
  * Generated source version: 2.2
  * 
  */
-@WebServiceClient(name = "KuwaibaService", targetNamespace = "http://ws.kuwaiba.org/", wsdlLocation = "http://localhost:8080/kuwaiba/KuwaibaService?wsdl")
+@WebServiceClient(name = "KuwaibaService", targetNamespace = "http://ws.interfaces.kuwaiba.org/", wsdlLocation = "http://localhost:8080/kuwaiba/KuwaibaService?wsdl")
 public class KuwaibaService_Service
     extends Service
 {
 
     private final static URL KUWAIBASERVICE_WSDL_LOCATION;
     private final static WebServiceException KUWAIBASERVICE_EXCEPTION;
-    private final static QName KUWAIBASERVICE_QNAME = new QName("http://ws.kuwaiba.org/", "KuwaibaService");
+    private final static QName KUWAIBASERVICE_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "KuwaibaService");
 
     static {
         URL url = null;
@@ -69,7 +69,7 @@ public class KuwaibaService_Service
      */
     @WebEndpoint(name = "KuwaibaServicePort")
     public KuwaibaService getKuwaibaServicePort() {
-        return super.getPort(new QName("http://ws.kuwaiba.org/", "KuwaibaServicePort"), KuwaibaService.class);
+        return super.getPort(new QName("http://ws.interfaces.kuwaiba.org/", "KuwaibaServicePort"), KuwaibaService.class);
     }
 
     /**
@@ -81,7 +81,7 @@ public class KuwaibaService_Service
      */
     @WebEndpoint(name = "KuwaibaServicePort")
     public KuwaibaService getKuwaibaServicePort(WebServiceFeature... features) {
-        return super.getPort(new QName("http://ws.kuwaiba.org/", "KuwaibaServicePort"), KuwaibaService.class, features);
+        return super.getPort(new QName("http://ws.interfaces.kuwaiba.org/", "KuwaibaServicePort"), KuwaibaService.class, features);
     }
 
     private static URL __getWsdlLocation() {

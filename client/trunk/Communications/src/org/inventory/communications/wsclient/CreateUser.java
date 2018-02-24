@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="LastName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="privileges" type="{http://ws.kuwaiba.org/}privilegeInfo" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="privileges" type="{http://ws.interfaces.kuwaiba.org/}privilegeInfo" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="defaultGroupId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>

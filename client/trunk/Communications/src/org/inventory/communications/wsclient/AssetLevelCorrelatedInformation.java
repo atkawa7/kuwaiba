@@ -19,8 +19,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="inventoryObjects" type="{http://ws.kuwaiba.org/}remoteObject" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="services" type="{http://ws.kuwaiba.org/}serviceLevelCorrelatedInformation" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="inventoryObjects" type="{http://ws.interfaces.kuwaiba.org/}remoteObject" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="services" type="{http://ws.interfaces.kuwaiba.org/}serviceLevelCorrelatedInformation" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

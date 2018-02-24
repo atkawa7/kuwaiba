@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="classInfo">
  *   &lt;complexContent>
- *     &lt;extension base="{http://ws.kuwaiba.org/}classInfoLight">
+ *     &lt;extension base="{http://ws.interfaces.kuwaiba.org/}classInfoLight">
  *       &lt;sequence>
  *         &lt;element name="attributesIds" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributesNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>

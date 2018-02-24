@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="classNameEndpointB" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="idEndpointB" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="linkType" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="positions" type="{http://ws.kuwaiba.org/}sdhPosition" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="positions" type="{http://ws.interfaces.kuwaiba.org/}sdhPosition" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="defaultName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>

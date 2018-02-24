@@ -10,7 +10,7 @@ import javax.xml.ws.WebFault;
  * Generated source version: 2.2
  * 
  */
-@WebFault(name = "InterruptedException", targetNamespace = "http://ws.kuwaiba.org/")
+@WebFault(name = "InterruptedException", targetNamespace = "http://ws.interfaces.kuwaiba.org/")
 public class InterruptedException_Exception
     extends java.lang.Exception
 {

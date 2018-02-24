@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="taskId" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="notificationType" type="{http://ws.kuwaiba.org/}taskNotificationDescriptor" minOccurs="0"/>
+ *         &lt;element name="notificationType" type="{http://ws.interfaces.kuwaiba.org/}taskNotificationDescriptor" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>

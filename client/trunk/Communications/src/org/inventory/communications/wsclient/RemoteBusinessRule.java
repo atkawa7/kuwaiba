@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="scope" type="{http://www.w3.org/2001/XMLSchema}int"/>
- *         &lt;element name="constraints" type="{http://ws.kuwaiba.org/}remoteBusinessRuleConstraint" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="constraints" type="{http://ws.interfaces.kuwaiba.org/}remoteBusinessRuleConstraint" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>

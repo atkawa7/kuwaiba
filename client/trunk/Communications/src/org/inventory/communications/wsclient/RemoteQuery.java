@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="remoteQuery">
  *   &lt;complexContent>
- *     &lt;extension base="{http://ws.kuwaiba.org/}remoteQueryLight">
+ *     &lt;extension base="{http://ws.interfaces.kuwaiba.org/}remoteQueryLight">
  *       &lt;sequence>
  *         &lt;element name="content" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
  *       &lt;/sequence>

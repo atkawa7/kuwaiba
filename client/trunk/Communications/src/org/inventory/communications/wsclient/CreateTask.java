@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="commitOnExecute" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="script" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="parameters" type="{http://ws.kuwaiba.org/}stringPair" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="schedule" type="{http://ws.kuwaiba.org/}taskScheduleDescriptor" minOccurs="0"/>
- *         &lt;element name="notificationType" type="{http://ws.kuwaiba.org/}taskNotificationDescriptor" minOccurs="0"/>
+ *         &lt;element name="parameters" type="{http://ws.interfaces.kuwaiba.org/}stringPair" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="schedule" type="{http://ws.interfaces.kuwaiba.org/}taskScheduleDescriptor" minOccurs="0"/>
+ *         &lt;element name="notificationType" type="{http://ws.interfaces.kuwaiba.org/}taskNotificationDescriptor" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
