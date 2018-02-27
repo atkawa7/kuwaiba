@@ -511,7 +511,7 @@ public class CommunicationsStub {
     public LocalObjectLight getFirstParentOfClass(String objectClass, long objectId, String objectToMatchClassName) {
         try {
             RemoteObjectLight parent = service.getFirstParentOfClass(objectClass, objectId, objectToMatchClassName, session.getSessionId());
-            return new LocalObjectLight(parent.getOid(), parent.getName(), parent.getClassName());
+            return parent != null ? new LocalObjectLight(parent.getOid(), parent.getName(), parent.getClassName()) : null;
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
@@ -1553,7 +1553,7 @@ public class CommunicationsStub {
      */
     public boolean addPossibleChildren(long parentClassId, long[] possibleChildren){
         try{
-            List<Long> pChildren = new ArrayList<Long>();
+            List<Long> pChildren = new ArrayList<>();
             for (long pChild : possibleChildren){
                 pChildren.add(pChild);
             }
@@ -2130,7 +2130,7 @@ public class CommunicationsStub {
             //The first record is used to store the table headers
             res[0] = new LocalResultRecord(null, myResult.get(0).getExtraColumns());
             for (int i = 1; i < res.length ; i++){
-                HashMap<String, Integer> validators = new HashMap<String, Integer>();
+                HashMap<String, Integer> validators = new HashMap<>();
                 for (Validator validator : myResult.get(i).getObject().getValidators())
                     validators.put(validator.getLabel(), validator.getValue());
                 
@@ -2393,6 +2393,40 @@ public class CommunicationsStub {
             return false;
         }
         return true;
+    }
+    
+    /**
+     * Retrieves all the list types of a class
+     * @param className the given class name of the list type
+     * @param id the given list type id
+     * @return an array with all possible list types of a given class
+     */
+    public LocalObjectListItem getListTypeItem(String className, long id) {
+       try{
+            LocalObjectListItem res = new LocalObjectListItem();
+            List<LocalObjectListItem> cachedLists = new ArrayList<>();
+            List<RemoteObjectLight> remoteList = service.getListTypeItems(className,this.session.getSessionId());
+
+            for (RemoteObjectLight r : remoteList) {
+                if(r.getOid() == id){
+                    res.setId(r.getOid());
+                    res.setName(r.getName());
+                    res.setDisplayName(r.getName());
+                }
+                LocalObjectListItem localObjectListItem = new LocalObjectListItem();
+                localObjectListItem.setId(r.getOid());
+                localObjectListItem.setName(r.getName());
+                localObjectListItem.setDisplayName(r.getName());
+                cachedLists.add(localObjectListItem);
+            }
+            cache.addListCached(className, cachedLists);
+
+            return res; 
+            
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
     }
     
     /**
@@ -2939,10 +2973,12 @@ public class CommunicationsStub {
      * Create a view for a given object. If there's already a view of the provided view type, it will be overwritten
      * @param oid object's oid
      * @param objectClass object class
+     * @param viewId
      * @param name view name
      * @param description view description
      * @param structure XML document with the view structure (see http://neotropic.co/kuwaiba/wiki/index.php?title=XML_Documents#To_Save_Object_Views for details about the supported format)
      * @param background Background image. If null, the previous will be removed, if 0-sized array, it will remain unchanged
+     * @return 
      */
     public boolean updateObjectRelatedView(long oid, String objectClass, long viewId, String name, String description, byte[] structure, byte[] background){
         try{
@@ -2956,11 +2992,12 @@ public class CommunicationsStub {
 
     /**
      * Saves a view not related to a particular object. The view type can not be changed
-     * @param view id
+     * @param oid
      * @param name view name. Null to leave unchanged
      * @param description view description. Null to leave unchanged
      * @param structure XML document specifying the view structure (nodes, edges, control points). Null to leave unchanged
      * @param background Background image. If null, the previous will be removed, if 0-sized array, it will remain unchanged
+     * @return 
      */
     public boolean updateGeneralView(long oid, String name, String description, byte[] structure, byte[] background){
         try{
@@ -2976,7 +3013,7 @@ public class CommunicationsStub {
     /**
      * Deletes a list of general views
      * @param ids view ids
-     * @throws ObjectNotFoundException if the view can't be found
+     * @return 
      */
     public boolean deleteGeneralViews(long [] ids) {
          try{
