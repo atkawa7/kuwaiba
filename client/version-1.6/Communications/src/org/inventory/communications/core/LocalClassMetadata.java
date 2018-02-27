@@ -213,7 +213,7 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
         return false;
     }
 
-    public final int getMappingFromType(String type){
+    public static final int getMappingFromType(String type){
         if (type.equals("String") || type.equals("Integer") || type.equals("Float") || type.equals("Long") || type.equals("Boolean"))
             return Constants.MAPPING_PRIMITIVE;
         if (type.equals("Timestamp"))
