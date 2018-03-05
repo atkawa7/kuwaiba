@@ -665,8 +665,8 @@ public class KuwaibaService {
      * @throws ServerSideException If the list type item class can not be found
      *                             If the view type is not supported
      */
-    @WebMethod(operationName = "createListTypeItemRelateView")
-    public long createListTypeItemRelateView(
+    @WebMethod(operationName = "createListTypeItemRelatedView")
+    public long createListTypeItemRelatedView(
         @WebParam(name = "listTypeItemId") long listTypeItemId, 
         @WebParam(name = "listTypeItemClassName") String listTypeItemClassName, 
         @WebParam(name = "viewClassName") String viewClassName, 
@@ -677,7 +677,7 @@ public class KuwaibaService {
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {
-            return wsBean.createListTypeItemRelateView(listTypeItemId, listTypeItemClassName, viewClassName, 
+            return wsBean.createListTypeItemRelatedView(listTypeItemId, listTypeItemClassName, viewClassName, 
                 name, description, structure, background, getIPAddress(), sessionId);            
         } catch(Exception e){
             if (e instanceof ServerSideException)
@@ -815,6 +815,51 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Gets the list of template elements with a device layout
+     * @param sessionId Session id token
+     * @return the list of template elements with a device layout
+     * @throws ServerSideException 
+     */
+    @WebMethod(operationName = "getDeviceLayouts")
+    public List<RemoteObjectLight> getDeviceLayouts(
+        @WebParam(name = "sessionId")  String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getDeviceLayouts(getIPAddress(), sessionId);
+        } catch (Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getDeviceLayouts: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets the device layout structure
+     * @param oid object id
+     * @param className class of object
+     * @param sessionId Session id token
+     * @return the structure of the device layout
+     * @throws ServerSideException 
+     */
+    @WebMethod(operationName = "getDeviceLayoutStructure")
+    public byte[] getDeviceLayoutStructure(
+        @WebParam(name = "oid") long oid, 
+        @WebParam(name = "className") String className, 
+        @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getDeviceLayoutStructure(oid, className, getIPAddress(), sessionId);
+        } catch (Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getDeviceLayoutStructure: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }    
 
     /**
      * Creates a view an relates it to an existing object

@@ -264,7 +264,7 @@ public interface WebserviceBeanRemote {
     public void deleteGroups(long[] oids, String ipAddress, String sessionId)
             throws ServerSideException;
     
-    public long createListTypeItemRelateView(long listTypeItemId, String listTypeItemClassName, String viewClassName, 
+    public long createListTypeItemRelatedView(long listTypeItemId, String listTypeItemClassName, String viewClassName, 
         String name, String description, byte [] structure, byte [] background, String ipAddress, String sessionId) 
         throws ServerSideException;
     
@@ -424,6 +424,10 @@ public interface WebserviceBeanRemote {
     
     public long[] copyTemplateSpecialElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, 
         String newParentClassName, long newParentId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<RemoteObjectLight> getDeviceLayouts(String ipAddress, String sessionId) throws ServerSideException;
+        
+    public byte[] getDeviceLayoutStructure(long oid, String className, String ipAddress, String sessionId) throws ServerSideException;
     //</editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Reporting methods.">
