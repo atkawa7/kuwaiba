@@ -302,7 +302,7 @@ public class DeviceLayoutImporter {
                 }
             }
             if (relatedView == null) {
-                long newRelatedViewId = CommunicationsStub.getInstance().createListTypeItemRelateView(
+                long newRelatedViewId = CommunicationsStub.getInstance().createListTypeItemRelatedView(
                     listItem.getId(), listItem.getClassName(), "DeviceLayoutView", null, null, viewStructure, null); //NOI18N
 
                 if (newRelatedViewId == -1) {

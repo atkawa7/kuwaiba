@@ -366,7 +366,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
 
             @Override
             public void run() {
-                progressHandle.start();
+                progressHandle.start();                
                 
                 toolBarMain.setVisible(false);
                 pnlMainScrollPanel.setVisible(false);
@@ -378,6 +378,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                     scene.setShowConnections(true);            
                     scene.clear();
 
+                    service.setProgressHandle(progressHandle);
                     service.shownRack();
                     scene.validate();
                     
@@ -398,6 +399,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                     scene.setShowConnections(false);
                     scene.clear();
                     
+                    service.setProgressHandle(progressHandle);
                     service.shownRack();
                     scene.validate();
                     

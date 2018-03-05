@@ -16,7 +16,6 @@
  */
 package org.inventory.core.templates.layouts.nodes;
 
-import org.inventory.core.templates.layouts.nodes.DeviceLayoutChildren;
 import java.util.List;
 import org.inventory.communications.core.LocalObjectLight;
 import org.openide.nodes.AbstractNode;

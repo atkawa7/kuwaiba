@@ -25,7 +25,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.CommunicationsStubTask;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
@@ -33,12 +37,14 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.DeviceLayoutRenderer;
+import org.inventory.views.rackview.RackViewService;
 import org.netbeans.api.visual.border.Border;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
+import org.openide.util.Exceptions;
 
 /**
  * Is the graphical representation in the scene of a rack object
@@ -159,14 +165,42 @@ public class RackWidget extends SelectableRackViewWidget {
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return;
             }
+            ExecutorService fixedThreadPool = CommunicationsStubTask.getFixedThreadPool();
+            
+            HashMap<LocalObjectLight, Future<LocalObject>> futures = new HashMap();
+            for (LocalObjectLight equipmentLight : equipmentsLight)
+                futures.put(equipmentLight, fixedThreadPool.submit(CommunicationsStubTask.getInstance().getObjectInfoCallable(equipmentLight.getClassName(), equipmentLight.getOid())));
+                        
+            HashMap<LocalObjectLight, LocalObject> equipmentsMap = new HashMap();
+            
+            for (LocalObjectLight equipmentLight : equipmentsLight) {
+                try {
+                    equipmentsMap.put(equipmentLight, futures.get(equipmentLight).get());
+                } catch (InterruptedException | ExecutionException ex) {
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                        NotificationUtil.ERROR_MESSAGE, 
+                        "An unexpected error occurred in the Rack Widget. Contact your administrator.");
+                    Exceptions.printStackTrace(ex);
+                    fixedThreadPool.shutdown();
+                }
+            }
+                        
             List<LocalObject> equipments = new ArrayList<>();
             for (LocalObjectLight equipmentLight : equipmentsLight) {
-                LocalObject equipment = CommunicationsStub.getInstance().getObjectInfo(equipmentLight.getClassName(), equipmentLight.getOid());
-                
+//                LocalObject equipment = CommunicationsStub.getInstance().getObjectInfo(equipmentLight.getClassName(), equipmentLight.getOid());
+                LocalObject equipment = equipmentsMap.get(equipmentLight);
+                if (equipment == null) {
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                    continue;
+                }
                 if (!isRackable(equipment, -1))
                     return;
                 equipments.add(equipment);                                                
             }
+            RackViewService.switchToDeterminate(equipments.size());
+            RackViewService.setProgress("Loading the devices");            
+            
             setLayout(LayoutFactory.createVerticalFlowLayout());
             Widget top = new Widget(getRackViewScene());
             top.setBackground(grayColor);
@@ -235,8 +269,10 @@ public class RackWidget extends SelectableRackViewWidget {
                 rackUnit = ascending ? rackUnit + 1 : rackUnit - 1;
             }
                                     
-            for (LocalObject equipment : equipments)
-                addEquipment(equipment);
+            for (int i = 0; i < equipments.size(); i += 1) {
+                addEquipment(equipments.get(i));
+                RackViewService.setProgress(i + 1);
+            }
             
             edgeLayer = new LayerWidget(getRackViewScene());
             center.addChild(edgeLayer);
@@ -394,7 +430,7 @@ public class RackWidget extends SelectableRackViewWidget {
                 DeviceLayoutRenderer render = new DeviceLayoutRenderer(equipment, 
                     equipmentsLayer, 
                     new Point(Constants.DEVICE_LAYOUT_RESIZE_BORDER_SIZE, Constants.DEVICE_LAYOUT_RESIZE_BORDER_SIZE), 
-                    new Rectangle(0, 0, width, height));
+                    new Rectangle(0, 0, width, height), null, null);
                 
                 if (render.hasDeviceLayout() || render.hasDefaultDeviceLayout()) {
                     render.render();

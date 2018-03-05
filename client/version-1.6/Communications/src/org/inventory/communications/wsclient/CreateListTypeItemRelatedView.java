@@ -9,12 +9,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for createListTypeItemRelateView complex type.
+ * <p>Java class for createListTypeItemRelatedView complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="createListTypeItemRelateView">
+ * &lt;complexType name="createListTypeItemRelatedView">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "createListTypeItemRelateView", propOrder = {
+@XmlType(name = "createListTypeItemRelatedView", propOrder = {
     "listTypeItemId",
     "listTypeItemClassName",
     "viewClassName",
@@ -45,7 +45,7 @@ import javax.xml.bind.annotation.XmlType;
     "background",
     "sessionId"
 })
-public class CreateListTypeItemRelateView {
+public class CreateListTypeItemRelatedView {
 
     protected long listTypeItemId;
     protected String listTypeItemClassName;

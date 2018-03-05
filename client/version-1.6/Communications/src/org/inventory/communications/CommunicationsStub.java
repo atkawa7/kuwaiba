@@ -73,6 +73,10 @@ import org.inventory.communications.wsclient.ApplicationLogEntry;
 import org.inventory.communications.wsclient.AttributeInfo;
 import org.inventory.communications.wsclient.ClassInfo;
 import org.inventory.communications.wsclient.ClassInfoLight;
+import org.inventory.communications.wsclient.GetClassResponse;
+import org.inventory.communications.wsclient.GetObjectChildrenResponse;
+import org.inventory.communications.wsclient.GetObjectResponse;
+import org.inventory.communications.wsclient.GetSpecialAttributesResponse;
 import org.inventory.communications.wsclient.GroupInfo;
 import org.inventory.communications.wsclient.KuwaibaService;
 import org.inventory.communications.wsclient.KuwaibaService_Service;
@@ -238,6 +242,28 @@ public class CommunicationsStub {
             }
             return res;
         }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    public List<LocalObjectLight> getObjectChildrenAsync(long oid, String className) {
+        try {
+            Response<GetObjectChildrenResponse> response = service.getObjectChildrenAsync(className, oid, 0, session.getSessionId());
+            while (!response.isDone())
+                Thread.sleep(100);        
+            GetObjectChildrenResponse getObjectChildrenResponse = response.get();
+            
+            List <RemoteObjectLight> children = getObjectChildrenResponse.getReturn();
+            
+            List <LocalObjectLight> res = new ArrayList<>();
+
+            for (RemoteObjectLight rol : children)
+                res.add(new LocalObjectLight(rol.getOid(), rol.getName(), rol.getClassName()));
+                        
+            return res;
+            
+        } catch (InterruptedException | ExecutionException ex) {
             this.error =  ex.getMessage();
             return null;
         }
@@ -421,6 +447,28 @@ public class CommunicationsStub {
         }
     }
     
+    public LocalObject getObjectInfoAsync(String objectClass, long oid) {
+        try {
+            LocalClassMetadata lcmd = getMetaForClassAsync(objectClass, false);
+            
+            Response<GetObjectResponse> response = service.getObjectAsync(objectClass, oid,this.session.getSessionId());
+            while (!response.isDone())
+                Thread.sleep(100);
+            GetObjectResponse getObjectResponse = response.get();
+                        
+            RemoteObject myObject = getObjectResponse.getReturn();
+            
+            List<List<String>> values = new ArrayList<>();
+            for (StringArray value : myObject.getValues())
+                values.add(value.getItem());
+            return new LocalObject(myObject.getClassName(), myObject.getOid(), 
+                    myObject.getAttributes(), values,lcmd);
+        } catch(Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
     /** 
      * Gets the common parent of a given object in the standard or special containment
      * hierarchy.
@@ -521,6 +569,37 @@ public class CommunicationsStub {
     public HashMap<String, LocalObjectLight[]> getSpecialAttributes (String objectClass, long objectId) {
         try{
             RemoteObjectSpecialRelationships remoteRelationships = service.getSpecialAttributes(objectClass, objectId, session.getSessionId());
+            HashMap<String, LocalObjectLight[]> res = new HashMap<>();
+            
+            for (int i = 0; i < remoteRelationships.getRelationships().size(); i++){
+                
+                RemoteObjectLightList relatedRemoteObjects = remoteRelationships.getRelatedObjects().get(i);
+                LocalObjectLight[] relatedLocalObjects = new LocalObjectLight[relatedRemoteObjects.getList().size()];
+                int j = 0;
+                for (RemoteObjectLight relatedRemoteObject : relatedRemoteObjects.getList()) {
+                    relatedLocalObjects[j] = new LocalObjectLight(relatedRemoteObject.getOid(), 
+                                                    relatedRemoteObject.getName(), 
+                                                    relatedRemoteObject.getClassName());
+                    j++;
+                }
+                res.put(remoteRelationships.getRelationships().get(i), relatedLocalObjects);
+            }
+            return res;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public HashMap<String, LocalObjectLight[]> getSpecialAttributesAsync (String objectClass, long objectId) {
+        try{
+            Response<GetSpecialAttributesResponse> response = service.getSpecialAttributesAsync(objectClass, objectId, session.getSessionId());
+            while (!response.isDone())
+                Thread.sleep(100);
+        
+            GetSpecialAttributesResponse getSpecialAttributesResponse = response.get();
+            RemoteObjectSpecialRelationships remoteRelationships = getSpecialAttributesResponse.getReturn();
+                        
             HashMap<String, LocalObjectLight[]> res = new HashMap<>();
             
             for (int i = 0; i < remoteRelationships.getRelationships().size(); i++){
@@ -991,6 +1070,50 @@ public class CommunicationsStub {
             }
 
             ClassInfo cm = service.getClass(className,this.session.getSessionId());
+            HashMap<String, Integer> validators = new HashMap<>();
+            for (Validator validator : cm.getValidators())
+                validators.put(validator.getLabel(), validator.getValue());
+
+            res = new LocalClassMetadata(cm.getId(),
+                                            cm.getClassName(),
+                                            cm.getDisplayName(),
+                                            cm.getParentClassName(),
+                                            cm.isAbstract(),cm.isViewable(), cm.isListType(),
+                                            cm.isCustom(), cm.isInDesign(),
+                                            cm.getSmallIcon(), cm.getColor(), validators, cm.getIcon(),
+                                            cm.getDescription(), 
+                    cm.getAttributesIds(),                         
+                    cm.getAttributesNames().toArray(new String[0]),
+                    cm.getAttributesTypes().toArray(new String[0]),
+                    cm.getAttributesDisplayNames().toArray(new String[0]),
+                    cm.getAttributesMandatories(),
+                    cm.getAttributesUniques(),
+                    cm.getAttributesVisibles(), 
+                    cm.getAttributesDescriptions().toArray(new String[0]));
+            cache.addMeta(new LocalClassMetadata[]{res});
+            return res;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public LocalClassMetadata getMetaForClassAsync(String className, boolean ignoreCache) {
+        try {
+            LocalClassMetadata res;
+            if (!ignoreCache){
+                res = cache.getMetaForClass(className);
+                if (res != null)
+                    return res;
+            }
+            
+            Response<GetClassResponse> response = service.getClassAsync(className,this.session.getSessionId());
+            while (!response.isDone())
+                Thread.sleep(100);
+            GetClassResponse getClassResponse = response.get();
+            
+            ClassInfo cm = getClassResponse.getReturn();
+            
             HashMap<String, Integer> validators = new HashMap<>();
             for (Validator validator : cm.getValidators())
                 validators.put(validator.getLabel(), validator.getValue());
@@ -2773,11 +2896,11 @@ public class CommunicationsStub {
      * @param background background image
      * @return The id of the new view.
      */
-    public long createListTypeItemRelateView(long listTypeItemId, String listTypeItemClassName, String viewClassName, 
+    public long createListTypeItemRelatedView(long listTypeItemId, String listTypeItemClassName, String viewClassName, 
         String name, String description, byte [] structure, byte [] background) {
         
         try{
-            return service.createListTypeItemRelateView(listTypeItemId, listTypeItemClassName, viewClassName, name, description, structure, background, session.getSessionId());
+            return service.createListTypeItemRelatedView(listTypeItemId, listTypeItemClassName, viewClassName, name, description, structure, background, session.getSessionId());
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return -1;
@@ -2858,6 +2981,41 @@ public class CommunicationsStub {
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return false;
+        }
+    }
+    
+    /**
+     * Gets the list of template elements with a device layout
+     * @return the list of template elements with a device layout
+     */
+    public List<LocalObjectLight> getDeviceLayouts() {
+        try {
+            List<RemoteObjectLight> remoteTemplateElements = service.getDeviceLayouts(session.getSessionId());
+            
+            List<LocalObjectLight> templateElements = new ArrayList();
+            
+            for (RemoteObjectLight remoteTemplateElement : remoteTemplateElements)
+                templateElements.add(new LocalObjectLight(remoteTemplateElement.getOid(), remoteTemplateElement.getName(), remoteTemplateElement.getClassName()));
+            
+            return templateElements;
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Gets the device layout structure
+     * @param oid object id
+     * @param className class of object
+     * @return the structure of the device layout
+     */
+    public byte[] getDeviceLayoutStructure(long oid, String className) {
+        try {
+            return service.getDeviceLayoutStructure(oid, className, session.getSessionId());
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return null;
         }
     }
 

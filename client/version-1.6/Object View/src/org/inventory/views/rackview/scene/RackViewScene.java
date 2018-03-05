@@ -28,6 +28,8 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.scene.AbstractScene;
+import static org.inventory.core.visual.scene.AbstractScene.ACTION_CONNECT;
+import static org.inventory.core.visual.scene.AbstractScene.ACTION_SELECT;
 import org.inventory.models.physicalconnections.wizards.NewLinkWizard;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.views.rackview.widgets.EquipmentWidget;
@@ -169,7 +171,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
                     .getCommonParent(sourcePort.getClassName(), sourcePort.getOid(), 
                         targetPort.getClassName(), targetPort.getOid());
                 if (commonParent == null) {
-                    NotificationUtil.getInstance().showSimplePopup("Error", 
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                     return;
                 } 
@@ -177,7 +179,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
                     .getContainersBetweenObjects(sourcePort.getClassName(), sourcePort.getOid(), 
                         targetPort.getClassName(), targetPort.getOid(), Constants.CLASS_WIRECONTAINER);
                 if (existintWireContainersList == null) {
-                    NotificationUtil.getInstance().showSimplePopup("Error", 
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                     return;
                 } 

@@ -17,9 +17,13 @@ package org.inventory.views.rackview;
 
 import org.inventory.views.rackview.scene.RackViewScene;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.CommunicationsStubTask;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
@@ -31,8 +35,9 @@ import org.inventory.views.rackview.widgets.NestedDeviceWidget;
 import org.inventory.views.rackview.widgets.PortWidget;
 import org.inventory.views.rackview.widgets.RackViewConnectionWidget;
 import org.inventory.views.rackview.widgets.RackWidget;
-import org.inventory.views.rackview.widgets.SelectableRackViewWidget;
+import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.visual.widget.Widget;
+import org.openide.util.Exceptions;
 
 /**
  * Service used to load data to render a rack view
@@ -43,14 +48,47 @@ public class RackViewService {
     //this need to be replace, the VirtualPort should be moved under GenericLogicalPort, 
     //find a better place for the other classes under GenericBoard, should be GenericCommunitacionsBoard 
     //to make a diference between the PowerBoards and the Communitacions Boards
-    private static final List<String> noVisibleDevices = Arrays.asList(new String [] {"PowerBoard", "VirtualPort", "ServiceInstance", "PowerPort", "Transceiver"}); //NOI18N
     private final LocalObjectLight rackLight;
     private final RackViewScene scene;
+    private static ProgressHandle progressHandle;
     
     public RackViewService(RackViewScene scene, LocalObjectLight rackLight) {
         this.rackLight = rackLight;
         this.scene = scene;
     }
+    
+    public static ProgressHandle getProgressHandle() {
+        return progressHandle;
+    }
+    
+    public static void setProgressHandle(ProgressHandle ph) {
+        progressHandle = ph;
+    }
+    
+    public static void setProgress(int workUnit) {
+        if (progressHandle != null)
+            progressHandle.progress(workUnit);
+    }
+    
+    public static void setProgress(String message) {
+        if (progressHandle != null)
+            progressHandle.progress(message);
+    }
+    
+    public static void setProgress(String message, int workunits) {
+        if (progressHandle != null)
+            progressHandle.progress(message, workunits);
+    }
+    
+    public static void switchToDeterminate(int workunits) {
+        if (progressHandle != null)
+            progressHandle.switchToDeterminate(workunits);
+    }
+    
+//    public static void switchToIndeterminate(int workunits) {
+//        if (progressHandle != null)
+//            progressHandle.switchToIndeterminate();
+//    }
     
     public void shownRack() {
         LocalObject rack = CommunicationsStub.getInstance().getObjectInfo(
@@ -62,13 +100,11 @@ public class RackViewService {
         } else {
             Boolean ascending = (Boolean) rack.getAttribute(Constants.PROPERTY_RACK_UNITS_NUMBERING);
             if (ascending == null) {
-                ascending = true;
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), NotificationUtil.WARNING_MESSAGE, 
                     "The rack unit sorting has not been set. Ascending is assumed");
-            } else
-                ascending = !ascending;
-            
+            }
             scene.render(rack);
+            
             if (scene.getShowConnections()) {
                 Widget widget = scene.findWidget(rack);
                 if (widget instanceof RackWidget) {
@@ -77,8 +113,6 @@ public class RackViewService {
                                 
                         if(equipmentWidget instanceof EquipmentWidget && ((EquipmentWidget) equipmentWidget).hasLayout())
                             setEquipmentParent(equipmentWidget, equipmentWidget);
-                        else
-                            addNestedDevices(equipment);
                     }
                     List<LocalObjectLight> specialChildren = CommunicationsStub.getInstance().getObjectSpecialChildren(rackLight.getClassName(), rackLight.getOid());
                     
@@ -100,7 +134,9 @@ public class RackViewService {
             scene.repaint();
         }
     }
-    
+    /**
+     * Used to create the connection router
+     */
     private void setEquipmentParent(Widget equipmentWidget, Widget parentWidget) {
         
         for (Widget child : parentWidget.getChildren()) {
@@ -114,7 +150,7 @@ public class RackViewService {
             setEquipmentParent(equipmentWidget, child);
         }
     }
-    
+    /*
     public void addNestedDevices(LocalObjectLight parent) {
         Widget parentWidget = scene.findWidget(parent);
                 
@@ -142,41 +178,66 @@ public class RackViewService {
             }
         }
     }
+    */
     
-    private void createConnections(List<LocalObjectLight> connections) {        
+    private void createConnections(List<LocalObjectLight> connections) {   
+        ExecutorService fixedThreadPool = CommunicationsStubTask.getFixedThreadPool();
+
+        HashMap<LocalObjectLight, Future<HashMap<String, LocalObjectLight[]>>> futures = new HashMap();
+        for (LocalObjectLight connection : connections)
+            futures.put(connection, fixedThreadPool.submit(CommunicationsStubTask.getInstance().getSpecialAttributesCallable(connection.getClassName(), connection.getOid())));
+
+        HashMap<LocalObjectLight, HashMap<String, LocalObjectLight[]>> connectionsMap = new HashMap();
         for (LocalObjectLight connection : connections) {
-            
-            List<LocalObjectLight> endpointsA = CommunicationsStub.getInstance().getSpecialAttribute(connection.getClassName(), connection.getOid(), "endpointA"); //NOI18N
-            if (endpointsA == null) {
+            try {
+                connectionsMap.put(connection, futures.get(connection).get());
+            } catch (InterruptedException | ExecutionException ex) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                continue;
+                    NotificationUtil.ERROR_MESSAGE, 
+                    "An unexpected error occurred in the Rack Widget. Contact your administrator.");
+                Exceptions.printStackTrace(ex);
+                fixedThreadPool.shutdown();
             }
+        }
+        RackViewService.switchToDeterminate(connections.size());
+        RackViewService.setProgress("Loading connections");
                 
-            List<LocalObjectLight> endpointsB = CommunicationsStub.getInstance().getSpecialAttribute(connection.getClassName(), connection.getOid(), "endpointB"); //NOI18N
-            if (endpointsB == null) {
+        for (int i = 0; i < connections.size(); i += 1) {
+            LocalObjectLight connection = connections.get(i);
+            
+            HashMap<String, LocalObjectLight[]> specialAttributes = connectionsMap.get(connection);/*CommunicationsStub.getInstance().getSpecialAttributes(connection.getClassName(), connection.getOid());*/
+            
+            if (specialAttributes == null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 continue;
             }
             
-            if (endpointsA.isEmpty()) {
+            LocalObjectLight[] endpointsA = specialAttributes.get("endpointA"); //NOI18N
+            if (endpointsA == null)
+                continue;
+                            
+            LocalObjectLight[] endpointsB = specialAttributes.get("endpointB"); //NOI18N
+            if (endpointsB == null)
+                continue;
+            
+            if (endpointsA.length == 0) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
                     NotificationUtil.WARNING_MESSAGE, String.format("The endpointA was removed in the link %s", connection.toString()));
                 continue;
             }
-            if (endpointsB.isEmpty()) {
+            if (endpointsB.length == 0) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
                     NotificationUtil.WARNING_MESSAGE, String.format("The Endpoint B was removed in the link %s", connection.toString()));
                 continue;
             }
-            LocalObjectLight aSide = endpointsA.get(0);
+            LocalObjectLight aSide = endpointsA[0];
             if (!CommunicationsStub.getInstance().isSubclassOf(aSide.getClassName(), Constants.CLASS_GENERICPORT)) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
                     NotificationUtil.WARNING_MESSAGE, String.format("The endpointA in link %s is not a %s", connection.toString(), Constants.CLASS_GENERICPORT));
                 continue;
             }
-            LocalObjectLight bSide = endpointsB.get(0);
+            LocalObjectLight bSide = endpointsB[0];
             if (!CommunicationsStub.getInstance().isSubclassOf(bSide.getClassName(), Constants.CLASS_GENERICPORT)) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
                     NotificationUtil.WARNING_MESSAGE, String.format("The endpointB in link %s is not a %s", connection.toString(), Constants.CLASS_GENERICPORT));
@@ -191,40 +252,50 @@ public class RackViewService {
                 lastConnectionWidget.getLabelWidget().setLabel((aSide.getName() == null ? "" : aSide.getName()) + " ** " + (bSide.getName() == null ? "" : bSide.getName()));
                 scene.setEdgeSource(connection, aSide);
                 scene.setEdgeTarget(connection, bSide);
-                
-                if (aSideWidget instanceof PortWidget)
-                    ((PortWidget) aSideWidget).setFree(false);
-                
-                if (bSideWidget instanceof PortWidget)
-                    ((PortWidget) bSideWidget).setFree(false);
             }
+            if (aSideWidget instanceof PortWidget)
+                ((PortWidget) aSideWidget).setFree(false);
+
+            if (bSideWidget instanceof PortWidget)
+                ((PortWidget) bSideWidget).setFree(false);
+            
             scene.validate();
             scene.repaint();
+            
+            RackViewService.setProgress(i + 1);
         }
         // Marking as in use the ports which has connections outside the rack
+        /*
         for (LocalObjectLight node : scene.getNodes()) {
-            if (CommunicationsStub.getInstance().isSubclassOf(node.getClassName(), Constants.CLASS_GENERICPORT)) {
-                Widget widget = scene.findWidget(node);
-                if (widget instanceof PortWidget) {
-                    List<LocalObjectLight> endpointsA = CommunicationsStub.getInstance().getSpecialAttribute(node.getClassName(), node.getOid(), "endpointA"); //NOI18N
-                    if (endpointsA == null) {
-                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                            NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                        continue;
-                    }
+//            if (CommunicationsStub.getInstance().isSubclassOf(node.getClassName(), Constants.CLASS_GENERICPORT)) {
+            Widget widget = scene.findWidget(node);
+            
+            if (widget instanceof PortWidget) {
+                if (!((PortWidget) widget).isFree())
+                    continue;
 
-                    List<LocalObjectLight> endpointsB = CommunicationsStub.getInstance().getSpecialAttribute(node.getClassName(), node.getOid(), "endpointB"); //NOI18N
-                    if (endpointsB == null) {
-                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                            NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                        continue;
-                    }
-                    
-                    if (!endpointsA.isEmpty() || !endpointsB.isEmpty())
-                        ((PortWidget) widget).setFree(false);
+                HashMap<String, LocalObjectLight[]> specialAttributes = CommunicationsStub.getInstance().getSpecialAttributes(node.getClassName(), node.getOid());
+
+                if (specialAttributes == null) {
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+                    continue;
                 }
+
+                LocalObjectLight[] endpointsA = specialAttributes.get("endpointA"); //NOI18N
+                if (endpointsA == null)
+                    continue;
+
+                LocalObjectLight[] endpointsB = specialAttributes.get("endpointB"); //NOI18N
+                if (endpointsB == null)
+                    continue;
+
+                if (endpointsA.length > 0 || endpointsB.length > 0)
+                    ((PortWidget) widget).setFree(false);
             }
+//            }
         }
+                */
     }
     
     public List<List<LocalObjectLight>> getRackTable() {

@@ -18,8 +18,10 @@ package org.inventory.core.templates.layouts.nodes;
 
 import java.util.Collections;
 import java.util.List;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.templates.layouts.DeviceLayoutsService;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.nodes.TemplateElementNode;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
 import org.openide.nodes.Node;
@@ -37,12 +39,13 @@ public class DeviceLayoutChildren extends AbstractChildren {
 
     @Override
     public void addNotify() {
-        DeviceLayoutsService service = new DeviceLayoutsService();
-        List<LocalObjectLight> devices = service.getDevices();
+        List<LocalObjectLight> devices = CommunicationsStub.getInstance().getDeviceLayouts();
         
-        if (devices == null)
+        if (devices == null) {
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             setKeys(Collections.EMPTY_SET);
-        else {
+        } else {
             Collections.sort(devices);
             setKeys(devices);
         }

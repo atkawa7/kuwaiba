@@ -8,12 +8,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for createListTypeItemRelateViewResponse complex type.
+ * <p>Java class for createListTypeItemRelatedViewResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="createListTypeItemRelateViewResponse">
+ * &lt;complexType name="createListTypeItemRelatedViewResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -27,10 +27,10 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "createListTypeItemRelateViewResponse", propOrder = {
+@XmlType(name = "createListTypeItemRelatedViewResponse", propOrder = {
     "_return"
 })
-public class CreateListTypeItemRelateViewResponse {
+public class CreateListTypeItemRelatedViewResponse {
 
     @XmlElement(name = "return")
     protected long _return;
