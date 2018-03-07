@@ -44,9 +44,9 @@ class ExecuteTaskAction extends GenericInventoryAction {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {
             ExecuteTaskResultTopComponent tc = new ExecuteTaskResultTopComponent(taskResult);
-            tc.setDisplayName(String.format("Result for task %s", selectedTask.getName()));
+            tc.setDisplayName(String.format("Results for Task %s", selectedTask.getName()));
             tc.open();
-            tc.requestAttention(true);
+            tc.requestActive();
         }
     }
 
