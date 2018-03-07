@@ -302,7 +302,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
         if (classMetadata.isInDesign())
-            throw new OperationNotPermittedException("Can not create instances of classes marked as isDesign");
+            throw new OperationNotPermittedException("Can not create instances of classes marked as inDesign");
         
         if (classMetadata.isAbstract())
             throw new OperationNotPermittedException("Can not create objects of abstract classes");
