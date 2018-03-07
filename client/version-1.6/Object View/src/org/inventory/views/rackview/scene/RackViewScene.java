@@ -57,14 +57,16 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
     public static int STROKE_WIDTH = 3;
     private boolean addingNestedDevice = true;
     private boolean showConnections = false;
-    private LocalObjectLight rack;
+    private LocalObject rack;
     
     private final ChangePositionAction changePositionAction = new ChangePositionAction();
     
     private final PopupMenuProvider defaultPopupMenuProvider;
     
-    public RackViewScene(LocalObjectLight rack) {
-        this.rack = rack;
+    private List<LocalObject> equipments;
+    
+    public RackViewScene(/*LocalObject rack, */List<LocalObject> equipments) {
+////        this.rack = rack;
         getActions().addAction(ActionFactory.createZoomAction());
         getInputBindings().setZoomActionModifiers(0); //No keystroke combinations
         getActions().addAction(ActionFactory.createPanAction());
@@ -89,6 +91,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
                 return popupMenu;
             }
         };
+        this.equipments = equipments;
     }
     
     public LocalObjectLight getRack() {
@@ -122,7 +125,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
 
     @Override
     public void render(LocalObjectLight root) {
-        this.rack = root;
+        rack = (LocalObject) root;
         RackWidgetWrapper rackWidgetWrapper = new RackWidgetWrapper(this, root, !getShowConnections());
         rackWidgetWrapper.setPreferredLocation(new Point(70, 30));
         rackWidgetWrapper.paintRack();
@@ -247,9 +250,9 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
         }            
         if (getRack().equals(node)) {
             if (showConnections)
-                widget = new RackWidget(this, node, (int) Math.round(1086 * 1.5), (int) Math.round(100 * 1.5), 15);
+                widget = new RackWidget(this, node, (int) Math.round(1086 * 1.5), (int) Math.round(100 * 1.5), 15, equipments);
             else
-                widget = new RackWidget(this, node, 300, 35, 5);
+                widget = new RackWidget(this, node, 300, 35, 5, equipments);
             widget.createActions(AbstractScene.ACTION_SELECT);
             widget.getActions(ACTION_SELECT).addAction(createSelectAction());
         }

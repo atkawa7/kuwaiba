@@ -68,7 +68,7 @@ public class EditLayoutAction extends GenericInventoryAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalClassMetadata customShapeClass = CommunicationsStub.getInstance().getMetaForClass(Constants.CLASS_CUSTOMSHAPE, true);
+        LocalClassMetadata customShapeClass = CommunicationsStub.getInstance().getMetaForClass(Constants.CLASS_CUSTOMSHAPE, false);
         if (customShapeClass == null) {
             JOptionPane.showMessageDialog(null, I18N.gm("patch_equipment_model_layout"), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             return;

@@ -105,7 +105,7 @@ public final class CustomShapesTopComponent extends TopComponent implements Expl
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        if (CommunicationsStub.getInstance().getMetaForClass(Constants.CLASS_GENERICAPPLICATIONLISTTYPE, true) == null) {
+        if (CommunicationsStub.getInstance().getMetaForClass(Constants.CLASS_GENERICAPPLICATIONLISTTYPE, false) == null) {
             JOptionPane.showMessageDialog(null, I18N.gm("database_seems_outdated"), 
                 I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             this.close();

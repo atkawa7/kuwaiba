@@ -55,33 +55,8 @@ public class ShowDeviceLayoutView extends GenericObjectNodeAction {
     }
     
     @Override
-    public boolean isEnabled() {        
-        boolean isEnabled = super.isEnabled();
-        if (isEnabled) {
-            ObjectNode selectedNode = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
-            
-            if (selectedNode == null)
-                return false;
-            
-            LocalObjectLight selectedObject = selectedNode.getLookup().lookup(LocalObjectLight.class);
-            
-            if (selectedObject == null)
-                return false;
-            
-            try {
-                return Utils.classMayHaveDeviceLayout(selectedObject.getClassName());
-            } catch (Exception ex) {
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                    NotificationUtil.ERROR_MESSAGE, ex.getMessage());
-                return false;
-            }
-        }
-        return isEnabled;
-    }
-
-    @Override
     public void actionPerformed(ActionEvent e) {        
-        LocalClassMetadata customShapeClass = CommunicationsStub.getInstance().getMetaForClass(Constants.CLASS_CUSTOMSHAPE, true); //NOI18N
+        LocalClassMetadata customShapeClass = CommunicationsStub.getInstance().getMetaForClass(Constants.CLASS_CUSTOMSHAPE, false); //NOI18N
         if (customShapeClass == null) {
             JOptionPane.showMessageDialog(null, "This database seems outdated. Contact your administrator to apply the necessary patches to use the Device Layout feature", I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             return;

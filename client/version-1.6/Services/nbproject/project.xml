@@ -82,6 +82,7 @@
                 </dependency>
             </module-dependencies>
             <public-packages>
+                <package>org.inventory.core.services</package>
                 <package>org.inventory.core.services.api.actions</package>
                 <package>org.inventory.core.services.api.behaviors</package>
                 <package>org.inventory.core.services.api.export</package>
@@ -91,7 +92,6 @@
                 <package>org.inventory.core.services.api.visual</package>
                 <package>org.inventory.core.services.api.windows</package>
                 <package>org.inventory.core.services.api.xml</package>
-                <package>org.inventory.core.services.compatible</package>
                 <package>org.inventory.core.services.event</package>
                 <package>org.inventory.core.services.i18n</package>
                 <package>org.inventory.core.services.utils</package>

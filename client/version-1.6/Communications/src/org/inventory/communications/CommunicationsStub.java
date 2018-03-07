@@ -69,6 +69,7 @@ import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import org.inventory.communications.runnable.AbstractSyncRunnable;
+import org.inventory.communications.util.Constants;
 import org.inventory.communications.wsclient.ApplicationLogEntry;
 import org.inventory.communications.wsclient.AttributeInfo;
 import org.inventory.communications.wsclient.ClassInfo;
@@ -147,7 +148,7 @@ public class CommunicationsStub {
                 instance = new CommunicationsStub();
             return instance;
     }
-
+    
     /**
      * Resets the singleton instance to null so it has to be created again
      */
@@ -1329,6 +1330,71 @@ public class CommunicationsStub {
             return null;
         }
     }// </editor-fold>
+    
+    public LocalObjectListItem getCustomShape(long customShapeId, boolean ignoreCache) {        
+        if (!ignoreCache) {
+            for (LocalObjectListItem customShape : cache.getCustomShapes()) {
+                if (customShape.getId() == customShapeId)
+                    return customShape;
+            }
+        }
+        getCustomShapes(false);
+        
+        for (LocalObjectListItem customShape : cache.getCustomShapes()) {
+            if (customShape.getId() == customShapeId)
+                return customShape;
+        }
+        return null;
+    }
+    
+    public LocalObjectView getCustomShapeLayout(long customShapeId, boolean ignoreCache) {
+        LocalObjectListItem customShape = getCustomShape(customShapeId, false);
+        
+        if (customShape != null) {
+            if (!ignoreCache) {
+                
+                LocalObjectView layout = cache.getCustomShapeLayout(customShape);
+
+                if (layout != null)
+                    return layout;
+            }
+            List<LocalObjectViewLight> views = getListTypeItemRelatedViews(customShape.getId(), Constants.CLASS_CUSTOMSHAPE);
+
+            if (views != null) {
+
+                if (!views.isEmpty()) {
+
+                    LocalObjectView view = getListTypeItemRelatedView(customShape.getId(), Constants.CLASS_CUSTOMSHAPE, views.get(0).getId());
+
+                    if (view != null) {
+                        cache.setCustomShapeLayout(customShape, view);
+                        return view;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+    
+    public List<LocalObjectListItem> getCustomShapes(boolean ignoreCache) {
+        List<LocalObjectListItem> customShapes = null;
+        if (!ignoreCache) {
+            customShapes = new ArrayList();
+            
+            for (LocalObjectListItem customShape : cache.getCustomShapes())
+                customShapes.add(customShape);
+            
+            if (!customShapes.isEmpty())
+                return customShapes;
+        }
+        customShapes = getList(Constants.CLASS_CUSTOMSHAPE, false, ignoreCache);
+        
+        if (customShapes != null) {
+            for (LocalObjectListItem customShape : customShapes)
+                cache.setCustomShapeLayout(customShape, null);
+        }
+        return customShapes;    
+    }
     
     //<editor-fold defaultstate="collapsed" desc="Tasks">
     /**

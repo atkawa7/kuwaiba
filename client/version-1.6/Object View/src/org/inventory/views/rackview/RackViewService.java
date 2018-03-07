@@ -48,12 +48,12 @@ public class RackViewService {
     //this need to be replace, the VirtualPort should be moved under GenericLogicalPort, 
     //find a better place for the other classes under GenericBoard, should be GenericCommunitacionsBoard 
     //to make a diference between the PowerBoards and the Communitacions Boards
-    private final LocalObjectLight rackLight;
+    private final LocalObject rack;
     private final RackViewScene scene;
     private static ProgressHandle progressHandle;
     
-    public RackViewService(RackViewScene scene, LocalObjectLight rackLight) {
-        this.rackLight = rackLight;
+    public RackViewService(RackViewScene scene, LocalObject rack) {
+        this.rack = rack;
         this.scene = scene;
     }
     
@@ -91,8 +91,6 @@ public class RackViewService {
 //    }
     
     public void shownRack() {
-        LocalObject rack = CommunicationsStub.getInstance().getObjectInfo(
-            rackLight.getClassName(), rackLight.getOid());
         
         if (rack == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), //NOI18N
@@ -114,7 +112,7 @@ public class RackViewService {
                         if(equipmentWidget instanceof EquipmentWidget && ((EquipmentWidget) equipmentWidget).hasLayout())
                             setEquipmentParent(equipmentWidget, equipmentWidget);
                     }
-                    List<LocalObjectLight> specialChildren = CommunicationsStub.getInstance().getObjectSpecialChildren(rackLight.getClassName(), rackLight.getOid());
+                    List<LocalObjectLight> specialChildren = CommunicationsStub.getInstance().getObjectSpecialChildren(rack.getClassName(), rack.getOid());
                     
                     if (specialChildren == null) {
                         NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), //NOI18N
@@ -150,37 +148,9 @@ public class RackViewService {
             setEquipmentParent(equipmentWidget, child);
         }
     }
-    /*
-    public void addNestedDevices(LocalObjectLight parent) {
-        Widget parentWidget = scene.findWidget(parent);
-                
-        if (parentWidget == null)
-            return;
-        
-        if (parentWidget instanceof NestedDeviceWidget) {
-            
-            List<LocalObjectLight> children = CommunicationsStub.getInstance()
-                .getObjectChildren(parent.getOid(), parent.getClassName());
-
-            if (children == null) {
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), //NOI18N
-                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                return;
-            }
-            
-            for (LocalObjectLight child : children) {
-                if (noVisibleDevices.contains(child.getClassName()))
-                    continue;
-                Widget deviceWidget = scene.addNode(child);
-                ((NestedDeviceWidget) parentWidget).addChildDevice((SelectableRackViewWidget) deviceWidget);
-                scene.validate();
-                addNestedDevices(child);
-            }
-        }
-    }
-    */
     
-    private void createConnections(List<LocalObjectLight> connections) {   
+    private void createConnections(List<LocalObjectLight> connections) {
+               
         ExecutorService fixedThreadPool = CommunicationsStubTask.getFixedThreadPool();
 
         HashMap<LocalObjectLight, Future<HashMap<String, LocalObjectLight[]>>> futures = new HashMap();
@@ -201,11 +171,11 @@ public class RackViewService {
         }
         RackViewService.switchToDeterminate(connections.size());
         RackViewService.setProgress("Loading connections");
-                
+                        
         for (int i = 0; i < connections.size(); i += 1) {
             LocalObjectLight connection = connections.get(i);
             
-            HashMap<String, LocalObjectLight[]> specialAttributes = connectionsMap.get(connection);/*CommunicationsStub.getInstance().getSpecialAttributes(connection.getClassName(), connection.getOid());*/
+            HashMap<String, LocalObjectLight[]> specialAttributes = connectionsMap.get(connection);
             
             if (specialAttributes == null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
@@ -262,42 +232,10 @@ public class RackViewService {
             scene.validate();
             scene.repaint();
             
-            RackViewService.setProgress(i + 1);
+            RackViewService.setProgress("Loading " + connection.toString(), i + 1);
         }
-        // Marking as in use the ports which has connections outside the rack
-        /*
-        for (LocalObjectLight node : scene.getNodes()) {
-//            if (CommunicationsStub.getInstance().isSubclassOf(node.getClassName(), Constants.CLASS_GENERICPORT)) {
-            Widget widget = scene.findWidget(node);
-            
-            if (widget instanceof PortWidget) {
-                if (!((PortWidget) widget).isFree())
-                    continue;
-
-                HashMap<String, LocalObjectLight[]> specialAttributes = CommunicationsStub.getInstance().getSpecialAttributes(node.getClassName(), node.getOid());
-
-                if (specialAttributes == null) {
-                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                    continue;
-                }
-
-                LocalObjectLight[] endpointsA = specialAttributes.get("endpointA"); //NOI18N
-                if (endpointsA == null)
-                    continue;
-
-                LocalObjectLight[] endpointsB = specialAttributes.get("endpointB"); //NOI18N
-                if (endpointsB == null)
-                    continue;
-
-                if (endpointsA.length > 0 || endpointsB.length > 0)
-                    ((PortWidget) widget).setFree(false);
-            }
-//            }
-        }
-                */
     }
-    
+        
     public List<List<LocalObjectLight>> getRackTable() {
         List<List<LocalObjectLight>> result = new ArrayList<>();
         
