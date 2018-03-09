@@ -65,8 +65,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
     
     private List<LocalObject> equipments;
     
-    public RackViewScene(/*LocalObject rack, */List<LocalObject> equipments) {
-////        this.rack = rack;
+    public RackViewScene(List<LocalObject> equipments) {
         getActions().addAction(ActionFactory.createZoomAction());
         getInputBindings().setZoomActionModifiers(0); //No keystroke combinations
         getActions().addAction(ActionFactory.createPanAction());

@@ -16,6 +16,7 @@
 
 package org.kuwaiba.management.services.views.endtoend;
 
+import java.awt.BasicStroke;
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.Point;
@@ -76,6 +77,8 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
     private final LayerWidget imagesLayer;
     private final LayerWidget framesLayer;
     private final CustomResizeProvider resizeProvider;
+    
+    public static int STROKE_WIDTH = 3;
     /**
      * Default move widget action (shared by all connection widgets)
      */
@@ -108,6 +111,8 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
         resizeProvider = new CustomResizeProvider(this);
         
         getActions().addAction(ActionFactory.createZoomAction());
+        getInputBindings().setZoomActionModifiers(0); //No keystroke combinations
+        getActions().addAction(ActionFactory.createPanAction());
         initSelectionListener();
     }
     
@@ -554,6 +559,7 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
         newWidget.getActions().addAction(createSelectAction());
         newWidget.getActions().addAction(moveControlPointAction);
         newWidget.getActions().addAction(addRemoveControlPointAction);
+        newWidget.setStroke(new BasicStroke(STROKE_WIDTH));
         newWidget.setRouter(RouterFactory.createFreeRouter());
         newWidget.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         newWidget.setEndPointShape(PointShape.SQUARE_FILLED_BIG);

@@ -73,6 +73,8 @@ import org.openide.util.ImageUtilities;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
+    
+    public static int STROKE_WIDTH = 3;
     /**
      * Version of the XML format used to store this view (see getAsXML method)
      */
@@ -115,6 +117,9 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
         addRemoveControlPointAction = new CustomAddRemoveControlPointAction(this);
         moveControlPointAction = new CustomMoveControlPointAction(this);
         
+        getActions().addAction(ActionFactory.createZoomAction());
+        getInputBindings().setZoomActionModifiers(0); //No keystroke combinations
+        getActions().addAction(ActionFactory.createPanAction());
         initSelectionListener();
     }    
     
@@ -586,7 +591,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
         newEdge.getActions().addAction(selectAction);
         newEdge.getActions().addAction(addRemoveControlPointAction);
         newEdge.getActions().addAction(moveControlPointAction);
-        newEdge.setStroke(new BasicStroke(1));
+        newEdge.setStroke(new BasicStroke(STROKE_WIDTH));
         newEdge.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         newEdge.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
         newEdge.setRouter(RouterFactory.createFreeRouter());

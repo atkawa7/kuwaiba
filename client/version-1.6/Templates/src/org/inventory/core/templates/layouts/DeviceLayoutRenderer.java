@@ -372,6 +372,10 @@ public class DeviceLayoutRenderer {
         parentWidget.addChild(deviceLayoutWidget);
         // Gets the set of shapes
         render(structure, originalSize, deviceLayoutLocation, deviceLayoutBounds);
+        // In recursive calls to render nested devices layouts is necessary update the current hierarchy
+        HashMap<LocalObjectLight, List<LocalObjectLight>> subHierarchy = new HashMap();
+        getSubHierarchy(nodes, deviceToRender, subHierarchy);
+        nodes = subHierarchy;
         // Comparing the names of shapes and object to render the layout
         addNodes();
     }
@@ -681,6 +685,23 @@ public class DeviceLayoutRenderer {
         for (LocalObjectLight child : children) {
             DeviceLayoutRenderer render = new DeviceLayoutRenderer(child, widget, new Point(0, 0), widget.getPreferredBounds(), nodes, structureRepository);
             render.render();
+        }
+    }
+    
+    private void getSubHierarchy(
+        HashMap<LocalObjectLight, List<LocalObjectLight>> hierarchy, 
+        LocalObjectLight object, 
+        HashMap<LocalObjectLight, List<LocalObjectLight>> subHierarchy) {
+        
+        if (hierarchy.containsKey(object)) {
+            List<LocalObjectLight> children = hierarchy.get(object);
+            
+            subHierarchy.put(object, children);
+            
+            for (LocalObjectLight child : children)
+                getSubHierarchy(hierarchy, child, subHierarchy);
+        } else {
+            subHierarchy.put(object, new ArrayList());
         }
     }
     
