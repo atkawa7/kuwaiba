@@ -55,6 +55,7 @@ import org.netbeans.api.visual.widget.Widget;
  */
 public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
     public static int STROKE_WIDTH = 3;
+    public static int SELECTED_STROKE_WIDTH = 3;
     private boolean addingNestedDevice = true;
     private boolean showConnections = false;
     private LocalObject rack;
@@ -199,7 +200,6 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
                     ((PortWidget) targetWidget).setFree(false);
                             
                     edge.getLabelWidget().setVisible(true);
-                    edge.setStroke(new BasicStroke(3));                    
                     edge.setLineColor(Color.CYAN);
                     
                     validate();
@@ -262,7 +262,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         RackViewConnectionWidget newWidget = new RackViewConnectionWidget(this, edge);
-        newWidget.setStroke(new BasicStroke(STROKE_WIDTH));
+        newWidget.setStroke(new BasicStroke(RackViewScene.STROKE_WIDTH));                    
         newWidget.getLabelWidget().setVisible(false);
         newWidget.getActions().addAction(ActionFactory.createSelectAction(new RackConnectionSelectProvider()));
         newWidget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));

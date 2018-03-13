@@ -16,6 +16,7 @@
 
 package org.inventory.core.visual.scene;
 
+import java.awt.BasicStroke;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.netbeans.api.visual.action.ActionFactory;
@@ -32,6 +33,8 @@ import org.openide.util.lookup.Lookups;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public abstract class SelectableConnectionWidget extends ConnectionWidget {
+    public static final int STROKE_WIDTH = 3;
+    public static final int SELECTED_STROKE_WIDTH = 4;
     
     private Lookup lookup;
     protected LabelWidget labelWidget;
@@ -53,6 +56,7 @@ public abstract class SelectableConnectionWidget extends ConnectionWidget {
         lookup = Lookups.fixed(new ObjectNode(businessObject), businessObject);
         
         setState(ObjectState.createNormal());
+        setStroke(new BasicStroke(STROKE_WIDTH));
     }
     
     public LabelWidget getLabelWidget() {

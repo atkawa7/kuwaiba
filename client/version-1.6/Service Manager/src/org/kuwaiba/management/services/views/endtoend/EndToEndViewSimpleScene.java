@@ -559,7 +559,6 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
         newWidget.getActions().addAction(createSelectAction());
         newWidget.getActions().addAction(moveControlPointAction);
         newWidget.getActions().addAction(addRemoveControlPointAction);
-        newWidget.setStroke(new BasicStroke(STROKE_WIDTH));
         newWidget.setRouter(RouterFactory.createFreeRouter());
         newWidget.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         newWidget.setEndPointShape(PointShape.SQUARE_FILLED_BIG);

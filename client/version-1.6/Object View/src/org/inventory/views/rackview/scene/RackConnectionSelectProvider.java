@@ -77,7 +77,7 @@ public class RackConnectionSelectProvider implements SelectProvider {
             }
             if (widget instanceof RackViewConnectionWidget) {
                 ((RackViewConnectionWidget) widget).setLineColor(Color.CYAN);
-                ((RackViewConnectionWidget) widget).setStroke(new BasicStroke(RackViewScene.STROKE_WIDTH));
+                ((RackViewConnectionWidget) widget).setStroke(new BasicStroke(RackViewScene.SELECTED_STROKE_WIDTH));
             }
         } else
             scene.userSelectionSuggested (Collections.emptySet(), invertSelection);

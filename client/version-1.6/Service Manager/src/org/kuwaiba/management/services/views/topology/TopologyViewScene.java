@@ -102,6 +102,10 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
         initSelectionListener();
         
         expandedTransportLinks = new HashMap<>();
+        
+        getActions().addAction(ActionFactory.createZoomAction());
+        getInputBindings().setZoomActionModifiers(0); //No keystroke combinations
+        getActions().addAction(ActionFactory.createPanAction());
     }
     
     @Override
