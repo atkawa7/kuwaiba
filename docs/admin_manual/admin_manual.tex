@@ -5,7 +5,7 @@
 %Metadata
 \title{Kuwaiba Open Network Inventory Administrator's Manual}
 \author{Neotropic SAS}
-\date{21.08.2017}
+\date{14.03.2018}
 
 %Imports
 \usepackage{graphicx}
@@ -68,6 +68,8 @@
 				March 24th 2017 & Added notes about configuring Glassfish to support HTTP compression. \\
 				\midrule
 				June 1st 2017 & Added Appendix E and some remarks in the "How to Configure a Secure Connection"\\
+				\midrule
+				March 14th 2018 & Added a new tip in the troubleshooting section about database access libraries versions.\\
 				\bottomrule
 			\end{tabular}	
 				
@@ -124,7 +126,7 @@
 					Note that you need the JDK (Java Development Kit), not only the JRE (Java Runtime Environment).
 				\end{framed}
 				\item An application server. The instructions presented in this document apply to Glassfish version 3 or above, however, Glassfish 4.1 is highly recommended. You can find details on its installation process here\footnote{Glassfish Quick Start Guide https://glassfish.java.net/docs/4.0/quick-start-guide.pdf}. In short, just download the .exe/.bin installer from its official site\footnote{Glassfish Official Web Site https://glassfish.java.net/} and execute it choosing the default options. Make sure you secure and tune it in your production environment. You can also use any other Java EE 7 compliant application server, but this document will use Glassfish.
-				\item Neo4J 2.3.x Community Edition. We just need some libraries included in its installation package, but it's good to have it all installed so we can use it for troubleshooting problems in the future. You can get the installer from here\footnote {Neo4J 2.3.2 Community Edition Downloads https://neo4j.com/download-thanks/?edition=community\&flavour=unix\&release=2.3.2}.
+				\item Neo4J 2.3.x Community Edition. We just need some libraries included in its installation package, but it's good to have it all installed so we can use it for troubleshooting problems in the future. You can get the installer from here\footnote {Neo4J 2.3.11 Community Edition Downloads https://neo4j.com/download-thanks/?edition=community\&flavour=unix\&release=2.3.11}.
 				\item The latest Kuwaiba Server installation package. You can get it from here\footnote {Kuwaiba Installation Packages http://sourceforge.net/projects/kuwaiba/files/}. As of version 1.0, both client and server are in the same file, whose name must look like this 
 		
 				\begin{verbatim}
@@ -257,7 +259,19 @@
 				\end{figure}
 				
 				\begin{framed} {\large \textbf{Important}} \\
-					For security reasons, the administration console can \textbf{only} be opened from the same computer the server is running. If you try to open it from some other computer, you'll get an error. If you want to access the administration console from outside, you can use an SSH tunnel.
+					For security reasons, the administration console can \textbf{only} be opened from the same computer the server is running. If you try to open it from some other computer, you'll get an error. If you want to access the administration console from another computer, you can use an SSH tunnel. On UNIX terminals with the default SSH client installed, you can use the following command:
+					
+					%\begin{verbbox}
+						ssh user@server -L local-port:localhost:remote-port -N
+					%\end{verbbox}
+					%\begin{figure}[ht]
+					%	\centering	
+					%	\theverbbox
+					%\end{figure}
+					
+					Where \textbf{remote-port} is 8080 or 8181 depending if you want to use HTTP or HTTPS. \textbf{local-port} is the local port you want to map the remote port to. For the sake of simplicity, use the same \textbf{remote-port}, as long as it is locally free.
+					
+					Windows users, please refer to PuTTY documentation on how to create SSH tunnels \footnote{PuTTY https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html}.
 				\end{framed}
 				\item Additionally, \textbf{always} check the command prompt/console you used to launch the server to see if an error was thrown. Sometimes, the errors are logged only in the server log file, located at \textbf{[GF\_INSTALL\_DIR]/glassfish/domains/domainXX/logs/}. The application may have been deployed, but the Persistence Service might have not started. A successful startup should look like this in the server log files:
 				\begin{figure}[h!]
@@ -281,6 +295,16 @@
 					\item A message \textit{Can not find the class InventoryObject} means that 
 					\item If you install Glassfish under MS Windows 7/Vista in \textbf{c:/glassfishv3}, check if you have proper permissions to write on this location, since due to system restrictions it's not possible by default. That will affect the domain creation and application deployment processes.
 					\item In some cases, if you install Glassfish before installing the JDK under MS Windows (especially versions 7 and Vista) or when the installer detects a wrong version of Java, the variable AS\_JAVA in \textbf{[GLASSFISH\_INSTALL\_DIR]/glassfish/config/asenv.bat} is set to a wrong location. It should be pointing to the JAVA\_HOME value (this is, the JDK installation directory).
+					\item The server log file shows an error like this:
+					\begin{verbbox}
+						Error starting org.neo4j.kernel.impl.factory.CommunityFacadeFactory, DATABASE_PATH
+					\end{verbbox}
+					\begin{figure}[h!]
+						\centering	
+						\theverbbox
+					\end{figure}
+					
+					 There might be a compatibility problem regarding the database access libraries. Check that you are using the latest version on the recommended branch (in the case, 2.x, so the latest available version at the time of writing is 2.3.11).
 				\end{enumerate}
 			\newpage
 			\section{Client Installation}
@@ -371,7 +395,7 @@
 						\label{fig:certificate_generation}
 					\end{figure}
 					
-					\textbf{Important:} If your server doesn't have a formal canonical name, and instead you reach it directky usin its IP address, the command needs and extra parameter:\\
+					\textbf{Important:} If your server doesn't have a formal canonical name, and instead you reach it directly using its IP address, the command needs and extra parameter:\\
 					
 					\small keytool -genkey -keyalg RSA -alias [alias] -keystore [keystore\_filename] -validity 3600 -keysize 2048 -ext san=ip:[server\_ip\_address]\\
 					
