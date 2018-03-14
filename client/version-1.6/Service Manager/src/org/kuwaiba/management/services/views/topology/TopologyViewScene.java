@@ -144,7 +144,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
             xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
             
             for (Widget edgeWidget : edgeLayer.getChildren()) {
-                //Ignore the expanded edges, that is the container links thet were created during the disaggregation of a transporlink
+                //Ignore the expanded edges, that is the container links thet were created during the disaggregation of a transportlink
                 if (isExpandedEdge((LocalObjectLight)findObject(edgeWidget)))
                     continue;
                 
@@ -190,6 +190,8 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
     }
 
 
+    //This method MUST be called after render(LocalObjectLight), since it assumes that the required nodes and connections already exist and it's only
+    //necessary to set their position and control points
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
         //<editor-fold defaultstate="collapsed" desc="Uncomment this for debugging purposes. This outputs the XML view as a file">
@@ -219,61 +221,40 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                         int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
                         int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
                         long objectId = Long.valueOf(reader.getElementText());
-
-                        LocalObjectLight lol = CommunicationsStub.getInstance().getObjectInfoLight(objectClass, objectId);
-                        if (lol != null) {
-                            if (getNodes().contains(lol)) //The node in the saved view already exists in the canvas, so either is duplicated or the view was not cleared previously 
-                                NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
-                            else {
-                                Widget widget = addNode(lol);
-                                widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
-                                widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
-                                validate();
-                            }
-                        } //In case of error, ignore the node
+                        
+                        Widget dummyNodeWidget = findWidget(new LocalObjectLight(objectId, "", objectClass));
+                        
+                        if (dummyNodeWidget != null) { //If the node does not exist, it's ignored because that means that the resource is no longer associated to the service
+                            dummyNodeWidget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
+                            dummyNodeWidget.setBackground(com.getMetaForClass(objectClass, false).getColor());
+                            validate();
+                        } else
+                            NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, String.format("Node with id %s could not be found. Save the view to keep the changes", objectId));
                     }else {
                         if (reader.getName().equals(qEdge)) {
                             long objectId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
 
-                            long aSide = Long.valueOf(reader.getAttributeValue(null, "aside")); //NOI18N
-                            long bSide = Long.valueOf(reader.getAttributeValue(null, "bside")); //NOI18N
+                            String objectClass = reader.getAttributeValue(null, "class"); //NOI18N
 
-                            String className = reader.getAttributeValue(null, "class"); //NOI18N
+                            ObjectConnectionWidget connectionWidget = (ObjectConnectionWidget)findWidget(new LocalObjectLight(objectId, "", objectClass));
 
-                            LocalObjectLight container = com.getObjectInfoLight(className, objectId);
-
-                            if (container != null) { // if the connection exist
-                                LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
-                                ObjectNodeWidget aSideWidget = (ObjectNodeWidget) findWidget(aSideObject);
-
-                                LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
-                                ObjectNodeWidget bSideWidget = (ObjectNodeWidget) findWidget(bSideObject);
-
+                            if (connectionWidget != null) { // if the connection exists, update its control
                                 
-                                if (aSideWidget != null && bSideWidget != null) {//If one of the endpoints is missing, don't render the connection
+                                List<Point> localControlPoints = new ArrayList<>();
+                                while(true) {
+                                    reader.nextTag();
 
-                                    if (getEdges().contains(container))
-                                        NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
-                                    else {
-                                        ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
-                                        setEdgeSource(container, aSideObject);
-                                        setEdgeTarget(container, bSideObject);
-                                        
-                                        List<Point> localControlPoints = new ArrayList<>();
-                                        while(true) {
-                                            reader.nextTag();
-
-                                            if (reader.getName().equals(qControlPoint)) {
-                                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                                                    localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
-                                            } else {
-                                                newEdge.setControlPoints(localControlPoints,false);
-                                                break;
-                                            }
-                                        }
+                                    if (reader.getName().equals(qControlPoint)) {
+                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                            localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
+                                    } else {
+                                        connectionWidget.setControlPoints(localControlPoints,false);
+                                        validate();
+                                        break;
                                     }
                                 }
-                            } 
+                            } else
+                                NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, String.format("Connection with id %s could not be found. Save the view to keep the changes", objectId));
                         }
                         // FREE FRAMES
                         else if (reader.getName().equals(qPolygon)) { /*Nothing for now*/ }//end qPolygon
@@ -303,7 +284,6 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
         }
         validate();
         repaint();
-        
     }
 
     @Override
@@ -312,31 +292,22 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
         if (serviceResources == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
-            List<LocalObjectLight> nodesToBeDeleted = new ArrayList<>(getNodes()); 
-            //We clone the existing nodes to synchronize the view, so saved nodes that are no longer listed as service resources are removed
-            //We assume that render(byte[]) was called before calling render(LocalObjectLight)
-            Map<Long, LocalObjectLight> equipmentByPort = new HashMap<>();
+            Map<Long, LocalObjectLight> portsInDevice = new HashMap<>();
             //We will ignore all resources that are not GenericCommunicationsElement
             for (LocalObjectLight serviceResource : serviceResources) {
                 if (com.isSubclassOf(serviceResource.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)) {
                     if (findWidget(serviceResource) == null)
                         addNode(serviceResource);
                     
-                    nodesToBeDeleted.remove(serviceResource);
-                    
                     List<LocalObjectLight> physicalPorts = com.getChildrenOfClassLightRecursive(serviceResource.getOid(), serviceResource.getClassName(), "GenericPhysicalPort");
                     if (physicalPorts == null) 
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
 
                     for (LocalObjectLight physicalPort : physicalPorts)
-                        equipmentByPort.put(physicalPort.getOid(), serviceResource);
+                        portsInDevice.put(physicalPort.getOid(), serviceResource);
                 }
             }
             
-            for (LocalObjectLight nodeToBeDeleted : nodesToBeDeleted) {
-                removeNodeWithEdges(nodeToBeDeleted);
-                validate();
-            }
             
             //Once the nodes have been added, we retrieve the physical and logical (STMX) connections between them and ignore those that end in other elements
             for (LocalObjectLight aNode : getNodes()) {
@@ -352,7 +323,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                         LocalObjectLight targetPort = aConnection.get(aConnection.size() - 1);
                         
                         LocalObjectLight sourceEquipment = aNode;
-                        LocalObjectLight targetEquipment = equipmentByPort.get(targetPort.getOid());
+                        LocalObjectLight targetEquipment = portsInDevice.get(targetPort.getOid());
 
                         if (findWidget(targetEquipment) != null) {
                             
@@ -373,18 +344,17 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                     
                     //Now the logical connections
                     for (LocalObjectLight aConnection : logicalConnections) {
-                        ObjectConnectionWidget connectionWidget = (ObjectConnectionWidget)findWidget(aConnection);
-                        if (connectionWidget == null) { //The connection hasn't already added, so we add it and set the source anchor
+                        ObjectConnectionWidget logicalConnectionWidget = (ObjectConnectionWidget)findWidget(aConnection);
+                        if (logicalConnectionWidget == null) {
                             addEdge(aConnection);
                             setEdgeSource(aConnection, aNode);
-                        } else { //The connection already exists, check the endpoints and connect whatever is left to connect
-                            if (getEdgeTarget(aConnection) == null)
-                                setEdgeTarget(aConnection, aNode);
-                        }
+                        } else
+                            setEdgeTarget(aConnection, aNode);
                     }
+                    
                 }
-            }            
-            //Now we delete the connections to elements that are not in the view. Granted, this is a reprocess, but I prefer and save a few
+            }
+            //Now we delete the connections to elements that are not in the view (they will only have a source, not a target widget). Granted, this is a reprocess, but I prefer and save a few
             //calls to the server doing this at client-side only
             for (LocalObjectLight aConnection : new ArrayList<>(getEdges())) {
                 if (getEdgeTarget(aConnection) == null)

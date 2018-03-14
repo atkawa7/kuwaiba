@@ -173,12 +173,11 @@ public class TopologyViewTopComponent extends TopComponent implements
     
     @Override
     protected void componentOpened() {
-        if (currentView != null)
-            scene.render(currentView.getStructure()); //Render the saved view, if any
+        //Render the default view first, that is, add the resources associated directly to the service and the applicable connections
+        scene.render(currentService);
+        if (currentView != null) //Then see if there's a saved one (if any) containing the position of the nodes and control points for the connections
+            scene.render(currentView.getStructure());
         
-        //Renders the default anyway to synchronize the possible changes
-        //that might have appeared since the last time the view was opened
-        scene.render(currentService); 
         saved = true;
         scene.addChangeListener(this);
     }
