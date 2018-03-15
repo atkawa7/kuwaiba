@@ -18,6 +18,7 @@ package org.kuwaiba.apis.web.gui.nodes;
 import com.google.common.eventbus.EventBus;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.server.Page;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
@@ -46,6 +47,42 @@ public class ObjectNodePropertyChangeValueListener extends AbstractNodePorpertyV
             Object value = event.getProperty().getValue();
             String[] attributes = (String[])object.getItemProperty("attributes").getValue();
             String[][] values = (String[][])object.getItemProperty("values").getValue();
+            
+//            for (int i = 0; i < attributes.length; i += 1) {
+//                if (attributes[i].equals(attributeCaption)) {
+//
+//                    switch (attributeType) {
+//                        case "String":
+//                            values[i][0] = (String) value;
+//                            break;
+//                        case "Boolean":
+//                            values[i][0] = Boolean.toString((boolean)value);
+//                            break;
+//                        case "ListType":
+//                            values[i][0] = Long.toString(((RemoteObjectLight)value).getOid());
+//                            break;
+//                    }
+//                    parentComponent.getWsBean().updateObject(
+//                            (String)(object.getItemProperty(Constants.PROPERTY_CLASS_NAME).getValue()), 
+//                            (long)(object.getItemProperty(Constants.PROPERTY_OID).getValue()), 
+//                            new String[] {attributeCaption}, 
+//                            new String[] {values[i][0]},
+//                            Page.getCurrent().getWebBrowser().getAddress(), 
+//                            parentComponent.getApplicationSession().getSessionId());
+//                    // Notifies if the name has changed
+//                    if(attributeCaption.equals(Constants.PROPERTY_NAME)) {
+//                        Property.ValueChangeEvent eventOID = new Property.ValueChangeEvent() {
+//
+//                            @Override
+//                            public Property getProperty() {
+//                                return object.getItemProperty(Constants.PROPERTY_OID);
+//                            }
+//                        };                
+//                        eventBus.post(new Property.ValueChangeEvent[]{eventOID, event});
+//                    }
+//                    return;
+//                }
+//            }            
             int k=0;
             for(String attibuteName : attributes){
                 if(attibuteName.equals(attributeCaption))
@@ -85,13 +122,17 @@ public class ObjectNodePropertyChangeValueListener extends AbstractNodePorpertyV
                     values[k][0] = Long.toString(((RemoteObjectLight)value).getOid());
                     break;
             }
+            String[] arrayValues = new String[values.length];
             
-//            parentComponent.getWsBean().updateObject((String)(object.getItemProperty(Constants.PROPERTY_CLASS_NAME).getValue()),
-//                    (long)(object.getItemProperty(Constants.PROPERTY_OID).getValue()),
-//                    attributes, values,
-//                    Page.getCurrent().getWebBrowser().getAddress(), 
-//                    parentComponent.getApplicationSession().getSessionId());
-            throw new ServerSideException("Fix Me!");
+            for (int i = 0; i < arrayValues.length; i += 1)
+                arrayValues[i] = values[i][0];
+                        
+            parentComponent.getWsBean().updateObject((String)(object.getItemProperty(Constants.PROPERTY_CLASS_NAME).getValue()),
+                    (long)(object.getItemProperty(Constants.PROPERTY_OID).getValue()),
+                    attributes, arrayValues,
+                    Page.getCurrent().getWebBrowser().getAddress(), 
+                    parentComponent.getApplicationSession().getSessionId());
+
         } catch (ServerSideException ex) {
             Logger.getLogger(ObjectNodePropertyChangeValueListener.class.getName()).log(Level.SEVERE, null, ex);
         }

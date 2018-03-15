@@ -41,34 +41,34 @@ public class CreateInventoryObjectChildAction extends AbstractComposedAction {
 
     @Override
     public void finalActionPerformed(Object sourceComponent, Object targetObject, Object selectedOption) {
-//        try {
-//            if (!(sourceComponent instanceof EmbeddableComponent))
-//                return;
-//            
-//            if (!(targetObject instanceof RemoteObjectLight))
-//                return;
-//            
-//            TopComponent parentComponent = ((EmbeddableComponent) sourceComponent).getTopComponent();
-//            RemoteObjectLight object = (RemoteObjectLight) targetObject;
-//            
-//            long oid = parentComponent.getWsBean().createObject(
-//                    ((ClassInfoLight) selectedOption).getClassName(), 
-//                    "DummyRoot".equals(((ClassInfoLight) selectedOption).getClassName()) ? null : object.getClassName(),
-//                    object.getOid(),
-//                    new String[0],
-//                    new String[0][0],
-//                    0,
-//                    Page.getCurrent().getWebBrowser().getAddress(), 
-//                    parentComponent.getApplicationSession().getSessionId());
-//            
-//            newObject = parentComponent.getWsBean().getObjectLight(
-//                    ((ClassInfoLight) selectedOption).getClassName(), 
-//                    oid, 
-//                    Page.getCurrent().getWebBrowser().getAddress(), 
-//                    parentComponent.getApplicationSession().getSessionId());
-//        } catch (ServerSideException ex) {
-//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-//        }
+        try {
+            if (!(sourceComponent instanceof EmbeddableComponent))
+                return;
+            
+            if (!(targetObject instanceof RemoteObjectLight))
+                return;
+            
+            TopComponent parentComponent = ((EmbeddableComponent) sourceComponent).getTopComponent();
+            RemoteObjectLight object = (RemoteObjectLight) targetObject;
+            
+            long oid = parentComponent.getWsBean().createObject(
+                    ((ClassInfoLight) selectedOption).getClassName(), 
+                    "DummyRoot".equals(((ClassInfoLight) selectedOption).getClassName()) ? null : object.getClassName(), //NOI18N
+                    object.getOid(),
+                    new String[0],
+                    new String[0],
+                    -1,
+                    Page.getCurrent().getWebBrowser().getAddress(), 
+                    parentComponent.getApplicationSession().getSessionId());
+            
+            newObject = parentComponent.getWsBean().getObjectLight(
+                    ((ClassInfoLight) selectedOption).getClassName(), 
+                    oid, 
+                    Page.getCurrent().getWebBrowser().getAddress(), 
+                    parentComponent.getApplicationSession().getSessionId());
+        } catch (ServerSideException ex) {
+            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+        }
     }
 
     @Override

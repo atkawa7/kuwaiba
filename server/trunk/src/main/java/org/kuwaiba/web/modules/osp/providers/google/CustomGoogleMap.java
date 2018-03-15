@@ -58,12 +58,18 @@ import org.kuwaiba.apis.web.gui.menus.RawContextMenu;
 import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
+import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.web.custom.tree.DynamicTree;
+import org.kuwaiba.web.custom.wizards.physicalconnection.NewContainerWizard;
+import org.kuwaiba.web.custom.wizards.physicalconnection.NewLinkWizard;
 import org.kuwaiba.web.modules.osp.providers.google.overlays.ConnectionPolyline;
 import org.kuwaiba.web.custom.wizards.physicalconnection.PhysicalConnectionWizard;
+import org.kuwaiba.web.custom.wizards.physicalconnection.WizardInterface;
 import org.kuwaiba.web.modules.osp.AbstractGISView;
 import org.kuwaiba.web.modules.osp.providers.google.overlays.Polygon;
 
@@ -95,10 +101,32 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
                         
                         newConnection.setTarget((MarkerNode) clickedMarker);
                         
-                        PhysicalConnectionWizard wizard = new PhysicalConnectionWizard(parentComponent, newConnection);
-                        wizard.addCloseListener(CustomGoogleMap.this);
-                        
-                        getUI().addWindow(wizard);
+                        WebserviceBeanLocal wsBean = getTopComponent().getWsBean();
+                        String ipAddress = getUI().getPage().getWebBrowser().getAddress();
+                        String sessioId = getTopComponent().getApplicationSession().getSessionId();
+
+                        List<ClassInfoLight> linkClasses = null;
+                        List<ClassInfoLight> containerClasses = null;
+////                        try {
+////                            linkClasses = wsBean.getSubClassesLight(Constants.CLASS_GENERICPHYSICALLINK, false, false, ipAddress, sessioId);
+////                            containerClasses = wsBean.getSubClassesLight(Constants.CLASS_GENERICPHYSICALCONTAINER, false, false, ipAddress, sessioId);
+////                            
+////                            PhysicalConnectionWizard wizard = new PhysicalConnectionWizard(parentComponent, newConnection, linkClasses, containerClasses);
+////                            wizard.addCloseListener(CustomGoogleMap.this);
+////
+////                            getUI().addWindow(wizard);
+                            if (isContainer) {
+                                NewContainerWizard newContainerWizard = new NewContainerWizard(parentComponent, newConnection);
+                                newContainerWizard.addCloseListener(CustomGoogleMap.this);
+                                getUI().addWindow(newContainerWizard);
+                            } else {
+                                NewLinkWizard newLinkWizard = new NewLinkWizard(parentComponent, newConnection);
+                                newLinkWizard.addCloseListener(CustomGoogleMap.this);
+                                getUI().addWindow(newLinkWizard);
+                            }
+////                        } catch (ServerSideException ex) {
+////                            NotificationsUtil.showError(ex.getMessage());
+////                        }
                     }
                 }
                 MarkerNode clickedMarkerNode = (MarkerNode) clickedMarker;
@@ -239,6 +267,8 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
     private boolean updateView = false;
     
     private List<AbstractAction> actions = null;
+    
+    private boolean isContainer = false;
             
     public CustomGoogleMap(TopComponent parentComponent, String apiKey, String clientId, String language) {
         super(apiKey, clientId, language);
@@ -347,10 +377,11 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
         toolState(null);
     }
     
-    public void enableConnectionTool() {
+    public void enableConnectionTool(boolean isContainer) {
         toolState(DRAWING_MODE_EDGE);
         getState().markerSource = null;
         newConnection = null;
+        this.isContainer = isContainer;
     }
             
     public void enablePolygonTool() {
@@ -741,35 +772,35 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
 
     @Override
     public void windowClose(Window.CloseEvent e) {
-        PhysicalConnectionWizard wizard = (PhysicalConnectionWizard) e.getWindow();
-        
-        if (wizard.getSelectedButton() == 
-                PhysicalConnectionWizard.SELECTED_CANCEL_BUTTON)
-            Notification.show("Physical connection wizard was cancelled", 
-                    Notification.Type.TRAY_NOTIFICATION);
-        
-        if (wizard.getSelectedButton() == 
-                PhysicalConnectionWizard.SELECTED_FINISH_BUTTON) {
-            if (newConnection.getConnectionInfo().getOid() != -1L) {
-                
-                if (!edgesForNode.containsKey(newConnection.getSource().getId()))
-                    edgesForNode.put(newConnection.getSource().getId(), new ArrayList());
-                edgesForNode.get(newConnection.getSource().getId()).add(newConnection);
-                
-                if (!edgesForNode.containsKey(newConnection.getTarget().getId()))
-                    edgesForNode.put(newConnection.getTarget().getId(), new ArrayList());
-                edgesForNode.get(newConnection.getTarget().getId()).add(newConnection);
-                
-                addEdge(newConnection, newConnection.getSource(), newConnection.getTarget());
-                
-                if (!getConnectionsFilter().contains(newConnection.getConnectionInfo().getClassName()))
-                    getConnectionsFilter().add(newConnection.getConnectionInfo().getClassName());
-                
-                newConnection.setSaved(false);
-                setUpdateView(true);
+        if (e.getWindow() instanceof WizardInterface) {
+            WizardInterface wizardInterface = (WizardInterface) e.getWindow();
+                    
+            if (!wizardInterface.isWizardCompleted())
+                Notification.show("Physical connection wizard was cancelled", 
+                        Notification.Type.TRAY_NOTIFICATION);
+
+            if (wizardInterface.isWizardCompleted()) {
+                if (newConnection.getConnectionInfo().getOid() != -1L) {
+
+                    if (!edgesForNode.containsKey(newConnection.getSource().getId()))
+                        edgesForNode.put(newConnection.getSource().getId(), new ArrayList());
+                    edgesForNode.get(newConnection.getSource().getId()).add(newConnection);
+
+                    if (!edgesForNode.containsKey(newConnection.getTarget().getId()))
+                        edgesForNode.put(newConnection.getTarget().getId(), new ArrayList());
+                    edgesForNode.get(newConnection.getTarget().getId()).add(newConnection);
+
+                    addEdge(newConnection, newConnection.getSource(), newConnection.getTarget());
+
+                    if (!getConnectionsFilter().contains(newConnection.getConnectionInfo().getClassName()))
+                        getConnectionsFilter().add(newConnection.getConnectionInfo().getClassName());
+
+                    newConnection.setSaved(false);
+                    setUpdateView(true);
+                }
             }
+            getUI().removeWindow(e.getWindow());
         }
-        getUI().removeWindow(wizard);
         newConnection = null;
     }
     

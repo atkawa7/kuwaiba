@@ -132,4 +132,9 @@ public class RemoteObjectLight implements Serializable {
     public boolean equals (Object obj) {
         return obj instanceof RemoteObjectLight && ((RemoteObjectLight)obj).getOid() == oid;
     }
+    
+    @Override
+    public String toString() {
+        return String.format("%s [%s]", name, className);
+    }
 }

@@ -16,7 +16,6 @@
 package org.kuwaiba.web.custom.wizards.physicalconnection;
 
 import com.vaadin.data.Property;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
@@ -25,14 +24,11 @@ import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
-import java.util.HashMap;
+import java.util.List;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
-import org.kuwaiba.beans.WebserviceBeanLocal;
-import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.interfaces.ws.toserialize.application.Validator;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
 import org.vaadin.teemu.wizards.WizardStep;
 
@@ -41,15 +37,15 @@ import org.vaadin.teemu.wizards.WizardStep;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class FirstStepChooseEndpoint implements WizardStep {
-    private final PhysicalConnectionWizard wizard;
+    private final PhysicalConnectionWizard physicalConnectionWizard;
     private DynamicTree treeEndPointA;
     private DynamicTree treeEndPointB;
     
-    VerticalLayout content;
-    
-    public FirstStepChooseEndpoint(PhysicalConnectionWizard wizard) {
+    private VerticalLayout content;
+        
+    public FirstStepChooseEndpoint(PhysicalConnectionWizard physicalConnectionWizard) {
         content = null;
-        this.wizard = wizard;
+        this.physicalConnectionWizard = physicalConnectionWizard;
     }
     
     @Override
@@ -58,15 +54,15 @@ public class FirstStepChooseEndpoint implements WizardStep {
     }
     
     private Component initTrees() {
-        RemoteObjectLight rootSource = wizard.getConnection().getSource().getRemoteObjectLight();
+        RemoteObjectLight rootSource = physicalConnectionWizard.getConnection().getSource().getRemoteObjectLight();
         InventoryObjectNode rootNodeA = new InventoryObjectNode(rootSource);
-        treeEndPointA = new DynamicTree(rootNodeA, wizard.getTopComponent());
+        treeEndPointA = new DynamicTree(rootNodeA, physicalConnectionWizard.getTopComponent());
         treeEndPointA.setDragMode(Tree.TreeDragMode.NONE);
         rootNodeA.setTree(treeEndPointA);
         
-        RemoteObjectLight rootTarget = wizard.getConnection().getTarget().getRemoteObjectLight();
+        RemoteObjectLight rootTarget = physicalConnectionWizard.getConnection().getTarget().getRemoteObjectLight();
         InventoryObjectNode rootNodeB = new InventoryObjectNode(rootTarget);
-        treeEndPointB = new DynamicTree(rootNodeB, wizard.getTopComponent());
+        treeEndPointB = new DynamicTree(rootNodeB, physicalConnectionWizard.getTopComponent());
         treeEndPointB.setDragMode(Tree.TreeDragMode.NONE);
         rootNodeB.setTree(treeEndPointB);
         
@@ -88,31 +84,39 @@ public class FirstStepChooseEndpoint implements WizardStep {
             selectConnection.setWidth("30%");
                         
             selectConnection.setNullSelectionAllowed(false);
-            
-            String [] connectionClasses = new String[] {
-                "Wire Container", 
-                "Wireless Container", 
-                "Electrical Link", 
-                "Optical Link", 
-                "Wireless Link", 
-                "Power Link"};
-            
-            ThemeResource [] icons = new ThemeResource[] { 
-                new ThemeResource("img/mod_phy_conn_icon_wire_container.png"), 
-                new ThemeResource("img/mod_phy_conn_icon_wireless_container.png"), 
-                new ThemeResource("img/mod_phy_conn_icon_electrical_link.png"), 
-                new ThemeResource("img/mod_phy_conn_icon_optical_link.png"), 
-                new ThemeResource("img/mod_phy_conn_icon_wireless_link.png"), 
-                new ThemeResource("img/mod_phy_conn_icon_power_link.png") };
-            
-            for (int i = 0; i < icons.length; i += 1) {
-                selectConnection.addItem(connectionClasses[i]);
-                selectConnection.setItemIcon(connectionClasses[i], icons[i]);
+                       
+            List<ClassInfoLight> links = physicalConnectionWizard.getLinkClasses();
+            List<ClassInfoLight> containers = physicalConnectionWizard.getContainerClasses();
+////            String [] connectionClasses = new String[] {
+////                "Wire Container", 
+////                "Wireless Container", 
+////                "Electrical Link", 
+////                "Optical Link", 
+////                "Wireless Link", 
+////                "Power Link"};
+////            
+////            ThemeResource [] icons = new ThemeResource[] { 
+////                new ThemeResource("img/mod_phy_conn_icon_wire_container.png"), 
+////                new ThemeResource("img/mod_phy_conn_icon_wireless_container.png"), 
+////                new ThemeResource("img/mod_phy_conn_icon_electrical_link.png"), 
+////                new ThemeResource("img/mod_phy_conn_icon_optical_link.png"), 
+////                new ThemeResource("img/mod_phy_conn_icon_wireless_link.png"), 
+////                new ThemeResource("img/mod_phy_conn_icon_power_link.png") };
+////            
+////            for (int i = 0; i < icons.length; i += 1) {
+////                selectConnection.addItem(connectionClasses[i]);
+////                selectConnection.setItemIcon(connectionClasses[i], icons[i]);
+////            }
+////            selectConnection.setValue(connectionClasses[0]);
+
+            for (ClassInfoLight link : links) {
+                selectConnection.addItem(link.getClassName());
             }
-            selectConnection.setValue(connectionClasses[0]);
-                                                
+            for (ClassInfoLight container : containers) {
+                selectConnection.addItem(container.getClassName());
+            }
             String connectionClass  = (String) selectConnection.getValue();
-            PhysicalConnectionConfiguration connConfig = wizard.getConnectionConfiguration();
+            PhysicalConnectionConfiguration connConfig = physicalConnectionWizard.getConnectionConfiguration();
             connConfig.chooseWizardType(connectionClass);
             
             selectConnection.addListener(new Property.ValueChangeListener() {
@@ -120,7 +124,8 @@ public class FirstStepChooseEndpoint implements WizardStep {
                 @Override
                 public void valueChange(Property.ValueChangeEvent event) {                             
                     String connectionClass = (String) event.getProperty().getValue();
-                    connConfig.chooseWizardType(connectionClass);
+                    connConfig.setConnectionClass(connectionClass);                    
+////                    connConfig.chooseWizardType(connectionClass);
                 }
             });
             
@@ -153,80 +158,82 @@ public class FirstStepChooseEndpoint implements WizardStep {
             
             if (treeEndPointA.getValue() instanceof InventoryObjectNode &&
                     treeEndPointB.getValue() instanceof InventoryObjectNode) {
-                try {
+////                try {
                     InventoryObjectNode aObjectNode = (InventoryObjectNode) treeEndPointA.getValue();
                     InventoryObjectNode bObjectNode = (InventoryObjectNode) treeEndPointB.getValue();
                     
-                    WebserviceBeanLocal wsBean = wizard.getTopComponent().getWsBean();
-                    String ipAddress = wizard.getUI().getPage().getWebBrowser().getAddress();
-                    String sessionId = wizard.getTopComponent().getApplicationSession().getSessionId();
+////                    WebserviceBeanLocal wsBean = physicalConnectionWizard.getTopComponent().getWsBean();
+////                    String ipAddress = physicalConnectionWizard.getUI().getPage().getWebBrowser().getAddress();
+////                    String sessionId = physicalConnectionWizard.getTopComponent().getApplicationSession().getSessionId();
                     //TODO: validate The port A or B is already connected
                     RemoteObjectLight aRemoteObject = (RemoteObjectLight) aObjectNode.getObject();
                     RemoteObjectLight bRemoteObject = (RemoteObjectLight) bObjectNode.getObject();
-
-                    ClassInfo aClassInfo = wsBean.getClass(aRemoteObject.getClassName(), ipAddress, sessionId);
                     
-                    HashMap<String, Integer> aValidators = new HashMap<>();
-                    if (aClassInfo != null)
-                        for (Validator validator : aClassInfo.getValidators())
-                            aValidators.put(validator.getLabel(), validator.getValue());
-                                    
-                    ClassInfo bClassInfo = wsBean.getClass(bRemoteObject.getClassName(), ipAddress, sessionId);
-
-                    HashMap<String, Integer> bValidators = new HashMap<>();
-                    if (bClassInfo != null)
-                        for (Validator validator : bClassInfo.getValidators())
-                            bValidators.put(validator.getLabel(), validator.getValue());
-                    
-                    PhysicalConnectionConfiguration connConfig = wizard.getConnectionConfiguration();
-                    switch(connConfig.getWizardType()) {
-                        case PhysicalConnectionConfiguration.WIZARD_TYPE_CONTAINER:
-                            int aValidatorPhysicalNodeValue =
-                                    aValidators.get(PhysicalConnectionConfiguration.VALIDATOR_PHYSICAL_NODE) == null ? 0 :
-                                    aValidators.get(PhysicalConnectionConfiguration.VALIDATOR_PHYSICAL_NODE);
-                            
-                            if (aValidatorPhysicalNodeValue == 1) {
-                                int bValidatorPhysicalNodeValue = 
-                                        bValidators.get(PhysicalConnectionConfiguration.VALIDATOR_PHYSICAL_NODE) == null ? 0 :
-                                        bValidators.get(PhysicalConnectionConfiguration.VALIDATOR_PHYSICAL_NODE);
-                                
-                                if (!(bValidatorPhysicalNodeValue == 1)) {
-                                    NotificationsUtil.showError("The object selected in the right tree cannot be connected using a container");
-                                    advanced = false;
-                                }
-                            }
-                            else {
-                                NotificationsUtil.showError("The object selected in the left tree cannot be connected using a container");
-                                advanced = false;
-                            }
-                        break;
-                        case PhysicalConnectionConfiguration.WIZARD_TYPE_LINK:
-                            int aValidatorPhysicalEndpoint = 
-                                    aValidators.get(PhysicalConnectionConfiguration.VALIDATOR_PHYSICAL_ENDPOINT) == null ? 0 :
-                                    aValidators.get(PhysicalConnectionConfiguration.VALIDATOR_PHYSICAL_ENDPOINT);
-                            
-                            if (aValidatorPhysicalEndpoint == 1) {
-                                int bValidatorPhysicalEndpoint = 
-                                        bValidators.get(PhysicalConnectionConfiguration.VALIDATOR_PHYSICAL_ENDPOINT) == null ? 0 :
-                                        bValidators.get(PhysicalConnectionConfiguration.VALIDATOR_PHYSICAL_ENDPOINT);
-                                
-                                if (!(bValidatorPhysicalEndpoint == 1)) {
-                                    NotificationsUtil.showError("The object selected in the right tree cannot be connected using a link");
-                                    advanced = false;
-                                }
-                            }
-                            else {
-                                NotificationsUtil.showError("The object selected in the left tree cannot be connected using a link");
-                                advanced = false;
-                            }
-                        break;
-                        default:
-                            advanced = false;
-                    }
-                } catch (ServerSideException ex) {
-                    NotificationsUtil.showError(ex.getMessage());
-                    advanced = false;
-                }
+                    physicalConnectionWizard.getConnectionConfiguration().setEndpointA(aRemoteObject);
+                    physicalConnectionWizard.getConnectionConfiguration().setEndpointB(bRemoteObject);
+////                    ClassInfo aClassInfo = wsBean.getClass(aRemoteObject.getClassName(), ipAddress, sessionId);
+////                 
+////                    HashMap<String, Integer> aValidators = new HashMap<>();
+////                    if (aClassInfo != null)
+////                        for (Validator validator : aClassInfo.getValidators())
+////                            aValidators.put(validator.getLabel(), validator.getValue());
+////                                    
+////                    ClassInfo bClassInfo = wsBean.getClass(bRemoteObject.getClassName(), ipAddress, sessionId);
+////
+////                    HashMap<String, Integer> bValidators = new HashMap<>();
+////                    if (bClassInfo != null)
+////                        for (Validator validator : bClassInfo.getValidators())
+////                            bValidators.put(validator.getLabel(), validator.getValue());
+////                 
+////                    PhysicalConnectionConfiguration connConfig = physicalConnectionWizard.getConnectionConfiguration();
+////                    switch(connConfig.getWizardType()) {
+////                        case PhysicalConnectionConfiguration.WIZARD_TYPE_CONTAINER:
+////                            int aValidatorPhysicalNodeValue =
+////                                    aValidators.get(PhysicalConnectionConfiguration.VALIDATOR_PHYSICAL_NODE) == null ? 0 :
+////                                    aValidators.get(PhysicalConnectionConfiguration.VALIDATOR_PHYSICAL_NODE);
+////                            
+////                            if (aValidatorPhysicalNodeValue == 1) {
+////                                int bValidatorPhysicalNodeValue = 
+////                                        bValidators.get(PhysicalConnectionConfiguration.VALIDATOR_PHYSICAL_NODE) == null ? 0 :
+////                                        bValidators.get(PhysicalConnectionConfiguration.VALIDATOR_PHYSICAL_NODE);
+////                                
+////                                if (!(bValidatorPhysicalNodeValue == 1)) {
+////                                    NotificationsUtil.showError("The object selected in the right tree cannot be connected using a container");
+////                                    advanced = false;
+////                                }
+////                            }
+////                            else {
+////                                NotificationsUtil.showError("The object selected in the left tree cannot be connected using a container");
+////                                advanced = false;
+////                            }
+////                        break;
+////                        case PhysicalConnectionConfiguration.WIZARD_TYPE_LINK:
+////                            int aValidatorPhysicalEndpoint = 
+////                                    aValidators.get(PhysicalConnectionConfiguration.VALIDATOR_PHYSICAL_ENDPOINT) == null ? 0 :
+////                                    aValidators.get(PhysicalConnectionConfiguration.VALIDATOR_PHYSICAL_ENDPOINT);
+////                            
+////                            if (aValidatorPhysicalEndpoint == 1) {
+////                                int bValidatorPhysicalEndpoint = 
+////                                        bValidators.get(PhysicalConnectionConfiguration.VALIDATOR_PHYSICAL_ENDPOINT) == null ? 0 :
+////                                        bValidators.get(PhysicalConnectionConfiguration.VALIDATOR_PHYSICAL_ENDPOINT);
+////                                
+////                                if (!(bValidatorPhysicalEndpoint == 1)) {
+////                                    NotificationsUtil.showError("The object selected in the right tree cannot be connected using a link");
+////                                    advanced = false;
+////                                }
+////                            }
+////                            else {
+////                                NotificationsUtil.showError("The object selected in the left tree cannot be connected using a link");
+////                                advanced = false;
+////                            }
+////                        break;
+////                        default:
+////                            advanced = false;
+////                    }
+////                } catch (ServerSideException ex) {
+////                    NotificationsUtil.showError(ex.getMessage());
+////                    advanced = false;
+////                }
             }
             else { // when select the dummy node
                 NotificationsUtil.showError("You have to select both sides of this connection");

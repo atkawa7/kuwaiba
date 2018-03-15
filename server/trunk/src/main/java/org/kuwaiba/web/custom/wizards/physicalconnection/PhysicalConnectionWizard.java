@@ -15,8 +15,18 @@
  */
 package org.kuwaiba.web.custom.wizards.physicalconnection;
 
+import com.vaadin.server.Page;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.Window;
+import java.awt.Color;
+import java.util.List;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
+import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
+import org.kuwaiba.beans.WebserviceBeanLocal;
+import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
 import org.kuwaiba.web.modules.osp.providers.google.overlays.ConnectionPolyline;
 import org.vaadin.teemu.wizards.Wizard;
 import org.vaadin.teemu.wizards.event.WizardCancelledEvent;
@@ -41,13 +51,19 @@ public class PhysicalConnectionWizard extends Window implements
     private ConnectionPolyline connection;
     private PhysicalConnectionConfiguration connConfig;
     
-    public PhysicalConnectionWizard(TopComponent parentComponent, ConnectionPolyline connection) {
+    private final List<ClassInfoLight> linkClasses;
+    private final List<ClassInfoLight> containerClasses;
+    
+    public PhysicalConnectionWizard(TopComponent parentComponent, ConnectionPolyline connection, List<ClassInfoLight> linkClasses, List<ClassInfoLight> containerClasses) {
         super("Physical Connection Wizard");
         center();
         
         this.parentComponent = parentComponent;
         this.connection = connection;
         this.connConfig = new PhysicalConnectionConfiguration();
+        
+        this.linkClasses = linkClasses;
+        this.containerClasses = containerClasses;
         
         initWizard();
         setHeight("70%");
@@ -57,11 +73,19 @@ public class PhysicalConnectionWizard extends Window implements
         setContent(wizard);
     }
     
+    public List<ClassInfoLight> getLinkClasses() {
+        return linkClasses;
+    }
+    
+    public List<ClassInfoLight> getContainerClasses() {
+        return containerClasses;
+    }
+    
     private void initWizard() {
         wizard = new Wizard();
         wizard.setUriFragmentEnabled(true);
-        wizard.addStep(new FirstStepChooseEndpoint(this), "first");
-        wizard.addStep(new SecondStepConnectionSettings(this), "second");
+        wizard.addStep(new FirstStepChooseEndpoint(this), "first"); //NOI18
+        wizard.addStep(new SecondStepConnectionSettings(this), "second"); //NOI18
         wizard.setSizeFull();
         wizard.addListener(this);
     }
@@ -87,18 +111,37 @@ public class PhysicalConnectionWizard extends Window implements
     }
 
     @Override
-    public void wizardCompleted(WizardCompletedEvent event) {
-//        connection.setCaption(connConfig.getCaption());
-//        connection.setStrokeColor(connConfig.getStrokeColor());
-//        connection.setStrokeOpacity(connConfig.getStrokeOpacity());
-//        connection.setStrokeWeight(connConfig.getStrokeWeight());
-//                
+    public void wizardCompleted(WizardCompletedEvent event) {        
+        String connectionName = connConfig.getCaption();
+        String connectionClassName = connConfig.getConnectionClass();        
+        RemoteObjectLight endpointA = connConfig.getEndpointA();
+        RemoteObjectLight endpointB = connConfig.getEndpointB();
+        RemoteObjectLight template = new RemoteObjectLight(-1, null, null);
+        
+        WebserviceBeanLocal wsBean = getTopComponent().getWsBean();
+        String ipAddress = Page.getCurrent().getWebBrowser().getAddress();
+        String sessionId = getTopComponent().getApplicationSession().getSessionId();
+        
+        RemoteObjectLight parent;
+        try {
+            parent = wsBean.getCommonParent(endpointA.getClassName(), endpointA.getOid(), endpointB.getClassName(), endpointB.getOid(), ipAddress, sessionId);
+        } catch (ServerSideException ex) {
+            NotificationsUtil.showError(ex.getMessage());
+            return;
+        }
+        
+        long connectionId = -1;
+        try {
+            connectionId = wsBean.createPhysicalConnection(endpointA.getClassName(), endpointA.getOid(), endpointB.getClassName(), endpointB.getOid(), parent.getClassName(), parent.getOid(), connectionName, connectionClassName, template.getOid(), ipAddress, sessionId);
+        } catch (ServerSideException ex) {
+            NotificationsUtil.showError(ex.getMessage());
+            return;
+        }
 //        RemoteObjectLight aRbo = connection.getSource().getRemoteObjectLight();
 //        RemoteObjectLight bRbo = connection.getTarget().getRemoteObjectLight();
-//                
+//        
 //        String [] names;
 //        String [][] values;
-//        
 //        String name = connConfig.getCaption(); // connection name
 //        
 //        long typeOid = connConfig.getTypeOid();
@@ -164,6 +207,34 @@ public class PhysicalConnectionWizard extends Window implements
 //        }
 //        else
 //            NotificationsUtil.showError(errorMessage);
+        if (connectionId != -1l) {
+            ClassInfo connectionClass = null;
+            try {
+                connectionClass = wsBean.getClass(connectionClassName, ipAddress, sessionId);
+            } catch (ServerSideException ex) {
+                NotificationsUtil.showError(ex.getMessage());
+            }
+            
+            connection.setId(connectionId);
+            
+            
+            connection.setStrokeColor(toHexString(new Color(connectionClass.getColor())));
+            connection.setStrokeOpacity(connConfig.getStrokeOpacity());
+            connection.setStrokeWeight(connConfig.getStrokeWeight());
+            
+            connection.setConnectionInfo(new RemoteObjectLight(connectionId, connectionName, connectionClassName));
+            Notification.show("The connection was created successfully", Notification.Type.HUMANIZED_MESSAGE);
+            selectedButton = SELECTED_FINISH_BUTTON;
+            close();
+        }
+    }
+        
+    public final static String toHexString(Color colour) throws NullPointerException {
+        // Thanks to: http://www.javacreed.com/how-to-get-the-hex-value-from-color/
+        String hexColour = Integer.toHexString(colour.getRGB() & 0xffffff);
+        if (hexColour.length() < 6)
+            hexColour = "000000".substring(0, 6 - hexColour.length()) + hexColour;
+        return "#" + hexColour;
     }
 
     @Override
@@ -172,9 +243,9 @@ public class PhysicalConnectionWizard extends Window implements
         close();
     }
     
-    public int getSelectedButton() {
-        return selectedButton;
-    }
+////    public int getSelectedButton() {
+////        return selectedButton;
+////    }
     
     public TopComponent getTopComponent() {
         return parentComponent;

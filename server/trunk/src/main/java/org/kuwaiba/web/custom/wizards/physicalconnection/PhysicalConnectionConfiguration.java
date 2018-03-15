@@ -15,10 +15,13 @@
  */
 package org.kuwaiba.web.custom.wizards.physicalconnection;
 
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+
 /**
  * Physical Connection Configuration
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
+@Deprecated
 public class PhysicalConnectionConfiguration {
     public static final int WIZARD_TYPE_CONTAINER = 1;
     public static final int WIZARD_TYPE_LINK = 2;
@@ -68,8 +71,30 @@ public class PhysicalConnectionConfiguration {
     private int numChildren = 0;
     private String portType;
     
+    private RemoteObjectLight endpointA;
+    private RemoteObjectLight endpointB;
+    
+////    private PhysicalConnectionWizard physicalConnectionWizard;
+    
     public PhysicalConnectionConfiguration() {
+////        this.physicalConnectionWizard = physicalConnectionWizard;
         
+    }
+    
+    public RemoteObjectLight getEndpointA() {
+        return endpointA;
+    }
+    
+    public void setEndpointA(RemoteObjectLight endpointA) {
+        this.endpointA = endpointA;
+    }
+    
+    public RemoteObjectLight getEndpointB() {
+        return endpointB;
+    }
+        
+    public void setEndpointB(RemoteObjectLight endpointB) {
+        this.endpointB = endpointB;
     }
 
     public String getCaption() {

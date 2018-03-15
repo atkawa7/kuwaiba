@@ -86,4 +86,9 @@ public class ViewInfoLight implements Serializable {
     public void setType(String className) {
         this.className = className;
     }
+    
+    @Override
+    public String toString() {
+        return name;
+    }
 }
