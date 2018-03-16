@@ -264,7 +264,7 @@ public interface WebserviceBeanLocal {
     public void deleteGroups(long[] oids, String ipAddress, String sessionId)
             throws ServerSideException;
     
-    public long createListTypeItemRelateView(long listTypeItemId, String listTypeItemClassName, String viewClassName, 
+    public long createListTypeItemRelatedView(long listTypeItemId, String listTypeItemClassName, String viewClassName, 
         String name, String description, byte [] structure, byte [] background, String ipAddress, String sessionId) 
         throws ServerSideException;
     
@@ -424,6 +424,10 @@ public interface WebserviceBeanLocal {
     
     public long[] copyTemplateSpecialElements(String[] sourceObjectsClassNames, long[] sourceObjectsIds, 
         String newParentClassName, long newParentId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<RemoteObjectLight> getDeviceLayouts(String ipAddress, String sessionId) throws ServerSideException;
+        
+    public byte[] getDeviceLayoutStructure(long oid, String className, String ipAddress, String sessionId) throws ServerSideException;
     //</editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Reporting methods.">
@@ -577,9 +581,10 @@ public interface WebserviceBeanLocal {
     public List<RemoteFavoritesFolder> getFavoritesFoldersForObject(long userId ,String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteFavoritesFolder getFavoritesFolder(long favoritesFolderId, long userId, String ipAddress, String sessionId) throws ServerSideException;
     public void updateFavoritesFolder(long favoritesFolderId, long userId, String favoritesFolderName, String ipAddress, String sessionId) throws ServerSideException;
-    public List<RemoteBusinessRule> getBusinessRules(int type, String ipAddress, String sessionId) throws ServerSideException;
-    public AssetLevelCorrelatedInformation getAffectedServices(int resourceType, String resourceDefinition, String ipAddress, String sessionId) throws ServerSideException;
-    //Business rules
     public long createBusinessRule(String ruleName, String ruleDescription, int ruleType, int ruleScope, String appliesTo, String ruleVersion, List<String> constraints, String ipAddress, String sessionId) throws ServerSideException;
     public void deleteBusinessRule(long businessRuleId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteBusinessRule> getBusinessRules(int type, String ipAddress, String sessionId) throws ServerSideException;
+    public AssetLevelCorrelatedInformation getAffectedServices(int resourceType, String resourceDefinition, String ipAddress, String sessionId) throws ServerSideException;
+    
+    
 }

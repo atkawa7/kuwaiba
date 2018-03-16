@@ -28,8 +28,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.json.Json;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
@@ -190,7 +188,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
     }
     
     @Override
-    public List<SyncFinding> sync(PollResult pollResult) {
+    public List<SyncFinding> sync(PollResult pollResult) throws Exception {
         HashMap<RemoteBusinessObjectLight, AbstractDataEntity> originalData = pollResult.getResult();
         List<SyncFinding> findings = new ArrayList<>();
         // Adding to findings list the not blocking execution exception found during the mapped poll
@@ -206,7 +204,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
             try {
                 findings.addAll(x.load());
             } catch (MetadataObjectNotFoundException | ObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-                Logger.getLogger(ReferenceSnmpSyncProvider.class.getName()).log(Level.SEVERE, null, ex);
+                throw new Exception(ex.getMessage());
             }
         }
         return findings;

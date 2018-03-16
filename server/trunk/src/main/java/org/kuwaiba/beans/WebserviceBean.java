@@ -2393,7 +2393,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public long createListTypeItemRelateView(long listTypeItemId, String listTypeItemClassName, String viewClassName, 
+    public long createListTypeItemRelatedView(long listTypeItemId, String listTypeItemClassName, String viewClassName, 
         String name, String description, byte [] structure, byte [] background, String ipAddress, String sessionId) 
         throws ServerSideException {
         
@@ -2402,7 +2402,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
         try {
             aem.validateWebServiceCall("createListTypeItemRelateView", ipAddress, sessionId);            
             
-            long viewId = aem.createListTypeItemRelateView(listTypeItemId, listTypeItemClassName, viewClassName, name, description, structure, background);
+            long viewId = aem.createListTypeItemRelatedView(listTypeItemId, listTypeItemClassName, viewClassName, name, description, structure, background);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
@@ -3451,7 +3451,33 @@ public class WebserviceBean implements WebserviceBeanLocal {
             throw new ServerSideException(ex.getMessage());
         }
     }
-
+    
+    @Override
+    public List<RemoteObjectLight> getDeviceLayouts(String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("getDeviceLayouts", ipAddress, sessionId);
+            return RemoteObjectLight.toRemoteObjectLightArray(aem.getDeviceLayouts());
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public byte[] getDeviceLayoutStructure(long oid, String className, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("getDeviceLayoutStructure", ipAddress, sessionId);
+            return aem.getDeviceLayoutStructure(oid, className);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Reporting methods">
     @Override    

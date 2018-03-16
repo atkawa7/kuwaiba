@@ -526,7 +526,7 @@ public class Util {
             for (AttributeMetadata myAtt : myClass.getAttributes()){
                 if (myAtt.getName().equals(attributeName)){
                     if (attributes.get(attributeName)==null)
-                        attributes.put(attributeName, new ArrayList<>());
+                        attributes.put(attributeName, new ArrayList<String>());
                     attributes.get(attributeName).add(String.valueOf(relationship.getEndNode().getId()));
                 }
             }

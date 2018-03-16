@@ -38,12 +38,13 @@ import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
+import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.beans.WebserviceBean;
-import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.utils.i18n.I18N;
+import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
 
 /**
  * Loads data from a SNMP file to replace/update an existing element in the
@@ -327,7 +328,8 @@ public class SNMPDataProcessor {
         else if (classId == 10) { //port
             if (name.toLowerCase().contains("usb") || descr.toLowerCase().contains("usb")) //NOI18N
                 return "USBPort";//NOI18N
-            else if (name.toLowerCase().contains("mgmteth") || name.toLowerCase().contains("cpu") || name.toLowerCase().contains("control") ||
+            else if (name.toLowerCase().contains("fastethernet") || name.toLowerCase().contains("mgmteth") || 
+                    name.toLowerCase().contains("cpu") || name.toLowerCase().contains("control") ||
                     (descr.toLowerCase().contains("ethernet") && !descr.toLowerCase().contains("gigabit")) ||
                     descr.toLowerCase().contains("fast") || descr.toLowerCase().contains("management")) //NOI18N
                 return "ElectricalPort";//NOI18N
@@ -342,11 +344,10 @@ public class SNMPDataProcessor {
             return "PowerPort";//NOI18N
         else if (classId == 6 && name.contains("Module")) //NOI18N
             return "HybridBoard"; //NOI18N
-        else if (classId == 9) { //module      
-            if (!name.toLowerCase().contains("transceiver") || !descr.toLowerCase().contains("transceiver"))
-                return "IPBoard"; //NOI18N      
-            else if (name.toLowerCase().contains("transceiver") || descr.toLowerCase().contains("transceiver") || (descr.toLowerCase().contains("sfp") 
-                    || descr.toLowerCase().contains("xfp") || descr.toLowerCase().contains("cpak") || descr.toLowerCase().equals("ge t")))
+        else if (classId == 9) { //module
+            //In Routers ASR9001 the Transceivers, some times have an empty desc
+            if ((name.split("/").length > 3 || name.toLowerCase().contains("transceiver") || descr.toLowerCase().contains("transceiver") || (descr.toLowerCase().contains("sfp") 
+                    || descr.toLowerCase().contains("xfp") || descr.toLowerCase().contains("cpak") || descr.toLowerCase().equals("ge t"))) && !name.toLowerCase().contains("spa") && !descr.toLowerCase().contains("spa"))
                 return "Transceiver"; //NOI18N
 
             return "IPBoard"; //NOI18N
@@ -394,10 +395,8 @@ public class SNMPDataProcessor {
      */
     private void loadClassHierarchy() throws MetadataObjectNotFoundException {
         JsonObject jHierarchyFinding = Json.createObjectBuilder().add("type", "hierarchy").build();//NOI18N
-
         JsonObject jsonHierarchy = Json.createObjectBuilder().build();
         for (String parentClass : mapOfClasses.keySet()) {
-            
             List<ClassMetadataLight> actualPossibleChildren = mem.getPossibleChildren(parentClass);
             List<String> possibleChildrenToAdd = mapOfClasses.get(parentClass);
             
@@ -422,10 +421,8 @@ public class SNMPDataProcessor {
             }
         }//end for
         jHierarchyFinding = jsonObjectToBuilder(jHierarchyFinding).add("hierarchy",jsonHierarchy).build();//NOI18N
-        
         if(!jsonHierarchy.isEmpty()){
             jHierarchyFinding = jsonObjectToBuilder(jHierarchyFinding).add("hierarchy",jsonHierarchy).build();//NOI18N
-
             findings.add(new SyncFinding(SyncFinding.EVENT_NEW,
                     I18N.gm("the_contaimnet_hierarchy_needs_to_be_updated"),
                     jHierarchyFinding.toString()));
@@ -435,16 +432,20 @@ public class SNMPDataProcessor {
     /**
      * Create into kuwaiba's objects the lines read it from the SNMP
      * it creates a branch every time he finds a port or an element with no children
-     * e.g. branch 1) slot0/0[Slot]+
-     *                             |_board0/0[Board]+
-     *                                              |_ a port0/0/0[Port] 
+     * e.g. branch 1)slot0/0[Slot]+
+     *                            |_board0/0[Board]+
+     *                                             |_ port0/0/0[Port] 
+     *                                             (end of branch)
      * -------------------------------------------------------------------------
-     *      branch 2)                               |_0/0/1[Port] 
+     *      branch 2)                              |_0/0/1[Port] 
+     *                                             (end of branch)
      * -------------------------------------------------------------------------
-     *      branch 3)                               |_0/0/2[Port]
+     *      branch 3)                              |_0/0/2[Port]
+     *                                             (end of branch)
      * -------------------------------------------------------------------------     
      *      branch 4)  slot0/1[Slot]
      *                              |_board0/1[Board]
+     *                               (end of branch) 
      * -------------------------------------------------------------------------                           
      * @param parentId
      * @param parentClassName
@@ -484,21 +485,21 @@ public class SNMPDataProcessor {
                 
                 //We parse the class Id from SNMP into kuwaiba's class name
                 String mappedClass = parseClass(allData.get("entPhysicalClass").get(i), objectName, allData.get("entPhysicalDescr").get(i)); //NOI18N
-                HashMap<String, String> newAttributes = createNewAttributes(i);
                 
                 if(mappedClass == null) //it was impossible to parse the SNMP class into kuwaiba's class
                     findings.add(new SyncFinding(SyncFinding.EVENT_ERROR,
                                 I18N.gm("empty_fields_in_the_data"),
                                 Json.createObjectBuilder().add("type","error")
                                         .add("className", allData.get("entPhysicalClass").get(i))
-                                        .add("InstanceId", childId)
-                                        .add("attributes", newAttributes.toString()).build().toString()));
+                                        .add("InstanceId", childId).build().toString()));
                 else{
+                    HashMap<String, String> newAttributes = createNewAttributes(mappedClass, i);
                     //The chassis can be only updated
                     if (className.contains(mappedClass)) {
                         newAttributes.remove("name"); //NOI18N //the router name won't be changed
                         HashMap<String, String> comparedAttributes = compareAttributes(bem.getObject(id).getAttributes(), newAttributes);
                         if (!comparedAttributes.isEmpty()) {
+                            comparedAttributes.put("name", bem.getObject(id).getAttributes().get("name").get(0)); //we need this to show the name in the results
                             findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
                                     I18N.gm("router_has_changes"),
                                     createExtraInfoToUpdateAttributesInObject(Long.toString(id), mappedClass, comparedAttributes, bem.getObject(id).getAttributes()).toString()));
@@ -570,12 +571,12 @@ public class SNMPDataProcessor {
                 }
             }
             List<RemoteBusinessObjectLight> oldBranch = oldBranchesWithMatches.get(indexOfTheLargestsize);
-            return editBranch(oldBranch, newBranchToEvalueate);
+            return  partOfTheBranchMustBeCreated(oldBranch, newBranchToEvalueate);
         }
         return false; //if is empty all the branch should by created
     }
     
-    private boolean editBranch(List<RemoteBusinessObjectLight> oldBranch, 
+    private boolean partOfTheBranchMustBeCreated(List<RemoteBusinessObjectLight> oldBranch, 
             List<JsonObject> newBranchToEvalueate) throws InvalidArgumentException, 
             ObjectNotFoundException, MetadataObjectNotFoundException
     {
@@ -584,6 +585,10 @@ public class SNMPDataProcessor {
             List<JsonObject> newPartOfTheBranch = newBranchToEvalueate.subList(oldBranch.size(), newBranchToEvalueate.size());
             if(!newPartOfTheBranch.isEmpty()){//lets search if the part exists
                 List<List<RemoteBusinessObjectLight>> oldBranchesWithMatches = searchInOldStructure(newPartOfTheBranch);
+                if(oldBranchesWithMatches != null && !oldBranchesWithMatches.isEmpty()){//we found something
+                    oldBranch.addAll(oldBranchesWithMatches.get(0));
+                    return partOfTheBranchMustBeCreated(oldBranch, newBranchToEvalueate);
+                }
                 if(oldBranchesWithMatches == null)//we find the other part, the branch exists
                     return true; 
                 else if(oldBranchesWithMatches.isEmpty()){ //the new part of the branch doesn't exists, so we are going to create it an remove the part that exists 
@@ -619,6 +624,9 @@ public class SNMPDataProcessor {
                         currentObjName = objAttributes.getString("name");
                         objParentName = currentObj.getString("parentName");
                         objParentClassName = currentObj.getString("parentClassName");
+                        if(oldParent.getClassName().equals(className) && objParentClassName.equals(className))
+                            objParentName = oldParent.getName();
+                        
                         if(currentObjName.equals(oldObj.getName()) && currentObjClassName.equals(oldObj.getClassName()) &&
                             oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName))
                         {
@@ -651,7 +659,6 @@ public class SNMPDataProcessor {
         return true;
     }
     
-    
     /**
      * Search a new branch in the current structure if finds a part of the new 
      * branch in the o
@@ -666,8 +673,8 @@ public class SNMPDataProcessor {
     {
         List <List<RemoteBusinessObjectLight>> oldBranchesWithMatches = new ArrayList<>();
         List<RemoteBusinessObjectLight> foundPath = new ArrayList<>();
-        boolean hasBeenFound = false; // this is usded becaus some branch are in disorder
-        long parentId = 0;
+        boolean hasBeenFound = false; //This is usded because some branch are in disorder
+        
         for (long i : oldObjectStructure.keySet()) {
             foundPath = new ArrayList<>();
             List<RemoteBusinessObjectLight> oldBranch = oldObjectStructure.get(i);
@@ -681,8 +688,11 @@ public class SNMPDataProcessor {
                 if (!className.equals(objClassName)) {
                     RemoteBusinessObjectLight oldObj = oldBranch.get(w);
                     RemoteBusinessObjectLight oldParent = bem.getParent(oldObj.getClassName(), oldObj.getId());
+                    //The name of the Router will be diferent in most of the cases so we must avoid the name in this case..
+                    if(oldParent.getClassName().equals(className) && objParentClassName.equals(className))
+                        objParentName = oldParent.getName();
                     if (oldObj.getName().equals(newObjName) && oldObj.getClassName().equals(objClassName)){
-                        if(objParentClassName.equals(className) || oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName))
+                        if(oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName))
                             foundPath.add(oldObj);
                     }
                 }//end if not router
@@ -696,8 +706,7 @@ public class SNMPDataProcessor {
                 }
                 return null; //we find the whole path, we return null
             }
-            //Some paths exists but in order to find them we should look for 
-            //them backwards in the branch, because the SNMP doesn't order the 
+            //Some paths exists but in order to find them we should look for them backwards in the branch, because the SNMP doesn't order the 
             //first son in the same way of kuwaiba
             //e.g. from kuwaiba:                  form SNMP:
             //          Board0/2                   Board0/2
@@ -707,7 +716,6 @@ public class SNMPDataProcessor {
             //from SNMP:
             //slot0/2, Board0/2, Gi0/0/2/16[Port] <-- this branch exists (the first branch will always bring the parents)
             //                   Gi0/0/2/00[Port] <-- this too, but is not in the same order  (the other children don't bring the parents)
-            
             if(foundPath.isEmpty()){
                 for (int n=newBranchToEvalueate.size(), o= oldBranch.size(); (n*o)>0; n--, o--) {
                     String objClassName = newBranchToEvalueate.get(n-1).getString("className");
@@ -718,18 +726,15 @@ public class SNMPDataProcessor {
                     if (!className.equals(objClassName)) {
                         RemoteBusinessObjectLight oldObj = oldBranch.get(o-1);
                         RemoteBusinessObjectLight oldParent = bem.getParent(oldObj.getClassName(), oldObj.getId());
-                        if (oldObj.getName().equals(newObjName) && oldObj.getClassName().equals(objClassName)){
-                            if(objParentClassName.equals(className) || oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName)){
-                                foundPath.add(oldObj);
-                                hasBeenFound = true;
-                            }
+                        //The name of the Router will be diferent in most of the cases so we must avoid the name in this case..
+                        if(oldParent.getClassName().equals(className) && objParentClassName.equals(className))
+                            objParentName = oldParent.getName();
+                        if (oldObj.getName().equals(newObjName) && oldObj.getClassName().equals(objClassName) && (oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName))){
+                            foundPath.add(oldObj);
+                            hasBeenFound = true;
                         }
-                        if(objParentClassName.equals(className) || oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName))
-                            parentId = oldParent.getId();
-                        
                     }//end if not router
                 } 
-               
                 //we find the whole path, if the path si found backwards, the comparation of the attributes should be do it backwards too
                 if(foundPath.size() == newBranchToEvalueate.size()){
                     for (int j=foundPath.size()-1, r=0; j>-1; j--, r++) { 
@@ -741,41 +746,58 @@ public class SNMPDataProcessor {
                     return null;
                 }
             }
-            
             else if(!foundPath.isEmpty())
                 oldBranchesWithMatches.add(foundPath);
         }//end for
-        //we must search again to check if there are is a match between the last
-        //element of the old structure and the first element of the new branch
-        for (long i : oldObjectStructure.keySet()) {
-            List<RemoteBusinessObjectLight> oldBranch = oldObjectStructure.get(i);
-            String objClassName = newBranchToEvalueate.get(0).getString("className");
-            String objParentName = newBranchToEvalueate.get(0).getString("parentName");
-            String objParentClassName = newBranchToEvalueate.get(0).getString("parentClassName");
-            JsonObject objAttributes = newBranchToEvalueate.get(0).getJsonObject("attributes");
-            String newObjName = objAttributes.getString("name");
-            if (!className.equals(objClassName)) {
+        if(foundPath.isEmpty()){
+            //we must search again to check if there are is a match between the last element of the old structure and the first element of the new branch
+            for (long i : oldObjectStructure.keySet()) {
+                List<RemoteBusinessObjectLight> oldBranch = oldObjectStructure.get(i);
+                String objClassName = newBranchToEvalueate.get(0).getString("className");
+                String objParentName = newBranchToEvalueate.get(0).getString("parentName");
+                String objParentClassName = newBranchToEvalueate.get(0).getString("parentClassName");
+                JsonObject objAttributes = newBranchToEvalueate.get(0).getJsonObject("attributes");
+                String newObjName = objAttributes.getString("name");
+                if (!className.equals(objClassName)) {
+                    RemoteBusinessObjectLight oldObj = oldBranch.get(oldBranch.size()-1);
+                    RemoteBusinessObjectLight oldParent = bem.getParent(oldObj.getClassName(), oldObj.getId());
+                    //The name of the Router will be diferent in most of the cases so we must avoid the name in this case..
+                    if(oldParent.getClassName().equals(className) && objParentClassName.equals(className))
+                        objParentName = oldParent.getName();
+                    if (oldObj.getName().equals(newObjName) && oldObj.getClassName().equals(objClassName) && oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName)){
+                        foundPath.add(oldObj);
+                        break;
+                    }
+                }//end if not router
+            }
+        }
+        if(!foundPath.isEmpty() && !oldBranchesWithMatches.contains(foundPath))
+            oldBranchesWithMatches.add(foundPath);
+        //we Check if the branch starts in the first level
+        else if(!hasBeenFound && oldBranchesWithMatches.isEmpty()){
+            if(newBranchToEvalueate.get(0).getString("parentClassName").equals(className)){
+                JsonObject jObj = newBranchToEvalueate.get(0);
+                jObj = jsonObjectToBuilder(jObj).add("deviceParentId", Long.toString(id)).build();
+                branch.set(0, jObj);
+                return new ArrayList<>();
+            }
+            //This is the less accurate method 
+            for (long i : oldObjectStructure.keySet()) {
+                List<RemoteBusinessObjectLight> oldBranch = oldObjectStructure.get(i);
+                String objParentName = newBranchToEvalueate.get(0).getString("parentName");
+                String objParentClassName = newBranchToEvalueate.get(0).getString("parentClassName");
                 RemoteBusinessObjectLight oldObj = oldBranch.get(oldBranch.size()-1);
                 RemoteBusinessObjectLight oldParent = bem.getParent(oldObj.getClassName(), oldObj.getId());
-                if (oldObj.getName().equals(newObjName) && oldObj.getClassName().equals(objClassName) && (objParentClassName.equals(className) || oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName))){
-                    foundPath.add(oldObj);
+                if (oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName)){
+                    JsonObject jObj = branch.get(0);
+                    jObj = jsonObjectToBuilder(jObj).add("deviceParentId", Long.toString(oldParent.getId())).build();
+                    if(jObj.getString("className").contains("Port"))
+                        editNewPortWithDeviceParentId(jObj);
+                    branch.set(0, jObj);
                     break;
                 }
-            }//end if not router
+            }
         }
-        if(!foundPath.isEmpty())
-            oldBranchesWithMatches.add(foundPath);
-        
-        else if(!hasBeenFound && parentId > 0){
-            JsonObject jObj = newBranchToEvalueate.get(0);
-            if(jObj.getString("className").equals(className))
-                jObj = newBranchToEvalueate.get(newBranchToEvalueate.size()-1);
-            jObj = jsonObjectToBuilder(jObj).add("deviceParentId", Long.toString(parentId)).build();
-            if(jObj.getString("className").contains("Port"))
-                editNewPortWithDeviceParentId(jObj);
-            branch.set(0, jObj);
-        }
-        
         return oldBranchesWithMatches;
     }
    
@@ -822,19 +844,16 @@ public class SNMPDataProcessor {
     private void readActualDeviceStructure(long parentId, List<RemoteBusinessObjectLight> objects)
             throws MetadataObjectNotFoundException, ObjectNotFoundException {
         for (RemoteBusinessObjectLight object : objects) {
-            if (!object.getClassName().contains("Virtual") && !object.getClassName().equals("ServiceInstance")) {
+            if (!mem.isSubClass("GenericLogicalPort", object.getClassName())) 
                 tempAuxOldBranch.add(object);
-                if (object.getClassName().contains("Board")) {
-                    oldBoards.add(new StringPair(Long.toString(parentId), object.getName()));
-                }
-            }
-            if (object.getClassName().contains("Port") && !object.getClassName().contains("Virtual") && !object.getClassName().contains("Power")) {
+            
+            if (object.getClassName().contains("Port") && !object.getClassName().contains("Virtual") && !object.getClassName().contains("Power")) 
                 oldPorts.add(object);
-            }
+            
             List<RemoteBusinessObjectLight> children = bem.getObjectChildren(object.getClassName(), object.getId(), -1);
-            if (!children.isEmpty()) {
+            if (!children.isEmpty()) 
                 readActualDeviceStructure(object.getId(), children);
-            } else {
+            else {
                 if(!tempAuxOldBranch.isEmpty())
                     oldObjectStructure.put(k, tempAuxOldBranch);
                 tempAuxOldBranch = new ArrayList<>();
@@ -949,48 +968,67 @@ public class SNMPDataProcessor {
      * Create a hash map for the attributes of the given index entry of the data read it from SNMP
      * @param index the index of the entry
      * @return a HashMap with attribute name(key) attribute value (value)
-     * @throws MetadataObjectNotFoundException
+     * @throws MetadataObjectNotFoundException if the attributes we are trying to sync doesn't exists in the classmetadata
      * @throws InvalidArgumentException
      * @throws OperationNotPermittedException 
      */
-    private HashMap<String, String> createNewAttributes(int index) 
+    private HashMap<String, String> createNewAttributes(String mappedClass, int index) 
             throws MetadataObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException
     {
         HashMap<String, String> attributes = new HashMap<>();
-
-
+        ClassMetadata mappedClassMetadata = mem.getClass(mappedClass);
+               
         String objectName = allData.get("entPhysicalName").get(index);//NOI18N
-        //For optical ports
-        if (objectName.contains("GigabitEthernet")) //TODO check the supported port name cases
+        
+        if (objectName.contains("GigabitEthernet"))//NO18N For optical ports
             objectName = objectName.replace("GigabitEthernet", "Gi");//NOI18N
-
+        
         attributes.put("name", objectName);//NOI18N
         String description = allData.get("entPhysicalDescr").get(index).trim();
-        if(!description.isEmpty())
+        if(!description.isEmpty()){
+            if(mappedClassMetadata.getAttribute("description") == null)
+                createAttributeError(mappedClass, "description", "String");
+            
             attributes.put("description", description);
-        if (!allData.get("entPhysicalMfgName").get(index).isEmpty()) {
-            String vendor = findingListTypeId(index, "EquipmentVendor");//NOI18N
-            if (vendor != null) 
-                attributes.put("vendor", vendor); //NOI18N
         }
-        if (!allData.get("entPhysicalSerialNum").get(index).isEmpty()) 
-            attributes.put("serialNumber", allData.get("entPhysicalSerialNum").get(index).trim());//NOI18N
+        if (!allData.get("entPhysicalMfgName").get(index).isEmpty()) {
+            if(mappedClassMetadata.getAttribute("vendor") != null){
+                String vendor = findingListTypeId(index, "EquipmentVendor");//NOI18N
+                if (vendor != null) 
+                    attributes.put("vendor", vendor); //NOI18N
+            }
+            else
+                 createAttributeError(mappedClass, "vendor", "EquipmentVendor");    
+        }
+        if (!allData.get("entPhysicalSerialNum").get(index).isEmpty()){
+            if(mappedClassMetadata.getAttribute("serialNumber") == null)
+                createAttributeError(mappedClass, "serialNumber", "String");
         
-        //If the 
+            attributes.put("serialNumber", allData.get("entPhysicalSerialNum").get(index).trim());//NOI18N
+        }
         if (!allData.get("entPhysicalModelName").get(index).isEmpty()){ 
-            String mappedClass = parseClass(allData.get("entPhysicalClass").get(index), objectName, allData.get("entPhysicalDescr").get(index));//NOI18N
             if(mappedClass != null){
-                AttributeMetadata modelAttribute = mem.getClass(mappedClass).getAttribute("model");
+                AttributeMetadata modelAttribute = mappedClassMetadata.getAttribute("model");
                 if(modelAttribute != null){
                     String model = findingListTypeId(index, modelAttribute.getType());//NOI18N
                     if(model != null)
                         attributes.put("model", model);//NOI18N
                 }
+                else
+                    createAttributeError(mappedClass, "model", "EquipmentModel or any list type");
             }
         }
         return attributes;
     }
-
+   public void createAttributeError(String aClass, String attributeName, String type){
+       
+       findings.add(new SyncFinding(SyncFinding.EVENT_ERROR,
+                                            String.format(I18N.gm("attribute_does_not_exist_in_class"), attributeName, type, aClass),
+                                            Json.createObjectBuilder().add("type","error")
+                                             .add("className", aClass)
+                                             .add("attributeType", type)  
+                                             .add("attributeName", attributeName).build().toString()));
+   }
     /**
      * Compares the old and the new list of attributes an return the changes
      * @param oldObjectAttributes the old list of attributes
@@ -998,9 +1036,7 @@ public class SNMPDataProcessor {
      * @return the a map with the attributes changed
      */
     private HashMap<String, String> compareAttributes(HashMap<String, List<String>> oldObjectAttributes, HashMap<String, String> newObjectAttributes){
-        
         HashMap<String, String> updatedAttributes = new HashMap<>();
-
         for (String attributeName : newObjectAttributes.keySet()) {
             String newAttributeValue = newObjectAttributes.get(attributeName);
             if (oldObjectAttributes.containsKey(attributeName)) {
@@ -1022,9 +1058,7 @@ public class SNMPDataProcessor {
      * @return the a map with the attributes changed
      */
     private HashMap<String, String> compareAttributes(HashMap<String, List<String>> oldObjectAttributes,  JsonObject newObjectAttributes){
-        
         HashMap<String, String> updatedAttributes = new HashMap<>();
-
         for (String attributeName : newObjectAttributes.keySet()) {
             String newAttributeValue = newObjectAttributes.getString(attributeName);
             if (oldObjectAttributes.containsKey(attributeName)) {
@@ -1046,10 +1080,10 @@ public class SNMPDataProcessor {
         }
     }
     
-    public void checkDataToBeDeleted() {
+    public void checkDataToBeDeleted() throws MetadataObjectNotFoundException {
         JsonObject json = Json.createObjectBuilder().add("type", "old_object_to_delete").build();
         for (RemoteBusinessObjectLight actualChildFirstLevel : actualFirstLevelChildren) {
-            if (!actualChildFirstLevel.getClassName().contains("Port") && !actualChildFirstLevel.getClassName().contains("ServiceInstance")) {
+            if (!mem.isSubClass("GenericLogicalPort", actualChildFirstLevel.getClassName())) {
                 
                 JsonObject jdevice = Json.createObjectBuilder()
                             .add("deviceId", Long.toString(actualChildFirstLevel.getId()))
@@ -1107,12 +1141,13 @@ public class SNMPDataProcessor {
      */
     public void checkPortsWithNoMatch() {
         for (JsonObject oldPort : notMatchedPorts) {
-            oldPort = jsonObjectToBuilder(oldPort).add("type", "object_port_no_match").build();
+            JsonObject json = Json.createObjectBuilder().add("type", "old_object_to_delete").build();
+            json = jsonObjectToBuilder(json).add("device", oldPort).build();
 
             findings.add(new SyncFinding(SyncFinding.EVENT_DELETE,
                     String.format("There was no match for port: %s [%s] - id: %s. Do you want to delete this port after the sync process?",
-                            oldPort.getJsonObject("attributes").getString("name"), oldPort.getString("className"), oldPort.getString("id")),
-                    oldPort.toString()));
+                            oldPort.getString("deviceName"), oldPort.getString("deviceClassName"), oldPort.getString("deviceId")),
+                    json.toString()));
         }
 
         for (JsonObject jnewPort : newPorts) {
@@ -1166,14 +1201,14 @@ public class SNMPDataProcessor {
                 }
                 else{
                     HashMap<String, List<String>> oldAttributes = bem.getObject(oldPort.getId()).getAttributes();
-                    HashMap<String, String> updatedAttributes = compareAttributes(oldAttributes, portFound.getJsonObject("attributes"));
+                    HashMap<String, String> changedAttributes = compareAttributes(oldAttributes, portFound.getJsonObject("attributes"));
                     
-                    if(!updatedAttributes.isEmpty()){ //if the port its in the rigth place but the attributes have been updated
+                    if(!changedAttributes.isEmpty()){ //if the port its in the rigth place but the attributes have been updated
                         portFound = jsonObjectToBuilder(portFound).add("type", "device").build();
                         portFound = jsonObjectToBuilder(portFound).add("deviceClassName", oldPort.getClassName()).build();
-                        JsonObject newAttributes = createExtraInfoToUpdateAttributesInObject(Long.toString(oldPort.getId()), oldPort.getClassName(), updatedAttributes, oldAttributes);
-                        portFound = jsonObjectToBuilder(portFound).add("attributes", newAttributes).build();
                         portFound = jsonObjectToBuilder(portFound).add("deviceId", Long.toString(oldPort.getId())).build();
+                        portFound = jsonObjectToBuilder(portFound).add("attributes", parseAttributesToJson(changedAttributes)).build();
+                        portFound = jsonObjectToBuilder(portFound).add("oldAttributes", parseOldAttributesToJson(oldAttributes)).build();
                         findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
                             String.format("Would you like to overwrite the attributes in port %s, with those in port with id %s?", oldPort.toString(), oldPort.getId()),
                             portFound.toString()));
@@ -1182,9 +1217,9 @@ public class SNMPDataProcessor {
             } 
             else {
                 JsonObject oldPortWithNoMatch = Json.createObjectBuilder()
-                        .add("id", Long.toString(oldPort.getId()))
-                        .add("className", oldPort.getClassName())
-                        .add("attributes", Json.createObjectBuilder().add("name", oldPort.getName()).build())
+                        .add("deviceId", Long.toString(oldPort.getId()))
+                        .add("deviceClassName", oldPort.getClassName())
+                        .add("deviceName", oldPort.getName())
                         .build();
 
                 notMatchedPorts.add(oldPortWithNoMatch);
@@ -1200,9 +1235,9 @@ public class SNMPDataProcessor {
             if (index > -1) 
                 newPorts.remove(index);
         }
-        System.out.println("Stop");
+        
     }
-//    for debuging don't delete 
+
     private int removeMatchedNewPorts(JsonObject jnewportFound) {
         for (int i = 0; i < newPorts.size(); i++) {
             if (newPorts.get(i).getJsonObject("attributes").getString("name")
@@ -1443,6 +1478,4 @@ public class SNMPDataProcessor {
         return -1;
     }
     //</editor-fold>
-
-   
 }

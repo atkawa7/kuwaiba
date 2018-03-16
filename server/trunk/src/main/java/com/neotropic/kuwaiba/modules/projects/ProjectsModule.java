@@ -96,7 +96,7 @@ public class ProjectsModule implements GenericCommercialModule {
      */
     public List<RemotePool> getProjectPools() {
         List<Pool> projectPools = aem.getRootPools(Constants.CLASS_GENERICPROJECT, ApplicationEntityManager.POOL_TYPE_MODULE_COMPONENT, true);
-        List<RemotePool> remoteProjPools = new ArrayList<>();
+        List<RemotePool> remoteProjPools = new ArrayList();
         
         for (Pool projectPool : projectPools)
             remoteProjPools.add(new RemotePool(projectPool));

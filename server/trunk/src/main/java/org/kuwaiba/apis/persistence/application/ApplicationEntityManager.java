@@ -35,11 +35,11 @@ import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
+import org.kuwaiba.util.ChangeDescriptor;
 import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.UserInfoLight;
-import org.kuwaiba.util.ChangeDescriptor;
 
 /**
  * This is the entity in charge of manipulating application objects such as users, views, etc
@@ -295,7 +295,7 @@ public interface ApplicationEntityManager {
      * @throws MetadataObjectNotFoundException if the list type item class can not be found
      * @throws InvalidArgumentException if the view type is not supported
      */
-    public long createListTypeItemRelateView(long listTypeItemId, String listTypeItemClassName, String viewClassName, String name, String description, byte [] structure, byte [] background) 
+    public long createListTypeItemRelatedView(long listTypeItemId, String listTypeItemClassName, String viewClassName, String name, String description, byte [] structure, byte [] background) 
         throws MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
@@ -352,6 +352,20 @@ public interface ApplicationEntityManager {
      */
     public void deleteListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId) 
         throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException;
+    
+    /**
+     * Gets the list of template elements with a device layout
+     * @return the list of template elements with a device layout
+     */
+    public List<RemoteBusinessObjectLight> getDeviceLayouts();
+    
+    /**
+     * Gets the device layout structure
+     * @param oid object id
+     * @param className object class
+     * @return the structure of the device layout
+     */
+    public byte[] getDeviceLayoutStructure(long oid, String className);
         
     /**
      * Get a view related to an object, such as the default, rack or equipment views

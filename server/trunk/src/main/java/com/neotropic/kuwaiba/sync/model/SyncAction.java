@@ -37,8 +37,8 @@ import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
-import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
 import org.kuwaiba.utils.i18n.I18N;
+import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
 
 /**
  * An instance of this class define an action to be performed upon a sync finding
@@ -181,8 +181,9 @@ public class SyncAction {
         long deviceId = Long.valueOf(device.getString("deviceId"));
         String deviceClassName = device.getString("deviceClassName");
         JsonObject jsonAttributes = device.getJsonObject("attributes");
+        String name = "";
         if(jsonAttributes.get("name") != null)
-            attributes.put("name", jsonAttributes.getString("name"));
+           attributes.put("name", jsonAttributes.getString("name"));
         if(jsonAttributes.get("description") != null)
             attributes.put("description", jsonAttributes.getString("description"));
         if(jsonAttributes.get("serialNumber") != null)
@@ -194,7 +195,11 @@ public class SyncAction {
         if (find.getType() == SyncFinding.EVENT_UPDATE){
             try{
                 bem.updateObject(deviceClassName, deviceId, attributes);
-                results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_UPDATED, attributes.get("name"), deviceClassName, Long.toString(deviceId)), ACTION_UPDATED));
+                if(attributes.get("name") == null)
+                    name = bem.getObject(deviceId).getAttributes().get("name").get(0);
+                else
+                    name = attributes.get("name");
+                results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_UPDATED, name, deviceClassName, Long.toString(deviceId)), ACTION_UPDATED));
             } catch (InvalidArgumentException | ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
                 results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), "Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
             }
@@ -245,7 +250,6 @@ public class SyncAction {
                     else{
                         try{
                             if(child.getJsonObject("child").get("deviceParentId") == null){
-                                
                                 parentId = createdIdsToMap.get(tempParentId);
                                 if(parentId == null)
                                     parentId = tempParentId;
@@ -253,7 +257,7 @@ public class SyncAction {
                             else //if we are updating a branch
                                 createdIdsToMap.put(tempParentId, parentId);
 
-                            if(!className.contains("Port") || attributes.get("name").contains("Power")){
+                            if(!className.contains("Port") || attributes.get("name").contains("Power") || className.contains("PowerPort")){
                                 long createdObjectId = bem.createObject(className, parentClassName, parentId, attributes, -1);
                                 createdIdsToMap.put(childId, createdObjectId);
                                 results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), ACTION_CREATED));

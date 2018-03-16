@@ -302,7 +302,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
 
         if (classMetadata.isInDesign())
-            throw new OperationNotPermittedException("Can not create instances of classes marked as isDesign");
+            throw new OperationNotPermittedException("Can not create instances of classes marked as inDesign");
         
         if (classMetadata.isAbstract())
             throw new OperationNotPermittedException("Can not create objects of abstract classes");
@@ -1976,7 +1976,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             environmentParameters.setVariable("classIndex", classIndex); //NOI18N
             environmentParameters.setVariable("defaultReports", defaultReports); //NOI18N
             
-            //To keep backward compatibility
+            //To keep backwards compatibility
             environmentParameters.setVariable("objectClassName", objectClassName); //NOI18N
             environmentParameters.setVariable("objectId", objectId); //NOI18N
             

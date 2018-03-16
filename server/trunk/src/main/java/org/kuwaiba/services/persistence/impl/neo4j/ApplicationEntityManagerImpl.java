@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.DatatypeConverter;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -882,7 +883,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public long createListTypeItemRelateView(long listTypeItemId, String listTypeItemClassName, String viewClassName, String name, String description, byte [] structure, byte [] background) 
+    public long createListTypeItemRelatedView(long listTypeItemId, String listTypeItemClassName, String viewClassName, String name, String description, byte [] structure, byte [] background) 
         throws MetadataObjectNotFoundException, InvalidArgumentException {
         long id;
         try (Transaction tx = graphDb.beginTx()) {
@@ -1073,7 +1074,200 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
         throw new ObjectNotFoundException("View", viewId);
     }
+    
+    @Override
+    public List<RemoteBusinessObjectLight> getDeviceLayouts() {
+        try (Transaction tx = graphDb.beginTx()) {
+            String columnName = "elements"; //NOI18N
+            String cypherQuery = String.format(
+                "MATCH (classNode)<-[r1:%s]-(templateElement)-[r2:%s]->(list)-[:%s]->(view) "
+              + "WHERE r1.name=\"template\" AND r2.name=\"model\" "
+              + "RETURN templateElement AS %s "
+              + "ORDER BY templateElement.name ASC ", 
+                 RelTypes.INSTANCE_OF_SPECIAL, RelTypes.RELATED_TO, RelTypes.HAS_VIEW, columnName);
+            
+            Result result = graphDb.execute(cypherQuery);
+            Iterator<Node> column = result.columnAs(columnName);
+            
+            List<RemoteBusinessObjectLight> templateElements = new ArrayList();
+            
+            for (Node templateElementNode : IteratorUtil.asIterable(column))
+                templateElements.add(Util.createTemplateElementLightFromNode(templateElementNode));
+                        
+            return templateElements;
+        }
+    }
+    
+    @Override
+    public byte[] getDeviceLayoutStructure(long oid, String className) {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+            XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
+            XMLEventFactory xmlef = XMLEventFactory.newInstance();
+            
+            QName tagStructure = new QName("deviceLayoutStructure");
+            xmlew.add(xmlef.createStartElement(tagStructure, null, null));
+            
+            QName tagDevice = new QName("device"); // NOI18N
+            xmlew.add(xmlef.createStartElement(tagDevice, null, null));
+            xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), Long.toString(oid)));
+            xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), className));
+            addDeviceModelAsXML(oid, xmlew, xmlef);
+            xmlew.add(xmlef.createEndElement(tagDevice, null));
+            
+            addDeviceNodeChildrenAsXml(oid, className, xmlew, xmlef);
+            
+            xmlew.add(xmlef.createEndElement(tagStructure, null));          
+            
+            xmlew.close();
+            
+            return baos.toByteArray();
+        } catch (XMLStreamException ex) {
+            Logger.getLogger(ApplicationEntityManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+            return null;            
+        }
+    }
+    
+    private void addDeviceNodeChildrenAsXml(long id, String className, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException {
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            String columnName = "childNode"; //NOI18N
+
+            String cypherQuery = String.format(
+                "MATCH (classNode)<-[:%s]-(objectNode)<-[:%s]-(objChildNode) "
+              + "WHERE id(objectNode)={id} AND classNode.name={className}"
+              + "RETURN objChildNode AS %s "
+              + "ORDER BY objChildNode.name ASC "
+              , RelTypes.INSTANCE_OF, RelTypes.CHILD_OF, columnName);
+
+            HashMap<String, Object> queryParameters = new HashMap<>();
+            queryParameters.put("id", id); //NOI18N
+            queryParameters.put("className", className); //NOI18N
+            
+            Result result = graphDb.execute(cypherQuery, queryParameters);
+            Iterator<Node> column = result.columnAs(columnName);
+
+            for (Node deviceNode : IteratorUtil.asIterable(column))
+                addDeviceNodeAsXML(deviceNode, id, xmlew, xmlef);
+        }
+    }
+    
+    private void addDeviceNodeAsXML(Node deviceNode, long parentId, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException {
+        QName tagDevice = new QName("device"); // NOI18N
         
+        long id = deviceNode.getId();
+        String className = Util.getClassName(deviceNode);
+
+        xmlew.add(xmlef.createStartElement(tagDevice, null, null));
+        
+        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), Long.toString(id)));
+        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_NAME), deviceNode.getProperty(Constants.PROPERTY_NAME).toString()));
+        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), className));
+        xmlew.add(xmlef.createAttribute(new QName("parentId"), Long.toString(parentId))); //NOI18N     
+        
+        addDeviceModelAsXML(id, xmlew, xmlef);
+        
+        xmlew.add(xmlef.createEndElement(tagDevice, null));
+        
+        addDeviceNodeChildrenAsXml(id, className, xmlew, xmlef);
+    }
+    
+    private void addDeviceModelAsXML(long id, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException {
+        String cypherQuery = String.format(
+            "MATCH (objectNode)-[r1:%s]->(modelNode) "
+          + "WHERE id(objectNode) = %s "
+          + "AND r1.name=\"model\" "
+          + "RETURN modelNode;",
+            RelTypes.RELATED_TO, id);
+
+        try (Transaction tx = graphDb.beginTx()) {
+            Result result = graphDb.execute(cypherQuery);
+
+            Iterator<Node> column = result.columnAs("modelNode");
+
+            if (column.hasNext()) {
+                Node modelNode = column.next();
+
+                long modelId = modelNode.getId();
+                String modelName = modelNode.getProperty(Constants.PROPERTY_NAME) != null ? (String) modelNode.getProperty(Constants.PROPERTY_NAME) : null;
+
+                cypherQuery = String.format(""
+                    + "MATCH (modelNode)-[:%s]->(classNode) "
+                    + "WHERE id(modelNode) = %s "
+                    + "RETURN classNode;",
+                    RelTypes.INSTANCE_OF, modelId);
+
+                result = graphDb.execute(cypherQuery);
+                column = result.columnAs("classNode");
+
+                String modelClassName = null;
+
+                if (column.hasNext()) {
+                    Node classNode = column.next();
+                    modelClassName = classNode.getProperty(Constants.PROPERTY_NAME) != null ? (String) classNode.getProperty(Constants.PROPERTY_NAME) : null;
+                }   
+
+                cypherQuery = String.format(""
+                    + "MATCH (modelNode)-[:%s]->(viewNode) "
+                    + "WHERE id(modelNode) = %s "
+                    + "RETURN viewNode;", 
+                    RelTypes.HAS_VIEW, modelId);
+
+                result = graphDb.execute(cypherQuery);
+                column = result.columnAs("viewNode");
+
+                if (column.hasNext()) {
+                    Node viewNode = column.next();
+                    long modelViewId = viewNode.getId();
+
+                    try {
+                        ViewObject modeViewObj = getListTypeItemRelatedView(modelId, modelClassName, modelViewId);
+
+                        QName tagModel = new QName("model");
+
+                        xmlew.add(xmlef.createStartElement(tagModel, null, null));
+
+                        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), Long.toString(modelId)));
+                        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), modelClassName));
+                        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_NAME), modelName));
+
+                        QName tagView = new QName("view");
+                        
+                        xmlew.add(xmlef.createStartElement(tagView, null, null));
+                        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_ID), Long.toString(modelViewId)));
+                        xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_CLASS_NAME), modeViewObj.getViewClassName()));
+                        
+                        if (modeViewObj.getName() != null)
+                            xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_NAME), modeViewObj.getName()));
+                        
+                        if (modeViewObj.getDescription() != null)
+                            xmlew.add(xmlef.createAttribute(new QName(Constants.PROPERTY_DESCRIPTION), modeViewObj.getDescription()));                        
+                        
+                        QName tagStructure = new QName("structure");
+                        xmlew.add(xmlef.createStartElement(tagStructure, null, null));
+                        if (modeViewObj.getStructure() != null)
+                            xmlew.add(xmlef.createCharacters(DatatypeConverter.printBase64Binary(modeViewObj.getStructure())));
+                        xmlew.add(xmlef.createEndElement(tagStructure, null));
+                        
+                        QName tagBackground = new QName("background");
+                        xmlew.add(xmlef.createStartElement(tagBackground, null, null));
+                        if (modeViewObj.getBackground() != null)
+                            xmlew.add(xmlef.createCharacters(DatatypeConverter.printBase64Binary(modeViewObj.getBackground())));                            
+                        xmlew.add(xmlef.createEndElement(tagBackground, null));
+                        
+                        xmlew.add(xmlef.createEndElement(tagView, null));  
+
+                        xmlew.add(xmlef.createEndElement(tagModel, null));  
+
+                    } catch (MetadataObjectNotFoundException | InvalidArgumentException | ObjectNotFoundException ex) {
+                        Logger.getLogger(ApplicationEntityManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        }
+    }
+            
     @Override
     public long createObjectRelatedView(long oid, String objectClass, String name, String description, String viewClassName, 
         byte[] structure, byte[] background) 
