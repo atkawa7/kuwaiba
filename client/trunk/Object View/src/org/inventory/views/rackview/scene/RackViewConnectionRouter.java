@@ -48,7 +48,7 @@ public class RackViewConnectionRouter implements Router {
     private static final int RIGHT_MARGIN = 10;
     private static final int LEFT_MARGIN = 10;
     private static final int BOTTOM_MARGIN = 2;
-    private static final int SPACING_EDGE = 4;
+    private static final int SPACING_EDGE = RackViewScene.STROKE_WIDTH + 2;
     
     private final LayerWidget connectionLayer;
     private final int rackUnitHeight;

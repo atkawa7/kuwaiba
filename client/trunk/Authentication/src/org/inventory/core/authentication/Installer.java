@@ -30,11 +30,13 @@ import java.util.Calendar;
 import java.util.Properties;
 import javax.swing.JButton;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.core.services.GenericCacheInitializer;
 import org.inventory.core.services.i18n.I18N;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.LifecycleManager;
 import org.openide.modules.ModuleInstall;
+import org.openide.util.Lookup;
 import org.openide.windows.WindowManager;
 
 /**
@@ -143,6 +145,10 @@ public class Installer extends ModuleInstall {
                                 CommunicationsStub.getInstance().getSession().getUsername(), 
                                 CommunicationsStub.getServerURL().getHost(),
                                 connSettings.isSecureConnection() ? I18N.gm("secure_connection") : I18N.gm("insecure_connection")));
+                            
+                            for (GenericCacheInitializer cacheInitializer : Lookup.getDefault().lookupAll(GenericCacheInitializer.class)) {
+                                cacheInitializer.initCache();
+                            }
                     }
 
                     @Override

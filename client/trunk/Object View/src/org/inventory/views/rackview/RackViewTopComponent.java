@@ -15,8 +15,8 @@
  */
 package org.inventory.views.rackview;
 
-import org.inventory.views.rackview.scene.RackViewScene;
 import java.awt.BorderLayout;
+import org.inventory.views.rackview.scene.RackViewScene;
 import java.awt.KeyEventDispatcher;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,8 +24,10 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
@@ -35,13 +37,17 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.behaviors.CompatibleTopComponent;
+import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.visual.export.ExportScenePanel;
 import org.inventory.core.visual.export.filters.ImageFilter;
 import org.inventory.core.visual.export.filters.SceneExportFilter;
 import org.inventory.core.services.event.CurrentKeyEventDispatcher;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.core.visual.scene.AbstractScene;
+import org.inventory.views.rackview.scene.RackConnectionSelectProvider;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
+import org.netbeans.api.visual.widget.Widget;
 import org.openide.DialogDescriptor;
 import org.openide.DialogDisplayer;
 import org.openide.util.RequestProcessor;
@@ -54,15 +60,22 @@ import org.openide.windows.WindowManager;
  */
 public final class RackViewTopComponent extends TopComponent implements ActionListener, Refreshable, CompatibleTopComponent {
     private RackViewScene scene;
-    private LocalObjectLight rackLight;
+    private LocalObject rack;
     private RackViewService service;
     private JComponent satelliteView;
     
     private KeyEventDispatcher keyEventDispatcher;
+    
+    private boolean isCompatible;
         
-    public RackViewTopComponent(LocalObjectLight rack) {
+    public RackViewTopComponent(LocalObjectLight rackLight) {
         this();
-        this.rackLight = rack;
+        rack = CommunicationsStub.getInstance().getObjectInfo(rackLight.getClassName(), rackLight.getOid());
+        if (rack == null) {
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            isCompatible = false;
+        }
         initCustomComponents();
         btnSelect.setEnabled(false);
         btnConnect.setEnabled(false);
@@ -78,7 +91,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
     
     @Override
     protected String preferredID() {
-        return "RackViewTopComponent_" + rackLight.getOid(); //NOI18N
+        return "RackViewTopComponent_" + (rack != null ? rack.getOid() : 0); //NOI18N
     }
 
     @Override
@@ -87,13 +100,14 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
     }
     
     private void initCustomComponents() {
-        scene = new RackViewScene(rackLight);
+        List<LocalObject> devices = getDevices();
+        scene = new RackViewScene(devices);
         scene.addChangeListener(this);        
                 
         associateLookup(scene.getLookup());
         pnlMainScrollPanel.setViewportView(scene.createView());
-                        
-        service = new RackViewService(scene, rackLight);
+                               
+        service = new RackViewService(scene, rack);
         
         keyEventDispatcher = new KeyEventDispatcher() {
 
@@ -148,6 +162,10 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
         btnRackTableView = new javax.swing.JButton();
         btnShowConnections = new javax.swing.JToggleButton();
         jSeparator3 = new javax.swing.JToolBar.Separator();
+        paneConnections = new javax.swing.JLayeredPane();
+        lblConnections = new javax.swing.JLabel();
+        paneCboConnections = new javax.swing.JLayeredPane();
+        cboConnections = new javax.swing.JComboBox();
 
         setLayout(new java.awt.BorderLayout());
         add(pnlMainScrollPanel, java.awt.BorderLayout.CENTER);
@@ -268,6 +286,27 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
         toolBarMain.add(btnShowConnections);
         toolBarMain.add(jSeparator3);
 
+        paneConnections.setLayout(new java.awt.BorderLayout());
+
+        lblConnections.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        org.openide.awt.Mnemonics.setLocalizedText(lblConnections, org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.lblConnections.text")); // NOI18N
+        lblConnections.setToolTipText(org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.lblConnections.toolTipText")); // NOI18N
+        paneConnections.add(lblConnections, java.awt.BorderLayout.CENTER);
+
+        toolBarMain.add(paneConnections);
+
+        paneCboConnections.setLayout(new java.awt.BorderLayout());
+
+        cboConnections.setToolTipText(org.openide.util.NbBundle.getMessage(RackViewTopComponent.class, "RackViewTopComponent.cboConnections.toolTipText")); // NOI18N
+        cboConnections.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboConnectionsActionPerformed(evt);
+            }
+        });
+        paneCboConnections.add(cboConnections, java.awt.BorderLayout.CENTER);
+
+        toolBarMain.add(paneCboConnections);
+
         add(toolBarMain, java.awt.BorderLayout.PAGE_START);
     }// </editor-fold>//GEN-END:initComponents
 
@@ -300,7 +339,8 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
             close();
             return;
         }
-        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading The Rack View to %s", rackLight.toString()));
+        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading The Rack View to %s", rack.toString()));
+        RackViewService.setProgressHandle(progressHandle);
         
         RequestProcessor.getDefault().post(new Runnable() {
             
@@ -330,39 +370,48 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnShowConnectionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowConnectionsActionPerformed
-        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading the Rack View for %s", rackLight.toString()));
+        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading the Rack View for %s", rack.toString()));
         
         RequestProcessor.getDefault().post(new Runnable() {
 
             @Override
             public void run() {
-                progressHandle.start();
+                progressHandle.start();                
                 
                 toolBarMain.setVisible(false);
                 pnlMainScrollPanel.setVisible(false);
                                 
                 if (satelliteView == null)
                     satelliteView = scene.createSatelliteView();
-
+                                    
                 if (btnShowConnections.isSelected()) {
+                    remove(satelliteView);
+                    
                     scene.setShowConnections(true);            
                     scene.clear();
 
+                    RackViewService.setProgressHandle(progressHandle);
                     service.shownRack();
                     scene.validate();
                     
                     btnSelect.setEnabled(true);
                     btnConnect.setEnabled(true);
                     btnRackTableView.setEnabled(true);
+                                        
+                    lblConnections.setVisible(true);
+                    cboConnections.setVisible(true);
+                                        
+                    for (LocalObjectLight connection : getConnectionsInScene())
+                        cboConnections.addItem(connection);
                     
                     add(satelliteView, BorderLayout.EAST);
-                    
                 } else {
                     remove(satelliteView);
                     
                     scene.setShowConnections(false);
                     scene.clear();
                     
+                    RackViewService.setProgressHandle(progressHandle);
                     service.shownRack();
                     scene.validate();
                     
@@ -372,6 +421,10 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                     btnSelect.setEnabled(false);
                     btnConnect.setEnabled(false);
                     btnRackTableView.setEnabled(false);
+                    
+                    lblConnections.setVisible(false);
+                    cboConnections.removeAllItems();
+                    cboConnections.setVisible(false);
                 }
                 toolBarMain.setVisible(true);
                 pnlMainScrollPanel.setVisible(true);
@@ -386,7 +439,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
     private void btnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportActionPerformed
         ExportScenePanel exportPanel = new ExportScenePanel(
             new SceneExportFilter[]{ImageFilter.getInstance()}, 
-            scene, rackLight.toString());
+            scene, rack.toString());
                         
         DialogDescriptor dd = new DialogDescriptor(exportPanel, "Export options",true, exportPanel);
         DialogDisplayer.getDefault().createDialog(dd).setVisible(true);
@@ -413,10 +466,10 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
         if (!btnRackTableView.isEnabled())
             return;
         
-        RackTableViewTopComponent rackTable = ((RackTableViewTopComponent) WindowManager.getDefault().findTopComponent("RackTableViewTopComponent_" + rackLight.getOid())); //NOI18N
+        RackTableViewTopComponent rackTable = ((RackTableViewTopComponent) WindowManager.getDefault().findTopComponent("RackTableViewTopComponent_" + rack.getOid())); //NOI18N
 
         if (rackTable == null) {
-            rackTable = new RackTableViewTopComponent(rackLight, service);
+            rackTable = new RackTableViewTopComponent(rack, service);
             rackTable.open();
         } else {
             if (rackTable.isOpened())
@@ -430,6 +483,19 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
         rackTable.requestActive();
     }//GEN-LAST:event_btnRackTableViewActionPerformed
 
+    private void cboConnectionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboConnectionsActionPerformed
+        LocalObjectLight selectedItem = (LocalObjectLight) ((JComboBox) evt.getSource()).getSelectedItem();
+
+        Widget widget = scene.findWidget(selectedItem);
+        if (widget != null) {
+            //See: https://netbeans.org/projects/platform/lists/graph/archive/2007-09/message/5
+            scene.getView().scrollRectToVisible(widget.getScene().convertSceneToView(widget.convertLocalToScene(widget.getBounds())));
+            new RackConnectionSelectProvider().select(widget, widget.convertLocalToScene(widget.getLocation()), true);
+            //Updates the lookup so that other modules are aware of this selection
+            ((AbstractScene.SceneLookup)scene.getLookup()).updateLookup(scene.findWidget(selectedItem).getLookup());
+        }
+    }//GEN-LAST:event_cboConnectionsActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton btnConnect;
     private javax.swing.JButton btnExport;
@@ -437,9 +503,13 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
     private javax.swing.JButton btnRefresh;
     private javax.swing.JToggleButton btnSelect;
     private javax.swing.JToggleButton btnShowConnections;
+    private javax.swing.JComboBox cboConnections;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
+    private javax.swing.JLabel lblConnections;
+    private javax.swing.JLayeredPane paneCboConnections;
+    private javax.swing.JLayeredPane paneConnections;
     private javax.swing.JScrollPane pnlMainScrollPanel;
     private javax.swing.JToolBar toolBarMain;
     // End of variables declaration//GEN-END:variables
@@ -450,11 +520,33 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
             return;
         }        
         service.shownRack();
+        lblConnections.setVisible(false);
+        cboConnections.setVisible(false);
+    }
+    
+    private List<LocalObjectLight> getConnectionsInScene() {
+        List<LocalObjectLight> connections = new ArrayList(scene.getEdges());
+        Collections.sort(connections);
+        return connections;
     }
 
     @Override
     public void componentClosed() {
+        btnShowConnections.setSelected(false);
+////        remove(satelliteView);
+        scene.setShowConnections(false);
         scene.clear();
+        
+        scene.setActiveTool(RackViewScene.ACTION_SELECT);
+        btnSelect.setSelected(true);        
+        btnConnect.setSelected(false);
+        btnSelect.setEnabled(false);
+        btnConnect.setEnabled(false);
+        btnRackTableView.setEnabled(false);
+
+        lblConnections.setVisible(false);
+        cboConnections.removeAllItems();
+        cboConnections.setVisible(false);
     }
 
     void writeProperties(java.util.Properties p) {
@@ -487,22 +579,27 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
 
     @Override
     public boolean isCompatible() {
-        boolean isCompatible = false;
-        
-        String title = I18N.gm("error");
+        return isCompatible;
+    }
+    
+    private List<LocalObject> getDevices() {
+        isCompatible = false;
+////        String title = I18N.gm("error");
         String message = "";
-        int messageType = JOptionPane.ERROR_MESSAGE;
+////        int messageType = JOptionPane.ERROR_MESSAGE;
         
-        if(CommunicationsStub.getInstance().getMetaForClass(Constants.CLASS_CUSTOMSHAPE, true) == null) {
+        if(CommunicationsStub.getInstance().getMetaForClass(Constants.CLASS_CUSTOMSHAPE, false) == null) {
             JOptionPane.showMessageDialog(null, 
                 "This database seems outdated. Contact your administrator to apply the necessary patches to add the CustomShape class", 
-                I18N.gm("error"), messageType);
-            return false;            
+                I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+            return null;            
         }
-        LocalObject rack = CommunicationsStub.getInstance().getObjectInfo(rackLight.getClassName(), rackLight.getOid());
+////        LocalObject rack = CommunicationsStub.getInstance().getObjectInfo(rackLight.getClassName(), rackLight.getOid());
         
         if (rack == null) {
-            message = CommunicationsStub.getInstance().getError();
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+////            message = CommunicationsStub.getInstance().getError();
         } else {
             Integer rackUnits = (Integer) rack.getAttribute(Constants.PROPERTY_RACK_UNITS);
             if (rackUnits == null || rackUnits == 0) {
@@ -510,57 +607,77 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
             } else {
                 List<LocalObjectLight> devicesLight = CommunicationsStub.getInstance().getObjectChildren(rack.getOid(), rack.getClassName());
                 if (devicesLight != null) {
-                    List<LocalClassMetadata> objChildrenClasses = new ArrayList<>();
-
-                    for (LocalObjectLight device : devicesLight) {
-                        LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(device.getClassName(), true);
-                        if (lcm == null) {
-                            JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), title, messageType);
-                            return false;
-                        }
-                        if (!objChildrenClasses.contains(lcm))
-                            objChildrenClasses.add(lcm);
-                    }                            
-                    for (LocalClassMetadata lcm : objChildrenClasses) {
-                        if (!lcm.hasAttribute(Constants.PROPERTY_POSITION))
-                            message += String.format("The %s attribute does not exist in class %s\n", Constants.PROPERTY_POSITION, lcm.toString());
-                        else {
-                            if (!"Integer".equals(lcm.getTypeForAttribute(Constants.PROPERTY_POSITION)))
-                                message += String.format("The %s attribute type in class %s must be an Integer\n", Constants.PROPERTY_POSITION, lcm.toString());
-                        }
-                        if (!lcm.hasAttribute(Constants.PROPERTY_RACK_UNITS))
-                            message += String.format("The %s attribute does not exist in class %s\n", Constants.PROPERTY_RACK_UNITS, lcm.toString());
-                        else {
-                            if (!"Integer".equals(lcm.getTypeForAttribute(Constants.PROPERTY_RACK_UNITS)))
-                                message += String.format("The %s attribute type in class %s must be an Integer\n", Constants.PROPERTY_RACK_UNITS, lcm.toString());
-                        }
-                    }
+////                    List<LocalClassMetadata> objChildrenClasses = new ArrayList<>();
+                    
+////                    for (LocalObjectLight device : devicesLight) {
+////                        LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(device.getClassName(), false);
+////                        if (lcm == null) {
+////                            JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), I18N.gm("error"), messageType);
+////                            return false;
+////                        }
+////                        if (!objChildrenClasses.contains(lcm))
+////                            objChildrenClasses.add(lcm);
+////                    }                            
+////                    for (LocalClassMetadata lcm : objChildrenClasses) {
+////                        if (!lcm.hasAttribute(Constants.PROPERTY_POSITION))
+////                            message += String.format("The %s attribute does not exist in class %s\n", Constants.PROPERTY_POSITION, lcm.toString());
+////                        else {
+////                            if (!"Integer".equals(lcm.getTypeForAttribute(Constants.PROPERTY_POSITION)))
+////                                message += String.format("The %s attribute type in class %s must be an Integer\n", Constants.PROPERTY_POSITION, lcm.toString());
+////                        }
+////                        if (!lcm.hasAttribute(Constants.PROPERTY_RACK_UNITS))
+////                            message += String.format("The %s attribute does not exist in class %s\n", Constants.PROPERTY_RACK_UNITS, lcm.toString());
+////                        else {
+////                            if (!"Integer".equals(lcm.getTypeForAttribute(Constants.PROPERTY_RACK_UNITS)))
+////                                message += String.format("The %s attribute type in class %s must be an Integer\n", Constants.PROPERTY_RACK_UNITS, lcm.toString());
+////                        }
+////                    }
                     List<LocalObject> devices = new ArrayList<>();
-                    if (message.isEmpty()) {
-                        for (LocalObjectLight deviceLight : devicesLight) {
-                            LocalObject device = CommunicationsStub.getInstance().getObjectInfo(deviceLight.getClassName(), deviceLight.getOid());
-                            if (device != null) {
-                                devices.add(device);
-                                
-                                int devicePosition = device.getAttribute(Constants.PROPERTY_POSITION) != null ? (int) device.getAttribute(Constants.PROPERTY_POSITION) : 0;
-                                if (devicePosition <= 0)
-                                    message += String.format("The %s in %s must be greater than or equal to zero\n", Constants.PROPERTY_POSITION, device.toString());
-                                else {
-                                    if (devicePosition > rackUnits)
-                                        message += String.format("The %s in %s is greater than the number of rack units\n", Constants.PROPERTY_POSITION, device.toString());
-                                }
-                                int deviceRackUnits = device.getAttribute(Constants.PROPERTY_RACK_UNITS) != null ? (int) device.getAttribute(Constants.PROPERTY_RACK_UNITS) : 0;
-                                
-                                if (deviceRackUnits <= 0)
-                                    message += String.format("The %s in %s must be greater than or equal to zero\n", Constants.PROPERTY_RACK_UNITS, device.toString());
-                                else {
-                                    if (deviceRackUnits > rackUnits)
-                                        message += String.format("The %s in %s is greater than the number of rack units\n", Constants.PROPERTY_RACK_UNITS, device.toString());
-                                }
-                            } else {
-                                JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), title, messageType);
-                                return false;
+                    
+                    for (LocalObjectLight deviceLight : devicesLight) {
+                        LocalObject device = CommunicationsStub.getInstance().getObjectInfo(deviceLight.getClassName(), deviceLight.getOid());
+                        if (device != null) {
+                            LocalClassMetadata lcm = device.getObjectMetadata();
+
+                            if (lcm == null) {
+                                JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+                                return null;
                             }
+                            if (!lcm.hasAttribute(Constants.PROPERTY_POSITION))
+                                message += String.format("The %s attribute does not exist in class %s\n", Constants.PROPERTY_POSITION, lcm.toString());
+                            else {
+                                if (!"Integer".equals(lcm.getTypeForAttribute(Constants.PROPERTY_POSITION)))
+                                    message += String.format("The %s attribute type in class %s must be an Integer\n", Constants.PROPERTY_POSITION, lcm.toString());
+                            }
+                            if (!lcm.hasAttribute(Constants.PROPERTY_RACK_UNITS))
+                                message += String.format("The %s attribute does not exist in class %s\n", Constants.PROPERTY_RACK_UNITS, lcm.toString());
+                            else {
+                                if (!"Integer".equals(lcm.getTypeForAttribute(Constants.PROPERTY_RACK_UNITS)))
+                                    message += String.format("The %s attribute type in class %s must be an Integer\n", Constants.PROPERTY_RACK_UNITS, lcm.toString());
+                            }
+                            if (!message.isEmpty())
+                                break;
+                            
+                            devices.add(device);
+
+                            int devicePosition = device.getAttribute(Constants.PROPERTY_POSITION) != null ? (int) device.getAttribute(Constants.PROPERTY_POSITION) : 0;
+                            if (devicePosition <= 0)
+                                message += String.format("The %s in %s must be greater than or equal to zero\n", Constants.PROPERTY_POSITION, device.toString());
+                            else {
+                                if (devicePosition > rackUnits)
+                                    message += String.format("The %s in %s is greater than the number of rack units\n", Constants.PROPERTY_POSITION, device.toString());
+                            }
+                            int deviceRackUnits = device.getAttribute(Constants.PROPERTY_RACK_UNITS) != null ? (int) device.getAttribute(Constants.PROPERTY_RACK_UNITS) : 0;
+
+                            if (deviceRackUnits <= 0)
+                                message += String.format("The %s in %s must be greater than or equal to zero\n", Constants.PROPERTY_RACK_UNITS, device.toString());
+                            else {
+                                if (deviceRackUnits > rackUnits)
+                                    message += String.format("The %s in %s is greater than the number of rack units\n", Constants.PROPERTY_RACK_UNITS, device.toString());
+                            }
+                        } else {
+                            JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+                            return null;
                         }
                     }
                     if (message.isEmpty()) {
@@ -582,17 +699,22 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                             }
                         }
                     }
+                    if (message.isEmpty()) {
+                        isCompatible = true;
+                        return devices;
+                    }
                 } else {
-                    JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), title, messageType);
-                    return false;
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+////                    JOptionPane.showMessageDialog(null, CommunicationsStub.getInstance().getError(), I18N.gm("error"), messageType);
+                    return null;
                 }
             }
         }
-        if (message.isEmpty())
-            isCompatible = true;
-        
-        if (!isCompatible)
-            JOptionPane.showMessageDialog(null, message, title, messageType);
-        return isCompatible;
+////        if (message.isEmpty())
+////            isCompatible = true;
+////        if (!isCompatible)
+        JOptionPane.showMessageDialog(null, message, I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+        return null;
     }
 }

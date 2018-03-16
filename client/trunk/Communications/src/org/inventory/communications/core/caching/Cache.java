@@ -26,6 +26,7 @@ import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalReportLight;
 import org.inventory.communications.core.LocalUserGroupObject;
 import org.inventory.communications.core.LocalUserObject;
+import org.inventory.communications.core.views.LocalObjectView;
 
 /**
  * This class implements the local caching functionality
@@ -41,6 +42,7 @@ public class Cache{
     private HashMap<String,List<LocalObjectListItem>> listIndex; //Cache for list-type attributes
     private HashMap<String, List<LocalReportLight>> reportIndex; //Cache for class reports
     private HashMap<String, List<LocalObjectLight>> templateIndex; //Cache for templates
+    private HashMap<LocalObjectListItem, LocalObjectView> customShapeIndex; // Cache for custom shapes
     
     private Long rootClassId = null;
     /**
@@ -60,6 +62,7 @@ public class Cache{
         this.listIndex = new HashMap<>();
         this.reportIndex = new HashMap<>();
         this.templateIndex = new HashMap<>();
+        this.customShapeIndex = new HashMap();
     }
 
     /**
@@ -221,6 +224,32 @@ public class Cache{
     public LocalUserGroupObject[] getCurrentGroupsInfo(){
         return this.currentUserGroupInfo;
     }
+    
+    /**
+     * Gets the layout assigned to a custom shape
+     * @param customShape the custom shape
+     * @return the layout structure
+     */
+    public LocalObjectView getCustomShapeLayout(LocalObjectListItem customShape) {
+        return customShapeIndex.get(customShape);
+    }
+    
+    /**
+     * Sets the layout to a custom shape
+     * @param customShape the custom shape
+     * @param layout custom shape layout view
+     */
+    public void setCustomShapeLayout(LocalObjectListItem customShape, LocalObjectView layout) {
+        customShapeIndex.put(customShape, layout);
+    }
+    
+    /**
+     * Gets cached custom shapes
+     * @return An array of custom shapes
+     */
+    public LocalObjectListItem[] getCustomShapes() {
+        return customShapeIndex.keySet().toArray(new LocalObjectListItem[0]);
+    }
 
     /**
      * Resets de cached list types
@@ -264,6 +293,13 @@ public class Cache{
         reportIndex.clear();
     }
     
+    /**
+     * Resets cached custom shapes
+     */
+    public void resetCustomShapeIndex() {
+        customShapeIndex.clear();
+    }
+    
     public void resetAll(){
         listIndex.clear();
         possibleChildrenIndex.clear();
@@ -272,5 +308,6 @@ public class Cache{
         lightMetadataIndex.clear();
         reportIndex.clear();
         templateIndex.clear();
+        customShapeIndex.clear();
     }
 }

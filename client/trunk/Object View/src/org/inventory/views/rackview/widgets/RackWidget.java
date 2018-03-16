@@ -33,6 +33,8 @@ import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.DeviceLayoutRenderer;
+import org.inventory.core.templates.layouts.DeviceLayoutStructure;
+import org.inventory.views.rackview.RackViewService;
 import org.netbeans.api.visual.border.Border;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
@@ -63,8 +65,10 @@ public class RackWidget extends SelectableRackViewWidget {
     private LayerWidget edgeLayer;
     
     private List<LocalObject> localEquipments = new ArrayList<>();
-
-    public RackWidget(RackViewScene scene, LocalObjectLight businessObject, int rackUnitWidth, int rackUnitHeight, int rackUnitBottomMargin) {
+    
+    private DeviceLayoutStructure deviceLayoutStructure;
+    
+    public RackWidget(RackViewScene scene, LocalObjectLight businessObject, int rackUnitWidth, int rackUnitHeight, int rackUnitBottomMargin, List<LocalObject> equipments) {
         super(scene, businessObject);
         this.rackUnitWidth = rackUnitWidth;
         this.rackUnitHeight = rackUnitHeight;
@@ -72,9 +76,12 @@ public class RackWidget extends SelectableRackViewWidget {
         
         mapRackUnits = new HashMap<>();
         localEquipments = new ArrayList<>();       
-        buildRack();
+        
+        if (scene.getShowConnections())
+            deviceLayoutStructure = new DeviceLayoutStructure(businessObject);
+        buildRack(equipments);
     }
-    
+        
     public RackUnitWidget findRackUnitIndex(Point point) {
         for (RackUnitWidget rackUnit : mapRackUnits.values()) {
             Rectangle bounds = rackUnit.getBounds();
@@ -139,7 +146,7 @@ public class RackWidget extends SelectableRackViewWidget {
         return edgeLayer;
     }
     
-    private void buildRack() {
+    private void buildRack(List<LocalObject> equipments) {
         LocalObject rack = getLookup().lookup(LocalObject.class);
         if (rack != null) {
             rackUnits = (int) rack.getAttribute(Constants.PROPERTY_RACK_UNITS);            
@@ -152,21 +159,9 @@ public class RackWidget extends SelectableRackViewWidget {
                 mapRackUnits.put(rackUnit, rackUnitWidget);
                 rackUnit = ascending ? rackUnit + 1 : rackUnit - 1;
             }
+            RackViewService.switchToDeterminate(equipments.size());
+            RackViewService.setProgress("Loading the devices");            
             
-            List<LocalObjectLight> equipmentsLight = CommunicationsStub.getInstance().getObjectChildren(rack.getOid(), rack.getClassName());
-            if (equipmentsLight == null) {
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                return;
-            }
-            List<LocalObject> equipments = new ArrayList<>();
-            for (LocalObjectLight equipmentLight : equipmentsLight) {
-                LocalObject equipment = CommunicationsStub.getInstance().getObjectInfo(equipmentLight.getClassName(), equipmentLight.getOid());
-                
-                if (!isRackable(equipment, -1))
-                    return;
-                equipments.add(equipment);                                                
-            }
             setLayout(LayoutFactory.createVerticalFlowLayout());
             Widget top = new Widget(getRackViewScene());
             top.setBackground(grayColor);
@@ -235,8 +230,10 @@ public class RackWidget extends SelectableRackViewWidget {
                 rackUnit = ascending ? rackUnit + 1 : rackUnit - 1;
             }
                                     
-            for (LocalObject equipment : equipments)
-                addEquipment(equipment);
+            for (int i = 0; i < equipments.size(); i += 1) {
+                addEquipment(equipments.get(i));
+                RackViewService.setProgress("Loading " + equipments.get(i).toString(),i + 1);
+            }
             
             edgeLayer = new LayerWidget(getRackViewScene());
             center.addChild(edgeLayer);
@@ -260,7 +257,7 @@ public class RackWidget extends SelectableRackViewWidget {
     /**
      * Verifies if an equipment can be added to the rack
      * @param equipment
-     * @param position if the value is -1 use the position of the equipment 
+     * @param position if the value is -1 use the equipment position
      *                 else use the given position to verify if the equipment is rackable
      */
     public boolean isRackable(LocalObject equipment, int position) {
@@ -394,15 +391,13 @@ public class RackWidget extends SelectableRackViewWidget {
                 DeviceLayoutRenderer render = new DeviceLayoutRenderer(equipment, 
                     equipmentsLayer, 
                     new Point(Constants.DEVICE_LAYOUT_RESIZE_BORDER_SIZE, Constants.DEVICE_LAYOUT_RESIZE_BORDER_SIZE), 
-                    new Rectangle(0, 0, width, height));
+                    new Rectangle(0, 0, width, height), deviceLayoutStructure.getHierarchy(), deviceLayoutStructure.getLayouts());
                 
                 if (render.hasDeviceLayout() || render.hasDefaultDeviceLayout()) {
                     render.render();
                     equipmentWidget = (EquipmentWidget) render.getDeviceLayoutWidget();
                     equipmentWidget.setHasLayout(true);
                 }
-                
-                getRackViewScene().setAddingNestedDevice(true);
             }
             if (equipmentWidget == null) {
                 equipmentWidget = (EquipmentWidget) (getRackViewScene()).addNode(equipment);
@@ -413,9 +408,13 @@ public class RackWidget extends SelectableRackViewWidget {
             equipmentWidget.setRackWidget(this);
             equipmentWidget.setMinimumSize(new Dimension(width, height));
             
-            if (!equipmentWidget.hasLayout())
+            if (!equipmentWidget.hasLayout()) {
+                getRackViewScene().setAddingNestedDevice(true);
+                
                 equipmentWidget.paintNestedDeviceWidget();
-            
+                
+                getRackViewScene().setAddingNestedDevice(false);
+            }
         } else {
             equipmentWidget.getLookup().lookup(LocalObject.class)
                 .setAttribute(Constants.PROPERTY_POSITION, equipmentPosition);

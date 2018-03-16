@@ -43,7 +43,7 @@ public class CustomShapeChildren extends AbstractChildren {
 
     @Override
     public void addNotify() {
-        List<LocalObjectListItem> customShapes = CommunicationsStub.getInstance().getList(Constants.CLASS_CUSTOMSHAPE, false, true);
+        List<LocalObjectListItem> customShapes = CommunicationsStub.getInstance().getCustomShapes(true);
         if (customShapes == null) {
             setKeys(Collections.EMPTY_LIST);
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 

@@ -193,7 +193,7 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
     public void componentOpened() {
 
         final DeviceLayoutRenderer renderDeviceLayout = new DeviceLayoutRenderer(deviceToReder, scene, 
-            new Point(0, 0), new Rectangle(0, 0, 7000, 1000));
+            new Point(0, 0), new Rectangle(0, 0, 7000, 1000), null, null);
         
         if (renderDeviceLayout.getDeviceLayoutObjectView() == null && !renderDeviceLayout.hasDefaultDeviceLayout()) {
             close();

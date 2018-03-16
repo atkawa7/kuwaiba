@@ -16,6 +16,7 @@
  */
 package org.inventory.views.rackview.scene;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
 import java.util.Collections;
@@ -71,10 +72,13 @@ public class RackConnectionSelectProvider implements SelectProvider {
                         continue;
                     }
                     ((RackViewConnectionWidget )edgeWidget).setLineColor(connectionClass.getColor());
+                    ((RackViewConnectionWidget) edgeWidget).setStroke(new BasicStroke(RackViewScene.STROKE_WIDTH));
                 }
             }
-            if (widget instanceof RackViewConnectionWidget)
+            if (widget instanceof RackViewConnectionWidget) {
                 ((RackViewConnectionWidget) widget).setLineColor(Color.CYAN);
+                ((RackViewConnectionWidget) widget).setStroke(new BasicStroke(RackViewScene.SELECTED_STROKE_WIDTH));
+            }
         } else
             scene.userSelectionSuggested (Collections.emptySet(), invertSelection);
     }

@@ -26,7 +26,10 @@ import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.scene.AbstractScene;
+import static org.inventory.core.visual.scene.AbstractScene.ACTION_CONNECT;
+import static org.inventory.core.visual.scene.AbstractScene.ACTION_SELECT;
 import org.inventory.models.physicalconnections.wizards.NewLinkWizard;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.views.rackview.widgets.EquipmentWidget;
@@ -51,16 +54,19 @@ import org.netbeans.api.visual.widget.Widget;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
+    public static int STROKE_WIDTH = 3;
+    public static int SELECTED_STROKE_WIDTH = 3;
     private boolean addingNestedDevice = true;
     private boolean showConnections = false;
-    private LocalObjectLight rack;
+    private LocalObject rack;
     
     private final ChangePositionAction changePositionAction = new ChangePositionAction();
     
     private final PopupMenuProvider defaultPopupMenuProvider;
     
-    public RackViewScene(LocalObjectLight rack) {
-        this.rack = rack;
+    private List<LocalObject> equipments;
+    
+    public RackViewScene(List<LocalObject> equipments) {
         getActions().addAction(ActionFactory.createZoomAction());
         getInputBindings().setZoomActionModifiers(0); //No keystroke combinations
         getActions().addAction(ActionFactory.createPanAction());
@@ -85,6 +91,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
                 return popupMenu;
             }
         };
+        this.equipments = equipments;
     }
     
     public LocalObjectLight getRack() {
@@ -118,7 +125,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
 
     @Override
     public void render(LocalObjectLight root) {
-        this.rack = root;
+        rack = (LocalObject) root;
         RackWidgetWrapper rackWidgetWrapper = new RackWidgetWrapper(this, root, !getShowConnections());
         rackWidgetWrapper.setPreferredLocation(new Point(70, 30));
         rackWidgetWrapper.paintRack();
@@ -167,7 +174,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
                     .getCommonParent(sourcePort.getClassName(), sourcePort.getOid(), 
                         targetPort.getClassName(), targetPort.getOid());
                 if (commonParent == null) {
-                    NotificationUtil.getInstance().showSimplePopup("Error", 
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                     return;
                 } 
@@ -175,7 +182,7 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
                     .getContainersBetweenObjects(sourcePort.getClassName(), sourcePort.getOid(), 
                         targetPort.getClassName(), targetPort.getOid(), Constants.CLASS_WIRECONTAINER);
                 if (existintWireContainersList == null) {
-                    NotificationUtil.getInstance().showSimplePopup("Error", 
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                     return;
                 } 
@@ -193,7 +200,6 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
                     ((PortWidget) targetWidget).setFree(false);
                             
                     edge.getLabelWidget().setVisible(true);
-                    edge.setStroke(new BasicStroke(3));                    
                     edge.setLineColor(Color.CYAN);
                     
                     validate();
@@ -243,9 +249,9 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
         }            
         if (getRack().equals(node)) {
             if (showConnections)
-                widget = new RackWidget(this, node, (int) Math.round(1086 * 1.5), (int) Math.round(100 * 1.5), 15);
+                widget = new RackWidget(this, node, (int) Math.round(1086 * 1.5), (int) Math.round(100 * 1.5), 15, equipments);
             else
-                widget = new RackWidget(this, node, 300, 35, 5);
+                widget = new RackWidget(this, node, 300, 35, 5, equipments);
             widget.createActions(AbstractScene.ACTION_SELECT);
             widget.getActions(ACTION_SELECT).addAction(createSelectAction());
         }
@@ -256,13 +262,14 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
     @Override
     protected Widget attachEdgeWidget(LocalObjectLight edge) {
         RackViewConnectionWidget newWidget = new RackViewConnectionWidget(this, edge);
+        newWidget.setStroke(new BasicStroke(RackViewScene.STROKE_WIDTH));                    
         newWidget.getLabelWidget().setVisible(false);
         newWidget.getActions().addAction(ActionFactory.createSelectAction(new RackConnectionSelectProvider()));
         newWidget.getActions().addAction(ActionFactory.createPopupMenuAction(defaultPopupMenuProvider));
         
         LocalClassMetadata edgeClass = CommunicationsStub.getInstance().getMetaForClass(edge.getClassName(), false);
         if (edgeClass == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return null;
         }        

@@ -23,6 +23,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.Widget;
@@ -52,7 +53,7 @@ public class PortWidget extends SelectableRackViewWidget implements NestedDevice
         
         portClass = CommunicationsStub.getInstance().getMetaForClass(portObject.getClassName(), false);
         if (portClass == null) {
-            NotificationUtil.getInstance().showSimplePopup("Error", 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         }
         free = true; 

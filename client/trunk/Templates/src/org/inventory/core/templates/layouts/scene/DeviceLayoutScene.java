@@ -350,12 +350,12 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
     }
 
     @Override
-    public void render(byte[] structure) throws IllegalArgumentException {
+    public void render(byte[] structure) throws IllegalArgumentException { 
         clear();
         structureRepository.clear();
         render(structure, null, null);
     }
-
+    
     @Override
     public void render(Shape root) {
     }
@@ -578,11 +578,11 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
             this.validate();
             this.repaint();
             
-        } catch (XMLStreamException ex) {
+        } catch (XMLStreamException ex) {            
             NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.ERROR_MESSAGE, "The view seems corrupted and could not be loaded");
             clear();
             if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
-            Exceptions.printStackTrace(ex);
+                Exceptions.printStackTrace(ex);
         }
     }
     

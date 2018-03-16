@@ -69,7 +69,7 @@ public class DeviceLayoutEditorService {
     public boolean saveLayout() {
         byte[] structure = scene.getAsXML();
         if (deviceLayoutView == null) {
-            long viewId = CommunicationsStub.getInstance().createListTypeItemRelateView(
+            long viewId = CommunicationsStub.getInstance().createListTypeItemRelatedView(
                 model.getId(), model.getClassName(), "DeviceLayoutView", null, null, structure, scene.getBackgroundImage()); //NOI18N
             
             if (viewId != -1) { //Success
