@@ -26,12 +26,10 @@ import org.kuwaiba.apis.persistence.application.Privilege;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.services.persistence.util.Constants;
-import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.index.Index;
 
 /**
  * Creates the initial schema needed to load the Kuwaiba data model in a neo4j implementation
@@ -44,14 +42,15 @@ public class DataModelLoader {
      * Reference to the db handle
      */
     private final GraphDatabaseService graphDb;
-    private final Index<Node> specialNodes;
+////    private final Index<Node> specialNodes;
+    private final Label specialNodeLabel = Label.label(Constants.LABEL_SPECIAL_NODE);
     
     public DataModelLoader(ConnectionManager cmn, MetadataEntityManager mem) {
         graphDb = (GraphDatabaseService) cmn.getConnectionHandler();
-        try(Transaction tx = graphDb.beginTx()) {
-            specialNodes = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
-            tx.success();
-        }
+////        try(Transaction tx = graphDb.beginTx()) {
+////            specialNodes = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
+////            tx.success();
+////        }
         this.mem = mem;
     }
         
@@ -68,15 +67,16 @@ public class DataModelLoader {
     {
         try (Transaction tx = graphDb.beginTx())
         {
-            Node dummyRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
+////            Node dummyRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
+            Node dummyRootNode = graphDb.findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
             if(dummyRootNode == null) {
-                Label label = DynamicLabel.label(Constants.LABEL_ROOT);
-                dummyRootNode = graphDb.createNode(label);
+                Label label = Label.label(Constants.LABEL_ROOT);
+                dummyRootNode = graphDb.createNode(label, specialNodeLabel);
                 dummyRootNode.setProperty(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
                 dummyRootNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, Constants.NODE_DUMMYROOT);
                 dummyRootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
 
-                graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).putIfAbsent(dummyRootNode, Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
+////                graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).putIfAbsent(dummyRootNode, Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
                 tx.success();
             }
         }catch(Exception ex) {
@@ -88,15 +88,16 @@ public class DataModelLoader {
     {
         try (Transaction tx = graphDb.beginTx())
         {
-            Node groupRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_GROUPS).getSingle();
+////            Node groupRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_GROUPS).getSingle();
+            Node groupRootNode = graphDb.findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_GROUPS);
 
             if(groupRootNode == null){
-                Label label = DynamicLabel.label(Constants.LABEL_ROOT);
-                groupRootNode = graphDb.createNode(label);
+                Label label = Label.label(Constants.LABEL_ROOT);
+                groupRootNode = graphDb.createNode(label, specialNodeLabel);
                 groupRootNode.setProperty(Constants.PROPERTY_NAME, Constants.NODE_GROUPS);
                 groupRootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
     
-                graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).putIfAbsent(groupRootNode, Constants.PROPERTY_NAME, Constants.NODE_GROUPS);
+////                graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).putIfAbsent(groupRootNode, Constants.PROPERTY_NAME, Constants.NODE_GROUPS);
                 tx.success();
             }
         }catch(Exception ex) {
@@ -108,22 +109,24 @@ public class DataModelLoader {
     {
         try (Transaction tx = graphDb.beginTx())
         {
-            Node generalActivityRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle();
-            Node objectActivityRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG).getSingle();
+////            Node generalActivityRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle();
+            Node generalActivityRootNode = graphDb.findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG);
+////            Node objectActivityRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG).getSingle();
+            Node objectActivityRootNode = graphDb.findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG);
             
-            Label label = DynamicLabel.label(Constants.LABEL_ROOT);
+            Label label = Label.label(Constants.LABEL_ROOT);
             if (generalActivityRootNode == null){
-                generalActivityRootNode = graphDb.createNode(label);
+                generalActivityRootNode = graphDb.createNode(label, specialNodeLabel);
                 generalActivityRootNode.setProperty(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG);
                 generalActivityRootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-                graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).putIfAbsent(generalActivityRootNode, Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG);
+////                graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).putIfAbsent(generalActivityRootNode, Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG);
             }
             
             if (objectActivityRootNode == null){
-                objectActivityRootNode = graphDb.createNode(label);
+                objectActivityRootNode = graphDb.createNode(label, specialNodeLabel);
                 objectActivityRootNode.setProperty(Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG);
                 objectActivityRootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-                graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).putIfAbsent(objectActivityRootNode, Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG);
+////                graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).putIfAbsent(objectActivityRootNode, Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG);
             }
                         
             tx.success();
@@ -136,14 +139,15 @@ public class DataModelLoader {
     {
         try (Transaction tx = graphDb.beginTx())
         {
-            Node privilegeRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_PRIVILEGES).getSingle();
+////            Node privilegeRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_PRIVILEGES).getSingle();
+            Node privilegeRootNode = graphDb.findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_PRIVILEGES);
             
             if(privilegeRootNode == null){
-                Label label = DynamicLabel.label(Constants.LABEL_ROOT);
-                privilegeRootNode = graphDb.createNode(label);
+                Label label = Label.label(Constants.LABEL_ROOT);
+                privilegeRootNode = graphDb.createNode(label, specialNodeLabel);
                 privilegeRootNode.setProperty(Constants.PROPERTY_NAME, Constants.NODE_PRIVILEGES);
                 privilegeRootNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-                graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).putIfAbsent(privilegeRootNode, Constants.PROPERTY_NAME, Constants.NODE_PRIVILEGES);
+////                graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).putIfAbsent(privilegeRootNode, Constants.PROPERTY_NAME, Constants.NODE_PRIVILEGES);
                 tx.success();
             }
         }catch(Exception ex) {

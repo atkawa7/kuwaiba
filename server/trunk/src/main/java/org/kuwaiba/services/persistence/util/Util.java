@@ -38,6 +38,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.GroupProfileLight;
 import org.kuwaiba.apis.persistence.application.Pool;
@@ -63,12 +64,14 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemotePool;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
 import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.DynamicLabel;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
-import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.ResourceIterator;
+import org.neo4j.graphdb.Result;
+import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.kernel.impl.traversal.MonoDirectionalTraversalDescription;
 
@@ -180,7 +183,7 @@ public class Util {
         for (Relationship rel : instance.getRelationships())
             rel.delete();
 
-        instance.getGraphDatabase().index().forNodes(Constants.INDEX_OBJECTS).remove(instance);
+////        instance.getGraphDatabase().index().forNodes(Constants.INDEX_OBJECTS).remove(instance);
         instance.delete();
         
         while (!relatedViews.isEmpty()) {
@@ -622,7 +625,7 @@ public class Util {
      * @param userIndex Index of users. Used to remove the user node before top actually delete it
      * @throws InvalidArgumentException If you try to delete the default administrator
      */
-    public static void deleteUserNode(Node userNode, Index<Node> userIndex) throws InvalidArgumentException {
+    public static void deleteUserNode(Node userNode/*, Index<Node> userIndex*/) throws InvalidArgumentException {
         String userName = (String)userNode.getProperty(Constants.PROPERTY_NAME);
         if (UserProfile.DEFAULT_ADMIN.equals(userName))
             throw new InvalidArgumentException("The default administrator can not be deleted");
@@ -638,7 +641,7 @@ public class Util {
         for (Relationship relationship : userNode.getRelationships()) 
             relationship.delete();
         
-        userIndex.remove(userNode);
+////        userIndex.remove(userNode);
         userNode.delete();
         CacheManager.getInstance().removeUser(userName);
     }
@@ -908,7 +911,7 @@ public class Util {
             if (hasAttribute)
                 continue;
             
-            Label label = DynamicLabel.label(Constants.LABEL_ATTRIBUTE);
+            Label label = Label.label(Constants.LABEL_ATTRIBUTE);
             Node attrNode = classNode.getGraphDatabase().createNode(label);
             attrNode.setProperty(Constants.PROPERTY_NAME, attributeDefinition.getName()); //This should not be null. That should be checked in the caller
             attrNode.setProperty(Constants.PROPERTY_MANDATORY, attributeDefinition.isMandatory()== null ? false : attributeDefinition.isMandatory());
@@ -1085,7 +1088,8 @@ public class Util {
             int type, long timestamp, String affectedProperty, String oldValue, String newValue, String notes) 
             throws ApplicationObjectNotFoundException
     {
-        Node userNode = logRoot.getGraphDatabase().index().forNodes(Constants.INDEX_USERS).get(Constants.PROPERTY_NAME, userName).getSingle();
+////        Node userNode = logRoot.getGraphDatabase().index().forNodes(Constants.INDEX_USERS).get(Constants.PROPERTY_NAME, userName).getSingle();
+        Node userNode = logRoot.getGraphDatabase().findNode(Label.label(Constants.LABEL_USER), Constants.PROPERTY_NAME, userName);
         
         if (userNode == null)
             throw new ApplicationObjectNotFoundException(String.format("User %s can not be found", userName));
@@ -1160,5 +1164,22 @@ public class Util {
         if (!objectList.get(i).getName().equals(Constants.NODE_DUMMYROOT))
             outputString += objectList.get(i);
         return outputString;
+    }
+    
+    public static Node findNodeByLabelAndId(Label label, long id) {
+        GraphDatabaseService graphDb = (GraphDatabaseService) PersistenceService.getInstance().getConnectionManager().getConnectionHandler();
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            String cypherQuery = "MATCH (node:" + label.name() + ") " +
+                                 "WHERE id(node) = " + id + " " +
+                                 "RETURN node";
+            
+            Result result = graphDb.execute(cypherQuery);
+            ResourceIterator<Node> node = result.columnAs("node");
+            
+            tx.success();
+            return node.hasNext() ? node.next() : null;
+        }
     }
 }

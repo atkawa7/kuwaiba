@@ -122,7 +122,7 @@
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j</artifactId>
-            <version>2.3.11</version>
+            <version>3.3.3</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.neo4j</groupId>

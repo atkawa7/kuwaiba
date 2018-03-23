@@ -19,6 +19,7 @@ import org.kuwaiba.apis.persistence.ConnectionManager;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
 import org.neo4j.graphdb.index.Index;
 
@@ -32,18 +33,23 @@ public class DataIntegrityService{
      * Reference to the db handle
      */
     private final GraphDatabaseService graphDb;
-    private final Index<Node> specialNodes;
+////    private final Index<Node> specialNodes;
     
     public DataIntegrityService(ConnectionManager cmn) {
         graphDb = (GraphDatabaseService) cmn.getConnectionHandler();
-        specialNodes = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
+////        specialNodes = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES);
+        
     }
     
     public void checkIntegrity() throws MetadataObjectNotFoundException{
-        Node dummyRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
-        Node groupRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_GROUPS).getSingle();
-        Node generalActivityRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle();
-        Node objectActivityRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG).getSingle();
+////        Node dummyRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
+////        Node groupRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_GROUPS).getSingle();
+////        Node generalActivityRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG).getSingle();
+////        Node objectActivityRootNode = specialNodes.get(Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG).getSingle();
+        Node dummyRootNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
+        Node groupRootNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_GROUPS);
+        Node generalActivityRootNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_GENERAL_ACTIVITY_LOG);
+        Node objectActivityRootNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG);
         //TODO privileges
         if(dummyRootNode == null)
             throw new MetadataObjectNotFoundException(String.format(
