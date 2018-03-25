@@ -162,6 +162,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
      * @param node the node
      * @return the widget attached to the node
      */
+    @Override
     protected Widget attachNodeWidget (Object node) {
         QueryEditorNodeWidget widget = null;
         if (node instanceof LocalClassMetadata){ //A complex class filter node
@@ -173,6 +174,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
                         ColorSchemeFactory.getYellowScheme());
                 widget.getActions().addAction(ActionFactory.createPopupMenuAction(new PopupMenuProvider() {
 
+                            @Override
                             public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
                                 JPopupMenu myMenu = new JPopupMenu();
                                 myMenu.add(new SwitchClassNodeWidgetFilterAction((ClassNodeWidget)widget));
@@ -186,6 +188,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
                 widget = new ListTypeFilter(this, (LocalClassMetadataLight)node);
                 widget.getActions().addAction(ActionFactory.createPopupMenuAction(new PopupMenuProvider() {
 
+                            @Override
                             public JPopupMenu getPopupMenu(Widget widget, Point localLocation) {
                                 JPopupMenu myMenu = new JPopupMenu();
                                 myMenu.add(new SwitchClassNodeWidgetFilterAction((ListTypeFilter)widget));
@@ -224,6 +227,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
      * @param pin the pin
      * @return the widget attached to the pin, null, if it is a default pin
      */
+    @Override
     protected Widget attachPinWidget (Object node, Object pin) {
         VMDPinWidget widget;
             if (pin instanceof LocalAttributeMetadata){
@@ -245,6 +249,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
      * @param edge the edge
      * @return the widget attached to the edge
      */
+    @Override
     protected Widget attachEdgeWidget (String edge) {
         VMDConnectionWidget connectionWidget = new VMDConnectionWidget (this, scheme);
         connectionWidget.setRouter (router);
@@ -264,6 +269,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
      * @param oldSourcePin the old source pin
      * @param sourcePin the new source pin
      */
+    @Override
     protected void attachEdgeSourceAnchor (String edge, Object oldSourcePin, Object sourcePin) {
         ((ConnectionWidget) findWidget (edge)).setSourceAnchor (getPinAnchor (sourcePin));
     }
@@ -276,6 +282,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
      * @param oldTargetPin the old target pin
      * @param targetPin the new target pin
      */
+    @Override
     protected void attachEdgeTargetAnchor (String edge, Object oldTargetPin, Object targetPin) {
         ((ConnectionWidget) findWidget (edge)).setTargetAnchor (getPinAnchor (targetPin));
     }
@@ -440,7 +447,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
      */
     public void addActionListener(ActionListener listener){
         if (listeners == null)
-            listeners = new ArrayList<ActionListener>();
+            listeners = new ArrayList<>();
         listeners.add(listener);
     }
 
@@ -458,6 +465,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
      * Listen for checkbox selections
      * @param e
      */
+    @Override
     public void itemStateChanged(ItemEvent e) {
         fireChangeEvent(new ActionEvent(e.getSource(), 
                 ((JCheckBox)e.getSource()).isSelected() ?

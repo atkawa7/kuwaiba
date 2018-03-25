@@ -42,6 +42,7 @@ import org.inventory.queries.scene.QueryEditorNodeWidget;
 import org.inventory.queries.scene.QueryEditorScene;
 import org.inventory.queries.scene.ClassNodeWidget;
 import org.inventory.queries.scene.filters.ListTypeFilter;
+import org.netbeans.api.visual.widget.Widget;
 
 /**
  * This class will replace the old QueryManagerService in next releases
@@ -240,9 +241,10 @@ public class QueryManagerService implements ActionListener {
                         }
                     }
                     
-                    else
+                    else{
                         myMetadata = com.getMetaForClass((String)insideCheck.getClientProperty("className"),false);
-                    
+                        myMetadata.setDisplayName(((LocalAttributeMetadata)insideCheck.getClientProperty("attribute")).getName());
+                    }
                     LocalClassMetadataLight myMetadataLight;
                     if(!isParentMenu){
                         myMetadataLight = new LocalClassMetadataLight(myMetadata.getOid(), 
