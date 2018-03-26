@@ -132,7 +132,8 @@ public class CommunicationsStub {
     private LocalSession session;
     
     private static String[] classesWithCustomDeleteActions = new String[] {"ElectricalLink", "RadioLink", "OpticalLink", "MPLSLink",
-                                                                    "VC4", "VC4-04", "VC4-16", "VC4TributaryLink", "VC12TributaryLink", "VC3TributaryLink",
+                                                                    "VC4", "VC4-04", "VC4-16", "VC4-07", "VC4-64", "VC4TributaryLink", "VC12TributaryLink", "VC3TributaryLink",
+                                                                    "VC4-07TributaryLink", "VC4-64TributaryLink",
                                                                     "STM1", "STM4", "STM16", "STM64", "STM256",
                                                                     "WireContainer", "WirelessContainer",
                                                                     "CorporateCustomer", "TelecomOperator", "Provider", "HomeCustomer",
