@@ -97,80 +97,62 @@ public class Constants {
      * Application modifier for attributes used for administrative purposes only
      */
     public static int ATTRIBUTE_MODIFIER_ADMINISTRATIVE = 16;
-    
+    /**
+     * Label name for user nodes
+     */
     public static final String LABEL_USER = "users"; //NOI18N
-    public static final String LABEL_OBJECT = "objects"; //NOI18N
+    /**
+     * To label the inventory objects
+     */
+    public static final String LABEL_INVENTORY_OBJECT = "inventory_objects"; //NOI18N
+    /**
+     * Label used for the metadata classes nodes label
+     */
     public static final String LABEL_CLASS = "classes"; //NOI18N
+    /**
+     * Label name for group nodes
+     */
     public static final String LABEL_GROUP = "groups"; //NOI18N
+    /**
+     * Name of the label for list type items
+     */
     public static final String LABEL_LIST_TYPE_ITEM = "listTypeItems"; //NOI18N
+    /**
+     * Name of the label for pools
+     */
     public static final String LABEL_POOL = "pools"; //NOI18N
+    /**
+     * Label used for the special nodes
+     */
     public static final String LABEL_SPECIAL_NODE = "specialNodes"; //NOI18N
+    /**
+     * Name of the label for reports
+     */
     public static final String LABEL_REPORTS = "reports"; //NOI18N
+    /**
+     * Name of the label for queries
+     */
     public static final String LABEL_QUERIES = "queries"; //NOI18N
+    /**
+     * Name of the label for tasks
+     */
     public static final String LABEL_TASKS = "tasks"; //NOI18N
+    /**
+     * Label used for the business rules
+     */
     public static final String LABEL_BUSINESS_RULES = "businessRules"; //NOI18N
+    /**
+     * Name of the label for general views
+     */
     public static final String LABEL_GENERAL_VIEWS = "generalViews"; //NOI18N
+    /**
+     * Name of the label for synchronization groups
+     */
     public static final String LABEL_SYNCGROUPS = "syncGroups"; //NOI18N
-    /**
-     * To label the objects index
-     */
-////    public static final String INDEX_OBJECTS ="objects"; //NOI18N
-    /**
-     * Index name for user nodes
-     */
-////    public static final String INDEX_USERS = "users"; //NOI18N
-    /**
-     * Index name for group nodes
-     */
-////    public static final String INDEX_GROUPS = "groups"; //NOI18N
-    /**
-     * Index name for group nodes
-     */
-////    public static final String INDEX_QUERIES = "queries"; //NOI18N
-    /**
-     * Name of the index for list type items
-     */
-////    public static final String INDEX_LIST_TYPE_ITEMS = "listTypeItems"; //NOI18N
-    /**
-     * Name of the index for general views
-     */
-////    public static final String INDEX_GENERAL_VIEWS = "generalViews"; //NOI18N
-    /**
-     * Name of the index for pools
-     */
-////    public static final String INDEX_POOLS = "pools"; //NOI18N
-    /**
-     * Name of the index for tasks
-     */
-////    public static final String INDEX_TASKS = "tasks"; //NOI18N
-    /**
-     * Name of the index for tasks
-     */
-////    public static final String INDEX_SYNCGROUPS = "syncGroups"; //NOI18N
-    /**
-     * Name of the index for reports
-     */
-////    public static final String INDEX_REPORTS = "reports"; //NOI18N
-    /**
-     * Label used for the class index
-     */
-////    public static final String INDEX_CLASS = "classes"; //NOI18N
-    /**
-     * Label used for the special nodes index
-     */
-////    public static final String INDEX_SPECIAL_NODES = "specialNodes"; //NOI18N
-    /**
-     * Label used for the business rules index
-     */
-////    public static final String INDEX_BUSINESS_RULES = "businessRules"; //NOI18N
     /**
      * Label used for the attributes nodes label
      */
     public static final String LABEL_ATTRIBUTE = "attribute"; //NOI18N
-    /**
-     * Label used for the metadata classes nodes label
-     */
-////    public static final String LABEL_CLASS = "class"; //NOI18N
     /**
      * label used for root, dummyRoot, groupsRoot, nodes
      */

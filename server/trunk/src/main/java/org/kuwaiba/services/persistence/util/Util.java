@@ -183,7 +183,6 @@ public class Util {
         for (Relationship rel : instance.getRelationships())
             rel.delete();
 
-////        instance.getGraphDatabase().index().forNodes(Constants.INDEX_OBJECTS).remove(instance);
         instance.delete();
         
         while (!relatedViews.isEmpty()) {
@@ -640,8 +639,7 @@ public class Util {
         //Delete the rest of relationships
         for (Relationship relationship : userNode.getRelationships()) 
             relationship.delete();
-        
-////        userIndex.remove(userNode);
+                
         userNode.delete();
         CacheManager.getInstance().removeUser(userName);
     }
@@ -1088,7 +1086,6 @@ public class Util {
             int type, long timestamp, String affectedProperty, String oldValue, String newValue, String notes) 
             throws ApplicationObjectNotFoundException
     {
-////        Node userNode = logRoot.getGraphDatabase().index().forNodes(Constants.INDEX_USERS).get(Constants.PROPERTY_NAME, userName).getSingle();
         Node userNode = logRoot.getGraphDatabase().findNode(Label.label(Constants.LABEL_USER), Constants.PROPERTY_NAME, userName);
         
         if (userNode == null)

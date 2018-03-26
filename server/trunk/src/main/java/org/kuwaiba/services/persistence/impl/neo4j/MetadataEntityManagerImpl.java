@@ -58,12 +58,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
      * Reference to the db handle
      */
     private GraphDatabaseService graphDb;
-    
-    private Label classLabel;
     /**
-     * Class index
+     * Class label
      */
-////    private Index<Node> classIndex;
+    private Label classLabel;
     /**
      * Reference to the CacheManager
      */
@@ -86,9 +84,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         this();
         graphDb = (GraphDatabaseService) cmn.getConnectionHandler();
         this.relationshipDisplayNames = new HashMap<>();
+        classLabel = Label.label(Constants.LABEL_CLASS);
         try(Transaction tx = graphDb.beginTx()) {
-////            classIndex = graphDb.index().forNodes(Constants.INDEX_CLASS);
-            classLabel = Label.label(Constants.LABEL_CLASS);
             buildClassCache();
         }catch(Exception ex) {
             System.out.println(String.format("[KUWAIBA] [%s] An error was found while creating the MEM instance: %s", 
@@ -110,12 +107,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     throw new InvalidArgumentException("Class name can not be an empty string");
         
         try (Transaction tx = graphDb.beginTx()) {
-////            if (classIndex.get(Constants.PROPERTY_NAME, classDefinition.getName()).getSingle() != null)
+            
             if (graphDb.findNode(classLabel, Constants.PROPERTY_NAME, classDefinition.getName()) != null)
                 throw new InvalidArgumentException(String.format("Class %s already exists", classDefinition.getName()));
             
-////            Label label = DynamicLabel.label(Constants.LABEL_CLASS);
-////            Label categoryLabel = DynamicLabel.label(classDefinition.getCategory() == null ? "org.kuwaiba.entity.undefined" : classDefinition.getCategory());
             Node classNode = graphDb.createNode(classLabel);
 
             classNode.setProperty(Constants.PROPERTY_NAME, classDefinition.getName());
@@ -131,8 +126,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             classNode.setProperty(Constants.PROPERTY_IN_DESIGN, classDefinition.isInDesign() == null ? false : classDefinition.isInDesign());
 
             id = classNode.getId();
-////            classIndex.putIfAbsent(classNode, Constants.PROPERTY_NAME, classDefinition.getName());
-////            classIndex.putIfAbsent(classNode, Constants.PROPERTY_ID, classNode.getId());
             
             //Here we add the attributes
             if (classDefinition.getAttributes() != null) {
@@ -150,8 +143,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     throw new MetadataObjectNotFoundException(String.format("Only %s can be the root superclass", Constants.CLASS_ROOTOBJECT));
             }
             else { 
-////                Node parentNode = classIndex.get(Constants.PROPERTY_NAME, classDefinition.getParentClassName()).getSingle();
                 Node parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, classDefinition.getParentClassName());
+                
                 if (parentNode != null) {
                     classNode.createRelationshipTo(parentNode, RelTypes.EXTENDS);
                     Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.HAS_ATTRIBUTE);
@@ -210,8 +203,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         String affectedProperties = "", oldValues = "", newValues = "";
         
         try (Transaction tx = graphDb.beginTx()) {
-////            Node classMetadata = classIndex.get(Constants.PROPERTY_ID, newClassDefinition.getId()).getSingle();
-////            Node classMetadata = graphDb.findNode(classLabel, Constants.PROPERTY_ID, newClassDefinition.getId());
+            
             Node classMetadata = Util.findNodeByLabelAndId(classLabel, newClassDefinition.getId());
             
             if (classMetadata == null)
@@ -227,18 +219,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 if (!newClassDefinition.getName().matches("^[a-zA-Z0-9_-]*$"))
                     throw new InvalidArgumentException(String.format("Class name %s contains invalid characters", newClassDefinition.getName()));
                 
-////                if (classIndex.get(Constants.PROPERTY_NAME, newClassDefinition.getName()).getSingle() != null)
                 if (graphDb.findNode(classLabel, Constants.PROPERTY_NAME, newClassDefinition.getName()) != null)
                    throw new InvalidArgumentException(String.format("Class %s already exists", newClassDefinition.getName()));
                 
-////                classIndex.remove(classMetadata, Constants.PROPERTY_NAME);
                 classMetadata.setProperty(Constants.PROPERTY_NAME, newClassDefinition.getName());
                 
                 affectedProperties = Constants.PROPERTY_NAME + " ";
                 oldValues = classMetadata.getProperty(Constants.PROPERTY_NAME) + " ";
                 newValues = newClassDefinition.getName() + " ";
-                
-////                classIndex.add(classMetadata, Constants.PROPERTY_NAME, newClassDefinition.getName());
+                                
                 buildClassCache();
             }
             if(newClassDefinition.getDisplayName() != null) {
@@ -328,8 +317,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     public void deleteClass(long classId) 
             throws MetadataObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
-////            Node node = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
-////            Node node = graphDb.findNode(classLabel, Constants.PROPERTY_ID, classId);
+            
             Node node = Util.findNodeByLabelAndId(classLabel, classId);
 
             if (node == null)
@@ -352,8 +340,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             if (isSubClass(Constants.CLASS_GENERICOBJECTLIST, className)) {
                 //If the class is a list type, let's check if it's used by another class
                 ResourceIterator<Node> classes = graphDb.findNodes(classLabel);
-                
-////                for (Node classNode : classIndex.query(Constants.PROPERTY_ID, "*")) {
+                                
                 while (classes.hasNext()) {
                     Node classNode = classes.next();
                                         
@@ -384,8 +371,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             //Release the rest of relationships
             for (Relationship rel : node.getRelationships())
                 rel.delete();
-            
-////            classIndex.remove(node);
+                        
             node.delete();
             buildClassCache();
             tx.success();
@@ -396,7 +382,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     public void deleteClass(String className) 
             throws MetadataObjectNotFoundException, InvalidArgumentException   {
         try (Transaction tx  = graphDb.beginTx()) {
-////            Node node = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
+            
             Node node = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
 
             if (node == null)
@@ -418,8 +404,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             if (isSubClass(Constants.CLASS_GENERICOBJECTLIST, className)) {
                 //If the class is a list type, let's check if it's used by another class
                 ResourceIterator<Node> classes = graphDb.findNodes(classLabel);
-                
-////                for (Node classNode : classIndex.query(Constants.PROPERTY_ID, "*")) {
+                                
                 while (classes.hasNext()) {
                     Node classNode = classes.next();
                     
@@ -450,7 +435,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             for (Relationship rel : node.getRelationships())
                 rel.delete();
             
-////            classIndex.remove(node);
             node.delete();
             buildClassCache();
             tx.success();
@@ -463,14 +447,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             throws MetadataObjectNotFoundException {
         List<ClassMetadataLight> cml = new ArrayList<>();
         try (Transaction tx = graphDb.beginTx()) {
-////            Node myClassInventoryObjectNode =  classIndex.get(Constants.PROPERTY_NAME, Constants.CLASS_INVENTORYOBJECT).getSingle();
             Node myClassInventoryObjectNode =  graphDb.findNode(classLabel, Constants.PROPERTY_NAME, Constants.CLASS_INVENTORYOBJECT);
             Node myClassGenericObjectListNode = null;
             
             if (includeListTypes)
                 myClassGenericObjectListNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, Constants.CLASS_GENERICOBJECTLIST);
-////                myClassGenericObjectListNode =  classIndex.get(Constants.PROPERTY_NAME, Constants.CLASS_GENERICOBJECTLIST).getSingle();
-            
+                        
             if (myClassInventoryObjectNode == null) {
                 throw new MetadataObjectNotFoundException(String.format(
                          "Can not find a class with name %s", Constants.CLASS_INVENTORYOBJECT));
@@ -486,27 +468,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             if (includeListTypes && myClassGenericObjectListNode != null)
                 cml.add(Util.createClassMetadataLightFromNode(myClassGenericObjectListNode));
             
-////            String cypherQuery = "START inventory = node:classes({className}) ".concat(
-////                                 "MATCH inventory <-[:").concat(RelTypes.EXTENDS.toString()).concat("*]-classmetadata ").concat(
-////                                 "RETURN classmetadata,inventory ").concat(
-////                                 "ORDER BY classmetadata.name ASC");
-//            String cypherQuery = "MATCH (inventory:classes)<-[:EXTENDS*]-(classmetadata) "
-//                + "WHERE inventory.name IN [{className}] "
-//                + "RETURN classmetadata, inventory "
-//                + "ORDER BY classmetadata.name ASC;";
-
-////            Map<String, Object> params = new HashMap<>();
             String rootClasses;
 
             if(includeListTypes)
                 rootClasses = "'" + Constants.CLASS_INVENTORYOBJECT + "', '" + Constants.CLASS_GENERICOBJECTLIST + "'";
-////                params.put("className", "'" + Constants.CLASS_INVENTORYOBJECT + "', '" + Constants.CLASS_GENERICOBJECTLIST + "'");//NOI18N
-////                params.put("className", "name:"+ Constants.CLASS_INVENTORYOBJECT + " name:" + Constants.CLASS_GENERICOBJECTLIST);//NOI18N
-            
             else
                 rootClasses = "'" + Constants.CLASS_INVENTORYOBJECT + "'";
-////                params.put("className", "'" + Constants.CLASS_INVENTORYOBJECT + "'");//NOI18N
-////                params.put("className", "name:"+ Constants.CLASS_INVENTORYOBJECT);//NOI18N
+            
             String cypherQuery = "MATCH (inventory:classes)<-[:EXTENDS*]-(classmetadata) "
                 + "WHERE inventory.name IN [" + rootClasses + "] "
                 + "RETURN classmetadata, inventory "
@@ -544,18 +512,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             return classManagerResultList;
         }
         // Retrieving all subclasses to update the cache
-////        String cypherQuery = "START inventory = node:classes({className}) ".concat(
-////                             "MATCH (inventory)<-[:").concat(RelTypes.EXTENDS.toString()).concat("*]-(classmetadata) ").concat(
-////                             "RETURN classmetadata ").concat(
-////                             "ORDER BY classmetadata.name ASC");
         String cypherQuery = "MATCH (inventory:classes)<-[:EXTENDS*]-(classmetadata) "
                            + "WHERE inventory.name IN ['" + className + "'] "
                            + "RETURN classmetadata "
                            + "ORDER BY classmetadata.name ASC;";
                 
-////        Map<String, Object> params = new HashMap<>();
-////        params.put("className", "'" + className + "'"); //NOI18N
-        
         subclasses = new ArrayList();
             
         try (Transaction tx = graphDb.beginTx()) {
@@ -604,18 +565,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         }
         // Retrieving all subclasses to update the cache
         classManagerResultList = new ArrayList<>();
-////        String cypherQuery = "START inventory = node:classes({className}) ".concat(
-////                             "MATCH (inventory)<-[:").concat(RelTypes.EXTENDS.toString()).concat("]-(classmetadata) ").concat(
-////                             "RETURN classmetadata ").concat(
-////                             "ORDER BY classmetadata.name ASC");
+        
         String cypherQuery = ""
             + "MATCH (inventory:classes)<-[:EXTENDS]-(classmetadata) "
             + "WHERE inventory.name IN ['" + className + "'] "
             + "RETURN classmetadata "
             + "ORDER BY classmetadata.name ASC;";
-
-////        Map<String, Object> params = new HashMap<>();
-////        params.put("className", "'" + className + "'"); //NOI18N
         
         subclasses = new ArrayList();
 
@@ -643,34 +598,20 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     public List<ClassMetadata> getAllClasses(boolean includeListTypes, boolean includeIndesign) {
         List<ClassMetadata> classMetadataResultList = new ArrayList<>();
         
-////        String cypherQuery = "START inventory = node:classes({className}) " +
-////                             "MATCH inventory <-[:" + (RelTypes.EXTENDS.toString()) + "*]-classmetadata " +
-////                             "RETURN classmetadata,inventory " +
-////                             "ORDER BY classmetadata.name ASC";
-//        String cypherQuery = "MATCH (inventory:classes) <-[:" + (RelTypes.EXTENDS.toString()) + "*]-(classmetadata) " +
-//                             "WHERE inventory.name IN [{className}] " +
-//                             "RETURN classmetadata, inventory " +
-//                             "ORDER BY classmetadata.name ASC";
         String rootClasses;
 
-        Map<String, Object> params = new HashMap<>();
         if(includeListTypes)
             rootClasses = String.format("\'%s\', \'%s\'", Constants.CLASS_INVENTORYOBJECT, Constants.CLASS_GENERICOBJECTLIST);
-//            params.put("className", String.format("\'%s\', \'%s\'", Constants.CLASS_INVENTORYOBJECT, Constants.CLASS_GENERICOBJECTLIST));//"'" + Constants.CLASS_INVENTORYOBJECT + "', '" + Constants.CLASS_GENERICOBJECTLIST + "'");//NOI18N
-////            params.put("className", "name:"+ Constants.CLASS_INVENTORYOBJECT + " name:" + Constants.CLASS_GENERICOBJECTLIST);//NOI18N
-
         else
             rootClasses = String.format("\'%s\'", Constants.CLASS_INVENTORYOBJECT);
-//            params.put("className", String.format("\'%s\'", Constants.CLASS_INVENTORYOBJECT));//'" + Constants.CLASS_INVENTORYOBJECT + "'");//NOI18N
-////            params.put("className", "name:"+ Constants.CLASS_INVENTORYOBJECT);//NOI18N
-
+        
         String cypherQuery = "MATCH (inventory:classes) <-[:" + (RelTypes.EXTENDS.toString()) + "*]-(classmetadata) " +
                              "WHERE inventory.name IN [" + rootClasses + "] " +
                              "RETURN classmetadata, inventory " +
                              "ORDER BY classmetadata.name ASC";
         
         try (Transaction tx = graphDb.beginTx()) {
-           Result result = graphDb.execute(cypherQuery/*, params*/);
+           Result result = graphDb.execute(cypherQuery);
             ResourceIterator<Node> n_column = result.columnAs("classmetadata");
            //First, we inject the InventoryObject class (for some reason, the start node can't be retrieved as part of the path, so it can be sorted)
             ResourceIterator<Node> roots = result.columnAs("inventory");
@@ -687,9 +628,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         ClassMetadata clmt = null;
         try(Transaction tx = graphDb.beginTx()) 
         {
-////            Node node = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
-////            Node node = graphDb.findNode(classLabel, Constants.PROPERTY_ID, classId);
             Node node = Util.findNodeByLabelAndId(classLabel, classId);
+            
             if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
                         "Can not find a class with id %s", classId));
@@ -707,8 +647,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             return clmt;
         
         try (Transaction tx = graphDb.beginTx()) {
-////            Node node = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
             Node node = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
+            
             if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
                         "Can not find a class with name %s", className));
@@ -729,8 +669,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         
         try (Transaction tx = graphDb.beginTx())
         {
-////            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
+            
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", className));
             
@@ -747,9 +687,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     {
         try (Transaction tx = graphDb.beginTx())
         {        
-////            Node classNode = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
-////            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_ID, classId);
             Node classNode = Util.findNodeByLabelAndId(classLabel, classId);
+            
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Can not find a class with id %s", classId));
         
@@ -764,9 +703,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     @Override
     public boolean hasAttribute(String className, String attributeName) throws MetadataObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-////            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
-            
+                        
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format(
                     "Can not find a class with name %s", className));
@@ -787,7 +725,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         AttributeMetadata attribute = null;
         try (Transaction tx = graphDb.beginTx())
         {
-////            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
 
             if (classNode == null)
@@ -817,8 +754,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         AttributeMetadata attribute = null;
         try (Transaction tx = graphDb.beginTx())
         {
-////            Node classNode = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
-////            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_ID, classId);
             Node classNode = Util.findNodeByLabelAndId(classLabel, classId);
             if (classNode == null) 
                 throw new MetadataObjectNotFoundException(String.format(
@@ -847,8 +782,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         String affectedProperties = "", oldValues = "", newValues = "";
         
         try(Transaction tx = graphDb.beginTx()) {
-////            Node classNode = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
-////            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_ID, classId);
             Node classNode = Util.findNodeByLabelAndId(classLabel, classId);
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Can not find a class with id %s", classId));
@@ -976,7 +909,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         
         try(Transaction tx = graphDb.beginTx()) 
         {
-////            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", className));
@@ -1104,7 +1036,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be deleted", attributeName));
         
         try(Transaction tx = graphDb.beginTx()) {
-////            Node classNode = classIndex.get(Constants.PROPERTY_NAME, attributeName).getSingle();
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, attributeName);
 
             if (classNode == null)
@@ -1133,8 +1064,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be deleted", attributeName));
         
         try (Transaction tx = graphDb.beginTx()) {
-////            Node classNode = classIndex.get(Constants.PROPERTY_ID, classId).getSingle();
-////            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_ID, classId);
             Node classNode = Util.findNodeByLabelAndId(classLabel, classId);
 
             if (classNode == null)
@@ -1171,12 +1100,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             Node parentNode;
             
-            if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT)) {
-////                parentNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
+            if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT))
                 parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
-            } else
+            else
                 parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
-////                parentNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
             
             tx.success();
             return refreshPossibleChildren(parentNode);
@@ -1199,13 +1126,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             Node parentNode; 
             
-            if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT)) {
-////                parentNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
+            if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT))
                 parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
-            } else
+            else
                 parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
-////                parentNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
-            
+                        
             tx.success();
             return refreshPossibleSpecialChildren(parentNode);
         }
@@ -1217,13 +1142,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             Node parentNode;
             
-            if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT)) {
-////                parentNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
+            if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT))
                 parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
-            } else
+            else
                 parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
-////                parentNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
-
+            
             Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.POSSIBLE_CHILD, Direction.OUTGOING);
             
             List<ClassMetadataLight> classMetadataListResult = new ArrayList<>();
@@ -1243,13 +1166,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             Node parentNode;
             
-            if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT)) {
-////                parentNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
+            if (parentClassName == null || parentClassName.equals(Constants.NODE_DUMMYROOT))
                 parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
-            } else
+            else
                 parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
-////                parentNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
-
+            
             Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.POSSIBLE_SPECIAL_CHILD, Direction.OUTGOING);
             
             List<ClassMetadataLight> classMetadataListResult = new ArrayList<>();
@@ -1292,8 +1213,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         Node parentNode;
         try(Transaction tx = graphDb.beginTx()) {
             if(parentClassId != -1) {
-////                parentNode = classIndex.get(Constants.PROPERTY_ID, parentClassId).getSingle();
-////                parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_ID, parentClassId);
+                
                 parentNode = Util.findNodeByLabelAndId(classLabel, parentClassId);
 
                 if (parentNode == null)
@@ -1304,13 +1224,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
             }else
                 parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
-////                parentNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
 
             List<ClassMetadataLight> currentPossibleChildren = refreshPossibleChildren(parentNode);
             
             for (long id : possibleChildren) {
-////                Node childNode = classIndex.get(Constants.PROPERTY_ID, id).getSingle();
-////                Node childNode = graphDb.findNode(classLabel, Constants.PROPERTY_ID, id);
+                
                 Node childNode = Util.findNodeByLabelAndId(classLabel, id);
 
                 if (childNode == null)
@@ -1362,8 +1280,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         try(Transaction tx = graphDb.beginTx()) {
             Node parentNode;
             if(parentClassId != -1) {
-////                parentNode = classIndex.get(Constants.PROPERTY_ID, parentClassId).getSingle();
-////                parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_ID, parentClassId);
+                
                 parentNode = Util.findNodeByLabelAndId(classLabel, parentClassId);
 
                 if (parentNode == null)
@@ -1374,13 +1291,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
             } else
                 parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
-////                parentNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
 
             List<ClassMetadataLight> currentPossibleSpecialChildren = refreshPossibleSpecialChildren(parentNode);
             
             for (long id : possibleSpecialChildren) {
-////                Node childNode = classIndex.get(Constants.PROPERTY_ID, id).getSingle();
-////                Node childNode = graphDb.findNode(classLabel, Constants.PROPERTY_ID, id);
                 Node childNode = Util.findNodeByLabelAndId(classLabel, id);
 
                 if (childNode == null)
@@ -1428,7 +1342,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
         try(Transaction tx = graphDb.beginTx()) {
             if(parentClassName != null) {
-////                parentNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
+                
                 parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
 
                 if (parentNode == null)
@@ -1440,7 +1354,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
             } else {
                 parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
-////                parentNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
 
                 if(!(Constants.NODE_DUMMYROOT).equals((String)parentNode.getProperty(Constants.PROPERTY_NAME)))
                         throw new MetadataObjectNotFoundException("DummyRoot node is corrupted");
@@ -1448,7 +1361,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             List<ClassMetadataLight> currentPossibleChildren = refreshPossibleChildren(parentNode);
         
             for (String possibleChildName : possibleChildren) {
-////                Node childNode = classIndex.get(Constants.PROPERTY_NAME, possibleChildName).getSingle();
+                
                 Node childNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, possibleChildName);
                 
                 if (childNode == null)
@@ -1493,7 +1406,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
         try(Transaction tx = graphDb.beginTx()) {
             if(parentClassName != null) {
-////                parentNode = classIndex.get(Constants.PROPERTY_NAME, parentClassName).getSingle();
+                
                 parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, parentClassName);
 
                 if (parentNode == null)
@@ -1505,16 +1418,15 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
             } else {
                 parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
-////                parentNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
-
+                
                 if(!(Constants.NODE_DUMMYROOT).equals((String)parentNode.getProperty(Constants.PROPERTY_NAME)))
                         throw new MetadataObjectNotFoundException("DummyRoot node is corrupted");
             }
             List<ClassMetadataLight> currentPossibleSpecialChildren = refreshPossibleSpecialChildren(parentNode);
         
             for (String possibleSpecialChildName : possibleSpecialChildren) {
-////                Node childNode = classIndex.get(Constants.PROPERTY_NAME, possibleSpecialChildName).getSingle();
                 Node childNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, possibleSpecialChildName);
+                
                 if (childNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
                             "Can not find class %s", possibleSpecialChildName));
@@ -1559,23 +1471,21 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             Node parentNode;
             if (parentClassId == -1){
-////                parentNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
                 parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
+                
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException("DummyRoot is corrupted");
             }
             else {
-////                parentNode = classIndex.get(Constants.PROPERTY_ID, parentClassId).getSingle();
-////                parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_ID, parentClassId);
                 parentNode = Util.findNodeByLabelAndId(classLabel, parentClassId);
+                
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
                             "Can not find a class with id %s", parentClassId));
             }
             for (long id : childrenToBeRemoved) {
-////                Node childNode = classIndex.get(Constants.PROPERTY_ID, id).getSingle();
-////                Node childNode = graphDb.findNode(classLabel, Constants.PROPERTY_ID, id);
                 Node childNode = Util.findNodeByLabelAndId(classLabel, id);
+                
                 Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.POSSIBLE_CHILD, Direction.OUTGOING);
 
                 for (Relationship rel: relationships) {
@@ -1596,23 +1506,21 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             Node parentNode;
             if (parentClassId == -1){
-////                parentNode = graphDb.index().forNodes(Constants.INDEX_SPECIAL_NODES).get(Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT).getSingle();
                 parentNode = graphDb.findNode(Label.label(Constants.LABEL_SPECIAL_NODE), Constants.PROPERTY_NAME, Constants.NODE_DUMMYROOT);
+                
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException("DummyRoot is corrupted");
             }
             else {
-////                parentNode = classIndex.get(Constants.PROPERTY_ID, parentClassId).getSingle();
-////                parentNode = graphDb.findNode(classLabel, Constants.PROPERTY_ID, parentClassId);
                 parentNode = Util.findNodeByLabelAndId(classLabel, parentClassId);
+                
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
                             "Can not find a class with id %s", parentClassId));
             }
             for (long id : specialChildrenToBeRemoved) {
-////                Node childNode = classIndex.get(Constants.PROPERTY_ID, id).getSingle();
-////                Node childNode = graphDb.findNode(classLabel, Constants.PROPERTY_ID, id);
                 Node childNode = Util.findNodeByLabelAndId(classLabel, id);
+                
                 Iterable<Relationship> relationships = parentNode.getRelationships(RelTypes.POSSIBLE_SPECIAL_CHILD, Direction.OUTGOING);
 
                 for (Relationship rel: relationships) {
@@ -1632,8 +1540,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             boolean recursive) throws MetadataObjectNotFoundException {
         List<ClassMetadataLight> res = new ArrayList<>();
         try(Transaction tx = graphDb.beginTx()) {
-////            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
+            
             if (classNode == null){
                throw new MetadataObjectNotFoundException(String.format(
                             "Can not find class %s", className));
@@ -1659,8 +1567,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             boolean recursive) throws MetadataObjectNotFoundException {
         List<ClassMetadataLight> res = new ArrayList<>();
         try(Transaction tx = graphDb.beginTx()) {
-////            Node classNode = classIndex.get(Constants.PROPERTY_NAME, className).getSingle();
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
+            
             if (classNode == null){
                throw new MetadataObjectNotFoundException(String.format(
                             "Can not find class %s", className));
@@ -1735,8 +1643,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         ResourceIterator<Node> classes = graphDb.findNodes(classLabel);
         while (classes.hasNext()) {
             Node classNode = classes.next();
-////        for (Node classNode : classIndex.query(Constants.PROPERTY_ID, "*")) {
-
+            
             ClassMetadata aClass = Util.createClassMetadataFromNode(classNode);
             cm.putClass(aClass);
 
@@ -1817,8 +1724,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             String attributeName) 
             throws MetadataObjectNotFoundException, InvalidArgumentException
     {
-////        Node classNode = classIndex.get(Constants.PROPERTY_NAME,className).getSingle();
         Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
+        
         String attributeType = Util.createClassMetadataFromNode(classNode).getAttribute(attributeName).getType();
         if (classNode == null)
             throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", className));
@@ -1909,7 +1816,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         subClassesLight.add(Util.createClassMetadataLightFromNode(classNode)); //Add itself, since getSubClassesLight(Node, boolean) does not do it on its own
         
         for(ClassMetadataLight subClassLight : subClassesLight){
-////            Node subClassNode = classIndex.get(Constants.PROPERTY_NAME, subClassLight.getName()).getSingle();
             Node subClassNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, subClassLight.getName());
             ClassMetadata subClassMetadata = createClassMetadataFromNode(subClassNode);
             if(subClassMetadata.hasAttribute(attributeName)){
@@ -1946,7 +1852,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
      */
     private void loadUniqueAttributesCache() throws InvalidArgumentException{
         
-////        Node inventoryObject = classIndex.get(Constants.PROPERTY_NAME, Constants.CLASS_INVENTORYOBJECT).getSingle();
         Node inventoryObject = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, Constants.CLASS_INVENTORYOBJECT);
         
         TraversalDescription td = new MonoDirectionalTraversalDescription(); //TODO Check this!
