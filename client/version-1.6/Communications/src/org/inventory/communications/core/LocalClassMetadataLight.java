@@ -121,6 +121,10 @@ public class LocalClassMetadataLight implements Transferable, Comparable<LocalCl
     public void setClassName(String className) {
         this.className = className;
     }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
     
     public long getOid() {
         return id;
@@ -155,7 +159,7 @@ public class LocalClassMetadataLight implements Transferable, Comparable<LocalCl
        if (!(obj instanceof LocalClassMetadataLight)) {
            return false;
        }
-       return (this.getOid() == ((LocalClassMetadataLight)obj).getOid());
+       return (this.getOid() == ((LocalClassMetadataLight)obj).getOid() && this.getDisplayName().equals(((LocalClassMetadataLight)obj).getDisplayName()));
    }
 
     @Override
