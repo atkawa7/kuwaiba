@@ -8,13 +8,14 @@
     <packaging>war</packaging>
 
     <name>Kuwaiba Open Network Inventory Server</name>
-
+    <description>The First and Only Open Source Network Inventory for the Telecom Industry</description>
+    
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <vaadin.version>8.3.1</vaadin.version>
         <vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
-        <vaadin.version>7.7.3</vaadin.version>
-        <deltaspike.version>1.1.0</deltaspike.version>
+        <deltaspike.version>1.8.1</deltaspike.version>
                 
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>        
         <project.source.version>1.8</project.source.version>
@@ -30,25 +31,25 @@
            <artifactId>messagebox</artifactId>
            <version>3.0.19</version>
         </dependency>
-        
+        <!--
         <dependency>
            <groupId>org.vaadin.addons</groupId>
            <artifactId>stepper</artifactId>
            <version>2.3.0</version>
         </dependency>
-        
+        -->
         <dependency>
            <groupId>org.vaadin.addons</groupId>
            <artifactId>wizards-for-vaadin</artifactId>
            <version>1.1.0</version>
             <type>jar</type>
         </dependency>
-        
+        <!--
         <dependency>
             <groupId>com.vaadin.tapio</groupId>
             <artifactId>googlemaps</artifactId>
             <version>1.4.1-NEOTROPIC</version>
-        </dependency>
+        </dependency>-->
         
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -118,7 +119,7 @@
             <scope>runtime</scope>
         </dependency>
         
-        <!-- Neo4J, Groovy and the local WAX -->
+        <!-- Neo4J, Groovy, SNMP and JSON support -->
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j</artifactId>

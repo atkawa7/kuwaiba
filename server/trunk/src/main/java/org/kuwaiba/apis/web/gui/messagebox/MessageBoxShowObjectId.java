@@ -16,7 +16,7 @@
 package org.kuwaiba.apis.web.gui.messagebox;
 
 import com.vaadin.server.Page;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;

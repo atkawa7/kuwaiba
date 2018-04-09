@@ -41,7 +41,7 @@ public class ClassMetadataNode extends AbstractNode<ClassInfoLight> {
     @Override
     public void setTree(DynamicTree tree) {
         super.setTree(tree);
-        tree.setItemIcon(this, FontAwesome.SQUARE);
+        //tree.setItemIcon(this, FontAwesome.SQUARE);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class ClassMetadataNode extends AbstractNode<ClassInfoLight> {
             for (ClassInfoLight child : children) {
                 ClassMetadataNode childNode = new ClassMetadataNode(child);
                 childNode.setTree(getTree());
-                getTree().setParent(childNode, this);
+                //getTree().setParent(childNode, this);
             }
         }
         catch(ServerSideException ex) {

@@ -41,7 +41,7 @@ public class ListTypeNode extends AbstractNode<ClassInfoLight> {
     @Override
     public void setTree(DynamicTree tree) {
         super.setTree(tree);
-        tree.setItemIcon(this, new ThemeResource("img/mod_list_icon_list_type.png"));
+        //tree.setItemIcon(this, new ThemeResource("img/mod_list_icon_list_type.png"));
     }
     
     @Override
@@ -62,7 +62,7 @@ public class ListTypeNode extends AbstractNode<ClassInfoLight> {
             for (RemoteObjectLight child : children) {
                 ListTypeChildNode childNode = new ListTypeChildNode(child);
                 childNode.setTree(getTree());
-                getTree().setParent(childNode, this);
+                //getTree().setParent(childNode, this);
             }
         } catch (ServerSideException ex) {
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);

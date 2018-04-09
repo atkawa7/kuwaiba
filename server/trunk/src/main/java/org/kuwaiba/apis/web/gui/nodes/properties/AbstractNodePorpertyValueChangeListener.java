@@ -16,8 +16,8 @@
 package org.kuwaiba.apis.web.gui.nodes.properties;
 
 import com.google.common.eventbus.EventBus;
-import com.vaadin.data.Property;
-import com.vaadin.data.util.BeanItem;
+//import com.vaadin.data.Property;
+//import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.FieldEvents;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.services.persistence.util.Constants;
@@ -28,16 +28,18 @@ import org.kuwaiba.services.persistence.util.Constants;
  * @param <T> the kind of object in the listen class
  */
 public abstract class AbstractNodePorpertyValueChangeListener<T extends Object>  
-    implements Property.ValueChangeListener, FieldEvents.FocusListener{
+    implements 
+        //Property.ValueChangeListener,
+        FieldEvents.FocusListener {
 
     protected final EventBus eventBus;
     protected String attributeCaption;
     protected String attributeType;
-    protected BeanItem<T> object;
+  //  protected BeanItem<T> object;
     protected TopComponent parentComponent;
 
-    public AbstractNodePorpertyValueChangeListener(TopComponent parentComponent, BeanItem<T> object, EventBus eventBus){
-        this.object = object;
+    public AbstractNodePorpertyValueChangeListener(TopComponent parentComponent/*, BeanItem<T> object*/, EventBus eventBus){
+        //this.object = object;
         this.eventBus = eventBus;
         this.parentComponent = parentComponent;
     }
@@ -50,9 +52,6 @@ public abstract class AbstractNodePorpertyValueChangeListener<T extends Object>
         this.attributeType = attributeType;
     }
     
-    @Override
-    public abstract void valueChange(Property.ValueChangeEvent event);
-
     @Override
     public void focus(FieldEvents.FocusEvent event){
         Object source = event.getSource();

@@ -15,21 +15,14 @@
  */
 package org.kuwaiba.web.modules.physicalconnections.windows;
 
-import com.vaadin.data.Item;
-import com.vaadin.data.Property;
 import com.vaadin.event.Action;
 import com.vaadin.server.Page;
-import com.vaadin.shared.ui.label.ContentMode;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.Table;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.Reindeer;
 import com.vaadin.ui.themes.ValoTheme;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -58,14 +51,14 @@ public class ConnectLinksWindow extends Window {
     private final String btnConnectCaption = "Connect";
     
     private DynamicTree treeEndpointA;
-    private Table tblAvailableConnections;
+    //private Table tblAvailableConnections;
     private DynamicTree treeEndpointB;
     
     private Panel pnlResult;
     /**
      * A property value change listener used for the trees and the table.
      */
-    private Property.ValueChangeListener generalValueChangeListener;
+    //private Property.ValueChangeListener generalValueChangeListener;
         
     public ConnectLinksWindow(TopComponent parentComponent, RemoteObjectLight connection) {
 //        super("Connecting Links");
@@ -178,145 +171,145 @@ public class ConnectLinksWindow extends Window {
     private void initTreeEndPointA(RemoteObjectLight object) {
         EndpointNode rootNodeA = new EndpointNode(object);
         treeEndpointA = new DynamicTree(rootNodeA, parentComponent);
-        treeEndpointA.setDragMode(Tree.TreeDragMode.NONE);
+        //treeEndpointA.setDragMode(Tree.TreeDragMode.NONE);
         rootNodeA.setTree(treeEndpointA);
-        treeEndpointA.setSelectable(true);
-        treeEndpointA.setImmediate(true);
-        treeEndpointA.setMultiSelect(true);
-        treeEndpointA.setNullSelectionAllowed(true);
-                        
-        treeEndpointA.addActionHandler(new Action.Handler() {
-            
-            @Override
-            public Action[] getActions(Object target, Object sender) {
-                if (target instanceof AbstractNode) {
-                    AbstractAction [] actions = ((AbstractNode)target).getActions();
-                    List<Action> actionsList = new ArrayList();
-                    
-                    for (AbstractAction action : actions)
-                        actionsList.add(action);
-                    actionsList.add(new Action("Free"));
-                    
-                    return actionsList.toArray(new Action[0]);
-                }
-                return null;
-            }
-            
-            @Override
-            public void handleAction(Action action, Object sender, Object target) {
-                if (action.getCaption().equals("Free"))
-                    freeEndpoint(((EndpointNode) target).getObjectLink(), true);
-                else
-                    ((AbstractAction) action).actionPerformed(sender, target);
-            }
-        });
+//        treeEndpointA.setSelectable(true);
+//        treeEndpointA.setImmediate(true);
+//        treeEndpointA.setMultiSelect(true);
+//        treeEndpointA.setNullSelectionAllowed(true);
+//                        
+//        treeEndpointA.addActionHandler(new Action.Handler() {
+//            
+//            @Override
+//            public Action[] getActions(Object target, Object sender) {
+//                if (target instanceof AbstractNode) {
+//                    AbstractAction [] actions = ((AbstractNode)target).getActions();
+//                    List<Action> actionsList = new ArrayList();
+//                    
+//                    for (AbstractAction action : actions)
+//                        actionsList.add(action);
+//                    actionsList.add(new Action("Free"));
+//                    
+//                    return actionsList.toArray(new Action[0]);
+//                }
+//                return null;
+//            }
+//            
+//            @Override
+//            public void handleAction(Action action, Object sender, Object target) {
+//                if (action.getCaption().equals("Free"))
+//                    freeEndpoint(((EndpointNode) target).getObjectLink(), true);
+//                else
+//                    ((AbstractAction) action).actionPerformed(sender, target);
+//            }
+//        });
         
-        treeEndpointA.setItemStyleGenerator((Tree source, Object itemId) -> {
-            if (itemId instanceof EndpointNode) {
-                if (!((EndpointNode) itemId).isFree())
-                    return "disabled"; //NOI18N
-            }
-            return null;
-        });
+//        treeEndpointA.setItemStyleGenerator((Tree source, Object itemId) -> {
+//            if (itemId instanceof EndpointNode) {
+//                if (!((EndpointNode) itemId).isFree())
+//                    return "disabled"; //NOI18N
+//            }
+//            return null;
+//        });
         
-        treeEndpointA.addValueChangeListener(generalValueChangeListener);
+        //treeEndpointA.addValueChangeListener(generalValueChangeListener);
     }
     
-    private void initTblAvailableConnections(List<RemoteObjectLight> links) {
-        tblAvailableConnections = new Table();
-        tblAvailableConnections.setSizeFull();
-        tblAvailableConnections.addContainerProperty(ENDPOINT_A_COLUMN_HEADER, String.class, null);
-        tblAvailableConnections.addContainerProperty(LINK_COLUMN_HEADER, RemoteObjectLight.class, null);
-        tblAvailableConnections.addContainerProperty(ENDPOINT_B_COLUMN_HEADER, String.class, null);
-        
-        tblAvailableConnections.setCellStyleGenerator((Table source, Object itemId, Object propertyId) -> {
-            if (propertyId != null) {
-                Item item = source.getItem(itemId);
-                String state = null;
-                
-                if (propertyId.equals(ENDPOINT_A_COLUMN_HEADER))
-                    state = (String) item.getItemProperty(propertyId).getValue();
-                
-                if (propertyId.equals(ENDPOINT_B_COLUMN_HEADER))
-                    state = (String) item.getItemProperty(propertyId).getValue();
-                
-                if (state != null && state.equals(IN_USE))
-                    return "disable"; //NOI18N
-            }
-            return null;
-        });
-                
-        for (RemoteObjectLight link : links) {
-            try {
-                List<RemoteObjectLight> aEndpointList = parentComponent.getWsBean().getSpecialAttribute(                        
-                        link.getClassName(),
-                        link.getOid(),
-                        "endpointA", //NOI18N
-                        Page.getCurrent().getWebBrowser().getAddress(),
-                        this.parentComponent.getApplicationSession().getSessionId());
-                
-                List<RemoteObjectLight> bEndpointList = parentComponent.getWsBean().getSpecialAttribute(
-                        link.getClassName(), 
-                        link.getOid(), 
-                        "endpointB", //NOI18N
-                        Page.getCurrent().getWebBrowser().getAddress(), 
-                        this.parentComponent.getApplicationSession().getSessionId());
-                
-                aEndpointList.equals(bEndpointList);
-                
-                String aEndpointConnected = FREE_ENDPOINT;
-                String bEndpointConnected = FREE_ENDPOINT;
-                
-                if (!aEndpointList.isEmpty()){
-                    aEndpointConnected = IN_USE;
-                }
-                if (!bEndpointList.isEmpty()){
-                    bEndpointConnected = IN_USE;
-                }
-                tblAvailableConnections.addItem(new Object[]{aEndpointConnected, link,  bEndpointConnected}, link);
-            }
-            catch (ServerSideException ex) {
-                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-            }
-        }
-        tblAvailableConnections.setColumnHeaderMode(Table.ColumnHeaderMode.HIDDEN);
-        tblAvailableConnections.addStyleName(Reindeer.TABLE_BORDERLESS) ;
-        tblAvailableConnections.addStyleName(ValoTheme.TABLE_NO_STRIPES);
-        tblAvailableConnections.addStyleName(ValoTheme.TABLE_NO_VERTICAL_LINES);
-        tblAvailableConnections.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
-        tblAvailableConnections.setMultiSelect(true);
-        
-        tblAvailableConnections.setSelectable(true);
-        tblAvailableConnections.setImmediate(true);
-        
-        tblAvailableConnections.addActionHandler(new Action.Handler() {
-
-            @Override
-            public Action[] getActions(Object target, Object sender) {
-                
-                return new Action[] {
-                    new Action("Free Endpoint A"),
-                    new Action("Free Endpoint B"),
-                    new Action("Free Both Endpoints"),
-                };
-            }
-
-            @Override
-            public void handleAction(Action action, Object sender, Object target) {
-                if ("Free Endpoint A".equals(action.getCaption()))
-                    freeEndpoint((RemoteObjectLight) target, true);
-                
-                if ("Free Endpoint B".equals(action.getCaption()))
-                    freeEndpoint((RemoteObjectLight) target, false);
-                
-                if ("Free Both Endpoints".equals(action.getCaption())) {
-                    freeEndpoint((RemoteObjectLight) target, true);
-                    freeEndpoint((RemoteObjectLight) target, false);
-                }
-            }
-        });
-        tblAvailableConnections.addValueChangeListener(generalValueChangeListener);        
-    }
+//    private void initTblAvailableConnections(List<RemoteObjectLight> links) {
+//        tblAvailableConnections = new Table();
+//        tblAvailableConnections.setSizeFull();
+//        tblAvailableConnections.addContainerProperty(ENDPOINT_A_COLUMN_HEADER, String.class, null);
+//        tblAvailableConnections.addContainerProperty(LINK_COLUMN_HEADER, RemoteObjectLight.class, null);
+//        tblAvailableConnections.addContainerProperty(ENDPOINT_B_COLUMN_HEADER, String.class, null);
+//        
+//        tblAvailableConnections.setCellStyleGenerator((Table source, Object itemId, Object propertyId) -> {
+//            if (propertyId != null) {
+//                Item item = source.getItem(itemId);
+//                String state = null;
+//                
+//                if (propertyId.equals(ENDPOINT_A_COLUMN_HEADER))
+//                    state = (String) item.getItemProperty(propertyId).getValue();
+//                
+//                if (propertyId.equals(ENDPOINT_B_COLUMN_HEADER))
+//                    state = (String) item.getItemProperty(propertyId).getValue();
+//                
+//                if (state != null && state.equals(IN_USE))
+//                    return "disable"; //NOI18N
+//            }
+//            return null;
+//        });
+//                
+//        for (RemoteObjectLight link : links) {
+//            try {
+//                List<RemoteObjectLight> aEndpointList = parentComponent.getWsBean().getSpecialAttribute(                        
+//                        link.getClassName(),
+//                        link.getOid(),
+//                        "endpointA", //NOI18N
+//                        Page.getCurrent().getWebBrowser().getAddress(),
+//                        this.parentComponent.getApplicationSession().getSessionId());
+//                
+//                List<RemoteObjectLight> bEndpointList = parentComponent.getWsBean().getSpecialAttribute(
+//                        link.getClassName(), 
+//                        link.getOid(), 
+//                        "endpointB", //NOI18N
+//                        Page.getCurrent().getWebBrowser().getAddress(), 
+//                        this.parentComponent.getApplicationSession().getSessionId());
+//                
+//                aEndpointList.equals(bEndpointList);
+//                
+//                String aEndpointConnected = FREE_ENDPOINT;
+//                String bEndpointConnected = FREE_ENDPOINT;
+//                
+//                if (!aEndpointList.isEmpty()){
+//                    aEndpointConnected = IN_USE;
+//                }
+//                if (!bEndpointList.isEmpty()){
+//                    bEndpointConnected = IN_USE;
+//                }
+//                tblAvailableConnections.addItem(new Object[]{aEndpointConnected, link,  bEndpointConnected}, link);
+//            }
+//            catch (ServerSideException ex) {
+//                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//            }
+//        }
+//        tblAvailableConnections.setColumnHeaderMode(Table.ColumnHeaderMode.HIDDEN);
+//        tblAvailableConnections.addStyleName(Reindeer.TABLE_BORDERLESS) ;
+//        tblAvailableConnections.addStyleName(ValoTheme.TABLE_NO_STRIPES);
+//        tblAvailableConnections.addStyleName(ValoTheme.TABLE_NO_VERTICAL_LINES);
+//        tblAvailableConnections.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
+//        tblAvailableConnections.setMultiSelect(true);
+//        
+//        tblAvailableConnections.setSelectable(true);
+//        tblAvailableConnections.setImmediate(true);
+//        
+//        tblAvailableConnections.addActionHandler(new Action.Handler() {
+//
+//            @Override
+//            public Action[] getActions(Object target, Object sender) {
+//                
+//                return new Action[] {
+//                    new Action("Free Endpoint A"),
+//                    new Action("Free Endpoint B"),
+//                    new Action("Free Both Endpoints"),
+//                };
+//            }
+//
+//            @Override
+//            public void handleAction(Action action, Object sender, Object target) {
+//                if ("Free Endpoint A".equals(action.getCaption()))
+//                    freeEndpoint((RemoteObjectLight) target, true);
+//                
+//                if ("Free Endpoint B".equals(action.getCaption()))
+//                    freeEndpoint((RemoteObjectLight) target, false);
+//                
+//                if ("Free Both Endpoints".equals(action.getCaption())) {
+//                    freeEndpoint((RemoteObjectLight) target, true);
+//                    freeEndpoint((RemoteObjectLight) target, false);
+//                }
+//            }
+//        });
+//        tblAvailableConnections.addValueChangeListener(generalValueChangeListener);        
+//    }
     
     private void freeEndpoint(RemoteObjectLight objectLink, boolean freeEndpointA) {        
 //        if (objectLink == null)
@@ -380,243 +373,244 @@ public class ConnectLinksWindow extends Window {
     private void initTreeEndPointB(RemoteObjectLight object) {
         EndpointNode rootNodeB = new EndpointNode(object);
         treeEndpointB = new DynamicTree(rootNodeB, parentComponent);
-        treeEndpointB.setDragMode(Tree.TreeDragMode.NONE);
-        rootNodeB.setTree(treeEndpointB);
-        treeEndpointB.setSelectable(true);
-        treeEndpointB.setImmediate(true);
-        treeEndpointB.setMultiSelect(true);
-        treeEndpointB.setNullSelectionAllowed(true);
-        
-        treeEndpointB.addActionHandler(new Action.Handler() {
-            
-            @Override
-            public Action[] getActions(Object target, Object sender) {
-                
-                if (target instanceof AbstractNode) {
-                    AbstractAction [] actions = ((AbstractNode)target).getActions();
-                    List<Action> actionsList = new ArrayList();
-                    
-                    for (AbstractAction action : actions)
-                        actionsList.add(action);
-                    actionsList.add(new Action("Free"));
-                    
-                    return actionsList.toArray(new Action[0]);
-                }
-                return null;
-            }
-            
-            @Override
-            public void handleAction(Action action, Object sender, Object target) {
-                if (action.getCaption().equals("Free"))
-                    freeEndpoint(((EndpointNode) target).getObjectLink(), false);
-                else
-                    ((AbstractAction) action).actionPerformed(sender, target);
-            }
-        });
-        
-        treeEndpointB.setItemStyleGenerator((Tree source, Object itemId) -> {
-            if (itemId instanceof EndpointNode) {
-                if (!((EndpointNode) itemId).isFree())
-                    return "disabled"; //NOI18N
-            }
-            return null;
-        });
-        
-        treeEndpointB.addValueChangeListener(generalValueChangeListener);
+//        treeEndpointB.setDragMode(Tree.TreeDragMode.NONE);
+//        rootNodeB.setTree(treeEndpointB);
+//        treeEndpointB.setSelectable(true);
+//        treeEndpointB.setImmediate(true);
+//        treeEndpointB.setMultiSelect(true);
+//        treeEndpointB.setNullSelectionAllowed(true);
+//        
+//        treeEndpointB.addActionHandler(new Action.Handler() {
+//            
+//            @Override
+//            public Action[] getActions(Object target, Object sender) {
+//                
+//                if (target instanceof AbstractNode) {
+//                    AbstractAction [] actions = ((AbstractNode)target).getActions();
+//                    List<Action> actionsList = new ArrayList();
+//                    
+//                    for (AbstractAction action : actions)
+//                        actionsList.add(action);
+//                    actionsList.add(new Action("Free"));
+//                    
+//                    return actionsList.toArray(new Action[0]);
+//                }
+//                return null;
+//            }
+//            
+//            @Override
+//            public void handleAction(Action action, Object sender, Object target) {
+//                if (action.getCaption().equals("Free"))
+//                    freeEndpoint(((EndpointNode) target).getObjectLink(), false);
+//                else
+//                    ((AbstractAction) action).actionPerformed(sender, target);
+//            }
+//        });
+//        
+//        treeEndpointB.setItemStyleGenerator((Tree source, Object itemId) -> {
+//            if (itemId instanceof EndpointNode) {
+//                if (!((EndpointNode) itemId).isFree())
+//                    return "disabled"; //NOI18N
+//            }
+//            return null;
+//        });
+//        
+//        treeEndpointB.addValueChangeListener(generalValueChangeListener);
     }
     
-    private EndpointNode [] getASelectedNodes() {
-        return ((Collection<EndpointNode>) treeEndpointA.getValue())
-                .toArray(new EndpointNode[0]);
-    }
-    
-    private RemoteObjectLight [] getLinksSelected() {
-        return ((Collection<RemoteObjectLight>) tblAvailableConnections.getValue())
-                .toArray(new RemoteObjectLight[0]);
-    }
-    
-    private EndpointNode [] getBSelectedNodes() {
-        return ((Collection<EndpointNode>) treeEndpointB.getValue())
-                .toArray(new EndpointNode[0]);
-    }
+//    private EndpointNode [] getASelectedNodes() {
+//        return ((Collection<EndpointNode>) treeEndpointA.getValue())
+//                .toArray(new EndpointNode[0]);
+//    }
+//    
+//    private RemoteObjectLight [] getLinksSelected() {
+//        return ((Collection<RemoteObjectLight>) tblAvailableConnections.getValue())
+//                .toArray(new RemoteObjectLight[0]);
+//    }
+//    
+//    private EndpointNode [] getBSelectedNodes() {
+//        return ((Collection<EndpointNode>) treeEndpointB.getValue())
+//                .toArray(new EndpointNode[0]);
+//    }
     
     private int currentNumberOfLinks() {
-        EndpointNode [] aSelectedNodes = getASelectedNodes();
-        RemoteObjectLight [] connections = getLinksSelected();
-        EndpointNode [] bSelectedNodes = getBSelectedNodes();
-        
-        int numberNodesA = aSelectedNodes == null ? 0 : aSelectedNodes.length;
-        int numberConnections = connections == null ? 0 : connections.length;
-        int numberNodesB = bSelectedNodes == null ? 0 : bSelectedNodes.length;
-        
-        if (numberNodesA >= numberConnections) {
-            if (numberNodesA >=  numberNodesB)
-                return numberNodesA;
-            else
-                return numberNodesB;
-        }
-        else {
-            if (numberConnections >= numberNodesB)
-                return numberConnections;
-            else
-                return numberNodesB;
-        }
+//        EndpointNode [] aSelectedNodes = getASelectedNodes();
+//        RemoteObjectLight [] connections = getLinksSelected();
+//        EndpointNode [] bSelectedNodes = getBSelectedNodes();
+//        
+//        int numberNodesA = aSelectedNodes == null ? 0 : aSelectedNodes.length;
+//        int numberConnections = connections == null ? 0 : connections.length;
+//        int numberNodesB = bSelectedNodes == null ? 0 : bSelectedNodes.length;
+//        
+//        if (numberNodesA >= numberConnections) {
+//            if (numberNodesA >=  numberNodesB)
+//                return numberNodesA;
+//            else
+//                return numberNodesB;
+//        }
+//        else {
+//            if (numberConnections >= numberNodesB)
+//                return numberConnections;
+//            else
+//                return numberNodesB;
+//        }
+        return 0;
     }
     
     private void updateLstResult() {
-        VerticalLayout lytResult = (VerticalLayout) pnlResult.getContent();
-        lytResult.removeAllComponents();
-        
-        int rows = currentNumberOfLinks();
-        
-        if (rows > 0) {
-            EndpointNode [] aSelectedNodes = getASelectedNodes();
-            RemoteObjectLight [] connections = getLinksSelected();
-            EndpointNode [] bSelectedNodes = getBSelectedNodes();
-            // 4 new labels for make a blank space
-//            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
-//            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
-//            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
-//            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
-            
-            for (int i = 0; i < rows; i += 1) {
-                String aSelectedObject;
-                String connection;
-                String bSelectedObject;
-
-                if (aSelectedNodes != null && aSelectedNodes.length > i)
-                    aSelectedObject = ((RemoteObjectLight) aSelectedNodes[i].getObject()).toString();                
-                else                
-                    aSelectedObject = "Free";                
-
-                if (connections != null && connections.length > i)
-                    connection = connections[i].toString();
-                else                
-                    connection = "No connection";
-
-                if (bSelectedNodes != null && bSelectedNodes.length > i)
-                    bSelectedObject = ((RemoteObjectLight) bSelectedNodes[i].getObject()).toString();                
-                else                
-                    bSelectedObject = "Free";
-
-
-                String result = String.format("<font color=\"blue\"> %s <-> %s <-> %s", 
-                    aSelectedObject, 
-                    connection, 
-                    bSelectedObject);
-
-                    lytResult.addComponent(new Label(result, ContentMode.HTML));
-            }            
-        }
+//        VerticalLayout lytResult = (VerticalLayout) pnlResult.getContent();
+//        lytResult.removeAllComponents();
+//        
+//        int rows = currentNumberOfLinks();
+//        
+//        if (rows > 0) {
+//            EndpointNode [] aSelectedNodes = getASelectedNodes();
+//            RemoteObjectLight [] connections = getLinksSelected();
+//            EndpointNode [] bSelectedNodes = getBSelectedNodes();
+//            // 4 new labels for make a blank space
+////            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
+////            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
+////            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
+////            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
+//            
+//            for (int i = 0; i < rows; i += 1) {
+//                String aSelectedObject;
+//                String connection;
+//                String bSelectedObject;
+//
+//                if (aSelectedNodes != null && aSelectedNodes.length > i)
+//                    aSelectedObject = ((RemoteObjectLight) aSelectedNodes[i].getObject()).toString();                
+//                else                
+//                    aSelectedObject = "Free";                
+//
+//                if (connections != null && connections.length > i)
+//                    connection = connections[i].toString();
+//                else                
+//                    connection = "No connection";
+//
+//                if (bSelectedNodes != null && bSelectedNodes.length > i)
+//                    bSelectedObject = ((RemoteObjectLight) bSelectedNodes[i].getObject()).toString();                
+//                else                
+//                    bSelectedObject = "Free";
+//
+//
+//                String result = String.format("<font color=\"blue\"> %s <-> %s <-> %s", 
+//                    aSelectedObject, 
+//                    connection, 
+//                    bSelectedObject);
+//
+//                    lytResult.addComponent(new Label(result, ContentMode.HTML));
+//            }            
+//        }
     }
     
     private void connectLinks() {
-        List<String> results = new ArrayList();
-        
-        int rows = currentNumberOfLinks();
-        
-        if (rows > 0) {
-            EndpointNode [] aSelectedNodes = getASelectedNodes();
-            RemoteObjectLight [] connections = getLinksSelected();
-            EndpointNode [] bSelectedNodes = getBSelectedNodes();
-                    
-            for (int i = 0; i < rows; i += 1) {
-                String sideAClassName = null;
-                Long sideAId = null;
-                String linkClassName = null;
-                Long linkId = null;
-                String sideBClassName = null;
-                Long sideBId = null;
-
-                if (aSelectedNodes != null && aSelectedNodes.length > i) {
-                    sideAClassName = ((RemoteObjectLight) aSelectedNodes[i].getObject()).getClassName();
-                    sideAId = ((RemoteObjectLight) aSelectedNodes[i].getObject()).getOid();
-                }
-
-                if (connections != null && connections.length > i) {
-                    linkClassName = connections[i].getClassName();
-                    linkId = connections[i].getOid();
-                }           
-                else {
-                    results.add(String.format(
-                            "<font color=\"red\">%s", 
-                            "Select a link from the list"));
-                    continue;
-                }
-
-
-                if (bSelectedNodes != null && bSelectedNodes.length > i) {
-                    sideBClassName = ((RemoteObjectLight) bSelectedNodes[i].getObject()).getClassName();
-                    sideBId = ((RemoteObjectLight) bSelectedNodes[i].getObject()).getOid();
-                }
-
-                try {
-                    parentComponent.getWsBean().connectPhysicalLinks(
-                            new String[]{sideAClassName},
-                            new Long[]{sideAId},
-                            new String[]{linkClassName},
-                            new Long[]{linkId},
-                            new String[]{sideBClassName},
-                            new Long[]{sideBId},
-                            Page.getCurrent().getWebBrowser().getAddress(),
-                            parentComponent.getApplicationSession().getSessionId());
-
-                    results.add(String.format(
-                            "<font color=\"green\">%s", 
-                            "Connection was made successfully"));
-
-                    if (aSelectedNodes != null && aSelectedNodes.length > i) {
-                        aSelectedNodes[i].setObjectLink(connections[i]);
-                        aSelectedNodes[i].setFree(false);
-                    }
-
-                    if (bSelectedNodes != null && bSelectedNodes.length > i) {
-                        bSelectedNodes[i].setObjectLink(connections[i]);
-                        bSelectedNodes[i].setFree(false);
-                    }
-
-                    if (!tblAvailableConnections.getItem(connections[i])
-                            .getItemProperty(ENDPOINT_A_COLUMN_HEADER) 
-                            .getValue().equals(IN_USE)) {
-
-                        tblAvailableConnections.getItem(connections[i])
-                                .getItemProperty(ENDPOINT_A_COLUMN_HEADER) 
-                                .setValue(sideAClassName == null ? FREE_ENDPOINT : IN_USE);
-                    }
-
-                    if (!tblAvailableConnections.getItem(connections[i])
-                            .getItemProperty(ENDPOINT_B_COLUMN_HEADER)                        
-                            .getValue().equals(IN_USE)) {
-
-                        tblAvailableConnections.getItem(connections[i])
-                                .getItemProperty(ENDPOINT_B_COLUMN_HEADER) 
-                                .setValue(sideBClassName == null ? FREE_ENDPOINT : IN_USE);
-                    }
-
-                } catch (ServerSideException ex) {
-                    results.add(String.format(
-                            "<font color=\"red\">%s", 
-                            ex.getMessage()));
-                }
-            }
-            VerticalLayout lytResult = (VerticalLayout) pnlResult.getContent();
-
-            for (int i = 0; i < rows; i += 1) {
-                Label lblResult = (Label) lytResult.getComponent(i);
-                lblResult.setValue(lblResult.getValue() + " " + results.get(i));
-            }            
-            treeEndpointA.removeValueChangeListener(generalValueChangeListener);
-            tblAvailableConnections.removeValueChangeListener(generalValueChangeListener);
-            treeEndpointB.removeValueChangeListener(generalValueChangeListener);
-
-            treeEndpointA.setValue(Collections.emptySet());
-            tblAvailableConnections.setValue(Collections.emptySet());
-            treeEndpointB.setValue(Collections.emptySet());
-            
-            treeEndpointA.addValueChangeListener(generalValueChangeListener);
-            tblAvailableConnections.addValueChangeListener(generalValueChangeListener);
-            treeEndpointB.addValueChangeListener(generalValueChangeListener);
-        }
+//        List<String> results = new ArrayList();
+//        
+//        int rows = currentNumberOfLinks();
+//        
+//        if (rows > 0) {
+//            EndpointNode [] aSelectedNodes = getASelectedNodes();
+//            RemoteObjectLight [] connections = getLinksSelected();
+//            EndpointNode [] bSelectedNodes = getBSelectedNodes();
+//                    
+//            for (int i = 0; i < rows; i += 1) {
+//                String sideAClassName = null;
+//                Long sideAId = null;
+//                String linkClassName = null;
+//                Long linkId = null;
+//                String sideBClassName = null;
+//                Long sideBId = null;
+//
+//                if (aSelectedNodes != null && aSelectedNodes.length > i) {
+//                    sideAClassName = ((RemoteObjectLight) aSelectedNodes[i].getObject()).getClassName();
+//                    sideAId = ((RemoteObjectLight) aSelectedNodes[i].getObject()).getOid();
+//                }
+//
+//                if (connections != null && connections.length > i) {
+//                    linkClassName = connections[i].getClassName();
+//                    linkId = connections[i].getOid();
+//                }           
+//                else {
+//                    results.add(String.format(
+//                            "<font color=\"red\">%s", 
+//                            "Select a link from the list"));
+//                    continue;
+//                }
+//
+//
+//                if (bSelectedNodes != null && bSelectedNodes.length > i) {
+//                    sideBClassName = ((RemoteObjectLight) bSelectedNodes[i].getObject()).getClassName();
+//                    sideBId = ((RemoteObjectLight) bSelectedNodes[i].getObject()).getOid();
+//                }
+//
+//                try {
+//                    parentComponent.getWsBean().connectPhysicalLinks(
+//                            new String[]{sideAClassName},
+//                            new Long[]{sideAId},
+//                            new String[]{linkClassName},
+//                            new Long[]{linkId},
+//                            new String[]{sideBClassName},
+//                            new Long[]{sideBId},
+//                            Page.getCurrent().getWebBrowser().getAddress(),
+//                            parentComponent.getApplicationSession().getSessionId());
+//
+//                    results.add(String.format(
+//                            "<font color=\"green\">%s", 
+//                            "Connection was made successfully"));
+//
+//                    if (aSelectedNodes != null && aSelectedNodes.length > i) {
+//                        aSelectedNodes[i].setObjectLink(connections[i]);
+//                        aSelectedNodes[i].setFree(false);
+//                    }
+//
+//                    if (bSelectedNodes != null && bSelectedNodes.length > i) {
+//                        bSelectedNodes[i].setObjectLink(connections[i]);
+//                        bSelectedNodes[i].setFree(false);
+//                    }
+//
+//                    if (!tblAvailableConnections.getItem(connections[i])
+//                            .getItemProperty(ENDPOINT_A_COLUMN_HEADER) 
+//                            .getValue().equals(IN_USE)) {
+//
+//                        tblAvailableConnections.getItem(connections[i])
+//                                .getItemProperty(ENDPOINT_A_COLUMN_HEADER) 
+//                                .setValue(sideAClassName == null ? FREE_ENDPOINT : IN_USE);
+//                    }
+//
+//                    if (!tblAvailableConnections.getItem(connections[i])
+//                            .getItemProperty(ENDPOINT_B_COLUMN_HEADER)                        
+//                            .getValue().equals(IN_USE)) {
+//
+//                        tblAvailableConnections.getItem(connections[i])
+//                                .getItemProperty(ENDPOINT_B_COLUMN_HEADER) 
+//                                .setValue(sideBClassName == null ? FREE_ENDPOINT : IN_USE);
+//                    }
+//
+//                } catch (ServerSideException ex) {
+//                    results.add(String.format(
+//                            "<font color=\"red\">%s", 
+//                            ex.getMessage()));
+//                }
+//            }
+//            VerticalLayout lytResult = (VerticalLayout) pnlResult.getContent();
+//
+//            for (int i = 0; i < rows; i += 1) {
+//                Label lblResult = (Label) lytResult.getComponent(i);
+//                lblResult.setValue(lblResult.getValue() + " " + results.get(i));
+//            }            
+//            treeEndpointA.removeValueChangeListener(generalValueChangeListener);
+//            tblAvailableConnections.removeValueChangeListener(generalValueChangeListener);
+//            treeEndpointB.removeValueChangeListener(generalValueChangeListener);
+//
+//            treeEndpointA.setValue(Collections.emptySet());
+//            tblAvailableConnections.setValue(Collections.emptySet());
+//            treeEndpointB.setValue(Collections.emptySet());
+//            
+//            treeEndpointA.addValueChangeListener(generalValueChangeListener);
+//            tblAvailableConnections.addValueChangeListener(generalValueChangeListener);
+//            treeEndpointB.addValueChangeListener(generalValueChangeListener);
+//        }
     }
     
     /*
@@ -627,9 +621,9 @@ public class ConnectLinksWindow extends Window {
     */
     @Override    
     public void close() {
-        treeEndpointA.removeValueChangeListener(generalValueChangeListener);
-        tblAvailableConnections.removeValueChangeListener(generalValueChangeListener);
-        treeEndpointB.removeValueChangeListener(generalValueChangeListener);
-        super.close();
+//        treeEndpointA.removeValueChangeListener(generalValueChangeListener);
+//        //tblAvailableConnections.removeValueChangeListener(generalValueChangeListener);
+//        treeEndpointB.removeValueChangeListener(generalValueChangeListener);
+//        super.close();
     }
 }

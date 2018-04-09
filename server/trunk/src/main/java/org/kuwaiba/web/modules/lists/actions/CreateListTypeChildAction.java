@@ -56,7 +56,7 @@ public class CreateListTypeChildAction extends AbstractAction {
             ListTypeChildNode childNode = new ListTypeChildNode(listTypeObject);
             childNode.setTree(parentNode.getTree());
             
-            ((DynamicTree) sourceComponent).setParent(childNode, parentNode);            
+            //((DynamicTree) sourceComponent).setParent(childNode, parentNode);            
         } catch (ServerSideException ex) {
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
         }

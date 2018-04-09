@@ -27,11 +27,11 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
-import com.vaadin.ui.Table;
+//import com.vaadin.ui.Table;
 import com.vaadin.ui.Tree;
-import com.vaadin.ui.Tree.TreeDragMode;
+//import com.vaadin.ui.Tree.TreeDragMode;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.Reindeer;
+//import com.vaadin.ui.themes.Reindeer;
 import com.vaadin.ui.themes.ValoTheme;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,106 +82,106 @@ public class ContainmentManagerComponent extends AbstractTopComponent {
             }
             DynamicTree tree = new DynamicTree(null, this);
             
-            tree.setDragMode(TreeDragMode.NONE);
-            
-            ClassInfoLight navtreeRootClass = new ClassInfoLight();
-            navtreeRootClass.setDisplayName("Navigation Tree Root");
-            navtreeRootClass.setId(-1);
-            
-            ContainmentNode navtreeRootNode = new ContainmentNode(navtreeRootClass);
-            navtreeRootNode.setDisplayName(navtreeRootClass.getDisplayName());
-            navtreeRootNode.setTree(tree);
-            navtreeRootNode.getTree().setItemIcon(navtreeRootNode, 
-                    new ThemeResource("img/mod_containtment_icon_flag_red.png"));
-            
-            for (ClassInfoLight item : treeModel) {
-                ContainmentNode containmentNode = new ContainmentNode(item);
-                containmentNode.setTree(tree);
-                containmentNode.getTree().setItemIcon(containmentNode, 
-                        new ThemeResource("img/mod_containtment_icon_flag_green.png"));
-            }
-            
-            Table table = new Table();
-            table.setSizeFull();
-            table.setVisible(true);
-            table.addContainerProperty("class", ContainmentNode.class, null);
-            
-            for (ClassInfoLight item: listModel) {
-                table.addItem(new Object[]{new ContainmentNode(item)}, item.getId());
-            }
-            
-            table.setPageLength(table.size());
-            table.setSelectable(true);
-            table.setImmediate(true);
-            table.setDragMode(Table.TableDragMode.ROW);
-            table.setColumnHeaderMode(Table.ColumnHeaderMode.HIDDEN);
-            table.addStyleName(Reindeer.TABLE_BORDERLESS) ;
-            table.addStyleName(ValoTheme.TABLE_NO_STRIPES);
-            table.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
-                                    
-            tree.setDropHandler(new DropHandler() {
-
-                public void drop(DragAndDropEvent event) {
-                    Transferable t = event.getTransferable();
-                    
-                    Tree.TreeTargetDetails target = 
-                            (Tree.TreeTargetDetails) event.getTargetDetails();
-                    
-                    Object sourceItemId = t.getData("itemId");
-                    Object targetItemId = target.getItemIdOver();
-                    
-                    if (!tree.areChildrenAllowed(targetItemId))
-                        return;
-
-                    if (event.getTransferable().getSourceComponent() instanceof Table) {
-                        try {
-                            ContainmentNode child = (ContainmentNode) 
-                                    table.getItem(sourceItemId)
-                                            .getItemProperty("class").getValue();
-                            ContainmentNode parent = (ContainmentNode) targetItemId;
-                                                        
-                            long[] children = new long[]{((ClassInfoLight) child.getObject()).getId()};
-                            
-                            wsBean.addPossibleChildren(((ClassInfoLight) parent.getObject()).getId(), 
-                                    children, 
-                                    Page.getCurrent().getWebBrowser().getAddress(), 
-                                    session.getSessionId());
-                            
-                            child.setTree(tree);
-                            child.getTree().setChildrenAllowed(child, false);
-                            child.getTree().setParent(child, parent);
-                            child.getTree().setItemIcon(child, 
-                                    new ThemeResource("img/mod_containtment_icon_flag_black.png"));
-                                                        
-                            Notification.show("Operation completed successfully", 
-                                    Notification.Type.TRAY_NOTIFICATION);
-                        } catch (ServerSideException ex) {
-                            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-                        }
-                    }
-                }
-
-                public AcceptCriterion getAcceptCriterion() {
-                    return AcceptAll.get();
-                }
-            });
-            tree.addActionHandler(new Action.Handler() {
-
-                @Override
-                public Action[] getActions(Object target, Object sender) {
-                    if (target instanceof ContainmentNode)
-                        return ((ContainmentNode) target).getActions();
-                    return null;
-                }
-
-                @Override
-                public void handleAction(Action action, Object sender, Object target) {
-                    ((AbstractAction) action).actionPerformed(sender, target);
-                }
-            });
+//            tree.setDragMode(TreeDragMode.NONE);
+//            
+//            ClassInfoLight navtreeRootClass = new ClassInfoLight();
+//            navtreeRootClass.setDisplayName("Navigation Tree Root");
+//            navtreeRootClass.setId(-1);
+//            
+//            ContainmentNode navtreeRootNode = new ContainmentNode(navtreeRootClass);
+//            navtreeRootNode.setDisplayName(navtreeRootClass.getDisplayName());
+//            navtreeRootNode.setTree(tree);
+//            navtreeRootNode.getTree().setItemIcon(navtreeRootNode, 
+//                    new ThemeResource("img/mod_containtment_icon_flag_red.png"));
+//            
+//            for (ClassInfoLight item : treeModel) {
+//                ContainmentNode containmentNode = new ContainmentNode(item);
+//                containmentNode.setTree(tree);
+//                containmentNode.getTree().setItemIcon(containmentNode, 
+//                        new ThemeResource("img/mod_containtment_icon_flag_green.png"));
+//            }
+//            
+//            Table table = new Table();
+//            table.setSizeFull();
+//            table.setVisible(true);
+//            table.addContainerProperty("class", ContainmentNode.class, null);
+//            
+//            for (ClassInfoLight item: listModel) {
+//                table.addItem(new Object[]{new ContainmentNode(item)}, item.getId());
+//            }
+//            
+//            table.setPageLength(table.size());
+//            table.setSelectable(true);
+//            table.setImmediate(true);
+//            table.setDragMode(Table.TableDragMode.ROW);
+//            table.setColumnHeaderMode(Table.ColumnHeaderMode.HIDDEN);
+//            table.addStyleName(Reindeer.TABLE_BORDERLESS) ;
+//            table.addStyleName(ValoTheme.TABLE_NO_STRIPES);
+//            table.addStyleName(ValoTheme.TABLE_NO_HORIZONTAL_LINES);
+//                                    
+//            tree.setDropHandler(new DropHandler() {
+//
+//                public void drop(DragAndDropEvent event) {
+//                    Transferable t = event.getTransferable();
+//                    
+//                    Tree.TreeTargetDetails target = 
+//                            (Tree.TreeTargetDetails) event.getTargetDetails();
+//                    
+//                    Object sourceItemId = t.getData("itemId");
+//                    Object targetItemId = target.getItemIdOver();
+//                    
+//                    if (!tree.areChildrenAllowed(targetItemId))
+//                        return;
+//
+//                    if (event.getTransferable().getSourceComponent() instanceof Table) {
+//                        try {
+//                            ContainmentNode child = (ContainmentNode) 
+//                                    table.getItem(sourceItemId)
+//                                            .getItemProperty("class").getValue();
+//                            ContainmentNode parent = (ContainmentNode) targetItemId;
+//                                                        
+//                            long[] children = new long[]{((ClassInfoLight) child.getObject()).getId()};
+//                            
+//                            wsBean.addPossibleChildren(((ClassInfoLight) parent.getObject()).getId(), 
+//                                    children, 
+//                                    Page.getCurrent().getWebBrowser().getAddress(), 
+//                                    session.getSessionId());
+//                            
+//                            child.setTree(tree);
+//                            child.getTree().setChildrenAllowed(child, false);
+//                            child.getTree().setParent(child, parent);
+//                            child.getTree().setItemIcon(child, 
+//                                    new ThemeResource("img/mod_containtment_icon_flag_black.png"));
+//                                                        
+//                            Notification.show("Operation completed successfully", 
+//                                    Notification.Type.TRAY_NOTIFICATION);
+//                        } catch (ServerSideException ex) {
+//                            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                        }
+//                    }
+//                }
+//
+//                public AcceptCriterion getAcceptCriterion() {
+//                    return AcceptAll.get();
+//                }
+//            });
+//            tree.addActionHandler(new Action.Handler() {
+//
+//                @Override
+//                public Action[] getActions(Object target, Object sender) {
+//                    if (target instanceof ContainmentNode)
+//                        return ((ContainmentNode) target).getActions();
+//                    return null;
+//                }
+//
+//                @Override
+//                public void handleAction(Action action, Object sender, Object target) {
+//                    ((AbstractAction) action).actionPerformed(sender, target);
+//                }
+//            });
                         
             content.setFirstComponent(tree);
-            content.setSecondComponent(table);
+            //content.setSecondComponent(table);
         } catch (ServerSideException ex) {
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
         }

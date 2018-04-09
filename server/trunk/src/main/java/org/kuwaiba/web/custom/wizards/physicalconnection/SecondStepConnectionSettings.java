@@ -25,7 +25,6 @@ import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
-import org.vaadin.risto.stepper.IntStepper;
 import org.vaadin.teemu.wizards.WizardStep;
 
 /**
@@ -53,7 +52,7 @@ public class SecondStepConnectionSettings implements WizardStep {
             content.setSizeFull();
             
             TextField tfConnectionName = new TextField("Connection Name");
-            tfConnectionName.setRequired(true);
+            tfConnectionName.setRequiredIndicatorVisible(true);
             content.addComponent(tfConnectionName);
             
             try {
@@ -67,12 +66,12 @@ public class SecondStepConnectionSettings implements WizardStep {
                 List<RemoteObjectLight> types = wsBean.getListTypeItems(connectionTypeClass, ipAddress, sessionId);
                 
                 NativeSelect selectConnectionTypeClass = new NativeSelect("Connection Type");
-                selectConnectionTypeClass.setNullSelectionItemId("None");
+                selectConnectionTypeClass.setEmptySelectionCaption("None");
                 
                 if (types != null && types.size() > 0)
                     for (RemoteObjectLight type : types) {
-                        selectConnectionTypeClass.addItem(type);
-                        selectConnectionTypeClass.setItemCaption(type, type.getName());
+                        //selectConnectionTypeClass.addItem(type);
+                        //selectConnectionTypeClass.setItemCaption(type, type.getName());
                     }
                 
                 content.addComponent(selectConnectionTypeClass);
@@ -84,14 +83,14 @@ public class SecondStepConnectionSettings implements WizardStep {
 
                     if (portClasses.size() > 0) {
                         NativeSelect selectChildrenType = new NativeSelect("Children type");
-                        selectChildrenType.setNullSelectionItemId(null);
-                        selectChildrenType.setNullSelectionAllowed(false);
+                        selectChildrenType.setEmptySelectionCaption(null);
+                        selectChildrenType.setEmptySelectionAllowed(false);
                         
                         
                         boolean flag = true;
                         for (ClassInfoLight portClass : portClasses) {
-                            selectChildrenType.addItem(portClass);
-                            selectChildrenType.setItemCaption(portClass, portClass.getClassName());                            
+                            //selectChildrenType.addItem(portClass);
+                            //selectChildrenType.setItemCaption(portClass, portClass.getClassName());                            
                             if (flag) {
                                 selectChildrenType.setValue(portClass);
                                 flag = false;
@@ -100,9 +99,9 @@ public class SecondStepConnectionSettings implements WizardStep {
                         
                         content.addComponent(selectChildrenType);
                         
-                        IntStepper numChildren = new IntStepper("Number of children");
-                        numChildren.setMinValue(0);
-                        content.addComponent(numChildren);
+                        //IntStepper numChildren = new IntStepper("Number of children");
+                        //numChildren.setMinValue(0);
+                        //content.addComponent(numChildren);
                     }
                 }
             } catch (ServerSideException ex) {
@@ -132,8 +131,8 @@ public class SecondStepConnectionSettings implements WizardStep {
                 ClassInfoLight portClass = (ClassInfoLight) ((NativeSelect) content.getComponent(2)).getValue();
                 connConfig.setPortType(portClass.getClassName());
                 
-                int numChildren = ((IntStepper) content.getComponent(3)).getValue();
-                connConfig.setNumChildren(numChildren);
+                //int numChildren = ((IntStepper) content.getComponent(3)).getValue();
+                //connConfig.setNumChildren(numChildren);
             }
             return true;
         }

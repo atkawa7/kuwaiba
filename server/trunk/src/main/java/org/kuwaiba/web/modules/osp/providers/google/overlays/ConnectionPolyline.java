@@ -15,7 +15,7 @@
  */
 package org.kuwaiba.web.modules.osp.providers.google.overlays;
 
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
+//import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolyline;
 import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
@@ -28,7 +28,7 @@ import org.kuwaiba.web.modules.osp.providers.google.actions.DeletePhysicalConnec
  * Polyline that represent a physical connection
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ConnectionPolyline extends GoogleMapPolyline {
+public class ConnectionPolyline /*extends GoogleMapPolyline*/ {
     List<AbstractAction> actions;
     /**
      * Saved. is used to know if the connection was stored in the view 
@@ -42,7 +42,7 @@ public class ConnectionPolyline extends GoogleMapPolyline {
             
     public ConnectionPolyline(MarkerNode source) {
         this.source = source;
-        getCoordinates().add(source.getPosition());
+        //getCoordinates().add(source.getPosition());
         target = null;
     }
     
@@ -77,7 +77,7 @@ public class ConnectionPolyline extends GoogleMapPolyline {
     
     public void setTarget(MarkerNode target) {
         this.target = target;
-        getCoordinates().add(target.getPosition());
+        //getCoordinates().add(target.getPosition());
     }
     
     public List<AbstractAction> getActions() {

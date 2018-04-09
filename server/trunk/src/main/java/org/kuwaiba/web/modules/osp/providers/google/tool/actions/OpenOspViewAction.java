@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.web.modules.osp.providers.google.tool.actions;
 
-import com.vaadin.data.Property;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.FormLayout;
@@ -38,7 +37,7 @@ import org.kuwaiba.web.modules.osp.providers.google.OutsidePlantTooledComponent;
 public class OpenOspViewAction extends AbstractComposedAction {
     private final FormLayout form;
     private final ListSelect availableViews;
-    private final Property.ValueChangeListener valueChangeListener;
+    //private final Property.ValueChangeListener valueChangeListener;
     private MessageBox mbChooseView;
     private ViewInfoLight viewChoosed;
     
@@ -47,14 +46,14 @@ public class OpenOspViewAction extends AbstractComposedAction {
                 
         availableViews = new ListSelect("Choose a view");
                 
-        valueChangeListener = new Property.ValueChangeListener() {
-
-            @Override
-            public void valueChange(Property.ValueChangeEvent event) {
-                viewChoosed = (ViewInfoLight) event.getProperty().getValue();
-            }
-        };
-        availableViews.addValueChangeListener(valueChangeListener);
+//        valueChangeListener = new Property.ValueChangeListener() {
+//
+//            @Override
+//            public void valueChange(Property.ValueChangeEvent event) {
+//                viewChoosed = (ViewInfoLight) event.getProperty().getValue();
+//            }
+//        };
+        //availableViews.addValueChangeListener(valueChangeListener);
         
         form = new FormLayout();
         form.addComponent(availableViews);
@@ -80,25 +79,25 @@ public class OpenOspViewAction extends AbstractComposedAction {
                 Page.getCurrent().getWebBrowser().getAddress(), 
                 parentComponent.getApplicationSession().getSessionId());
             
-            map.newMap();
-            map.render(view.getStructure());
-            
-            if (map.getUpdateView()) {
-                view.setStructure(map.getAsXML());
-                
-                parentComponent.getWsBean().updateGeneralView(
-                    view.getId(), 
-                    view.getName(), 
-                    view.getDescription(), 
-                    view.getStructure(), 
-                    null, 
-                    Page.getCurrent().getWebBrowser().getAddress(), 
-                    parentComponent.getApplicationSession().getSessionId());
-                
-                Notification.show("OSP View Updated", Notification.Type.TRAY_NOTIFICATION);
-                map.physicalConnectionsSaved();
-            }
-            map.setUpdateView(false);
+//            map.newMap();
+//            map.render(view.getStructure());
+//            
+//            if (map.getUpdateView()) {
+//                view.setStructure(map.getAsXML());
+//                
+//                parentComponent.getWsBean().updateGeneralView(
+//                    view.getId(), 
+//                    view.getName(), 
+//                    view.getDescription(), 
+//                    view.getStructure(), 
+//                    null, 
+//                    Page.getCurrent().getWebBrowser().getAddress(), 
+//                    parentComponent.getApplicationSession().getSessionId());
+//                
+//                Notification.show("OSP View Updated", Notification.Type.TRAY_NOTIFICATION);
+//                map.physicalConnectionsSaved();
+//            }
+//            map.setUpdateView(false);
             ((GoogleMapWrapper) targetObject).setCurrentView(view);
             parentComponent.enableTools(true);
             Notification.show("Open OSP View", Notification.Type.TRAY_NOTIFICATION);
@@ -111,64 +110,64 @@ public class OpenOspViewAction extends AbstractComposedAction {
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
         CustomGoogleMap map = ((GoogleMapWrapper) targetObject).getMap();
-        if (map.getUpdateView()) {
-            ((GoogleMapWrapper) targetObject).setViewClosedByOpenView(true);
-            
-            MessageBox mbUpdateView = MessageBox.createQuestion()
-                .withCaption("Confirmation")
-                .withMessage("This view has not been saved, do you want to save it")
-                .withYesButton(() -> {
-                    ActionsFactory.createSaveOspViewAction(
-                        OutsidePlantTooledComponent.ACTION_CAPTION_SAVE, 
-                        OutsidePlantTooledComponent.ACTION_ICON_SAVE)
-                            .actionPerformed(sourceComponent, targetObject);
-                })
-                .withNoButton(() -> {
-                    ((GoogleMapWrapper) targetObject).initNewMap();
-                    ((OutsidePlantComponent) sourceComponent).removeMainComponentToTooledComponent();                    
-                    
-                    ActionsFactory.createOpenOspViewAction(
-                        OutsidePlantTooledComponent.ACTION_CAPTION_OPEN, 
-                        OutsidePlantTooledComponent.ACTION_ICON_OPEN)
-                            .actionPerformed(sourceComponent, targetObject);
-                })
-                .withCancelButton(() -> {
-                    ((GoogleMapWrapper) targetObject).setViewClosedByOpenView(false);
-                });
-            
-            mbUpdateView.open();
-        } else {
-            try {
-                OutsidePlantComponent parentComponent = (OutsidePlantComponent) sourceComponent;
-                
-                ViewInfoLight [] views = parentComponent.getWsBean().getGeneralViews(
-                    GoogleMapWrapper.CLASS_VIEW, 
-                    -1, 
-                    Page.getCurrent().getWebBrowser().getAddress(), 
-                    parentComponent.getApplicationSession().getSessionId());
-                
-                if (views.length > 0) {
-                    
-                    availableViews.removeAllItems();
-                    
-                    for (ViewInfoLight view : views)
-                        availableViews.addItem(view);
-                    availableViews.setSizeFull();
-                    availableViews.setRows(5);
-                    
-                    mbChooseView = MessageBox.createQuestion()
-                        .withMessage(form)
-                        .withOkButton(() -> { finalActionPerformed(sourceComponent, targetObject, viewChoosed); })
-                        .withCancelButton();
-                    mbChooseView.open();
-                    
-                } else {
-                    Notification.show("There are not views", Notification.Type.TRAY_NOTIFICATION);
-                }
-            } catch (ServerSideException ex) {
-                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-            }
-        }
+//        if (map.getUpdateView()) {
+//            ((GoogleMapWrapper) targetObject).setViewClosedByOpenView(true);
+//            
+//            MessageBox mbUpdateView = MessageBox.createQuestion()
+//                .withCaption("Confirmation")
+//                .withMessage("This view has not been saved, do you want to save it")
+//                .withYesButton(() -> {
+//                    ActionsFactory.createSaveOspViewAction(
+//                        OutsidePlantTooledComponent.ACTION_CAPTION_SAVE, 
+//                        OutsidePlantTooledComponent.ACTION_ICON_SAVE)
+//                            .actionPerformed(sourceComponent, targetObject);
+//                })
+//                .withNoButton(() -> {
+//                    ((GoogleMapWrapper) targetObject).initNewMap();
+//                    ((OutsidePlantComponent) sourceComponent).removeMainComponentToTooledComponent();                    
+//                    
+//                    ActionsFactory.createOpenOspViewAction(
+//                        OutsidePlantTooledComponent.ACTION_CAPTION_OPEN, 
+//                        OutsidePlantTooledComponent.ACTION_ICON_OPEN)
+//                            .actionPerformed(sourceComponent, targetObject);
+//                })
+//                .withCancelButton(() -> {
+//                    ((GoogleMapWrapper) targetObject).setViewClosedByOpenView(false);
+//                });
+//            
+//            mbUpdateView.open();
+//        } else {
+//            try {
+//                OutsidePlantComponent parentComponent = (OutsidePlantComponent) sourceComponent;
+//                
+//                ViewInfoLight [] views = parentComponent.getWsBean().getGeneralViews(
+//                    GoogleMapWrapper.CLASS_VIEW, 
+//                    -1, 
+//                    Page.getCurrent().getWebBrowser().getAddress(), 
+//                    parentComponent.getApplicationSession().getSessionId());
+//                
+//                if (views.length > 0) {
+//                    
+////                    availableViews.removeAllItems();
+////                    
+////                    for (ViewInfoLight view : views)
+////                        availableViews.addItem(view);
+//                    availableViews.setSizeFull();
+//                    availableViews.setRows(5);
+//                    
+//                    mbChooseView = MessageBox.createQuestion()
+//                        .withMessage(form)
+//                        .withOkButton(() -> { finalActionPerformed(sourceComponent, targetObject, viewChoosed); })
+//                        .withCancelButton();
+//                    mbChooseView.open();
+//                    
+//                } else {
+//                    Notification.show("There are not views", Notification.Type.TRAY_NOTIFICATION);
+//                }
+//            } catch (ServerSideException ex) {
+//                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//            }
+//        }
     }
     
 }

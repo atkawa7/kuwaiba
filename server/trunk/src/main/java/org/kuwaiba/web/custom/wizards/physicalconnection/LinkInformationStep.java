@@ -70,7 +70,7 @@ public class LinkInformationStep implements WizardStep {
             content.setSizeFull();
             
             TextField txtLinkName = new TextField("Link Name");
-            txtLinkName.setRequired(true);
+            txtLinkName.setRequiredIndicatorVisible(true);
             content.addComponent(txtLinkName);
             
             WebserviceBeanLocal wsBean = newLinkWizard.getParentComponent().getWsBean();
@@ -85,16 +85,16 @@ public class LinkInformationStep implements WizardStep {
                 return new VerticalLayout();
             }
             NativeSelect txtLinkClass = new NativeSelect("Link Class");
-            txtLinkClass.setNullSelectionItemId("None");
+            txtLinkClass.setEmptySelectionCaption("None");
             
-            for (ClassInfoLight containerClass : containerClasses) {
-                txtLinkClass.addItem(containerClass);
-                txtLinkClass.setItemCaption(containerClass, containerClass.toString());
-            }
+//            for (ClassInfoLight containerClass : containerClasses) {
+//                txtLinkClass.addItem(containerClass);
+//                txtLinkClass.setItemCaption(containerClass, containerClass.toString());
+//            }
             content.addComponent(txtLinkClass);
             
             NativeSelect txtLinkTemplate = new NativeSelect("Link Template");
-            txtLinkTemplate.setNullSelectionItemId("None");
+            txtLinkTemplate.setEmptySelectionCaption("None");
             content.addComponent(txtLinkTemplate);
             
         }

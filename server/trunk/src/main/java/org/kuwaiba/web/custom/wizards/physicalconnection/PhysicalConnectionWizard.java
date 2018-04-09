@@ -48,18 +48,18 @@ public class PhysicalConnectionWizard extends Window implements
     private TopComponent parentComponent;
     private Wizard wizard = null;   
     
-    private ConnectionPolyline connection;
+    //private ConnectionPolyline connection;
     private PhysicalConnectionConfiguration connConfig;
     
     private final List<ClassInfoLight> linkClasses;
     private final List<ClassInfoLight> containerClasses;
     
-    public PhysicalConnectionWizard(TopComponent parentComponent, ConnectionPolyline connection, List<ClassInfoLight> linkClasses, List<ClassInfoLight> containerClasses) {
+    public PhysicalConnectionWizard(TopComponent parentComponent, /*ConnectionPolyline connection,*/ List<ClassInfoLight> linkClasses, List<ClassInfoLight> containerClasses) {
         super("Physical Connection Wizard");
         center();
         
         this.parentComponent = parentComponent;
-        this.connection = connection;
+        //this.connection = connection;
         this.connConfig = new PhysicalConnectionConfiguration();
         
         this.linkClasses = linkClasses;
@@ -90,9 +90,9 @@ public class PhysicalConnectionWizard extends Window implements
         wizard.addListener(this);
     }
     
-    public ConnectionPolyline getConnection() {
-        return connection;
-    }
+//    public ConnectionPolyline getConnection() {
+//        return connection;
+//    }
     
     public PhysicalConnectionConfiguration getConnectionConfiguration() {
         return connConfig;
@@ -215,14 +215,14 @@ public class PhysicalConnectionWizard extends Window implements
                 NotificationsUtil.showError(ex.getMessage());
             }
             
-            connection.setId(connectionId);
+            //connection.setId(connectionId);
             
             
-            connection.setStrokeColor(toHexString(new Color(connectionClass.getColor())));
-            connection.setStrokeOpacity(connConfig.getStrokeOpacity());
-            connection.setStrokeWeight(connConfig.getStrokeWeight());
+            //connection.setStrokeColor(toHexString(new Color(connectionClass.getColor())));
+            //connection.setStrokeOpacity(connConfig.getStrokeOpacity());
+            //connection.setStrokeWeight(connConfig.getStrokeWeight());
             
-            connection.setConnectionInfo(new RemoteObjectLight(connectionId, connectionName, connectionClassName));
+            //connection.setConnectionInfo(new RemoteObjectLight(connectionId, connectionName, connectionClassName));
             Notification.show("The connection was created successfully", Notification.Type.HUMANIZED_MESSAGE);
             selectedButton = SELECTED_FINISH_BUTTON;
             close();

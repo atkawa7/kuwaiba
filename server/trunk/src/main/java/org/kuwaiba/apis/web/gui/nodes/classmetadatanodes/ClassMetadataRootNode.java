@@ -46,8 +46,8 @@ public class ClassMetadataRootNode extends AbstractRootNode {
         for (ClassInfoLight child: children) {
             ClassMetadataNode classNode = new ClassMetadataNode(child);
             classNode.setTree(getTree());
-            getTree().addItem(classNode);
-            getTree().setParent(classNode, this);
+            //getTree().addItem(classNode);
+            //getTree().setParent(classNode, this);
         }
     }
 

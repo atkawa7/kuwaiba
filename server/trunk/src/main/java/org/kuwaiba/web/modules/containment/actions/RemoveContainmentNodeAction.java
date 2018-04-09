@@ -37,28 +37,28 @@ public class RemoveContainmentNodeAction extends AbstractAction {
 
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
-        try {
-            AbstractNode node = (AbstractNode) targetObject;
-            AbstractNode parentNode = (AbstractNode) 
-                    ((DynamicTree) sourceComponent).getParent(node);
-            
-            ClassInfoLight parentObject = (ClassInfoLight) parentNode.getObject();
-            ClassInfoLight childObject = (ClassInfoLight) node.getObject();
-            
-            TopComponent parentComponent = ((DynamicTree) sourceComponent)
-                    .getTopComponent();
-            
-            parentComponent.getWsBean().removePossibleChildren(
-                    parentObject.getId(), 
-                    new long[]{ childObject.getId() }, 
-                    Page.getCurrent().getWebBrowser().getAddress(),
-                    parentComponent.getApplicationSession().getSessionId());
-            
-            node.delete();
-            
-            Notification.show("Operation completed successfully", Notification.Type.TRAY_NOTIFICATION);
-        } catch (ServerSideException ex) {
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-        }
+//        try {
+//            AbstractNode node = (AbstractNode) targetObject;
+//            AbstractNode parentNode = (AbstractNode) 
+//                    ((DynamicTree) sourceComponent).getParent(node);
+//            
+//            ClassInfoLight parentObject = (ClassInfoLight) parentNode.getObject();
+//            ClassInfoLight childObject = (ClassInfoLight) node.getObject();
+//            
+//            TopComponent parentComponent = ((DynamicTree) sourceComponent)
+//                    .getTopComponent();
+//            
+//            parentComponent.getWsBean().removePossibleChildren(
+//                    parentObject.getId(), 
+//                    new long[]{ childObject.getId() }, 
+//                    Page.getCurrent().getWebBrowser().getAddress(),
+//                    parentComponent.getApplicationSession().getSessionId());
+//            
+//            node.delete();
+//            
+//            Notification.show("Operation completed successfully", Notification.Type.TRAY_NOTIFICATION);
+//        } catch (ServerSideException ex) {
+//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//        }
     }
 }

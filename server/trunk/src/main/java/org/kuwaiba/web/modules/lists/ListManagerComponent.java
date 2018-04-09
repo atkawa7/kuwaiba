@@ -58,23 +58,23 @@ public class ListManagerComponent extends AbstractTopComponent {
             pnlSplitExplorer.setSplitPosition(100);
             
             listTypesTree = new DynamicTree(rootNode, this);
-            listTypesTree.setDragMode(Tree.TreeDragMode.NONE);
+            //listTypesTree.setDragMode(Tree.TreeDragMode.NONE);
             rootNode.setTree(listTypesTree);
             
-            listTypesTree.addActionHandler(new Action.Handler() {
-
-                @Override
-                public Action[] getActions(Object target, Object sender) {
-                    if (target instanceof AbstractNode)
-                        return ((AbstractNode)target).getActions();
-                    return null;
-                }
-
-                @Override
-                public void handleAction(Action action, Object sender, Object target) {
-                    ((AbstractAction) action).actionPerformed(sender, target);
-                }
-            });
+//            listTypesTree.addActionHandler(new Action.Handler() {
+//
+//                @Override
+//                public Action[] getActions(Object target, Object sender) {
+//                    if (target instanceof AbstractNode)
+//                        return ((AbstractNode)target).getActions();
+//                    return null;
+//                }
+//
+//                @Override
+//                public void handleAction(Action action, Object sender, Object target) {
+//                    ((AbstractAction) action).actionPerformed(sender, target);
+//                }
+//            });
                         
             pnlSplitExplorer.addComponent(listTypesTree);
             setCompositionRoot(pnlSplitExplorer);

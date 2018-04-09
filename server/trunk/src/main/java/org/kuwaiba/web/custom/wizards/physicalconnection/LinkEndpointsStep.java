@@ -15,7 +15,7 @@
  */
 package org.kuwaiba.web.custom.wizards.physicalconnection;
 
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
@@ -80,13 +80,13 @@ public class LinkEndpointsStep implements WizardStep {
         RemoteObjectLight rootSource = newLinkWizard.getConnectionPolyline().getSource().getRemoteObjectLight();
         InventoryObjectNode rootNodeA = new InventoryObjectNode(rootSource);
         treeEndPointA = new DynamicTree(rootNodeA, newLinkWizard.getParentComponent());
-        treeEndPointA.setDragMode(Tree.TreeDragMode.NONE);
+        //treeEndPointA.setDragMode(Tree.TreeDragMode.NONE);
         rootNodeA.setTree(treeEndPointA);
         
         RemoteObjectLight rootTarget = newLinkWizard.getConnectionPolyline().getTarget().getRemoteObjectLight();
         InventoryObjectNode rootNodeB = new InventoryObjectNode(rootTarget);
         treeEndPointB = new DynamicTree(rootNodeB, newLinkWizard.getParentComponent());
-        treeEndPointB.setDragMode(Tree.TreeDragMode.NONE);
+        //treeEndPointB.setDragMode(Tree.TreeDragMode.NONE);
         rootNodeB.setTree(treeEndPointB);
         
         HorizontalSplitPanel pnlChooseEndpoints = new HorizontalSplitPanel();
@@ -98,7 +98,8 @@ public class LinkEndpointsStep implements WizardStep {
 
     @Override
     public boolean onAdvance() {
-        return treeEndPointA.getValue() != null && treeEndPointB.getValue() != null;
+        //return treeEndPointA.getValue() != null && treeEndPointB.getValue() != null;
+        return false;
     }
 
     @Override

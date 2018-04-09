@@ -15,7 +15,7 @@
  */
 package org.kuwaiba.web.modules.osp.providers.google.overlays;
 
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
+//import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
@@ -26,14 +26,14 @@ import org.kuwaiba.web.modules.osp.providers.google.actions.ActionsFactory;
  * Custom GoogleMapMarker for Kuwaiba
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class MarkerNode extends GoogleMapMarker {
+public class MarkerNode /*extends GoogleMapMarker*/ {
     List<AbstractAction> actions;
     
     private final RemoteObjectLight remoteObjectLight;
     
     public MarkerNode(RemoteObjectLight remoteObjectLight) {
         this.remoteObjectLight = remoteObjectLight;
-        setDraggable(true);
+        //setDraggable(true);
     }
     
     public RemoteObjectLight getRemoteObjectLight() {

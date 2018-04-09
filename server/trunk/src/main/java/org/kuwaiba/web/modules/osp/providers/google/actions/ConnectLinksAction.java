@@ -34,10 +34,10 @@ public class ConnectLinksAction extends AbstractAction {
     public void actionPerformed(Object sourceComponent, Object targetObject) {
         CustomGoogleMap map = (CustomGoogleMap) sourceComponent;
         
-        map.getUI().addWindow(new ConnectLinksWindow(
-                map.getTopComponent(), 
-                ((ConnectionPolyline) targetObject).getConnectionInfo()
-        ));
+//        map.getUI().addWindow(new ConnectLinksWindow(
+//                map.getTopComponent(), 
+//                ((ConnectionPolyline) targetObject).getConnectionInfo()
+//        ));
     }
     
 }

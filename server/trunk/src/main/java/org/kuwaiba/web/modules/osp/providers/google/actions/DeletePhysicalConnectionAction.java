@@ -32,10 +32,10 @@ public class DeletePhysicalConnectionAction extends AbstractAction {
 
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
-        ((CustomGoogleMap) sourceComponent)
-                .deletePhysicalConnection((ConnectionPolyline) targetObject);
-        ((CustomGoogleMap) sourceComponent)
-                .removeEdge((ConnectionPolyline) targetObject);
-        ((CustomGoogleMap) sourceComponent).setUpdateView(true);
+//        ((CustomGoogleMap) sourceComponent)
+//                .deletePhysicalConnection((ConnectionPolyline) targetObject);
+//        ((CustomGoogleMap) sourceComponent)
+//                .removeEdge((ConnectionPolyline) targetObject);
+//        ((CustomGoogleMap) sourceComponent).setUpdateView(true);
     }
 }

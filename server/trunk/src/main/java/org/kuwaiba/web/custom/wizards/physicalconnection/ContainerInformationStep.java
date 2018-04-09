@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.web.custom.wizards.physicalconnection;
 
-import com.vaadin.data.Property;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.FormLayout;
@@ -23,8 +22,6 @@ import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -73,7 +70,7 @@ public class ContainerInformationStep implements WizardStep {
             content.setSizeFull();
             
             TextField txtcontainerName = new TextField("Container Name");
-            txtcontainerName.setRequired(true);
+            txtcontainerName.setRequiredIndicatorVisible(true);
             content.addComponent(txtcontainerName);
             
             WebserviceBeanLocal wsBean = newContainerWizard.getParentComponent().getWsBean();
@@ -88,34 +85,34 @@ public class ContainerInformationStep implements WizardStep {
                 return new VerticalLayout();
             }
             NativeSelect txtContainerClass = new NativeSelect("Container Class");
-            txtContainerClass.setNullSelectionItemId("None");            
+            txtContainerClass.setEmptySelectionCaption("None");            
 
             
             for (ClassInfoLight containerClass : containerClasses) {
-                txtContainerClass.addItem(containerClass);
-                txtContainerClass.setItemCaption(containerClass, containerClass.toString());
+                //txtContainerClass.addItem(containerClass);
+                //txtContainerClass.setItemCaption(containerClass, containerClass.toString());
             }
             content.addComponent(txtContainerClass);
             
             NativeSelect txtContainerTemplate = new NativeSelect("Container Template");
-            txtContainerTemplate.setNullSelectionItemId("None");
+            txtContainerTemplate.setEmptySelectionCaption("None");
             content.addComponent(txtContainerTemplate);
             
-            txtContainerClass.addListener(new Property.ValueChangeListener() {
-                @Override
-                public void valueChange(Property.ValueChangeEvent event) {
-                    try {
-                        List<RemoteObjectLight> templates = wsBean.getTemplatesForClass(containerName, ipAddress, sessionId);
-                        txtContainerTemplate.addItem(this);
-                        /*
-                        for ()
-                        txtContainerTemplate.setItemCaption(this, containerName);.addItem(this);
-                        */
-                    } catch (ServerSideException ex) {
-                        NotificationsUtil.showError(ex.getMessage());
-                    }
-                }
-            });
+//            txtContainerClass.addListener(new Property.ValueChangeListener() {
+//                @Override
+//                public void valueChange(Property.ValueChangeEvent event) {
+//                    try {
+//                        List<RemoteObjectLight> templates = wsBean.getTemplatesForClass(containerName, ipAddress, sessionId);
+//                        txtContainerTemplate.addItem(this);
+//                        /*
+//                        for ()
+//                        txtContainerTemplate.setItemCaption(this, containerName);.addItem(this);
+//                        */
+//                    } catch (ServerSideException ex) {
+//                        NotificationsUtil.showError(ex.getMessage());
+//                    }
+//                }
+//            });
             
         }
         return content;

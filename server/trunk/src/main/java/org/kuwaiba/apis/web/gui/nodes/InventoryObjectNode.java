@@ -52,7 +52,7 @@ public class InventoryObjectNode extends AbstractNode<RemoteObjectLight>{
         Resource icon = ClassIcon.newInstance(tree.getTopComponent()).getSmallIcon(
             ((RemoteObjectLight) getObject()).getClassName());
         
-        tree.setItemIcon(this, icon);
+        //tree.setItemIcon(this, icon);
     }
     
     @Override
@@ -72,7 +72,7 @@ public class InventoryObjectNode extends AbstractNode<RemoteObjectLight>{
             for (RemoteObjectLight child : children) {
                 InventoryObjectNode childNode = new InventoryObjectNode(child);
                 childNode.setTree(getTree());
-                getTree().setParent(childNode, this);
+                //getTree().setParent(childNode, this);
             }
         }catch (ServerSideException ex) {
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);

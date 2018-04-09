@@ -15,7 +15,7 @@
  */
 package org.kuwaiba.web.custom.wizards.physicalconnection;
 
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
@@ -70,7 +70,7 @@ public class ExistingWireContainerStep implements WizardStep {
         RemoteObjectLight rootSource = newLinkWizard.getConnectionPolyline().getSource().getRemoteObjectLight();
         InventoryObjectNode rootNodeA = new InventoryObjectNode(rootSource);
         treeEndPointA = new DynamicTree(rootNodeA, newLinkWizard.getParentComponent());
-        treeEndPointA.setDragMode(Tree.TreeDragMode.NONE);
+        //treeEndPointA.setDragMode(Tree.TreeDragMode.NONE);
         rootNodeA.setTree(treeEndPointA);
                 
         HorizontalSplitPanel pnlChooseEndpoints = new HorizontalSplitPanel();

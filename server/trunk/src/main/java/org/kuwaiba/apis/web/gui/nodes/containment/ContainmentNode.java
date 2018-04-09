@@ -47,8 +47,8 @@ public class ContainmentNode extends AbstractNode {
     @Override
     public void setTree(DynamicTree tree) {
         this.tree = tree;
-        id = this.tree.addItem(this);
-        this.tree.setItemIcon(this, FontAwesome.SQUARE);
+//        id = this.tree.addItem(this);
+//        this.tree.setItemIcon(this, FontAwesome.SQUARE);
     }
     
     private Object getId() {
@@ -57,44 +57,45 @@ public class ContainmentNode extends AbstractNode {
     
     @Override
     public void expand() {
-        if (getTree() == null)
-            return;
-        
-        try {
-            collapse();
-            if (getTree().areChildrenAllowed(this)) {
-                ClassInfoLight currentObject = (ClassInfoLight) getObject();
-
-                TopComponent topComponent = getTree().getTopComponent();
-
-                List<ClassInfoLight> children = topComponent.getWsBean()
-                        .getPossibleChildrenNoRecursive(currentObject.getClassName(), 
-                                Page.getCurrent().getWebBrowser().getAddress(), 
-                                topComponent.getApplicationSession().getSessionId());
-
-                for (ClassInfoLight child : children) {
-                    ContainmentNode childNode = new ContainmentNode(child);
-                    childNode.setTree(getTree());
-                    
-                    childNode.getTree().setChildrenAllowed(childNode, false);
-                    childNode.getTree().setParent(childNode, this);
-                    childNode.getTree().setItemIcon(childNode, 
-                            new ThemeResource("img/mod_containtment_icon_flag_black.png"));
-                }
-            }
-        }
-        catch(ServerSideException ex) {
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-        }
+//        if (getTree() == null)
+//            return;
+//        
+//        try {
+//            collapse();
+//            if (getTree().areChildrenAllowed(this)) {
+//                ClassInfoLight currentObject = (ClassInfoLight) getObject();
+//
+//                TopComponent topComponent = getTree().getTopComponent();
+//
+//                List<ClassInfoLight> children = topComponent.getWsBean()
+//                        .getPossibleChildrenNoRecursive(currentObject.getClassName(), 
+//                                Page.getCurrent().getWebBrowser().getAddress(), 
+//                                topComponent.getApplicationSession().getSessionId());
+//
+//                for (ClassInfoLight child : children) {
+//                    ContainmentNode childNode = new ContainmentNode(child);
+//                    childNode.setTree(getTree());
+//                    
+//                    childNode.getTree().setChildrenAllowed(childNode, false);
+//                    childNode.getTree().setParent(childNode, this);
+//                    childNode.getTree().setItemIcon(childNode, 
+//                            new ThemeResource("img/mod_containtment_icon_flag_black.png"));
+//                }
+//            }
+//        }
+//        catch(ServerSideException ex) {
+//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//        }
     }
     
     @Override
     public AbstractAction[] getActions() {
-        if (!getTree().areChildrenAllowed(this))
-            return new AbstractAction[] {
-                ActionsFactory.createRemoveContainmentNodeAction() };
-        else
-            return new AbstractAction[0];
+//        if (!getTree().areChildrenAllowed(this))
+//            return new AbstractAction[] {
+//                ActionsFactory.createRemoveContainmentNodeAction() };
+//        else
+//            return new AbstractAction[0];
+return null;
     }
 
     @Override

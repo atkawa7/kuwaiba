@@ -91,58 +91,58 @@ public class NewContainerWizard extends Window implements WizardProgressListener
 
     @Override
     public void wizardCompleted(WizardCompletedEvent event) {        
-        String connectionName = containerInformationStep.getContainerName();
-        String connectionClassName = containerInformationStep.getContainerClass().getClassName();        
-        
-        InventoryObjectNode aObjectNode = (InventoryObjectNode) containerEndpointsStep.getTreeEndPointA().getValue();
-        InventoryObjectNode bObjectNode = (InventoryObjectNode) containerEndpointsStep.getTreeEndPointA().getValue();
-        
-        RemoteObjectLight endpointA = (RemoteObjectLight) aObjectNode.getObject();
-        RemoteObjectLight endpointB = (RemoteObjectLight) bObjectNode.getObject();
-        RemoteObjectLight template = new RemoteObjectLight(-1, null, null);
-        
-        WebserviceBeanLocal wsBean = getParentComponent().getWsBean();
-        String ipAddress = Page.getCurrent().getWebBrowser().getAddress();
-        String sessionId = getParentComponent().getApplicationSession().getSessionId();
-        
-        RemoteObjectLight parent;
-        try {
-            parent = wsBean.getCommonParent(endpointA.getClassName(), endpointA.getOid(), endpointB.getClassName(), endpointB.getOid(), ipAddress, sessionId);
-        } catch (ServerSideException ex) {
-            NotificationsUtil.showError(ex.getMessage());
-            wizardCompleted = false;
-            return;
-        }
-        
-        long connectionId = -1;
-        try {
-            connectionId = wsBean.createPhysicalConnection(endpointA.getClassName(), endpointA.getOid(), endpointB.getClassName(), endpointB.getOid(), parent.getClassName(), parent.getOid(), connectionName, connectionClassName, template.getOid(), ipAddress, sessionId);
-        } catch (ServerSideException ex) {
-            NotificationsUtil.showError(ex.getMessage());
-            wizardCompleted = false;
-            return;
-        }
-        
-        if (connectionId != -1l) {
-            ClassInfo connectionClass = null;
-            try {
-                connectionClass = wsBean.getClass(connectionClassName, ipAddress, sessionId);
-            } catch (ServerSideException ex) {
-                NotificationsUtil.showError(ex.getMessage());
-            }
-            
-            connectionPolyline.setId(connectionId);
-            
-            
-            connectionPolyline.setStrokeColor(toHexString(new Color(connectionClass.getColor())));
-            connectionPolyline.setStrokeOpacity(1);
-            connectionPolyline.setStrokeWeight(3);
-            
-            connectionPolyline.setConnectionInfo(new RemoteObjectLight(connectionId, connectionName, connectionClassName));
-            Notification.show("The connection was created successfully", Notification.Type.HUMANIZED_MESSAGE);
-            wizardCompleted = true;
-            close();
-        }
+//        String connectionName = containerInformationStep.getContainerName();
+//        String connectionClassName = containerInformationStep.getContainerClass().getClassName();        
+//        
+//        InventoryObjectNode aObjectNode = (InventoryObjectNode) containerEndpointsStep.getTreeEndPointA().getValue();
+//        InventoryObjectNode bObjectNode = (InventoryObjectNode) containerEndpointsStep.getTreeEndPointA().getValue();
+//        
+//        RemoteObjectLight endpointA = (RemoteObjectLight) aObjectNode.getObject();
+//        RemoteObjectLight endpointB = (RemoteObjectLight) bObjectNode.getObject();
+//        RemoteObjectLight template = new RemoteObjectLight(-1, null, null);
+//        
+//        WebserviceBeanLocal wsBean = getParentComponent().getWsBean();
+//        String ipAddress = Page.getCurrent().getWebBrowser().getAddress();
+//        String sessionId = getParentComponent().getApplicationSession().getSessionId();
+//        
+//        RemoteObjectLight parent;
+//        try {
+//            parent = wsBean.getCommonParent(endpointA.getClassName(), endpointA.getOid(), endpointB.getClassName(), endpointB.getOid(), ipAddress, sessionId);
+//        } catch (ServerSideException ex) {
+//            NotificationsUtil.showError(ex.getMessage());
+//            wizardCompleted = false;
+//            return;
+//        }
+//        
+//        long connectionId = -1;
+//        try {
+//            connectionId = wsBean.createPhysicalConnection(endpointA.getClassName(), endpointA.getOid(), endpointB.getClassName(), endpointB.getOid(), parent.getClassName(), parent.getOid(), connectionName, connectionClassName, template.getOid(), ipAddress, sessionId);
+//        } catch (ServerSideException ex) {
+//            NotificationsUtil.showError(ex.getMessage());
+//            wizardCompleted = false;
+//            return;
+//        }
+//        
+//        if (connectionId != -1l) {
+//            ClassInfo connectionClass = null;
+//            try {
+//                connectionClass = wsBean.getClass(connectionClassName, ipAddress, sessionId);
+//            } catch (ServerSideException ex) {
+//                NotificationsUtil.showError(ex.getMessage());
+//            }
+//            
+//            connectionPolyline.setId(connectionId);
+//            
+//            
+//            connectionPolyline.setStrokeColor(toHexString(new Color(connectionClass.getColor())));
+//            connectionPolyline.setStrokeOpacity(1);
+//            connectionPolyline.setStrokeWeight(3);
+//            
+//            connectionPolyline.setConnectionInfo(new RemoteObjectLight(connectionId, connectionName, connectionClassName));
+//            Notification.show("The connection was created successfully", Notification.Type.HUMANIZED_MESSAGE);
+//            wizardCompleted = true;
+//            close();
+//        }
     }
     
     public String toHexString(Color colour) throws NullPointerException {

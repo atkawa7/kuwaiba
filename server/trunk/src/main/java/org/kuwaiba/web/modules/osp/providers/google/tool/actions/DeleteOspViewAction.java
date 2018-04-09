@@ -55,7 +55,7 @@ public class DeleteOspViewAction extends AbstractAction {
                         );
                         Notification.show("OSP View Deleted", Notification.Type.TRAY_NOTIFICATION);
                     }
-                    mapWrapper.getMap().clear();
+                    //mapWrapper.getMap().clear();
                     mapWrapper.initNewMap();
                     parentComponent.removeMainComponentToTooledComponent();
                     parentComponent.enableTools(false);

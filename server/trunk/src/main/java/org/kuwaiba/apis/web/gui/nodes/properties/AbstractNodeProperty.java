@@ -16,7 +16,6 @@
 package org.kuwaiba.apis.web.gui.nodes.properties;
 
 import com.google.common.eventbus.Subscribe;
-import com.vaadin.event.ItemClickEvent;
 import com.vaadin.ui.CustomComponent;
 import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
@@ -40,6 +39,6 @@ public abstract class AbstractNodeProperty extends CustomComponent implements
         return parentComponent;
     }
         
-    @Subscribe
-    abstract void nodeSelected(ItemClickEvent event);
+//    @Subscribe
+//    abstract void nodeSelected(ItemClickEvent event);
 }

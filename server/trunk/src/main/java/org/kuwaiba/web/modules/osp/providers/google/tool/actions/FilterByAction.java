@@ -17,7 +17,6 @@ package org.kuwaiba.web.modules.osp.providers.google.tool.actions;
 
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.FormLayout;
-import com.vaadin.ui.OptionGroup;
 import de.steinwedel.messagebox.MessageBox;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,8 +29,8 @@ import org.kuwaiba.web.modules.osp.providers.google.GoogleMapWrapper;
  *  @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class FilterByAction extends AbstractAction {
-    private final OptionGroup ogConnectionsFilter;
-    private final OptionGroup ogNodesFilter;
+//    private final OptionGroup ogConnectionsFilter;
+//    private final OptionGroup ogNodesFilter;
     private final FormLayout form;
     private boolean firstCall = true;
     
@@ -39,64 +38,64 @@ public class FilterByAction extends AbstractAction {
         super(caption, new ThemeResource(resourceId));
         form = new FormLayout();
         
-        ogConnectionsFilter = new OptionGroup("Connections Filter by:");
-        ogConnectionsFilter.setMultiSelect(true);
-        
-        form.addComponent(ogConnectionsFilter);
-        
-        ogNodesFilter = new OptionGroup("Nodes Filter by:");
-        ogNodesFilter.setMultiSelect(true);
-        
-        form.addComponent(ogNodesFilter);
+//        ogConnectionsFilter = new OptionGroup("Connections Filter by:");
+//        ogConnectionsFilter.setMultiSelect(true);
+//        
+//        form.addComponent(ogConnectionsFilter);
+//        
+//        ogNodesFilter = new OptionGroup("Nodes Filter by:");
+//        ogNodesFilter.setMultiSelect(true);
+//        
+//        form.addComponent(ogNodesFilter);
     }
 
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
-        CustomGoogleMap map = ((GoogleMapWrapper) targetObject).getMap();
-                
-        Collection<String> selectedConnFilter = (Collection<String>) ogConnectionsFilter.getValue();
-        ogConnectionsFilter.addItems(map.getConnectionsFilter());
-        
-        if (firstCall) {
-            
-            for (String filter : map.getConnectionsFilter())
-                ogConnectionsFilter.select(filter);
-        } else {
-            
-            for (String filter : map.getConnectionsFilter()) {
-                if (selectedConnFilter.contains(filter))
-                    ogConnectionsFilter.select(filter);
-            }
-        }
-        
-        Collection<String> selectedNodeFilter = (Collection<String>) ogNodesFilter.getValue();
-        ogNodesFilter.addItems(map.getNodeFilter());
-        
-        if (firstCall) {
-            for (String filter : map.getNodeFilter())
-                ogNodesFilter.select(filter);
-        } else {
-            
-            for (String filter : map.getNodeFilter()) {
-                if (selectedNodeFilter.contains(filter))
-                    ogNodesFilter.select(filter);
-            }
-        }
-        
-        if (firstCall)
-            firstCall = false;
-        
-        MessageBox mbFilter = MessageBox
-            .createQuestion()
-            .withMessage(form)
-            .withOkButton(() -> {
-                map.filterby(
-                    new ArrayList((Collection<String>) ogNodesFilter.getValue()), 
-                    new ArrayList((Collection<String>) ogConnectionsFilter.getValue()));
-            })
-            .withCancelButton();
-        
-        mbFilter.open();
+//        CustomGoogleMap map = ((GoogleMapWrapper) targetObject).getMap();
+//                
+//        Collection<String> selectedConnFilter = (Collection<String>) ogConnectionsFilter.getValue();
+//        ogConnectionsFilter.addItems(map.getConnectionsFilter());
+//        
+//        if (firstCall) {
+//            
+//            for (String filter : map.getConnectionsFilter())
+//                ogConnectionsFilter.select(filter);
+//        } else {
+//            
+//            for (String filter : map.getConnectionsFilter()) {
+//                if (selectedConnFilter.contains(filter))
+//                    ogConnectionsFilter.select(filter);
+//            }
+//        }
+//        
+//        Collection<String> selectedNodeFilter = (Collection<String>) ogNodesFilter.getValue();
+//        ogNodesFilter.addItems(map.getNodeFilter());
+//        
+//        if (firstCall) {
+//            for (String filter : map.getNodeFilter())
+//                ogNodesFilter.select(filter);
+//        } else {
+//            
+//            for (String filter : map.getNodeFilter()) {
+//                if (selectedNodeFilter.contains(filter))
+//                    ogNodesFilter.select(filter);
+//            }
+//        }
+//        
+//        if (firstCall)
+//            firstCall = false;
+//        
+//        MessageBox mbFilter = MessageBox
+//            .createQuestion()
+//            .withMessage(form)
+//            .withOkButton(() -> {
+//                map.filterby(
+//                    new ArrayList((Collection<String>) ogNodesFilter.getValue()), 
+//                    new ArrayList((Collection<String>) ogConnectionsFilter.getValue()));
+//            })
+//            .withCancelButton();
+//        
+//        mbFilter.open();
     }
     
 }

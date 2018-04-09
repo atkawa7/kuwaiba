@@ -16,7 +16,7 @@
 package org.kuwaiba.apis.web.gui.nodes;
 
 import java.util.ArrayList;
-import com.vaadin.data.util.BeanItem;
+//import com.vaadin.data.util.BeanItem;
 import com.vaadin.server.Page;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import java.util.Collection;
@@ -81,7 +81,7 @@ public abstract class AbstractNode<T> {
      */
     public void setTree(DynamicTree tree) {
         this.tree = tree;
-        this.tree.addItem(this);
+  //      this.tree.addItem(this);
     }
 
     public DynamicTree getTree() {
@@ -101,9 +101,9 @@ public abstract class AbstractNode<T> {
         
         List<AbstractNode> nodesToRemove = getChildren(this, new ArrayList<>());
         
-        if (!nodesToRemove.isEmpty())
-            for (AbstractNode node : nodesToRemove) 
-                getTree().removeItem(node);
+//        if (!nodesToRemove.isEmpty())
+//            for (AbstractNode node : nodesToRemove) 
+//                getTree().removeItem(node);
     }
     
     /**
@@ -111,28 +111,29 @@ public abstract class AbstractNode<T> {
      */
     public void delete() {
         List<AbstractNode> nodesToRemove = getChildren(this, new ArrayList<>());
-        
-        if(!nodesToRemove.isEmpty())
-            for (AbstractNode node : nodesToRemove) 
-                getTree().removeItem(node);
-                
-        tree.removeItem(this);
+//        
+//        if(!nodesToRemove.isEmpty())
+//            for (AbstractNode node : nodesToRemove) 
+//                getTree().removeItem(node);
+//                
+//        tree.removeItem(this);
     }
     
     public List<AbstractNode> getChildren(AbstractNode node, List<AbstractNode> nodes){
-        Collection<AbstractNode> children = (Collection<AbstractNode>) getTree().getChildren(node);
-        if(children != null){
-            for (AbstractNode child : children) {
-                Collection<AbstractNode> subChildren = (Collection<AbstractNode>) getTree().getChildren(child);
-                if(subChildren != null){
-                    nodes.add(child);
-                    nodes.addAll(getChildren(child, nodes));
-                }
-                else
-                    nodes.add(child);
-            }
-        }
-        return nodes;
+//        Collection<AbstractNode> children = (Collection<AbstractNode>) getTree().getChildren(node);
+//        if(children != null){
+//            for (AbstractNode child : children) {
+//                Collection<AbstractNode> subChildren = (Collection<AbstractNode>) getTree().getChildren(child);
+//                if(subChildren != null){
+//                    nodes.add(child);
+//                    nodes.addAll(getChildren(child, nodes));
+//                }
+//                else
+//                    nodes.add(child);
+//            }
+//        }
+//        return nodes;
+            return null;
     }
         
     /**
@@ -152,8 +153,8 @@ public abstract class AbstractNode<T> {
      * @param node 
      */
     public void add(AbstractNode node) {
-        tree.addItem(node);
-        tree.setParent(node, this);
+//        tree.addItem(node);
+//        tree.setParent(node, this);
     }
     
     /**
@@ -161,7 +162,7 @@ public abstract class AbstractNode<T> {
      * @param node 
      */
     public void remove(AbstractNode node) {
-        tree.removeItem(node);
+        //tree.removeItem(node);
     }
     
     @Override
@@ -193,10 +194,10 @@ public abstract class AbstractNode<T> {
                     Page.getCurrent().getWebBrowser().getAddress(), 
                      getTree().getTopComponent().getApplicationSession().getSessionId());
             
-            BeanItem<RemoteObject> beanItem = new BeanItem<> (remoteObject);
-            ObjectNodePropertyChangeValueListener valueListener = new ObjectNodePropertyChangeValueListener(getTree().getTopComponent(), beanItem, getTree().getTopComponent().getEventBus());
+            //BeanItem<RemoteObject> beanItem = new BeanItem<> (remoteObject);
+            //ObjectNodePropertyChangeValueListener valueListener = new ObjectNodePropertyChangeValueListener(getTree().getTopComponent(), beanItem, getTree().getTopComponent().getEventBus());
             
-            Sheet sheet = new Sheet(beanItem, valueListener);
+            //Sheet sheet = new Sheet(beanItem, valueListener);
             
             ClassInfo meta = getTree().getTopComponent().getWsBean().getClass(remoteObject.getClassName(), 
                     Page.getCurrent().getWebBrowser().getAddress(), 
@@ -223,10 +224,10 @@ public abstract class AbstractNode<T> {
                     switch (LocalClassMetadata.getMappingFromType(attributeTypes[i])) {
                         case AttributeMetadata.MAPPING_TIMESTAMP:
                         case AttributeMetadata.MAPPING_DATE:
-                            sheet.createDateProperty(classAttribute, meta.getAttributesDescription()[i], new Date(Long.valueOf(attributeValue)), i);
+              //              sheet.createDateProperty(classAttribute, meta.getAttributesDescription()[i], new Date(Long.valueOf(attributeValue)), i);
                             break;
                         case AttributeMetadata.MAPPING_PRIMITIVE:
-                            sheet.createPrimitiveField(classAttribute,  meta.getAttributesDescription()[i], attributeValue, meta.getAttributesTypes()[i], i);
+                //            sheet.createPrimitiveField(classAttribute,  meta.getAttributesDescription()[i], attributeValue, meta.getAttributesTypes()[i], i);
                             break;
                         case AttributeMetadata.MAPPING_MANYTOONE:
                             List<RemoteObjectLight> listTypeItems = getTree().getTopComponent().getWsBean().getListTypeItems(meta.getAttributesTypes()[i], 
@@ -250,7 +251,7 @@ public abstract class AbstractNode<T> {
                                         actualItem = listTypeItem;
                                 }
                             }
-                            sheet.createListTypeField(classAttribute,  meta.getAttributesDescription()[i], localListTypeItems, actualItem, i);
+                  //          sheet.createListTypeField(classAttribute,  meta.getAttributesDescription()[i], localListTypeItems, actualItem, i);
                             break;
                         default:
                             NotificationsUtil.showError("Mapping not supported");
@@ -258,8 +259,8 @@ public abstract class AbstractNode<T> {
                 }
                 i++;
             }//end for
-            sheet.setPageLength(sheet.size());
-            return sheet;
+//            sheet.setPageLength(sheet.size());
+//            return sheet;
             
          } catch (ServerSideException ex) {
             Logger.getLogger(NodeProperty.class.getName()).log(Level.SEVERE, null, ex);

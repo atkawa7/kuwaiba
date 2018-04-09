@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.apis.web.gui.nodes.properties;
 
-import com.vaadin.shared.ui.datefield.Resolution;
 import com.vaadin.ui.DateField;
 import java.util.Date;
 
@@ -27,8 +26,8 @@ public class PorpertyDate extends DateField {
 
     public PorpertyDate (Date date) {
         super();
-        this.setResolution(Resolution.MINUTE);
-        this.setValue(date);
+//        this.setResolution(Resolution.MINUTE);
+//        this.setValue(date);
     }
     
 }

@@ -15,7 +15,8 @@
  */
 package org.kuwaiba.web.custom.wizards.physicalconnection;
 
-import com.vaadin.shared.ui.label.ContentMode;
+//import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
@@ -64,8 +65,7 @@ public class ContainerEndpointsStep implements WizardStep {
             Component trees = initTrees();
             
             if (trees != null) {
-                Label lblMessage = new Label("<p><b>Select the objects you'd like to connect.</b></p>", 
-                        ContentMode.HTML);
+                Label lblMessage = new Label("<p><b>Select the objects you'd like to connect.</b></p>", ContentMode.HTML);
                 content.addComponent(lblMessage);
                 content.setExpandRatio(lblMessage, 0.1f);
                 
@@ -80,13 +80,13 @@ public class ContainerEndpointsStep implements WizardStep {
         RemoteObjectLight rootSource = newContainerWizard.getConnectionPolyline().getSource().getRemoteObjectLight();
         InventoryObjectNode rootNodeA = new InventoryObjectNode(rootSource);
         treeEndPointA = new DynamicTree(rootNodeA, newContainerWizard.getParentComponent());
-        treeEndPointA.setDragMode(Tree.TreeDragMode.NONE);
+        //treeEndPointA.setDragMode(Tree.TreeDragMode.NONE);
         rootNodeA.setTree(treeEndPointA);
         
         RemoteObjectLight rootTarget = newContainerWizard.getConnectionPolyline().getTarget().getRemoteObjectLight();
         InventoryObjectNode rootNodeB = new InventoryObjectNode(rootTarget);
         treeEndPointB = new DynamicTree(rootNodeB, newContainerWizard.getParentComponent());
-        treeEndPointB.setDragMode(Tree.TreeDragMode.NONE);
+        //treeEndPointB.setDragMode(Tree.TreeDragMode.NONE);
         rootNodeB.setTree(treeEndPointB);
         
         HorizontalSplitPanel pnlChooseEndpoints = new HorizontalSplitPanel();
@@ -98,7 +98,8 @@ public class ContainerEndpointsStep implements WizardStep {
 
     @Override
     public boolean onAdvance() {
-        return treeEndPointA.getValue() != null && treeEndPointB.getValue() != null;
+        //return treeEndPointA.getValue() != null && treeEndPointB.getValue() != null;
+        return false;
     }
 
     @Override

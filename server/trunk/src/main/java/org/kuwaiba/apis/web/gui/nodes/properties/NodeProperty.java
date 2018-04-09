@@ -16,8 +16,7 @@
 package org.kuwaiba.apis.web.gui.nodes.properties;
 
 import com.google.common.eventbus.Subscribe;
-import com.vaadin.event.ItemClickEvent;
-import com.vaadin.ui.Button;
+//import com.vaadin.event.ItemClickEvent;
 import com.vaadin.ui.CustomComponent;
 import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
@@ -42,17 +41,17 @@ public class NodeProperty extends CustomComponent implements
         this.parentComponent = parentComponent;
     }
       
-    @Subscribe
-    public void nodeSelected(ItemClickEvent event) {
-        if(event.getItemId() instanceof InventoryObjectNode)
-            setCompositionRoot(((InventoryObjectNode)event.getItemId()).createPropertySheet());
-        else if(event.getItemId() instanceof ListTypeChildNode)  
-            setCompositionRoot(((AbstractNode)event.getItemId()).createPropertySheet());
-        else{
-            Sheet p = new Sheet(null, null);
-            setCompositionRoot(null);
-        }
-    }
+//    @Subscribe
+//    public void nodeSelected(ItemClickEvent event) {
+//        if(event.getItemId() instanceof InventoryObjectNode)
+//            setCompositionRoot(((InventoryObjectNode)event.getItemId()).createPropertySheet());
+//        else if(event.getItemId() instanceof ListTypeChildNode)  
+//            setCompositionRoot(((AbstractNode)event.getItemId()).createPropertySheet());
+//        else{
+//            Sheet p = new Sheet(null, null);
+//            setCompositionRoot(null);
+//        }
+//    }
     
     /** 
      * A marker is selected in GIS View

@@ -22,7 +22,7 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.label.ContentMode;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
@@ -57,7 +57,6 @@ class LoginView extends CustomComponent implements View {
     private TextField txtUsername;
     private PasswordField txtPassword;
     private Button btnLogin;
-    private Button btnForgotPassword;
     
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -79,19 +78,11 @@ class LoginView extends CustomComponent implements View {
         
         txtUsername = new TextField();
         txtUsername.setWidth(18, Unit.EM);
-        txtUsername.setInputPrompt("Type your username");
         
         txtPassword = new PasswordField();
         txtPassword.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
         txtPassword.setWidth(18, Unit.EM);
         txtPassword.setIcon(FontAwesome.LOCK);
-        
-        btnForgotPassword = new Button("Forgot Password?");
-        btnForgotPassword.addClickListener((Button.ClickEvent event) -> {
-            NotificationsUtil.showError("This button should do something some day!");
-        });
-        btnForgotPassword.addStyleName("v-button-link");
-        btnForgotPassword.addStyleName("v-button-borderless");
         
         btnLogin = new Button();
         btnLogin.setIcon(FontAwesome.SIGN_IN);
@@ -113,10 +104,7 @@ class LoginView extends CustomComponent implements View {
             }
         });
         
-        HorizontalLayout lytButtons = new HorizontalLayout(btnLogin, btnForgotPassword);
-        lytButtons.setSpacing(true);
-        
-        VerticalLayout lytForm = new VerticalLayout(txtUsername, txtPassword, lytButtons);
+        VerticalLayout lytForm = new VerticalLayout(txtUsername, txtPassword);
         lytForm.setSpacing(true);
         
         VerticalLayout lytloginPanel = new VerticalLayout();

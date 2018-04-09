@@ -47,7 +47,7 @@ public class IndexUI extends UI {
             navigator.navigateTo(ApplicationView.VIEW_NAME);
     }
     
-    @VaadinServletConfiguration(productionMode = false, ui = IndexUI.class, widgetset = "org.kuwaiba.KuwaibaWidgetSet")
+    @VaadinServletConfiguration(productionMode = false, ui = IndexUI.class/*, widgetset = "org.kuwaiba.KuwaibaWidgetSet"*/)
     public static class Servlet extends VaadinServlet {
     }
 }

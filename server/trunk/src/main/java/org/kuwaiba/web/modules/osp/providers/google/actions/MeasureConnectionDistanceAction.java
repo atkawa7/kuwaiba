@@ -32,10 +32,10 @@ public class MeasureConnectionDistanceAction extends AbstractAction {
     public void actionPerformed(Object sourceComponent, Object targetObject) {
         CustomGoogleMap map = (CustomGoogleMap) sourceComponent;
         
-        map.setMeasureEdgeDistance(!map.getMesaureEdgeDistance());
-        if (map.getMesaureEdgeDistance())
-            setCaption("Clear measurement");
-        else
-            setCaption("Measure distance");
+//        map.setMeasureEdgeDistance(!map.getMesaureEdgeDistance());
+//        if (map.getMesaureEdgeDistance())
+//            setCaption("Clear measurement");
+//        else
+//            setCaption("Measure distance");
     }    
 }

@@ -37,38 +37,38 @@ public class NewOspViewAction extends AbstractAction {
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
         CustomGoogleMap map = ((GoogleMapWrapper) targetObject).getMap();
-        if (map.getUpdateView()) {
-            ((GoogleMapWrapper) targetObject).setViewClosedByNewView(true);
-            
-            MessageBox mbUpdateView = MessageBox.createQuestion()
-                .withCaption("Confirmation")
-                .withMessage("This view has not been saved, do you want to save it")
-                .withYesButton(() -> {
-                    ActionsFactory.createSaveOspViewAction(
-                        OutsidePlantTooledComponent.ACTION_CAPTION_SAVE, 
-                        OutsidePlantTooledComponent.ACTION_ICON_SAVE)
-                            .actionPerformed(sourceComponent, targetObject);
-                })
-                .withNoButton(() -> {
-                    ((GoogleMapWrapper) targetObject).initNewMap();
-                    ((OutsidePlantComponent) sourceComponent).removeMainComponentToTooledComponent();
-                    
-                    ActionsFactory.createNewOspViewAction(
-                        OutsidePlantTooledComponent.ACTION_CAPTION_NEW, 
-                        OutsidePlantTooledComponent.ACTION_ICON_NEW)
-                            .actionPerformed(sourceComponent, targetObject);
-                })
-                .withCancelButton(() -> {
-                    ((GoogleMapWrapper) targetObject).setViewClosedByNewView(false);
-                });
-            
-            mbUpdateView.open();
-        } else {
-            ((OutsidePlantComponent) sourceComponent).addMainComponentToTooledComponent();
-            ((GoogleMapWrapper) targetObject).initNewMap();
-            ((OutsidePlantComponent) sourceComponent).enableTools(true);
-            
-            Notification.show("New OSP View", Notification.Type.TRAY_NOTIFICATION);
-        }
+//        if (map.getUpdateView()) {
+//            ((GoogleMapWrapper) targetObject).setViewClosedByNewView(true);
+//            
+//            MessageBox mbUpdateView = MessageBox.createQuestion()
+//                .withCaption("Confirmation")
+//                .withMessage("This view has not been saved, do you want to save it")
+//                .withYesButton(() -> {
+//                    ActionsFactory.createSaveOspViewAction(
+//                        OutsidePlantTooledComponent.ACTION_CAPTION_SAVE, 
+//                        OutsidePlantTooledComponent.ACTION_ICON_SAVE)
+//                            .actionPerformed(sourceComponent, targetObject);
+//                })
+//                .withNoButton(() -> {
+//                    ((GoogleMapWrapper) targetObject).initNewMap();
+//                    ((OutsidePlantComponent) sourceComponent).removeMainComponentToTooledComponent();
+//                    
+//                    ActionsFactory.createNewOspViewAction(
+//                        OutsidePlantTooledComponent.ACTION_CAPTION_NEW, 
+//                        OutsidePlantTooledComponent.ACTION_ICON_NEW)
+//                            .actionPerformed(sourceComponent, targetObject);
+//                })
+//                .withCancelButton(() -> {
+//                    ((GoogleMapWrapper) targetObject).setViewClosedByNewView(false);
+//                });
+//            
+//            mbUpdateView.open();
+//        } else {
+//            ((OutsidePlantComponent) sourceComponent).addMainComponentToTooledComponent();
+//            ((GoogleMapWrapper) targetObject).initNewMap();
+//            ((OutsidePlantComponent) sourceComponent).enableTools(true);
+//            
+//            Notification.show("New OSP View", Notification.Type.TRAY_NOTIFICATION);
+//        }
     }
 }

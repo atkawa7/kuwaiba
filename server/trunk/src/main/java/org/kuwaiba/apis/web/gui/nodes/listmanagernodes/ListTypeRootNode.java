@@ -41,8 +41,8 @@ public class ListTypeRootNode extends AbstractRootNode {
         for (ClassInfoLight child : initialChildren) {
             ListTypeNode objectNode = new ListTypeNode(child);
             objectNode.setTree(getTree());
-            getTree().addItem(objectNode);
-            getTree().setParent(objectNode, this);
+//            getTree().addItem(objectNode);
+//            getTree().setParent(objectNode, this);
         }
     }
 

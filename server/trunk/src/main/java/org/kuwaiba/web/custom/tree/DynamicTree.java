@@ -16,10 +16,10 @@
 package org.kuwaiba.web.custom.tree;
 
 import com.google.common.eventbus.Subscribe;
-import com.vaadin.data.Property;
-import com.vaadin.event.ItemClickEvent;
+//import com.vaadin.data.Property;
+//import com.vaadin.event.ItemClickEvent;
 import com.vaadin.ui.Tree;
-import com.vaadin.ui.Tree.CollapseListener;
+//import com.vaadin.ui.Tree.CollapseListener;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
@@ -31,8 +31,8 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
-public class DynamicTree extends Tree implements Tree.ExpandListener, 
-        CollapseListener, EmbeddableComponent 
+public class DynamicTree extends Tree implements /*Tree.ExpandListener, 
+        CollapseListener,*/ EmbeddableComponent 
 {
     /**
      * Currently selected node
@@ -50,21 +50,21 @@ public class DynamicTree extends Tree implements Tree.ExpandListener,
      * @param parentComponent The parent TopComponent component
      */
     public DynamicTree(AbstractNode rootNode, TopComponent parentComponent) {
-        addItem(rootNode);
+        //addItem(rootNode);
         registerListeners();
-        this.setDragMode(Tree.TreeDragMode.NODE);
+        //this.setDragMode(Tree.TreeDragMode.NODE);
         this.parentComponent = parentComponent;
     }
     
     public final void registerListeners(){
-        addExpandListener(this);
-        addCollapseListener(this);
+        //addExpandListener(this);
+        //addCollapseListener(this);
         
-        this.addItemClickListener((ItemClickEvent event) -> {
-            currentlySelectedNode = (AbstractNode)event.getItemId();
-            if (parentComponent != null)
-                parentComponent.getEventBus().post(event);
-        });
+//        this.addItemClickListener((ItemClickEvent event) -> {
+//            currentlySelectedNode = (AbstractNode)event.getItemId();
+//            if (parentComponent != null)
+//                parentComponent.getEventBus().post(event);
+//        });
     }
     
     /**
@@ -83,46 +83,46 @@ public class DynamicTree extends Tree implements Tree.ExpandListener,
             parentComponent.getEventBus().unregister(this);
     }
     
-    @Override
-    public void nodeExpand(ExpandEvent event) {
-        ((AbstractNode)event.getItemId()).expand();
-    }
-
-    @Override
-    public void nodeCollapse(CollapseEvent event) {
-        ((AbstractNode)event.getItemId()).collapse();
-    }
+    //@Override
+//    public void nodeExpand(ExpandEvent event) {
+//        ((AbstractNode)event.getItemId()).expand();
+//    }
+//
+//    //@Override
+//    public void nodeCollapse(CollapseEvent event) {
+//        ((AbstractNode)event.getItemId()).collapse();
+//    }
     
-    @Subscribe
-    public void nodeChange(Property.ValueChangeEvent[] event) {
-        long oid = (Long) event[0].getProperty().getValue();
-        
-        String newValue = (String) event[1].getProperty().getValue();
-        
-        AbstractNode node = new AbstractNode(new RemoteObjectLight(oid, "", "")){
-
-            @Override
-            public void expand() {}
-
-            @Override
-            public AbstractAction[] getActions() {
-                return new AbstractAction[0];
-            }
-
-            @Override
-            public void refresh(boolean recursive) {}
-        };
-        
-        for (Object item : getItemIds()) {
-            if (item instanceof AbstractNode) {
-                if (node.equals((AbstractNode) item)) {
-                    
-                    this.setItemCaption(item, newValue);
-                    break;
-                }
-            }
-        }
-    }
+//    @Subscribe
+//    public void nodeChange(Property.ValueChangeEvent[] event) {
+//        long oid = (Long) event[0].getProperty().getValue();
+//        
+//        String newValue = (String) event[1].getProperty().getValue();
+//        
+//        AbstractNode node = new AbstractNode(new RemoteObjectLight(oid, "", "")){
+//
+//            @Override
+//            public void expand() {}
+//
+//            @Override
+//            public AbstractAction[] getActions() {
+//                return new AbstractAction[0];
+//            }
+//
+//            @Override
+//            public void refresh(boolean recursive) {}
+//        };
+//        
+//        for (Object item : getItemIds()) {
+//            if (item instanceof AbstractNode) {
+//                if (node.equals((AbstractNode) item)) {
+//                    
+//                    this.setItemCaption(item, newValue);
+//                    break;
+//                }
+//            }
+//        }
+//    }
 
     @Override
     public TopComponent getTopComponent() {

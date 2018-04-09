@@ -15,10 +15,9 @@
  */
 package org.kuwaiba.apis.web.gui.nodes.properties;
 
-import com.vaadin.data.util.IndexedContainer;
+//import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.ui.ComboBox;
 import java.util.List;
-import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * A field to represent a set of values(a list) in a property sheet
@@ -33,11 +32,11 @@ public class PropertyListType <T> extends ComboBox {
     public PropertyListType(String propertyName, List<T> list, T actualValue) {
         this.propertyName = propertyName;
         this.setTextInputAllowed(false);
-        this.setNullSelectionAllowed(false);
-        for (T item : list) 
-            addItem(item);
+        this.setEmptySelectionAllowed(false);
+//        for (T item : list) 
+//            addItem(item);
         
-        this.select(actualValue);
+//        this.select(actualValue);
     }
 
     public String getPropertyName() {

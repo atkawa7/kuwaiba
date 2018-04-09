@@ -202,8 +202,8 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
         
         btnNodeLabels.addClickListener((Button.ClickEvent event) -> {
             setButtonSelected(btnNodeLabels);
-            ((OutsidePlantComponent) parentComponent).getGoogleMapWrapper()
-                    .getMap().enableShowNodeLabelsTool();
+//            ((OutsidePlantComponent) parentComponent).getGoogleMapWrapper()
+//                    .getMap().enableShowNodeLabelsTool();
         });
     }
     
@@ -214,8 +214,8 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
         
         btnConnLabels.addClickListener((Button.ClickEvent event) -> {
             setButtonSelected(btnConnLabels);
-            ((OutsidePlantComponent) parentComponent).getGoogleMapWrapper()
-                    .getMap().enableShowConnectionLabelsTool();
+//            ((OutsidePlantComponent) parentComponent).getGoogleMapWrapper()
+//                    .getMap().enableShowConnectionLabelsTool();
         });
     }
     
@@ -231,8 +231,8 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
             setButtonSelected(btnPolygon, false);
             setButtonSelected(btnMeasure, false);
             
-            ((OutsidePlantComponent) parentComponent).getGoogleMapWrapper()
-                    .getMap().enableSelectTool();
+//            ((OutsidePlantComponent) parentComponent).getGoogleMapWrapper()
+//                    .getMap().enableSelectTool();
         });
     }
     
@@ -262,8 +262,8 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
             setButtonSelected(btnPolygon, false);
             setButtonSelected(btnMeasure, false);
             
-            ((OutsidePlantComponent) parentComponent).getGoogleMapWrapper()
-                    .getMap().enableConnectionTool(true);
+//            ((OutsidePlantComponent) parentComponent).getGoogleMapWrapper()
+//                    .getMap().enableConnectionTool(true);
         });
     }
     
@@ -278,8 +278,8 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
             setButtonSelected(btnPolygon, false);
             setButtonSelected(btnMeasure, false);
             
-            ((OutsidePlantComponent) parentComponent).getGoogleMapWrapper()
-                    .getMap().enableConnectionTool(false);
+//            ((OutsidePlantComponent) parentComponent).getGoogleMapWrapper()
+//                    .getMap().enableConnectionTool(false);
         });
     }
     
@@ -295,8 +295,8 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
             setButtonSelected(btnPolygon, true);
             setButtonSelected(btnMeasure, false);
             
-            ((OutsidePlantComponent) parentComponent).getGoogleMapWrapper()
-                    .getMap().enablePolygonTool();
+//            ((OutsidePlantComponent) parentComponent).getGoogleMapWrapper()
+//                    .getMap().enablePolygonTool();
         });
     }
     
@@ -312,10 +312,10 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
             setButtonSelected(btnNewLink, false);
             setButtonSelected(btnPolygon, false);
             
-            setButtonSelected(btnSelect, map.getMeasureDistance());
-            setButtonSelected(btnMeasure, !map.getMeasureDistance());
-            
-            map.enableMeasureTool();
+//            setButtonSelected(btnSelect, map.getMeasureDistance());
+//            setButtonSelected(btnMeasure, !map.getMeasureDistance());
+//            
+//            map.enableMeasureTool();
         });
     }
     
@@ -348,27 +348,27 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
                     CustomGoogleMap map = ((OutsidePlantComponent) parentComponent)
                         .getGoogleMapWrapper().getMap();
                     
-                    if (mapWrapper.getCurrentView() != null) {
-                        try {
-                            map.enableCleanTool();
-                            
-                            parentComponent.getWsBean().updateGeneralView(
-                                    mapWrapper.getCurrentView().getId(),
-                                    mapWrapper.getCurrentView().getName(),
-                                    mapWrapper.getCurrentView().getDescription(),
-                                    map.getAsXML(),
-                                    null,
-                                    Page.getCurrent().getWebBrowser().getAddress(),
-                                    parentComponent.getApplicationSession().getSessionId());
-                            
-                            Notification.show("The view was cleaned", Notification.Type.TRAY_NOTIFICATION);
-                        } catch (ServerSideException ex) {
-                            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-                        }
-                    } else {
-                        map.enableCleanTool();
-                        Notification.show("The view was cleaned", Notification.Type.TRAY_NOTIFICATION);
-                    }
+//                    if (mapWrapper.getCurrentView() != null) {
+//                        try {
+//                            map.enableCleanTool();
+//                            
+//                            parentComponent.getWsBean().updateGeneralView(
+//                                    mapWrapper.getCurrentView().getId(),
+//                                    mapWrapper.getCurrentView().getName(),
+//                                    mapWrapper.getCurrentView().getDescription(),
+//                                    map.getAsXML(),
+//                                    null,
+//                                    Page.getCurrent().getWebBrowser().getAddress(),
+//                                    parentComponent.getApplicationSession().getSessionId());
+//                            
+//                            Notification.show("The view was cleaned", Notification.Type.TRAY_NOTIFICATION);
+//                        } catch (ServerSideException ex) {
+//                            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                        }
+//                    } else {
+//                        map.enableCleanTool();
+//                        Notification.show("The view was cleaned", Notification.Type.TRAY_NOTIFICATION);
+//                    }
                 })
                 .withCancelButton();
             
@@ -377,35 +377,35 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
     }
     
     private void createButtonComboBoxSearch() {
-        cboSearch = new ComboBox();
-        cboSearch.setDescription("Search");
-        cboSearch.addFocusListener((FieldEvents.FocusEvent event) -> {
-            cboSearch.setValue(null);
-            CustomGoogleMap map = ((OutsidePlantComponent) parentComponent)
-                .getGoogleMapWrapper().getMap();
-            
-            List<Object> elements = map.getVisbleNodesAndConnections();
-            cboSearch.removeAllItems();
-            cboSearch.addItem(null);
-            cboSearch.addItems(elements);
-        });
-        cboSearch.setNullSelectionAllowed(true);
-        cboSearch.setValue(null);
-        cboSearch.setNullSelectionItemId(null);
-        //TODO: deafult size
-        cboSearch.setHeight(toolBarSize.size() + 2 * TOOLBAR_VERTICAL_PADDING, Unit.PIXELS);
-                
-        ((AbstractOrderedLayout) getToolbarLayout()).addComponent(cboSearch);
+//        cboSearch = new ComboBox();
+//        cboSearch.setDescription("Search");
+//        cboSearch.addFocusListener((FieldEvents.FocusEvent event) -> {
+//            cboSearch.setValue(null);
+//            CustomGoogleMap map = ((OutsidePlantComponent) parentComponent)
+//                .getGoogleMapWrapper().getMap();
+//            
+//            List<Object> elements = map.getVisbleNodesAndConnections();
+//            cboSearch.removeAllItems();
+//            cboSearch.addItem(null);
+//            cboSearch.addItems(elements);
+//        });
+//        cboSearch.setNullSelectionAllowed(true);
+//        cboSearch.setValue(null);
+//        cboSearch.setNullSelectionItemId(null);
+//        //TODO: deafult size
+//        cboSearch.setHeight(toolBarSize.size() + 2 * TOOLBAR_VERTICAL_PADDING, Unit.PIXELS);
+//                
+//        ((AbstractOrderedLayout) getToolbarLayout()).addComponent(cboSearch);
     }
     
     private void createButtonSearch() {
         btnSearch = createButton(null);
         btnSearch.setIcon(new ThemeResource(BUTTON_ICON_SEARCH));
         btnSearch.setDescription(BUTTON_CAPTION_SEARCH);
-        btnSearch.addClickListener((Button.ClickEvent event) -> {
-            ((OutsidePlantComponent) parentComponent)
-                    .getGoogleMapWrapper().getMap().moveMapToOverlay(cboSearch.getValue());
-        });
+//        btnSearch.addClickListener((Button.ClickEvent event) -> {
+//            ((OutsidePlantComponent) parentComponent)
+//                    .getGoogleMapWrapper().getMap().moveMapToOverlay(cboSearch.getValue());
+//        });
     }
     
     public void enableTools(boolean enable) {

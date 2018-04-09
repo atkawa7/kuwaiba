@@ -19,7 +19,7 @@ import com.vaadin.event.dd.DragAndDropEvent;
 import com.vaadin.event.dd.DropHandler;
 import com.vaadin.event.dd.acceptcriteria.AcceptAll;
 import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
-import com.vaadin.tapio.googlemaps.client.LatLon;
+//import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.ui.DragAndDropWrapper;
 import com.vaadin.ui.Notification;
 import javax.naming.Context;
@@ -42,14 +42,14 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
 
         @Override
         public void drop(DragAndDropEvent event) {
-            Object object = event.getTransferable().getData("itemId");
-            if (object instanceof InventoryObjectNode) {
-                InventoryObjectNode objectNode = (InventoryObjectNode) object;
-                                
-                map.addNodeMarker((RemoteObjectLight) objectNode.getObject());
-            }
-            else
-                NotificationsUtil.showError("Only inventory objects are allowed to be dropped here");
+//            Object object = event.getTransferable().getData("itemId");
+//            if (object instanceof InventoryObjectNode) {
+//                InventoryObjectNode objectNode = (InventoryObjectNode) object;
+//                                
+//                map.addNodeMarker((RemoteObjectLight) objectNode.getObject());
+//            }
+//            else
+//                NotificationsUtil.showError("Only inventory objects are allowed to be dropped here");
         }
 
         @Override
@@ -77,12 +77,12 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
             double latitude = (double)context.lookup("java:comp/env/defaultCenterLatitude"); //NOI18N
             int zoom = (int)context.lookup("java:comp/env/defaultZoom"); //NOI18N
             
-            map = new CustomGoogleMap(parentComponent, apiKey, null, mapLanguage);
-            map.setCenter(new LatLon(latitude, longitude));
-            map.setZoom(zoom);
-            map.setSizeFull();
+//            map = new CustomGoogleMap(parentComponent, apiKey, null, mapLanguage);
+//            map.setCenter(new LatLon(latitude, longitude));
+//            map.setZoom(zoom);
+//            map.setSizeFull();
             
-            setCompositionRoot(map);
+//            setCompositionRoot(map);
             setDropHandler(dropHandler);
         } catch (NamingException ex){
             System.out.println(String.format("[KUWAIBA] Unexpected exception while loading a map in the OSP module: %s", ex.getMessage()));
@@ -123,20 +123,20 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
         viewClosedByNewView = false;
         viewClosedByOpenView = false;
         currentView = null;
-        map.newMap();
+//        map.newMap();
     }
     
     public void register() {
         if (parentComponent != null) {
             parentComponent.getEventBus().register(this);
-            map.register();
+  //          map.register();
         }
     }
     
     public void unregister() {
         if (parentComponent != null) {
             parentComponent.getEventBus().unregister(this);
-            map.unregister();
+    //        map.unregister();
         }
     }
     

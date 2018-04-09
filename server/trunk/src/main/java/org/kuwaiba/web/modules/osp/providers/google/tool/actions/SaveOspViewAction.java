@@ -40,7 +40,7 @@ public class SaveOspViewAction extends AbstractAction {
     public SaveOspViewAction(String caption, String resourceId) {
         super(caption, new ThemeResource(resourceId));
                 
-        tfName.setRequired(true);
+        tfName.setRequiredIndicatorVisible(true);
         form.setMargin(true);
         form.addComponent(tfName);
         form.addComponent(tfDescription);
@@ -65,68 +65,68 @@ public class SaveOspViewAction extends AbstractAction {
             .withOkButton(() -> {
                 ViewInfo view = mapWrapper.getCurrentView();
                 
-                try {
-                    long id = -1;
-                    if (view == null) {
-                        id = parentComponent.getWsBean().createGeneralView(
-                            GoogleMapWrapper.CLASS_VIEW, 
-                            tfName.getValue(), 
-                            tfDescription.getValue(), 
-                            mapWrapper.getMap().getAsXML(), 
-                            null, 
-                            Page.getCurrent().getWebBrowser().getAddress(), 
-                            parentComponent.getApplicationSession().getSessionId());
-                                                
-                        Notification.show("OSP View Saved", Notification.Type.TRAY_NOTIFICATION);
-                        mapWrapper.getMap().physicalConnectionsSaved();
-                    } else {
-                        id = view.getId();
-                        
-                        parentComponent.getWsBean().updateGeneralView(
-                            id, 
-                            tfName.getValue(), 
-                            tfDescription.getValue(), 
-                            mapWrapper.getMap().getAsXML(), 
-                            null, 
-                            Page.getCurrent().getWebBrowser().getAddress(), 
-                            parentComponent.getApplicationSession().getSessionId());
-                                                
-                        Notification.show("OSP View Updated", Notification.Type.TRAY_NOTIFICATION);
-                        mapWrapper.getMap().physicalConnectionsSaved();
-                    }
-                    
-                    if (id != -1) {
-                        
-                        if (mapWrapper.isViewClosedByNewView()) {
-                            
-                            mapWrapper.initNewMap();
-                            
-                            ActionsFactory.createNewOspViewAction(
-                                OutsidePlantTooledComponent.ACTION_CAPTION_NEW, 
-                                OutsidePlantTooledComponent.ACTION_ICON_NEW)
-                                    .actionPerformed(sourceComponent, targetObject);
-                            return;
-                        }
-                        if (mapWrapper.isViewClosedByOpenView()) {
-                            
-                            mapWrapper.initNewMap();
-                            ((OutsidePlantComponent) sourceComponent).removeMainComponentToTooledComponent();
-                            
-                            ActionsFactory.createOpenOspViewAction(
-                                OutsidePlantTooledComponent.ACTION_CAPTION_OPEN, 
-                                OutsidePlantTooledComponent.ACTION_ICON_OPEN)
-                                    .actionPerformed(sourceComponent, targetObject);
-                            return;
-                        }
-                        mapWrapper.getMap().setUpdateView(false);
-                        mapWrapper.setCurrentView(parentComponent.getWsBean().getGeneralView(
-                            id, 
-                            Page.getCurrent().getWebBrowser().getAddress(), 
-                            parentComponent.getApplicationSession().getSessionId()));
-                    }
-                } catch (ServerSideException ex) {
-                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-                }
+//                try {
+//                    long id = -1;
+//                    if (view == null) {
+//                        id = parentComponent.getWsBean().createGeneralView(
+//                            GoogleMapWrapper.CLASS_VIEW, 
+//                            tfName.getValue(), 
+//                            tfDescription.getValue(), 
+//                            mapWrapper.getMap().getAsXML(), 
+//                            null, 
+//                            Page.getCurrent().getWebBrowser().getAddress(), 
+//                            parentComponent.getApplicationSession().getSessionId());
+//                                                
+//                        Notification.show("OSP View Saved", Notification.Type.TRAY_NOTIFICATION);
+//                        mapWrapper.getMap().physicalConnectionsSaved();
+//                    } else {
+//                        id = view.getId();
+//                        
+//                        parentComponent.getWsBean().updateGeneralView(
+//                            id, 
+//                            tfName.getValue(), 
+//                            tfDescription.getValue(), 
+//                            mapWrapper.getMap().getAsXML(), 
+//                            null, 
+//                            Page.getCurrent().getWebBrowser().getAddress(), 
+//                            parentComponent.getApplicationSession().getSessionId());
+//                                                
+//                        Notification.show("OSP View Updated", Notification.Type.TRAY_NOTIFICATION);
+//                        mapWrapper.getMap().physicalConnectionsSaved();
+//                    }
+//                    
+//                    if (id != -1) {
+//                        
+//                        if (mapWrapper.isViewClosedByNewView()) {
+//                            
+//                            mapWrapper.initNewMap();
+//                            
+//                            ActionsFactory.createNewOspViewAction(
+//                                OutsidePlantTooledComponent.ACTION_CAPTION_NEW, 
+//                                OutsidePlantTooledComponent.ACTION_ICON_NEW)
+//                                    .actionPerformed(sourceComponent, targetObject);
+//                            return;
+//                        }
+//                        if (mapWrapper.isViewClosedByOpenView()) {
+//                            
+//                            mapWrapper.initNewMap();
+//                            ((OutsidePlantComponent) sourceComponent).removeMainComponentToTooledComponent();
+//                            
+//                            ActionsFactory.createOpenOspViewAction(
+//                                OutsidePlantTooledComponent.ACTION_CAPTION_OPEN, 
+//                                OutsidePlantTooledComponent.ACTION_ICON_OPEN)
+//                                    .actionPerformed(sourceComponent, targetObject);
+//                            return;
+//                        }
+//                        mapWrapper.getMap().setUpdateView(false);
+//                        mapWrapper.setCurrentView(parentComponent.getWsBean().getGeneralView(
+//                            id, 
+//                            Page.getCurrent().getWebBrowser().getAddress(), 
+//                            parentComponent.getApplicationSession().getSessionId()));
+//                    }
+//                } catch (ServerSideException ex) {
+//                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                }
             })
             .withCancelButton();
         

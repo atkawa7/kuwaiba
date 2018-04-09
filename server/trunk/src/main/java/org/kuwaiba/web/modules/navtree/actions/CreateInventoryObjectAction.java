@@ -48,7 +48,7 @@ public class CreateInventoryObjectAction extends CreateInventoryObjectChildActio
             childNode = new InventoryObjectNode(object);
         
         childNode.setTree(parentNode.getTree());
-        parentNode.getTree().setParent(childNode, parentNode);            
+        //parentNode.getTree().setParent(childNode, parentNode);            
             
         Notification.show("Object created successfully",  Notification.Type.TRAY_NOTIFICATION);
     }

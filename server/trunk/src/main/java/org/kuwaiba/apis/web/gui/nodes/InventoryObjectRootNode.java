@@ -46,8 +46,8 @@ public class InventoryObjectRootNode extends AbstractRootNode {
         for (RemoteObjectLight child : initialChildren) {
             InventoryObjectNode objectNode = new InventoryObjectNode(child);
             objectNode.setTree(getTree());
-            getTree().addItem(objectNode);
-            getTree().setParent(objectNode, this);
+//            getTree().addItem(objectNode);
+//            getTree().setParent(objectNode, this);
         }
     }
     

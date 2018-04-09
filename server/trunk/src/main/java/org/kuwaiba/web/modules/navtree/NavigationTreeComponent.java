@@ -51,20 +51,20 @@ class NavigationTreeComponent extends AbstractTopComponent {
                 tree = new DynamicTree(rootNode, this);
                 rootNode.setTree(tree);
                 
-                tree.addActionHandler(new Action.Handler() {
-
-                    @Override
-                    public Action[] getActions(Object target, Object sender) {
-                        if (target instanceof AbstractNode)
-                            return ((AbstractNode)target).getActions();
-                        return null;
-                    }
-
-                    @Override
-                    public void handleAction(Action action, Object sender, Object target) {
-                        ((AbstractAction) action).actionPerformed(sender, target);
-                    }
-                });
+//                tree.addActionHandler(new Action.Handler() {
+//
+//                    @Override
+//                    public Action[] getActions(Object target, Object sender) {
+//                        if (target instanceof AbstractNode)
+//                            return ((AbstractNode)target).getActions();
+//                        return null;
+//                    }
+//
+//                    @Override
+//                    public void handleAction(Action action, Object sender, Object target) {
+//                        ((AbstractAction) action).actionPerformed(sender, target);
+//                    }
+//                });
                 
                 
 

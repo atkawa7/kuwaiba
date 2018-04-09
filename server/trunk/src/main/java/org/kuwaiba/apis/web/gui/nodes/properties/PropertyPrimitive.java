@@ -36,9 +36,9 @@ public class PropertyPrimitive extends TextField{
     
     public PropertyPrimitive(int value) {
         super();
-        setConverter(Integer.class);
-        setValue(Integer.toString(value));
-        this.addValidator(new numericValidator());
+//        setConverter(Integer.class);
+//        setValue(Integer.toString(value));
+//        this.addValidator(new numericValidator());
     }
 
     public String getPropertyName() {
@@ -49,14 +49,14 @@ public class PropertyPrimitive extends TextField{
         return propertyType;
     }
     
-    private class numericValidator implements Validator {
-        @Override
-        public void validate(Object value)
-                throws Validator.InvalidValueException {
-            if (!(value instanceof Integer &&
-                    (value instanceof Double))) {
-                throw new Validator.InvalidValueException("The value is not a number");
-            }     
-        }
-    }
+//    private class numericValidator implements Validator {
+//        @Override
+//        public void validate(Object value)
+//                throws Validator.InvalidValueException {
+//            if (!(value instanceof Integer &&
+//                    (value instanceof Double))) {
+//                throw new Validator.InvalidValueException("The value is not a number");
+//            }     
+//        }
+//    }
 }

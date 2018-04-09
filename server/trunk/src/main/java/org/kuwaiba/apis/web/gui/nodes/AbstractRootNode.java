@@ -32,7 +32,7 @@ public abstract class AbstractRootNode extends AbstractNode {
     @Override
     public void setTree(DynamicTree tree) {
         super.setTree(tree);
-        tree.addItem(this);
-        tree.setItemIcon(this, FontAwesome.STAR);
+        //tree.addItem(this);
+        //tree.setItemIcon(this, FontAwesome.STAR);
     }
 }
