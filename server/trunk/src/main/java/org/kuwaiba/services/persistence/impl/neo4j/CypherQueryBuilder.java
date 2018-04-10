@@ -252,8 +252,9 @@ public class CypherQueryBuilder {
         try(Transaction tx = classNode.getGraphDatabase().beginTx()) {
             boolean isAbstract = (Boolean) classNode.getProperty(Constants.PROPERTY_ABSTRACT);
 
-            String cypherQuery = cp.createStart(query.getClassName(), isAbstract);
-            cypherQuery = cypherQuery.concat(cp.createInstanceMatch(isAbstract));
+//            String cypherQuery = cp.createStart(query.getClassName(), isAbstract);
+//            cypherQuery = cypherQuery.concat(cp.createInstanceMatch(isAbstract));
+            String cypherQuery = cp.createInstanceMatch(query.getClassName(),isAbstract);
             readQuery(query);
             if(!match.isEmpty())
                 cypherQuery = cypherQuery.concat(match);

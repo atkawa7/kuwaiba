@@ -32,6 +32,7 @@ public class CypherParser {
      * @param isAbstract if the class is an abstract classMetadata
      * @return a query part
      */
+    @Deprecated
     public String createStart(String className, boolean isAbstract){
          if(isAbstract)
             return "START abstractClassmetadata = node:classes(name = \""+ className +"\") ";//NOI18N
@@ -44,11 +45,19 @@ public class CypherParser {
      * @param isAbstract
      * @return
      */
-    public String createInstanceMatch(boolean isAbstract){
+    @Deprecated
+    public String createInstanceMatch(boolean isAbstract) {
         if(isAbstract)
             return "MATCH abstractClassmetadata<-[:" + RelTypes.EXTENDS + "*]-classmetadata<-[:" + RelTypes.INSTANCE_OF + "]-instance";
         else
             return "MATCH classmetadata<-[:" + RelTypes.INSTANCE_OF + "]-instance";
+    }
+    
+    public String createInstanceMatch(String className, boolean isAbstract) {
+        if(isAbstract)
+            return "MATCH (abstractClassmetadata:classes)<-[:" + RelTypes.EXTENDS + "*]-(classmetadata:classes)<-[:" + RelTypes.INSTANCE_OF + "]-(instance) WHERE abstractClassmetadata.name = \"" + className + "\"";
+        else
+            return "MATCH (classmetadata:classes)<-[:" + RelTypes.INSTANCE_OF + "]-(instance) WHERE classmetadata.name = \"" + className + "\"";
     }
 
      /**
