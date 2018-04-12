@@ -416,7 +416,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
                        
             if (myClass.isInDesign())
-                throw new OperationNotPermittedException("Can not create instances of classes marked as isDesign");
+                throw new OperationNotPermittedException("Can not create instances of classes marked as inDesign");
             
             if (myClass.isAbstract())
                 throw new OperationNotPermittedException(String.format("Abstract class %s can not be instantiated", className));
@@ -445,13 +445,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             DynamicName dynamicName = new DynamicName(namePattern);
             if (dynamicName.getNumberOfDynamicNames() < numberOfObjects) {
                 throw new InvalidArgumentException("The given pattern to generate the name has "
-                        + "less possibilities that the number of objects to be created");
+                        + "less possibilities than the number of objects to be created");
             }
             long res[] = new long[numberOfObjects];
             
             List<StringPair> createdMirrorPorts = new ArrayList<>();
             
-            for (int i = 0; i < numberOfObjects; i += 1) {
+            for (int i = 0; i < numberOfObjects; i++) {
                 Node newObject = createObject(classNode, myClass, null);
                 newObject.setProperty(Constants.PROPERTY_NAME, dynamicName.getDynamicNames().get(i));
                 

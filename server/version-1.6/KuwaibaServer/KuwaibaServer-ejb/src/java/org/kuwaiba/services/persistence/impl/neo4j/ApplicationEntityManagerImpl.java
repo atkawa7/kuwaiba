@@ -20,6 +20,7 @@ import com.neotropic.kuwaiba.modules.GenericCommercialModule;
 import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import groovy.lang.Binding;
+import groovy.lang.GroovyRuntimeException;
 import groovy.lang.GroovyShell;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -43,7 +44,6 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import org.codehaus.groovy.control.CompilationFailedException;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -2713,7 +2713,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             return (TaskResult)theResult;
 
-        } catch(CompilationFailedException | InvalidArgumentException ex) {
+        } catch(GroovyRuntimeException | InvalidArgumentException ex) {
             return TaskResult.createErrorResult(ex.getMessage());
         }
        
