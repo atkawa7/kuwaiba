@@ -38,6 +38,8 @@ public class Constants {
         public static final String SUBFORM = "subform"; //NOI18N
         public static final String HORIZONTAL_LAYOUT = "horizontalLayout"; //NOI18N
         public static final String IMAGE = "image"; //NOI18N
+        public static final String SCRIPT = "script"; //NOI18N
+        public static final String FUNCTION = "function"; //NOI18N
     }
     
     public class Attribute {
@@ -53,10 +55,18 @@ public class Constants {
         public static final String AREA="area"; //NOI18N
         public static final String ENABLED="enabled"; //NOI18N
         public static final String PRECONDITIONS="preconditions"; //NOI18N
+        public static final String NAME = "name"; //NOI18N
     }
     
     public class EventAttribute {
         public static final String ONCLICK = "onclick"; //NOI18N
-        public static final String ONVALUECHANGE = "onvaluechange"; //NOI18N        
+        public static final String ONVALUECHANGE = "onvaluechange"; //NOI18N
+        public static final String ONNOTIFY = "onnotify"; //NOI18N
+        
+        public static final String ONCHANGE = "onchange"; //NOI18N
+    }
+    
+    public class Function {
+        public static final String GLOBAL = "global";
     }
 }

@@ -14,28 +14,18 @@
  */
 package com.neotropic.api.forms;
 
-import com.neotropic.web.components.ChangeDescriptor;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 /**
- *
+ * A field is a terminal element that contain data
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementSubform extends AbstractElementContainer {
+public abstract class AbstractElementField extends AbstractElement {
+    private Object value;
     
-    public ElementSubform() {
-                
-    }
-
-    @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        setId(reader);
-    }
-
-    @Override
-    public void componentChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Object getValue() {
+        return value;        
     }
     
+    public void setValue(Object value) {
+        this.value = value;        
+    }
 }

@@ -9,6 +9,6 @@ package com.neotropic.api.forms;
  *
  * @author johnyortega
  */
-public class ElementContainer {
+public class AbstractAnotherElements {
     
 }

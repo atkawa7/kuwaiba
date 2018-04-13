@@ -14,6 +14,7 @@
  */
 package com.neotropic.api.forms;
 
+import com.neotropic.web.components.ChangeDescriptor;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -49,7 +50,8 @@ public class ElementTextField extends AbstractElement {
     public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
         setId(reader);
         setArea(reader);
-        
+        setEvents(reader);
+                
         String attrValue = reader.getAttributeValue(null, Constants.Attribute.VALUE);
 ////        if (attrValue == null)
 ////            throw new XMLStreamException(String.format("Missing attribute %s in tag %s", Constants.Attribute.VALUE, Constants.Tag.TEXT_FIELD));
@@ -61,5 +63,14 @@ public class ElementTextField extends AbstractElement {
         if (attrValue != null)
             enabled = Boolean.valueOf(attrValue);
     }
-    
+
+    @Override
+    public void componentChange(ChangeDescriptor changeDescriptor) {
+        if (changeDescriptor != null) {
+            
+            if (Constants.Attribute.VALUE.equals(changeDescriptor.getPropertyName()))
+                value = (String) changeDescriptor.getNewValue();
+        }
+    }
+        
 }

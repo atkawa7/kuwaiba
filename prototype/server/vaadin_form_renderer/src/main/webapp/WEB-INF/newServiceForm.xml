@@ -29,7 +29,7 @@
                     <label value="${I18N.customer}"/>
                     <comboBox id="cmbCustomer" value="${Query.getCustomers}" onvaluechange="threeCharacterCode.cmbCustomer.txtCustomer" />
                     <label value="${I18N.acronym}"/>
-                    <textField id="txtCustomer" enabled="false"/>
+                    <textField id="txtCustomer" enabled="false" onvaluechange="notify.txtServiceCode"/>
 
                     <label value="${I18N.endCustomer}"/>
                     <comboBox id="cmbEndCustomer" value="${Query.getCustomers}" onvaluechange="threeCharacterCode.cmbEndCustomer.txtEndCustomer"/>
@@ -43,7 +43,7 @@
                     <label value="${I18N.typeOfService}"/>
                     <comboBox id="cmbTypeOfService" value="${Query.getServices}" onvaluechange="threeCharacterCode.cmbTypeOfService.txtTypeOfService"/>
                     <label value="${I18N.acronym}"/>
-                    <textField id="txtTypeOfService" enabled="false"/>
+                    <textField id="txtTypeOfService" enabled="false" onnotify="getServiceCode.txtCustomer"/>
                     
                     <label value="${I18N.bandwidth}"/>
                     <comboBox id="cboBandwidth" value="${Query.getBandwidths}" onvaluechange="notify.txtServiceCode"/>

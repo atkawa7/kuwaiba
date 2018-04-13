@@ -45,11 +45,19 @@ public class ElementBuilder {
     private final QName tagSubform = new QName(Constants.Tag.SUBFORM);
     private final QName tagHorizontalLayout = new QName(Constants.Tag.HORIZONTAL_LAYOUT);
     private final QName tagImage = new QName(Constants.Tag.IMAGE);
+    private final QName tagScript = new QName(Constants.Tag.SCRIPT);
     
     private final List<QName> containers;
     
     private ElementForm root;
-    private ElementI18N i18n;
+    
+    
+    private List<AbstractElement> elements = new ArrayList();
+    private ElementScript elementScript;
+    private ElementI18N elementI18N;
+    
+    private ScriptRunner scriptRunner;
+        
     private Evaluator evaluator;
         
     public ElementBuilder() {
@@ -59,111 +67,91 @@ public class ElementBuilder {
         containers.add(tagSubform);
         containers.add(tagHorizontalLayout);
     }
-    
+        
     public ElementForm getRoot() {
         return root;
     }
-    
-    public ElementI18N getI18N() {
-        return i18n;
-    }
-    
+            
     public Evaluator getEvaluator() {
-        return evaluator == null ? evaluator = new Evaluator(i18n) : evaluator;
+        return evaluator == null ? evaluator = new Evaluator(elementI18N) : evaluator;
     }
     
-    private void createFormContaimentHierarchy(AbstractElement parent, XMLStreamReader reader) throws XMLStreamException {
+    public ScriptRunner getScriptRunner() {
+        return scriptRunner;
+    }
+    
+    private int createFormContaimentHierarchy(AbstractElement parent, XMLStreamReader reader, int event) throws XMLStreamException {
         
         while (reader.hasNext()) {
-            int event = reader.next();
+            event = reader.next();
             
             if (event == XMLStreamConstants.END_ELEMENT) {
                 if (containers.contains(reader.getName()))
-                    return;
+                    return event;
             }
             
             if (event == XMLStreamConstants.START_ELEMENT) {
                 
+                AbstractElement child = null;                
+                
                 if (reader.getName().equals(tagGridLayout)) {
-                    ElementGridLayout gridLayout = new ElementGridLayout();
-                    gridLayout.initFromXMl(reader);
-                    
-                    parent.getChildren().add(gridLayout);
-                    createFormContaimentHierarchy(gridLayout, reader);
+                    child = new ElementGridLayout();
                     
                 } else if (reader.getName().equals(tagVerticalLayout)) {
-                    ElementVerticalLayout verticalLayout = new ElementVerticalLayout();
-                    verticalLayout.initFromXMl(reader);
+                    child = new ElementVerticalLayout();
                     
-                    parent.getChildren().add(verticalLayout);
-                    createFormContaimentHierarchy(verticalLayout, reader);
-                    
-                } else if (reader.getName().equals(tagSubform)) { 
-                    ElementSubform subform = new ElementSubform();
-                    subform.initFromXMl(reader);
-                    
-                    parent.getChildren().add(subform);
-                    createFormContaimentHierarchy(subform, reader);
+                } else if (reader.getName().equals(tagSubform)) {
+                    child = new ElementSubform();
                     
                 } else if (reader.getName().equals(tagHorizontalLayout)) {
-                    ElementHorizontalLayout horizontalLayout = new ElementHorizontalLayout();
-                    horizontalLayout.initFromXMl(reader);
+                    child = new ElementHorizontalLayout();
                     
-                    parent.getChildren().add(horizontalLayout);
-                    createFormContaimentHierarchy(horizontalLayout, reader);
-                                        
                 } else if (reader.getName().equals(tagLabel)) {
-                    ElementLabel label = new ElementLabel();
-                    label.initFromXMl(reader);
-                    
-                    parent.getChildren().add(label);
+                    child = new ElementLabel();
                     
                 } else if (reader.getName().equals(tagTextField)) {
-                    ElementTextField textField = new ElementTextField();
-                    textField.initFromXMl(reader);
-                    
-                    parent.getChildren().add(textField);
+                    child = new ElementTextField();
                     
                 } else if (reader.getName().equals(tagTextArea)) {
-                    ElementTextArea textArea = new ElementTextArea();
-                    textArea.initFromXMl(reader);
-                    
-                    parent.getChildren().add(textArea);
+                    child = new ElementTextArea();
                     
                 } else if (reader.getName().equals(tagDateField)) {
-                    ElementDateField dateField = new ElementDateField();
-                    dateField.initFromXMl(reader);
+                    child = new ElementDateField();
                     
-                    parent.getChildren().add(dateField);
-                                        
                 } else if (reader.getName().equals(tagComboBox)) {
-                    ElementComboBox comboBox = new ElementComboBox();
-                    comboBox.initFromXMl(reader);
-                    
-                    parent.getChildren().add(comboBox);
+                    child = new ElementComboBox();
                     
                 } else if (reader.getName().equals(tagGrid)) {
-                    ElementGrid grid = new ElementGrid();
-                    grid.initFromXMl(reader);
+                    child = new ElementGrid();
                     
-                    parent.getChildren().add(grid);
-                                        
-                } else if (reader.getName().equals(tagButton)) { 
-                    ElementButton button = new ElementButton();
-                    button.initFromXMl(reader);
-                    
-                    parent.getChildren().add(button);
+                } else if (reader.getName().equals(tagButton)) {
+                    child = new ElementButton();
                     
                 } else if (reader.getName().equals(tagImage)) {
-                    ElementImage image = new ElementImage();
-                    image.initFromXMl(reader);
+                    child = new ElementImage();
                     
-                    parent.getChildren().add(image);
+                } else if (reader.getName().equals(tagI18N)) {
+                    return event;
                     
-                } else if (reader.getName().equals(tagI18N))
-                    return;
+                } else if (reader.getName().equals(tagScript)) {
+                    return event;
+                    
+                }
+                                
+                if (child != null) {
+                    child.initFromXMl(reader);
+                    
+                    elements.add(child);
+                                                            
+                    if (parent instanceof AbstractElementContainer)
+                        ((AbstractElementContainer) parent).addChild(child);
+                    
+                    if (child instanceof AbstractElementContainer)
+                        event = createFormContaimentHierarchy(child, reader, event);
+                }
             }
         }
+        return event;
     }    
     
     public void build(byte[] structure) {
@@ -181,18 +169,30 @@ public class ElementBuilder {
                     if (reader.getName().equals(tagForm)) {
                         root = new ElementForm();
                         root.initFromXMl(reader);
-                        
-                        createFormContaimentHierarchy(root, reader);
+                                                
+                        elements.add(root);
+                                                                                    
+                        event = createFormContaimentHierarchy(root, reader, event);
                     }
-                    
+                }
+                if (event == XMLStreamConstants.START_ELEMENT) {
                     if (reader.getName().equals(tagI18N)) {
-                        i18n = new ElementI18N();
-                        i18n.initFromXMl(reader);
+                        elementI18N = new ElementI18N();
+                        elementI18N.initFromXMl(reader);
+                    }
+                    if (reader.getName().equals(tagScript)) {
+                        elementScript = new ElementScript();  
+                        elementScript.initFromXMl(reader);
                     }
                 }
             }
             reader.close();
             
+            scriptRunner = new ScriptRunner(new FormStructure(elements, elementScript, elementI18N));
+                        
+            for (AbstractElement element : elements)
+                element.setScriptRunner(scriptRunner);
+                
         } catch (XMLStreamException ex) {
             Logger.getLogger(ElementBuilder.class.getName()).log(Level.SEVERE, null, ex);
         }

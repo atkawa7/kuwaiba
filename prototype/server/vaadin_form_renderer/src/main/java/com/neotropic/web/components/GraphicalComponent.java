@@ -12,30 +12,21 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package com.neotropic.api.forms;
+package com.neotropic.web.components;
 
-import com.neotropic.web.components.ChangeDescriptor;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+import com.neotropic.api.forms.AbstractElement;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementSubform extends AbstractElementContainer {
+public interface GraphicalComponent extends ElementChangeListener {
+//    void addComponentChangeListener(ComponentChangeListener changeListener);
+//    void removeComponentChangeListener(ComponentChangeListener changeListener);
+//    void fireComponentChange(ChangeDescriptor changeDescriptor);
     
-    public ElementSubform() {
-                
-    }
-
-    @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        setId(reader);
-    }
-
-    @Override
-    public void componentChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
+    void setComponentEventListener(ComponentEventListener componentEventListener);
+    ComponentEventListener getComponentEventListener();
+    void fireComponentEvent(EventDescriptor eventDescriptor);
+    void initFromElement(AbstractElement element);
 }

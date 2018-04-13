@@ -14,6 +14,7 @@
  */
 package com.neotropic.api.forms;
 
+import com.neotropic.web.components.ChangeDescriptor;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -21,7 +22,7 @@ import javax.xml.stream.XMLStreamReader;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementVerticalLayout extends AbstractElement {
+public class ElementVerticalLayout extends AbstractElementContainer {
     
     public ElementVerticalLayout() {
     }
@@ -30,5 +31,10 @@ public class ElementVerticalLayout extends AbstractElement {
     public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
         
     }
-    
+
+    @Override
+    public void componentChange(ChangeDescriptor changeDecriptor) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+        
 }

@@ -33,7 +33,7 @@ public class MyUI extends UI {
             String basepath = VaadinService.getCurrent()
                 .getBaseDirectory().getAbsolutePath();
             
-            Scanner in = new Scanner(new File(basepath + "/WEB-INF/newServiceForm.xml"));
+            Scanner in = new Scanner(new File(basepath + "/WEB-INF/simpleForm.xml"));
             
             String line = "";
             
@@ -45,8 +45,10 @@ public class MyUI extends UI {
             
             in.close();
             
-            ElementBuilder formBuilder = new ElementBuilder();
+            ElementBuilder formBuilder = new ElementBuilder();            
             formBuilder.build(structure);
+            
+//            ScriptRunner scriptRunner = new ScriptRunner(formBuilder.getElements(), formBuilder.getScript().getFunctions());
                         
             Window subWindow = new Window(formBuilder.getEvaluator().getValue(formBuilder.getRoot().getTitle()));
             subWindow.setModal(true);
@@ -65,11 +67,13 @@ public class MyUI extends UI {
                 subWindow.center();
                 subWindow.setSizeFull();
                 UI.getCurrent().addWindow(subWindow);
+                
+//                scriptRunner.run(Constants.Function.GLOBAL);
             });
             layout.addComponents(button);
-
+            
             setContent(layout);
-                        
+            
         } catch (FileNotFoundException ex) {
             int i = 0;            
         }

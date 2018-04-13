@@ -14,20 +14,27 @@
  */
 package com.neotropic.api.forms;
 
+import com.neotropic.web.components.ChangeDescriptor;
+import com.neotropic.web.components.ComponentChangeListener;
+import com.neotropic.web.components.ComponentEventListener;
+import com.neotropic.web.components.ElementChangeListener;
+import com.neotropic.web.components.EventDescriptor;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 /**
+ * 
+ * API IN TOP FORM
  * General java representation of a Tag
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public abstract class AbstractElement {
+public abstract class AbstractElement implements Tag, ComponentChangeListener, ComponentEventListener {
     private String id;
     private String name;
-    private List<AbstractElement> children;
+////    private List<AbstractElement> children;
     /**
      * event->function->parameters
      */    
@@ -36,6 +43,28 @@ public abstract class AbstractElement {
     private List<Integer> area;
     
     private List<String> precondition;
+    
+    protected List<ElementChangeListener> changeListeners;
+    
+    private ScriptRunner scriptRunner;    
+        
+    public void addElementChangeListener(ElementChangeListener changeListener) {
+        if (changeListener != null) {
+            
+            if (changeListeners == null)
+                changeListeners = new ArrayList();
+            
+            changeListeners.add(changeListener);
+        }
+    }
+    
+    public void removeElementChangeListener(ElementChangeListener changeListener) {
+        if (changeListener != null) {
+            
+            if (changeListeners != null)
+                changeListeners.remove(changeListener);
+        }
+    }
     
     public String getId() {
         return id;
@@ -53,20 +82,20 @@ public abstract class AbstractElement {
         this.name = name;
     }
     
-    public List<AbstractElement> getChildren() {
-        return children == null ? children = new ArrayList() : children;
-    }
+////    public List<AbstractElement> getChildren() {
+////        return children == null ? children = new ArrayList() : children;
+////    }
+////    
+////    public void setChildren(List<AbstractElement> children) {
+////        this.children = children;
+////    }
     
-    public void setChildren(List<AbstractElement> children) {
-        this.children = children;
-    }
-    
-    public void setEvents(HashMap<String, HashMap<String, List<String>>> events) {
-        this.events = events;
-    }
-        
     public HashMap<String, HashMap<String, List<String>>> getEvents() {
         return events;
+    }
+        
+    public void setEvents(HashMap<String, HashMap<String, List<String>>> events) {
+        this.events = events;
     }
     
     public void setArea(List<Integer> area) {
@@ -76,8 +105,16 @@ public abstract class AbstractElement {
     public List<Integer> getArea() {
         return area;
     }
+    
+    public ScriptRunner getScriptRunner() {
+        return scriptRunner;
+    }
+    
+    public void setScriptRunner(ScriptRunner scriptRunner) {
+        this.scriptRunner = scriptRunner;
+    }
                         
-    public abstract void initFromXMl(XMLStreamReader reader) throws XMLStreamException;
+//    public abstract void initFromXMl(XMLStreamReader reader) throws XMLStreamException;
     
     public void setId(XMLStreamReader reader) {
         id = reader.getAttributeValue(null, Constants.Attribute.ID);
@@ -99,7 +136,10 @@ public abstract class AbstractElement {
     }
     
     public void setEvents(XMLStreamReader reader) {
-        String [] eventAttrs = {Constants.EventAttribute.ONCLICK, Constants.EventAttribute.ONVALUECHANGE};
+        String [] eventAttrs = {
+            Constants.EventAttribute.ONCLICK, 
+            Constants.EventAttribute.ONVALUECHANGE, 
+            Constants.EventAttribute.ONNOTIFY};
         
         for (String eventAttr : eventAttrs) {
             
@@ -134,4 +174,15 @@ public abstract class AbstractElement {
         }
     }    
     
+    public final void fireElementChange(ChangeDescriptor changeDescriptor) {
+        Iterator<ElementChangeListener> iterator = changeListeners.iterator();
+        
+        while (iterator.hasNext())
+            iterator.next().elementChange(changeDescriptor);
+    }
+    
+    @Override
+    public void onEvent(EventDescriptor event) {
+        getScriptRunner().run(this, event.getName());
+    }
 }

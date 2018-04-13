@@ -24,7 +24,7 @@ import javax.xml.stream.XMLStreamReader;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementI18N extends AbstractElement {
+public class ElementI18N implements Tag {
     private HashMap<String, HashMap<String, String>> keys;
     private String lang;
     
@@ -105,6 +105,5 @@ public class ElementI18N extends AbstractElement {
                     break;
             }
         }
-    }
-            
+    }                
 }

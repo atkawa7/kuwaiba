@@ -14,28 +14,29 @@
  */
 package com.neotropic.api.forms;
 
-import com.neotropic.web.components.ChangeDescriptor;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- *
+ * A element container is an element which can contain other elements containers 
+ * and fields.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementSubform extends AbstractElementContainer {
+public abstract class AbstractElementContainer extends AbstractElement {
+    private List<AbstractElement> children;
     
-    public ElementSubform() {
-                
-    }
-
-    @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        setId(reader);
-    }
-
-    @Override
-    public void componentChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<AbstractElement> getChildren() {
+        return children;
     }
     
+    public void addChild(AbstractElement child) {
+        if (children == null)
+            children = new ArrayList();
+        children.add(child);
+    }
+    
+    public void removeChild(AbstractElement child) {
+        if (children != null)
+            children.remove(child);
+    }
 }

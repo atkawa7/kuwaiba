@@ -14,6 +14,7 @@
  */
 package com.neotropic.api.forms;
 
+import com.neotropic.web.components.ChangeDescriptor;
 import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -63,6 +64,11 @@ public class ElementComboBox extends AbstractElement {
             if (function[0].equals("Query"))
                 items = ElementQuery.getInstance().executeQuery(function[1]);
         }
+    }
+
+    @Override
+    public void componentChange(ChangeDescriptor changeDecriptor) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

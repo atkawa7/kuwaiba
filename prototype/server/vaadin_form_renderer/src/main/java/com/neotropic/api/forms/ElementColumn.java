@@ -14,6 +14,7 @@
  */
 package com.neotropic.api.forms;
 
+import com.neotropic.web.components.ChangeDescriptor;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -43,5 +44,10 @@ public class ElementColumn extends AbstractElement {
             throw new XMLStreamException(String.format("Missing attribute %s in tag %s", Constants.Attribute.CAPTION, Constants.Tag.COLUMN));
 
         caption = attrValue;
+    }
+
+    @Override
+    public void componentChange(ChangeDescriptor changeDecriptor) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

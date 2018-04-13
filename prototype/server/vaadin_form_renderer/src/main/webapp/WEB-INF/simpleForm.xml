@@ -1,0 +1,18 @@
+<root>
+    <form title="Simple form">
+        <label id="lblLabel" value="label"/>
+        <button caption="Button" id="btnButton" onclick="open.subform">
+    </form>
+    
+    <subform id="subform">
+        <label caption="A Subform"/>        
+    </subform>
+    
+    <script>
+        <function>
+            elements.get("lblLabel").setValue("Hello World");        
+            
+            elements;    
+        </function>
+    </script>
+</root>
