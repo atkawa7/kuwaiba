@@ -14,19 +14,42 @@
  */
 package com.neotropic.web.components;
 
+import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
+import com.neotropic.api.forms.ElementEventListener;
+import com.vaadin.ui.Component;
 
 /**
- *
+ * A wrapper to Vaadin components
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public interface GraphicalComponent extends ElementChangeListener {
-//    void addComponentChangeListener(ComponentChangeListener changeListener);
-//    void removeComponentChangeListener(ComponentChangeListener changeListener);
-//    void fireComponentChange(ChangeDescriptor changeDescriptor);
+public abstract class GraphicalComponent implements ElementEventListener {
+    private ComponentEventListener componentEventListener;
+    private Component component;
     
-    void setComponentEventListener(ComponentEventListener componentEventListener);
-    ComponentEventListener getComponentEventListener();
-    void fireComponentEvent(EventDescriptor eventDescriptor);
-    void initFromElement(AbstractElement element);
+    public GraphicalComponent(Component component) {
+        this.component = component;        
+    }
+    
+    public Component getComponent() {
+        return component;
+    }
+    
+    public void setComponent(Component component) {
+        this.component = component;        
+    }
+    
+    public ComponentEventListener getComponentEventListener() {
+        return componentEventListener;
+    }
+
+    public void setComponentEventListener(ComponentEventListener componentEventListener) {
+        this.componentEventListener = componentEventListener;        
+    }
+    
+    void fireComponentEvent(EventDescriptor eventDescriptor) {
+        componentEventListener.onComponentEvent(eventDescriptor);
+    }
+    
+    public abstract void initFromElement(AbstractElement element);
 }

@@ -14,22 +14,29 @@
  */
 package com.neotropic.web.components;
 
+import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
 import com.neotropic.api.forms.Constants;
 import com.neotropic.api.forms.ElementTextField;
+import com.vaadin.data.HasValue;
 import com.vaadin.data.HasValue.ValueChangeListener;
 import com.vaadin.ui.TextField;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ComponentTextField extends TextField implements GraphicalComponent {
-    List<ComponentChangeListener> changeListeners;
+public class ComponentTextField extends GraphicalComponent {
     
+    public ComponentTextField() {
+        super(new TextField());
+    }
+    
+    @Override
+    public TextField getComponent() {
+        return (TextField) super.getComponent();
+    }
+        
 //    public ComponentTextField(ElementTextField elementTextField) {
 //        elementTextField.addElementChangeListener(this);
 //        
@@ -44,47 +51,22 @@ public class ComponentTextField extends TextField implements GraphicalComponent 
 //            }
 //        });
 //    }
-
-    @Override
-    public void elementChange(ChangeDescriptor changeDecriptor) {
-
-    }
-
-////    @Override
-////    public void addComponentChangeListener(ComponentChangeListener changeListener) {
-////        if (changeListener != null) {
-////                        
-////            if (changeListeners == null)
-////                changeListeners = new ArrayList();
-////                        
-////            changeListeners.add(changeListener);
-////        }
-////    }
-////
-////    @Override
-////    public void removeComponentChangeListener(ComponentChangeListener changeListener) {
-////        if (changeListener != null) {
-////            
-////            if (changeListeners != null)            
-////                changeListeners.remove(changeListener);
-////        }
-////    }
-////
-////    @Override
-////    public void fireComponentChange(ChangeDescriptor changeDescriptor) {
-////        Iterator<ComponentChangeListener> iterator = changeListeners.iterator();
-////        
-////        while (iterator.hasNext())
-////            iterator.next().componentChange(changeDescriptor);        
-////    }
-
+    
     @Override
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementTextField) {
             ElementTextField textField = (ElementTextField) element;
             
-            setValue(textField.getValue() != null ? textField.getValue() : "");
-            setEnabled(textField.isEnabled());
+            getComponent().setValue(textField.getValue() != null ? textField.getValue() : "");
+            getComponent().setEnabled(textField.isEnabled());
+            
+            getComponent().addValueChangeListener(new ValueChangeListener() {
+                
+                @Override
+                public void valueChange(HasValue.ValueChangeEvent event) {
+                    fireComponentEvent(new EventDescriptor(Constants.EventAttribute.ONVALUECHANGE, event.getValue(), event.getOldValue()));
+                }
+            });
         }
         /*
         childComponent = new TextField();
@@ -103,20 +85,12 @@ public class ComponentTextField extends TextField implements GraphicalComponent 
         });
         */
     }
-
+    
     @Override
-    public void setComponentEventListener(ComponentEventListener componentEventListener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ComponentEventListener getComponentEventListener() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void fireComponentEvent(EventDescriptor eventDescriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void onElementEvent(EventDescriptor event) {
+        if (Constants.Function.SET_VALUE.equals(event.getName())) {
+            getComponent().setValue("Hola Text Field");
+        }
     }
     
 }

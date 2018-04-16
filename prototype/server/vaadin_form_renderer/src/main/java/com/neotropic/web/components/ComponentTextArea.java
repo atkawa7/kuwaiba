@@ -14,40 +14,44 @@
  */
 package com.neotropic.web.components;
 
+import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
+import com.neotropic.api.forms.Constants;
 import com.neotropic.api.forms.ElementTextArea;
+import com.vaadin.data.HasValue;
+import com.vaadin.data.HasValue.ValueChangeListener;
 import com.vaadin.ui.TextArea;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ComponentTextArea extends TextArea implements GraphicalComponent {
+public class ComponentTextArea extends GraphicalComponent {
+    
+    public ComponentTextArea() {
+        super(new TextArea());
+    }
+    
+    @Override
+    public TextArea getComponent() {
+        return (TextArea) super.getComponent();
+    }
 
     @Override
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementTextArea) {
-                                    
+            getComponent().addValueChangeListener(new ValueChangeListener() {
+                @Override
+                public void valueChange(HasValue.ValueChangeEvent event) {
+                    fireComponentEvent(new EventDescriptor(Constants.EventAttribute.ONVALUECHANGE, 
+                        event.getValue(), event.getOldValue()));
+                }
+            });
         }
     }
-
+    
     @Override
-    public void elementChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setComponentEventListener(ComponentEventListener componentEventListener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ComponentEventListener getComponentEventListener() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void fireComponentEvent(EventDescriptor eventDescriptor) {
+    public void onElementEvent(EventDescriptor event) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

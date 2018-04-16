@@ -19,5 +19,9 @@ package com.neotropic.api.forms;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public interface ElementEventListener {
-    
+    /**
+     * Executes a set of actions to update a <code>GraphicalComponent</code> when a element change
+     * @param event Gets the event details
+     */
+    void onElementEvent(EventDescriptor event);    
 }

@@ -14,7 +14,9 @@
  */
 package com.neotropic.web.components;
 
+import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
+import com.neotropic.api.forms.Constants;
 import com.neotropic.api.forms.ElementLabel;
 import com.vaadin.ui.Label;
 
@@ -22,17 +24,27 @@ import com.vaadin.ui.Label;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ComponentLabel extends Label implements GraphicalComponent {
+public class ComponentLabel extends GraphicalComponent {
+    
+    public ComponentLabel() {
+        super(new Label());        
+    }
+    
+    @Override
+    public Label getComponent() {
+        return (Label) super.getComponent();
+    }
+    
 
     @Override
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementLabel) {
             ElementLabel label = (ElementLabel) element;
             
-            setValue(label.getValue());
+            getComponent().setValue(label.getValue());
             
             if (label.getStyleName() != null)
-                setStyleName(label.getStyleName());
+                getComponent().setStyleName(label.getStyleName());
         }
         /*
         childComponent = new Label();
@@ -47,25 +59,11 @@ public class ComponentLabel extends Label implements GraphicalComponent {
             ((Label) childComponent).setStyleName(styleName);
         */
     }
-
+    
     @Override
-    public void elementChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setComponentEventListener(ComponentEventListener componentEventListener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ComponentEventListener getComponentEventListener() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void fireComponentEvent(EventDescriptor eventDescriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void onElementEvent(EventDescriptor event) {
+        if (Constants.Function.SET_VALUE.equals(event.getName()))
+            getComponent().setValue(((ElementLabel) getComponentEventListener()).getValue());
     }
     
 }

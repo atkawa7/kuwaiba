@@ -14,6 +14,7 @@
  */
 package com.neotropic.web.components;
 
+import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
 import com.neotropic.api.forms.ElementColumn;
 import com.neotropic.api.forms.ElementGrid;
@@ -24,7 +25,16 @@ import java.util.HashMap;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ComponentGrid extends Grid<HashMap<String, String>> implements GraphicalComponent {
+public class ComponentGrid extends GraphicalComponent {
+    
+    public ComponentGrid() {
+        super(new Grid<HashMap<String, String>>());
+    }
+    
+    @Override
+    public Grid<HashMap<String, String>> getComponent() {
+        return (Grid<HashMap<String, String>>) super.getComponent();
+    }
 
     @Override
     public void initFromElement(AbstractElement element) {
@@ -33,8 +43,8 @@ public class ComponentGrid extends Grid<HashMap<String, String>> implements Grap
             
             if (grid.getColums() != null) {
                 for (ElementColumn column : grid.getColums())
-                    addColumn(row -> row.get(column.getCaption())).setCaption(column.getCaption());
-            }
+                    getComponent().addColumn(row -> row.get(column.getCaption())).setCaption(column.getCaption());
+            }            
         }
         /*
         Grid<HashMap<String, String>> gridComponent = new Grid<>();
@@ -50,24 +60,9 @@ public class ComponentGrid extends Grid<HashMap<String, String>> implements Grap
         }
         */
     }
-
+    
     @Override
-    public void elementChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setComponentEventListener(ComponentEventListener componentEventListener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ComponentEventListener getComponentEventListener() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void fireComponentEvent(EventDescriptor eventDescriptor) {
+    public void onElementEvent(EventDescriptor event) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

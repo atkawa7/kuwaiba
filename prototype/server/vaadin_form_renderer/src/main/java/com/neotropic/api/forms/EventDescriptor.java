@@ -12,66 +12,51 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package com.neotropic.web.components;
+package com.neotropic.api.forms;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ChangeDescriptor {
-    private String propertyName;        
-    private Object source;
-    private Object newValue;
+public class EventDescriptor {
+    private String name;
     private Object oldValue;
+    private Object newValue;
     
-    public ChangeDescriptor() {
-                
+    public EventDescriptor() {
     }
     
-    public ChangeDescriptor(Object source, String propertyName, Object oldValue, Object newValue) {
-        this.source = source;
-        this.propertyName = propertyName;
+    public EventDescriptor(String name) {
+        this.name = name;
+    }
+    
+    public EventDescriptor(String name, Object newValue, Object oldValue) {
+        this(name);
         this.newValue = newValue;
         this.oldValue = oldValue;
     }
     
-    public ChangeDescriptor(ChangeDescriptor changeDescriptor) {
-        this.source = changeDescriptor.getSource();
-        this.propertyName = changeDescriptor.getPropertyName();
-        this.newValue = changeDescriptor.getNewValue();
-        this.oldValue = changeDescriptor.getOldValue();
+    public String getName() {
+        return name;
     }
-
-    public String getPropertyName() {
-        return propertyName;
+    
+    public void setName(String name) {
+        this.name = name;
     }
-
-    public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
-    }
-
-    public Object getSource() {
-        return source;
-    }
-
-    public void setSource(Object source) {
-        this.source = source;
-    }
-
+    
     public Object getNewValue() {
         return newValue;
     }
-
+    
     public void setNewValue(Object newValue) {
-        this.newValue = newValue;
+        this.newValue = newValue;        
     }
-
+    
     public Object getOldValue() {
-        return oldValue;
+        return oldValue;        
     }
-
+    
     public void setOldValue(Object oldValue) {
         this.oldValue = oldValue;
     }
-        
 }

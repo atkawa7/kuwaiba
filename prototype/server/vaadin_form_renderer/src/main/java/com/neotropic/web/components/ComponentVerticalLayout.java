@@ -14,6 +14,7 @@
  */
 package com.neotropic.web.components;
 
+import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
 import com.neotropic.api.forms.ElementVerticalLayout;
 import com.vaadin.ui.VerticalLayout;
@@ -22,31 +23,25 @@ import com.vaadin.ui.VerticalLayout;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ComponentVerticalLayout extends VerticalLayout implements GraphicalComponent {
+public class ComponentVerticalLayout extends GraphicalComponent {
+    
+    public ComponentVerticalLayout() {
+        super(new VerticalLayout());
+    }
+    
+    @Override
+    public VerticalLayout getComponent() {
+        return (VerticalLayout) super.getComponent();
+    }
 
     @Override
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementVerticalLayout) {            
         }
     }
-
+    
     @Override
-    public void elementChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setComponentEventListener(ComponentEventListener componentEventListener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ComponentEventListener getComponentEventListener() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void fireComponentEvent(EventDescriptor eventDescriptor) {
+    public void onElementEvent(EventDescriptor event) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

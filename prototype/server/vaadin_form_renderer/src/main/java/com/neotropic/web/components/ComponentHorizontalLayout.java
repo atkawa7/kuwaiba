@@ -14,6 +14,7 @@
  */
 package com.neotropic.web.components;
 
+import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
 import com.neotropic.api.forms.ElementHorizontalLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -22,7 +23,16 @@ import com.vaadin.ui.HorizontalLayout;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ComponentHorizontalLayout extends HorizontalLayout implements GraphicalComponent {
+public class ComponentHorizontalLayout extends GraphicalComponent {
+    
+    public ComponentHorizontalLayout() {
+        super(new HorizontalLayout());
+    }
+    
+    @Override
+    public HorizontalLayout getComponent() {
+        return (HorizontalLayout) super.getComponent();
+    }
 
     @Override
     public void initFromElement(AbstractElement element) {
@@ -30,24 +40,9 @@ public class ComponentHorizontalLayout extends HorizontalLayout implements Graph
             
         }
     }
-
+    
     @Override
-    public void elementChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setComponentEventListener(ComponentEventListener componentEventListener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ComponentEventListener getComponentEventListener() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void fireComponentEvent(EventDescriptor eventDescriptor) {
+    public void onElementEvent(EventDescriptor event) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

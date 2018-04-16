@@ -14,8 +14,12 @@
  */
 package com.neotropic.web.components;
 
+import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
+import com.neotropic.api.forms.Constants;
 import com.neotropic.api.forms.ElementDateField;
+import com.vaadin.data.HasValue;
+import com.vaadin.data.HasValue.ValueChangeListener;
 import com.vaadin.ui.DateField;
 import java.time.LocalDate;
 
@@ -23,32 +27,34 @@ import java.time.LocalDate;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ComponentDateField extends DateField implements GraphicalComponent {
+public class ComponentDateField extends GraphicalComponent {
+        
+    public ComponentDateField() {
+        super(new DateField());
+    }
+    
+    @Override
+    public DateField getComponent() {
+        return (DateField) super.getComponent();
+    }
 
     @Override
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementDateField) {
-            setValue(LocalDate.now());
+            getComponent().setValue(LocalDate.now());
+            
+            getComponent().addValueChangeListener(new ValueChangeListener<LocalDate>() {
+                @Override
+                public void valueChange(HasValue.ValueChangeEvent<LocalDate> event) {
+                    fireComponentEvent(new EventDescriptor(Constants.EventAttribute.ONVALUECHANGE, 
+                        event.getValue(), event.getOldValue()));
+                }
+            });
         }
     }
-
+        
     @Override
-    public void elementChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setComponentEventListener(ComponentEventListener componentEventListener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ComponentEventListener getComponentEventListener() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void fireComponentEvent(EventDescriptor eventDescriptor) {
+    public void onElementEvent(EventDescriptor event) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

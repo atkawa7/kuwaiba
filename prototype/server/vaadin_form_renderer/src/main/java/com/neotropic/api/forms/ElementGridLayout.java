@@ -14,7 +14,6 @@
  */
 package com.neotropic.api.forms;
 
-import com.neotropic.web.components.ChangeDescriptor;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -60,9 +59,9 @@ public class ElementGridLayout extends AbstractElementContainer {
         columns = Integer.valueOf(attrValue);
     }
 
-    @Override
-    public void componentChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+////    @Override
+////    public void componentChange(ChangeDescriptor changeDecriptor) {
+////        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+////    }
     
 }

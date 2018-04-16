@@ -14,7 +14,6 @@
  */
 package com.neotropic.api.forms;
 
-import com.neotropic.web.components.ChangeDescriptor;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -25,11 +24,7 @@ import javax.xml.stream.XMLStreamReader;
 public class ElementTextArea extends AbstractElement {
     
     private String value;
-    
-    public ElementTextArea() {
         
-    }
-    
     public void setValue(String value) {
         this.value = value;
     }
@@ -47,9 +42,9 @@ public class ElementTextArea extends AbstractElement {
         value = attrValue;
     }
 
-    @Override
-    public void componentChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+////    @Override
+////    public void componentChange(ChangeDescriptor changeDecriptor) {
+////        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+////    }
         
 }

@@ -14,15 +14,22 @@
  */
 package com.neotropic.api.forms;
 
+import java.util.HashMap;
+import java.util.Random;
+
 /**
- *
+ * Executes functions on events
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ScriptRunner {
+    private HashMap<String, String> scripts = new HashMap();
+    
     private final FormStructure formStructure;
     
     public ScriptRunner(FormStructure formStructure) {
         this.formStructure = formStructure;
+        
+        scripts.put("setLabelValue", "A Label Value");
     }
     
     public FormStructure getFormStructure() {
@@ -30,6 +37,23 @@ public class ScriptRunner {
     }
     
     public void run(AbstractElement element, String eventAttribute) {
+                        
+        if (hasEventAttribute(element, eventAttribute)) {
+                
+            String elementId = element.getEvents().get(eventAttribute).get(Constants.Function.OPEN).get(0);
+
+            AbstractElement anElement = getFormStructure().getElementById(elementId);
+
+            if (anElement instanceof ElementSubform)
+                anElement.fireElementEvent(new EventDescriptor(Constants.Function.OPEN));
+            if (anElement instanceof ElementTextField)
+                anElement.fireElementEvent(new EventDescriptor(Constants.Function.SET_VALUE));     
+            if (anElement instanceof ElementLabel) {
+                Random r = new Random();
+                ((ElementLabel) anElement).setValue("***A Label Value***"+r.nextInt());
+                anElement.fireElementEvent(new EventDescriptor(Constants.Function.SET_VALUE));
+            }
+        }
     }
     
     public boolean hasEventAttribute(AbstractElement element, String eventAttribute) {

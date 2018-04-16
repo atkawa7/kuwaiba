@@ -14,36 +14,12 @@
  */
 package com.neotropic.api.forms;
 
-import com.neotropic.web.components.ChangeDescriptor;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementImage extends AbstractElement {
-    private String value;
-    
+public class ElementImage extends AbstractElementField {
+        
     public ElementImage() {
     }
-    
-    public void setValue(String value) {
-        this.value = value;                
-    }   
-    
-    public String getValue() {
-        return value;        
-    }
-        
-    @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        value = reader.getAttributeValue(null, Constants.Attribute.VALUE);
-    }
-
-    @Override
-    public void componentChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-        
 }

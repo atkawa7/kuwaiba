@@ -14,41 +14,51 @@
  */
 package com.neotropic.web.components;
 
+import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
+import com.neotropic.api.forms.Constants;
 import com.neotropic.api.forms.ElementSubform;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ComponentSubform extends VerticalLayout implements GraphicalComponent {
-
+public class ComponentSubform extends GraphicalComponent {
+        
+    public ComponentSubform() {
+        super(new VerticalLayout());
+    }
+    
+    @Override
+    public VerticalLayout getComponent() {
+        return (VerticalLayout) super.getComponent();
+    }
+    
     @Override
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementSubform) {
-            
+            element.setElementEventListener(this);
         }
     }
-
+        
     @Override
-    public void elementChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    public void onElementEvent(EventDescriptor event) {
+        if (Constants.Function.OPEN.equals(event.getName())) {
 
-    @Override
-    public void setComponentEventListener(ComponentEventListener componentEventListener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ComponentEventListener getComponentEventListener() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void fireComponentEvent(EventDescriptor eventDescriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            if (UI.getCurrent() != null) {
+                
+                Window window = new Window();
+                window.setModal(true);
+                window.setContent(getComponent());
+                window.center();
+                
+                UI.getCurrent().addWindow(window);
+            }
+        }
+        int i = 0;
     }
     
 }

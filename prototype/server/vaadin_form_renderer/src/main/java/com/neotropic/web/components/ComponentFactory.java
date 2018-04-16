@@ -73,22 +73,14 @@ public class ComponentFactory {
             component = new ComponentSubform();            
         }
         
-        if (component != null)
+        if (component != null && element != null) {
             component.initFromElement(element);
+            
+            element.setElementEventListener(component);
+            component.setComponentEventListener(element);
+        }
+        return component != null && component.getComponent() != null && 
+            component.getComponent() instanceof Component ? component.getComponent() : null;
+    }
         
-        return component instanceof Component ? (Component) component : null;
-    }  
-    /*
-    GridLayout
-    VerticalLayout
-    Label
-    TextField
-    TextArea
-    DateField
-    ComboBox
-    Grid
-    Button
-    HorizontalLayout
-    Image
-    */
 }

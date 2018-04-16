@@ -62,11 +62,11 @@ public class Constants {
         public static final String ONCLICK = "onclick"; //NOI18N
         public static final String ONVALUECHANGE = "onvaluechange"; //NOI18N
         public static final String ONNOTIFY = "onnotify"; //NOI18N
-        
-        public static final String ONCHANGE = "onchange"; //NOI18N
     }
     
     public class Function {
         public static final String GLOBAL = "global";
+        public static final String OPEN = "open";
+        public static final String SET_VALUE = "setValue";
     }
 }

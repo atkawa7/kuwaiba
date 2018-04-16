@@ -14,7 +14,6 @@
  */
 package com.neotropic.api.forms;
 
-import com.neotropic.web.components.ChangeDescriptor;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.namespace.QName;
@@ -69,9 +68,9 @@ public class ElementGrid extends AbstractElement {
         }
     }
 
-    @Override
-    public void componentChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+////    @Override
+////    public void componentChange(ChangeDescriptor changeDecriptor) {
+////        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+////    }
         
 }

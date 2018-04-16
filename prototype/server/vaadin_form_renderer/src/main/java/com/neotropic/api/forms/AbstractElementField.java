@@ -14,6 +14,9 @@
  */
 package com.neotropic.api.forms;
 
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+
 /**
  * A field is a terminal element that contain data
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
@@ -28,4 +31,22 @@ public abstract class AbstractElementField extends AbstractElement {
     public void setValue(Object value) {
         this.value = value;        
     }
+    
+    @Override
+    public void onComponentEvent(EventDescriptor event) {
+        if (this instanceof AbstractElementField) {
+            if (Constants.EventAttribute.ONVALUECHANGE.equals(event.getName())) {
+                if (event.getNewValue() != null || event.getOldValue() != null)
+                    ((AbstractElementField) this).setValue(event.getNewValue());
+            }
+        }
+        super.onComponentEvent(event);
+    }
+            
+    @Override
+    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
+        super.initFromXMl(reader);
+        value = reader.getAttributeValue(null, Constants.Attribute.VALUE);                
+    }
+    
 }

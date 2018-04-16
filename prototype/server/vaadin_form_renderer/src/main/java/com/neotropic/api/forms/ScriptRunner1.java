@@ -14,7 +14,6 @@
  */
 package com.neotropic.api.forms;
 
-import com.neotropic.web.components.ChangeDescriptor;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import java.util.HashMap;
@@ -32,7 +31,7 @@ public class ScriptRunner1 {
     public ScriptRunner1(HashMap<String, AbstractElement> elements, HashMap<String, String> functions) {
         this.functions = functions;
         addVariable(VARIABLE_NAME_ELEMENTS, elements);
-        addVariable(ChangeDescriptor.class.getSimpleName(), ChangeDescriptor.class);
+//        addVariable(ChangeDescriptor.class.getSimpleName(), ChangeDescriptor.class);
     }
     
     public void addVariable(String name, Object value) {

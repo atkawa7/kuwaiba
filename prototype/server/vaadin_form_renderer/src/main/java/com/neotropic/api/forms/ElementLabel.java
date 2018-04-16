@@ -14,7 +14,6 @@
  */
 package com.neotropic.api.forms;
 
-import com.neotropic.web.components.ChangeDescriptor;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -22,50 +21,28 @@ import javax.xml.stream.XMLStreamReader;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementLabel extends AbstractElement {
+public class ElementLabel extends AbstractElementField {
     
-    private String value;    
-    private String styleName;
-    
-    public ElementLabel() {
+    public ElementLabel() {        
     }
     
-    public void setValue(String value) {
-        this.value = value;
-    }
-    
+    @Override
     public String getValue() {
-        return value;        
+        return (String) super.getValue();
     }
-    
-    public void setStyleName(String styleName) {
-        this.styleName = styleName;        
-    }
-    
-    public String getStyleName() {
-        return styleName;
-    }
-            
+                
     @Override
     public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        setId(reader);
-        setArea(reader);
+        super.initFromXMl(reader);
         
-        String attrValue = reader.getAttributeValue(null, Constants.Attribute.VALUE);
-        if (attrValue == null)
-            throw new XMLStreamException(String.format("Missing attribute %s in tag %s", Constants.Attribute.VALUE, Constants.Tag.LABEL));
-        
-        value = attrValue;
-        value = value.replace("$lt.", "<");
-        value = value.replace("$gt.", ">");
-        value = value.replace("$qm.", "\"");
-        
-        styleName = reader.getAttributeValue(null, Constants.Attribute.STYLE_NAME);
+        String strValue = getValue();
+                
+        if (strValue != null) {
+            strValue = strValue.replace("$lt.", "<");
+            strValue = strValue.replace("$gt.", ">");
+            strValue = strValue.replace("$qm.", "\"");
+            
+            setValue(strValue);
+        }
     }
-
-    @Override
-    public void componentChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
 }

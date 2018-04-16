@@ -14,63 +14,18 @@
  */
 package com.neotropic.api.forms;
 
-import com.neotropic.web.components.ChangeDescriptor;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementTextField extends AbstractElement {
-    
-    private String value;    
-    private boolean enabled = true;
+public class ElementTextField extends AbstractElementField {
     
     public ElementTextField() {
     }
     
-    public void setValue(String value) {
-        this.value = value;
-    }
-    
+    @Override
     public String getValue() {
-        return value;        
+        return (String) super.getValue();
     }
     
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-    
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        setId(reader);
-        setArea(reader);
-        setEvents(reader);
-                
-        String attrValue = reader.getAttributeValue(null, Constants.Attribute.VALUE);
-////        if (attrValue == null)
-////            throw new XMLStreamException(String.format("Missing attribute %s in tag %s", Constants.Attribute.VALUE, Constants.Tag.TEXT_FIELD));
-        
-        value = attrValue;
-        
-        attrValue = reader.getAttributeValue(null, Constants.Attribute.ENABLED);
-        
-        if (attrValue != null)
-            enabled = Boolean.valueOf(attrValue);
-    }
-
-    @Override
-    public void componentChange(ChangeDescriptor changeDescriptor) {
-        if (changeDescriptor != null) {
-            
-            if (Constants.Attribute.VALUE.equals(changeDescriptor.getPropertyName()))
-                value = (String) changeDescriptor.getNewValue();
-        }
-    }
-        
 }

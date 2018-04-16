@@ -14,6 +14,7 @@
  */
 package com.neotropic.web.components;
 
+import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
 import com.neotropic.api.forms.Constants;
 import com.neotropic.api.forms.ElementButton;
@@ -23,27 +24,32 @@ import com.vaadin.ui.Button;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ComponentButton extends Button implements GraphicalComponent {
-    private ComponentEventListener componentEventListener;
-    
+public class ComponentButton extends GraphicalComponent {
+            
     public ComponentButton() {
+        super(new Button());
     }
-
+    
+    @Override
+    public Button getComponent() {
+        return (Button) super.getComponent();
+    }
+        
     @Override
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementButton) {
-            componentEventListener = element;
             ElementButton button = (ElementButton) element;
             
-                        
-            setCaption(button.getCaption());
             
-            addClickListener(new Button.ClickListener() {
+            getComponent().setCaption(button.getCaption());
+            
+            getComponent().addClickListener(new Button.ClickListener() {
+                
                 @Override
-                public void buttonClick(ClickEvent event) {
+                public void buttonClick(Button.ClickEvent event) {
                     fireComponentEvent(new EventDescriptor(Constants.EventAttribute.ONCLICK));
                 }
-            });
+            });            
         }
         /*
                     childComponent = new Button();
@@ -148,25 +154,10 @@ public class ComponentButton extends Button implements GraphicalComponent {
                     });
         */
     }
-
+    
     @Override
-    public void elementChange(ChangeDescriptor changeDecriptor) {
+    public void onElementEvent(EventDescriptor event) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setComponentEventListener(ComponentEventListener componentEventListener) {
-        this.componentEventListener = componentEventListener;
-    }
-
-    @Override
-    public ComponentEventListener getComponentEventListener() {
-        return componentEventListener;
-    }
-
-    @Override
-    public void fireComponentEvent(EventDescriptor componentDescriptor) {
-        componentEventListener.onEvent(componentDescriptor);
     }
     
 }

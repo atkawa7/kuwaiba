@@ -14,6 +14,7 @@
  */
 package com.neotropic.web.components;
 
+import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
 import com.neotropic.api.forms.ElementGridLayout;
 import com.vaadin.ui.GridLayout;
@@ -22,35 +23,29 @@ import com.vaadin.ui.GridLayout;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ComponentGridLayout extends GridLayout implements GraphicalComponent {
+public class ComponentGridLayout extends GraphicalComponent {
+    
+    public ComponentGridLayout() {
+        super(new GridLayout());
+    }
+    
+    @Override
+    public GridLayout getComponent() {
+        return (GridLayout) super.getComponent();
+    }
 
     @Override
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementGridLayout) {
             ElementGridLayout gridLayout = (ElementGridLayout) element;
             
-            setColumns(gridLayout.getColumns());
-            setRows(gridLayout.getRows());
+            getComponent().setColumns(gridLayout.getColumns());
+            getComponent().setRows(gridLayout.getRows());
         }
     }
-
+    
     @Override
-    public void elementChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setComponentEventListener(ComponentEventListener componentEventListener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ComponentEventListener getComponentEventListener() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void fireComponentEvent(EventDescriptor eventDescriptor) {
+    public void onElementEvent(EventDescriptor event) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

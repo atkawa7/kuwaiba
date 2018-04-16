@@ -102,9 +102,8 @@ public class FormRenderer extends CustomComponent {
                 Component childComponent = null;
 
                 if (childElement instanceof ElementForm) {
-                } else {
+                } else
                     childComponent = ComponentFactory.getInstance().getComponent(childElement);
-                }
                 
                 if (childComponent != null) {
 

@@ -14,7 +14,6 @@
  */
 package com.neotropic.api.forms;
 
-import com.neotropic.web.components.ChangeDescriptor;
 import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -23,20 +22,16 @@ import javax.xml.stream.XMLStreamReader;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementComboBox extends AbstractElement {
-    private String value;    
+public class ElementComboBox extends AbstractElementField {
     private List items;
                     
     public ElementComboBox() {
         
     }
     
-    public void setValue(String value) {
-        this.value = value;
-    }
-    
+    @Override
     public String getValue() {
-        return value;
+        return (String) super.getValue();
     }
     
     public void setItems(List items) {
@@ -49,13 +44,11 @@ public class ElementComboBox extends AbstractElement {
 
     @Override
     public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        setId(reader);
-        setEvents(reader);
-        value = reader.getAttributeValue(null, Constants.Attribute.VALUE);
+        super.initFromXMl(reader);
         
-        if (value != null && value.contains("${") && value.contains("}")) {
+        if (getValue() != null && getValue().contains("${") && getValue().contains("}")) {
             
-            String cpyValue = value;
+            String cpyValue = getValue();
             cpyValue = cpyValue.replace("${", "");
             cpyValue = cpyValue.replace("}", "");
             
@@ -65,10 +58,5 @@ public class ElementComboBox extends AbstractElement {
                 items = ElementQuery.getInstance().executeQuery(function[1]);
         }
     }
-
-    @Override
-    public void componentChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
+        
 }

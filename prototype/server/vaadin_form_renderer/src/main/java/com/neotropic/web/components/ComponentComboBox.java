@@ -14,23 +14,44 @@
  */
 package com.neotropic.web.components;
 
+import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
+import com.neotropic.api.forms.Constants;
 import com.neotropic.api.forms.ElementComboBox;
+import com.vaadin.data.HasValue;
+import com.vaadin.data.HasValue.ValueChangeListener;
 import com.vaadin.ui.ComboBox;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ComponentComboBox extends ComboBox implements GraphicalComponent {
-
+public class ComponentComboBox extends GraphicalComponent {
+    
+    public ComponentComboBox() {
+        super(new ComboBox());
+    }
+    
+    @Override
+    public ComboBox getComponent() {
+        return (ComboBox) super.getComponent();
+    }
+    
     @Override
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementComboBox) {
             ElementComboBox comboBox = (ElementComboBox) element;
             
             if (comboBox.getItems() != null)
-                setItems(comboBox.getItems());
+                getComponent().setItems(comboBox.getItems());
+            
+            getComponent().addValueChangeListener(new ValueChangeListener() {
+                @Override
+                public void valueChange(HasValue.ValueChangeEvent event) {
+                    fireComponentEvent(new EventDescriptor(Constants.EventAttribute.ONVALUECHANGE, 
+                        event.getValue(), event.getOldValue()));
+                }
+            });
         }
         /*
         childComponent = new ComboBox();
@@ -50,24 +71,9 @@ public class ComponentComboBox extends ComboBox implements GraphicalComponent {
         });
         */
     }
-
+    
     @Override
-    public void elementChange(ChangeDescriptor changeDecriptor) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void setComponentEventListener(ComponentEventListener componentEventListener) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public ComponentEventListener getComponentEventListener() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void fireComponentEvent(EventDescriptor eventDescriptor) {
+    public void onElementEvent(EventDescriptor event) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

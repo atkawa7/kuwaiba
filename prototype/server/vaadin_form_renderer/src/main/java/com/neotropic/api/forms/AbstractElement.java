@@ -14,15 +14,11 @@
  */
 package com.neotropic.api.forms;
 
-import com.neotropic.web.components.ChangeDescriptor;
-import com.neotropic.web.components.ComponentChangeListener;
 import com.neotropic.web.components.ComponentEventListener;
-import com.neotropic.web.components.ElementChangeListener;
-import com.neotropic.web.components.EventDescriptor;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 /**
@@ -31,40 +27,23 @@ import javax.xml.stream.XMLStreamReader;
  * General java representation of a Tag
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public abstract class AbstractElement implements Tag, ComponentChangeListener, ComponentEventListener {
+public abstract class AbstractElement implements Tag, ComponentEventListener {
+    /**
+     * Tags of Attributes
+     */
     private String id;
     private String name;
-////    private List<AbstractElement> children;
+    private List<Integer> area;
+    private String styleName;
+    private boolean enabled = true;
     /**
      * event->function->parameters
      */    
     private HashMap<String, HashMap<String, List<String>>> events;
     
-    private List<Integer> area;
-    
-    private List<String> precondition;
-    
-    protected List<ElementChangeListener> changeListeners;
-    
     private ScriptRunner scriptRunner;    
-        
-    public void addElementChangeListener(ElementChangeListener changeListener) {
-        if (changeListener != null) {
-            
-            if (changeListeners == null)
-                changeListeners = new ArrayList();
-            
-            changeListeners.add(changeListener);
-        }
-    }
     
-    public void removeElementChangeListener(ElementChangeListener changeListener) {
-        if (changeListener != null) {
-            
-            if (changeListeners != null)
-                changeListeners.remove(changeListener);
-        }
-    }
+    private ElementEventListener elementEventListener;
     
     public String getId() {
         return id;
@@ -81,14 +60,30 @@ public abstract class AbstractElement implements Tag, ComponentChangeListener, C
     public void setName(String name) {
         this.name = name;
     }
+        
+    public List<Integer> getArea() {
+        return area;
+    }
+        
+    public void setArea(List<Integer> area) {
+        this.area = area;        
+    }
+        
+    public String getStyleName() {
+        return styleName;
+    }
+        
+    public void setStyleName(String styleName) {
+        this.styleName = styleName;        
+    }
     
-////    public List<AbstractElement> getChildren() {
-////        return children == null ? children = new ArrayList() : children;
-////    }
-////    
-////    public void setChildren(List<AbstractElement> children) {
-////        this.children = children;
-////    }
+    public boolean isEnabled() {
+        return enabled;
+    }
+    
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
     
     public HashMap<String, HashMap<String, List<String>>> getEvents() {
         return events;
@@ -98,14 +93,6 @@ public abstract class AbstractElement implements Tag, ComponentChangeListener, C
         this.events = events;
     }
     
-    public void setArea(List<Integer> area) {
-        this.area = area;        
-    }
-    
-    public List<Integer> getArea() {
-        return area;
-    }
-    
     public ScriptRunner getScriptRunner() {
         return scriptRunner;
     }
@@ -113,8 +100,31 @@ public abstract class AbstractElement implements Tag, ComponentChangeListener, C
     public void setScriptRunner(ScriptRunner scriptRunner) {
         this.scriptRunner = scriptRunner;
     }
-                        
-//    public abstract void initFromXMl(XMLStreamReader reader) throws XMLStreamException;
+        
+    @Override
+    public void onComponentEvent(EventDescriptor event) {
+        getScriptRunner().run(this, event.getName());
+    }
+    
+    public void setElementEventListener(ElementEventListener elementEventListener) {
+        this.elementEventListener = elementEventListener;
+    }
+    
+    public ElementEventListener getElementEventListener() {
+        return elementEventListener;
+    }
+    
+    public void fireElementEvent(EventDescriptor eventDescriptor) {
+        elementEventListener.onElementEvent(eventDescriptor);
+    }    
+    
+    @Override
+    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
+        setId(reader);
+        setArea(reader);
+        setEvents(reader);
+        setStyleName(reader);
+    }
     
     public void setId(XMLStreamReader reader) {
         id = reader.getAttributeValue(null, Constants.Attribute.ID);
@@ -169,20 +179,18 @@ public abstract class AbstractElement implements Tag, ComponentChangeListener, C
 
                     function.put(functionName, params);                                        
                 }
-////                events.put(eventAttr, function);
             }
         }
-    }    
-    
-    public final void fireElementChange(ChangeDescriptor changeDescriptor) {
-        Iterator<ElementChangeListener> iterator = changeListeners.iterator();
-        
-        while (iterator.hasNext())
-            iterator.next().elementChange(changeDescriptor);
     }
     
-    @Override
-    public void onEvent(EventDescriptor event) {
-        getScriptRunner().run(this, event.getName());
+    public void setStyleName(XMLStreamReader reader) {
+        styleName = reader.getAttributeValue(null, Constants.Attribute.STYLE_NAME);
+    }
+    
+    public void setEnabled(XMLStreamReader reader) {
+        String attrValue = reader.getAttributeValue(null, Constants.Attribute.ENABLED);
+                
+        if (attrValue != null)
+            enabled = Boolean.valueOf(attrValue);
     }
 }

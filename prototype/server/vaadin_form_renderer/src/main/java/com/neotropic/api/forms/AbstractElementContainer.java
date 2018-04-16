@@ -24,7 +24,7 @@ import java.util.List;
  */
 public abstract class AbstractElementContainer extends AbstractElement {
     private List<AbstractElement> children;
-    
+
     public List<AbstractElement> getChildren() {
         return children;
     }

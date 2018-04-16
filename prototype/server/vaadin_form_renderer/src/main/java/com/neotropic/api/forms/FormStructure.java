@@ -22,7 +22,7 @@ import java.util.List;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class FormStructure {
-    private final HashMap<String, AbstractElement> elementsWithId;
+    private final HashMap<String, AbstractElement> elementsById;
     private final List<AbstractElement> elements;
     private final ElementScript elementScript;
     private final ElementI18N elementI18N;
@@ -32,14 +32,18 @@ public class FormStructure {
         this.elementScript = elementScript;
         this.elementI18N = elementI18N;
         
-        elementsWithId = new HashMap();
+        elementsById = new HashMap();
         
         for (AbstractElement element : elements) {
             
             if (element.getId() != null)
-                elementsWithId.put(element.getId(), element);
+                elementsById.put(element.getId(), element);
         }
-    }   
+    }
+    
+    public AbstractElement getElementById(String elementId) {
+        return elementsById.get(elementId);
+    }
     
     public List<AbstractElement> getElements() {
         return elements;
