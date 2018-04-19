@@ -31,9 +31,13 @@ public class EventDescriptor {
         this.eventName = eventName;
     }
     
-    public EventDescriptor(String eventName, String propertyName, Object newValue, Object oldValue) {
+    public EventDescriptor(String eventName, String propertyName) {
         this(eventName);
         this.propertyName = propertyName;
+    }
+    
+    public EventDescriptor(String eventName, String propertyName, Object newValue, Object oldValue) {
+        this(eventName, propertyName);
         this.newValue = newValue;
         this.oldValue = oldValue;
     }

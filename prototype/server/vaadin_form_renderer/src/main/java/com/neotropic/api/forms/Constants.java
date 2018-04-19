@@ -60,7 +60,8 @@ public class Constants {
         public static final String PARAMETER_NAMES = "parameternames"; //NOI18N
         public static final String TYPE = "type"; //NOI18N
         public static final String QUERY_NAME = "queryname"; //NOI18N
-        public static final String MESSAGE = "message";
+        public static final String MESSAGE = "message"; //NOI18N
+        public static final String MANDATORY = "mandatory"; //NOI18N
     }
     
     public class EventAttribute {
@@ -72,11 +73,14 @@ public class Constants {
     }
     
     public class Function {
-        public static final String GLOBAL = "global"; //NOI18N
+////        public static final String GLOBAL = "global"; //NOI18N
         public static final String OPEN = "open"; //NOI18N
-        public static final String SET_VALUE = "setValue"; //NOI18N
+        public static final String CLOSE = "close"; //NOI18N
+        public static final String CLEAN = "clean"; //NOI18N
+////        public static final String SET_VALUE = "setValue"; //NOI18N
         public static final String VALIDATE = "validate"; //NOI18N
         public static final String I18N = "i18n"; //NOI18N
+        public static final String ADD_GRID_ROW = "addgridrow"; //NOI18N
         
         public class Type {
             public static final String FUNCTION = "function";
@@ -90,5 +94,6 @@ public class Constants {
         public static final String ENABLED = "enabled"; //NOI18N
         public static final String DUMMY_PROPERTY = "dummyproperty"; //NOI18N
         public static final String ITEMS = "items"; //NOI18N
+        public static final String ROWS = "rows"; //NOI18N
     }
 }

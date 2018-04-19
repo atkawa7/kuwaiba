@@ -37,6 +37,7 @@ public class ElementForm extends AbstractElementContainer {
 
     @Override
     public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
+        super.initFromXMl(reader);
         // This variable is used to verify if the attribute exist and to avoid 
         // the exceptions that can be caused by the parse of null values
         String attrValue = reader.getAttributeValue(null, Constants.Attribute.TITLE);

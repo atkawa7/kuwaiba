@@ -14,36 +14,23 @@
  */
 package com.neotropic.api.forms;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementLabel extends AbstractElementField {
+public class FormNotification {
+    public static String WARNING = "warning";
+    public static String ERROR = "error";
+    public static String SUCCESS = "success";
     
-    public ElementLabel() {     
-        setCleanable(false);
-    }
-    
-    @Override
-    public String getValue() {
-        return (String) super.getValue();
-    }
-                
-    @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        super.initFromXMl(reader);
+    private static FormNotification instance;
         
-        String strValue = getValue();
-                
-        if (strValue != null) {
-            strValue = strValue.replace("$lt.", "<");
-            strValue = strValue.replace("$gt.", ">");
-            strValue = strValue.replace("$qm.", "\"");
-            
-            setValue(strValue);
-        }
+    private FormNotification() {
     }
+    
+    public FormNotification getInstance() {
+        return instance == null ? instance = new FormNotification() : instance;
+    }
+    
+    
 }

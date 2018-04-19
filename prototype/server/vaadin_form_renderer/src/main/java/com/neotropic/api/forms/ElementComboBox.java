@@ -27,14 +27,9 @@ public class ElementComboBox extends AbstractElementField {
     private List items;
                     
     public ElementComboBox() {
+                                
+    }
         
-    }
-    
-    @Override
-    public String getValue() {
-        return (String) super.getValue();
-    }
-    
     public void setItems(List items) {
         this.items = items;
     }

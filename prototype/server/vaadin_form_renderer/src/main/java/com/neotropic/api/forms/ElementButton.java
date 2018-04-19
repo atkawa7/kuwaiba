@@ -14,6 +14,8 @@
  */
 package com.neotropic.api.forms;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -40,14 +42,105 @@ public class ElementButton extends AbstractElement {
     
     @Override
     public void onComponentEvent(EventDescriptor event) {
-        if (hasProperty(Constants.EventAttribute.ONCLICK, Constants.Function.OPEN)) {
-            String elementId = getEvents().get(Constants.EventAttribute.ONCLICK).get(Constants.Function.OPEN).get(0);
+        if (hasEventAttribute(Constants.EventAttribute.ONCLICK) && getEvents().get(Constants.EventAttribute.ONCLICK) != null) {
+            
+            for (String key : getEvents().get(Constants.EventAttribute.ONCLICK).keySet()) {
+                
+                if (Constants.Function.OPEN.equals(key)) {
 
-            AbstractElement anElement = getFormStructure().getElementById(elementId);
+                    String elementId = getEvents().get(Constants.EventAttribute.ONCLICK).get(Constants.Function.OPEN).get(0);
 
-            if (anElement instanceof ElementSubform)
-                anElement.fireElementEvent(new EventDescriptor(Constants.Function.OPEN));
+                    AbstractElement anElement = getFormStructure().getElementById(elementId);
+
+                    if (anElement instanceof ElementSubform)
+                        anElement.fireElementEvent(new EventDescriptor(Constants.EventAttribute.ONCLICK, Constants.Function.OPEN));
+
+                } else if (Constants.Function.ADD_GRID_ROW.equals(key)) {
+                    List<String> functionParams = getEvents().get(Constants.EventAttribute.ONCLICK).get(Constants.Function.ADD_GRID_ROW);
+
+                    String elementId = functionParams.get(0);
+
+                    List<String> elements = new ArrayList();
+
+                    for (int i = 1; i < functionParams.size(); i += 1) {
+                        AbstractElement ae = getFormStructure().getElementById(functionParams.get(i));
+
+                        if (ae instanceof AbstractElementField) {
+                            AbstractElementField aef = (AbstractElementField) ae;
+                            elements.add(aef.getValue() != null ? aef.getValue().toString() : new NullObject().toString());
+                        } else
+                            elements.add(new NullObject().toString());
+                    }
+
+                    AbstractElement anElement = getFormStructure().getElementById(elementId);
+
+                    if (anElement instanceof ElementGrid)
+                        anElement.fireElementEvent(new EventDescriptor(Constants.EventAttribute.ONPROPERTYCHANGE, Constants.Property.ROWS, elements, null));
+
+                } else if (Constants.Function.CLOSE.equals(key)) {
+
+                    String elementId = getEvents().get(Constants.EventAttribute.ONCLICK).get(Constants.Function.CLOSE).get(0);
+
+                    AbstractElement anElement = getFormStructure().getElementById(elementId);
+
+                    if (anElement instanceof ElementSubform)
+                        anElement.fireElementEvent(new EventDescriptor(Constants.EventAttribute.ONCLICK, Constants.Function.CLOSE));
+                    
+                } else if (Constants.Function.CLEAN.equals(key)) {
+                    
+                    String elementId = getEvents().get(Constants.EventAttribute.ONCLICK).get(Constants.Function.CLEAN).get(0);
+
+                    AbstractElement anElement = getFormStructure().getElementById(elementId);
+
+                    if (anElement instanceof AbstractElementContainer) {
+                        ((AbstractElementContainer) anElement).clean();
+                        anElement.fireElementEvent(new EventDescriptor(Constants.EventAttribute.ONCLICK, Constants.Function.CLEAN));
+                    }
+                }
+            }
         }
+        /*
+        if (hasProperty(Constants.EventAttribute.ONCLICK, Constants.Function.OPEN)) {
+                        
+            String elementId = getEvents().get(Constants.EventAttribute.ONCLICK).get(Constants.Function.OPEN).get(0);
+                        
+            AbstractElement anElement = getFormStructure().getElementById(elementId);
+            
+            if (anElement instanceof ElementSubform)
+                anElement.fireElementEvent(new EventDescriptor(Constants.EventAttribute.ONCLICK, Constants.Function.OPEN));
+            
+        } else if (hasProperty(Constants.EventAttribute.ONCLICK, Constants.Function.ADD_GRID_ROW)) {
+            List<String> functionParams = getEvents().get(Constants.EventAttribute.ONCLICK).get(Constants.Function.ADD_GRID_ROW);
+            
+            String elementId = functionParams.get(0);
+            
+            List<String> elements = new ArrayList();
+            
+            for (int i = 1; i < functionParams.size(); i += 1) {
+                AbstractElement ae = getFormStructure().getElementById(functionParams.get(i));
+                
+                if (ae instanceof AbstractElementField) {
+                    AbstractElementField aef = (AbstractElementField) ae;
+                    elements.add(aef.getValue() != null ? aef.getValue().toString() : new NullObject().toString());
+                } else
+                    elements.add(new NullObject().toString());
+            }
+                        
+            AbstractElement anElement = getFormStructure().getElementById(elementId);
+            
+            if (anElement instanceof ElementGrid)
+                anElement.fireElementEvent(new EventDescriptor(Constants.EventAttribute.ONPROPERTYCHANGE, Constants.Property.ROWS, elements, null));
+                        
+        } else if (hasProperty(Constants.EventAttribute.ONCLICK, Constants.Function.CLOSE)) {
+                                                
+            String elementId = getEvents().get(Constants.EventAttribute.ONCLICK).get(Constants.Function.CLOSE).get(0);
+                        
+            AbstractElement anElement = getFormStructure().getElementById(elementId);
+            
+            if (anElement instanceof ElementSubform)
+                anElement.fireElementEvent(new EventDescriptor(Constants.EventAttribute.ONCLICK, Constants.Function.CLOSE));
+        }
+        */
     }
     
     @Override

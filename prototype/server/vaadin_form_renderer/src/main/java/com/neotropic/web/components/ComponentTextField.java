@@ -70,7 +70,7 @@ public class ComponentTextField extends GraphicalComponent {
         if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
             
             if (Constants.Property.VALUE.equals(event.getPropertyName()))
-                getComponent().setValue(event.getNewValue().toString());
+                getComponent().setValue(event.getNewValue() != null ? event.getNewValue().toString() : "");
         }
 ////        if (Constants.Function.SET_VALUE.equals(event.getEventName())) {
 ////            getComponent().setValue("Hola Text Field");

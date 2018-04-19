@@ -18,6 +18,7 @@ import com.neotropic.web.components.ComponentEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -44,7 +45,7 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
     /**
      * event->function->parameters
      */    
-    private HashMap<String, HashMap<String, List<String>>> events;
+    private HashMap<String, LinkedHashMap<String, List<String>>> events;
     
     private ScriptRunner2 scriptRunner;    
     
@@ -145,11 +146,11 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
 ////        getScriptRunner().run(this, Constants.EventAttribute.ONPROPERTYCHANGE);
     }
     
-    public HashMap<String, HashMap<String, List<String>>> getEvents() {
+    public HashMap<String, LinkedHashMap<String, List<String>>> getEvents() {
         return events;
     }
         
-    public void setEvents(HashMap<String, HashMap<String, List<String>>> events) {
+    public void setEvents(HashMap<String, LinkedHashMap<String, List<String>>> events) {
         this.events = events;
     }
     
@@ -185,7 +186,8 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
     }
     
     public void fireElementEvent(EventDescriptor eventDescriptor) {
-        elementEventListener.onElementEvent(eventDescriptor);
+        if (elementEventListener != null)
+            elementEventListener.onElementEvent(eventDescriptor);
     }    
     
     @Override
@@ -264,7 +266,7 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
                         params.add(values[i]);
 
                     if (events.get(eventAttr) == null)
-                        events.put(eventAttr, new HashMap());
+                        events.put(eventAttr, new LinkedHashMap());
 
                     HashMap<String, List<String>> function = events.get(eventAttr);
 

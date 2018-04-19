@@ -47,11 +47,11 @@ public class ScriptRunner2 {
             if (anElement instanceof ElementSubform)
                 anElement.fireElementEvent(new EventDescriptor(Constants.Function.OPEN));
             if (anElement instanceof ElementTextField)
-                anElement.fireElementEvent(new EventDescriptor(Constants.Function.SET_VALUE));     
+//                anElement.fireElementEvent(new EventDescriptor(Constants.Function.SET_VALUE));     
             if (anElement instanceof ElementLabel) {
                 Random r = new Random();
                 ((ElementLabel) anElement).setValue("***A Label Value***"+r.nextInt());
-                anElement.fireElementEvent(new EventDescriptor(Constants.Function.SET_VALUE));
+//                anElement.fireElementEvent(new EventDescriptor(Constants.Function.SET_VALUE));
             }
         }
     }

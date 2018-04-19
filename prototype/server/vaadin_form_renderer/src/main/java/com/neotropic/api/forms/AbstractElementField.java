@@ -26,6 +26,8 @@ import javax.xml.stream.XMLStreamReader;
  */
 public abstract class AbstractElementField extends AbstractElement {
     private Object value;
+    private boolean mandatory = false;
+    private boolean cleanable = true;
     
     public Object getValue() {
         return value;        
@@ -35,6 +37,22 @@ public abstract class AbstractElementField extends AbstractElement {
         this.value = value;        
     }
     
+    public boolean isMandatory() {
+        return mandatory;
+    }
+    
+    public void setMandatory(boolean mandatory) {
+        this.mandatory = mandatory;                
+    }
+    
+    public boolean isCleanable() {
+        return cleanable;
+    }
+    
+    public void setCleanable(boolean cleanable) {
+        this.cleanable = cleanable;        
+    }
+           
     @Override
     public void onComponentEvent(EventDescriptor event) {
         if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
@@ -110,7 +128,19 @@ public abstract class AbstractElementField extends AbstractElement {
     @Override
     public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
         super.initFromXMl(reader);
-        value = reader.getAttributeValue(null, Constants.Attribute.VALUE);                
+        setValue(reader);
+        setMandatory(reader);
+    }
+    
+    private void setValue(XMLStreamReader reader) {
+        value = reader.getAttributeValue(null, Constants.Attribute.VALUE);        
+    }
+    
+    private void setMandatory(XMLStreamReader reader) {
+        String attrValue = reader.getAttributeValue(null, Constants.Attribute.MANDATORY);
+                
+        if (attrValue != null)
+            mandatory = Boolean.valueOf(attrValue);
     }
     
     @Override

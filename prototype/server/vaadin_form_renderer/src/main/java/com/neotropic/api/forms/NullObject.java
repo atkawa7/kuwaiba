@@ -14,36 +14,17 @@
  */
 package com.neotropic.api.forms;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementLabel extends AbstractElementField {
+public class NullObject {
     
-    public ElementLabel() {     
-        setCleanable(false);
-    }
+    public NullObject() {
+    }    
     
     @Override
-    public String getValue() {
-        return (String) super.getValue();
-    }
-                
-    @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        super.initFromXMl(reader);
-        
-        String strValue = getValue();
-                
-        if (strValue != null) {
-            strValue = strValue.replace("$lt.", "<");
-            strValue = strValue.replace("$gt.", ">");
-            strValue = strValue.replace("$qm.", "\"");
-            
-            setValue(strValue);
-        }
+    public String toString() {
+        return "Not Set";
     }
 }

@@ -60,7 +60,12 @@ public class ComponentDateField extends GraphicalComponent {
         
     @Override
     public void onElementEvent(EventDescriptor event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+            
+            if (Constants.Property.VALUE.equals(event.getPropertyName())) {
+            }
+        }
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

@@ -44,9 +44,11 @@ public class ComponentComboBox extends GraphicalComponent {
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementComboBox) {
             ElementComboBox comboBox = (ElementComboBox) element;
-            
+                        
             if (comboBox.getItems() != null)
                 getComponent().setItems(comboBox.getItems());
+            
+            getComponent().setRequiredIndicatorVisible(comboBox.isMandatory());
             
             getComponent().addValueChangeListener(new ValueChangeListener() {
                 @Override
@@ -91,6 +93,8 @@ public class ComponentComboBox extends GraphicalComponent {
                         lst.add(obj);
                 }
                 getComponent().setItems(lst);
+            } else if (Constants.Property.VALUE.equals(event.getPropertyName())) {
+                getComponent().setValue(event.getNewValue());
             }
         }
     }

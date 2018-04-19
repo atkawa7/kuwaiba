@@ -39,4 +39,28 @@ public abstract class AbstractElementContainer extends AbstractElement {
         if (children != null)
             children.remove(child);
     }
+    
+    public void clean() {
+        cleanRecursive(this);                                
+    }
+    
+    private void cleanRecursive(AbstractElementContainer parent) {
+        if (parent.getChildren() != null) {
+            for (AbstractElement child : parent.getChildren()) {
+                if (child instanceof AbstractElementField) {
+                    Object oldValue = ((AbstractElementField) child).getValue();
+                    Object newValue = null;
+                    
+                    if (((AbstractElementField) child).isCleanable()) {
+                        ((AbstractElementField) child).setValue(newValue);
+
+                        child.fireElementEvent(new EventDescriptor(
+                            Constants.EventAttribute.ONPROPERTYCHANGE, 
+                            Constants.Property.VALUE, newValue, oldValue));
+                    }
+                } else if (child instanceof AbstractElementContainer)
+                    cleanRecursive((AbstractElementContainer) child);                
+            }
+        }
+    }
 }

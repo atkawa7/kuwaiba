@@ -27,6 +27,7 @@ import com.vaadin.ui.Window;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ComponentSubform extends GraphicalComponent {
+    private Window window;
         
     public ComponentSubform() {
         super(new VerticalLayout());
@@ -46,19 +47,24 @@ public class ComponentSubform extends GraphicalComponent {
         
     @Override
     public void onElementEvent(EventDescriptor event) {
-        if (Constants.Function.OPEN.equals(event.getEventName())) {
+        if (Constants.EventAttribute.ONCLICK.equals(event.getEventName())) {
+            if (Constants.Function.OPEN.equals(event.getPropertyName())) {
+                if (UI.getCurrent() != null) {
+                    if (window == null)
+                        window = new Window();
+                    window.setModal(true);
+                    window.setContent(getComponent());
+                    window.center();
 
-            if (UI.getCurrent() != null) {
-                
-                Window window = new Window();
-                window.setModal(true);
-                window.setContent(getComponent());
-                window.center();
-                
-                UI.getCurrent().addWindow(window);
+                    UI.getCurrent().addWindow(window);
+                }
+            } else if (Constants.Function.CLOSE.equals(event.getPropertyName())) {
+                if (window != null)
+                    window.close();
+            } else if (Constants.Function.CLEAN.equals(event.getPropertyName())) {
+                int i = 0;
             }
         }
-        int i = 0;
     }
     
 }

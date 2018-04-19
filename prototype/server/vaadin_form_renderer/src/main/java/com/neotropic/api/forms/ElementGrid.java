@@ -27,7 +27,8 @@ import javax.xml.stream.XMLStreamReader;
  */
 public class ElementGrid extends AbstractElement {        
     List<ElementColumn> columns;
-    
+    List<List<Object>> rows;
+        
     public ElementGrid() {
         
     }    
@@ -39,7 +40,15 @@ public class ElementGrid extends AbstractElement {
     public List<ElementColumn> getColums() {
         return columns;
     }
-
+    
+    public List<List<Object>> getRows() {
+        return rows;        
+    }
+    
+    public void setRows(List<List<Object>> rows) {
+        this.rows = rows;
+    }
+    
     @Override
     public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
         setId(reader);
@@ -67,10 +76,22 @@ public class ElementGrid extends AbstractElement {
             }
         }
     }
+    
+    @Override
+    public void onComponentEvent(EventDescriptor event) {
+        super.onComponentEvent(event);        
+    }
+    /*
+    @Override
+    public void onComponentEvent(EventDescriptor event) {
+        if (hasProperty(Constants.EventAttribute.ONCLICK, Constants.Function.OPEN)) {
+            String elementId = getEvents().get(Constants.EventAttribute.ONCLICK).get(Constants.Function.OPEN).get(0);
 
-////    @Override
-////    public void componentChange(ChangeDescriptor changeDecriptor) {
-////        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-////    }
-        
+            AbstractElement anElement = getFormStructure().getElementById(elementId);
+
+            if (anElement instanceof ElementSubform)
+                anElement.fireElementEvent(new EventDescriptor(Constants.Function.OPEN));
+        }
+    }
+    */
 }

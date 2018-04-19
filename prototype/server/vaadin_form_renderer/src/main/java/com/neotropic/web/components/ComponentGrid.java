@@ -16,16 +16,20 @@ package com.neotropic.web.components;
 
 import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
+import com.neotropic.api.forms.Constants;
 import com.neotropic.api.forms.ElementColumn;
 import com.neotropic.api.forms.ElementGrid;
 import com.vaadin.ui.Grid;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ComponentGrid extends GraphicalComponent {
+    private final List<HashMap<String, String>> rows = new ArrayList();
     
     public ComponentGrid() {
         super(new Grid<HashMap<String, String>>());
@@ -63,7 +67,73 @@ public class ComponentGrid extends GraphicalComponent {
     
     @Override
     public void onElementEvent(EventDescriptor event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+            if (Constants.Property.ROWS.equals(event.getPropertyName())) {
+                if (event.getNewValue() instanceof List) {
+                    
+                    ElementGrid grid = (ElementGrid) getComponentEventListener();
+                    
+                    List<ElementColumn> columns = grid.getColums();
+                    List<String> values = (List<String>) event.getNewValue();
+                    
+                    if (values.size() == columns.size()) {
+                        
+                        HashMap<String, String> row = new HashMap();
+                        
+                        for (int i = 0; i < values.size(); i += 1)
+                            row.put(columns.get(i).getCaption(), values.get(i));
+                        
+                        rows.add(row);
+                        getComponent().setItems(rows);
+                    }
+                }
+            }
+        }
     }
     
+    /*
+                                        List<String> params = functions.get(addGridRow);
+
+                                        if (params != null) {
+                                            String subformId = params.get(0);
+                                            String elementId = params.get(1);
+
+                                            ElementGrid elementGrid = (ElementGrid) getElement(elementId);
+                                            Grid<HashMap<String, String>> grid = (Grid) getComponent(elementId);
+
+                                            if (grid != null) {
+
+                                                int ncolumns = grid.getColumns().size();
+                                                String [] values = new String [ncolumns];
+
+                                                for (int i = 0; i < ncolumns; i += 1) {
+                                                    String paramId = params.get(i + 2);
+                                                    Component component = getComponent(paramId);
+                                                    if (component != null && component instanceof AbstractField) {
+                                                        Object value = ((AbstractField) component).getValue();
+                                                        if (value != null)
+                                                            values[i] = value.toString();
+                                                        else
+                                                            values[i] = "no set";
+                                                    } else {
+                                                        values[i] = "no set";
+                                                    }
+                                                }
+
+                                                HashMap<String, String> columnValues = new HashMap<>();
+
+                                                List<ElementColumn> columns = elementGrid.getColums();
+
+                                                for (int i = 0; i < ncolumns; i+= 1)
+                                                    columnValues.put(columns.get(i).getCaption(), values[i]);
+
+                                                List lst = new ArrayList();
+                                                lst.add(columnValues);
+
+                                                grid.setItems(lst);
+                                                closeWindow(subformId);
+                                            }
+                                        }
+                                    }
+    */    
 }

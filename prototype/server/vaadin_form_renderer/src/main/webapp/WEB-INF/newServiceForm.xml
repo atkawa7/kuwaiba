@@ -1,5 +1,5 @@
 <root>
-    <form title="${I18N.newService}">
+    <form id="newServiceForm123" title="${I18N.newService}">
         <!--<gridLayout rows="1" columns="4">-->
         <gridLayout rows="1" columns="3">
             <verticalLayout>
@@ -27,12 +27,12 @@
                 <label value="CUSTOMER AND ORDER INFORMATION" styleName="empty bold"/>
                 <gridLayout rows="2" columns="4">
                     <label onload="value.i18n.customer"/>
-                    <comboBox id="cmbCustomer" onload="items.getCustomers" onvaluechange="threeCharacterCode.cmbCustomer.txtCustomer" />
+                    <comboBox id="cmbCustomer" onload="items.getCustomers" propertychangelistener="txtServiceCode" mandatory="true"/>
                     <label onload="value.i18n.acronym"/>
                     <textField id="txtCustomer" enabled="false" onvaluechange="notify.txtServiceCode"/>
 
                     <label onload="value.i18n.endCustomer"/>
-                    <comboBox id="cmbEndCustomer" onload="items.getCustomers" onvaluechange="threeCharacterCode.cmbEndCustomer.txtEndCustomer"/>
+                    <comboBox id="cmbEndCustomer" onload="items.getCustomers" onvaluechange="threeCharacterCode.cmbEndCustomer.txtEndCustomer" mandatory="true"/>
                     <label onload="value.i18n.acronym"/>
                     <textField id="txtEndCustomer" enabled="false"/>
                 </gridLayout>
@@ -51,7 +51,7 @@
                     <label value=" " styleName="empty"/>
 
                     <label onload="value.i18n.serviceCode"/>
-                    <textField id="txtServiceCode" value="" enabled="false" preconditions="cmbCustomer cmbEndCustomer cmbTypeOfService cboBandwidth"/>
+                    <textField id="txtServiceCode" onpropertychange="value.getServiceCode.cmbCustomer.cmbEndCustomer.cmbTypeOfService.txtCircuitOriginCity.txtCircuitDestinationCity.cboBandwidth" enabled="false"/>
                     <label value=" " styleName="empty"/>
                     <label value=" " styleName="empty"/>
                 </gridLayout>
@@ -85,8 +85,8 @@
                         <label value="Yearly"/> <textField id="orderFormField10"/>
                     </gridLayout>
                     <horizontalLayout>
-                        <button caption="Add" onclick="addGridRow.orderForm.gridOrderForm.orderFormField1.orderFormField2.orderFormField3.orderFormField4.orderFormField5.orderFormField6.orderFormField7.orderFormField8.orderFormField9.orderFormField10"/>                        
-                        <button caption="Cancel" onclick="closeSubform.orderForm"/>
+                        <button caption="Add" onclick="addgridrow.gridOrderForm.orderFormField1.orderFormField2.orderFormField3.orderFormField4.orderFormField5.orderFormField6.orderFormField7.orderFormField8.orderFormField9.orderFormField10 close.orderForm clean.orderForm"/>
+                        <button caption="Cancel" onclick="close.orderForm clean.orderForm"/>
                     </horizontalLayout>
                 </subform>
                 <grid id="gridContractForm">
@@ -108,27 +108,26 @@
                         <label value="BILLING START"/> <textField id="contractFormField6"/>
                     </gridLayout>
                     <horizontalLayout>
-                        <button caption="Add" onclick="addGridRow.contractForm.gridContractForm.contractFormField1.contractFormField2.contractFormField3.contractFormField4.contractFormField5.contractFormField6"/>
-                        <button caption="Cancel" onclick="closeSubform.contractForm"/>
+                        <button caption="Add" onclick="addgridrow.gridContractForm.contractFormField1.contractFormField2.contractFormField3.contractFormField4.contractFormField5.contractFormField6 close.contractForm clean.contractForm"/>
+                        <button caption="Cancel" onclick="close.contractForm clean.contractForm"/>
                     </horizontalLayout>
                 </subform>
             </verticalLayout>
             <verticalLayout>
                 <label value="COMMENTS" styleName="empty bold"/>     
+                <label value="CUSTOMER SERVICE DELIVERY INFORMATION" styleName="empty bold"/>
                 <textArea/>       
             </verticalLayout>
             <verticalLayout>
-                <label value="CUSTOMER SERVICE DELIVERY INFORMATION" styleName="empty bold"/>
                 <gridLayout rows="2" columns="4">
                     <label value="Circuit Origin" styleName="empty subtitle bold" area="0,0,1,0"/>
                     <label value="Circuit Destination" styleName="empty subtitle bold" area="2,0,3,0"/>
-                                                            
                     <label onload="value.i18n.hosterLocation"/><comboBox onload="items.getBuildings"/><label onload="value.i18n.hosterLocation"/><comboBox onload="items.getBuildings"/>
                     <label onload="value.i18n.circuitCode"/><textField /><label onload="value.i18n.circuitCode"/><textField />
                     <label onload="value.i18n.mmrCode"/><textField /><label onload="value.i18n.mmrCode"/><textField />
                     <label value="Node Address" /><textField /><label value="Node Address"/><textField />
                     <label value="Contact Info" /><textField /><label value="Contact Info"/><textField />
-                    <label value="City" /><textField enabled="false"/><label value="City"/><textField enabled="false"/>
+                    <label value="City" /><textField id="txtCircuitOriginCity" enabled="false"/><label value="City"/><textField id="txtCircuitDestinationCity" enabled="false"/>
                     <label value="Country" /><textField enabled="false"/><label value="Country"/><textField enabled="false"/>
                 </gridLayout>
             </verticalLayout>
@@ -150,9 +149,9 @@
                 <label value="AFR-IX COMMERCIAL CONTACT INFO" styleName="empty bold" area="2,0,3,0"/>
                 
                 <label value="Name" /><textField /><label value="Name"/><textField />
-                <label value="Phone" /><textField /><label value="Phone"/><textField />
+                <label value="Phone" /><textField id="txtCommercialPhone1" validate="value.phoneValidator.txtCommercialPhone1"/><label value="Phone"/><textField id="txtCommercialPhone2" validate="value.phoneValidator.txtCommercialPhone2"/>
                 <label value="Cell Phone" /><textField /><label value="Cell phone"/><textField />
-                <label value="Email" /><textField /><label value="Email"/><textField />
+                <label value="Email" /><textField id="txtCommercialEmail1" validate="value.emailValidator.txtCommercialEmail1"/><label value="Email"/><textField id="txtCommercialEmail2" validate="value.emailValidator.txtCommercialEmail2"/>
                 <label value="Fax" /><textField /><label value="Fax"/><textField />
             </gridLayout>
         </verticalLayout>
@@ -163,9 +162,9 @@
                 <label value="AFR-IX TECHNICAL CONTACT INFO" styleName="empty bold" area="2,0,3,0"/>
                 
                 <label value="Name" /><textField /><label value="Name"/><textField />
-                <label value="Phone" /><textField /><label value="Phone"/><textField />
-                <label value="Cell Phone" /><textField /><label value="Cell Phone"/><textField />
-                <label value="E-mail" /><textField /><label value="E-mail"/><textField />
+                <label value="Phone"/><textField id="txtTechnicalPhone1" validate="value.phoneValidator.txtTechnicalPhone1"/><label value="Phone"/><textField id="txtTechnicalPhone2" validate="value.phoneValidator.txtTechnicalPhone2"/>
+                <label value="Cell Phone" /><textField validate="value.phoneValidator.TxtBillingPhone1"/><label value="Cell Phone"/><textField validate="value.phoneValidator.TxtBillingPhone1"/>
+                <label value="E-mail"/><textField id="txtTechnicalEmail1" validate="value.emailValidator.txtTechnicalEmail1"/><label value="E-mail"/><textField id="txtTechnicalEmail2" validate="value.emailValidator.txtTechnicalEmail2"/>
                 <label value="Fax" /><textField /><label value="Fax"/><textField />
             </gridLayout>
         </verticalLayout>
@@ -176,9 +175,9 @@
                 <label value="AFR-IX BILLING CONTACT INFO" styleName="empty bold" area="2,0,3,0"/>
                 
                 <label value="Name"/><textField /><label value="Name"/><textField />
-                <label value="Phone" /><textField id="txtPhone1" validate="value.phoneValidator.txtPhone1"/><label value="Phone"/><textField  id="txtPhone2" validate="value.phoneValidator.txtPhone2"/>
+                <label value="Phone" /><textField id="txtBillingPhone1" validate="value.phoneValidator.txtBillingPhone1"/><label value="Phone"/><textField  id="txtBillingPhone2" validate="value.phoneValidator.txtBillingPhone2"/>
                 <label value="TIN Number"/><textField /><label value="TIN Number"/><textField />
-                <label value="E-mail"/><textField /><label value="E-mail"/><textField />
+                <label value="E-mail"/><textField id="txtBillingEmail1" validate="value.emailValidator.txtBillingEmail1"/><label value="E-mail"/><textField id="txtBillingEmail2" validate="value.emailValidator.txtBillingEmail2"/>
                 <label value="Fax"/><textField /><label value="Fax"/><textField />
                 <label value="City"/><textField /><label value="City"/><textField />
                 <label value="Country"/><textField /><label value="Country"/><textField />
@@ -206,12 +205,29 @@
                 <label value="Date"/><dateField/><label value="Date"/><dateField/>
             </gridLayout>
         </verticalLayout>
+        
+        <verticalLayout>
+            <button caption="Clean Form" onclick="clean.newServiceForm123"/>            
+        </verticalLayout>
+        
     </form>
     <script>
+        <function type="function" name="getServiceCode" parameternames="customer endCustomer typeOfService cityOrigin cityDestination bandwidth">
+            "Hello from Service Code!!!";
+        </function>
         <function type="function" name="getOrderNumber">
             import java.util.Random;
             String.valueOf(new Random().nextInt());
-        </function>     
+        </function>  
+        <function type="validator" name="emailValidator" parameternames="aField" message="The value must be a email">
+            import java.util.regex.Matcher;
+            import java.util.regex.Pattern;
+            
+            Pattern pat = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}\$", Pattern.CASE_INSENSITIVE);
+            if (aField.getValue() == null)
+                return false;
+            return pat.matcher(aField.getValue()).matches();
+        </function>
         <function type="function" name="getValue" parameternames="aField">
             aField.getValue();
         </function>
