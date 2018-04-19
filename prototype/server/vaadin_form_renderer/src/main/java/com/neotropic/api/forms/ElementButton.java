@@ -39,6 +39,18 @@ public class ElementButton extends AbstractElement {
     }
     
     @Override
+    public void onComponentEvent(EventDescriptor event) {
+        if (hasProperty(Constants.EventAttribute.ONCLICK, Constants.Function.OPEN)) {
+            String elementId = getEvents().get(Constants.EventAttribute.ONCLICK).get(Constants.Function.OPEN).get(0);
+
+            AbstractElement anElement = getFormStructure().getElementById(elementId);
+
+            if (anElement instanceof ElementSubform)
+                anElement.fireElementEvent(new EventDescriptor(Constants.Function.OPEN));
+        }
+    }
+    
+    @Override
     public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
         setId(reader);
         setEvents(reader);

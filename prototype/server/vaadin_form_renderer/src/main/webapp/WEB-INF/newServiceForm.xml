@@ -11,47 +11,47 @@
             </verticalLayout>
             
             <gridLayout rows="3" columns="2">
-                <label value="${I18N.orderNumber}"/>
-                <textField id="txtOrderNumber" value="${Query.orderNumber}" enabled="false"/>
+                <label onload="value.i18n.orderNumber"/>
+                <textField id="txtOrderNumber" onload="value.getOrderNumber" enabled="false"/>
                 
-                <label value="${I18N.orderDate}"/>
+                <label onload="value.i18n.orderDate"/>
                 <dateField/>
                 
-                <label value="${I18N.serviceDate}"/>
+                <label onload="value.i18n.serviceDate"/>
                 <dateField/>
             </gridLayout>            
         </gridLayout>
         <verticalLayout>
-            <label value="$lt.span style=$qm. color: green; font-size: 24px; font-family: Arial;$qm.$gt.CUSTOMER ORDER FORM$lt.span/$gt." styleName="empty bold"/>
+            <label value="CUSTOMER ORDER FORM" styleName="empty title bold"/>
             <verticalLayout>
                 <label value="CUSTOMER AND ORDER INFORMATION" styleName="empty bold"/>
                 <gridLayout rows="2" columns="4">
-                    <label value="${I18N.customer}"/>
-                    <comboBox id="cmbCustomer" value="${Query.getCustomers}" onvaluechange="threeCharacterCode.cmbCustomer.txtCustomer" />
-                    <label value="${I18N.acronym}"/>
+                    <label onload="value.i18n.customer"/>
+                    <comboBox id="cmbCustomer" onload="items.getCustomers" onvaluechange="threeCharacterCode.cmbCustomer.txtCustomer" />
+                    <label onload="value.i18n.acronym"/>
                     <textField id="txtCustomer" enabled="false" onvaluechange="notify.txtServiceCode"/>
 
-                    <label value="${I18N.endCustomer}"/>
-                    <comboBox id="cmbEndCustomer" value="${Query.getCustomers}" onvaluechange="threeCharacterCode.cmbEndCustomer.txtEndCustomer"/>
-                    <label value="${I18N.acronym}"/>
+                    <label onload="value.i18n.endCustomer"/>
+                    <comboBox id="cmbEndCustomer" onload="items.getCustomers" onvaluechange="threeCharacterCode.cmbEndCustomer.txtEndCustomer"/>
+                    <label onload="value.i18n.acronym"/>
                     <textField id="txtEndCustomer" enabled="false"/>
                 </gridLayout>
             </verticalLayout>
             <verticalLayout>
                 <label value="SERVICE INFORMATION" styleName="empty bold"/>     
                 <gridLayout rows="3" columns="4">
-                    <label value="${I18N.typeOfService}"/>
-                    <comboBox id="cmbTypeOfService" value="${Query.getServices}" onvaluechange="threeCharacterCode.cmbTypeOfService.txtTypeOfService"/>
-                    <label value="${I18N.acronym}"/>
+                    <label onload="value.i18n.typeOfService"/>
+                    <comboBox id="cmbTypeOfService" onload="items.getServices" onvaluechange="threeCharacterCode.cmbTypeOfService.txtTypeOfService"/>
+                    <label onload="value.i18n.acronym"/>
                     <textField id="txtTypeOfService" enabled="false" onnotify="getServiceCode.txtCustomer"/>
                     
-                    <label value="${I18N.bandwidth}"/>
-                    <comboBox id="cboBandwidth" value="${Query.getBandwidths}" onvaluechange="notify.txtServiceCode"/>
+                    <label onload="value.i18n.bandwidth"/>
+                    <comboBox id="cboBandwidth" onload="items.getBandwidths" onvaluechange="notify.txtServiceCode"/>
                     <label value=" " styleName="empty"/>
                     <label value=" " styleName="empty"/>
 
-                    <label value="${I18N.serviceCode}"/>
-                    <textField id="txtServiceCode" value="${Query.}" enabled="false" preconditions="cmbCustomer cmbEndCustomer cmbTypeOfService cboBandwidth"/>
+                    <label onload="value.i18n.serviceCode"/>
+                    <textField id="txtServiceCode" value="" enabled="false" preconditions="cmbCustomer cmbEndCustomer cmbTypeOfService cboBandwidth"/>
                     <label value=" " styleName="empty"/>
                     <label value=" " styleName="empty"/>
                 </gridLayout>
@@ -70,13 +70,13 @@
                     <column caption="Monthly Recurring"></column>
                     <column caption="Yearly"></column>
                 </grid>
-                <button caption="Add row" onclick="openSubform.orderForm"/>
+                <button caption="Add row" onclick="open.orderForm"/>
                 <subform id="orderForm">
                     <gridLayout rows="10" columns="2">
-                        <label value="ORDER"/> <textField id="orderFormField1" value="${Query.orderNumber}"/>
-                        <label value="ORDER TYPE"/> <comboBox id="orderFormField2" value="${Query.getOrders}"/>
-                        <label value="ORIGIN"/> <comboBox id="orderFormField3" value="${Query.getBuildings}"/>
-                        <label value="DESTINATION"/> <comboBox id="orderFormField4" value="${Query.getBuildings}"/>
+                        <label value="ORDER"/> <textField id="orderFormField1" onload="value.getValue.txtOrderNumber"/>
+                        <label value="ORDER TYPE"/> <comboBox id="orderFormField2" onload="items.getOrders"/>
+                        <label value="ORIGIN"/> <comboBox id="orderFormField3" onload="items.getBuildings"/>
+                        <label value="DESTINATION"/> <comboBox id="orderFormField4" onload="items.getBuildings"/>
                         <label value="SEGMENT"/> <textField id="orderFormField5"/>
                         <label value="A END"/> <textField id="orderFormField6"/>
                         <label value="B END"/> <textField id="orderFormField7"/>
@@ -97,14 +97,14 @@
                     <column caption="BILLING PERIOD"></column>
                     <column caption="BILLING START"></column>
                 </grid>
-                <button caption="Add row" onclick="openSubform.contractForm"/>
+                <button caption="Add row" onclick="open.contractForm"/>
                 <subform id="contractForm">
                     <gridLayout rows="6" columns="2">
-                        <label value="CONTRACT"/> <comboBox id="contractFormField1" value="${Query.getContracts}"/>
+                        <label value="CONTRACT"/> <comboBox id="contractFormField1" onload="items.getContracts"/>
                         <label value="CONTRACT RENEWAL"/> <dateField id="contractFormField2"/>
-                        <label value="INTERFAZ"/> <comboBox id="contractFormField3" value="${Query.getInterfaces}"/>
-                        <label value="CURRENCY"/> <comboBox id="contractFormField4" value="${Query.getCurrencies}"/>
-                        <label value="BILLING PERIOD"/> <comboBox id="contractFormField5" value="${Query.getBillingPeriod}"/>
+                        <label value="INTERFAZ"/> <comboBox id="contractFormField3" onload="items.getInterfaces"/>
+                        <label value="CURRENCY"/> <comboBox id="contractFormField4" onload="items.getCurrencies"/>
+                        <label value="BILLING PERIOD"/> <comboBox id="contractFormField5" onload="items.getBillingPeriod"/>
                         <label value="BILLING START"/> <textField id="contractFormField6"/>
                     </gridLayout>
                     <horizontalLayout>
@@ -120,12 +120,12 @@
             <verticalLayout>
                 <label value="CUSTOMER SERVICE DELIVERY INFORMATION" styleName="empty bold"/>
                 <gridLayout rows="2" columns="4">
-                    <label value="$lt.span style=$qm.color: green; font-family: Arial;$qm.$gt.Circuit Origin$lt.span/$gt." styleName="empty" area="0,0,1,0"/>
-                    <label value="$lt.span style=$qm.color: green; font-family: Arial;$qm.$gt.Circuit Destination$lt.span/$gt." styleName="empty" area="2,0,3,0"/>
+                    <label value="Circuit Origin" styleName="empty subtitle bold" area="0,0,1,0"/>
+                    <label value="Circuit Destination" styleName="empty subtitle bold" area="2,0,3,0"/>
                                                             
-                    <label value="${I18N.hosterLocation}"/><comboBox value="${Query.getBuildings}"/><label value="${I18N.hosterLocation}"/><comboBox value="${Query.getBuildings}"/>
-                    <label value="${I18N.circuitCode}"/><textField /><label value="${I18N.circuitCode}"/><textField />
-                    <label value="${I18N.mmrCode}"/><textField /><label value="${I18N.mmrCode}"/><textField />
+                    <label onload="value.i18n.hosterLocation"/><comboBox onload="items.getBuildings"/><label onload="value.i18n.hosterLocation"/><comboBox onload="items.getBuildings"/>
+                    <label onload="value.i18n.circuitCode"/><textField /><label onload="value.i18n.circuitCode"/><textField />
+                    <label onload="value.i18n.mmrCode"/><textField /><label onload="value.i18n.mmrCode"/><textField />
                     <label value="Node Address" /><textField /><label value="Node Address"/><textField />
                     <label value="Contact Info" /><textField /><label value="Contact Info"/><textField />
                     <label value="City" /><textField enabled="false"/><label value="City"/><textField enabled="false"/>
@@ -176,7 +176,7 @@
                 <label value="AFR-IX BILLING CONTACT INFO" styleName="empty bold" area="2,0,3,0"/>
                 
                 <label value="Name"/><textField /><label value="Name"/><textField />
-                <label value="Phone"/><textField /><label value="Phone"/><textField />
+                <label value="Phone" /><textField id="txtPhone1" validate="value.phoneValidator.txtPhone1"/><label value="Phone"/><textField  id="txtPhone2" validate="value.phoneValidator.txtPhone2"/>
                 <label value="TIN Number"/><textField /><label value="TIN Number"/><textField />
                 <label value="E-mail"/><textField /><label value="E-mail"/><textField />
                 <label value="Fax"/><textField /><label value="Fax"/><textField />
@@ -207,6 +207,27 @@
             </gridLayout>
         </verticalLayout>
     </form>
+    <script>
+        <function type="function" name="getOrderNumber">
+            import java.util.Random;
+            String.valueOf(new Random().nextInt());
+        </function>     
+        <function type="function" name="getValue" parameternames="aField">
+            aField.getValue();
+        </function>
+        <function type="validator" name="phoneValidator" parameternames="aField" message="The value must be a number">
+            aField.getValue().isInteger();
+        </function>
+        <function type="query" name="getCustomers" queryname="getCustomers"/>
+        <function type="query" name="getServices" queryname="getServices"/>
+        <function type="query" name="getBandwidths" queryname="getBandwidths"/>
+        <function type="query" name="getOrders" queryname="getOrders"/>
+        <function type="query" name="getBuildings" queryname="getBuildings"/>
+        <function type="query" name="getContracts" queryname="getContracts"/>
+        <function type="query" name="getInterfaces" queryname="getInterfaces"/> 
+        <function type="query" name="getCurrencies" queryname="getCurrencies"/>
+        <function type="query" name="getBillingPeriod" queryname="getBillingPeriod"/>
+    </script>
     <i18n>
         <messages key="newService">
             <message lang="en_US" value="New Service"/>

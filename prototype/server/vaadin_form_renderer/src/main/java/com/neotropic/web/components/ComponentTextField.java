@@ -37,21 +37,6 @@ public class ComponentTextField extends GraphicalComponent {
         return (TextField) super.getComponent();
     }
         
-//    public ComponentTextField(ElementTextField elementTextField) {
-//        elementTextField.addElementChangeListener(this);
-//        
-//        addValueChangeListener(new ValueChangeListener() {
-//            @Override
-//            public void valueChange(ValueChangeEvent event) {
-//                
-//                if (event.isUserOriginated()) {
-//                    elementChange(new ChangeDescriptor(
-//                        ComponentTextField.this, Constants.Attribute.VALUE, event.getOldValue(), event.getValue()));
-//                }
-//            }
-//        });
-//    }
-    
     @Override
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementTextField) {
@@ -64,33 +49,32 @@ public class ComponentTextField extends GraphicalComponent {
                 
                 @Override
                 public void valueChange(HasValue.ValueChangeEvent event) {
-                    fireComponentEvent(new EventDescriptor(Constants.EventAttribute.ONVALUECHANGE, event.getValue(), event.getOldValue()));
+                    
+                    if (event.isUserOriginated()) {
+                        fireComponentEvent(new EventDescriptor(
+                            Constants.EventAttribute.ONPROPERTYCHANGE, 
+                            Constants.Property.VALUE, event.getValue(), event.getOldValue()));
+                    }
                 }
             });
         }
         /*
-        childComponent = new TextField();
         String value = evaluator.getValue(((ElementTextField) childElement).getValue());
         ((TextField) childComponent).setValue(value != null ? value : "");
         ((TextField) childComponent).setEnabled(((ElementTextField) childElement).isEnabled());
-
-        ((TextField) childComponent).addValueChangeListener(new HasValue.ValueChangeListener() {
-            @Override
-            public void valueChange(HasValue.ValueChangeEvent event) {
-                if (childElement.getEvents() != null)
-                    if (childElement.getEvents().containsKey(Constants.EventAttribute.ONVALUECHANGE)) {
-                        textFieldOnvaluechange(childElement.getEvents().get(Constants.EventAttribute.ONVALUECHANGE));
-                    }                            
-            }
-        });
         */
     }
     
     @Override
     public void onElementEvent(EventDescriptor event) {
-        if (Constants.Function.SET_VALUE.equals(event.getName())) {
-            getComponent().setValue("Hola Text Field");
+        if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+            
+            if (Constants.Property.VALUE.equals(event.getPropertyName()))
+                getComponent().setValue(event.getNewValue().toString());
         }
+////        if (Constants.Function.SET_VALUE.equals(event.getEventName())) {
+////            getComponent().setValue("Hola Text Field");
+////        }
     }
     
 }

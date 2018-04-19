@@ -1,0 +1,32 @@
+<root>
+    <form title="Sample form">
+        <textField id="txtF0" onpropertychange="value.setF0" enabled="false" />
+        <textField id="txtF1" onpropertychange="value.setF1.txtF2" enabled="false" />
+        <textField id="txtF2" onload="value.i18n.newService" validate="value.validatorX.txtF2" propertychangelistener="txtF1 txtF0"/>
+        <comboBox onload="items.getServices" propertychangelistener="txtF0"/>
+    </form>
+    <script>
+        <function type="function" name="setF0">
+            import java.util.Random;
+            String.valueOf(new Random().nextInt()) + "Text Field F1";
+        </function>
+        <function type="function" name="setF1" parameternames="aTextField">
+            aTextField.getValue() + " algo";
+        </function>
+        <function type="validator" name="phoneValidator" parameternames="aField" message="The value must be a number">
+            aField.getValue().isInteger();
+        </function>
+        <function type="function" name="initTxtF2">
+            "Hola mundo";
+        </function>
+        <function type="query" name="getServices" queryname="getServices"/>
+        <!-- <query name="x" parameternames="y z w">-->
+        <!-- <validator name="x" queryName="" parameternames="y z w" message="...">-->
+    </script>   
+    <i18n>
+        <messages key="newService">
+            <message lang="en_US" value="New Service Locas"/>
+            <message lang="es_ES" value="Nuevo servicio"/>
+        </messages>
+    </i18n> 
+</root>

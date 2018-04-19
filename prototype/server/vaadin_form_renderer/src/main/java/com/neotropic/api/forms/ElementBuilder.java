@@ -56,7 +56,7 @@ public class ElementBuilder {
     private ElementScript elementScript;
     private ElementI18N elementI18N;
     
-    private ScriptRunner scriptRunner;
+    private ScriptRunner2 scriptRunner;
         
     private Evaluator evaluator;
         
@@ -76,7 +76,7 @@ public class ElementBuilder {
         return evaluator == null ? evaluator = new Evaluator(elementI18N) : evaluator;
     }
     
-    public ScriptRunner getScriptRunner() {
+    public ScriptRunner2 getScriptRunner() {
         return scriptRunner;
     }
     
@@ -188,14 +188,25 @@ public class ElementBuilder {
             }
             reader.close();
             
-            scriptRunner = new ScriptRunner(new FormStructure(elements, elementScript, elementI18N));
+            FormStructure formStructure = new FormStructure(elements, elementScript, elementI18N);
+                    
+            scriptRunner = new ScriptRunner2(formStructure);
                         
-            for (AbstractElement element : elements)
+            for (AbstractElement element : elements) {
                 element.setScriptRunner(scriptRunner);
+                element.setFormStructure(formStructure);
+            }
+            if (elementScript != null && elementScript.getFunctions() != null)
+                elementScript.getFunctions().put(Constants.Function.I18N, new FunctionI18N(elementI18N));
                 
         } catch (XMLStreamException ex) {
             Logger.getLogger(ElementBuilder.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public void fireOnload() {
+        for (AbstractElement element : elements)
+            element.fireOnload();
     }
 }
 /*

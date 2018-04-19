@@ -43,8 +43,13 @@ public class ComponentTextArea extends GraphicalComponent {
             getComponent().addValueChangeListener(new ValueChangeListener() {
                 @Override
                 public void valueChange(HasValue.ValueChangeEvent event) {
-                    fireComponentEvent(new EventDescriptor(Constants.EventAttribute.ONVALUECHANGE, 
-                        event.getValue(), event.getOldValue()));
+                    
+                    if (event.isUserOriginated()) {
+                        fireComponentEvent(new EventDescriptor(
+                            Constants.EventAttribute.ONPROPERTYCHANGE, 
+                            Constants.Property.VALUE, 
+                            event.getValue(), event.getOldValue()));
+                    }
                 }
             });
         }

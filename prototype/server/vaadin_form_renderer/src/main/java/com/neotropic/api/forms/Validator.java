@@ -24,14 +24,14 @@ import java.util.List;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class Function implements Runner {
-    private String functionName;
+public class Validator implements Runner {
+    private String validatorName;
     private List<String> parameterNames;
     private String script;
+    private String message;
     
-    public Function(String functionName, String paramNames, String script) {
-        this.functionName = functionName;
-        
+    public Validator(String validatorName, String paramNames, String script, String message) {
+        this.validatorName = validatorName;
         if (paramNames != null) {
             
             String[] parameterNamesArray = paramNames.split(" ");
@@ -42,38 +42,41 @@ public class Function implements Runner {
             }
         }
         this.script = script;
+        this.message = message; 
     }
     
-    public String getFunctionName() {
-        return functionName;
+    public String getValidatorName() {
+        return validatorName;
     }
     
-    public void setFunctionName(String functionName) {
-        this.functionName = functionName;
+    public void setValidatorName(String validatorName) {
+        this.validatorName = validatorName;
     }
     
-    public List<String> getParametersNames() {
-        return parameterNames;        
-    }
-    
-    public void setParametersNames(List<String> parametersNames) {
-        this.parameterNames = parametersNames;
+    public List<String> getParameterNames() {
+        return parameterNames;                
     }
     
     public String getScript() {
-        return script;        
+        return script;
     }
     
     public void setScript(String script) {
-        this.script = script;        
+        this.script = script;
     }
-
-//    @Override
-//    public Object run() {
-//        GroovyShell shell = new GroovyShell(Function.class.getClassLoader());
-//        return shell.evaluate(script);
-//    }
-
+    
+    public void setParameterNames(List<String> parameterNames) {
+        this.parameterNames = parameterNames;        
+    }
+    
+    public String getMessage() {
+        return message;
+    }
+    
+    public void setMessage(String message) {
+        this.message = message;
+    }
+            
     @Override
     public Object run(List parameters) {
         GroovyShell shell = null;
@@ -90,7 +93,6 @@ public class Function implements Runner {
             shell = new GroovyShell(Function.class.getClassLoader());
                 
         return shell.evaluate(script);
-            
-//        return null; //TODO: throw a exception: the list of parameters no match etc
     }
+    
 }

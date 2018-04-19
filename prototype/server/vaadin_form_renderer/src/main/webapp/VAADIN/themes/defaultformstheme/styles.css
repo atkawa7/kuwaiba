@@ -15070,8 +15070,21 @@ div.v-layout.v-horizontal.v-widget {
 	font-weight: bold;
 }
 
+.defaultformstheme .v-label.title {
+	color: green;
+	font-size: 24pt;
+}
+
+.defaultformstheme .v-label.subtitle {
+	color: green;
+}
+
+.defaultformstheme .v-verticallayout, .defaultformstheme .v-horizontallayout, .defaultformstheme .v-gridlayout {
+	padding: 1px 1px 1px 1px;
+	margin: 1px 1px 1px 1px;
+}
+
 .defaultformstheme .v-button {
-	border-radius: 15px;
 	border: 2px solid lightgray;
 	font-size: 12pt;
 	line-height: 12pt;

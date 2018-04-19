@@ -15,55 +15,48 @@
 package com.neotropic.api.forms;
 
 /**
- *
+ * TODO: deletes this class
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class EventDescriptor {
-    private String eventName;
+public class PropertyChangeEvent {
+    private AbstractElement source;
     private String propertyName;
-    private Object oldValue;
     private Object newValue;
+    private Object oldValue;
     
-    public EventDescriptor() {
-    }
-    
-    public EventDescriptor(String eventName) {
-        this.eventName = eventName;
-    }
-    
-    public EventDescriptor(String eventName, String propertyName, Object newValue, Object oldValue) {
-        this(eventName);
+    public PropertyChangeEvent(AbstractElement source, String propertyName, Object newValue, Object oldValue) {
+        this.source = source;
         this.propertyName = propertyName;
         this.newValue = newValue;
         this.oldValue = oldValue;
     }
     
+    public AbstractElement getSource() {
+        return source;
+    }
+    
+    public void setSource(AbstractElement source) {
+        this.source = source;        
+    }
+    
     public String getPropertyName() {
-        return propertyName;
+        return propertyName;        
     }
     
     public void setPropertyName(String propertyName) {
-        this.propertyName = propertyName;
-    }
-    
-    public String getEventName() {
-        return eventName;
-    }
-    
-    public void setEventName(String name) {
-        this.eventName = name;
+        this.propertyName = propertyName;        
     }
     
     public Object getNewValue() {
-        return newValue;
+        return newValue;        
     }
     
     public void setNewValue(Object newValue) {
-        this.newValue = newValue;        
+        this.newValue = newValue;
     }
     
     public Object getOldValue() {
-        return oldValue;        
+        return oldValue;
     }
     
     public void setOldValue(Object oldValue) {

@@ -46,8 +46,13 @@ public class ComponentDateField extends GraphicalComponent {
             getComponent().addValueChangeListener(new ValueChangeListener<LocalDate>() {
                 @Override
                 public void valueChange(HasValue.ValueChangeEvent<LocalDate> event) {
-                    fireComponentEvent(new EventDescriptor(Constants.EventAttribute.ONVALUECHANGE, 
-                        event.getValue(), event.getOldValue()));
+                    
+                    if (event.isUserOriginated()) {
+                        fireComponentEvent(new EventDescriptor(
+                            Constants.EventAttribute.ONPROPERTYCHANGE, 
+                            Constants.Property.VALUE, 
+                            event.getValue(), event.getOldValue()));
+                    }
                 }
             });
         }

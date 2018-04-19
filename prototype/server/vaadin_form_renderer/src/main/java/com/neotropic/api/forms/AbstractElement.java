@@ -17,7 +17,10 @@ package com.neotropic.api.forms;
 import com.neotropic.web.components.ComponentEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -27,24 +30,38 @@ import javax.xml.stream.XMLStreamReader;
  * General java representation of a Tag
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public abstract class AbstractElement implements Tag, ComponentEventListener {
+public abstract class AbstractElement implements Tag, ComponentEventListener, PropertyChangeListener {
     /**
      * Tags of Attributes
      */
     private String id;
-    private String name;
     private List<Integer> area;
     private String styleName;
+    /**
+     * Properties
+     */
     private boolean enabled = true;
     /**
      * event->function->parameters
      */    
     private HashMap<String, HashMap<String, List<String>>> events;
     
-    private ScriptRunner scriptRunner;    
+    private ScriptRunner2 scriptRunner;    
     
     private ElementEventListener elementEventListener;
     
+    private List<String> propertyChangeListeners;
+    
+    private FormStructure formStructure;
+    
+    public FormStructure getFormStructure() {
+        return formStructure;
+    }
+    
+    public void setFormStructure(FormStructure formStructure) {
+        this.formStructure = formStructure;
+    }
+        
     public String getId() {
         return id;
     }
@@ -52,15 +69,7 @@ public abstract class AbstractElement implements Tag, ComponentEventListener {
     public void setId(String id) {
         this.id = id;
     }
-        
-    public String getName() {
-        return name;
-    }
-    
-    public void setName(String name) {
-        this.name = name;
-    }
-        
+            
     public List<Integer> getArea() {
         return area;
     }
@@ -85,6 +94,57 @@ public abstract class AbstractElement implements Tag, ComponentEventListener {
         this.enabled = enabled;
     }
     
+    public void addPropertyChangeListener(String propertyChangeListener) {
+        if (propertyChangeListeners == null)
+            propertyChangeListeners = new ArrayList();
+        
+        if (propertyChangeListener != null)
+            propertyChangeListeners.add(propertyChangeListener);
+    }
+    
+    public void removePropertyChangeListener(String propertyChangeListener) {
+        if (propertyChangeListeners != null)
+            propertyChangeListeners.remove(propertyChangeListener);
+    }
+    
+    public void firePropertyChangeEvent() {
+        if (propertyChangeListeners != null) {
+            
+            Iterator<String> iterator = propertyChangeListeners.iterator();
+            
+            while (iterator.hasNext()) {
+
+                PropertyChangeListener pcl = getFormStructure().getElementById(iterator.next());
+
+                if (pcl != null)
+                    pcl.propertyChange();
+            }
+        }
+    }
+    
+    @Override
+    public void propertyChange() {
+        if (getEvents() != null && getEvents().containsKey(Constants.EventAttribute.ONPROPERTYCHANGE)) {
+            
+            if (getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE) != null &&
+                    getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE).containsKey(Constants.Property.ENABLED)) {
+                
+                boolean oldValue = isEnabled();
+                boolean newValue = true; // TODO: script runner
+                
+                setEnabled(newValue);
+                
+                firePropertyChangeEvent();
+                
+                fireElementEvent(new EventDescriptor(
+                    Constants.EventAttribute.ONPROPERTYCHANGE, 
+                    Constants.Property.ENABLED, newValue, oldValue));
+                                
+            }
+        }
+////        getScriptRunner().run(this, Constants.EventAttribute.ONPROPERTYCHANGE);
+    }
+    
     public HashMap<String, HashMap<String, List<String>>> getEvents() {
         return events;
     }
@@ -93,17 +153,27 @@ public abstract class AbstractElement implements Tag, ComponentEventListener {
         this.events = events;
     }
     
-    public ScriptRunner getScriptRunner() {
+    public ScriptRunner2 getScriptRunner() {
         return scriptRunner;
     }
     
-    public void setScriptRunner(ScriptRunner scriptRunner) {
+    public void setScriptRunner(ScriptRunner2 scriptRunner) {
         this.scriptRunner = scriptRunner;
     }
         
     @Override
     public void onComponentEvent(EventDescriptor event) {
-        getScriptRunner().run(this, event.getName());
+        if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+            if (Constants.Property.ENABLED.equals(event.getPropertyName())) {
+                try {
+                    setEnabled(Boolean.valueOf(String.valueOf(event.getNewValue())));
+                    firePropertyChangeEvent();
+                } catch (Exception ex) {
+                    Logger.getLogger(AbstractElement.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+////        getScriptRunner().run(this, event.getEventName());
     }
     
     public void setElementEventListener(ElementEventListener elementEventListener) {
@@ -124,6 +194,8 @@ public abstract class AbstractElement implements Tag, ComponentEventListener {
         setArea(reader);
         setEvents(reader);
         setStyleName(reader);
+        setPropertyChangeListener(reader);
+        setEnabled(reader);
     }
     
     public void setId(XMLStreamReader reader) {
@@ -145,11 +217,30 @@ public abstract class AbstractElement implements Tag, ComponentEventListener {
         }
     }
     
+    public void setPropertyChangeListener(XMLStreamReader reader) {
+        String listeners = reader.getAttributeValue(null, Constants.Attribute.PROPERTY_CHANGE_LISTENER);
+        
+        if (listeners != null) {
+            
+            String[] listenersArray = listeners.split(" ");
+            
+            if (listenersArray != null) {
+                propertyChangeListeners = new ArrayList();
+                
+                for (String listener : listenersArray)
+                    propertyChangeListeners.add(listener);
+            }
+        }
+    }
+    
     public void setEvents(XMLStreamReader reader) {
         String [] eventAttrs = {
             Constants.EventAttribute.ONCLICK, 
-            Constants.EventAttribute.ONVALUECHANGE, 
-            Constants.EventAttribute.ONNOTIFY};
+////            Constants.EventAttribute.ONVALUECHANGE, 
+            Constants.EventAttribute.ONNOTIFY, 
+            Constants.EventAttribute.ONPROPERTYCHANGE, 
+            Constants.EventAttribute.ONLOAD,
+            Constants.Function.VALIDATE};
         
         for (String eventAttr : eventAttrs) {
             
@@ -193,4 +284,19 @@ public abstract class AbstractElement implements Tag, ComponentEventListener {
         if (attrValue != null)
             enabled = Boolean.valueOf(attrValue);
     }
+    
+    public void fireOnload() {
+//        if (hasProperty(Constants.EventAttribute.ONLOAD, Constants.Property.ENABLED))
+                                    
+    }
+    
+    public boolean hasEventAttribute(String eventAttribute) {
+        return getEvents() != null && getEvents().containsKey(eventAttribute);
+    }
+    
+    public boolean hasProperty(String eventAttribute, String propertyName) {
+        return hasEventAttribute(eventAttribute) && 
+               getEvents().get(eventAttribute) != null && 
+               getEvents().get(eventAttribute).containsKey(propertyName);
+    }    
 }

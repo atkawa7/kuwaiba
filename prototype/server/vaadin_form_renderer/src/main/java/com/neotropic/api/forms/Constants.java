@@ -56,17 +56,39 @@ public class Constants {
         public static final String ENABLED="enabled"; //NOI18N
         public static final String PRECONDITIONS="preconditions"; //NOI18N
         public static final String NAME = "name"; //NOI18N
+        public static final String PROPERTY_CHANGE_LISTENER = "propertychangelistener"; //NOI18N
+        public static final String PARAMETER_NAMES = "parameternames"; //NOI18N
+        public static final String TYPE = "type"; //NOI18N
+        public static final String QUERY_NAME = "queryname"; //NOI18N
+        public static final String MESSAGE = "message";
     }
     
     public class EventAttribute {
         public static final String ONCLICK = "onclick"; //NOI18N
-        public static final String ONVALUECHANGE = "onvaluechange"; //NOI18N
+////        public static final String ONVALUECHANGE = "onvaluechange"; //NOI18N
         public static final String ONNOTIFY = "onnotify"; //NOI18N
+        public static final String ONPROPERTYCHANGE = "onpropertychange"; //NOI18N
+        public static final String ONLOAD = "onload"; //NOI18N
     }
     
     public class Function {
-        public static final String GLOBAL = "global";
-        public static final String OPEN = "open";
-        public static final String SET_VALUE = "setValue";
+        public static final String GLOBAL = "global"; //NOI18N
+        public static final String OPEN = "open"; //NOI18N
+        public static final String SET_VALUE = "setValue"; //NOI18N
+        public static final String VALIDATE = "validate"; //NOI18N
+        public static final String I18N = "i18n"; //NOI18N
+        
+        public class Type {
+            public static final String FUNCTION = "function";
+            public static final String QUERY = "query";
+            public static final String VALIDATOR = "validator";
+        }
+    }
+    
+    public class Property {
+        public static final String VALUE = "value"; //NOI18N
+        public static final String ENABLED = "enabled"; //NOI18N
+        public static final String DUMMY_PROPERTY = "dummyproperty"; //NOI18N
+        public static final String ITEMS = "items"; //NOI18N
     }
 }

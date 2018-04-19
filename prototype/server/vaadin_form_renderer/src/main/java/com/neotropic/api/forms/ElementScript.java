@@ -25,24 +25,28 @@ import javax.xml.stream.XMLStreamReader;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ElementScript implements Tag {
-    private HashMap<String, String> functions;
+    private HashMap<String, Runner> functions;
         
     public ElementScript() {
     }
     
-    public HashMap<String, String> getFunctions() {
+    public HashMap<String, Runner> getFunctions() {
         return functions;
     }
     
-    public void setFunctions(HashMap<String, String> functions) {
+    public void setFunctions(HashMap<String, Runner> functions) {
         this.functions = functions;
+    }
+    
+    public Runner getFunctionByName(String name) {
+        return functions != null ? functions.get(name) : null;
     }
     
     @Override
     public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
         QName tagScript = new QName(Constants.Tag.SCRIPT);
         QName tagFunction = new QName(Constants.Tag.FUNCTION);
-                
+                        
         functions = new HashMap();
         
         while (true) {
@@ -53,22 +57,41 @@ public class ElementScript implements Tag {
                 if (reader.getName().equals(tagFunction)) {
                     
                     String functionName = reader.getAttributeValue(null, Constants.Attribute.NAME);
-                    String blockOfCode = reader.getElementText();
+                    String functionType = reader.getAttributeValue(null, Constants.Attribute.TYPE);
                     
-                    if (blockOfCode != null) {
+                    if (functionName != null && functionType != null) {
                         
-                        if (functionName == null)
-                            functionName = Constants.Function.GLOBAL;
-                                                
-                        if (functions.containsKey(functionName)) {
-                            
-                            blockOfCode = functions.get(functionName) + " " + blockOfCode;
-                            
-                            functions.put(functionName, blockOfCode);
-                            
-                        } else
-                            functions.put(functionName, blockOfCode);
-                    }
+                        String parameterNames = reader.getAttributeValue(null, Constants.Attribute.PARAMETER_NAMES);
+                        String queryName = reader.getAttributeValue(null, Constants.Attribute.QUERY_NAME);
+                        String message = reader.getAttributeValue(null, Constants.Attribute.MESSAGE);
+                        String blockOfCode = reader.getElementText();
+                        
+                        if (Constants.Function.Type.FUNCTION.equals(functionType)) {
+                            if (blockOfCode != null)
+                                functions.put(functionName, new Function(functionName, parameterNames, blockOfCode));
+                        }
+                        if (Constants.Function.Type.QUERY.equals(functionType)) {
+                            if (queryName != null)
+                                functions.put(functionName, new Query(functionName, queryName, parameterNames));
+                        }
+                        if (Constants.Function.Type.VALIDATOR.equals(functionType)) {
+                            if (message != null)
+                                functions.put(functionName, new Validator(functionName, parameterNames, blockOfCode, message));
+                        }
+                    }                                                            
+                    
+
+//                        if (functionName == null)
+//                            functionName = Constants.Function.GLOBAL;
+//                                                
+//                        if (functions.containsKey(functionName)) {
+//                            
+//                            blockOfCode = functions.get(functionName) + " " + blockOfCode;
+//                            
+//                            functions.put(functionName, blockOfCode);
+//                            
+//                        } else
+//                            functions.put(functionName, blockOfCode);
                 }
             }
             if (reader.getEventType() == XMLStreamConstants.END_ELEMENT) {

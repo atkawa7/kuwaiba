@@ -65,11 +65,11 @@ public class ElementQuery {
             Logger.getLogger(ElementQuery.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-        
+    
     public static ElementQuery getInstance() {
         return instance == null ? instance = new ElementQuery() : instance;
     }
-            
+                
     public List executeQuery(String queryName) {
         if (anotherQueries.contains(queryName)) {
             if ("getServices".equals(queryName))                                
@@ -100,6 +100,7 @@ public class ElementQuery {
                         KuwaibaClient.getInstance().getRemoteSession().getSessionId());
                 
                 LocalTransientQuery localTransientQuery = new LocalTransientQuery(new LocalQuery(query));
+                localTransientQuery.setPage(0);
                 TransientQuery remoteQuery = LocalTransientQuery.toTransientQuery(localTransientQuery);
                 
                 List<ResultRecord> resultRecordList = KuwaibaClient.getInstance().getKuwaibaService().executeQuery(remoteQuery, 

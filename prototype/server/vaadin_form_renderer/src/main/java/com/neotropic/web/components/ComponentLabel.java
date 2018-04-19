@@ -18,6 +18,7 @@ import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
 import com.neotropic.api.forms.Constants;
 import com.neotropic.api.forms.ElementLabel;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Label;
 
 /**
@@ -41,10 +42,10 @@ public class ComponentLabel extends GraphicalComponent {
         if (element instanceof ElementLabel) {
             ElementLabel label = (ElementLabel) element;
             
-            getComponent().setValue(label.getValue());
-            
             if (label.getStyleName() != null)
                 getComponent().setStyleName(label.getStyleName());
+            getComponent().setContentMode(ContentMode.HTML);
+            getComponent().setValue(label.getValue());
         }
         /*
         childComponent = new Label();
@@ -62,8 +63,11 @@ public class ComponentLabel extends GraphicalComponent {
     
     @Override
     public void onElementEvent(EventDescriptor event) {
-        if (Constants.Function.SET_VALUE.equals(event.getName()))
-            getComponent().setValue(((ElementLabel) getComponentEventListener()).getValue());
+        if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+            
+            if (Constants.Property.VALUE.equals(event.getPropertyName()))
+                getComponent().setValue(((ElementLabel) getComponentEventListener()).getValue());
+        }
     }
     
 }

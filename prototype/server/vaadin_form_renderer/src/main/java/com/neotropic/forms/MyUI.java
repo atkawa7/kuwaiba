@@ -33,7 +33,7 @@ public class MyUI extends UI {
             String basepath = VaadinService.getCurrent()
                 .getBaseDirectory().getAbsolutePath();
             
-            Scanner in = new Scanner(new File(basepath + "/WEB-INF/simpleForm.xml"));
+            Scanner in = new Scanner(new File(basepath + "/WEB-INF/newServiceForm.xml"));
             
             String line = "";
             

@@ -21,6 +21,9 @@ import com.neotropic.api.forms.ElementComboBox;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.HasValue.ValueChangeListener;
 import com.vaadin.ui.ComboBox;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -48,9 +51,14 @@ public class ComponentComboBox extends GraphicalComponent {
             getComponent().addValueChangeListener(new ValueChangeListener() {
                 @Override
                 public void valueChange(HasValue.ValueChangeEvent event) {
-                    fireComponentEvent(new EventDescriptor(Constants.EventAttribute.ONVALUECHANGE, 
-                        event.getValue(), event.getOldValue()));
-                }
+                    
+                    if (event.isUserOriginated()) {
+                        fireComponentEvent(new EventDescriptor(
+                            Constants.EventAttribute.ONPROPERTYCHANGE, 
+                            Constants.Property.VALUE, 
+                            event.getValue(), event.getOldValue()));
+                    }
+                } 
             });
         }
         /*
@@ -74,7 +82,17 @@ public class ComponentComboBox extends GraphicalComponent {
     
     @Override
     public void onElementEvent(EventDescriptor event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+            
+            if (Constants.Property.ITEMS.equals(event.getPropertyName())) {
+                List lst = new ArrayList();
+                if (event.getNewValue() != null) {
+                    for (Object obj : (List) event.getNewValue())
+                        lst.add(obj);
+                }
+                getComponent().setItems(lst);
+            }
+        }
     }
     
 }

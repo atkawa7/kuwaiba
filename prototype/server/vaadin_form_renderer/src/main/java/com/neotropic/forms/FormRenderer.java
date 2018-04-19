@@ -91,6 +91,8 @@ public class FormRenderer extends CustomComponent {
             elementsIds.put(builder.getRoot().getId(), builder.getRoot());
                         
         renderRecursive(builder.getRoot(), content);
+        
+        builder.fireOnload();
     }
         
     private void renderRecursive(AbstractElement parentElement, Component parentComponent) {

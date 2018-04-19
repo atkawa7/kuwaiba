@@ -14,6 +14,9 @@
  */
 package com.neotropic.api.forms;
 
+import com.vaadin.ui.Notification;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -34,13 +37,74 @@ public abstract class AbstractElementField extends AbstractElement {
     
     @Override
     public void onComponentEvent(EventDescriptor event) {
-        if (this instanceof AbstractElementField) {
-            if (Constants.EventAttribute.ONVALUECHANGE.equals(event.getName())) {
-                if (event.getNewValue() != null || event.getOldValue() != null)
-                    ((AbstractElementField) this).setValue(event.getNewValue());
+        if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+            if (event.getNewValue() != null || event.getOldValue() != null) {
+                
+                if (Constants.Property.VALUE.equals(event.getPropertyName())) {
+                                        
+                    setValue(event.getNewValue()); // TODO: rollback
+                    
+                    if (hasProperty(Constants.Function.VALIDATE, Constants.Property.VALUE)) {
+                            
+                        List<String> list = getEvents().get(Constants.Function.VALIDATE).get(Constants.Property.VALUE);
+
+                        if (list != null && !list.isEmpty()) {
+
+                            String functionName = list.get(0);
+
+                            Validator validator = (Validator) getFormStructure().getElementScript().getFunctionByName(functionName);
+
+                            List parameters = new ArrayList();
+
+                            for (int i = 1; i < list.size(); i += 1) {
+                                AbstractElement anElement = getFormStructure().getElementById(list.get(i));
+                                parameters.add(anElement != null ? anElement : list.get(i));
+                            }
+                            
+                            Object newValue = validator.run(parameters);
+                            if (newValue instanceof Boolean && !((Boolean) newValue)) {
+                                Notification.show("WARNING", validator.getMessage(), Notification.Type.WARNING_MESSAGE);
+                                return;
+                            }
+                        }
+                    }
+                    firePropertyChangeEvent();
+                }
             }
         }
         super.onComponentEvent(event);
+    }
+    
+    @Override
+    public void fireOnload() {
+        super.fireOnload(); 
+        
+        if (hasProperty(Constants.EventAttribute.ONLOAD, Constants.Property.VALUE)) {
+            
+            List<String> list = getEvents().get(Constants.EventAttribute.ONLOAD).get(Constants.Property.VALUE);
+
+            if (list != null && !list.isEmpty()) {
+
+                String functionName = list.get(0);
+
+                Runner runner = getFormStructure().getElementScript().getFunctionByName(functionName);
+
+                List parameters = new ArrayList();
+
+                for (int i = 1; i < list.size(); i += 1) {
+                    AbstractElement anElement = getFormStructure().getElementById(list.get(i));
+                    parameters.add(anElement != null ? anElement : list.get(i));
+                }
+
+                Object newValue = runner.run(parameters);
+                
+                setValue(newValue);
+                
+                fireElementEvent(new EventDescriptor(
+                    Constants.EventAttribute.ONPROPERTYCHANGE, 
+                    Constants.Property.VALUE, newValue, null));
+            }
+        }                        
     }
             
     @Override
@@ -48,5 +112,69 @@ public abstract class AbstractElementField extends AbstractElement {
         super.initFromXMl(reader);
         value = reader.getAttributeValue(null, Constants.Attribute.VALUE);                
     }
+    
+    @Override
+    public void propertyChange() {
+        if (getEvents() != null && getEvents().containsKey(Constants.EventAttribute.ONPROPERTYCHANGE)) {
+            
+            if (getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE) != null && 
+                getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE).containsKey(Constants.Property.VALUE)) {
+                
+                Object oldValue = getValue();
+////                Object newValue = String.valueOf(Math.random()); //TODO: script runner
+                
+                
+                List<String> list = getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE).get(Constants.Property.VALUE);
+                if (list != null && !list.isEmpty()) {
+                    
+                    String functionName = list.get(0);
+                                        
+                    Runner function = getFormStructure().getElementScript().getFunctionByName(functionName);
+                    
+                    List parameters = new ArrayList();
+                    
+                    for (int i = 1; i < list.size(); i += 1) {
+                        AbstractElement anElement = getFormStructure().getElementById(list.get(i));
+                        parameters.add(anElement != null ? anElement : list.get(i));
+                    }
+                    
+                    Object newValue = function.run(parameters);
+
+                    setValue(newValue);
+
+                    firePropertyChangeEvent();
+
+                    fireElementEvent(new EventDescriptor(
+                        Constants.EventAttribute.ONPROPERTYCHANGE, 
+                        Constants.Property.VALUE, newValue, oldValue));
+                    
+
+                }
+            }
+        }
+        super.propertyChange();
+    }
+    /*
+    @Override
+    public void propertyChange() {
+        if (getEvents() != null && getEvents().containsKey(Constants.EventAttribute.ONPROPERTYCHANGE)) {
+            
+            if (getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE) != null &&
+                    getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE).containsKey(Constants.Property.ENABLED)) {
+                
+                boolean oldValue = isEnabled();
+                boolean newValue = true; // TODO: script runner
+                
+                setEnabled(newValue);
+                
+                fireElementEvent(new EventDescriptor(
+                    Constants.EventAttribute.ONPROPERTYCHANGE, 
+                    Constants.Property.ENABLED, newValue, oldValue));
+                                
+            }
+        }
+////        getScriptRunner().run(this, Constants.EventAttribute.ONPROPERTYCHANGE);
+    }
+    */
     
 }

@@ -1,6 +1,6 @@
 <root>
     <form title="Simple form">
-        <label id="lblLabel" value="label"/>
+        <label id="lblLabel" value="label" onpropertychange="random.value" propertychangelistener="txtField"/>
         <textField id="txtField" onvaluechange="open.lblLabel" />
         <button caption="Button" id="btnButton" onclick="open.subform"/>
         

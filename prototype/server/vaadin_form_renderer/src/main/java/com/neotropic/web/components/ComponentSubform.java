@@ -46,7 +46,7 @@ public class ComponentSubform extends GraphicalComponent {
         
     @Override
     public void onElementEvent(EventDescriptor event) {
-        if (Constants.Function.OPEN.equals(event.getName())) {
+        if (Constants.Function.OPEN.equals(event.getEventName())) {
 
             if (UI.getCurrent() != null) {
                 

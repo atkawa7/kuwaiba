@@ -21,12 +21,12 @@ import java.util.Random;
  * Executes functions on events
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ScriptRunner {
+public class ScriptRunner2 {
     private HashMap<String, String> scripts = new HashMap();
     
     private final FormStructure formStructure;
     
-    public ScriptRunner(FormStructure formStructure) {
+    public ScriptRunner2(FormStructure formStructure) {
         this.formStructure = formStructure;
         
         scripts.put("setLabelValue", "A Label Value");
