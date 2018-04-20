@@ -18,6 +18,7 @@ import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
 import com.neotropic.api.forms.Constants;
 import com.neotropic.api.forms.ElementSubform;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -28,7 +29,7 @@ import com.vaadin.ui.Window;
  */
 public class ComponentSubform extends GraphicalComponent {
     private Window window;
-        
+            
     public ComponentSubform() {
         super(new VerticalLayout());
     }
@@ -52,6 +53,7 @@ public class ComponentSubform extends GraphicalComponent {
                 if (UI.getCurrent() != null) {
                     if (window == null)
                         window = new Window();
+                                        
                     window.setModal(true);
                     window.setContent(getComponent());
                     window.center();

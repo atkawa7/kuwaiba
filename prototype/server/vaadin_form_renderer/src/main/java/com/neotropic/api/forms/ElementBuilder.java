@@ -53,7 +53,7 @@ public class ElementBuilder {
     
     
     private List<AbstractElement> elements = new ArrayList();
-    private ElementScript elementScript;
+    private ElementScript elementScript = new ElementScript();
     private ElementI18N elementI18N;
     
     private ScriptRunner2 scriptRunner;
@@ -180,10 +180,8 @@ public class ElementBuilder {
                         elementI18N = new ElementI18N();
                         elementI18N.initFromXMl(reader);
                     }
-                    if (reader.getName().equals(tagScript)) {
-                        elementScript = new ElementScript();  
+                    if (reader.getName().equals(tagScript))
                         elementScript.initFromXMl(reader);
-                    }
                 }
             }
             reader.close();

@@ -9,6 +9,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -33,7 +34,7 @@ public class MyUI extends UI {
             String basepath = VaadinService.getCurrent()
                 .getBaseDirectory().getAbsolutePath();
             
-            Scanner in = new Scanner(new File(basepath + "/WEB-INF/newServiceForm.xml"));
+            Scanner in = new Scanner(new File(basepath + "/WEB-INF/SOF_V2.xml"));
             
             String line = "";
             
@@ -55,7 +56,10 @@ public class MyUI extends UI {
             
             FormRenderer formRenderer = new FormRenderer(formBuilder);
             
-            subWindow.setContent(formRenderer);
+            Panel pnlForm = new Panel();
+            pnlForm.setContent(formRenderer);
+            pnlForm.setSizeUndefined();
+            subWindow.setContent(pnlForm);
             
             final VerticalLayout layout = new VerticalLayout();
             
@@ -64,6 +68,7 @@ public class MyUI extends UI {
             button.addClickListener(e -> {
                 
                 formRenderer.render();
+                subWindow.setResizable(true);
                 subWindow.center();
                 subWindow.setSizeFull();
                 UI.getCurrent().addWindow(subWindow);

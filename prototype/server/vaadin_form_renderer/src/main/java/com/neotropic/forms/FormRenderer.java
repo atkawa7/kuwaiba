@@ -97,7 +97,8 @@ public class FormRenderer extends CustomComponent {
         
     private void renderRecursive(AbstractElement parentElement, Component parentComponent) {
         
-        if (parentElement instanceof AbstractElementContainer) {
+        if (parentElement instanceof AbstractElementContainer && 
+           ((AbstractElementContainer) parentElement).getChildren() != null) {
             
             for (AbstractElement childElement : ((AbstractElementContainer) parentElement).getChildren()) {
 
