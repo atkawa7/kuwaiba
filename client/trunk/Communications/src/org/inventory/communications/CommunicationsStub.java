@@ -49,6 +49,8 @@ import org.inventory.communications.core.LocalPool;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalReport;
 import org.inventory.communications.core.LocalReportLight;
+import org.inventory.communications.core.LocalScriptQuery;
+import org.inventory.communications.core.LocalScriptQueryResult;
 import org.inventory.communications.core.LocalSyncDataSourceConfiguration;
 import org.inventory.communications.core.LocalSyncFinding;
 import org.inventory.communications.core.LocalSyncGroup;
@@ -97,6 +99,7 @@ import org.inventory.communications.wsclient.RemoteQueryLight;
 import org.inventory.communications.wsclient.RemoteReport;
 import org.inventory.communications.wsclient.RemoteReportLight;
 import org.inventory.communications.wsclient.RemoteResultMessage;
+import org.inventory.communications.wsclient.RemoteScriptQuery;
 import org.inventory.communications.wsclient.RemoteSynchronizationConfiguration;
 import org.inventory.communications.wsclient.RemoteSynchronizationGroup;
 import org.inventory.communications.wsclient.RemoteTask;
@@ -2421,7 +2424,148 @@ public class CommunicationsStub {
             this.error = (ex instanceof SOAPFaultException)? ex.getMessage() : ex.getClass().getSimpleName()+": "+ ex.getMessage();
             return null;
         }
-    }// </editor-fold>
+    }
+    
+    /**
+     * Creates a script query
+     * @param name The script query name
+     * @param description The script query description
+     * @param script The script query block of code
+     * @param parameters Set of parameters to the script query
+     * @return The id of the new script query
+     */
+    public long createScriptQuery(String name, String description, String script, HashMap<String, String> parameters) {
+        try {
+            List<StringPair> params = new ArrayList();
+            
+            for (String parameter : parameters.keySet()) {
+                
+                StringPair stringPair = new StringPair();
+                
+                stringPair.setKey(parameter);
+                stringPair.setValue(parameters.get(parameters));
+                
+                params.add(stringPair);
+            }
+                            
+            return service.createScriptQuery(name, description, script, params, session.getSessionId());
+            
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return -1;
+        }
+    }
+    
+    /**
+     * Updates a script query properties
+     * @param scriptQueryId The script query id
+     * @param propertyName The script query property name
+     * @param propertyValue The script query property value
+     * @return True if update the properties
+     */
+    public boolean updateScriptQueryProperties(long scriptQueryId, String propertyName, String propertyValue) {
+        try {
+            service.updateScriptQueryProperties(scriptQueryId, propertyName, propertyValue, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Updates script query parameters
+     * @param scriptQueryId The script query id
+     * @param parameters The script query parameters
+     * @return False if the script query could not be found
+     */
+    public boolean updateScriptQueryParameters(long scriptQueryId, HashMap<String, String> parameters) {
+        try {
+            List<StringPair> params = new ArrayList();
+            
+            for (String parameter : parameters.keySet()) {
+                StringPair param = new StringPair();
+                
+                param.setKey(parameter);
+                param.setValue(parameters.get(parameter));
+                
+                params.add(param);
+            }
+            service.updateScriptQueryParameters(scriptQueryId, params, session.getSessionId());
+            return true;
+            
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return false;
+        }  
+    }
+    
+    /**
+     * Gets a script query
+     * @param scriptQueryId The script query id
+     * @return A script query or null
+     *         If the script query could not be found
+     */
+    public LocalScriptQuery getScriptQuery(long scriptQueryId)  {
+        try {
+            return new LocalScriptQuery(service.getScriptQuery(scriptQueryId, session.getSessionId()));
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Gets a set of script queries
+     * @return Set of script queries
+     */
+    public List<LocalScriptQuery> getScriptQueries() {
+        try {
+            List<LocalScriptQuery> result = new ArrayList();
+            
+            for (RemoteScriptQuery remoteScriptQuery : service.getScriptQueries(session.getSessionId()))
+                result.add(new LocalScriptQuery(remoteScriptQuery));
+            
+            return result;
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Deletes a script query
+     * @param scriptQueryId The script query id
+     * @return If the script query can no be deleted
+     */
+    public boolean deleteScriptQuery(long scriptQueryId) {
+        try {
+            service.deleteScriptQuery(scriptQueryId, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return false;
+        }        
+    }
+    
+    /**
+     * Executes a script query
+     * @param scriptQueryId The script query id
+     * @return The script query result or null
+     *         If the script query could not be found,
+     *         If the script property can no be found
+     */
+    public LocalScriptQueryResult executeScriptQuery(long scriptQueryId) {
+        try {
+            return new LocalScriptQueryResult(
+                service.executeScriptQuery(scriptQueryId, session.getSessionId()).getResult());
+            
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return null;
+        }
+    }
+    // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Misc methods. Click on the + sign on the left to edit the code.">
 
