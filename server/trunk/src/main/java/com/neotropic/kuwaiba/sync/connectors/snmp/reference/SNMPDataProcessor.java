@@ -43,7 +43,7 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.services.persistence.util.Constants;
-import org.kuwaiba.utils.i18n.I18N;
+import org.kuwaiba.util.i18n.I18N;
 import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
 
 /**

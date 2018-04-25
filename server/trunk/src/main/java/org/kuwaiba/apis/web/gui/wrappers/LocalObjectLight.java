@@ -19,7 +19,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import org.kuwaiba.utils.i18n.I18N;
+import org.kuwaiba.util.i18n.I18N;
 
 /**
  * This class is a simple representation of a business object with a very basic information

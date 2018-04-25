@@ -37,7 +37,7 @@ import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
-import org.kuwaiba.utils.i18n.I18N;
+import org.kuwaiba.util.i18n.I18N;
 import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
 
 /**

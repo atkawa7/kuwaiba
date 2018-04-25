@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -12,19 +12,25 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.kuwaiba.util.i18n;
-
-import java.util.Locale;
+package org.kuwaiba.apis.persistence.application;
 
 /**
- * A wrapper to fetch the internationalization keys using a short syntax 
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * The result of the script query result
+ * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @param <T> The result type
  */
-public class I18N {
-
-    private static final String BUNDLE_PATH="org/kuwaiba/utils/i18n/LANG";
+public class ScriptQueryResult<T> {
+    private T result;
     
-    public static String gm(String key){
-        return java.util.ResourceBundle.getBundle(BUNDLE_PATH, Locale.getDefault()).getString(key);
+    public ScriptQueryResult(T result) {
+        this.result = result;                
+    }
+    
+    public T getResult() {
+        return result;
+    }
+    
+    public void setResult(T result) {
+        this.result = result;
     }
 }

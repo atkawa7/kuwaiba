@@ -62,6 +62,8 @@ import org.kuwaiba.apis.persistence.application.GroupProfileLight;
 import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.application.Privilege;
 import org.kuwaiba.apis.persistence.application.ResultRecord;
+import org.kuwaiba.apis.persistence.application.ScriptQuery;
+import org.kuwaiba.apis.persistence.application.ScriptQueryResult;
 import org.kuwaiba.apis.persistence.application.Session;
 import org.kuwaiba.apis.persistence.application.Task;
 import org.kuwaiba.apis.persistence.application.TaskResult;
@@ -165,6 +167,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      * SyncGroup label
      */
     private Label syncGroupsLabel;
+    /**
+     * Script query label
+     */
+    private Label scriptQueryLabel;
         
     /**
      * Reference to the singleton instance of CacheManager
@@ -206,6 +212,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         businessRulesLabel = Label.label(Constants.LABEL_BUSINESS_RULES);
         generalViewsLabel = Label.label(Constants.LABEL_GENERAL_VIEWS);
         syncGroupsLabel = Label.label(Constants.LABEL_SYNCGROUPS);
+        scriptQueryLabel = Label.label(Constants.LABEL_SCRIPT_QUERY);
             
         try (Transaction tx = graphDb.beginTx()) {
             
@@ -2368,7 +2375,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             int type, ChangeDescriptor changeDescriptor) throws ApplicationObjectNotFoundException, ObjectNotFoundException {
         createObjectActivityLogEntry(userName, className, oid, type, changeDescriptor.getAffectedProperties(), changeDescriptor.getOldValues(), changeDescriptor.getNewValues(), changeDescriptor.getNotes());
     }
-
+    
     @Override
     public long createTask(String name, String description, boolean enabled, boolean commitOnExecute, String script, 
             List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType) {
@@ -2725,6 +2732,180 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
        
     }
     
+    @Override
+    public long createScriptQuery(String name, String description, String script, List<StringPair> parameters) {
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            Node scriptQueryNode = graphDb.createNode(scriptQueryLabel);
+            
+            scriptQueryNode.setProperty(Constants.PROPERTY_NAME, name == null ? "" : name);
+            scriptQueryNode.setProperty(Constants.PROPERTY_DESCRIPTION, description == null ? "" : description);
+            
+            if (script != null)            
+                scriptQueryNode.setProperty(Constants.PROPERTY_SCRIPT, script);
+            
+            if (parameters != null) {
+                for (StringPair parameter : parameters) {
+                    scriptQueryNode.setProperty("PARAM_" + parameter.getKey(), parameter.getValue());
+                }
+            }
+            tx.success();
+            return scriptQueryNode.getId();
+        }
+    }
+    
+    @Override
+    public ChangeDescriptor updateScriptQueryProperties(long scriptQueryId, String propertyName, String propertyValue) 
+        throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            Node scriptQueryNode = Util.findNodeByLabelAndId(scriptQueryLabel, scriptQueryId);
+                        
+            if (scriptQueryNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The script query with id %s could not be found", scriptQueryId));
+            
+            if (Constants.PROPERTY_NAME.equals(propertyName) || 
+                Constants.PROPERTY_DESCRIPTION.equals(propertyName) || 
+                Constants.PROPERTY_SCRIPT.equals(propertyName)) {
+                                
+                String oldPropertyValue = scriptQueryNode.hasProperty(propertyName) ? (String) scriptQueryNode.getProperty(propertyName) : " ";            
+                
+                String scriptQueryName = scriptQueryNode.hasProperty(Constants.PROPERTY_NAME) ? (String) scriptQueryNode.getProperty(Constants.PROPERTY_NAME) : " ";            
+                
+                scriptQueryNode.setProperty(propertyName, propertyValue);
+                
+                tx.success();
+                                    
+                return new ChangeDescriptor(propertyName, oldPropertyValue, propertyValue, String.format("Updated properties in Script Query with name %s and id %s ", scriptQueryName, scriptQueryId));
+                                
+            } else
+                throw new InvalidArgumentException(String.format("%s is not a valid script query property", propertyName));
+            
+        }
+    }
+    
+    @Override
+    public ChangeDescriptor updateScriptQueryParameters(long scriptQueryId, List<StringPair> parameters) 
+        throws ApplicationObjectNotFoundException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            Node scriptQueryNode = Util.findNodeByLabelAndId(scriptQueryLabel, scriptQueryId);
+            
+            if (scriptQueryNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", scriptQueryId));
+            
+            String affectedProperties = "";
+            String oldValues = "";
+            String newValues = "";
+            
+            for (StringPair parameter : parameters) {
+                String parameterKey = "PARAM_" + parameter.getKey();
+                
+                if (scriptQueryNode.hasProperty(parameterKey) && parameter.getValue() == null) {
+                    
+                    oldValues += " " + (scriptQueryNode.hasProperty(parameterKey) ? scriptQueryNode.getProperty(parameterKey) : " ");
+                    newValues += " ";
+                    affectedProperties += " " + parameter.getKey();
+                    
+                    scriptQueryNode.removeProperty(parameterKey);
+                                        
+                } else {
+                    
+                    oldValues += " " + (scriptQueryNode.hasProperty(parameterKey) ? scriptQueryNode.getProperty(parameterKey) : " ");
+                    newValues += " " + parameter.getValue();
+                    affectedProperties += " " + parameter.getKey();
+                    
+                    scriptQueryNode.setProperty(parameterKey, parameter.getValue());
+                }
+            }
+            String scriptQueryName = scriptQueryNode.hasProperty(Constants.PROPERTY_NAME) ? (String) scriptQueryNode.getProperty(Constants.PROPERTY_NAME) : " ";
+            tx.success();
+            
+            return new ChangeDescriptor(affectedProperties, oldValues, newValues, 
+                String.format("Updated parameters in Script Query with name %s and id %s ", scriptQueryName, scriptQueryId));
+        }
+    }
+    
+    @Override
+    public ScriptQuery getScriptQuery(long scriptQueryId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node scriptQueryNode = Util.findNodeByLabelAndId(scriptQueryLabel, scriptQueryId);
+            
+            if (scriptQueryNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A Script Query with id %s could not be found", scriptQueryId));
+            
+            return Util.createScriptQueryFromNode(scriptQueryNode);
+        }
+    }
+    
+    @Override
+    public List<ScriptQuery> getScriptQueries() {
+        try (Transaction tx = graphDb.beginTx()) {
+            ResourceIterator<Node> scriptQueryNodes = graphDb.findNodes(scriptQueryLabel);
+            
+            List<ScriptQuery> allScriptQueries = new ArrayList();
+            
+            while (scriptQueryNodes.hasNext()) {
+                Node scriptQueryNode = scriptQueryNodes.next();
+                allScriptQueries.add(Util.createScriptQueryFromNode(scriptQueryNode));
+            }
+            return allScriptQueries;
+        }
+    }
+    
+    @Override
+    public void deleteScriptQuery(long scriptQueryId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            Node scriptQueryNode = Util.findNodeByLabelAndId(scriptQueryLabel, scriptQueryId);
+            
+            if (scriptQueryNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A Script Query with id %s could not be found", scriptQueryId));
+            
+            scriptQueryNode.delete();
+            tx.success();
+        }
+    }
+    
+    @Override
+    public ScriptQueryResult executeScriptQuery(long scriptQueryId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node scriptQueryNode = Util.findNodeByLabelAndId(scriptQueryLabel, scriptQueryId);
+            
+            if (scriptQueryNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A Script Query with id %s could not be found", scriptQueryId));
+            if (!scriptQueryNode.hasProperty(Constants.PROPERTY_SCRIPT))
+                throw new InvalidArgumentException(String.format("The Script Query with id %s does not have a script", scriptQueryId));
+                        
+            String script = (String) scriptQueryNode.getProperty(Constants.PROPERTY_SCRIPT);
+                        
+            Iterable<String> allProperties = scriptQueryNode.getPropertyKeys();
+            
+            HashMap<String, String> scriptParameters = new HashMap<>();
+            
+            for (String property : allProperties) {
+                if (property.startsWith("PARAM_"))
+                    scriptParameters.put(property.replace("PARAM_", ""), (String) scriptQueryNode.getProperty(property));
+            }
+            Binding environmentParameters = new Binding();
+                        
+            environmentParameters.setVariable("graphDb", graphDb); //NOI18N
+            environmentParameters.setVariable("inventoryObjectLabel", inventoryObjectLabel);
+            environmentParameters.setVariable("classLabel", classLabel); //NOI18N
+            environmentParameters.setVariable("Constants", Constants.class); //NOI18N
+            environmentParameters.setVariable("Direction", Direction.class); //NOI18N
+            environmentParameters.setVariable("RelTypes", RelTypes.class); //NOI18N
+            environmentParameters.setVariable("scriptParameters", scriptParameters); //NOI18N
+                     
+            GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
+            Object theResult = shell.evaluate(script);
+            
+            tx.failure();
+            return new ScriptQueryResult(theResult);
+        }
+    }
     //Templates
     @Override
     public long createTemplate(String templateClass, String templateName) throws MetadataObjectNotFoundException, OperationNotPermittedException {  

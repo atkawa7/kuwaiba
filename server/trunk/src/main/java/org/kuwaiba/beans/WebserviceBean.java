@@ -78,7 +78,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.sync.SyncManager;
 import org.kuwaiba.util.ChangeDescriptor;
 import org.kuwaiba.util.bre.TempBusinessRulesEngine;
-import org.kuwaiba.utils.i18n.I18N;
+import org.kuwaiba.util.i18n.I18N;
 import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
 import org.kuwaiba.interfaces.ws.todeserialize.TransientQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.ApplicationLogEntry;
@@ -93,6 +93,9 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemotePool;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteResultMessage;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQuery;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult;
+import org.kuwaiba.apis.persistence.application.ScriptQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationGroup;
@@ -3199,7 +3202,133 @@ public class WebserviceBean implements WebserviceBeanLocal {
             throw new ServerSideException(ex.getMessage());
         }
     }
-       
+    
+    @Override
+    public long createScriptQuery(String name, String description, String script, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("createScriptQuery", ipAddress, sessionId);
+            
+            
+            long result = aem.createScriptQuery(name, description, script, parameters);
+                        
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created Script Query %s with id %s", name, result));
+            
+            return result;
+            
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void updateScriptQueryProperties(long scriptQueryId, String propertyName, String propertyValue, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("updateScriptQuery", ipAddress, sessionId);
+            
+            ChangeDescriptor changeDescriptor = aem.updateScriptQueryProperties(scriptQueryId, propertyName, propertyValue);
+                        
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                changeDescriptor);
+                        
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void updateScriptQueryParameters(long scriptQueryId, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("updateScriptQueryParameters", ipAddress, sessionId);
+            
+            ChangeDescriptor changeDescriptor = aem.updateScriptQueryParameters(scriptQueryId, parameters);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                changeDescriptor);
+            
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteScriptQuery getScriptQuery(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("getScriptQuery", ipAddress, sessionId);
+            return new RemoteScriptQuery(aem.getScriptQuery(scriptQueryId));
+            
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public List<RemoteScriptQuery> getScriptQueries(String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("getScriptQueries", ipAddress, sessionId);
+            
+            List<ScriptQuery> scriptQueries = aem.getScriptQueries();
+            
+            List<RemoteScriptQuery> result = new ArrayList();
+            
+            for (ScriptQuery scriptQuery : scriptQueries)
+                result.add(new RemoteScriptQuery(scriptQuery));
+                        
+            return result;
+                                                
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void deleteScriptQuery(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("deleteScriptQuery", ipAddress, sessionId);
+            aem.deleteScriptQuery(scriptQueryId);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
+                String.format("Script Query task with id %s", scriptQueryId));
+                                        
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteScriptQueryResult executeScriptQuery(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("executeScriptQuery", ipAddress, sessionId);
+            return new RemoteScriptQueryResult(aem.executeScriptQuery(scriptQueryId).getResult());
+                        
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Sync/Bulk load data methods">

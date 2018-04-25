@@ -40,6 +40,8 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFavoritesFolder;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemotePool;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQueryLight;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQuery;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationGroup;
@@ -368,6 +370,19 @@ public interface WebserviceBeanLocal {
     
     public RemoteTaskResult executeTask(long taskId, String ipAddress, String sessionId) throws ServerSideException;
     
+    public long createScriptQuery(String name, String description, String script, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public void updateScriptQueryProperties(long scriptQueryId, String propertyName, String propertyValue, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public void updateScriptQueryParameters(long scriptQueryId, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public RemoteScriptQuery getScriptQuery(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<RemoteScriptQuery> getScriptQueries(String ipAddress, String sessionId) throws ServerSideException;
+    
+    public void deleteScriptQuery(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public RemoteScriptQueryResult executeScriptQuery(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException;
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Sync/bulkupload methods. Click on the + sign on the left to edit the code.">

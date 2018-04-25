@@ -162,6 +162,10 @@ public class Constants {
      */
     public static final String LABEL_LIST_TYPE = "listType";
     /**
+     * Label used for script query nodes
+     */
+    public static final String LABEL_SCRIPT_QUERY = "scriptQuery";
+    /**
      * Property "background path" for views
      */
     public static final String PROPERTY_BACKGROUND_FILE_NAME = "backgroundPath";

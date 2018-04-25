@@ -934,6 +934,67 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException  If the task doesn't have a script
      */
     public TaskResult executeTask(long taskId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Creates a script query
+     * @param name The script query name
+     * @param description The script query description
+     * @param script The script query block of code
+     * @param parameters Set of parameters to the script query
+     * @return The id of the new script query
+     */
+    public long createScriptQuery(String name, String description, String script, List<StringPair> parameters);
+    
+    /**
+     * Updates a script query properties
+     * @param scriptQueryId The script query id
+     * @param propertyName The script query property name
+     * @param propertyValue The script query property value
+     * @throws ApplicationObjectNotFoundException If the script query could not be found
+     * @throws InvalidArgumentException If the property could not be found
+     * @return The summary of the changes
+     */
+    public ChangeDescriptor updateScriptQueryProperties(long scriptQueryId, String propertyName, String propertyValue) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Updates script query parameters
+     * @param scriptQueryId The script query id
+     * @param parameters The script query parameters
+     * @throws ApplicationObjectNotFoundException If the script query could not be found
+     * @return The summary of the changes
+     */
+    public ChangeDescriptor updateScriptQueryParameters(long scriptQueryId, List<StringPair> parameters) throws ApplicationObjectNotFoundException;
+    
+    /**
+     * Gets a script query
+     * @param scriptQueryId The script query id
+     * @return A script query
+     * @throws ApplicationObjectNotFoundException If the script query could not be found
+     */
+    public ScriptQuery getScriptQuery(long scriptQueryId) throws ApplicationObjectNotFoundException;
+    
+    /**
+     * Gets a set of script queries
+     * @return Set of script queries
+     */
+    public List<ScriptQuery> getScriptQueries();
+    
+    /**
+     * Deletes a script query
+     * @param scriptQueryId The script query id
+     * @throws ApplicationObjectNotFoundException If the script query could not be found
+     */
+    public void deleteScriptQuery(long scriptQueryId) throws ApplicationObjectNotFoundException ;
+    
+    /**
+     * Executes a script query
+     * @param scriptQueryId The script query id
+     * @return The script query result
+     * @throws ApplicationObjectNotFoundException If the script query could not be found
+     * @throws InvalidArgumentException If the script property can no be found
+     */
+    public ScriptQueryResult executeScriptQuery(long scriptQueryId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    
     /**
      * Creates a template.
      * @param templateClass The class you want to create a template for.

@@ -39,7 +39,7 @@ import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.services.persistence.util.Constants;
-import org.kuwaiba.utils.i18n.I18N;
+import org.kuwaiba.util.i18n.I18N;
 import org.snmp4j.smi.OID;
 
 /**

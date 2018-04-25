@@ -15,7 +15,7 @@
  */
 package org.kuwaiba.apis.web.gui.wrappers;
 
-import org.kuwaiba.utils.i18n.I18N;
+import org.kuwaiba.util.i18n.I18N;
 
 
 /**

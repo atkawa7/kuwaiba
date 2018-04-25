@@ -43,6 +43,7 @@ import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.GroupProfileLight;
 import org.kuwaiba.apis.persistence.application.Pool;
 import org.kuwaiba.apis.persistence.application.Privilege;
+import org.kuwaiba.apis.persistence.application.ScriptQuery;
 import org.kuwaiba.apis.persistence.application.Task;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.UserProfileLight;
@@ -475,6 +476,26 @@ public class Util {
                                 parameters, schedule, notificationType, subscribedUsers);
         
     }
+    
+    public static ScriptQuery createScriptQueryFromNode(Node scriptQueryNode) {
+        Iterable<String> allProperties = scriptQueryNode.getPropertyKeys();
+        
+        List<StringPair> parameters = new ArrayList();
+        
+        for (String property : allProperties) {
+            if (property.startsWith("PARAM_"))
+                parameters.add(new StringPair(property.replace("PARAM_", ""), (String) scriptQueryNode.getProperty(property)));
+        }
+        return new ScriptQuery(
+            scriptQueryNode.getId(), 
+            (String) scriptQueryNode.getProperty(Constants.PROPERTY_NAME), 
+            (String) scriptQueryNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+            (String) scriptQueryNode.getProperty(Constants.PROPERTY_SCRIPT), 
+            parameters);
+    }
+    
+        
+    
     
     /**
      * Builds a RemoteBusinessObject instance from a node representing a business object

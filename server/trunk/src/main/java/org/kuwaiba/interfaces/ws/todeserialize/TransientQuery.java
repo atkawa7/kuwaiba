@@ -18,6 +18,8 @@ package org.kuwaiba.interfaces.ws.todeserialize;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * This is a representation in a code friendly flavor of a complex query.
@@ -30,7 +32,7 @@ import java.util.ArrayList;
  * one is used only for query execution purposes
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-
+@XmlAccessorType(XmlAccessType.FIELD)
 public class TransientQuery implements Serializable {
     
     /**
