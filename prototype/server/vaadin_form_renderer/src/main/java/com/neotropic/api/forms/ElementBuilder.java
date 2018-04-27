@@ -46,6 +46,8 @@ public class ElementBuilder {
     private final QName tagHorizontalLayout = new QName(Constants.Tag.HORIZONTAL_LAYOUT);
     private final QName tagImage = new QName(Constants.Tag.IMAGE);
     private final QName tagScript = new QName(Constants.Tag.SCRIPT);
+    private final QName tagPanel = new QName(Constants.Tag.PANEL);
+    private final QName tagTree = new QName(Constants.Tag.TREE);
     
     private final List<QName> containers;
     
@@ -66,6 +68,7 @@ public class ElementBuilder {
         containers.add(tagVerticalLayout);
         containers.add(tagSubform);
         containers.add(tagHorizontalLayout);
+        containers.add(tagPanel);
     }
         
     public ElementForm getRoot() {
@@ -129,6 +132,12 @@ public class ElementBuilder {
                     
                 } else if (reader.getName().equals(tagImage)) {
                     child = new ElementImage();
+                    
+                } else if (reader.getName().equals(tagPanel)) {
+                    child = new ElementPanel();
+                    
+                } else if (reader.getName().equals(tagTree)) {
+                    child = new ElementTree();
                     
                 } else if (reader.getName().equals(tagI18N)) {
                     return event;

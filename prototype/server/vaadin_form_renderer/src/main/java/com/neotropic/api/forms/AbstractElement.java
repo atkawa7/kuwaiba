@@ -42,6 +42,10 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
      * Properties
      */
     private boolean enabled = true;
+    
+    private String width;
+    
+    private String height;
     /**
      * event->function->parameters
      */    
@@ -93,6 +97,22 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
     
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+    
+    public String getHeight() {
+        return height;
+    }
+    
+    public void setHeight(String height) {
+        this.height = height;
+    }
+    
+    public String getWidth() {
+        return width;
+    }
+    
+    public void setWidth(String width) {
+        this.width = width;
     }
     
     public void addPropertyChangeListener(String propertyChangeListener) {
@@ -198,6 +218,8 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
         setStyleName(reader);
         setPropertyChangeListener(reader);
         setEnabled(reader);
+        setHeight(reader);
+        setWidth(reader);
     }
     
     public void setId(XMLStreamReader reader) {
@@ -285,6 +307,14 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
                 
         if (attrValue != null)
             enabled = Boolean.valueOf(attrValue);
+    }
+    
+    public void setHeight(XMLStreamReader reader) {
+        height = reader.getAttributeValue(null, Constants.Property.HEIGHT);
+    }
+    
+    public void setWidth(XMLStreamReader reader) {
+        width = reader.getAttributeValue(null, Constants.Property.WIDTH);
     }
     
     public void fireOnload() {

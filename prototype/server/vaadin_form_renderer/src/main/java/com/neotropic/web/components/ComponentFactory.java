@@ -23,9 +23,11 @@ import com.neotropic.api.forms.ElementGridLayout;
 import com.neotropic.api.forms.ElementHorizontalLayout;
 import com.neotropic.api.forms.ElementImage;
 import com.neotropic.api.forms.ElementLabel;
+import com.neotropic.api.forms.ElementPanel;
 import com.neotropic.api.forms.ElementSubform;
 import com.neotropic.api.forms.ElementTextArea;
 import com.neotropic.api.forms.ElementTextField;
+import com.neotropic.api.forms.ElementTree;
 import com.neotropic.api.forms.ElementVerticalLayout;
 import com.vaadin.ui.Component;
 
@@ -71,6 +73,10 @@ public class ComponentFactory {
             component = new ComponentImage();
         } else if (element instanceof ElementSubform) {
             component = new ComponentSubform();            
+        } else if (element instanceof ElementPanel) {
+            component = new ComponentPanel();            
+        } else if (element instanceof ElementTree) {
+            component = new ComponentTree(new TreeWrapper());            
         }
         
         if (component != null && element != null) {

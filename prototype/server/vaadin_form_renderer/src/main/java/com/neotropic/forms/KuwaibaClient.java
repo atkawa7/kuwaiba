@@ -14,12 +14,14 @@
  */
 package com.neotropic.forms;
 
-import com.neotrppic.wsclient.KuwaibaService;
-import com.neotrppic.wsclient.KuwaibaService_Service;
-import com.neotrppic.wsclient.RemoteSession;
-import com.neotrppic.wsclient.ServerSideException_Exception;
+import org.inventory.communications.wsclient.KuwaibaService;
+import org.inventory.communications.wsclient.KuwaibaService_Service;
+import org.inventory.communications.wsclient.RemoteObjectLight;
+import org.inventory.communications.wsclient.RemoteSession;
+import org.inventory.communications.wsclient.ServerSideException_Exception;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,7 +57,7 @@ public class KuwaibaClient {
     public RemoteSession getRemoteSession() {
         if (remoteSession == null) {
             try {
-                remoteSession = getKuwaibaService().createSession("amartinez", "123");
+                remoteSession = getKuwaibaService().createSession("anUser", "aPassword");
                 
             } catch (ServerSideException_Exception ex) {
                 Logger.getLogger(KuwaibaClient.class.getName()).log(Level.SEVERE, null, ex);
@@ -63,4 +65,12 @@ public class KuwaibaClient {
         }
         return remoteSession;
     }
+    
+    public List<RemoteObjectLight> getObjectChildren(String objectClassName, long oid) {
+        try {
+            return getKuwaibaService().getObjectChildren(objectClassName, oid, 0, getRemoteSession().getSessionId());
+        } catch (ServerSideException_Exception ex) {
+            return null;
+        }
+    }    
 }

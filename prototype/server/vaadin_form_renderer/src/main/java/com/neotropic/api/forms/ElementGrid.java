@@ -51,7 +51,7 @@ public class ElementGrid extends AbstractElement {
     
     @Override
     public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        setId(reader);
+        super.initFromXMl(reader);
         
         columns = new ArrayList();
         QName tagGrid = new QName(Constants.Tag.GRID);

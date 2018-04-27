@@ -16,13 +16,13 @@
 package com.neotropic.api.forms;
 
 import com.neotropic.forms.KuwaibaClient;
-import com.neotrppic.wsclient.ClassInfoLight;
-import com.neotrppic.wsclient.RemoteObjectLight;
-import com.neotrppic.wsclient.RemoteQuery;
-import com.neotrppic.wsclient.RemoteQueryLight;
-import com.neotrppic.wsclient.ResultRecord;
-import com.neotrppic.wsclient.ServerSideException_Exception;
-import com.neotrppic.wsclient.TransientQuery;
+import org.inventory.communications.wsclient.ClassInfoLight;
+import org.inventory.communications.wsclient.RemoteObjectLight;
+import org.inventory.communications.wsclient.RemoteQuery;
+import org.inventory.communications.wsclient.RemoteQueryLight;
+import org.inventory.communications.wsclient.ResultRecord;
+import org.inventory.communications.wsclient.ServerSideException_Exception;
+import org.inventory.communications.wsclient.TransientQuery;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

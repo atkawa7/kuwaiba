@@ -88,7 +88,8 @@ public class Function implements Runner {
             shell = new GroovyShell(Function.class.getClassLoader(), binding);
         } else
             shell = new GroovyShell(Function.class.getClassLoader());
-                
+        
+        script = script.replace("_AND_", "&&");
         return shell.evaluate(script);
             
 //        return null; //TODO: throw a exception: the list of parameters no match etc

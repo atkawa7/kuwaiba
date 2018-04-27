@@ -16,7 +16,7 @@
 
 package org.inventory.communications.core.queries;
 
-import com.neotrppic.wsclient.RemoteQueryLight;
+import org.inventory.communications.wsclient.RemoteQueryLight;
 
 /**
  * This is the simple version of LocalQuery {@link #LocalQuery}

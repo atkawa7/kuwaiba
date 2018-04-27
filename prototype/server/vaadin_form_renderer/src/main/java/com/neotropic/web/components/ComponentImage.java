@@ -40,10 +40,17 @@ public class ComponentImage extends GraphicalComponent {
     @Override
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementImage) {
+            ElementImage image = (ElementImage) element;
             String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-            FileResource resource = new FileResource(new File(basepath + "/WEB-INF/images/image001.png"));
-            
+            FileResource resource = new FileResource(new File(basepath + "/WEB-INF/" + image.getValue()));
+                        
             getComponent().setSource(resource);
+            
+            if (image.getHeight() != null)
+                getComponent().setWidth(image.getHeight());
+            
+            if (image.getWidth() != null)
+                getComponent().setWidth(image.getWidth());
         }
         /*
         String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();

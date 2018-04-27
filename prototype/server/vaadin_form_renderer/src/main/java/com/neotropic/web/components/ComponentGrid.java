@@ -48,7 +48,11 @@ public class ComponentGrid extends GraphicalComponent {
             if (grid.getColums() != null) {
                 for (ElementColumn column : grid.getColums())
                     getComponent().addColumn(row -> row.get(column.getCaption())).setCaption(column.getCaption());
-            }            
+            }
+            if (grid.getWidth() != null)
+                getComponent().setWidth(grid.getWidth());
+            if (grid.getHeight() != null)
+                getComponent().setHeight(grid.getHeight());
         }
         /*
         Grid<HashMap<String, String>> gridComponent = new Grid<>();

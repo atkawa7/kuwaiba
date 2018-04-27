@@ -40,6 +40,9 @@ public class Constants {
         public static final String IMAGE = "image"; //NOI18N
         public static final String SCRIPT = "script"; //NOI18N
         public static final String FUNCTION = "function"; //NOI18N
+        public static final String PANEL = "panel"; //NOI18N
+        public static final String TREE = "tree"; //NOI18N
+        
     }
     
     public class Attribute {
@@ -95,5 +98,7 @@ public class Constants {
         public static final String DUMMY_PROPERTY = "dummyproperty"; //NOI18N
         public static final String ITEMS = "items"; //NOI18N
         public static final String ROWS = "rows"; //NOI18N
+        public static final String HEIGHT = "height"; //NOI18N
+        public static final String WIDTH = "width"; //NOI18N
     }
 }

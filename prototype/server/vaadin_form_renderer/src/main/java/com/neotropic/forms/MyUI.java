@@ -1,6 +1,7 @@
 package com.neotropic.forms;
 
 import com.neotropic.api.forms.ElementBuilder;
+import com.neotropic.web.components.TreeWrapper;
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.Theme;
@@ -29,58 +30,57 @@ public class MyUI extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
+        String [] formFiles = {"formcustomerorder", "formequipmentselector"};
         
-        try {
-            String basepath = VaadinService.getCurrent()
-                .getBaseDirectory().getAbsolutePath();
-            
-            Scanner in = new Scanner(new File(basepath + "/WEB-INF/SOF_V2.xml"));
-            
-            String line = "";
-            
-            while (in.hasNext()) { // Iterates each line in the file
-                line += in.nextLine();
-                // Do something with line
+        String basepath = VaadinService.getCurrent()
+            .getBaseDirectory().getAbsolutePath();
+        
+        VerticalLayout verticalLayout = new VerticalLayout();
+        setContent(verticalLayout);
+        
+////        TreeWrapper treeWrapper = new TreeWrapper();
+////        setContent(treeWrapper.getTree());
+                
+        for (String formFile : formFiles) {
+            try {
+                Scanner in = new Scanner(new File(basepath + "/WEB-INF/" + formFile + ".xml"));
+
+                String line = "";
+
+                while (in.hasNext())
+                    line += in.nextLine();
+                    
+                byte [] structure = line.getBytes();
+
+                in.close();
+
+                ElementBuilder formBuilder = new ElementBuilder();            
+                formBuilder.build(structure);
+
+                Window subWindow = new Window(formBuilder.getEvaluator().getValue(formBuilder.getRoot().getTitle()));
+                subWindow.setModal(true);
+
+                FormRenderer formRenderer = new FormRenderer(formBuilder);
+
+                Panel pnlForm = new Panel();
+                pnlForm.setContent(formRenderer);
+                pnlForm.setSizeUndefined();
+                subWindow.setContent(pnlForm);
+                
+                Button button = new Button(formBuilder.getEvaluator().getValue(formBuilder.getRoot().getTitle()));
+                
+                button.addClickListener(e -> {
+
+                    formRenderer.render();
+                    subWindow.setResizable(true);
+                    subWindow.center();
+                    subWindow.setSizeFull();
+                    UI.getCurrent().addWindow(subWindow);
+                });
+                verticalLayout.addComponents(button);
+                                
+            } catch (FileNotFoundException ex) {
             }
-            byte [] structure = line.getBytes();
-            
-            in.close();
-            
-            ElementBuilder formBuilder = new ElementBuilder();            
-            formBuilder.build(structure);
-            
-//            ScriptRunner scriptRunner = new ScriptRunner(formBuilder.getElements(), formBuilder.getScript().getFunctions());
-                        
-            Window subWindow = new Window(formBuilder.getEvaluator().getValue(formBuilder.getRoot().getTitle()));
-            subWindow.setModal(true);
-            
-            FormRenderer formRenderer = new FormRenderer(formBuilder);
-            
-            Panel pnlForm = new Panel();
-            pnlForm.setContent(formRenderer);
-            pnlForm.setSizeUndefined();
-            subWindow.setContent(pnlForm);
-            
-            final VerticalLayout layout = new VerticalLayout();
-            
-            Button button = new Button(formBuilder.getEvaluator().getValue(formBuilder.getRoot().getTitle()));
-            
-            button.addClickListener(e -> {
-                
-                formRenderer.render();
-                subWindow.setResizable(true);
-                subWindow.center();
-                subWindow.setSizeFull();
-                UI.getCurrent().addWindow(subWindow);
-                
-//                scriptRunner.run(Constants.Function.GLOBAL);
-            });
-            layout.addComponents(button);
-            
-            setContent(layout);
-            
-        } catch (FileNotFoundException ex) {
-            int i = 0;            
         }
     }
 

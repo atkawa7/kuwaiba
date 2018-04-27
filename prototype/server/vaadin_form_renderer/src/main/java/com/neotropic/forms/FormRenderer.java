@@ -27,6 +27,7 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import java.util.HashMap;
@@ -117,8 +118,11 @@ public class FormRenderer extends CustomComponent {
                     components.put(childComponent, childElement);
 
                     if (!(childElement instanceof ElementSubform)) {
-
-                        if (parentComponent instanceof AbstractLayout) {
+                        
+                        if (parentComponent instanceof Panel) {
+                            ((Panel) parentComponent).setContent(childComponent);
+                            
+                        } else if (parentComponent instanceof AbstractLayout) {
                             if (parentComponent instanceof GridLayout) {
 
                                 List<Integer> area = childElement.getArea();

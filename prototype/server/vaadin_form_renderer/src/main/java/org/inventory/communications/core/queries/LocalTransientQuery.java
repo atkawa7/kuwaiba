@@ -17,7 +17,7 @@
 
 package org.inventory.communications.core.queries;
 
-import com.neotrppic.wsclient.TransientQuery;
+import org.inventory.communications.wsclient.TransientQuery;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
