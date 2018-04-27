@@ -42,9 +42,10 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.util.i18n.I18N;
-import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
+
 
 /**
  * Loads data from a SNMP file to replace/update an existing element in the
@@ -284,7 +285,9 @@ public class SNMPDataProcessor {
             if (!key.equals("0")) {
                 List<String> childrenId = mapOfFile.get(key);
                 int w = allData.get("instance").indexOf(key);
-                String patentClassParsed = parseClass(allData.get("entPhysicalClass").get(w),
+                String patentClassParsed = parseClass(
+                        allData.get("entPhysicalModelName").get(w),
+                        allData.get("entPhysicalClass").get(w),
                         allData.get("entPhysicalName").get(w),
                         allData.get("entPhysicalDescr").get(w)//NOI18N
                 );
@@ -297,6 +300,7 @@ public class SNMPDataProcessor {
                     for (String child : childrenId) {
                         int indexOfChild = allData.get("instance").indexOf(child);
                         String childParsedClass = parseClass(
+                                allData.get("entPhysicalModelName").get(w),
                                 allData.get("entPhysicalClass").get(indexOfChild),
                                 allData.get("entPhysicalName").get(indexOfChild),
                                 allData.get("entPhysicalDescr").get(indexOfChild)//NOI18N
@@ -313,19 +317,22 @@ public class SNMPDataProcessor {
 
     /**
      * Creates a kuwaiba's class hierarchy from the SNMP file
+     * @param deviceModel the device model
      * @param className_ the given class name
      * @param name name of the element
      * @param descr description of the element
      * @return equivalent kuwaiba's class
      */
-    public String parseClass(String className_, String name, String descr) {
+    public String parseClass(String deviceModel, String className_, String name, String descr) {
         if (className_.isEmpty())
             return null;
         
         int classId = Integer.valueOf(className_);
         if (classId == 3 && (!name.isEmpty() && !descr.isEmpty())) //chassis
             return className;
-        else if (classId == 10) { //port
+        else if (deviceModel != null && classId == 10 && deviceModel.contains("2960")) 
+            return "ElectricalPort";
+        else if (classId == 10){ //port
             if (name.toLowerCase().contains("usb") || descr.toLowerCase().contains("usb")) //NOI18N
                 return "USBPort";//NOI18N
             else if (name.toLowerCase().contains("fastethernet") || name.toLowerCase().contains("mgmteth") || 
@@ -484,7 +491,10 @@ public class SNMPDataProcessor {
                     objectName = objectName.replace("GigabitEthernet", "Gi"); //NOI18N
                 
                 //We parse the class Id from SNMP into kuwaiba's class name
-                String mappedClass = parseClass(allData.get("entPhysicalClass").get(i), objectName, allData.get("entPhysicalDescr").get(i)); //NOI18N
+                String mappedClass = parseClass(
+                        allData.get("entPhysicalModelName").get(i),
+                        allData.get("entPhysicalClass").get(i), 
+                        objectName, allData.get("entPhysicalDescr").get(i)); //NOI18N
                 
                 if(mappedClass == null) //it was impossible to parse the SNMP class into kuwaiba's class
                     findings.add(new SyncFinding(SyncFinding.EVENT_ERROR,
@@ -773,7 +783,7 @@ public class SNMPDataProcessor {
         }
         if(!foundPath.isEmpty() && !oldBranchesWithMatches.contains(foundPath))
             oldBranchesWithMatches.add(foundPath);
-        //we Check if the branch starts in the first level
+        //we check if the branch starts in the first level, direct child of the chassis
         else if(!hasBeenFound && oldBranchesWithMatches.isEmpty()){
             if(newBranchToEvalueate.get(0).getString("parentClassName").equals(className)){
                 JsonObject jObj = newBranchToEvalueate.get(0);
@@ -781,20 +791,41 @@ public class SNMPDataProcessor {
                 branch.set(0, jObj);
                 return new ArrayList<>();
             }
-            //This is the less accurate method 
+            //This iare the less accurate methods 
+            //we only check for the parent name of the first element of the new 
+            //branch with the last element of the old branch.
             for (long i : oldObjectStructure.keySet()) {
                 List<RemoteBusinessObjectLight> oldBranch = oldObjectStructure.get(i);
                 String objParentName = newBranchToEvalueate.get(0).getString("parentName");
                 String objParentClassName = newBranchToEvalueate.get(0).getString("parentClassName");
-                RemoteBusinessObjectLight oldObj = oldBranch.get(oldBranch.size()-1);
-                RemoteBusinessObjectLight oldParent = bem.getParent(oldObj.getClassName(), oldObj.getId());
-                if (oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName)){
-                    JsonObject jObj = branch.get(0);
-                    jObj = jsonObjectToBuilder(jObj).add("deviceParentId", Long.toString(oldParent.getId())).build();
-                    if(jObj.getString("className").contains("Port"))
-                        editNewPortWithDeviceParentId(jObj);
-                    branch.set(0, jObj);
-                    break;
+                if(oldBranch.size() > 2){ //we only check old branches with more than one element, otherwise they are ports
+                    RemoteBusinessObjectLight oldParent = oldBranch.get(oldBranch.size()-2);
+                    if (oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName)){
+                        JsonObject jObj = branch.get(0);
+                        jObj = jsonObjectToBuilder(jObj).add("deviceParentId", Long.toString(oldParent.getId())).build();
+                        if(jObj.getString("className").contains("Port"))
+                            editNewPortWithDeviceParentId(jObj);
+                        branch.set(0, jObj);
+                        break;
+                    }
+                }
+            }
+            //if the branch could not be found still its necessary to check again 
+            //in the old branch for the second element (an IPboard)
+            for (long i : oldObjectStructure.keySet()) {
+                List<RemoteBusinessObjectLight> oldBranch = oldObjectStructure.get(i);
+                String objParentName = newBranchToEvalueate.get(0).getString("parentName");
+                String objParentClassName = newBranchToEvalueate.get(0).getString("parentClassName");
+                if(oldBranch.size()>1){
+                    RemoteBusinessObjectLight oldParent = oldBranch.get(1);
+                    if (oldParent.getName().equals(objParentName) && oldParent.getClassName().equals(objParentClassName)){
+                        JsonObject jObj = branch.get(0);
+                        jObj = jsonObjectToBuilder(jObj).add("deviceParentId", Long.toString(oldParent.getId())).build();
+                        if(jObj.getString("className").contains("Port"))
+                            editNewPortWithDeviceParentId(jObj);
+                        branch.set(0, jObj);
+                        break;
+                    }
                 }
             }
         }
