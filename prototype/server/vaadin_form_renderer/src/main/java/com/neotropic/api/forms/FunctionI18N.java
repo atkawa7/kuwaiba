@@ -33,6 +33,5 @@ public class FunctionI18N implements Runner {
             return i18n.getMessage((String) parameters.get(0), i18n.getLang());
         return null;
     }
-    
-    
+        
 }

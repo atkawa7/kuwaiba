@@ -17,8 +17,8 @@ package com.neotropic.web.components;
 import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
 import com.neotropic.api.forms.ElementImage;
+import com.neotropic.forms.Variable;
 import com.vaadin.server.FileResource;
-import com.vaadin.server.VaadinService;
 import com.vaadin.ui.Image;
 import java.io.File;
 
@@ -41,8 +41,8 @@ public class ComponentImage extends GraphicalComponent {
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementImage) {
             ElementImage image = (ElementImage) element;
-            String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-            FileResource resource = new FileResource(new File(basepath + "/WEB-INF/" + image.getValue()));
+            
+            FileResource resource = new FileResource(new File(Variable.FORM_RESOURCE_IMAGES + "/" + image.getValue()));
                         
             getComponent().setSource(resource);
             
@@ -52,17 +52,12 @@ public class ComponentImage extends GraphicalComponent {
             if (image.getWidth() != null)
                 getComponent().setWidth(image.getWidth());
         }
-        /*
-        String basepath = VaadinService.getCurrent().getBaseDirectory().getAbsolutePath();
-        FileResource resource = new FileResource(new File(basepath + "/WEB-INF/images/image001.png"));
-
-        childComponent = new Image(null, resource);
-        */
+        
     }
     
     @Override
     public void onElementEvent(EventDescriptor event) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
     
 }

@@ -38,16 +38,8 @@ public class ElementForm extends AbstractElementContainer {
     @Override
     public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
         super.initFromXMl(reader);
-        // This variable is used to verify if the attribute exist and to avoid 
-        // the exceptions that can be caused by the parse of null values
-        String attrValue = reader.getAttributeValue(null, Constants.Attribute.TITLE);
         
-        title = attrValue;
+        title = reader.getAttributeValue(null, Constants.Attribute.TITLE);
     }
-
-////    @Override
-////    public void componentChange(ChangeDescriptor changeDecriptor) {
-////        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-////    }
     
 }

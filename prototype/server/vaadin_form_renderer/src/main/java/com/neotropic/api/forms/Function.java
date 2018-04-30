@@ -67,13 +67,7 @@ public class Function implements Runner {
     public void setScript(String script) {
         this.script = script;        
     }
-
-//    @Override
-//    public Object run() {
-//        GroovyShell shell = new GroovyShell(Function.class.getClassLoader());
-//        return shell.evaluate(script);
-//    }
-
+    
     @Override
     public Object run(List parameters) {
         GroovyShell shell = null;
@@ -91,7 +85,5 @@ public class Function implements Runner {
         
         script = script.replace("_AND_", "&&");
         return shell.evaluate(script);
-            
-//        return null; //TODO: throw a exception: the list of parameters no match etc
     }
 }

@@ -48,21 +48,20 @@ public class ElementBuilder {
     private final QName tagScript = new QName(Constants.Tag.SCRIPT);
     private final QName tagPanel = new QName(Constants.Tag.PANEL);
     private final QName tagTree = new QName(Constants.Tag.TREE);
+    private final QName tagListSelectFilter = new QName(Constants.Tag.LIST_SELECT_FILTER);
     
     private final List<QName> containers;
     
     private ElementForm root;
-    
-    
-    private List<AbstractElement> elements = new ArrayList();
-    private ElementScript elementScript = new ElementScript();
+        
+    private final List<AbstractElement> elements = new ArrayList();
+    private final ElementScript elementScript = new ElementScript();
     private ElementI18N elementI18N;
     
-    private ScriptRunner2 scriptRunner;
+    private byte[] structure;
         
-    private Evaluator evaluator;
-        
-    public ElementBuilder() {
+    public ElementBuilder(byte[] structure) {
+        this.structure = structure;        
         containers = new ArrayList();
         containers.add(tagGridLayout);
         containers.add(tagVerticalLayout);
@@ -73,14 +72,6 @@ public class ElementBuilder {
         
     public ElementForm getRoot() {
         return root;
-    }
-            
-    public Evaluator getEvaluator() {
-        return evaluator == null ? evaluator = new Evaluator(elementI18N) : evaluator;
-    }
-    
-    public ScriptRunner2 getScriptRunner() {
-        return scriptRunner;
     }
     
     private int createFormContaimentHierarchy(AbstractElement parent, XMLStreamReader reader, int event) throws XMLStreamException {
@@ -139,6 +130,9 @@ public class ElementBuilder {
                 } else if (reader.getName().equals(tagTree)) {
                     child = new ElementTree();
                     
+                } else if (reader.getName().equals(tagListSelectFilter)) {
+                    child = new ElementListSelectFilter();
+                    
                 } else if (reader.getName().equals(tagI18N)) {
                     return event;
                     
@@ -163,7 +157,7 @@ public class ElementBuilder {
         return event;
     }    
     
-    public void build(byte[] structure) {
+    public void build() {
 
         try {
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -197,12 +191,10 @@ public class ElementBuilder {
             
             FormStructure formStructure = new FormStructure(elements, elementScript, elementI18N);
                     
-            scriptRunner = new ScriptRunner2(formStructure);
                         
-            for (AbstractElement element : elements) {
-                element.setScriptRunner(scriptRunner);
+            for (AbstractElement element : elements)
                 element.setFormStructure(formStructure);
-            }
+                
             if (elementScript != null && elementScript.getFunctions() != null)
                 elementScript.getFunctions().put(Constants.Function.I18N, new FunctionI18N(elementI18N));
                 
@@ -215,213 +207,5 @@ public class ElementBuilder {
         for (AbstractElement element : elements)
             element.fireOnload();
     }
+    
 }
-/*
-XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-
-QName qNode = new QName("node"); //NOI18N
-QName qEdge = new QName("edge"); //NOI18N
-QName qControlPoint = new QName("controlpoint"); //NOI18N
-QName qPolygon = new QName("polygon"); //NOI18N
-QName qIcon = new QName("icon"); //NOI18N
-
-try {
-    ByteArrayInputStream bais = new ByteArrayInputStream(structure);
-    XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
-
-    while (reader.hasNext()){
-        int event = reader.next();
-        if (event == XMLStreamConstants.START_ELEMENT) {
-            if (reader.getName().equals(qNode)){
-                String objectClass = reader.getAttributeValue(null, "class");
-
-                int x = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
-                int y = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
-                Long objectId = Long.valueOf(reader.getElementText());
-
-                LocalObjectLight lol = CommunicationsStub.getInstance().
-                        getObjectInfoLight(objectClass, objectId);
-                if (lol != null)
-                    this.addNode(lol).setPreferredLocation(new Point(x, y));
-                else
-                    NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, String.format("ViewAbleObject of class %s and id %s could not be found and was removed from the topology view", objectClass, objectId));
-            } else {
-                if (reader.getName().equals(qIcon)){ // FREE CLOUDS
-                        if(Integer.valueOf(reader.getAttributeValue(null,"type"))==1){
-                            int x = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
-                            int y = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
-
-                            long oid = Long.valueOf(reader.getAttributeValue(null,"id"));
-                            LocalObjectLight lol = new LocalObjectLight(oid, reader.getElementText(), null);
-                            this.addNode(lol).setPreferredLocation(new Point(x, y));
-                        }
-                    }
-                else {
-                    if (reader.getName().equals(qEdge)) {
-                        Long aSide = Long.valueOf(reader.getAttributeValue(null,"aside"));
-                        Long bSide = Long.valueOf(reader.getAttributeValue(null,"bside"));
-
-                        LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
-                        Widget aSideWidget = this.findWidget(aSideObject);
-
-                        LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
-                        Widget bSideWidget = this.findWidget(bSideObject);
-
-                        if (aSideWidget == null || bSideWidget == null)
-                            NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, "One or both of the endpoints of a connection could not be found. The connection was removed from the topology view");
-                        else {
-                            String edgeName = "topologyEdge" + aSideObject.getOid() + bSideObject.getOid() + randomGenerator.nextInt(1000);
-                            ConnectionWidget newEdge = (ConnectionWidget)this.addEdge(edgeName);
-                            this.setEdgeSource(edgeName, aSideObject);
-                            this.setEdgeTarget(edgeName, bSideObject);
-                            List<Point> localControlPoints = new ArrayList<>();
-                            while (true) {
-                                reader.nextTag();
-                                if (reader.getName().equals(qControlPoint)) {
-                                    if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
-                                        String cpx = reader.getAttributeValue(null, "x");
-                                        String cpy = reader.getAttributeValue(null, "y");
-                                        Point point = new Point();
-                                        point.setLocation(Double.valueOf(cpx), Double.valueOf(cpy));
-                                        localControlPoints.add(point);
-                                    }
-                                } else {
-                                    newEdge.setControlPoints(localControlPoints, false);
-                                    break;
-                                }
-                            }
-                        }
-                    }// edges endign 
-                    else{ // FREE FRAMES
-                        if (reader.getName().equals(qPolygon)) { 
-                            long oid = randomGenerator.nextInt(1000);
-                            LocalObjectLight lol = new LocalObjectLight(oid, oid + FREE_FRAME + reader.getAttributeValue(null, "title"), null);
-                            Widget myPolygon = addNode(lol);
-                            Point p = new Point();
-                            p.setLocation(Double.valueOf(reader.getAttributeValue(null, "x")), Double.valueOf(reader.getAttributeValue(null, "y")));
-                            myPolygon.setPreferredLocation(p);
-                            Dimension d = new Dimension();
-                            d.setSize(Double.valueOf(reader.getAttributeValue(null, "w")), Double.valueOf(reader.getAttributeValue(null, "h")));
-                            Rectangle r = new Rectangle(d);
-                            myPolygon.setPreferredBounds(r);
-                        }
-                    }//end qPolygon
-                } //end qIcons
-            } // end qNodes
-        } // end if
-    } // end while
-    reader.close();
-
-    this.validate();
-    this.repaint();
-} catch (NumberFormatException | XMLStreamException ex) {
-    NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.ERROR_MESSAGE, "The view seems corrupted and could not be loaded");
-    clear();
-    if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
-        Exceptions.printStackTrace(ex);
-}
-/*
-XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-
-QName qNode = new QName("node"); //NOI18N
-QName qEdge = new QName("edge"); //NOI18N
-QName qControlPoint = new QName("controlpoint"); //NOI18N
-QName qPolygon = new QName("polygon"); //NOI18N
-QName qIcon = new QName("icon"); //NOI18N
-
-try {
-    ByteArrayInputStream bais = new ByteArrayInputStream(structure);
-    XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
-
-    while (reader.hasNext()){
-        int event = reader.next();
-        if (event == XMLStreamConstants.START_ELEMENT) {
-            if (reader.getName().equals(qNode)){
-                String objectClass = reader.getAttributeValue(null, "class");
-
-                int x = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
-                int y = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
-                Long objectId = Long.valueOf(reader.getElementText());
-
-                LocalObjectLight lol = CommunicationsStub.getInstance().
-                        getObjectInfoLight(objectClass, objectId);
-                if (lol != null)
-                    this.addNode(lol).setPreferredLocation(new Point(x, y));
-                else
-                    NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, String.format("ViewAbleObject of class %s and id %s could not be found and was removed from the topology view", objectClass, objectId));
-            } else {
-                if (reader.getName().equals(qIcon)){ // FREE CLOUDS
-                        if(Integer.valueOf(reader.getAttributeValue(null,"type"))==1){
-                            int x = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
-                            int y = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
-
-                            long oid = Long.valueOf(reader.getAttributeValue(null,"id"));
-                            LocalObjectLight lol = new LocalObjectLight(oid, reader.getElementText(), null);
-                            this.addNode(lol).setPreferredLocation(new Point(x, y));
-                        }
-                    }
-                else {
-                    if (reader.getName().equals(qEdge)) {
-                        Long aSide = Long.valueOf(reader.getAttributeValue(null,"aside"));
-                        Long bSide = Long.valueOf(reader.getAttributeValue(null,"bside"));
-
-                        LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
-                        Widget aSideWidget = this.findWidget(aSideObject);
-
-                        LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
-                        Widget bSideWidget = this.findWidget(bSideObject);
-
-                        if (aSideWidget == null || bSideWidget == null)
-                            NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, "One or both of the endpoints of a connection could not be found. The connection was removed from the topology view");
-                        else {
-                            String edgeName = "topologyEdge" + aSideObject.getOid() + bSideObject.getOid() + randomGenerator.nextInt(1000);
-                            ConnectionWidget newEdge = (ConnectionWidget)this.addEdge(edgeName);
-                            this.setEdgeSource(edgeName, aSideObject);
-                            this.setEdgeTarget(edgeName, bSideObject);
-                            List<Point> localControlPoints = new ArrayList<>();
-                            while (true) {
-                                reader.nextTag();
-                                if (reader.getName().equals(qControlPoint)) {
-                                    if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
-                                        String cpx = reader.getAttributeValue(null, "x");
-                                        String cpy = reader.getAttributeValue(null, "y");
-                                        Point point = new Point();
-                                        point.setLocation(Double.valueOf(cpx), Double.valueOf(cpy));
-                                        localControlPoints.add(point);
-                                    }
-                                } else {
-                                    newEdge.setControlPoints(localControlPoints, false);
-                                    break;
-                                }
-                            }
-                        }
-                    }// edges endign 
-                    else{ // FREE FRAMES
-                        if (reader.getName().equals(qPolygon)) { 
-                            long oid = randomGenerator.nextInt(1000);
-                            LocalObjectLight lol = new LocalObjectLight(oid, oid + FREE_FRAME + reader.getAttributeValue(null, "title"), null);
-                            Widget myPolygon = addNode(lol);
-                            Point p = new Point();
-                            p.setLocation(Double.valueOf(reader.getAttributeValue(null, "x")), Double.valueOf(reader.getAttributeValue(null, "y")));
-                            myPolygon.setPreferredLocation(p);
-                            Dimension d = new Dimension();
-                            d.setSize(Double.valueOf(reader.getAttributeValue(null, "w")), Double.valueOf(reader.getAttributeValue(null, "h")));
-                            Rectangle r = new Rectangle(d);
-                            myPolygon.setPreferredBounds(r);
-                        }
-                    }//end qPolygon
-                } //end qIcons
-            } // end qNodes
-        } // end if
-    } // end while
-    reader.close();
-
-    this.validate();
-    this.repaint();
-} catch (NumberFormatException | XMLStreamException ex) {
-    NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.ERROR_MESSAGE, "The view seems corrupted and could not be loaded");
-    clear();
-    if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
-        Exceptions.printStackTrace(ex);
-}
-*/

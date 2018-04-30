@@ -42,7 +42,7 @@ public class Constants {
         public static final String FUNCTION = "function"; //NOI18N
         public static final String PANEL = "panel"; //NOI18N
         public static final String TREE = "tree"; //NOI18N
-        
+        public static final String LIST_SELECT_FILTER = "listSelectFilter"; //NOI18N
     }
     
     public class Attribute {
@@ -69,18 +69,15 @@ public class Constants {
     
     public class EventAttribute {
         public static final String ONCLICK = "onclick"; //NOI18N
-////        public static final String ONVALUECHANGE = "onvaluechange"; //NOI18N
         public static final String ONNOTIFY = "onnotify"; //NOI18N
         public static final String ONPROPERTYCHANGE = "onpropertychange"; //NOI18N
         public static final String ONLOAD = "onload"; //NOI18N
     }
     
     public class Function {
-////        public static final String GLOBAL = "global"; //NOI18N
         public static final String OPEN = "open"; //NOI18N
         public static final String CLOSE = "close"; //NOI18N
         public static final String CLEAN = "clean"; //NOI18N
-////        public static final String SET_VALUE = "setValue"; //NOI18N
         public static final String VALIDATE = "validate"; //NOI18N
         public static final String I18N = "i18n"; //NOI18N
         public static final String ADD_GRID_ROW = "addgridrow"; //NOI18N

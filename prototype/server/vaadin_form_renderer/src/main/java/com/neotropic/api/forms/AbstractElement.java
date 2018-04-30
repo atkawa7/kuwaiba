@@ -51,8 +51,6 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
      */    
     private HashMap<String, LinkedHashMap<String, List<String>>> events;
     
-    private ScriptRunner2 scriptRunner;    
-    
     private ElementEventListener elementEventListener;
     
     private List<String> propertyChangeListeners;
@@ -163,7 +161,6 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
                                 
             }
         }
-////        getScriptRunner().run(this, Constants.EventAttribute.ONPROPERTYCHANGE);
     }
     
     public HashMap<String, LinkedHashMap<String, List<String>>> getEvents() {
@@ -174,14 +171,6 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
         this.events = events;
     }
     
-    public ScriptRunner2 getScriptRunner() {
-        return scriptRunner;
-    }
-    
-    public void setScriptRunner(ScriptRunner2 scriptRunner) {
-        this.scriptRunner = scriptRunner;
-    }
-        
     @Override
     public void onComponentEvent(EventDescriptor event) {
         if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
@@ -194,7 +183,6 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
                 }
             }
         }
-////        getScriptRunner().run(this, event.getEventName());
     }
     
     public void setElementEventListener(ElementEventListener elementEventListener) {
@@ -260,7 +248,6 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
     public void setEvents(XMLStreamReader reader) {
         String [] eventAttrs = {
             Constants.EventAttribute.ONCLICK, 
-////            Constants.EventAttribute.ONVALUECHANGE, 
             Constants.EventAttribute.ONNOTIFY, 
             Constants.EventAttribute.ONPROPERTYCHANGE, 
             Constants.EventAttribute.ONLOAD,
@@ -318,8 +305,6 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
     }
     
     public void fireOnload() {
-//        if (hasProperty(Constants.EventAttribute.ONLOAD, Constants.Property.ENABLED))
-                                    
     }
     
     public boolean hasEventAttribute(String eventAttribute) {

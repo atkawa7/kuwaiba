@@ -81,20 +81,7 @@ public class ElementScript implements Tag {
                             if (message != null)
                                 functions.put(functionName, new Validator(functionName, parameterNames, blockOfCode, message));
                         }
-                    }                                                            
-                    
-
-//                        if (functionName == null)
-//                            functionName = Constants.Function.GLOBAL;
-//                                                
-//                        if (functions.containsKey(functionName)) {
-//                            
-//                            blockOfCode = functions.get(functionName) + " " + blockOfCode;
-//                            
-//                            functions.put(functionName, blockOfCode);
-//                            
-//                        } else
-//                            functions.put(functionName, blockOfCode);
+                    }
                 }
             }
             if (reader.getEventType() == XMLStreamConstants.END_ELEMENT) {

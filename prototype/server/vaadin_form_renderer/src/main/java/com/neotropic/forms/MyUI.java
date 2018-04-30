@@ -1,13 +1,11 @@
 package com.neotropic.forms;
 
 import com.neotropic.api.forms.ElementBuilder;
-import com.neotropic.web.components.TreeWrapper;
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinService;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Panel;
@@ -30,57 +28,54 @@ public class MyUI extends UI {
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-        String [] formFiles = {"formcustomerorder", "formequipmentselector"};
-        
-        String basepath = VaadinService.getCurrent()
-            .getBaseDirectory().getAbsolutePath();
+        String path = Variable.FORM_RESOURCE_STRUCTURES;
+                
+        File folder = new File(path);
+        File[] listOfFiles = folder.listFiles();
         
         VerticalLayout verticalLayout = new VerticalLayout();
         setContent(verticalLayout);
-        
-////        TreeWrapper treeWrapper = new TreeWrapper();
-////        setContent(treeWrapper.getTree());
-                
-        for (String formFile : formFiles) {
-            try {
-                Scanner in = new Scanner(new File(basepath + "/WEB-INF/" + formFile + ".xml"));
+                        
+        for (File file : listOfFiles) {
+            Button button = new Button(file.getName());
 
-                String line = "";
+            button.addClickListener(e -> {
 
-                while (in.hasNext())
-                    line += in.nextLine();
-                    
-                byte [] structure = line.getBytes();
+                try {
+                    Scanner in = new Scanner(file);
 
-                in.close();
+                    String line = "";
 
-                ElementBuilder formBuilder = new ElementBuilder();            
-                formBuilder.build(structure);
+                    while (in.hasNext())
+                        line += in.nextLine();
 
-                Window subWindow = new Window(formBuilder.getEvaluator().getValue(formBuilder.getRoot().getTitle()));
-                subWindow.setModal(true);
+                    byte [] structure = line.getBytes();
 
-                FormRenderer formRenderer = new FormRenderer(formBuilder);
+                    in.close();
 
-                Panel pnlForm = new Panel();
-                pnlForm.setContent(formRenderer);
-                pnlForm.setSizeUndefined();
-                subWindow.setContent(pnlForm);
-                
-                Button button = new Button(formBuilder.getEvaluator().getValue(formBuilder.getRoot().getTitle()));
-                
-                button.addClickListener(e -> {
+                    Window subWindow = new Window(file.getName());
+                    subWindow.setModal(true);
+
+                    ElementBuilder formBuilder = new ElementBuilder(structure);            
+                    formBuilder.build();
+
+                    FormRenderer formRenderer = new FormRenderer(formBuilder);
+
+                    Panel pnlForm = new Panel();
+                    pnlForm.setContent(formRenderer);
+                    pnlForm.setSizeUndefined();
+                    subWindow.setContent(pnlForm);
 
                     formRenderer.render();
                     subWindow.setResizable(true);
                     subWindow.center();
                     subWindow.setSizeFull();
                     UI.getCurrent().addWindow(subWindow);
-                });
-                verticalLayout.addComponents(button);
-                                
-            } catch (FileNotFoundException ex) {
-            }
+
+                } catch (FileNotFoundException ex) {
+                }
+            });
+            verticalLayout.addComponents(button);
         }
     }
 

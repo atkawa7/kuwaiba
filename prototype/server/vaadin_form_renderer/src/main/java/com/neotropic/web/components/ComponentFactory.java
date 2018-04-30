@@ -23,6 +23,7 @@ import com.neotropic.api.forms.ElementGridLayout;
 import com.neotropic.api.forms.ElementHorizontalLayout;
 import com.neotropic.api.forms.ElementImage;
 import com.neotropic.api.forms.ElementLabel;
+import com.neotropic.api.forms.ElementListSelectFilter;
 import com.neotropic.api.forms.ElementPanel;
 import com.neotropic.api.forms.ElementSubform;
 import com.neotropic.api.forms.ElementTextArea;
@@ -77,6 +78,8 @@ public class ComponentFactory {
             component = new ComponentPanel();            
         } else if (element instanceof ElementTree) {
             component = new ComponentTree(new TreeWrapper());            
+        } else if (element instanceof ElementListSelectFilter) {
+            component = new ComponentListSelectFilter();            
         }
         
         if (component != null && element != null) {

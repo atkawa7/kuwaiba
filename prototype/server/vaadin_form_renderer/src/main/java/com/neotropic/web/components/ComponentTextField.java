@@ -58,11 +58,7 @@ public class ComponentTextField extends GraphicalComponent {
                 }
             });
         }
-        /*
-        String value = evaluator.getValue(((ElementTextField) childElement).getValue());
-        ((TextField) childComponent).setValue(value != null ? value : "");
-        ((TextField) childComponent).setEnabled(((ElementTextField) childElement).isEnabled());
-        */
+        
     }
     
     @Override
@@ -72,9 +68,7 @@ public class ComponentTextField extends GraphicalComponent {
             if (Constants.Property.VALUE.equals(event.getPropertyName()))
                 getComponent().setValue(event.getNewValue() != null ? event.getNewValue().toString() : "");
         }
-////        if (Constants.Function.SET_VALUE.equals(event.getEventName())) {
-////            getComponent().setValue("Hola Text Field");
-////        }
+        
     }
     
 }

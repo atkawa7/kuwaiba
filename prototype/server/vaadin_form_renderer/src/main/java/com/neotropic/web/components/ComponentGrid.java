@@ -54,19 +54,6 @@ public class ComponentGrid extends GraphicalComponent {
             if (grid.getHeight() != null)
                 getComponent().setHeight(grid.getHeight());
         }
-        /*
-        Grid<HashMap<String, String>> gridComponent = new Grid<>();
-        childComponent = gridComponent;
-
-        ((Grid) childComponent).setSizeFull();
-
-        ElementGrid grid = (ElementGrid) childElement;
-        if (grid.getColums() != null) {
-            for (ElementColumn column : grid.getColums())
-                gridComponent.addColumn(row -> row.get(column.getCaption())).setCaption(column.getCaption());
-////                        ((Grid) childComponent).addColumn(column.getCaption());
-        }
-        */
     }
     
     @Override
@@ -95,49 +82,4 @@ public class ComponentGrid extends GraphicalComponent {
         }
     }
     
-    /*
-                                        List<String> params = functions.get(addGridRow);
-
-                                        if (params != null) {
-                                            String subformId = params.get(0);
-                                            String elementId = params.get(1);
-
-                                            ElementGrid elementGrid = (ElementGrid) getElement(elementId);
-                                            Grid<HashMap<String, String>> grid = (Grid) getComponent(elementId);
-
-                                            if (grid != null) {
-
-                                                int ncolumns = grid.getColumns().size();
-                                                String [] values = new String [ncolumns];
-
-                                                for (int i = 0; i < ncolumns; i += 1) {
-                                                    String paramId = params.get(i + 2);
-                                                    Component component = getComponent(paramId);
-                                                    if (component != null && component instanceof AbstractField) {
-                                                        Object value = ((AbstractField) component).getValue();
-                                                        if (value != null)
-                                                            values[i] = value.toString();
-                                                        else
-                                                            values[i] = "no set";
-                                                    } else {
-                                                        values[i] = "no set";
-                                                    }
-                                                }
-
-                                                HashMap<String, String> columnValues = new HashMap<>();
-
-                                                List<ElementColumn> columns = elementGrid.getColums();
-
-                                                for (int i = 0; i < ncolumns; i+= 1)
-                                                    columnValues.put(columns.get(i).getCaption(), values[i]);
-
-                                                List lst = new ArrayList();
-                                                lst.add(columnValues);
-
-                                                grid.setItems(lst);
-                                                closeWindow(subformId);
-                                            }
-                                        }
-                                    }
-    */    
 }

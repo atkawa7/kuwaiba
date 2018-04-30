@@ -18,9 +18,9 @@ package com.neotropic.api.forms;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementDateField extends AbstractElementField {
+public class ElementListSelectFilter extends AbstractElementSelector {
     
-    public void ElementDateField() {
+    public ElementListSelectFilter() {
     }
-        
+    
 }

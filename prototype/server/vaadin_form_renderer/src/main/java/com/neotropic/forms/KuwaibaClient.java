@@ -57,7 +57,7 @@ public class KuwaibaClient {
     public RemoteSession getRemoteSession() {
         if (remoteSession == null) {
             try {
-                remoteSession = getKuwaibaService().createSession("anUser", "aPassword");
+                remoteSession = getKuwaibaService().createSession(Variable.USER, Variable.PASS);
                 
             } catch (ServerSideException_Exception ex) {
                 Logger.getLogger(KuwaibaClient.class.getName()).log(Level.SEVERE, null, ex);

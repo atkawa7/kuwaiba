@@ -14,56 +14,60 @@
  */
 package com.neotropic.web.components;
 
-import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
 import com.neotropic.api.forms.Constants;
-import com.neotropic.api.forms.ElementComboBox;
+import com.neotropic.api.forms.ElementListSelectFilter;
+import com.neotropic.api.forms.EventDescriptor;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.HasValue.ValueChangeListener;
-import com.vaadin.ui.ComboBox;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ComponentComboBox extends GraphicalComponent {
-    
-    public ComponentComboBox() {
-        super(new ComboBox());
+public class ComponentListSelectFilter extends GraphicalComponent {
+
+    public ComponentListSelectFilter() {
+        super(new ListSelectFilter());
     }
     
     @Override
-    public ComboBox getComponent() {
-        return (ComboBox) super.getComponent();
+    public ListSelectFilter getComponent() {
+        return (ListSelectFilter) super.getComponent();
     }
-    
+
     @Override
     public void initFromElement(AbstractElement element) {
-        if (element instanceof ElementComboBox) {
-            ElementComboBox comboBox = (ElementComboBox) element;
+        if (element instanceof ElementListSelectFilter) {
+            
+            ElementListSelectFilter listSelectFilter = new ElementListSelectFilter();
+            
+            if (listSelectFilter.getItems() != null)
+                getComponent().setItems(listSelectFilter.getItems());
                         
-            if (comboBox.getItems() != null)
-                getComponent().setItems(comboBox.getItems());
-            
-            getComponent().setRequiredIndicatorVisible(comboBox.isMandatory());
-            
-            getComponent().addValueChangeListener(new ValueChangeListener() {
+            getComponent().setValueChangeListener(new ValueChangeListener() {
+                
                 @Override
                 public void valueChange(HasValue.ValueChangeEvent event) {
-                    
-                    if (event.isUserOriginated()) {
-                        fireComponentEvent(new EventDescriptor(
-                            Constants.EventAttribute.ONPROPERTYCHANGE, 
-                            Constants.Property.VALUE, 
-                            event.getValue(), event.getOldValue()));
+                    if (event.getValue() != null && event.getValue() instanceof Set && ((Set) event.getValue()).size() > 0) {
+                        
+                        if (event.isUserOriginated()) {
+                            getComponent().setValue(((Set) event.getValue()).toArray()[0]);
+                            
+                            fireComponentEvent(new EventDescriptor(
+                                Constants.EventAttribute.ONPROPERTYCHANGE, 
+                                Constants.Property.VALUE, 
+                                getComponent().getValue(), event.getOldValue()));
+                        }
                     }
-                } 
+                }
             });
         }
     }
-    
+
     @Override
     public void onElementEvent(EventDescriptor event) {
         if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
@@ -80,5 +84,5 @@ public class ComponentComboBox extends GraphicalComponent {
             }
         }
     }
-    
+            
 }

@@ -151,9 +151,7 @@ public abstract class AbstractElementField extends AbstractElement {
                 getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE).containsKey(Constants.Property.VALUE)) {
                 
                 Object oldValue = getValue();
-////                Object newValue = String.valueOf(Math.random()); //TODO: script runner
-                
-                
+                                
                 List<String> list = getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE).get(Constants.Property.VALUE);
                 if (list != null && !list.isEmpty()) {
                     
@@ -184,27 +182,5 @@ public abstract class AbstractElementField extends AbstractElement {
         }
         super.propertyChange();
     }
-    /*
-    @Override
-    public void propertyChange() {
-        if (getEvents() != null && getEvents().containsKey(Constants.EventAttribute.ONPROPERTYCHANGE)) {
-            
-            if (getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE) != null &&
-                    getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE).containsKey(Constants.Property.ENABLED)) {
-                
-                boolean oldValue = isEnabled();
-                boolean newValue = true; // TODO: script runner
-                
-                setEnabled(newValue);
-                
-                fireElementEvent(new EventDescriptor(
-                    Constants.EventAttribute.ONPROPERTYCHANGE, 
-                    Constants.Property.ENABLED, newValue, oldValue));
-                                
-            }
-        }
-////        getScriptRunner().run(this, Constants.EventAttribute.ONPROPERTYCHANGE);
-    }
-    */
-    
+        
 }

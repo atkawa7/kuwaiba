@@ -65,7 +65,6 @@ public class ComponentDateField extends GraphicalComponent {
             if (Constants.Property.VALUE.equals(event.getPropertyName())) {
             }
         }
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

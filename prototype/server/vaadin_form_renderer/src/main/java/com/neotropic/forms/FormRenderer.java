@@ -17,13 +17,10 @@ package com.neotropic.forms;
 import com.neotropic.api.forms.AbstractElement;
 import com.neotropic.api.forms.AbstractElementContainer;
 import com.neotropic.api.forms.ElementBuilder;
-import com.neotropic.api.forms.Evaluator;
 import com.neotropic.api.forms.ElementForm;
 import com.neotropic.api.forms.ElementSubform;
 import com.neotropic.web.components.ComponentFactory;
-import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.AbstractLayout;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.GridLayout;
@@ -40,45 +37,21 @@ import java.util.List;
 public class FormRenderer extends CustomComponent {
     private final VerticalLayout content;
     private final ElementBuilder builder;
-    private final Evaluator evaluator;
     private HashMap<String, AbstractElement> elementsIds = new HashMap();
     private HashMap<AbstractElement, Component> elements = new HashMap();
     private HashMap<Component, AbstractElement> components = new HashMap();
     private HashMap<AbstractElement, Window> openedWindows = new HashMap();
     
-    public FormRenderer(ElementBuilder builder/*Window window*/) {
-//        VerticalLayout popupContent = new VerticalLayout();
-//        popupContent.addComponent(new TextField("textField"));
-//        
-//        Button btnOk = new Button("Ok");
-//////        btnOk.setClickShortcut(KeyCode.ENTER);
-//        popupContent.addComponent(btnOk);
-//        
-//        Button btnCancel = new Button("Cancel");
-//        btnOk.setClickShortcut(KeyCode.ESCAPE);
-//        popupContent.addComponent(btnCancel);        
-//        
-//        Button btnPrint = new Button("Print");
-//        //btnPrint.setClickShortcut(0, modifiers);
-//        popupContent.addComponent(btnPrint);
-//                
-//        btnCancel.addClickListener((Button.ClickEvent event) -> {
-//            window.close();
-//        });
-//        
-//        btnPrint.addClickListener((Button.ClickEvent event) -> {
-//            JavaScript.getCurrent().execute("print();");
-//        });
+    public FormRenderer(ElementBuilder builder) {
+                        
         this.builder = builder;
         
-        if (builder.getScriptRunner() != null && 
-            builder.getScriptRunner().getFormStructure() != null &&
-            builder.getScriptRunner().getFormStructure().getElementI18N() != null) {
+        if (builder.getRoot() != null && 
+            builder.getRoot().getFormStructure() != null &&
+            builder.getRoot().getFormStructure().getElementI18N() != null) {
             
-            builder.getScriptRunner().getFormStructure().getElementI18N().setLang("en_US");
-        }
-        evaluator = builder.getEvaluator();
-        
+            builder.getRoot().getFormStructure().getElementI18N().setLang("en_US");
+        }        
         content = new VerticalLayout();
         setCompositionRoot(content);
     }
@@ -99,7 +72,7 @@ public class FormRenderer extends CustomComponent {
     private void renderRecursive(AbstractElement parentElement, Component parentComponent) {
         
         if (parentElement instanceof AbstractElementContainer && 
-           ((AbstractElementContainer) parentElement).getChildren() != null) {
+            ((AbstractElementContainer) parentElement).getChildren() != null) {
             
             for (AbstractElement childElement : ((AbstractElementContainer) parentElement).getChildren()) {
 
@@ -154,67 +127,4 @@ public class FormRenderer extends CustomComponent {
         }
     }
     
-    public void comboboxOnvaluechange(HashMap<String, List<String>> values) {
-        if (values.containsKey("threeCharacterCode")) {
-            ComboBox source = (ComboBox) getComponent(values.get("threeCharacterCode").get(0));
-            AbstractField target = (AbstractField) getComponent(values.get("threeCharacterCode").get(1));
-
-            String str = source.getValue().toString();
-            str = str.replace(" ", "");
-            if (str.length() >= 4)
-                str = str.substring(0, 3);
-            
-            str = str.toUpperCase();
-            
-            target.setValue(str);
-        }        
-    }
-    
-    public void textFieldOnvaluechange(HashMap<String, List<String>> values) {
-        int i = 0;
-        
-        if (values.containsKey("notify")) {
-                                    
-        }
-//        if (values.containsKey("textField")) {
-//            ComboBox source = (ComboBox) getComponent(values.get("textField").get(0));
-//            AbstractField target = (AbstractField) getComponent(values.get("textField").get(1));
-//
-//            target.setValue(source.getValue().toString());
-//        }
-                
-    }
-    
-    private void closeWindow(String elementId) {
-        if (elementsIds != null && elementsIds.containsKey(elementId)) {
-            AbstractElement elementSubform = elementsIds.get(elementId);
-            if (elementSubform != null) {
-                if (openedWindows != null && openedWindows.containsKey(elementSubform)) {
-                    Window windowSubform = openedWindows.get(elementSubform);
-                    openedWindows.remove(elementSubform);
-
-                    windowSubform.close();
-                }
-            }
-        }
-    }
-    
-    private AbstractElement getElement(String elementId) {
-        if (elementsIds != null && elementsIds.containsKey(elementId))
-            return elementsIds.get(elementId);
-        
-        return null;
-    }
-    
-    private Component getComponent(String elementId) {
-            
-        AbstractElement element = getElement(elementId);
-
-        if (element != null) {
-
-            if (elements != null && elements.containsKey(element))
-                return elements.get(element);
-        }
-        return null;
-    }
 }

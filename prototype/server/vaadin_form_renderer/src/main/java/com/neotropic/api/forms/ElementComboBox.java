@@ -14,77 +14,13 @@
  */
 package com.neotropic.api.forms;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementComboBox extends AbstractElementField {
-    private List items;
-                    
+public class ElementComboBox extends AbstractElementSelector {
+    
     public ElementComboBox() {
-                                
-    }
-        
-    public void setItems(List items) {
-        this.items = items;
-    }
-    
-    public List getItems() {
-        return items;
-    }
-    
-    @Override
-    public void fireOnload() {
-        super.fireOnload();
-        
-        if (hasProperty(Constants.EventAttribute.ONLOAD, Constants.Property.ITEMS)) {
-            
-            List<String> list = getEvents().get(Constants.EventAttribute.ONLOAD).get(Constants.Property.ITEMS);
-
-            if (list != null && !list.isEmpty()) {
-
-                String functionName = list.get(0);
-
-                Runner runner = getFormStructure().getElementScript().getFunctionByName(functionName);
-
-                List parameters = new ArrayList();
-
-                for (int i = 1; i < list.size(); i += 1) {
-                    AbstractElement anElement = getFormStructure().getElementById(list.get(i));
-                    parameters.add(anElement != null ? anElement : list.get(i));
-                }
-
-                Object newValue = runner.run(parameters);
-                
-                setItems((List) newValue);
-                
-                fireElementEvent(new EventDescriptor(
-                    Constants.EventAttribute.ONPROPERTYCHANGE, 
-                    Constants.Property.ITEMS, newValue, null));
-            }
-        }                        
-    }
-
-    @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        super.initFromXMl(reader);
-        
-////        if (getValue() != null && getValue().contains("${") && getValue().contains("}")) {
-////            
-////            String cpyValue = getValue();
-////            cpyValue = cpyValue.replace("${", "");
-////            cpyValue = cpyValue.replace("}", "");
-////            
-////            String[] function = cpyValue.split("\\.");
-////            
-////            if (function[0].equals("Query"))
-////                items = ElementQuery.getInstance().executeQuery(function[1]);
-////        }
     }
         
 }

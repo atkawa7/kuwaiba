@@ -14,37 +14,18 @@
  */
 package com.neotropic.api.forms;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementTextArea extends AbstractElement {
+public class ElementTextArea extends AbstractElementField {
     
-    private String value;
-        
-    public void setValue(String value) {
-        this.value = value;
+    public ElementTextArea() {
     }
     
-    public String getValue() {
-        return value;        
-    }
-
     @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        String attrValue = reader.getAttributeValue(null, Constants.Attribute.VALUE);
-////        if (attrValue == null)
-////            throw new XMLStreamException(String.format("Missing attribute %s in tag %s", Constants.Attribute.VALUE, Constants.Tag.TEXT_FIELD));
-        
-        value = attrValue;
+    public String getValue() {
+        return (String) super.getValue();
     }
-
-////    @Override
-////    public void componentChange(ChangeDescriptor changeDecriptor) {
-////        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-////    }
         
 }

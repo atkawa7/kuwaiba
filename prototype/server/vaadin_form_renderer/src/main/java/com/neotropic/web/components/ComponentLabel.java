@@ -47,18 +47,7 @@ public class ComponentLabel extends GraphicalComponent {
             getComponent().setContentMode(ContentMode.HTML);
             getComponent().setValue(label.getValue());
         }
-        /*
-        childComponent = new Label();
-        String value = evaluator.getValue(((ElementLabel) childElement).getValue());
-        ((Label) childComponent).setValue(value != null ? value : "");
-        ((Label) childComponent).setContentMode(ContentMode.HTML);
-        ((Label) childComponent).setSizeFull();
-
-        String styleName = ((ElementLabel) childElement).getStyleName();
-
-        if (styleName != null)
-            ((Label) childComponent).setStyleName(styleName);
-        */
+        
     }
     
     @Override
