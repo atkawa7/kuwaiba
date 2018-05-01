@@ -153,6 +153,7 @@ public class TopologyViewTopComponent extends TopComponent implements
             barMainToolBar.add(btnRefresh);
             barMainToolBar.add(btnResetTransportLinks);
             // </editor-fold>  
+            
             add(barMainToolBar, BorderLayout.NORTH);
             associateLookup(scene.getLookup());
         }

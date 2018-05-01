@@ -166,24 +166,22 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                 
                 //Note that the edges will all be saved, whether they're STMX, physical connnections or ContainerLinks, 
                 //The expanded STMX will be marked as such, but when the view is rendered, they will be invisible by default, 
-                //while the COntainerLinks within will be displayed.
+                //while the ContainerLinks within will be displayed.
                 xmlew.add(xmlef.createAttribute(new QName("expanded"), Boolean.toString(expandedTransportLinks.containsKey(lolEdge))));
                 
-                if (!acwEdge.getControlPoints().isEmpty()) {
-                    QName qnameControlpoints = new QName("controlpoints"); //NOI18N
-                    
-                    xmlew.add(xmlef.createStartElement(qnameControlpoints, null, null));
-                    
-                    QName qnameControlpoint = new QName("controlpoint"); //NOI18N
-                    for (Point point : acwEdge.getControlPoints()) {
-                        xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
-                        xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString(point.x)));
-                        xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(point.y)));
-                        xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
-                    }
-                    
-                    xmlew.add(xmlef.createEndElement(qnameControlpoints, null));
+                QName qnameControlpoints = new QName("controlpoints"); //NOI18N
+
+                xmlew.add(xmlef.createStartElement(qnameControlpoints, null, null));
+
+                QName qnameControlpoint = new QName("controlpoint"); //NOI18N
+                for (Point point : acwEdge.getControlPoints()) {
+                    xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
+                    xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString(point.x)));
+                    xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(point.y)));
+                    xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
                 }
+
+                xmlew.add(xmlef.createEndElement(qnameControlpoints, null));
                 
                 if (expandedTransportLinks.containsKey(lolEdge)) {
                     QName qnameExpandedTLs = new QName("expandedTransportLinks"); //NOI18N
@@ -255,7 +253,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                         if (dummyNodeWidget != null) { //If the node does not exist, it's ignored because that means that the resource is no longer associated to the service
                             dummyNodeWidget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
                             dummyNodeWidget.setBackground(com.getMetaForClass(objectClass, false).getColor());
-                            validate();
+                            revalidate();
                         } else
                             NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, String.format("Node with id %s could not be found. Save the view to keep the changes", objectId));
                     }else {
@@ -278,8 +276,8 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                             if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
                                                 localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
                                         } else {
-                                            connectionWidget.setControlPoints(localControlPoints,false);
-                                            validate();
+                                            connectionWidget.setControlPoints(localControlPoints, true);
+                                            revalidate();
                                             break;
                                         }
                                     }
@@ -325,8 +323,6 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
             if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO)
                 Exceptions.printStackTrace(ex);
         }
-        validate();
-        repaint();
     }
 
     @Override
@@ -404,6 +400,8 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                     removeEdge(aConnection);
             }
         }
+        validate();
+        repaint();
     }
     
     @Override
