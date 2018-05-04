@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -21,11 +21,11 @@ import java.util.regex.Pattern;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObject;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 
@@ -41,7 +41,7 @@ public class FunctionValue extends DynamicSectionFunction {
     /**
      * Remote business object representation of the object with the given id
      */
-    private RemoteBusinessObject remoteBusinessObject;
+    private BusinessObject remoteBusinessObject;
     /**
      * Class metadata to the object with the given id
      */
@@ -67,7 +67,7 @@ public class FunctionValue extends DynamicSectionFunction {
             if (classMetadata.getAttribute(attribute) == null)
                 throw new InvalidArgumentException(String.format("The attribute \"%s\" can not be found for the object with id %s", attribute, id));
             
-        } catch (ObjectNotFoundException | MetadataObjectNotFoundException ex) {
+        } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException ex) {
             throw new InvalidArgumentException(String.format("The object with id %s can not be found", id));
         }
     }
@@ -85,7 +85,7 @@ public class FunctionValue extends DynamicSectionFunction {
             String attributeType = classMetadata.getAttribute(attribute).getType();
             
             if (attributeValue != null && mem.isSubClass("GenericObjectList", attributeType)) {
-                RemoteBusinessObjectLight item = aem.getListTypeItem(attributeType, Long.valueOf(attributeValue));
+                BusinessObjectLight item = aem.getListTypeItem(attributeType, Long.valueOf(attributeValue));
                 if (item != null)
                     attributeValue = item.getName();
             }

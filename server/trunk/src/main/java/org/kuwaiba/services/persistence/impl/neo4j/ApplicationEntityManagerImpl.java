@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.neotropic.kuwaiba.modules.GenericCommercialModule;
 import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import groovy.lang.Binding;
+import groovy.lang.GroovyRuntimeException;
 import groovy.lang.GroovyShell;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -43,12 +44,11 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import org.codehaus.groovy.control.CompilationFailedException;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.ConnectionManager;
@@ -70,9 +70,9 @@ import org.kuwaiba.apis.persistence.application.TaskResult;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
+import org.kuwaiba.apis.persistence.business.BusinessObject;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObjectList;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.BusinessRuleException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
@@ -85,7 +85,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.services.persistence.util.Util;
 import org.kuwaiba.util.ChangeDescriptor;
 import org.kuwaiba.util.dynamicname.DynamicName;
-import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
+import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.UserInfoLight;
@@ -494,7 +494,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public void setPrivilegeToGroup(long groupId, String featureToken, int accessLevel) throws InvalidArgumentException, ApplicationObjectNotFoundException {
         //TODO: This method should check the new privilege against a list of predefined feature tokens to avoid adding bogus items
         if (accessLevel != Privilege.ACCESS_LEVEL_READ && accessLevel != Privilege.ACCESS_LEVEL_READ_WRITE)
-            throw new InvalidArgumentException(String.format("The access level privided is not valid: %s", accessLevel));
+            throw new InvalidArgumentException(String.format("The provided access level is not valid: %s", accessLevel));
         
         try (Transaction tx = graphDb.beginTx()) {
             Node groupNode = Util.findNodeByLabelAndId(groupLabel, groupId);
@@ -765,7 +765,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public void deleteListTypeItem(String className, long oid, boolean realeaseRelationships) 
-            throws MetadataObjectNotFoundException, OperationNotPermittedException, ObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
+            throws MetadataObjectNotFoundException, OperationNotPermittedException, BusinessObjectNotFoundException, InvalidArgumentException, NotAuthorizedException {
         try(Transaction tx = graphDb.beginTx())
         {
             if (!mem.isSubClass(Constants.CLASS_GENERICOBJECTLIST, className))
@@ -779,10 +779,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public List<RemoteBusinessObjectLight> getListTypeItems(String className)
+    public List<BusinessObjectLight> getListTypeItems(String className)
             throws MetadataObjectNotFoundException, InvalidArgumentException {
         
-        List<RemoteBusinessObjectLight> children = new ArrayList<>();
+        List<BusinessObjectLight> children = new ArrayList<>();
         try(Transaction tx = graphDb.beginTx()) {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             
@@ -797,15 +797,15 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             while(relationships.hasNext()){
                 Node child = relationships.next().getStartNode();
-                children.add(new RemoteBusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME), className));
+                children.add(new BusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME), className));
             }
         }
         return children;
     }
     
     @Override
-    public RemoteBusinessObjectLight getListTypeItem(String listTypeClassName, long listTypeItemId) throws 
-        MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException {
+    public BusinessObjectLight getListTypeItem(String listTypeClassName, long listTypeItemId) throws 
+        MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, listTypeClassName);
@@ -820,7 +820,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 Node child = childRel.getStartNode();
                 if (child.getId() == listTypeItemId) {
                     tx.success();
-                    return new RemoteBusinessObjectLight(child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME), listTypeClassName);
+                    return new BusinessObjectLight(child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME), listTypeClassName);
                 }
             }
             throw new InvalidArgumentException(String.format("Can not find the list type item with id %s", listTypeItemId));
@@ -926,7 +926,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public ChangeDescriptor updateListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, 
         String name, String description, byte[] structure, byte[] background) 
-        throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException {
+        throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node listTypeItemNode = getListTypeItemNode(listTypeItemId, listTypeItemClass);
@@ -941,7 +941,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 }
             }
             if (viewNode == null)
-                throw new ObjectNotFoundException("View", viewId); //NOI18N
+                throw new BusinessObjectNotFoundException("View", viewId); //NOI18N
             
             String affectedProperties = "", oldValues = "", newValues = "";
             
@@ -994,7 +994,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public ViewObject getListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId) 
-        throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException {
+        throws MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node listTypeItemNode = getListTypeItemNode(listTypeItemId, listTypeItemClass);
@@ -1024,7 +1024,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 }
             }
         }
-        throw new ObjectNotFoundException("View", viewId);                
+        throw new ApplicationObjectNotFoundException(String.format("The view with id %s could not be found", viewId));                
     }
     
     @Override        
@@ -1057,7 +1057,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override        
     public void deleteListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId) 
-        throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException {
+        throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node listTypeItemNode = getListTypeItemNode(listTypeItemId, listTypeItemClass);            
@@ -1075,11 +1075,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             }
             tx.success();
         }
-        throw new ObjectNotFoundException("View", viewId);
+        throw new BusinessObjectNotFoundException("View", viewId);
     }
     
     @Override
-    public List<RemoteBusinessObjectLight> getDeviceLayouts() {
+    public List<BusinessObjectLight> getDeviceLayouts() {
         try (Transaction tx = graphDb.beginTx()) {
             String columnName = "elements"; //NOI18N
             String cypherQuery = String.format(
@@ -1092,7 +1092,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Result result = graphDb.execute(cypherQuery);
             Iterator<Node> column = result.columnAs(columnName);
             
-            List<RemoteBusinessObjectLight> templateElements = new ArrayList();
+            List<BusinessObjectLight> templateElements = new ArrayList();
             
             for (Node templateElementNode : Iterators.asIterable(column))
                 templateElements.add(Util.createTemplateElementLightFromNode(templateElementNode));
@@ -1102,7 +1102,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public byte[] getDeviceLayoutStructure(long oid, String className) {
+    public byte[] getDeviceLayoutStructure(long oid, String className) throws ApplicationObjectNotFoundException {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
@@ -1132,7 +1132,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
     }
     
-    private void addDeviceNodeChildrenAsXml(long id, String className, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException {
+    private void addDeviceNodeChildrenAsXml(long id, String className, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
             
             String columnName = "childNode"; //NOI18N
@@ -1156,7 +1156,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
     }
     
-    private void addDeviceNodeAsXML(Node deviceNode, long parentId, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException {
+    private void addDeviceNodeAsXML(Node deviceNode, long parentId, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException {
         QName tagDevice = new QName("device"); // NOI18N
         
         long id = deviceNode.getId();
@@ -1176,7 +1176,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         addDeviceNodeChildrenAsXml(id, className, xmlew, xmlef);
     }
     
-    private void addDeviceModelAsXML(long id, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException {
+    private void addDeviceModelAsXML(long id, XMLEventWriter xmlew, XMLEventFactory xmlef) throws XMLStreamException, ApplicationObjectNotFoundException {
         String cypherQuery = String.format(
             "MATCH (objectNode)-[r1:%s]->(modelNode) "
           + "WHERE id(objectNode) = %s "
@@ -1263,7 +1263,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
                         xmlew.add(xmlef.createEndElement(tagModel, null));  
 
-                    } catch (MetadataObjectNotFoundException | InvalidArgumentException | ObjectNotFoundException ex) {
+                    } catch (MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
                         Logger.getLogger(ApplicationEntityManagerImpl.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -1274,7 +1274,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public long createObjectRelatedView(long oid, String objectClass, String name, String description, String viewClassName, 
         byte[] structure, byte[] background) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         if (objectClass == null)
             throw new InvalidArgumentException("The root object can not be related to any view");
@@ -1345,7 +1345,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public ChangeDescriptor updateObjectRelatedView(long oid, String objectClass, long viewId, 
     String name, String description, byte[] structure, byte[] background)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         if (objectClass == null)
             throw new InvalidArgumentException("The root object does not have any view");
@@ -1363,7 +1363,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             }
 
             if (viewNode == null)
-                throw new ObjectNotFoundException("View", viewId); //NOI18N
+                throw new BusinessObjectNotFoundException("View", viewId); //NOI18N
 
             if (name != null) {
                 oldValues +=  " " + viewNode.getProperty(Constants.PROPERTY_NAME);
@@ -1477,7 +1477,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     @Override
     public ViewObject getObjectRelatedView(long oid, String objectClass, long viewId)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(objectClass, oid);
@@ -1505,12 +1505,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 }
             }
         }
-        throw new ObjectNotFoundException("View", viewId);
+        throw new BusinessObjectNotFoundException("View", viewId);
     }
 
     @Override
     public List<ViewObjectLight> getObjectRelatedViews(long oid, String objectClass, int limit)
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(objectClass, oid);
@@ -1564,13 +1564,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public ViewObject getGeneralView(long viewId) throws ObjectNotFoundException {
+    public ViewObject getGeneralView(long viewId) throws BusinessObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             Node gView = Util.findNodeByLabelAndId(generalViewsLabel, viewId);
 
             if (gView == null)
-                throw new ObjectNotFoundException("View", viewId);
+                throw new BusinessObjectNotFoundException("View", viewId);
 
             ViewObject aView = new ViewObject(gView.getId(),
                     gView.hasProperty(Constants.PROPERTY_NAME) ? (String)gView.getProperty(Constants.PROPERTY_NAME) : null,
@@ -1828,7 +1828,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public long createPoolInObject(String parentClassname, long parentId, String name, String description, String instancesOfClass, int type)
-            throws MetadataObjectNotFoundException, ObjectNotFoundException {
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             Node poolNode =  graphDb.createNode(poolLabel);
 
@@ -1848,7 +1848,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             Node parentNode = Util.findNodeByLabelAndId(inventoryObjectLabel, parentId);
             if (parentNode == null)
-                throw new ObjectNotFoundException(parentClassname, parentId);
+                throw new BusinessObjectNotFoundException(parentClassname, parentId);
             
             poolNode.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL).setProperty(Constants.PROPERTY_NAME, Constants.REL_PROPERTY_POOL);          
             
@@ -1990,7 +1990,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<Pool> getPoolsInObject(String objectClassName, long objectId, String poolClass) throws ObjectNotFoundException {
+    public List<Pool> getPoolsInObject(String objectClassName, long objectId, String poolClass) throws BusinessObjectNotFoundException {
         
         try(Transaction tx = graphDb.beginTx()) {
             List<Pool> pools  = new ArrayList<>();
@@ -1998,7 +1998,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node objectNode = Util.findNodeByLabelAndId(inventoryObjectLabel, objectId);
             
             if (objectNode == null)
-                throw new ObjectNotFoundException(objectClassName, objectId);
+                throw new BusinessObjectNotFoundException(objectClassName, objectId);
             
             for (Relationship containmentRelationship : objectNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)) {
                 if (containmentRelationship.hasProperty(Constants.PROPERTY_NAME) && 
@@ -2071,7 +2071,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<RemoteBusinessObjectLight> getPoolItems(long poolId, int limit)
+    public List<BusinessObjectLight> getPoolItems(long poolId, int limit)
             throws ApplicationObjectNotFoundException {
         try(Transaction tx = graphDb.beginTx()) {
             
@@ -2080,7 +2080,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (poolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The pool with id %s could not be found", poolId));
 
-            List<RemoteBusinessObjectLight> poolItems  = new ArrayList<>();
+            List<BusinessObjectLight> poolItems  = new ArrayList<>();
 
             int i = 0;
             for (Relationship rel : poolNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF_SPECIAL)){
@@ -2095,7 +2095,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         Node temp = Util.findNodeByLabelAndId(poolLabel, item.getId());
                         if(temp == null) //if is not a pool
                         {
-                            RemoteBusinessObjectLight rbol = new RemoteBusinessObjectLight(item.getId(), 
+                            BusinessObjectLight rbol = new BusinessObjectLight(item.getId(), 
                                                 item.hasProperty(Constants.PROPERTY_NAME) ? (String)item.getProperty(Constants.PROPERTY_NAME) : null,
                                                 Util.getClassName(item));
                             poolItems.add(rbol);
@@ -2109,7 +2109,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public List<ActivityLogEntry> getBusinessObjectAuditTrail(String objectClass, long objectId, int limit) 
-            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         try(Transaction tx = graphDb.beginTx()) {
             if (!mem.isSubClass(Constants.CLASS_INVENTORYOBJECT, objectClass))
                 throw new InvalidArgumentException(String.format("Class %s is not subclass of %s",
@@ -2352,13 +2352,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public void createObjectActivityLogEntry(String userName, String className, long oid, int type, 
-        String affectedProperties, String oldValues, String newValues, String notes) throws ApplicationObjectNotFoundException, ObjectNotFoundException {
+        String affectedProperties, String oldValues, String newValues, String notes) throws ApplicationObjectNotFoundException, BusinessObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
         
             Node objectNode = Util.findNodeByLabelAndId(inventoryObjectLabel, oid);
             
             if (objectNode == null)
-                throw new ObjectNotFoundException(className, oid);
+                throw new BusinessObjectNotFoundException(className, oid);
             
             Node activityNode =  graphDb.findNode(specialNodeLabel, Constants.PROPERTY_NAME, Constants.NODE_OBJECT_ACTIVITY_LOG);
             if (activityNode == null)
@@ -2372,7 +2372,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public void createObjectActivityLogEntry(String userName, String className, long oid,  
-            int type, ChangeDescriptor changeDescriptor) throws ApplicationObjectNotFoundException, ObjectNotFoundException {
+            int type, ChangeDescriptor changeDescriptor) throws ApplicationObjectNotFoundException, BusinessObjectNotFoundException {
         createObjectActivityLogEntry(userName, className, oid, type, changeDescriptor.getAffectedProperties(), changeDescriptor.getOldValues(), changeDescriptor.getNewValues(), changeDescriptor.getNotes());
     }
     
@@ -2726,7 +2726,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             return (TaskResult)theResult;
 
-        } catch(CompilationFailedException | InvalidArgumentException ex) {
+        } catch(GroovyRuntimeException | InvalidArgumentException ex) {
             return TaskResult.createErrorResult(ex.getMessage());
         }
        
@@ -3271,9 +3271,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public List<RemoteBusinessObjectLight> getTemplatesForClass(String className) throws MetadataObjectNotFoundException {
+    public List<BusinessObjectLight> getTemplatesForClass(String className) throws MetadataObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            List<RemoteBusinessObjectLight> templates = new ArrayList<>();
+            List<BusinessObjectLight> templates = new ArrayList<>();
                         
             String query = "MATCH (classNode)-[:" + RelTypes.HAS_TEMPLATE + "]->(templateObject) WHERE classNode.name={className} RETURN templateObject ORDER BY templateObject.name ASC"; //NOI18N
             HashMap<String, Object> parameters = new HashMap<>();
@@ -3287,7 +3287,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<RemoteBusinessObjectLight> getTemplateElementChildren(String templateElementClass, long templateElementId)  {
+    public List<BusinessObjectLight> getTemplateElementChildren(String templateElementClass, long templateElementId)  {
         try (Transaction tx = graphDb.beginTx()) {
             
             String query = "MATCH (classNode)<-[:" + RelTypes.INSTANCE_OF_SPECIAL + 
@@ -3299,7 +3299,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             parameters.put("templateElementId", templateElementId); //NOI18N
             ResourceIterator<Node> queryResult = graphDb.execute(query, parameters).columnAs("templateElementChild");
             
-            List<RemoteBusinessObjectLight> templateElementChildren = new ArrayList<>();
+            List<BusinessObjectLight> templateElementChildren = new ArrayList<>();
             while (queryResult.hasNext()) 
                 templateElementChildren.add(Util.createTemplateElementLightFromNode(queryResult.next()));
             
@@ -3308,7 +3308,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<RemoteBusinessObjectLight> getTemplateSpecialElementChildren(String tsElementClass, long tsElementId) {
+    public List<BusinessObjectLight> getTemplateSpecialElementChildren(String tsElementClass, long tsElementId) {
         try (Transaction tx = graphDb.beginTx()) {
             
             
@@ -3321,7 +3321,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             parameters.put("templateElementId", tsElementId); //NOI18N
             ResourceIterator<Node> queryResult = graphDb.execute(query, parameters).columnAs("templateElementChild");
             
-            List<RemoteBusinessObjectLight> templateElementChildren = new ArrayList<>();
+            List<BusinessObjectLight> templateElementChildren = new ArrayList<>();
             while (queryResult.hasNext()) 
                 templateElementChildren.add(Util.createTemplateElementLightFromNode(queryResult.next()));
             
@@ -3330,7 +3330,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public RemoteBusinessObject getTemplateElement(String templateElementClass, long templateElementId)
+    public BusinessObject getTemplateElement(String templateElementClass, long templateElementId)
         throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
@@ -3415,7 +3415,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public HashMap<String, RemoteBusinessObjectList> executeCustomDbCode(String dbCode, boolean needReturn) throws NotAuthorizedException {
+    public HashMap<String, BusinessObjectList> executeCustomDbCode(String dbCode, boolean needReturn) throws NotAuthorizedException {
         try (Transaction tx = graphDb.beginTx()) {
         
             Map<String, Object> params = new HashMap<>();
@@ -3423,10 +3423,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             params.put("true", true);//NOI18N
             Result theResult = graphDb.execute(dbCode, params);
             if(needReturn){
-                HashMap<String, RemoteBusinessObjectList> thePaths = new HashMap<>();
+                HashMap<String, BusinessObjectList> thePaths = new HashMap<>();
             
                 for (String column : theResult.columns())
-                    thePaths.put(column, new RemoteBusinessObjectList());
+                    thePaths.put(column, new BusinessObjectList());
 
                 try {
                     while (theResult.hasNext()) {
@@ -3559,7 +3559,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     private Node getInstanceOfClass(String className, long oid) 
-            throws MetadataObjectNotFoundException, ObjectNotFoundException
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException
     {
         //Note that for this method, the caller should handle the transaction
         //if any of the parameters is null, return the dummy root
@@ -3578,7 +3578,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (otherSide.getId() == oid)
                 return otherSide;
         }
-        throw new ObjectNotFoundException(className, oid);
+        throw new BusinessObjectNotFoundException(className, oid);
     }    
     
     public void deletePool(Node poolNode) throws OperationNotPermittedException {
@@ -3651,7 +3651,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     // Bookmarks
     @Override
     public void addObjectTofavoritesFolder(String objectClass, long objectId, long favoritesFolderId, long userId)
-            throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException, OperationNotPermittedException {
+            throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, BusinessObjectNotFoundException, OperationNotPermittedException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node favoritesFolderNode = getFavoritesFolderForUser(favoritesFolderId, userId);
@@ -3674,7 +3674,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public void removeObjectFromfavoritesFolder(String objectClass, long objectId, long favoritesFolderId, long userId) 
-        throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, ObjectNotFoundException {
+        throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, BusinessObjectNotFoundException {
                 
         try (Transaction tx = graphDb.beginTx()) {
             
@@ -3776,7 +3776,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public List<RemoteBusinessObjectLight> getObjectsInFavoritesFolder(long favoritesFolderId, long userId, int limit) 
+    public List<BusinessObjectLight> getObjectsInFavoritesFolder(long favoritesFolderId, long userId, int limit) 
         throws ApplicationObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
@@ -3785,7 +3785,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (favoritesFolderNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Can not find a favorites folder with id %s", favoritesFolderId));
             
-            List<RemoteBusinessObjectLight> bookmarkItems = new ArrayList<>();
+            List<BusinessObjectLight> bookmarkItems = new ArrayList<>();
             
             int i = 0;
             for (Relationship relationship : favoritesFolderNode.getRelationships(Direction.INCOMING, RelTypes.IS_BOOKMARK_ITEM_IN)) {
@@ -3796,7 +3796,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 }
                 Node bookmarkItem = relationship.getStartNode();
                 
-                RemoteBusinessObjectLight rbol = new RemoteBusinessObjectLight(
+                BusinessObjectLight rbol = new BusinessObjectLight(
                     bookmarkItem.getId(), 
                     bookmarkItem.hasProperty(Constants.PROPERTY_NAME) ? (String) bookmarkItem.getProperty(Constants.PROPERTY_NAME) : null, 
                     Util.getClassName(bookmarkItem));
@@ -3809,7 +3809,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public List<FavoritesFolder> getFavoritesFoldersForObject(long userId, String objectClass, long objectId) 
-        throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException {
+        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node objectNode = getInstanceOfClass(objectClass, objectId);
@@ -4252,7 +4252,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
     }
     //</editor-fold>
-
+    //</editor-fold>
 //Helpers
     
     private Node getFavoritesFolderForUser(long favoritesFolderId, long userId) {

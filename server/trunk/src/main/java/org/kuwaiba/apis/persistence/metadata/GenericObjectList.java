@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package org.kuwaiba.apis.persistence.metadata;
 
 import java.util.List;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 
 /**
  * This class represents a list type attribute (packing many list items) (people in charge of an equipment, antenna types, etc)
@@ -45,7 +45,7 @@ public class GenericObjectList {
     /**
      * Items in this list
      */
-    private List<RemoteBusinessObjectLight> list;
+    private List<BusinessObjectLight> list;
 
     public GenericObjectList() {
     }
@@ -79,11 +79,11 @@ public class GenericObjectList {
         this.displayName = dislayName;
     }
 
-    public List<RemoteBusinessObjectLight> getList() {
+    public List<BusinessObjectLight> getList() {
         return list;
     }
 
-    public void setList(List<RemoteBusinessObjectLight> list) {
+    public void setList(List<BusinessObjectLight> list) {
         this.list = list;
     }
 

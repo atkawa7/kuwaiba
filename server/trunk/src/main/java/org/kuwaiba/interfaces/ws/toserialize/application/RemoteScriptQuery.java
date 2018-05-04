@@ -19,7 +19,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.application.ScriptQuery;
-import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
+import org.kuwaiba.apis.persistence.util.StringPair;
 
 /**
  * Remote representation of script query

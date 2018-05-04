@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License
@@ -17,7 +17,6 @@
 package org.kuwaiba.beans;
 
 import com.neotropic.kuwaiba.correlation.SimpleCorrelation;
-import static com.neotropic.kuwaiba.correlation.SimpleCorrelation.servicesInPorts;
 import com.neotropic.kuwaiba.modules.ipam.IPAMModule;
 import com.neotropic.kuwaiba.modules.mpls.MPLSModule;
 import com.neotropic.kuwaiba.modules.projects.ProjectsModule;
@@ -49,7 +48,10 @@ import org.kuwaiba.apis.persistence.application.BusinessRule;
 import org.kuwaiba.apis.persistence.application.BusinessRuleConstraint;
 import org.kuwaiba.apis.persistence.application.FavoritesFolder;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
+import org.kuwaiba.apis.persistence.business.ContactLight;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
+import org.kuwaiba.apis.persistence.application.FileObject;
+import org.kuwaiba.apis.persistence.application.FileObjectLight;
 import org.kuwaiba.apis.persistence.application.GroupProfile;
 import org.kuwaiba.apis.persistence.application.GroupProfileLight;
 import org.kuwaiba.apis.persistence.application.Pool;
@@ -63,9 +65,9 @@ import org.kuwaiba.apis.persistence.application.UserProfileLight;
 import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
+import org.kuwaiba.apis.persistence.business.BusinessObject;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLightList;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
@@ -79,7 +81,7 @@ import org.kuwaiba.sync.SyncManager;
 import org.kuwaiba.util.ChangeDescriptor;
 import org.kuwaiba.util.bre.TempBusinessRulesEngine;
 import org.kuwaiba.util.i18n.I18N;
-import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
+import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.interfaces.ws.todeserialize.TransientQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfo;
@@ -88,7 +90,11 @@ import org.kuwaiba.interfaces.ws.toserialize.application.PrivilegeInfo;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBackgroundJob;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBusinessRule;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBusinessRuleConstraint;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContact;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContactLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFavoritesFolder;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObject;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemotePool;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQueryLight;
@@ -887,9 +893,9 @@ public class WebserviceBean implements WebserviceBeanLocal {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getListTypeItems", ipAddress, sessionId);
-            List<RemoteBusinessObjectLight> listTypeItems = aem.getListTypeItems(className);
+            List<BusinessObjectLight> listTypeItems = aem.getListTypeItems(className);
             List<RemoteObjectLight> res = new ArrayList<>();
-            for (RemoteBusinessObjectLight listTypeItem : listTypeItems)
+            for (BusinessObjectLight listTypeItem : listTypeItems)
                 res.add(new RemoteObjectLight(listTypeItem));
             return res;
         } catch (InventoryException ex) {
@@ -905,6 +911,86 @@ public class WebserviceBean implements WebserviceBeanLocal {
             aem.validateWebServiceCall("getClassHierarchy", ipAddress, sessionId);
             return aem.getClassHierachy(showAll);
         }catch (InventoryException ex){
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public long createContact(String contactClass, List<StringPair> properties, String customerClassName, long customerId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("createContact", ipAddress, sessionId);
+            return bem.createContact(contactClass, properties, customerClassName, customerId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void updateContact(String contactClass, long contactId, List<StringPair> properties, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("updateContact", ipAddress, sessionId);
+            bem.updateContact(contactClass, contactId, properties);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteContact(String contactClass, long contactId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("deleteContact", ipAddress, sessionId);
+            bem.deleteContact(contactClass, contactId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public RemoteContact getContact(String contactClass, long contactId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getContact", ipAddress, sessionId);
+            return new RemoteContact(bem.getContact(contactClass, contactId));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<RemoteContactLight> searchForContacts(String searchString, int maxResults, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            List<RemoteContactLight> res = new ArrayList();
+            aem.validateWebServiceCall("searchForContacts", ipAddress, sessionId);
+            for (ContactLight contact : bem.searchForContacts(searchString, maxResults)) 
+                res.add(new RemoteContactLight(contact));
+
+            return res;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<RemoteContactLight> getContactsForCustomer(String customerClass, long customerId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            List<RemoteContactLight> res = new ArrayList();
+            aem.validateWebServiceCall("getContactsForCustomer", ipAddress, sessionId);
+            for (ContactLight contact : bem.getContactsForCustomer(customerClass, customerId)) 
+                res.add(new RemoteContactLight(contact));
+
+            return res;
+        } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
@@ -1062,7 +1148,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getCommonParent", ipAddress, sessionId);
-            RemoteBusinessObjectLight commonParent = bem.getCommonParent(aObjectClass, aOid, bObjectClass, bOid);
+            BusinessObjectLight commonParent = bem.getCommonParent(aObjectClass, aOid, bObjectClass, bOid);
             if (commonParent.getId() != -1) // is not DummyRoot
                 return new RemoteObjectLight(commonParent.getId(), commonParent.getName(), commonParent.getClassName());
             else
@@ -1078,7 +1164,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getParent", ipAddress, sessionId);
-            RemoteBusinessObjectLight parent = bem.getParent(objectClass, oid);
+            BusinessObjectLight parent = bem.getParent(objectClass, oid);
             return new RemoteObjectLight(parent.getId(), parent.getName(), parent.getClassName());
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -1116,7 +1202,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getSpecialAttributes", ipAddress, sessionId);
-            HashMap<String, List<RemoteBusinessObjectLight>> relationships = bem.getSpecialAttributes(objectClass, oid);
+            HashMap<String, List<BusinessObjectLight>> relationships = bem.getSpecialAttributes(objectClass, oid);
             RemoteObjectSpecialRelationships res = new RemoteObjectSpecialRelationships(relationships);
 
             return res;
@@ -1133,7 +1219,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
         try {
             aem.validateWebServiceCall("getParentsUntilFirstOfClass", ipAddress, sessionId);
             List<RemoteObjectLight> remoteObjects = new ArrayList<>();
-            for (RemoteBusinessObjectLight remoteObject : bem.getParentsUntilFirstOfClass(objectClassName, oid, objectToMatchClassName))
+            for (BusinessObjectLight remoteObject : bem.getParentsUntilFirstOfClass(objectClassName, oid, objectToMatchClassName))
                 remoteObjects.add(new RemoteObjectLight(remoteObject));
             return remoteObjects;
         } catch (InventoryException ex) {
@@ -1149,7 +1235,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getLastParentUntilFirstOfClass", ipAddress, sessionId);
-            RemoteBusinessObjectLight firstParentOfClass = bem.getFirstParentOfClass(objectClassName, oid, objectToMatchClassName);
+            BusinessObjectLight firstParentOfClass = bem.getFirstParentOfClass(objectClassName, oid, objectToMatchClassName);
             return firstParentOfClass != null ? new RemoteObjectLight(firstParentOfClass) : null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -1518,12 +1604,12 @@ public class WebserviceBean implements WebserviceBeanLocal {
     
     @Override
     public List<AttributeInfo> getMandatoryAttributesInClass(String className, String ipAddress, String sessionId)  throws ServerSideException{
-         if (bem == null || aem == null)
+         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
         try {
                 aem.validateWebServiceCall("getMandatoryAttributesInClass", ipAddress, sessionId);
-                List<AttributeMetadata> mandatoryObjectAttributes = bem.getMandatoryAttributesInClass(className);
+                List<AttributeMetadata> mandatoryObjectAttributes = mem.getMandatoryAttributesInClass(className);
                 return AttributeMetadata.toAttributeInfo(mandatoryObjectAttributes);
 
             } catch (InventoryException ex) {
@@ -1619,7 +1705,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
             if (!mem.isSubClass("GenericPort", objectClass)) //NOI18N
                 throw new ServerSideException(String.format("Object %s is not a port", bem.getObjectLight(objectClass, objectId)));
                         
-            RemoteBusinessObjectLight theOtherPort = null;
+            BusinessObjectLight theOtherPort = null;
             if (bem.hasSpecialRelationship(objectClass, objectId, "mirror", 1)) //NOI18N
                 theOtherPort = bem.getSpecialAttribute(objectClass, objectId, "mirror").get(0); //NOI18N
             
@@ -1709,8 +1795,8 @@ public class WebserviceBean implements WebserviceBeanLocal {
             if (!mem.isSubClass("GenericPhysicalConnection", connectionClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a physical connection", connectionClass));
 
-            List<RemoteBusinessObjectLight> endpointA = bem.getSpecialAttribute(connectionClass, connectionId, "endpointA"); //NOI18N
-            List<RemoteBusinessObjectLight> endpointB = bem.getSpecialAttribute(connectionClass, connectionId, "endpointB"); //NOI18N
+            List<BusinessObjectLight> endpointA = bem.getSpecialAttribute(connectionClass, connectionId, "endpointA"); //NOI18N
+            List<BusinessObjectLight> endpointB = bem.getSpecialAttribute(connectionClass, connectionId, "endpointB"); //NOI18N
             return new RemoteObjectLight[] {endpointA.isEmpty() ? null : new RemoteObjectLight(endpointA.get(0)), 
                                             endpointB.isEmpty() ? null : new RemoteObjectLight(endpointB.get(0))};
 
@@ -1740,8 +1826,8 @@ public class WebserviceBean implements WebserviceBeanLocal {
                 if (Objects.equals(sideAIds[i], sideBIds[i]))
                     throw new ServerSideException("Can not connect a port to itself");
                 
-                List<RemoteBusinessObjectLight> aEndpointList = bem.getSpecialAttribute(linksClassNames[i], linksIds[i], "endpointA"); //NOI18N
-                List<RemoteBusinessObjectLight> bEndpointList = bem.getSpecialAttribute(linksClassNames[i], linksIds[i], "endpointB"); //NOI18N
+                List<BusinessObjectLight> aEndpointList = bem.getSpecialAttribute(linksClassNames[i], linksIds[i], "endpointA"); //NOI18N
+                List<BusinessObjectLight> bEndpointList = bem.getSpecialAttribute(linksClassNames[i], linksIds[i], "endpointB"); //NOI18N
                 
                 if (!aEndpointList.isEmpty()){
                     if (Objects.equals(aEndpointList.get(0).getId(), sideAIds[i]) || Objects.equals(aEndpointList.get(0).getId(), sideBIds[i]))
@@ -1808,7 +1894,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
                     throw new ServerSideException("Can not connect an object to itself");
                 
                 if (sideAIds[i] != null && sideAClassNames[i] != null) {
-                    List<RemoteBusinessObjectLight> aEndpointList = bem.getSpecialAttribute(containersClassNames[i], containersIds[i], "endpointA"); //NOI18N
+                    List<BusinessObjectLight> aEndpointList = bem.getSpecialAttribute(containersClassNames[i], containersIds[i], "endpointA"); //NOI18N
                     if (aEndpointList.isEmpty())
                         bem.createSpecialRelationship(containersClassNames[i], containersIds[i], sideAClassNames[i], sideAIds[i], "endpointA", true); //NOI18N
                     else
@@ -1816,7 +1902,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
                 }
                 
                 if (sideBIds[i] != null && sideBClassNames[i] != null) {
-                    List<RemoteBusinessObjectLight> bEndpointList = bem.getSpecialAttribute(containersClassNames[i], containersIds[i], "endpointB"); //NOI18N
+                    List<BusinessObjectLight> bEndpointList = bem.getSpecialAttribute(containersClassNames[i], containersIds[i], "endpointB"); //NOI18N
                     if (bEndpointList.isEmpty())
                         bem.createSpecialRelationship(containersClassNames[i], containersIds[i], sideBClassNames[i], sideBIds[i], "endpointB", true); //NOI18N
                     else
@@ -1846,14 +1932,14 @@ public class WebserviceBean implements WebserviceBeanLocal {
             
             switch (sideToDisconnect) {
                 case 1: //A side
-                    RemoteBusinessObjectLight endpointA = bem.getSpecialAttribute(connectionClass, connectionId, "endpointA").get(0); //NOI18N                    
+                    BusinessObjectLight endpointA = bem.getSpecialAttribute(connectionClass, connectionId, "endpointA").get(0); //NOI18N                    
                     bem.releaseRelationships(connectionClass, connectionId, Arrays.asList("endpointA")); //NOI18N
                     
                     affectedProperties += "endpointA" + " "; //NOI18N
                     oldValues += Long.toString(endpointA.getId()) + " ";
                     break;
                 case 2: //B side
-                    RemoteBusinessObjectLight endpointB = bem.getSpecialAttribute(connectionClass, connectionId, "endpointB").get(0); //NOI18N                    
+                    BusinessObjectLight endpointB = bem.getSpecialAttribute(connectionClass, connectionId, "endpointB").get(0); //NOI18N                    
                     bem.releaseRelationships(connectionClass, connectionId, Arrays.asList("endpointB")); //NOI18N
                     
                     affectedProperties += "endpointB" + " "; //NOI18N
@@ -1891,7 +1977,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
             if (!mem.isSubClass("GenericPort", objectClassName))
                 throw new ServerSideException(String.format("Class %s is not a port", objectClassName));
             
-            List<RemoteBusinessObjectLight> thePath = bem.getPhysicalPath(objectClassName, oid); 
+            List<BusinessObjectLight> thePath = bem.getPhysicalPath(objectClassName, oid); 
             return RemoteObjectLight.toRemoteObjectLightArray(thePath);
 
         } catch (InventoryException ex) {
@@ -1907,10 +1993,11 @@ public class WebserviceBean implements WebserviceBeanLocal {
         try {
             aem.validateWebServiceCall("getLogicalLinkDetails", ipAddress, sessionId); //NOI18N
             
-            RemoteBusinessObject linkObject = bem.getObject(linkId);
+            BusinessObject linkObject = bem.getObject(linkId);
             
-            RemoteBusinessObjectLight endpointA = null, endpointB = null;
-            List<RemoteBusinessObjectLight> physicalPathA = null, physicalPathB = null;
+            BusinessObjectLight endpointA = null;
+            BusinessObjectLight endpointB = null;
+            List<BusinessObjectLight> physicalPathA = null, physicalPathB = null;
             String endpointARelationshipName, endpointBRelationshipName;
             
             if (mem.isSubClass("GenericSDHTributaryLink", linkClass)) { //NOI18N
@@ -1926,13 +2013,13 @@ public class WebserviceBean implements WebserviceBeanLocal {
                     throw new ServerSideException(String.format("Class %s is not a supported logical link", linkClass)); //NOI18N
             }
             
-            List<RemoteBusinessObjectLight> endpointARelationship = bem.getSpecialAttribute(linkClass, linkId, endpointARelationshipName); //NOI18N
+            List<BusinessObjectLight> endpointARelationship = bem.getSpecialAttribute(linkClass, linkId, endpointARelationshipName); //NOI18N
             if (!endpointARelationship.isEmpty()) {
                 endpointA = endpointARelationship.get(0);
                 physicalPathA = bem.getPhysicalPath(endpointA.getClassName(), endpointA.getId());
             }
 
-            List<RemoteBusinessObjectLight> endpointBRelationship = bem.getSpecialAttribute(linkClass, linkId, endpointBRelationshipName); //NOI18N
+            List<BusinessObjectLight> endpointBRelationship = bem.getSpecialAttribute(linkClass, linkId, endpointBRelationshipName); //NOI18N
             if (!endpointBRelationship.isEmpty()) {
                 endpointB = endpointBRelationship.get(0);
                 physicalPathB = bem.getPhysicalPath(endpointB.getClassName(), endpointB.getId());
@@ -1953,28 +2040,28 @@ public class WebserviceBean implements WebserviceBeanLocal {
             aem.validateWebServiceCall("getContainersBetweenObjects", ipAddress, sessionId); //NOI18N
             List<RemoteObjectLight> res = new ArrayList<>();
 
-            HashMap<String, List<RemoteBusinessObjectLight>> specialAttributesA = bem.getSpecialAttributes(objectAClassName, objectAId);
-            HashMap<String, List<RemoteBusinessObjectLight>> specialAttributesB = bem.getSpecialAttributes(objectBClassName, objectBId);
+            HashMap<String, List<BusinessObjectLight>> specialAttributesA = bem.getSpecialAttributes(objectAClassName, objectAId);
+            HashMap<String, List<BusinessObjectLight>> specialAttributesB = bem.getSpecialAttributes(objectBClassName, objectBId);
             
             if(!specialAttributesA.isEmpty() && !specialAttributesB.isEmpty()){
-                List<RemoteBusinessObjectLight> wireContainersListA = new  ArrayList<>();
+                List<BusinessObjectLight> wireContainersListA = new  ArrayList<>();
 
                 if(specialAttributesA.get("endpointA") != null){
-                    for(RemoteBusinessObjectLight container : specialAttributesA.get("endpointA")){
+                    for(BusinessObjectLight container : specialAttributesA.get("endpointA")){
                         if(container.getClassName().equals(containerClassName))
                             wireContainersListA.add(container);
                     }
                 }
 
                 if(specialAttributesA.get("endpointB") != null){
-                    for(RemoteBusinessObjectLight container : specialAttributesA.get("endpointB")){
+                    for(BusinessObjectLight container : specialAttributesA.get("endpointB")){
                         if(container.getClassName().equals(containerClassName))
                             wireContainersListA.add(container);
                     }
                 }
 
                 if(specialAttributesB.get("endpointA") != null){
-                    for(RemoteBusinessObjectLight container : specialAttributesB.get("endpointA")){
+                    for(BusinessObjectLight container : specialAttributesB.get("endpointA")){
                         if(container.getClassName().equals(containerClassName)){
                             if(wireContainersListA.contains(container))
                                 res.add(new RemoteObjectLight(container));
@@ -1983,7 +2070,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
                 }
 
                 if(specialAttributesB.get("endpointB") != null){
-                    for(RemoteBusinessObjectLight container : specialAttributesB.get("endpointB")){
+                    for(BusinessObjectLight container : specialAttributesB.get("endpointB")){
                         if(container.getClassName().equals(containerClassName)){
                             if(wireContainersListA.contains(container))
                                 res.add(new RemoteObjectLight(container));
@@ -2007,10 +2094,10 @@ public class WebserviceBean implements WebserviceBeanLocal {
             aem.validateWebServiceCall("getPhysicalConnectionsInObject", ipAddress, sessionId); //NOI18N
             List<RemoteObjectLightList> res = new ArrayList<>();
             
-            List<RemoteBusinessObjectLight> allCommunicationsPorts = bem.getChildrenOfClassLightRecursive(objectId, objectClass, "GenericCommunicationsPort", -1);
+            List<BusinessObjectLight> allCommunicationsPorts = bem.getChildrenOfClassLightRecursive(objectId, objectClass, "GenericCommunicationsPort", -1);
             
-            for (RemoteBusinessObjectLight aCommunicationsPort : allCommunicationsPorts) {
-                List<RemoteBusinessObjectLight> physicalPath = bem.getPhysicalPath(aCommunicationsPort.getClassName(), aCommunicationsPort.getId());
+            for (BusinessObjectLight aCommunicationsPort : allCommunicationsPorts) {
+                List<BusinessObjectLight> physicalPath = bem.getPhysicalPath(aCommunicationsPort.getClassName(), aCommunicationsPort.getId());
                 if (physicalPath.size() > 1)
                     res.add(new RemoteObjectLightList(RemoteObjectLight.toRemoteObjectLightArray(physicalPath)));
             }
@@ -2403,7 +2490,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
-            aem.validateWebServiceCall("createListTypeItemRelateView", ipAddress, sessionId);            
+            aem.validateWebServiceCall("createListTypeItemRelatedView", ipAddress, sessionId);            
             
             long viewId = aem.createListTypeItemRelatedView(listTypeItemId, listTypeItemClassName, viewClassName, name, description, structure, background);
             
@@ -2975,6 +3062,61 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
 
     @Override
+    public long attachFileToObject(String name, String tags, byte[] file, String className, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("attachFileToObject", ipAddress, sessionId);
+            return bem.attachFileToObject(name, tags, file, className, objectId);
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void detachFileFromObject(long fileObjectId, String className, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("detachFileFromObject", ipAddress, sessionId);
+            bem.detachFileFromObject(fileObjectId, className, objectId);
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<RemoteFileObjectLight> getFilesForObject(String className, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            List<RemoteFileObjectLight> res = new ArrayList<>();
+            aem.validateWebServiceCall("getFilesForObject", ipAddress, sessionId);
+            List<FileObjectLight>filesForObject = bem.getFilesForObject(className, objectId);
+            for (FileObjectLight objectFile :filesForObject)
+                res.add(new RemoteFileObjectLight(objectFile.getFileOjectId(), objectFile.getName(), objectFile.getTags()));
+            return res;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public RemoteFileObject getFile(long fileObjectId, String className, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getFile", ipAddress, sessionId);
+            FileObject  fileForObject = bem.getFile(fileObjectId, className, objectId);
+            return new RemoteFileObject(fileForObject.getFileOjectId(), fileForObject.getName(), fileForObject.getTags(), fileForObject.getFile());
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
     public long createTask(String name, String description, boolean enabled, boolean commitOnExecute, String script, 
             List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType, 
             String ipAddress, String sessionId) throws ServerSideException {
@@ -3482,10 +3624,10 @@ public class WebserviceBean implements WebserviceBeanLocal {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getTemplatesForClass", ipAddress, sessionId);
-            List<RemoteBusinessObjectLight> templates = aem.getTemplatesForClass(className);
+            List<BusinessObjectLight> templates = aem.getTemplatesForClass(className);
             List<RemoteObjectLight> remoteTemplates = new ArrayList<>();
             
-            for (RemoteBusinessObjectLight template : templates)
+            for (BusinessObjectLight template : templates)
                 remoteTemplates.add(new RemoteObjectLight(template));
             
             return remoteTemplates;
@@ -3501,10 +3643,10 @@ public class WebserviceBean implements WebserviceBeanLocal {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getTemplateElementChildren", ipAddress, sessionId);
-            List<RemoteBusinessObjectLight> templateElementChildren = aem.getTemplateElementChildren(templateElementClass, templateElementId);
+            List<BusinessObjectLight> templateElementChildren = aem.getTemplateElementChildren(templateElementClass, templateElementId);
             List<RemoteObjectLight> remoteTemplateElementChildren = new ArrayList<>();
             
-            for (RemoteBusinessObjectLight templateElementChild : templateElementChildren)
+            for (BusinessObjectLight templateElementChild : templateElementChildren)
                 remoteTemplateElementChildren.add(new RemoteObjectLight(templateElementChild));
             
             return remoteTemplateElementChildren;
@@ -3520,10 +3662,10 @@ public class WebserviceBean implements WebserviceBeanLocal {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getTemplateSpecialElementChildren", ipAddress, sessionId);
-            List<RemoteBusinessObjectLight> templateElementChildren = aem.getTemplateSpecialElementChildren(tsElementClass, tsElementId);
+            List<BusinessObjectLight> templateElementChildren = aem.getTemplateSpecialElementChildren(tsElementClass, tsElementId);
             List<RemoteObjectLight> remoteTemplateElementChildren = new ArrayList<>();
             
-            for (RemoteBusinessObjectLight templateElementChild : templateElementChildren)
+            for (BusinessObjectLight templateElementChild : templateElementChildren)
                 remoteTemplateElementChildren.add(new RemoteObjectLight(templateElementChild));
             
             return remoteTemplateElementChildren;
@@ -3862,7 +4004,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public List<RemoteBusinessObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
+    public List<BusinessObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
                                             long  communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException {
         try {
@@ -3875,7 +4017,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public List<RemoteBusinessObjectLightList> findSDHRoutesUsingContainerLinks(String communicationsEquipmentClassA, 
+    public List<BusinessObjectLightList> findSDHRoutesUsingContainerLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
                                             long  communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException {
         try {
@@ -4825,7 +4967,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
                         return SimpleCorrelation.servicesInSlotOrBoard(resourceDefinitionTokens[0], resourceDefinitionTokens[1], bem, mem);
                     case 3:
                         
-                        List<RemoteBusinessObjectLight> matchedCommunicationsElements = bem.getObjectsWithFilterLight("GenericCommunicationsElement", "name", resourceDefinitionTokens[0]);
+                        List<BusinessObjectLight> matchedCommunicationsElements = bem.getObjectsWithFilterLight("GenericCommunicationsElement", "name", resourceDefinitionTokens[0]);
                         
                         if (matchedCommunicationsElements.isEmpty())
                             throw new ServerSideException(String.format("No resource with name %s could be found", resourceDefinitionTokens[0]));
@@ -4833,15 +4975,15 @@ public class WebserviceBean implements WebserviceBeanLocal {
                         if (matchedCommunicationsElements.size() > 1)
                             throw new ServerSideException(String.format("More than one communications equipment with name %s was found", resourceDefinitionTokens[0]));
                         
-                        List<RemoteBusinessObjectLight> deviceChildren = bem.getObjectChildren(matchedCommunicationsElements.get(0).getClassName(), 
+                        List<BusinessObjectLight> deviceChildren = bem.getObjectChildren(matchedCommunicationsElements.get(0).getClassName(), 
                                                                             matchedCommunicationsElements.get(0).getId(), -1);
 
-                        for (RemoteBusinessObjectLight deviceChild : deviceChildren) {
+                        for (BusinessObjectLight deviceChild : deviceChildren) {
                             if (resourceDefinitionTokens[1].equals(deviceChild.getName())) {
-                                List<RemoteBusinessObjectLight> portsInSlot = bem.getObjectChildren(deviceChild.getClassName(), deviceChild.getId(), -1);
-                                for (RemoteBusinessObjectLight portInSlot : portsInSlot) {
+                                List<BusinessObjectLight> portsInSlot = bem.getObjectChildren(deviceChild.getClassName(), deviceChild.getId(), -1);
+                                for (BusinessObjectLight portInSlot : portsInSlot) {
                                     if (resourceDefinitionTokens[2].equals(portInSlot.getName())) 
-                                        return servicesInPorts(Arrays.asList(bem.getObject(portInSlot.getId())), bem);
+                                        return SimpleCorrelation.servicesInPorts(Arrays.asList(bem.getObject(portInSlot.getId())), bem);
                                 }
                                 throw new ServerSideException(String.format("No port %s was found on device %s", 
                                         resourceDefinitionTokens[2], resourceDefinitionTokens[0]));
@@ -4856,24 +4998,24 @@ public class WebserviceBean implements WebserviceBeanLocal {
             }
             
             if (resourceType == 2) { //Logical connection
-                List<RemoteBusinessObject> matchedConnections = bem.getObjectsWithFilter("GenericLogicalConnection", "name", resourceDefinitionTokens[0]);
+                List<BusinessObject> matchedConnections = bem.getObjectsWithFilter("GenericLogicalConnection", "name", resourceDefinitionTokens[0]);
                 if (matchedConnections.isEmpty())
                     throw new ServerSideException(String.format("No logical connection with name %s could be found", resourceDefinitionTokens[0]));
                 
                 List<RemoteObjectLight> rawServices = new ArrayList<>();
-                for (RemoteBusinessObjectLight matchedConnection : matchedConnections) {
-                    List<RemoteBusinessObjectLight> servicesInConnection = bem.getSpecialAttribute(matchedConnection.getClassName(), 
+                for (BusinessObjectLight matchedConnection : matchedConnections) {
+                    List<BusinessObjectLight> servicesInConnection = bem.getSpecialAttribute(matchedConnection.getClassName(), 
                             matchedConnection.getId(), "uses");
-                    for (RemoteBusinessObjectLight serviceInConnection : servicesInConnection)
+                    for (BusinessObjectLight serviceInConnection : servicesInConnection)
                         rawServices.add(new RemoteObjectLight(serviceInConnection));
                 }
                 
                 List<ServiceLevelCorrelatedInformation> serviceLevelCorrelatedInformation = new ArrayList<>();
-                HashMap<RemoteBusinessObjectLight, List<RemoteObjectLight>> rawCorrelatedInformation = new HashMap<>();
+                HashMap<BusinessObjectLight, List<RemoteObjectLight>> rawCorrelatedInformation = new HashMap<>();
 
                 //Now we organize the rawServices by customers
                 for (RemoteObjectLight rawService : rawServices) {
-                    RemoteBusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getOid(), Constants.CLASS_GENERICCUSTOMER);
+                    BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getOid(), Constants.CLASS_GENERICCUSTOMER);
                     if (customer != null) {//Services without customers will be ignored. This shouldn't happen, though
                         if (!rawCorrelatedInformation.containsKey(customer))
                             rawCorrelatedInformation.put(customer, new ArrayList<RemoteObjectLight>());
@@ -4882,31 +5024,31 @@ public class WebserviceBean implements WebserviceBeanLocal {
                     }
                 }
 
-                for (RemoteBusinessObjectLight customer : rawCorrelatedInformation.keySet()) 
+                for (BusinessObjectLight customer : rawCorrelatedInformation.keySet()) 
                     serviceLevelCorrelatedInformation.add(new ServiceLevelCorrelatedInformation(new RemoteObjectLight(customer), rawCorrelatedInformation.get(customer)));
 
                 return new AssetLevelCorrelatedInformation(RemoteObject.toRemoteObjectArray(matchedConnections), serviceLevelCorrelatedInformation);
             }
             
             if (resourceType == 3) { //Same as 2, but use a GenericPhysicalConnection
-                List<RemoteBusinessObject> matchedConnections = bem.getObjectsWithFilter("GenericPhysicalConnection", "name", resourceDefinitionTokens[0]);
+                List<BusinessObject> matchedConnections = bem.getObjectsWithFilter("GenericPhysicalConnection", "name", resourceDefinitionTokens[0]);
                 if (matchedConnections.isEmpty())
                     throw new ServerSideException(String.format("No physical connection with name %s could be found", resourceDefinitionTokens[0]));
                 
                 List<RemoteObjectLight> rawServices = new ArrayList<>();
-                for (RemoteBusinessObjectLight matchedConnection : matchedConnections) {
-                    List<RemoteBusinessObjectLight> servicesInConnection = bem.getSpecialAttribute(matchedConnection.getClassName(), 
+                for (BusinessObjectLight matchedConnection : matchedConnections) {
+                    List<BusinessObjectLight> servicesInConnection = bem.getSpecialAttribute(matchedConnection.getClassName(), 
                             matchedConnection.getId(), "uses");
-                    for (RemoteBusinessObjectLight serviceInConnection : servicesInConnection)
+                    for (BusinessObjectLight serviceInConnection : servicesInConnection)
                         rawServices.add(new RemoteObjectLight(serviceInConnection));
                 }
                 
                 List<ServiceLevelCorrelatedInformation> serviceLevelCorrelatedInformation = new ArrayList<>();
-                HashMap<RemoteBusinessObjectLight, List<RemoteObjectLight>> rawCorrelatedInformation = new HashMap<>();
+                HashMap<BusinessObjectLight, List<RemoteObjectLight>> rawCorrelatedInformation = new HashMap<>();
 
                 //Now we organize the rawServices by customers
                 for (RemoteObjectLight rawService : rawServices) {
-                    RemoteBusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getOid(), Constants.CLASS_GENERICCUSTOMER);
+                    BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getOid(), Constants.CLASS_GENERICCUSTOMER);
                     if (customer != null) {//Services without customers will be ignored. This shouldn't happen, though
                         if (!rawCorrelatedInformation.containsKey(customer))
                             rawCorrelatedInformation.put(customer, new ArrayList<RemoteObjectLight>());
@@ -4915,7 +5057,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
                     }
                 }
 
-                for (RemoteBusinessObjectLight customer : rawCorrelatedInformation.keySet()) 
+                for (BusinessObjectLight customer : rawCorrelatedInformation.keySet()) 
                     serviceLevelCorrelatedInformation.add(new ServiceLevelCorrelatedInformation(new RemoteObjectLight(customer), rawCorrelatedInformation.get(customer)));
 
                 return new AssetLevelCorrelatedInformation(RemoteObject.toRemoteObjectArray(matchedConnections), serviceLevelCorrelatedInformation);

@@ -1,5 +1,5 @@
 /**
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundExceptio
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.util.ChangeDescriptor;
 
 /**
@@ -48,12 +48,12 @@ public interface MetadataEntityManager {
      * @throws MetadataObjectNotFoundException If the class could no be found
      * @throws InvalidArgumentException If the name has invalid characters, the 
      * new name is empty or if that name already exists.
-     * @throws ObjectNotFoundException If there is any problem retrieving an 
+     * @throws BusinessObjectNotFoundException If there is any problem retrieving an 
      * object, while checking if every created object of the class with an 
      * attributes marked as mandatory has value.
      */
     public ChangeDescriptor setClassProperties(ClassMetadata newClassDefinition) 
-            throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException;
+            throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException;
 
     /**
      * Deletes a class metadata, its attributes and category relationships
@@ -189,9 +189,9 @@ public interface MetadataEntityManager {
      * @return The summary of the changes that were made.
      * @throws MetadataObjectNotFoundException If the class could not be found.
      * @throws InvalidArgumentException If any of the new attribute parameters has a wrong value.
-     * @throws ObjectNotFoundException If an object can't be find, while it is checking if every object of the class (or subclasses) has a value in an attribute marked as mandatory
+     * @throws BusinessObjectNotFoundException If an object can't be find, while it is checking if every object of the class (or subclasses) has a value in an attribute marked as mandatory
      */
-    public ChangeDescriptor setAttributeProperties(long classId, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException;
+    public ChangeDescriptor setAttributeProperties(long classId, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException;
     
     /**
      * Changes an attribute definition belonging to a class metadata use the class name as id
@@ -200,9 +200,9 @@ public interface MetadataEntityManager {
      * @return The summary of the changes that were made.
      * @throws MetadataObjectNotFoundException If the class could not be found.
      * @throws InvalidArgumentException If any of the new attribute parameters has a wrong value.
-     * @throws ObjectNotFoundException  If an object can't be find, while it is checking if every object of the class (or subclasses) has a value in an attribute marked as mandatory
+     * @throws BusinessObjectNotFoundException  If an object can't be find, while it is checking if every object of the class (or subclasses) has a value in an attribute marked as mandatory
      */
-    public ChangeDescriptor setAttributeProperties(String className, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException;
+    public ChangeDescriptor setAttributeProperties(String className, AttributeMetadata newAttributeDefinition) throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException;
 
     /**
      * Deletes an attribute from a class.
@@ -365,4 +365,12 @@ public interface MetadataEntityManager {
      * @throws MetadataObjectNotFoundException if className does not correspond to any existing class
      */
     public List<ClassMetadataLight> getUpstreamSpecialContainmentHierarchy(String className, boolean recursive) throws MetadataObjectNotFoundException;
+    /**
+     * Retrieves the list of the attributes marked as mandatory
+     * @param className the class name
+     * @return a list of AttributeMetadata
+     * @throws MetadataObjectNotFoundException if the class doesn't exist
+     */
+    public List<AttributeMetadata> getMandatoryAttributesInClass(String className) throws 
+            MetadataObjectNotFoundException;
 }

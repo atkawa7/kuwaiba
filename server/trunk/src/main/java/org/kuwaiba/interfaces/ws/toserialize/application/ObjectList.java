@@ -1,5 +1,5 @@
 /**
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ public class ObjectList implements Serializable {
         this.type = listType.getType();
         this.displayName = listType.getDisplayName();
         this.list = new HashMap<Long, String>();
-        for (org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight item : listType.getList())
+        for (org.kuwaiba.apis.persistence.business.BusinessObjectLight item : listType.getList())
             this.list.put(item.getId(), item.getName());
     }
 

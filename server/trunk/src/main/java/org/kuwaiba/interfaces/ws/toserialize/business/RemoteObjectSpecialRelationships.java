@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 
 /**
  * Wraps the special relationships of an object so a Hashmap doesn't have to be used
@@ -34,7 +34,7 @@ public class RemoteObjectSpecialRelationships implements Serializable {
 
     public RemoteObjectSpecialRelationships() { }
 
-    public RemoteObjectSpecialRelationships(HashMap<String, List<RemoteBusinessObjectLight>> relationships) {
+    public RemoteObjectSpecialRelationships(HashMap<String, List<BusinessObjectLight>> relationships) {
         this.relationships = new ArrayList<>();
         this.relatedObjects = new ArrayList<>();
 

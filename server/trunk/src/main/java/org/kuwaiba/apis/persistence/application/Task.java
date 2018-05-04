@@ -1,5 +1,5 @@
 /**
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 package org.kuwaiba.apis.persistence.application;
 
 import java.util.List;
-import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
+import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License
@@ -23,23 +23,27 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 
 /**
- * This class represents a list of RemoteBusinessObjectLight list. It's basically a wrapper for ArrayList&lt;RemoteBusinessbjectLight&gt; 
+ * This class represents a list of RemoteBusinessObject. It's basically a wrapper for ArrayList&lt;RemoteBusinessbject&gt; 
  * It's used only to improve code readability. This class extended from ArrayList of RemoteBusinessObjectLight at the beginning, but JAX-WS just refused to treat it as a List
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteObjectLightList implements  Serializable {
-    private List<RemoteObjectLight> list;
+public class BusinessObjectList implements  Serializable {
+    private List<BusinessObject> list;
 
-    public RemoteObjectLightList() {
+    public BusinessObjectList() {
         list = new ArrayList<>();
     }
     
-    public boolean add(RemoteObjectLight element) {
+    public boolean add(BusinessObject element) {
         return list.add(element);
     }
     
-    public boolean remove(RemoteObjectLight element) {
+    public boolean remove(BusinessObject element) {
         return list.remove(element);
+    }
+    
+    public List<BusinessObject> getList() {
+        return list;
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
-import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
+import org.kuwaiba.apis.persistence.util.StringPair;
 
 /**
  * Splits a given list of ports into side A and B in order to relate mirror ports
@@ -77,7 +77,7 @@ public class MirrorPortsPairingUtil {
                     for (int i=0; i < endPointsA.size(); i++) 
                         bem.createSpecialRelationship(objectClassName, endPointsA.get(i), objectClassName, endPointsB.get(i), "mirror", true); //NOI18N
                 
-                } catch (ObjectNotFoundException | OperationNotPermittedException | MetadataObjectNotFoundException ex) {
+                } catch (BusinessObjectNotFoundException | OperationNotPermittedException | MetadataObjectNotFoundException ex) {
                     throw new InvalidArgumentException("The list of created ports could not be mirrored");
                 }
             }

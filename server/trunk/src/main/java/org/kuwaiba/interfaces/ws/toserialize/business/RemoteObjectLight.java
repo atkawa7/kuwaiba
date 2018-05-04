@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.Validator;
 
 /**
@@ -61,7 +61,7 @@ public class RemoteObjectLight implements Serializable {
     }
 
 
-    public RemoteObjectLight(RemoteBusinessObjectLight obj){
+    public RemoteObjectLight(BusinessObjectLight obj){
         this.className = obj.getClassName();
         this.name = obj.getName();
         this.oid = obj.getId();
@@ -109,12 +109,12 @@ public class RemoteObjectLight implements Serializable {
         this.validators.add(newValidator);
     }
 
-    public static List<RemoteObjectLight> toRemoteObjectLightArray(List<RemoteBusinessObjectLight> toBeWrapped){
+    public static List<RemoteObjectLight> toRemoteObjectLightArray(List<BusinessObjectLight> toBeWrapped){
         if (toBeWrapped == null)
             return null;
 
         List<RemoteObjectLight> res = new ArrayList<>();
-        for (RemoteBusinessObjectLight aRemoteBusinesObjectLight: toBeWrapped)
+        for (BusinessObjectLight aRemoteBusinesObjectLight: toBeWrapped)
             res.add(new RemoteObjectLight(aRemoteBusinesObjectLight));
 
         return res;

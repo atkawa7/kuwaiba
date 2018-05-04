@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,38 +13,37 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.kuwaiba.apis.persistence.business;
 
-import java.io.Serializable;
-
 /**
- * Contains a business object basic information
+ * A simplified version of {@link Contact}
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RemoteObjectLight implements Serializable {
-
+public class ContactLight {
     /**
-     * Object's id
+     * Contact oid
      */
     private long id;
     /**
-     * Object's name
+     * Contact name
      */
     private String name;
     /**
-     * Class this object is instance of
+     * Contact class name
      */
     private String className;
+    /**
+     * Customer this contact is associated to
+     */
+    private BusinessObjectLight customer;
 
-    protected RemoteObjectLight() {}
-
-    public RemoteObjectLight(Long id, String name, String className) {
+    public ContactLight(long id, String name, String className, BusinessObjectLight customer) {
         this.id = id;
         this.name = name;
         this.className = className;
+        this.customer = customer;
     }
-
+    
     public long getId() {
         return id;
     }
@@ -68,9 +67,14 @@ public class RemoteObjectLight implements Serializable {
     public void setClassName(String className) {
         this.className = className;
     }
-    
-    @Override
-    public String toString() {
-        return getName() + " [" + getClassName() + "]";
+
+    public BusinessObjectLight getCustomer() {
+        return customer;
     }
+
+    public void setCustomer(BusinessObjectLight customer) {
+        this.customer = customer;
+    }
+    
+    
 }

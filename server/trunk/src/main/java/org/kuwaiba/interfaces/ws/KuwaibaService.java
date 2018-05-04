@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,13 +33,13 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLightList;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
-import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
+import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.interfaces.ws.todeserialize.TransientQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQuery;
@@ -51,10 +51,15 @@ import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.PrivilegeInfo;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBackgroundJob;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBusinessRule;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContact;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContactLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFavoritesFolder;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObject;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemotePool;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationGroup;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteTask;
@@ -2107,6 +2112,140 @@ public class KuwaibaService {
             }
         }
     }
+    
+    /**
+     * Creates a contact
+     * @param contactClass The class of the new contact. It must be a subclass of GenericContact
+     * @param properties A dictionary (key-value list) with the set of string-type attributes to be set. No string-type attributes are not currently supported. Attribute <b>name</b> is mandatory.
+     * @param customerClassName The class of the customer this contact will be associated to
+     * @param customerId The id of the customer this contact will be associated to
+     * @param sessionId The session token
+     * @return The id of the newly created contact
+     * @throws ServerSideException If the contact class provided is not a valid GenericCustomer, or if the customer does not exist or if any of the properties does not exist or its type is invalid (not a string)
+     */
+    public long createContact(@WebParam(name = "contactClass")String contactClass, @WebParam(name = "properties")List<StringPair> properties, 
+            @WebParam(name = "customerClassName")String customerClassName, @WebParam(name = "customerId")long customerId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createContact(contactClass, properties, customerClassName, customerId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createContact: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Updates a set of properties of a contact
+     * @param contactClass The class of the contact to be updated
+     * @param contactId The id of the contact to be updated
+     * @param properties A set of pairs key-value with the properties to be updated
+     * @param sessionId The session token
+     * @throws ServerSideException If the contact could not be found or if any of the attributes to be set could not be found or has an invalid value
+     */
+    public void updateContact(@WebParam(name = "contactClass")String contactClass, @WebParam(name = "contactId")long contactId, 
+            @WebParam(name = "properties")List<StringPair> properties, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.updateContact(contactClass, contactId, properties, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateContact: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Deletes a contact
+     * @param contactClass The class of the contact to be deleted
+     * @param contactId The id of the contact to be deleted
+     * @param sessionId The session token
+     * @throws ServerSideException If the contact was not found
+     */
+    public void deleteContact(@WebParam(name = "contactClass")String contactClass, 
+            @WebParam(name = "contactId")long contactId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.deleteContact(contactClass, contactId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteContact: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets the whole information about a contact
+     * @param contactClass The class of the contact
+     * @param contactId The id of the contact
+     * @param sessionId The session token
+     * @return The contact object
+     * @throws ServerSideException If the contact could not be found
+     */
+    public RemoteContact getContact(@WebParam(name = "contactClass")String contactClass, 
+            @WebParam(name = "contactId")long contactId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getContact(contactClass, contactId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getContact: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Searches for contacts given a search string, This string will be searched in the attribute values of all contacts
+     * @param searchString The string to be searched. Use null or an empty string to retrieve all the contacts
+     * @param maxResults Maximum number of results. Use -1 to retrieve all results at once
+     * @param sessionId The session token
+     * @return The list of contacts for whom at least one of their attributes matches  
+     * @throws org.kuwaiba.exceptions.ServerSideException 
+     */
+    public List<RemoteContactLight> searchForContacts(@WebParam(name = "searchString")String searchString, 
+            @WebParam(name = "maxResults")int maxResults, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.searchForContacts(searchString, maxResults, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in searchForContacts: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Retrieves the contacts associated to a given customer
+     * @param customerClass The class of the customer to get the contacts from
+     * @param customerId The id of the customer to get the contacts from
+     * @param sessionId The session token
+     * @return The list of contacts associated to the customer
+     * @throws ServerSideException If the customer could not be found
+     */
+    public List<RemoteContactLight> getContactsForCustomer(@WebParam(name = "customerClass")String customerClass, 
+            @WebParam(name = "customerId")long customerId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getContactsForCustomer(customerClass, customerId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getContactsForCustomer: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
     //</editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Business Methods. Click on the + sign on the left to edit the code.">
@@ -3638,7 +3777,83 @@ public class KuwaibaService {
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
-    }    
+    }
+    
+    /**
+     * Attaches a file to an inventory object
+     * @param name The name of the file. It's more like its title, instead of the file name
+     * @param tags A semicolon (";") separated string with the tags associated to this document. These tags can be used to help find documents in a search
+     * @param file The actual file
+     * @param className The class name of the inventory object the file will be attached to
+     * @param objectId The id of the inventory object the file will be attached to
+     * @param sessionId Session token
+     * @return The id of the file object that was created
+     * @throws ServerSideException If the file can not be saved or if there's already a file with that name related to the object
+     */
+    @WebMethod(operationName = "attachFileToObject")
+    public long attachFileToObject(@WebParam(name = "name")String name, 
+            @WebParam(name = "tags")String tags, @WebParam(name = "file")byte[] file, 
+            @WebParam(name = "className")String className, @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try{
+            return wsBean.attachFileToObject(name, tags, file, className, objectId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in attachFileToObject: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    @WebMethod(operationName = "detachFileFromObject")
+    public void detachFileFromObject(@WebParam(name = "fileObjectId")long fileObjectId,
+            @WebParam(name = "className")String className, @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try{
+            wsBean.detachFileFromObject(fileObjectId, className, objectId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in detachFileFromObject: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    @WebMethod(operationName = "getFilesForObject")
+    public List<RemoteFileObjectLight> getFilesForObject(@WebParam(name = "className")String className, @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try{
+            return wsBean.getFilesForObject(className, objectId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getFilesForObject: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    @WebMethod(operationName = "getFile")
+    public RemoteFileObject getFile(@WebParam(name = "fileObjectId")long fileObjectId, 
+            @WebParam(name = "className")String className, @WebParam(name = "objectId")long objectId,
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try{
+            return wsBean.getFile(fileObjectId, className, objectId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getFilesForObject: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Metadata Methods. Click on the + sign on the left to edit the code.">
@@ -5848,8 +6063,6 @@ public class KuwaibaService {
     }
     //</editor-fold>
     
-    
-    // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
         // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
     /**
      * Creates an SDH transport link (STMX)
@@ -6050,7 +6263,7 @@ public class KuwaibaService {
      *                             If the given communication equipment is no subclass of GenericCommunicationsEquipment
      */
     @WebMethod(operationName = "findSDHRoutesUsingTransportLinks")
-    public List<RemoteBusinessObjectLightList> findSDHRoutesUsingTransportLinks(@WebParam(name = "communicationsEquipmentClassA") String communicationsEquipmentClassA, 
+    public List<BusinessObjectLightList> findSDHRoutesUsingTransportLinks(@WebParam(name = "communicationsEquipmentClassA") String communicationsEquipmentClassA, 
                                             @WebParam(name = "communicationsEquipmentIdA") long  communicationsEquipmentIdA, 
                                             @WebParam(name = "communicationsEquipmentClassB") String communicationsEquipmentClassB, 
                                             @WebParam(name = "communicationsEquipmentIB") long  communicationsEquipmentIB, 
@@ -6079,7 +6292,7 @@ public class KuwaibaService {
      *                             If the given communication equipment is no subclass of GenericCommunicationsEquipment
      */
     @WebMethod(operationName = "findSDHRoutesUsingContainerLinks")
-    public List<RemoteBusinessObjectLightList> findSDHRoutesUsingContainerLinks(@WebParam(name = "communicationsEquipmentClassA") String communicationsEquipmentClassA, 
+    public List<BusinessObjectLightList> findSDHRoutesUsingContainerLinks(@WebParam(name = "communicationsEquipmentClassA") String communicationsEquipmentClassA, 
                                             @WebParam(name = "communicationsEquipmentIdA") long  communicationsEquipmentIdA, 
                                             @WebParam(name = "communicationsEquipmentClassB") String communicationsEquipmentClassB, 
                                             @WebParam(name = "communicationsEquipmentIB") long  communicationsEquipmentIB, 
@@ -7525,6 +7738,46 @@ public class KuwaibaService {
             }
         }
         //</editor-fold>
+        //<editor-fold desc="Process Manager" defaultstate="collapsed">
+//        @WebMethod(operationName = "createProcessDefinition")
+//        public long createProcessDefinition(String name, String description, String version, boolean enabled, 
+//                byte[] structure, String sessionId) throws ServerSideException {
+//        }
+        
+//        @WebMethod(operationName = "updateProcessDefinition")
+//        public void updateProcessDefinition(long processDefinitionId, List<StringPair> properties, 
+//                byte[] structure, String sessionId) throws ServerSideException {
+//        }
+//        
+//        @WebMethod(operationName = "deleteProcessDefinition")
+//        public void deleteProcessDefinition(long processDefinitionId, String sessionId) throws ServerSideException {
+//        }
+//        
+//        @WebMethod(operationName = "getProcessDefinition")
+//        public RemoteProcessDefinition getProcessDefinition(long processDefinitionId, String sessionId) throws ServerSideException {
+//        }
+//        
+//        @WebMethod(operationName = "startProcess")
+//        public long startProcess(long processDefinitionId, String processInstanceName, 
+//                String processInstanceDescription, String sessionId) throws ServerSideException {
+//        }
+//        
+//        @WebMethod(operationName = "getNextActivity")
+//        public RemoteActivityDefinition getNextActivity(long processInstanceId, String sessionId) throws ServerSideException {
+//        }
+//        
+//        @WebMethod(operationName = "commitActivity")
+//        public void commitActivity(long processInstanceId, String activityId, RemoteArtifact artifact) throws ServerSideException {
+//        }
+//        
+//        public RemoteArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, 
+//                String activityDefinitionId, String sessionId) throws ServerSideException {
+//        }
+//        
+//        public RemoteArtifact getArtifactForActivity(long processInstanceId, String activityId, 
+//                String sessionId) throws ServerSideException {
+//        }
+        //</editor-fold>
     // </editor-fold>
         
     // <editor-fold defaultstate="collapsed" desc="Helpers. Click on the + sign on the left to edit the code.">/**
@@ -7537,3 +7790,6 @@ public class KuwaibaService {
                     get("javax.xml.ws.servlet.request")).getRemoteAddr(); //NOI18N
     }// </editor-fold>
 }
+    
+    // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
+    // <editor-fold defaultstate="collapsed" desc="Commercial APIs">

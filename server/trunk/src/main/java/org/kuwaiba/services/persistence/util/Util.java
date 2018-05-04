@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,8 +47,8 @@ import org.kuwaiba.apis.persistence.application.ScriptQuery;
 import org.kuwaiba.apis.persistence.application.Task;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.UserProfileLight;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObject;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -60,7 +60,7 @@ import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
 import org.kuwaiba.services.persistence.cache.CacheManager;
 import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
-import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
+import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemotePool;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
@@ -404,33 +404,33 @@ public class Util {
                 (Integer)instance.getProperty(Constants.PROPERTY_TYPE));
     }
     
-    public static RemoteBusinessObjectLight createRemoteObjectLightFromPoolNode (Node instance) {
-        return new RemoteBusinessObjectLight(instance.getId(), 
+    public static BusinessObjectLight createRemoteObjectLightFromPoolNode (Node instance) {
+        return new BusinessObjectLight(instance.getId(), 
                 (String)instance.getProperty(Constants.PROPERTY_NAME), 
                 String.format("%s of %s", Constants.CLASS_POOL, instance.getProperty(Constants.PROPERTY_CLASS_NAME)));
     }
     
-    public static RemoteBusinessObjectLight createRemoteObjectLightFromNode (Node instance) {
+    public static BusinessObjectLight createRemoteObjectLightFromNode (Node instance) {
         Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
         
-        return new RemoteBusinessObjectLight(instance.getId(), 
+        return new BusinessObjectLight(instance.getId(), 
             (String)instance.getProperty(Constants.PROPERTY_NAME), (String)classNode.getProperty(Constants.PROPERTY_NAME));
     }
     
-    public static RemoteBusinessObjectLight createTemplateElementLightFromNode (Node instance) {
+    public static BusinessObjectLight createTemplateElementLightFromNode (Node instance) {
         Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode();
         
-        return new RemoteBusinessObjectLight(instance.getId(), 
+        return new BusinessObjectLight(instance.getId(), 
             (String)instance.getProperty(Constants.PROPERTY_NAME), (String)classNode.getProperty(Constants.PROPERTY_NAME));
     }
     
-    public static RemoteBusinessObject createRemoteObjectFromNode (Node instance) throws InvalidArgumentException {
+    public static BusinessObject createRemoteObjectFromNode (Node instance) throws InvalidArgumentException {
         Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
         ClassMetadata classMetadata = createClassMetadataFromNode(classNode);
         return createRemoteObjectFromNode(instance, classMetadata);
     }
     
-    public static RemoteBusinessObject createTemplateElementFromNode (Node instance) throws InvalidArgumentException {
+    public static BusinessObject createTemplateElementFromNode (Node instance) throws InvalidArgumentException {
         Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode();
         ClassMetadata classMetadata = createClassMetadataFromNode(classNode);
         return createRemoteObjectFromNode(instance, classMetadata);
@@ -504,7 +504,7 @@ public class Util {
      * @return The business object.
      * @throws InvalidArgumentException If an attribute value can't be mapped into value.
      */
-    public static RemoteBusinessObject createRemoteObjectFromNode(Node instance, ClassMetadata myClass) throws InvalidArgumentException {
+    public static BusinessObject createRemoteObjectFromNode(Node instance, ClassMetadata myClass) throws InvalidArgumentException {
         
         HashMap<String, List<String>> attributes = new HashMap<>();
         String name = "";
@@ -549,12 +549,12 @@ public class Util {
             for (AttributeMetadata myAtt : myClass.getAttributes()){
                 if (myAtt.getName().equals(attributeName)){
                     if (attributes.get(attributeName)==null)
-                        attributes.put(attributeName, new ArrayList<String>());
+                        attributes.put(attributeName, new ArrayList<>());
                     attributes.get(attributeName).add(String.valueOf(relationship.getEndNode().getId()));
                 }
             }
         }
-        RemoteBusinessObject res = new RemoteBusinessObject(myClass.getName(), instance.getId(), name, attributes);
+        BusinessObject res = new BusinessObject(myClass.getName(), instance.getId(), name, attributes);
 
         return res;
         
@@ -642,10 +642,9 @@ public class Util {
      * Releases all the relationships associated to a user, and deletes the node corresponding to such user.
      * should be released but the caller
      * @param userNode The user node
-     * @param userIndex Index of users. Used to remove the user node before top actually delete it
      * @throws InvalidArgumentException If you try to delete the default administrator
      */
-    public static void deleteUserNode(Node userNode/*, Index<Node> userIndex*/) throws InvalidArgumentException {
+    public static void deleteUserNode(Node userNode) throws InvalidArgumentException {
         String userName = (String)userNode.getProperty(Constants.PROPERTY_NAME);
         if (UserProfile.DEFAULT_ADMIN.equals(userName))
             throw new InvalidArgumentException("The default administrator can not be deleted");
@@ -1167,7 +1166,7 @@ public class Util {
      * @param howManyToShow How many elements should be displayed? used -1 to show all
      * @return A string with the names of the objects concatenated with a "/" as separator
      */
-    public static String formatObjectList(List<RemoteBusinessObjectLight> objectList, boolean startFromTheLast, int howManyToShow) {
+    public static String formatObjectList(List<BusinessObjectLight> objectList, boolean startFromTheLast, int howManyToShow) {
         if (startFromTheLast)
             Collections.reverse(objectList);
         

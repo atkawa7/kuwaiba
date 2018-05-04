@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
+import org.kuwaiba.apis.persistence.business.BusinessObject;
 
 /**
  * Instances of this class are proxies that represents the entities in the database. This is a wrapper of
@@ -56,7 +56,7 @@ public class RemoteObject implements Serializable {
      *
      * @param object The object to be serialized
      */
-    public RemoteObject(RemoteBusinessObject object){
+    public RemoteObject(BusinessObject object){
         this.oid = object.getId();
         this.className = object.getClassName();
         attributes = new String[object.getAttributes().size()];
@@ -101,13 +101,13 @@ public class RemoteObject implements Serializable {
         this.oid = oid;
     }
 
-    public static List<RemoteObject> toRemoteObjectArray(List<RemoteBusinessObject> toBeWrapped){
+    public static List<RemoteObject> toRemoteObjectArray(List<BusinessObject> toBeWrapped){
         if (toBeWrapped == null)
             return null;
 
         List<RemoteObject> res = new ArrayList<>();
         
-        for (RemoteBusinessObject rawObject : toBeWrapped)
+        for (BusinessObject rawObject : toBeWrapped)
             res.add(new RemoteObject(rawObject));
         
         return res;

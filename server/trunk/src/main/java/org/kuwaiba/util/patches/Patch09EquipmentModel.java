@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -22,13 +22,13 @@ import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObject;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
@@ -119,7 +119,7 @@ public class Patch09EquipmentModel extends GenericPatch {
                 result.getMessages().add(" * " + ex.getMessage());
             }
         }                    
-        List<RemoteBusinessObjectLight> equipments;
+        List<BusinessObjectLight> equipments;
 
         try {
             equipments = bem.getObjectsOfClassLight("GenericCommunicationsElement", 0); //NOI18N
@@ -130,7 +130,7 @@ public class Patch09EquipmentModel extends GenericPatch {
         }
         List<String> classesToRemoveModelAttr = new ArrayList();
         // Search the classes that cannot be applied the patch and need remove the model attribute
-        for (RemoteBusinessObjectLight equipment : equipments) {
+        for (BusinessObjectLight equipment : equipments) {
             ClassMetadata equipmentClass;
             try {
                 equipmentClass = mem.getClass(equipment.getClassName());
@@ -149,10 +149,10 @@ public class Patch09EquipmentModel extends GenericPatch {
                 return result;
             }
 
-            RemoteBusinessObject object;
+            BusinessObject object;
             try {
                 object = bem.getObject(equipment.getClassName(), equipment.getId());
-            } catch (MetadataObjectNotFoundException | ObjectNotFoundException | InvalidArgumentException ex) {
+            } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException ex) {
                 result.getMessages().add(" * " + ex.getMessage());
                 result.setResultType(PatchResult.RESULT_ERROR);
                 return result;

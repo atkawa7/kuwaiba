@@ -24,7 +24,7 @@ import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
@@ -112,7 +112,7 @@ public class Patch07PortTypeFix extends GenericPatch {
                     aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN,
                         ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT,
                         changeDescriptor);
-                } catch (InvalidArgumentException | ObjectNotFoundException | ApplicationObjectNotFoundException ex) {
+                } catch (InvalidArgumentException | BusinessObjectNotFoundException | ApplicationObjectNotFoundException ex) {
                     Logger.getLogger(ToolsBean.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -156,7 +156,7 @@ public class Patch07PortTypeFix extends GenericPatch {
                     aem.createGeneralActivityLogEntry(UserProfile.DEFAULT_ADMIN,
                     ActivityLogEntry.ACTIVITY_TYPE_UPDATE_METADATA_OBJECT,
                     changeDescriptor);
-                } catch (InvalidArgumentException | ObjectNotFoundException | ApplicationObjectNotFoundException ex) {
+                } catch (InvalidArgumentException | BusinessObjectNotFoundException | ApplicationObjectNotFoundException ex) {
                     result.setResultType(PatchResult.RESULT_ERROR);
                     result.getMessages().add(", " + ex.getMessage());
                 }

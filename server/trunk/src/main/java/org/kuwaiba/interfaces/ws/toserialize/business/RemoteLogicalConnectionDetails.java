@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObject;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 
 /**
  * Instances of this class represent the details of a logical connection and the physical resources associated to the endpoints of such connection.
@@ -57,17 +57,17 @@ public class RemoteLogicalConnectionDetails implements Serializable {
      */
     public RemoteLogicalConnectionDetails() { }
 
-    public RemoteLogicalConnectionDetails(RemoteBusinessObject connectionObject, 
-            RemoteBusinessObjectLight endpointA, RemoteBusinessObjectLight endpointB, 
-            List<RemoteBusinessObjectLight> physicalPathForEndpointA, List<RemoteBusinessObjectLight> physicalPathForEndpointB) {
+    public RemoteLogicalConnectionDetails(BusinessObject connectionObject, 
+            BusinessObjectLight endpointA, BusinessObjectLight endpointB, 
+            List<BusinessObjectLight> physicalPathForEndpointA, List<BusinessObjectLight> physicalPathForEndpointB) {
         this.connectionObject = new RemoteObject(connectionObject);
         this.endpointA =  new RemoteObjectLight(endpointA);
         this.endpointB = new RemoteObjectLight(endpointB);
         this.physicalPathForEndpointA = new ArrayList<>();
-        for (RemoteBusinessObjectLight physicalPathForEndpointAElement : physicalPathForEndpointA)
+        for (BusinessObjectLight physicalPathForEndpointAElement : physicalPathForEndpointA)
             this.physicalPathForEndpointA.add(new RemoteObjectLight(physicalPathForEndpointAElement));
         this.physicalPathForEndpointB = new ArrayList<>();
-        for (RemoteBusinessObjectLight physicalPathForEndpointBElement : physicalPathForEndpointB)
+        for (BusinessObjectLight physicalPathForEndpointBElement : physicalPathForEndpointB)
             this.physicalPathForEndpointB.add(new RemoteObjectLight(physicalPathForEndpointBElement));
     }
     

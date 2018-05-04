@@ -16,7 +16,7 @@ package org.kuwaiba.apis.persistence.application;
 
 import java.io.Serializable;
 import java.util.List;
-import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
+import org.kuwaiba.apis.persistence.util.StringPair;
 
 /**
  * Class used to define a special type of query which execute an script and return a result

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License
@@ -21,12 +21,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.ConnectionManager;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
-import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.business.BusinessObject;
+import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
@@ -34,7 +35,6 @@ import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.services.persistence.cache.CacheManager;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.services.persistence.util.Util;
-import static org.kuwaiba.services.persistence.util.Util.createClassMetadataFromNode;
 import org.kuwaiba.util.ChangeDescriptor;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -199,7 +199,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
     @Override
     public ChangeDescriptor setClassProperties (ClassMetadata newClassDefinition) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException {
+            throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException {
         String affectedProperties = "", oldValues = "", newValues = "";
         
         try (Transaction tx = graphDb.beginTx()) {
@@ -777,7 +777,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     
     @Override
     public ChangeDescriptor setAttributeProperties(long classId, AttributeMetadata newAttributeDefinition) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException {
+            throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException {
         
         String affectedProperties = "", oldValues = "", newValues = "";
         
@@ -903,7 +903,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     
     @Override
     public ChangeDescriptor setAttributeProperties (String className, AttributeMetadata newAttributeDefinition) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException, ObjectNotFoundException {
+            throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException {
         
         String affectedProperties = "", oldValues = "", newValues = "";
         
@@ -1619,6 +1619,20 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             return isSubClass(allegedParent, currentClass.getParentClassName());
     }
     
+    @Override
+    public List<AttributeMetadata> getMandatoryAttributesInClass(String className) 
+            throws MetadataObjectNotFoundException
+    {
+        List<AttributeMetadata> mandatoryAttributes = new ArrayList<>();
+        ClassMetadata aClass = getClass(className);
+        Set<AttributeMetadata> classAttributes = aClass.getAttributes();
+        for (AttributeMetadata mandatoryAttribute : classAttributes) {
+            if(mandatoryAttribute.isMandatory())
+                 mandatoryAttributes.add(mandatoryAttribute);
+        }
+        return mandatoryAttributes;
+    }
+    
     /**
      * HELPERS
      */
@@ -1817,7 +1831,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         
         for(ClassMetadataLight subClassLight : subClassesLight){
             Node subClassNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, subClassLight.getName());
-            ClassMetadata subClassMetadata = createClassMetadataFromNode(subClassNode);
+            ClassMetadata subClassMetadata = Util.createClassMetadataFromNode(subClassNode);
             if(subClassMetadata.hasAttribute(attributeName)){
                 if(subClassNode.hasRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.INCOMING) ||
                         subClassNode.hasRelationship(RelTypes.INSTANCE_OF, Direction.INCOMING)){
@@ -1826,7 +1840,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     if(attributeType.equals(Util.getTypeOfAttribute(subClassNode, attributeName))){
                         while(relationships.hasNext()){
                             Relationship relationship = relationships.next();
-                            RemoteBusinessObject remoteObject = Util.createRemoteObjectFromNode(relationship.getStartNode());
+                            BusinessObject remoteObject = Util.createRemoteObjectFromNode(relationship.getStartNode());
                             if(remoteObject.getAttributes().get(attributeName) != null)
                                 uniqueAttributeValue = remoteObject.getAttributes().get(attributeName).get(0);
                             if(values.contains(uniqueAttributeValue))
@@ -1860,7 +1874,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         org.neo4j.graphdb.traversal.Traverser traverse = td.traverse(inventoryObject);
         
         for (Node subClassNode : traverse.nodes()) {
-            ClassMetadata subClassMetadata = createClassMetadataFromNode(subClassNode);
+            ClassMetadata subClassMetadata = Util.createClassMetadataFromNode(subClassNode);
             for(AttributeMetadata attribute :subClassMetadata.getAttributes()){
                 if(attribute.isUnique()){
                     if(subClassNode.hasRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.INCOMING) ||
@@ -1869,7 +1883,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         Iterator<Relationship> relationships = iterableRelationships.iterator();
                         while(relationships.hasNext()){
                             Relationship relationship = relationships.next();
-                            RemoteBusinessObject remoteObject = Util.createRemoteObjectFromNode(relationship.getStartNode());
+                            BusinessObject remoteObject = Util.createRemoteObjectFromNode(relationship.getStartNode());
                             if(remoteObject.getAttributes().get(attribute.getName()) != null)
                                 cm.putUniqueAttributeValueIndex(subClassMetadata.getName(), 
                                         attribute.getName(), 

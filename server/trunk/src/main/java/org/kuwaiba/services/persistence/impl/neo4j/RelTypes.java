@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,5 +49,5 @@ public enum RelTypes implements RelationshipType {
     HAS_REPORT, //Relates a class or the dummy root (depending on if it's a class or inventory level report) to a report
     INSTANCE_OF_SPECIAL, //Used to relate a class with an instance that makes part of a template. These instances are not indexed and can not be searched, that's why they need a special relationship
     HAS_BOOKMARK, //Used to relate a bookmark with an user
-    IS_BOOKMARK_ITEM_IN //Used to relate an object with a bookmark
+    IS_BOOKMARK_ITEM_IN, //Used to relate an object with a bookmark/favorite folder
 }

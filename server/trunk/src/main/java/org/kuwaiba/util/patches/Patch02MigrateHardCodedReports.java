@@ -24,7 +24,7 @@ import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.util.ChangeDescriptor;
@@ -83,7 +83,7 @@ public class Patch02MigrateHardCodedReports extends GenericPatch {
             fixedClass.setId(classToRename.getId());
             fixedClass.setName("GenericMPLSService");
             mem.setClassProperties(fixedClass);
-        } catch (InvalidArgumentException | ApplicationObjectNotFoundException | ObjectNotFoundException | MetadataObjectNotFoundException ex) {
+        } catch (InvalidArgumentException | ApplicationObjectNotFoundException | BusinessObjectNotFoundException | MetadataObjectNotFoundException ex) {
             //Do nothing. The class probably was already renamed
         }
 

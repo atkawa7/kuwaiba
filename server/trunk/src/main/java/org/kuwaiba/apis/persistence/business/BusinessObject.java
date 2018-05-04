@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.util.List;
  * Contains a business object detailed information
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RemoteBusinessObject extends RemoteBusinessObjectLight {
+public class BusinessObject extends BusinessObjectLight {
 
     /**
      * Map of attributes and values. Note that there's a little of overhead here, since
@@ -31,11 +31,11 @@ public class RemoteBusinessObject extends RemoteBusinessObjectLight {
      */
     private HashMap <String, List<String>> attributes;
 
-    public RemoteBusinessObject(long id, String name, String className) {
+    public BusinessObject(long id, String name, String className) {
         super(id, name, className);
     }
 
-    public RemoteBusinessObject(String className, long id, String name, HashMap<String, List<String>> attributes) {
+    public BusinessObject(String className, long id, String name, HashMap<String, List<String>> attributes) {
         setId(id);
         setName(name);
         setClassName(className);

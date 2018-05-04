@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,11 +19,9 @@ package org.kuwaiba.apis.persistence.exceptions;
  * Thrown if you're trying to access to a non existing object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ObjectNotFoundException extends InventoryException {
+public class BusinessObjectNotFoundException extends InventoryException {
 
-    public ObjectNotFoundException(String objectClass, Long oid) {
-        super(java.util.ResourceBundle.getBundle("org/kuwaiba/Bundle").
-                getString("LBL_NOSUCHOBJECT")+(objectClass == null ? "" : objectClass)+" "+java.util.
-                ResourceBundle.getBundle("org/kuwaiba/Bundle").getString("LBL_WHICHID") + oid);
+    public BusinessObjectNotFoundException(String objectClass, Long oid) {
+        super(String.format("Object of class %s and id %s could not be found. It might have been deleted already", objectClass, oid));
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
 import java.util.List;
 import javax.ejb.Local;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLightList;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
+import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.interfaces.ws.todeserialize.TransientQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.ApplicationLogEntry;
 import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfo;
@@ -36,7 +36,11 @@ import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.PrivilegeInfo;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBackgroundJob;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBusinessRule;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContact;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContactLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFavoritesFolder;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObject;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemotePool;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQueryLight;
@@ -343,6 +347,14 @@ public interface WebserviceBeanLocal {
     public ApplicationLogEntry[] getBusinessObjectAuditTrail(String objectClass, long objectId, int limit, String ipAddress, String sessionId) throws ServerSideException;
     
     public ApplicationLogEntry[] getGeneralActivityAuditTrail(int page, int limit, String ipAddress, String sessionId) throws ServerSideException;
+
+    public long attachFileToObject(String name, String tags, byte[] file, String className, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public void detachFileFromObject(long fileObjectId, String className, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public List<RemoteFileObjectLight> getFilesForObject(String className, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+
+    public RemoteFileObject getFile(long fileObjectId, String className, long objectId, String ipAddress, String sessionId) throws ServerSideException;
     
     public long createTask(String name, String description, boolean enabled, boolean commitOnExecute, String script, List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType, String ipAddress, String sessionId) throws ServerSideException;
 
@@ -383,6 +395,13 @@ public interface WebserviceBeanLocal {
     public void deleteScriptQuery(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException;
     
     public RemoteScriptQueryResult executeScriptQuery(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException;
+    public long createContact(String contactClass, List<StringPair> properties, String customerClassName, long customerId, String ipAddress, String sessionId) throws  ServerSideException;
+    public void updateContact(String contactClass, long contactId, List<StringPair> properties, String ipAddress, String sessionId) throws  ServerSideException;
+    public void deleteContact(String contactClass, long contactId, String ipAddress, String sessionId) throws  ServerSideException;
+    public RemoteContact getContact(String contactClass, long contactId, String ipAddress, String sessionId) throws  ServerSideException;
+    public List<RemoteContactLight> searchForContacts(String searchString, int maxResults, String ipAddress, String sessionId) throws  ServerSideException;
+    public List<RemoteContactLight> getContactsForCustomer(String customerClass, long customerId, String ipAddress, String sessionId) throws  ServerSideException;
+    
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Sync/bulkupload methods. Click on the + sign on the left to edit the code.">
@@ -492,11 +511,11 @@ public interface WebserviceBeanLocal {
     
     public void deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<RemoteBusinessObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
+    public List<BusinessObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
                                             long  communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<RemoteBusinessObjectLightList> findSDHRoutesUsingContainerLinks(String communicationsEquipmentClassA, 
+    public List<BusinessObjectLightList> findSDHRoutesUsingContainerLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
                                             long  communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException;
     
@@ -600,6 +619,5 @@ public interface WebserviceBeanLocal {
     public void deleteBusinessRule(long businessRuleId, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteBusinessRule> getBusinessRules(int type, String ipAddress, String sessionId) throws ServerSideException;
     public AssetLevelCorrelatedInformation getAffectedServices(int resourceType, String resourceDefinition, String ipAddress, String sessionId) throws ServerSideException;
-    
     
 }

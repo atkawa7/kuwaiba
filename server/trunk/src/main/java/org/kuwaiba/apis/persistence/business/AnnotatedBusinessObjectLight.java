@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License
@@ -15,36 +15,35 @@
  */
 package org.kuwaiba.apis.persistence.business;
 
-import java.io.Serializable;
 import java.util.Map;
 
 /**
- * When an object is related to another using a special relationship, the other side of the relationship an be retrieved
+ * When an object is related to another using a special relationship, the other side of the relationship can be retrieved
  * using the method BusinessEntityManager.getSpecialAttribute or BusinessEntityManager.getSpecialAttributes. However, in some cases, 
  * the relationship itself has its own properties, and it's called an annotated relationship. In order to be able to retrieve not only the 
- * other side of the relationship, but also the annotated property, use this type. It wraps both
+ * other side of the relationship, but also the annotated property, use this type.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class AnnotatedRemoteObjectLight implements Serializable {
+public class AnnotatedBusinessObjectLight {
     /**
      * The other side of the special relationship
      */
-    private RemoteObjectLight object;
+    private BusinessObjectLight object;
     /**
      * The properties of the annotated relationship
      */
     private Map<String, Object> properties;
 
-    public AnnotatedRemoteObjectLight(RemoteObjectLight theObject, Map<String, Object> properties) {
+    public AnnotatedBusinessObjectLight(BusinessObjectLight theObject, Map<String, Object> properties) {
         this.object = theObject;
         this.properties = properties;
     }
 
-    public RemoteObjectLight getObject() {
+    public BusinessObjectLight getObject() {
         return object;
     }
 
-    public void setObject(RemoteObjectLight theObject) {
+    public void setObject(BusinessObjectLight theObject) {
         this.object = theObject;
     }
 
