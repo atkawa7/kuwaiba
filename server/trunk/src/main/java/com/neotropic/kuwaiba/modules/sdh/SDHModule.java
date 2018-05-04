@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,15 +22,15 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
-import org.kuwaiba.apis.persistence.business.AnnotatedRemoteBusinessObjectLight;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
+import org.kuwaiba.apis.persistence.business.AnnotatedBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObject;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLightList;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.services.persistence.util.Constants;
@@ -178,11 +178,11 @@ public class SDHModule implements GenericCommercialModule {
             HashMap<String, String> attributesToBeSet = new HashMap<>();
             attributesToBeSet.put(Constants.PROPERTY_NAME, defaultName == null ? "" : defaultName );
             
-            RemoteBusinessObject communicationsEquipmentA = bem.getParentOfClass(classNameEndpointA, idEndpointA, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+            BusinessObject communicationsEquipmentA = bem.getParentOfClass(classNameEndpointA, idEndpointA, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
             if (communicationsEquipmentA == null)
                 throw new ServerSideException(String.format("The specified port (%s : %s) doesn't seem to be located in a communications equipment", classNameEndpointA, idEndpointA));
             
-            RemoteBusinessObject communicationsEquipmentB = bem.getParentOfClass(classNameEndpointB, idEndpointB, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+            BusinessObject communicationsEquipmentB = bem.getParentOfClass(classNameEndpointB, idEndpointB, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
             if (communicationsEquipmentB == null)
                 throw new ServerSideException(String.format("The specified port (%s : %s) doesn't seem to be located in a communications equipment", classNameEndpointB, idEndpointB));
             
@@ -376,9 +376,9 @@ public class SDHModule implements GenericCommercialModule {
         if (!mem.isSubClass("GenericSDHTransportLink", transportLinkClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not subclass of GenericSDHContainerLink", transportLinkClass));
         
-        List<RemoteBusinessObjectLight> containerLinks = bem.getSpecialAttribute(transportLinkClass, transportLinkId, RELATIONSHIP_SDHTRANSPORTS);
+        List<BusinessObjectLight> containerLinks = bem.getSpecialAttribute(transportLinkClass, transportLinkId, RELATIONSHIP_SDHTRANSPORTS);
         
-        for (RemoteBusinessObjectLight containerLink : containerLinks)
+        for (BusinessObjectLight containerLink : containerLinks)
             deleteSDHContainerLink(containerLink.getClassName(), containerLink.getId(), forceDelete);
        
         bem.deleteObject(transportLinkClass, transportLinkId, forceDelete);
@@ -401,15 +401,15 @@ public class SDHModule implements GenericCommercialModule {
 
         //The container could carry a tributary link (easy!) or carry more containers inside, in which case, we need to dig one more level.
         //There's a special case, where the container has no relationships to containers nor to tributary links, those are the empty structured VC4XX
-        List<RemoteBusinessObjectLight> tributaryLinks = bem.getSpecialAttribute(containerLinkClass, containerLinkId, RELATIONSHIP_SDHDELIVERS);
+        List<BusinessObjectLight> tributaryLinks = bem.getSpecialAttribute(containerLinkClass, containerLinkId, RELATIONSHIP_SDHDELIVERS);
 
         if (!tributaryLinks.isEmpty())
             //This will delete both the tributary link and the container
             deleteSDHTributaryLink(tributaryLinks.get(0).getClassName(), tributaryLinks.get(0).getId(), forceDelete);
         else {
-            List<RemoteBusinessObjectLight> containerLinks = bem.getSpecialAttribute(containerLinkClass, containerLinkId, RELATIONSHIP_SDHCONTAINS);
+            List<BusinessObjectLight> containerLinks = bem.getSpecialAttribute(containerLinkClass, containerLinkId, RELATIONSHIP_SDHCONTAINS);
             if (!containerLinks.isEmpty()) {
-                for (RemoteBusinessObjectLight containerLink : containerLinks)
+                for (BusinessObjectLight containerLink : containerLinks)
                     deleteSDHContainerLink(containerLink.getClassName(), containerLink.getId(), forceDelete);
             } else
                 bem.deleteObject(containerLinkClass, containerLinkId, forceDelete);
@@ -432,10 +432,10 @@ public class SDHModule implements GenericCommercialModule {
                 throw new ServerSideException("Class %s is not subclass of GenericSDHTributaryLink");
 
         //There should be only one
-        List<RemoteBusinessObjectLight> containers = bem.getSpecialAttribute(tributaryLinkClass, tributaryLinkId, RELATIONSHIP_SDHDELIVERS);
+        List<BusinessObjectLight> containers = bem.getSpecialAttribute(tributaryLinkClass, tributaryLinkId, RELATIONSHIP_SDHDELIVERS);
 
         //A tributary link has always a container assigned that should be removed as well
-        for (RemoteBusinessObjectLight container : containers)
+        for (BusinessObjectLight container : containers)
             bem.deleteObject(container.getClassName(), container.getId(), forceDelete);
 
         bem.deleteObject(tributaryLinkClass, tributaryLinkId, forceDelete);
@@ -451,7 +451,7 @@ public class SDHModule implements GenericCommercialModule {
      * @throws MetadataObjectNotFoundException If the core classes that support the SDH networks model don't exist
      * @throws InvalidArgumentException If the given communication equipment is no subclass of GenericCommunicationsEquipment 
      */
-    public List<RemoteBusinessObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
+    public List<BusinessObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
                                             long  communicationsEquipmentIB) throws InvalidArgumentException, MetadataObjectNotFoundException {
         if (!mem.isSubClass(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, communicationsEquipmentClassA))
@@ -474,7 +474,7 @@ public class SDHModule implements GenericCommercialModule {
      * @throws InvalidArgumentException If the given communication equipment is no subclass of GenericCommunicationsEquipment 
      * @throws MetadataObjectNotFoundException If the core classes that support the SDH networks model don't exist
      */
-    public List<RemoteBusinessObjectLightList> findSDHRoutesUsingContainerLinks(String communicationsEquipmentClassA, 
+    public List<BusinessObjectLightList> findSDHRoutesUsingContainerLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
                                             long  communicationsEquipmentIB) throws InvalidArgumentException, MetadataObjectNotFoundException {
         
@@ -494,22 +494,22 @@ public class SDHModule implements GenericCommercialModule {
      * @param transportLinkId TransportLink's id
      * @return The list of the containers that go through that transport link
      * @throws InvalidArgumentException If the given transport link is no subclass of GenericSDHTransportLink
-     * @throws ObjectNotFoundException if the given transport link does not exist
+     * @throws BusinessObjectNotFoundException if the given transport link does not exist
      * @throws MetadataObjectNotFoundException If any of the core classes that support the SDH networks model does not exist
      */
     public List<SDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId) 
-            throws InvalidArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException {
+            throws InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException {
         
         if (!mem.isSubClass("GenericSDHTransportLink", transportLinkClass))
                 throw new InvalidArgumentException(String.format("Class %s is not a GenericSDHTransportLink", transportLinkClass));
         
         ArrayList<SDHContainerLinkDefinition> containers = new ArrayList<>();
         
-        List<AnnotatedRemoteBusinessObjectLight> relatedContainers = bem.getAnnotatedSpecialAttribute(transportLinkClass, 
+        List<AnnotatedBusinessObjectLight> relatedContainers = bem.getAnnotatedSpecialAttribute(transportLinkClass, 
                 transportLinkId, RELATIONSHIP_SDHTRANSPORTS);
         
-        for (AnnotatedRemoteBusinessObjectLight container : relatedContainers) {
-            List<RemoteBusinessObjectLight> relatedLinks = bem.getSpecialAttribute(container.getObject().getClassName(), 
+        for (AnnotatedBusinessObjectLight container : relatedContainers) {
+            List<BusinessObjectLight> relatedLinks = bem.getSpecialAttribute(container.getObject().getClassName(), 
                     container.getObject().getId(), RELATIONSHIP_SDHDELIVERS);
                                    
             if (!container.getProperties().containsKey("sdhPosition")) //NOI18N
@@ -533,22 +533,22 @@ public class SDHModule implements GenericCommercialModule {
      * @param containerLinkId Container Id
      * @return The list of containers contained in the container
      * @throws InvalidArgumentException If the container supplied is not subclass of GenericSDHHighOrderContainerLink
-     * @throws ObjectNotFoundException If the container could not be found
+     * @throws BusinessObjectNotFoundException If the container could not be found
      * @throws MetadataObjectNotFoundException If the class could not be found
      */
     public List<SDHContainerLinkDefinition> getSDHContainerLinkStructure(String containerLinkClass, long containerLinkId) 
-            throws InvalidArgumentException, ObjectNotFoundException, MetadataObjectNotFoundException {
+            throws InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException {
         
         if (!mem.isSubClass("GenericSDHHighOrderContainerLink", containerLinkClass))
                 throw new InvalidArgumentException(String.format("Class %s is not a GenericSDHHighOrderContainerLink", containerLinkClass));
         
         ArrayList<SDHContainerLinkDefinition> containers = new ArrayList<>();
         
-        List<AnnotatedRemoteBusinessObjectLight> relatedContainers = bem.getAnnotatedSpecialAttribute(containerLinkClass, 
+        List<AnnotatedBusinessObjectLight> relatedContainers = bem.getAnnotatedSpecialAttribute(containerLinkClass, 
                 containerLinkId, RELATIONSHIP_SDHCONTAINS);
         
-        for (AnnotatedRemoteBusinessObjectLight container : relatedContainers) {
-            List<RemoteBusinessObjectLight> relatedLinks = bem.getSpecialAttribute(container.getObject().getClassName(), 
+        for (AnnotatedBusinessObjectLight container : relatedContainers) {
+            List<BusinessObjectLight> relatedLinks = bem.getSpecialAttribute(container.getObject().getClassName(), 
                     container.getObject().getId(), RELATIONSHIP_SDHCONTAINS);
                                    
             if (!container.getProperties().containsKey("sdhPosition"))

@@ -1,5 +1,5 @@
 /**
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import java.io.Serializable;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 
 /**
  * Instances of this class define a container
@@ -30,7 +30,7 @@ public class SDHContainerLinkDefinition implements Serializable {
     /**
      * Container object
      */
-    private RemoteBusinessObjectLight container;
+    private BusinessObjectLight container;
 
     /**
      * Is this container structured?
@@ -41,17 +41,17 @@ public class SDHContainerLinkDefinition implements Serializable {
      */
     private List<SDHPosition> positions;
 
-    public SDHContainerLinkDefinition(RemoteBusinessObjectLight container, boolean structured, List<SDHPosition> positions) {
+    public SDHContainerLinkDefinition(BusinessObjectLight container, boolean structured, List<SDHPosition> positions) {
         this.container = container;
         this.structured = structured;
         this.positions = positions;
     }       
 
-    public RemoteBusinessObjectLight getContainerName() {
+    public BusinessObjectLight getContainerName() {
         return container;
     }
 
-    public void setContainerName(RemoteBusinessObjectLight container) {
+    public void setContainerName(BusinessObjectLight container) {
         this.container = container;
     }
 
@@ -63,7 +63,7 @@ public class SDHContainerLinkDefinition implements Serializable {
         this.positions = positions;
     }
 
-    public RemoteBusinessObjectLight getContainer() {
+    public BusinessObjectLight getContainer() {
         return container;
     }
 

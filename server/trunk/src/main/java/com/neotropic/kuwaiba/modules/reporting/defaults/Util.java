@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package com.neotropic.kuwaiba.modules.reporting.defaults;
 
 import java.util.List;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.services.persistence.util.Constants;
 
 /**
@@ -25,7 +25,7 @@ import org.kuwaiba.services.persistence.util.Constants;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class Util {
-    public static String formatLocation (List<RemoteBusinessObjectLight> containmentHierarchy) {
+    public static String formatLocation (List<BusinessObjectLight> containmentHierarchy) {
         String location = "";
         if (containmentHierarchy.size() == 1 && !(Constants.NODE_DUMMYROOT).equals((containmentHierarchy.get(0).getClassName())))
             location += containmentHierarchy.get(0).toString();

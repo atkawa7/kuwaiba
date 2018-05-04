@@ -1,5 +1,5 @@
 /**
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@ package com.neotropic.kuwaiba.modules.sdh;
 
 import java.io.Serializable;
 import java.util.List;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 
 /**
   * Instances of this class define a tributary link
@@ -27,23 +27,23 @@ public class SDHTributaryLinkDefinition implements Serializable {
     /**
      * Link object
      */
-    private RemoteBusinessObjectLight link;
+    private BusinessObjectLight link;
 
     /**
      * The positions used by the container
      */
     private List<SDHPosition> positions;
 
-    public SDHTributaryLinkDefinition(RemoteBusinessObjectLight link, List<SDHPosition> positions) {
+    public SDHTributaryLinkDefinition(BusinessObjectLight link, List<SDHPosition> positions) {
         this.link = link;
         this.positions = positions;
     }       
 
-    public RemoteBusinessObjectLight getContainerName() {
+    public BusinessObjectLight getContainerName() {
         return link;
     }
 
-    public void setContainerName(RemoteBusinessObjectLight link) {
+    public void setContainerName(BusinessObjectLight link) {
         this.link = link;
     }
 

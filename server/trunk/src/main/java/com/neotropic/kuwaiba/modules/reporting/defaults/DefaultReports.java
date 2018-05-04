@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,16 +26,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
-import org.kuwaiba.apis.persistence.business.AnnotatedRemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.AnnotatedBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectList;
+import org.kuwaiba.apis.persistence.business.BusinessObject;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObjectList;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
@@ -60,13 +60,13 @@ public class DefaultReports {
         this.corporateLogo = aem.getConfiguration().getProperty("corporateLogo") == null ? "logo.jpg" : aem.getConfiguration().getProperty("corporateLogo");
     }
        
-    public RawReport buildRackUsageReport(long rackId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
-        RemoteBusinessObject theRack = bem.getObject("Rack", rackId);
+    public RawReport buildRackUsageReport(long rackId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        BusinessObject theRack = bem.getObject("Rack", rackId);
                     
         String query = String.format("MATCH (rack)<-[:%s*1..2]-(rackable)-[:%s]->(childClass)-[:%s*]->(superClass) "
                 + "WHERE id(rack) = %s AND (superClass.name=\"%s\" OR superClass.name=\"%s\") "
                 + "RETURN rackable", RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, rackId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, Constants.CLASS_GENERICBOX);
-        HashMap<String, RemoteBusinessObjectList> result = aem.executeCustomDbCode(query, true);
+        HashMap<String, BusinessObjectList> result = aem.executeCustomDbCode(query, true);
 
         String rackUsageReportBody = "<!DOCTYPE html>\n" +
                                 "<html lang=\"en\">\n" +
@@ -85,7 +85,7 @@ public class DefaultReports {
         String rackLevelIndicator = "ok";
 
 
-        List<RemoteBusinessObjectLight> parents = bem.getParents(theRack.getClassName(), theRack.getId());
+        List<BusinessObjectLight> parents = bem.getParents(theRack.getClassName(), theRack.getId());
         String location = Util.formatLocation(parents);
 
         totalRackUnits = theRack.getAttributes().get("rackUnits") == null ? 0 : Integer.valueOf(theRack.getAttributes().get("rackUnits").get(0));
@@ -93,7 +93,7 @@ public class DefaultReports {
         if (!result.get("rackable").getList().isEmpty()) {
             equipmentList += "<table><tr><th>Name</th><th>Serial Number</th><th>Rack Units</th><th>Operational State</th></tr>\n";
             int i = 0;
-            for (RemoteBusinessObject leaf : result.get("rackable").getList()) { //This row should contain the equipment
+            for (BusinessObject leaf : result.get("rackable").getList()) { //This row should contain the equipment
                 usedRackUnits += leaf.getAttributes().get("rackUnits") == null ? 0 : Integer.valueOf(leaf.getAttributes().get("rackUnits").get(0));
 
                 String operationalState = leaf.getAttributes().get("state") == null ? "<span class=\"error\">Not Set</span>" : 
@@ -138,9 +138,9 @@ public class DefaultReports {
         return new RawReport("Rack Usage", "Neotropic SAS","1.1", rackUsageReportBody);
     }
 
-    public RawReport buildDistributionFrameDetailReport(String frameClass, long frameId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
-        RemoteBusinessObject theFrame =  bem.getObject(frameClass, frameId);
-        List<RemoteBusinessObjectLight> frameChildren = bem.getObjectChildren(frameClass, frameId, -1);
+    public RawReport buildDistributionFrameDetailReport(String frameClass, long frameId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        BusinessObject theFrame =  bem.getObject(frameClass, frameId);
+        List<BusinessObjectLight> frameChildren = bem.getObjectChildren(frameClass, frameId, -1);
         
         String frameUsageReportText = "<!DOCTYPE html>\n" +
                                 "<html lang=\"en\">\n" +
@@ -159,7 +159,7 @@ public class DefaultReports {
             portList += "<table><tr><th>Port Name</th><th>Operational State</th><th>Connected Equipment</th><th>Services</th></tr>\n";
             int i = 0;
             //Collecti
-            for (RemoteBusinessObjectLight aPort : frameChildren) {
+            for (BusinessObjectLight aPort : frameChildren) {
                 String serviceString = "", connectedEquipmentString;
                 
                 //Next equipment
@@ -169,7 +169,7 @@ public class DefaultReports {
                                     RelTypes.INSTANCE_OF, RelTypes.EXTENDS, aPort.getId(), "endpointA", "endpointB", "endpointA", "endpointB", 
                                     Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, Constants.CLASS_GENERICBOX);
                 
-                HashMap<String, RemoteBusinessObjectList> nextEquipmentResult = aem.executeCustomDbCode(query, true);
+                HashMap<String, BusinessObjectList> nextEquipmentResult = aem.executeCustomDbCode(query, true);
                 
                 if (nextEquipmentResult.get("equipment").getList().isEmpty())
                     connectedEquipmentString  = "Free";
@@ -185,7 +185,7 @@ public class DefaultReports {
                                 RelTypes.CHILD_OF_SPECIAL, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, 
                                 aPort.getId(), "uses", Constants.CLASS_GENERICCUSTOMER);
                 
-                HashMap<String, RemoteBusinessObjectList> serviceResult = aem.executeCustomDbCode(query, true);
+                HashMap<String, BusinessObjectList> serviceResult = aem.executeCustomDbCode(query, true);
                 
                 for (int j = 0; j < serviceResult.get("service").getList().size(); j++)
                     serviceString += "<b>" + serviceResult.get("service").getList().get(j) + "</b> - " + serviceResult.get("customer").getList().get(j) + "<br/>";
@@ -194,7 +194,7 @@ public class DefaultReports {
                 query = String.format("MATCH (framePort)-[relation:%s]->(listType) "
                         + "WHERE id(framePort) = %s AND relation.name=\"%s\" RETURN listType", RelTypes.RELATED_TO, aPort.getId(), "state");
                 
-                HashMap<String, RemoteBusinessObjectList> operationalStateResult = aem.executeCustomDbCode(query, true);
+                HashMap<String, BusinessObjectList> operationalStateResult = aem.executeCustomDbCode(query, true);
                 
                 String operationalStateString = "<span class=\"error\">Not Set</span>";
                 
@@ -209,7 +209,7 @@ public class DefaultReports {
             }
             portList += "</table>\n";
             
-            List<RemoteBusinessObjectLight> parents = bem.getParents(theFrame.getClassName(), theFrame.getId());
+            List<BusinessObjectLight> parents = bem.getParents(theFrame.getClassName(), theFrame.getId());
             String location = Util.formatLocation(parents);
             float usePercentage = frameChildren.isEmpty() ? 0 : (usedPorts * 100 / frameChildren.size());
             
@@ -230,16 +230,16 @@ public class DefaultReports {
         return new RawReport("Distribution Frame Detail", "Neotropic SAS","1.1", frameUsageReportText);
     }
 
-    public RawReport buildTransportLinkUsageReport (String transportLinkClass, long transportLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildTransportLinkUsageReport (String transportLinkClass, long transportLinkId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         String query = String.format("MATCH (transportLink)-[relation:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
                     + "WHERE id(transportLink) = %s AND superClass.name = \"%s\" AND (relation.name = \"%s\" OR relation.name = \"%s\")"
                     + "RETURN transportLink, equipment, port",  RelTypes.RELATED_TO_SPECIAL, RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, 
                             RelTypes.EXTENDS, transportLinkId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, 
                             SDHModule.RELATIONSHIP_SDHTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTLENDPOINTB);
-        HashMap<String, RemoteBusinessObjectList> theResult = aem.executeCustomDbCode(query, true);
+        HashMap<String, BusinessObjectList> theResult = aem.executeCustomDbCode(query, true);
         
         String title, transportLinkUsageReportText;
-        RemoteBusinessObject theTransportLink;
+        BusinessObject theTransportLink;
         
         if (theResult.get("transportLink").getList().isEmpty()) {
             title = "Error";
@@ -295,16 +295,16 @@ public class DefaultReports {
         return new RawReport("Transport Link Usage", "Neotropic SAS","1.1", transportLinkUsageReportText);
     }
     
-    public RawReport buildLowOrderTributaryLinkDetailReport (String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildLowOrderTributaryLinkDetailReport (String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         String query = String.format("MATCH (customerSuperClass)<-[:%s*]-(customerClass)<-[:%s]-(customer)<-[:%s*]-(service)-[relationA:%s]->(tributaryLink)-[relationB:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
                 + "WHERE id(tributaryLink) = %s AND superClass.name=\"%s\" AND relationA.name = \"%s\" AND (relationB.name = \"%s\" OR relationB.name = \"%s\") AND customerSuperClass.name=\"%s\" RETURN tributaryLink, customer, service, port, equipment", 
                     RelTypes.EXTENDS, RelTypes.INSTANCE_OF, RelTypes.CHILD_OF_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, 
                     RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, tributaryLinkId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, "uses", 
                     SDHModule.RELATIONSHIP_SDHTTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTTLENDPOINTB, Constants.CLASS_GENERICCUSTOMER);
-        HashMap<String, RemoteBusinessObjectList> theResult = aem.executeCustomDbCode(query, true);
+        HashMap<String, BusinessObjectList> theResult = aem.executeCustomDbCode(query, true);
         
         String title, tributaryLinkUsageReportText;
-        RemoteBusinessObject theTributaryLink;
+        BusinessObject theTributaryLink;
         
         if (theResult.get("tributaryLink").getList().isEmpty()) {
             title = "Error";
@@ -328,7 +328,7 @@ public class DefaultReports {
                                     tributaryLinkId, SDHModule.RELATIONSHIP_SDHTTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTTLENDPOINTB,
                                     "endpointA", "endpointB", "endpointA", "endpointB", Constants.CLASS_GENERICDISTRIBUTIONFRAME);
             
-            HashMap<String, RemoteBusinessObjectList> demarcationPoints = aem.executeCustomDbCode(query,true);
+            HashMap<String, BusinessObjectList> demarcationPoints = aem.executeCustomDbCode(query,true);
             String demarcationPointsAsSring = "";
             for (int i = 0; i < demarcationPoints.get("nextEquipmentPort").getList().size(); i++)
                 demarcationPointsAsSring += "<b>" + demarcationPoints.get("nextEquipment").getList().get(i) + "</b>:" + demarcationPoints.get("nextEquipmentPort").getList().get(i) + "<br/>";
@@ -343,23 +343,23 @@ public class DefaultReports {
                     + "<tr><td class=\"generalInfoLabel\">Customer</td><td class=\"generalInfoValue\">" + theResult.get("customer").getList().get(0).getName() + "</td></tr></table>";
         
             //Used resources
-            List<RemoteBusinessObjectLight> container = bem.getSpecialAttribute(tributaryLinkClass, tributaryLinkId, SDHModule.RELATIONSHIP_SDHDELIVERS);
+            List<BusinessObjectLight> container = bem.getSpecialAttribute(tributaryLinkClass, tributaryLinkId, SDHModule.RELATIONSHIP_SDHDELIVERS);
             
             String usedResources;
             if (container.isEmpty())
                 usedResources = "<div class=\"error\">This tributary link seems malformed and does not have a path</div>";
             else {
-                List<AnnotatedRemoteBusinessObjectLight> structured = bem.getAnnotatedSpecialAttribute(container.get(0).getClassName(), 
+                List<AnnotatedBusinessObjectLight> structured = bem.getAnnotatedSpecialAttribute(container.get(0).getClassName(), 
                         container.get(0).getId(), SDHModule.RELATIONSHIP_SDHCONTAINS);
                 usedResources = "<table><tr><th>Structured Name</th><th>Position in Container</th><th>Transport Links</th></tr>";
                 int i = 0;
-                for (AnnotatedRemoteBusinessObjectLight aStructured : structured) {
+                for (AnnotatedBusinessObjectLight aStructured : structured) {
                     String transportLinksString = "";
                     
-                    List<AnnotatedRemoteBusinessObjectLight> transportLinks = 
+                    List<AnnotatedBusinessObjectLight> transportLinks = 
                             bem.getAnnotatedSpecialAttribute(aStructured.getObject().getClassName(), aStructured.getObject().getId(), SDHModule.RELATIONSHIP_SDHTRANSPORTS);
                     
-                    for (AnnotatedRemoteBusinessObjectLight transportLink : transportLinks)
+                    for (AnnotatedBusinessObjectLight transportLink : transportLinks)
                         transportLinksString += transportLink.getProperties().get(SDHModule.PROPERTY_SDHPOSITION) + " - " + transportLink.getObject() + "<br/>";
                     
                     usedResources += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + aStructured.getObject() + "</td>"
@@ -377,16 +377,16 @@ public class DefaultReports {
         return new RawReport("Tributary Link Details", "Neotropic SAS","1.1", tributaryLinkUsageReportText);
     }
 
-    public RawReport buildHighOrderTributaryLinkDetailReport (String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildHighOrderTributaryLinkDetailReport (String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         String query = String.format("MATCH (customerSuperClass)<-[:%s*]-(customerClass)<-[:%s]-(customer)<-[:%s*]-(service)-[relationA:%s]->(tributaryLink)-[relationB:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
                 + "WHERE id(tributaryLink) = %s AND superClass.name=\"%s\" AND relationA.name = \"%s\" AND (relationB.name = \"%s\" OR relationB.name = \"%s\") AND customerSuperClass.name=\"%s\" RETURN tributaryLink, customer, service, port, equipment", 
                     RelTypes.EXTENDS, RelTypes.INSTANCE_OF, RelTypes.CHILD_OF_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, 
                     RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, tributaryLinkId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, "uses", 
                     SDHModule.RELATIONSHIP_SDHTTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTTLENDPOINTB, Constants.CLASS_GENERICCUSTOMER);
-        HashMap<String, RemoteBusinessObjectList> theResult = aem.executeCustomDbCode(query, true);
+        HashMap<String, BusinessObjectList> theResult = aem.executeCustomDbCode(query, true);
         
         String title, tributaryLinkUsageReportText;
-        RemoteBusinessObject theTributaryLink;
+        BusinessObject theTributaryLink;
         
         if (theResult.get("tributaryLink").getList().isEmpty()) {
             title = "Error";
@@ -410,7 +410,7 @@ public class DefaultReports {
                                     tributaryLinkId, SDHModule.RELATIONSHIP_SDHTTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTTLENDPOINTB,
                                     "endpointA", "endpointB", "endpointA", "endpointB", Constants.CLASS_GENERICDISTRIBUTIONFRAME);
             
-            HashMap<String, RemoteBusinessObjectList> demarcationPoints = aem.executeCustomDbCode(query, true);
+            HashMap<String, BusinessObjectList> demarcationPoints = aem.executeCustomDbCode(query, true);
             String demarcationPointsAsSring = "";
             for (int i = 0; i < demarcationPoints.get("nextEquipmentPort").getList().size(); i++)
                 demarcationPointsAsSring += "<b>" + demarcationPoints.get("nextEquipment").getList().get(i) + "</b>:" + demarcationPoints.get("nextEquipmentPort").getList().get(i) + "<br/>";
@@ -425,18 +425,18 @@ public class DefaultReports {
                     + "<tr><td class=\"generalInfoLabel\">Customer</td><td class=\"generalInfoValue\">" + theResult.get("customer").getList().get(0).getName() + "</td></tr></table>";
         
             //Used resources
-            List<RemoteBusinessObjectLight> container = bem.getSpecialAttribute(tributaryLinkClass, tributaryLinkId, SDHModule.RELATIONSHIP_SDHDELIVERS);
+            List<BusinessObjectLight> container = bem.getSpecialAttribute(tributaryLinkClass, tributaryLinkId, SDHModule.RELATIONSHIP_SDHDELIVERS);
             
             String usedResources;
             if (container.isEmpty())
                 usedResources = "<div class=\"error\">This tributary link seems malformed and does not have a path</div>";
             else {
-                List<AnnotatedRemoteBusinessObjectLight> transportLinks = bem.getAnnotatedSpecialAttribute(container.get(0).getClassName(), 
+                List<AnnotatedBusinessObjectLight> transportLinks = bem.getAnnotatedSpecialAttribute(container.get(0).getClassName(), 
                         container.get(0).getId(), SDHModule.RELATIONSHIP_SDHTRANSPORTS);
                 usedResources = "<table><tr><th>Transport Link Name</th><th>Transport Link Position</th></tr>";
                
                 int i = 0;
-                for (AnnotatedRemoteBusinessObjectLight transportLink : transportLinks) {
+                for (AnnotatedBusinessObjectLight transportLink : transportLinks) {
                     usedResources += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + transportLink.getObject() + "</td>"
                                     + "<td>" + transportLink.getProperties().get(SDHModule.PROPERTY_SDHPOSITION) +"</td></tr>";
                     i ++;
@@ -450,16 +450,16 @@ public class DefaultReports {
         return new RawReport("Tributary Link Details", "Neotropic SAS","1.1", tributaryLinkUsageReportText);
     }
     
-    public RawReport buildNetworkEquipmentInLocationReport(String locationClass, long locationId) throws ObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildNetworkEquipmentInLocationReport(String locationClass, long locationId) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
         String query = String.format("MATCH (location)<-[:%s*]-(networkEquipment)-[:%s]->(class)-[:%s*]->(superclass) "
                 + "WHERE id(location) = %s AND superclass.name = \"%s\" "
                 + "RETURN networkEquipment", RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, 
                                                             locationId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
-        HashMap<String, RemoteBusinessObjectList> theResult = aem.executeCustomDbCode(query, true);
+        HashMap<String, BusinessObjectList> theResult = aem.executeCustomDbCode(query, true);
         
         String title, networkEquipmentInLocationReportText;
         
-        RemoteBusinessObjectLight location = bem.getObjectLight(locationClass, locationId);
+        BusinessObjectLight location = bem.getObjectLight(locationClass, locationId);
             
         title = "Network Equipment Report for " + location.getName();
         networkEquipmentInLocationReportText = getHeader(title);
@@ -475,7 +475,7 @@ public class DefaultReports {
         else {
             networkEquipmentInLocationReportText += "<table><tr><th>Name</th><th>Type</th><th>Serial Number</th><th>Location</th><th>Vendor</th><th>Operational State</th></tr>";
             int i = 0;
-            for (RemoteBusinessObject networkEquipment : theResult.get("networkEquipment").getList()) {
+            for (BusinessObject networkEquipment : theResult.get("networkEquipment").getList()) {
                 networkEquipmentInLocationReportText += "<tr class=\"" + (i % 2 == 0 ? "even" :"odd") + "\">"
                                                             + "<td>" + networkEquipment.getName() + "</td>"
                                                             + "<td>" + networkEquipment.getClassName() + "</td>"
@@ -494,8 +494,8 @@ public class DefaultReports {
         return new RawReport("Network Equipment", "Neotropic SAS","1.1", networkEquipmentInLocationReportText);
     }
     
-    public RawReport buildServiceResourcesReport(String className, long serviceId) throws MetadataObjectNotFoundException, ObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
-        RemoteBusinessObjectLight service = bem.getObjectLight(className, serviceId);
+    public RawReport buildServiceResourcesReport(String className, long serviceId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        BusinessObjectLight service = bem.getObjectLight(className, serviceId);
         String serviceResourcesReportText, title = "Resources Used By " + service.getName();
         serviceResourcesReportText = getHeader(title);
         serviceResourcesReportText += 
@@ -504,13 +504,13 @@ public class DefaultReports {
         serviceResourcesReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td>" + service.getName() + "</td></tr>\n"
                 + "<tr><td class=\"generalInfoLabel\">Type</td><td>" + service.getClassName() + "</td></tr>\n"
                 + "<tr><td class=\"generalInfoLabel\">Location</td><td>" + Util.formatLocation(bem.getParents(service.getClassName(), service.getId())) + "</td></tr>\n</table>\n";
-        List<RemoteBusinessObjectLight> resources = bem.getSpecialAttribute(service.getClassName(), service.getId(), "uses");
+        List<BusinessObjectLight> resources = bem.getSpecialAttribute(service.getClassName(), service.getId(), "uses");
         if (resources.isEmpty()) {
             serviceResourcesReportText += "<div class=\"warning\">This service does not use any network resources</div>";
         } else {
             serviceResourcesReportText += "<table><tr><th>Name</th><th>Type</th><th>Location</th></tr>";
             int i = 0;
-            for (RemoteBusinessObjectLight resource : resources) {
+            for (BusinessObjectLight resource : resources) {
                 serviceResourcesReportText += "<tr class=\"" + (i % 2 == 0 ? "even" :"odd") + "\">"
                                                             + "<td>" + resource.getName() + "</td>"
                                                             + "<td>" + resource.getClassName() + "</td>"
@@ -524,31 +524,31 @@ public class DefaultReports {
         return new RawReport("Service Resources", "Neotropic SAS","1.1", serviceResourcesReportText);
     }
     
-    public RawReport subnetUsageReport(String className, long subnetId) throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport subnetUsageReport(String className, long subnetId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
     
-        RemoteBusinessObject subnet = bem.getObject(className, subnetId);
-        List<RemoteBusinessObjectLight> subnetChildren = bem.getObjectSpecialChildren(className, subnetId);
+        BusinessObject subnet = bem.getObject(className, subnetId);
+        List<BusinessObjectLight> subnetChildren = bem.getObjectSpecialChildren(className, subnetId);
         HashMap<String, List<String>> subnetAttributes = subnet.getAttributes();
         int hosts = Integer.parseInt(subnetAttributes.get("hosts").get(0));
         
         
         int usedIps = 0;
         
-        List<RemoteBusinessObjectLight> ips  = new ArrayList<>();
-        List<RemoteBusinessObjectLight> subnets  = new ArrayList<>();
+        List<BusinessObjectLight> ips  = new ArrayList<>();
+        List<BusinessObjectLight> subnets  = new ArrayList<>();
         
-        for (RemoteBusinessObjectLight children : subnetChildren) {
+        for (BusinessObjectLight children : subnetChildren) {
             if(children.getClassName().equals(Constants.CLASS_IP_ADDRESS))
                 ips.add(children);
         }
         
-        for (RemoteBusinessObjectLight children : subnetChildren) {
+        for (BusinessObjectLight children : subnetChildren) {
             if(children.getClassName().equals(Constants.CLASS_SUBNET_IPV4) || children.getClassName().equals(Constants.CLASS_SUBNET_IPV6))
                 subnets.add(children);
         }
         
-        for (RemoteBusinessObjectLight ip : ips) {
-            List<RemoteBusinessObjectLight> ipDevices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
+        for (BusinessObjectLight ip : ips) {
+            List<BusinessObjectLight> ipDevices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
             if(!ipDevices.isEmpty())
                 usedIps++;
         }
@@ -563,9 +563,9 @@ public class DefaultReports {
         int freeIps = hosts - usedIps;
         
         String vrf="", vlan = "", service="", title, subnetUsageReportText;
-        List<RemoteBusinessObjectLight> vlans = bem.getSpecialAttribute(className, subnetId, IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN);
-        List<RemoteBusinessObjectLight> vrfs = bem.getSpecialAttribute(className, subnetId, IPAMModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE);
-        List<RemoteBusinessObjectLight> services = bem.getSpecialAttribute(className, subnetId, "uses");
+        List<BusinessObjectLight> vlans = bem.getSpecialAttribute(className, subnetId, IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN);
+        List<BusinessObjectLight> vrfs = bem.getSpecialAttribute(className, subnetId, IPAMModule.RELATIONSHIP_IPAMBELONGSTOVRFINSTACE);
+        List<BusinessObjectLight> services = bem.getSpecialAttribute(className, subnetId, "uses");
         
         if(!vlans.isEmpty())
             vlan = "<b>" + vlans.get(0).getName() + " ["+ vlans.get(0).getClassName()+ "]</b> |"+
@@ -611,14 +611,14 @@ public class DefaultReports {
             nestedSubnets = "<br><h2>Subnets</h2><table><tr><th>Subnet</th><th>Description</th><th>Service</th></tr>";
 
             int i = 0;
-            for (RemoteBusinessObjectLight nestedSubnet : subnets) {
+            for (BusinessObjectLight nestedSubnet : subnets) {
                 service = "";
                                 
-                List<RemoteBusinessObjectLight> subnetServices = bem.getSpecialAttribute(nestedSubnet.getClassName(), nestedSubnet.getId(), "uses"); //NOI18N
+                List<BusinessObjectLight> subnetServices = bem.getSpecialAttribute(nestedSubnet.getClassName(), nestedSubnet.getId(), "uses"); //NOI18N
                 if(!subnetServices.isEmpty())
                     service = subnetServices.get(0).getName() + "[" +  subnetServices.get(0).getClassName() + "]";
                 
-                RemoteBusinessObject subnetO = bem.getObject(className, nestedSubnet.getId());
+                BusinessObject subnetO = bem.getObject(className, nestedSubnet.getId());
                 HashMap<String, List<String>> attributes = subnetO.getAttributes();
                 
                 nestedSubnets += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + nestedSubnet.getName() + "</td>"
@@ -637,23 +637,23 @@ public class DefaultReports {
             ipAddresses = "<br><h2>IP Addresses</h2><table><tr><th>IP Address</th><th>Description</th><th>Port</th><th>Location</th><th>Service</th></tr>";
 
             int i = 0;
-            for (RemoteBusinessObjectLight ip : ips) {
+            for (BusinessObjectLight ip : ips) {
                 String device = "";
                 service = "";
                 
-                List<RemoteBusinessObjectLight> ipDevices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
+                List<BusinessObjectLight> ipDevices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
                 String location = "";
                 if(!ipDevices.isEmpty()){
                     device = ipDevices.get(0).getName() + " [" + ipDevices.get(0).getClassName()+"]";
-                    List<RemoteBusinessObjectLight> parents = bem.getParents(ipDevices.get(0).getClassName(), ipDevices.get(0).getId());
+                    List<BusinessObjectLight> parents = bem.getParents(ipDevices.get(0).getClassName(), ipDevices.get(0).getId());
                     location =  Util.formatLocation(parents);
                 }
                 
-                List<RemoteBusinessObjectLight> ipServices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), "uses");
+                List<BusinessObjectLight> ipServices = bem.getSpecialAttribute(Constants.CLASS_IP_ADDRESS, ip.getId(), "uses");
                 if(!ipServices.isEmpty())
                     service = ipServices.get(0).getName() + "[" +  ipServices.get(0).getClassName() + "]";
                 
-                RemoteBusinessObject ipO = bem.getObject(Constants.CLASS_IP_ADDRESS, ip.getId());
+                BusinessObject ipO = bem.getObject(Constants.CLASS_IP_ADDRESS, ip.getId());
                 HashMap<String, List<String>> attributes = ipO.getAttributes();
                 
                 ipAddresses += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + ip.getName() + "</td>"
@@ -672,9 +672,9 @@ public class DefaultReports {
         return new RawReport("Subnet Usage", "Neotropic SAS", "1.1", subnetUsageReportText);
     }
     
-    public RawReport buildContractStatusReport() throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+    public RawReport buildContractStatusReport() throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
         
-        List<RemoteBusinessObjectLight> contracts = bem.getObjectsOfClassLight(Constants.CLASS_GENERICCONTRACT, 0);
+        List<BusinessObjectLight> contracts = bem.getObjectsOfClassLight(Constants.CLASS_GENERICCONTRACT, 0);
         
         String title = "Contract Status Report";
         String contractStatusReportText = getHeader(title);
@@ -689,8 +689,8 @@ public class DefaultReports {
             
             int i = 0;
             SimpleDateFormat formatter = new SimpleDateFormat("MMMM dd, yyyy");
-            for (RemoteBusinessObjectLight aContract : contracts) {
-                RemoteBusinessObject fullContractInfo = bem.getObject(aContract.getClassName(), aContract.getId());
+            for (BusinessObjectLight aContract : contracts) {
+                BusinessObject fullContractInfo = bem.getObject(aContract.getClassName(), aContract.getId());
                 Date startDate =  fullContractInfo.getAttributes().get("startDate") == null ? 
                         null : new Date(Long.valueOf(fullContractInfo.getAttributes().get("startDate").get(0)));
                 
@@ -724,13 +724,13 @@ public class DefaultReports {
                     }
                 }
                 
-                List<RemoteBusinessObjectLight> equipment = bem.getSpecialAttribute(aContract.getClassName(), aContract.getId(), "contractHas"); //NOI18N
+                List<BusinessObjectLight> equipment = bem.getSpecialAttribute(aContract.getClassName(), aContract.getId(), "contractHas"); //NOI18N
                 
                 String equipmentString = "";
                 if (equipment.isEmpty())
                     equipmentString = asError("No Equipment");
                 else {
-                    for (RemoteBusinessObjectLight anEquipment : equipment)
+                    for (BusinessObjectLight anEquipment : equipment)
                         equipmentString += anEquipment + "<br/>";
                 }
                 
@@ -740,7 +740,7 @@ public class DefaultReports {
                 
                 List<String> serviceProviderId = fullContractInfo.getAttributes().get("serviceProvider");
                 if (serviceProviderId != null) {
-                    RemoteBusinessObject serviceProvider = bem.getObject(Constants.CLASS_SERVICEPROVIDER, Long.valueOf(serviceProviderId.get(0)));
+                    BusinessObject serviceProvider = bem.getObject(Constants.CLASS_SERVICEPROVIDER, Long.valueOf(serviceProviderId.get(0)));
                     if (!serviceProvider.getName().isEmpty())
                         providerName = serviceProvider.getName();
                     if (serviceProvider.getAttributes().get(Constants.PROPERTY_SUPPORT_PHONE_NUMBER) != null)
@@ -763,12 +763,12 @@ public class DefaultReports {
     }
     
     public RawReport buildMPLSServiceReport(String serviceClass, long serviceId) 
-            throws MetadataObjectNotFoundException, ObjectNotFoundException,
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException,
             InvalidArgumentException, ApplicationObjectNotFoundException, 
             NotAuthorizedException
     {
-        RemoteBusinessObject MPLSService = bem.getObject(serviceClass, serviceId);
-        List<RemoteBusinessObjectLight> serviceInstances = bem.getSpecialAttribute(serviceClass, serviceId, "uses");
+        BusinessObject MPLSService = bem.getObject(serviceClass, serviceId);
+        List<BusinessObjectLight> serviceInstances = bem.getSpecialAttribute(serviceClass, serviceId, "uses");
 
         String service="", title, MPLSDetailReportText;
         
@@ -791,15 +791,15 @@ public class DefaultReports {
                 instance = "<table><tr><th>Service Instance</th><th>Location</th></tr>";
 
             int i = 0;
-            for (RemoteBusinessObjectLight serviceInstance : serviceInstances) {
+            for (BusinessObjectLight serviceInstance : serviceInstances) {
                 String device = "";
                 service = "";
                 
-                RemoteBusinessObject ports = bem.getObject(serviceInstance.getClassName(), serviceInstance.getId());
+                BusinessObject ports = bem.getObject(serviceInstance.getClassName(), serviceInstance.getId());
                 String location = "";
                 if(ports != null){
                     device = ports.getName() + " [" + ports.getClassName()+"]";
-                    List<RemoteBusinessObjectLight> parents = bem.getParents(ports.getClassName(), ports.getId());
+                    List<BusinessObjectLight> parents = bem.getParents(ports.getClassName(), ports.getId());
                     location =  Util.formatLocation(parents);
                 }
                 
@@ -817,7 +817,7 @@ public class DefaultReports {
     }
     
     public RawReport buildLogicalConfigurationInterfacesReport(String logicalConfigurationClassName, long logicalConfigurationId) 
-            throws MetadataObjectNotFoundException, ObjectNotFoundException,
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException,
             InvalidArgumentException, ApplicationObjectNotFoundException, 
             NotAuthorizedException
     {
@@ -827,14 +827,14 @@ public class DefaultReports {
         DetailReportText = getHeader(title);
         DetailReportText += "<body><table><tr><td><h1>" + title + "</h1></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
         
-        List<RemoteBusinessObjectLight> listOflogicalConfigurations = bem.getObjectsOfClassLight(logicalConfigurationClassName, 0);
+        List<BusinessObjectLight> listOflogicalConfigurations = bem.getObjectsOfClassLight(logicalConfigurationClassName, 0);
         
-        for (RemoteBusinessObjectLight listOflogicalConfiguration : listOflogicalConfigurations) {
+        for (BusinessObjectLight listOflogicalConfiguration : listOflogicalConfigurations) {
             instance = "";
-            RemoteBusinessObject logicalConfigurationObject = bem.getObject(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId());
+            BusinessObject logicalConfigurationObject = bem.getObject(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId());
             
             HashMap<String, List<String>> attributes = logicalConfigurationObject.getAttributes();
-            List<RemoteBusinessObjectLight> ports = bem.getSpecialAttribute(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId(), IPAMModule.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE);
+            List<BusinessObjectLight> ports = bem.getSpecialAttribute(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId(), IPAMModule.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE);
             
             if (ports == null) 
                 DetailReportText += "<div class=\"error\">No information for" + listOflogicalConfiguration.getName() + " could be found</div>";
@@ -842,9 +842,9 @@ public class DefaultReports {
             
             else {
                 DetailReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\"><b>" + logicalConfigurationObject.getName() + "[" + logicalConfigurationObject.getClassName() + "]</b></td>";
-                List<RemoteBusinessObjectLight> vlans = bem.getSpecialAttribute(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId(), IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN);
+                List<BusinessObjectLight> vlans = bem.getSpecialAttribute(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId(), IPAMModule.RELATIONSHIP_IPAMBELONGSTOVLAN);
                 if (!vlans.isEmpty()){
-                    for (RemoteBusinessObjectLight vlanInstance : vlans) 
+                    for (BusinessObjectLight vlanInstance : vlans) 
                         vlan += vlanInstance.toString() + ", ";  
                     DetailReportText +=  "<tr><td class=\"generalInfoLabel\">VLAN</td><td class=\"generalInfoValue\"><b>" + vlan.substring(0, vlan.length()-2) + "</b> </td></tr>";
                 }
@@ -857,20 +857,20 @@ public class DefaultReports {
                     instance = "<table><tr><th>Port / Device</th><th>IP Address</th><th>Device Location</th></tr>";
 
                 int i = 0;
-                for (RemoteBusinessObjectLight relatedPort : ports) {
+                for (BusinessObjectLight relatedPort : ports) {
                     String device = "";
                     logicalConfiguration = "";
-                    List<RemoteBusinessObjectLight> ipAddresses = bem.getSpecialAttribute(relatedPort.getClassName(), relatedPort.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
-                    RemoteBusinessObject port = bem.getObject(relatedPort.getClassName(), relatedPort.getId());
+                    List<BusinessObjectLight> ipAddresses = bem.getSpecialAttribute(relatedPort.getClassName(), relatedPort.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
+                    BusinessObject port = bem.getObject(relatedPort.getClassName(), relatedPort.getId());
                     String location = "";
                     if(port != null){
                         device = port.getName() + " [" + port.getClassName()+"]";
-                        List<RemoteBusinessObjectLight> parents = bem.getParents(port.getClassName(), port.getId());
+                        List<BusinessObjectLight> parents = bem.getParents(port.getClassName(), port.getId());
                         location =  Util.formatLocation(parents);
                     }
 
                     String ips = "  ";
-                    for (RemoteBusinessObjectLight ipAddress : ipAddresses) 
+                    for (BusinessObjectLight ipAddress : ipAddresses) 
                         ips += ipAddress.getName() + ", ";
                     
                     
@@ -895,13 +895,13 @@ public class DefaultReports {
     }
     
     public RawReport buildServicesReport(String serviceClassName, long serviceId) 
-            throws MetadataObjectNotFoundException, ObjectNotFoundException,
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException,
             InvalidArgumentException, ApplicationObjectNotFoundException, 
             NotAuthorizedException
     {
-        RemoteBusinessObject theService = bem.getObject(serviceClassName, serviceId);
+        BusinessObject theService = bem.getObject(serviceClassName, serviceId);
         
-        List<RemoteBusinessObjectLight> serviceInstances = bem.getSpecialAttribute(serviceClassName, serviceId, "uses");
+        List<BusinessObjectLight> serviceInstances = bem.getSpecialAttribute(serviceClassName, serviceId, "uses");
         HashMap<String, List<String>> serviceAttributes = theService.getAttributes();
         Set<AttributeMetadata> serviceClassAttributes = mem.getClass(serviceClassName).getAttributes();
         String service="", title, ServiceDetailReportText;
@@ -919,11 +919,11 @@ public class DefaultReports {
 
             ServiceDetailReportText += "<table>";
             String value = "";
-            List<RemoteBusinessObjectLight> parents = bem.getParents(serviceClassName, serviceId);
+            List<BusinessObjectLight> parents = bem.getParents(serviceClassName, serviceId);
             
-            RemoteBusinessObject serviceCustomer = null;
+            BusinessObject serviceCustomer = null;
                     
-            for (RemoteBusinessObjectLight parent : parents) {
+            for (BusinessObjectLight parent : parents) {
                 if(mem.isSubClass(Constants.CLASS_GENERICCUSTOMER, parent.getClassName())){
                     serviceCustomer = bem.getObject(parent.getClassName(), parent.getId());
                     break;
@@ -950,15 +950,15 @@ public class DefaultReports {
                 instance = "<table><tr><th>Related Instances</th><th>Location</th></tr>";
 
             int i = 0;
-            for (RemoteBusinessObjectLight serviceInstance : serviceInstances) {
+            for (BusinessObjectLight serviceInstance : serviceInstances) {
                 String objectName = "";
                 service = "";
                 
-                RemoteBusinessObject inventoryObject = bem.getObject(serviceInstance.getClassName(), serviceInstance.getId());
+                BusinessObject inventoryObject = bem.getObject(serviceInstance.getClassName(), serviceInstance.getId());
                 String location = "";
                 if(inventoryObject != null){
                     objectName = inventoryObject.getName() + " [" + inventoryObject.getClassName()+"]";
-                    List<RemoteBusinessObjectLight> parents = bem.getParents(inventoryObject.getClassName(), inventoryObject.getId());
+                    List<BusinessObjectLight> parents = bem.getParents(inventoryObject.getClassName(), inventoryObject.getId());
                     location = Util.formatLocation(parents);
                 }
                 
@@ -1120,7 +1120,7 @@ public class DefaultReports {
         }
     
     private String createAttributesOfClass(HashMap<String, List<String>> attributes, Set<AttributeMetadata> classAttributes) 
-            throws MetadataObjectNotFoundException, ObjectNotFoundException, 
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, 
             InvalidArgumentException, ApplicationObjectNotFoundException, 
             NotAuthorizedException
     {

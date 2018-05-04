@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -30,13 +30,13 @@ import java.util.List;
 import java.util.Map;
 import javax.json.Json;
 import org.kuwaiba.apis.persistence.PersistenceService;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.util.i18n.I18N;
@@ -129,7 +129,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
 
             if (pollResult.getSyncDataSourceConfigurationExceptions(agent).isEmpty()) {
 
-                RemoteBusinessObjectLight mappedObjLight = null;
+                BusinessObjectLight mappedObjLight = null;
 
                 try {
                     mappedObjLight = PersistenceService.getInstance().getBusinessEntityManager().getObjectLight(className, id);
@@ -189,7 +189,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
     
     @Override
     public List<SyncFinding> sync(PollResult pollResult) throws Exception {
-        HashMap<RemoteBusinessObjectLight, AbstractDataEntity> originalData = pollResult.getResult();
+        HashMap<BusinessObjectLight, AbstractDataEntity> originalData = pollResult.getResult();
         List<SyncFinding> findings = new ArrayList<>();
         // Adding to findings list the not blocking execution exception found during the mapped poll
         for (SyncDataSourceConfiguration agent : pollResult.getExceptions().keySet()) {
@@ -198,12 +198,12 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                         exception.getMessage(), 
                         Json.createObjectBuilder().add("type","ex").build().toString()));
         }
-        for (Map.Entry<RemoteBusinessObjectLight, AbstractDataEntity> entrySet : originalData.entrySet()) {
+        for (Map.Entry<BusinessObjectLight, AbstractDataEntity> entrySet : originalData.entrySet()) {
             TableData table = (TableData)entrySet.getValue();
             SNMPDataProcessor x = new SNMPDataProcessor(entrySet.getKey(), (HashMap<String, List<String>>)table.getValue());
             try {
                 findings.addAll(x.load());
-            } catch (MetadataObjectNotFoundException | ObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
+            } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
                 throw new Exception(ex.getMessage());
             }
         }

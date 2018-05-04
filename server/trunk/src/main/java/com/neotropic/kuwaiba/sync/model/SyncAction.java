@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,12 +33,12 @@ import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.util.i18n.I18N;
-import org.kuwaiba.interfaces.ws.todeserialize.StringPair;
+import org.kuwaiba.apis.persistence.util.StringPair;
 
 /**
  * An instance of this class define an action to be performed upon a sync finding
@@ -200,7 +200,7 @@ public class SyncAction {
                 else
                     name = attributes.get("name");
                 results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_UPDATED, name, deviceClassName, Long.toString(deviceId)), ACTION_UPDATED));
-            } catch (InvalidArgumentException | ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
+            } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
                 results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), "Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
             }
         }
@@ -263,7 +263,7 @@ public class SyncAction {
                                 results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), ACTION_CREATED));
                             }
                            
-                        } catch (InvalidArgumentException | ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
+                        } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
                             results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), "Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
                             break;
                         }
@@ -346,7 +346,7 @@ public class SyncAction {
             }
             else
                 results.add(new SyncResult(SyncResult.WARNING, find.getDescription(), "Kuwaiba was not able to find the new parent to move the old port, please move it manually"));
-        } catch (MetadataObjectNotFoundException | ObjectNotFoundException | OperationNotPermittedException ex) {
+        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | OperationNotPermittedException ex) {
             results.add(new SyncResult(SyncResult.ERROR, find.getDescription()," Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
         } catch (InvalidArgumentException ex) {
             Logger.getLogger(SyncAction.class.getName()).log(Level.SEVERE, null, ex);
@@ -416,7 +416,7 @@ public class SyncAction {
                         long createdObjectId = bem.createObject(className, parentClassName, parentId, attributes, -1);
                         createdIdsToMap.put(childId, createdObjectId);
                         results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), ACTION_CREATED));
-                    } catch (InvalidArgumentException | ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
+                    } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
                         results.add(new SyncResult(SyncResult.WARNING, find.getDescription(), " Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
                     }
                 }
@@ -426,7 +426,7 @@ public class SyncAction {
                     long createdObjectId = bem.createObject(className, parentClassName, parentId, attributes, -1);
                     createdIdsToMap.put(childId, createdObjectId);
                     results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), ACTION_CREATED));
-                } catch (InvalidArgumentException | ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
+                } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
                     results.add(new SyncResult(SyncResult.WARNING, find.getDescription(), "Possible cause: " + ex.getMessage()));
                 }
             }
@@ -440,7 +440,7 @@ public class SyncAction {
             bem.deleteObject(className, Long.valueOf(jdevice.getString("deviceId")), false);
             results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_DELETED, jdevice.get("deviceName"), className, jdevice.getString("deviceId")), ACTION_DELETED));
 
-        } catch (ObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
+        } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
             results.add(new SyncResult(SyncResult.WARNING, find.getDescription(), 
                                         ex.getMessage() + "T his structure could not be deleted, because some elements has relationships (services, IP, links, etc), please check this structure and migrate ports manually.\n" +
                     "Remeber kuwaiba is able to move the ports if they have a similiar name in the current navigation tree and the data got from the SNMP, otherwise is not possible to move the ports. Please check and run the sync again"));
