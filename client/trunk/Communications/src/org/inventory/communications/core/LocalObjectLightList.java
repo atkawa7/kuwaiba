@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 package org.inventory.communications.core;
 
 import java.util.ArrayList;
-import org.inventory.communications.wsclient.RemoteBusinessObjectLight;
-import org.inventory.communications.wsclient.RemoteBusinessObjectLightList;
 import org.inventory.communications.wsclient.RemoteObjectLight;
 import org.inventory.communications.wsclient.RemoteObjectLightList;
 
@@ -26,12 +24,7 @@ import org.inventory.communications.wsclient.RemoteObjectLightList;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class LocalObjectLightList extends ArrayList<LocalObjectLight> {
-
-    public LocalObjectLightList(RemoteBusinessObjectLightList objectChain) {
-        for (RemoteBusinessObjectLight anElement : objectChain.getList()) 
-            add(new LocalObjectLight(anElement.getId(), anElement.getName(), anElement.getClassName()));
-    }
-    
+   
     public LocalObjectLightList(RemoteObjectLightList objectChain) {
         for (RemoteObjectLight anElement : objectChain.getList()) 
             add(new LocalObjectLight(anElement.getOid(), anElement.getName(), anElement.getClassName()));

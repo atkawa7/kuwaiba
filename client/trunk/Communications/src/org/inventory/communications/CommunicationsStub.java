@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import org.inventory.communications.core.LocalBusinessRule;
 import org.inventory.communications.core.LocalFavoritesFolder;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
+import org.inventory.communications.core.LocalContactLight;
 import org.inventory.communications.core.LocalLogicalConnectionDetails;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
@@ -87,9 +88,8 @@ import org.inventory.communications.wsclient.LaunchSupervisedSynchronizationTask
 import org.inventory.communications.wsclient.PrivilegeInfo;
 import org.inventory.communications.wsclient.RemoteBackgroundJob;
 import org.inventory.communications.wsclient.RemoteFavoritesFolder;
-import org.inventory.communications.wsclient.RemoteBusinessObjectLight;
-import org.inventory.communications.wsclient.RemoteBusinessObjectLightList;
 import org.inventory.communications.wsclient.RemoteBusinessRule;
+import org.inventory.communications.wsclient.RemoteContactLight;
 import org.inventory.communications.wsclient.RemoteObject;
 import org.inventory.communications.wsclient.RemoteObjectLight;
 import org.inventory.communications.wsclient.RemoteObjectLightList;
@@ -105,7 +105,6 @@ import org.inventory.communications.wsclient.RemoteSynchronizationGroup;
 import org.inventory.communications.wsclient.RemoteTask;
 import org.inventory.communications.wsclient.RemoteTaskResult;
 import org.inventory.communications.wsclient.ResultRecord;
-import org.inventory.communications.wsclient.SdhContainerLinkDefinition;
 import org.inventory.communications.wsclient.SdhPosition;
 import org.inventory.communications.wsclient.ServerSideException_Exception;
 import org.inventory.communications.wsclient.StringArray;
@@ -139,7 +138,7 @@ public class CommunicationsStub {
                                                                     "STM1", "STM4", "STM16", "STM64", "STM256",
                                                                     "WireContainer", "WirelessContainer",
                                                                     "CorporateCustomer", "TelecomOperator", "Provider", "HomeCustomer",
-                                                                    "Subnet" };
+                                                                    "Subnet", "ExecutiveContact", "TechnicalContact", "CommercialContact" };
     
     private CommunicationsStub() {
         cache = Cache.getInstace();
@@ -379,6 +378,12 @@ public class CommunicationsStub {
         }
     }
     
+    /**
+     * Fetches the instances of a given class. Abstract classes are supported. Use with care, since the 
+     * amount of objects might be extensive.
+     * @param className The class of the objects to be retrieved
+     * @return The list of inventory objects or null in case of error
+     */
     public List<LocalObjectLight> getObjectsOfClassLight(String className){
         try{
             List <RemoteObjectLight> instances = service.getObjectsOfClassLight(className, 0, this.session.getSessionId());
@@ -938,6 +943,70 @@ public class CommunicationsStub {
             return null;
         }
     }
+    
+    //<editor-fold desc="Contact Manager" defaultstate="collapsed">
+    /**
+     * Creates a contact
+     * @param contactClass The class of the new contact. It must be a subclass of GenericContact
+     * @param name The name of the contact
+     * @param customerClassName The class of the customer this contact will be associated to
+     * @param customerId The id of the customer this contact will be associated to
+     * @return The new contact or null in case of error
+     */
+    public LocalContactLight createContact(String contactClass, String name, 
+            String customerClassName, long customerId) {
+        try {
+            StringPair nameAsProperty = new StringPair();
+            nameAsProperty.setKey(Constants.PROPERTY_NAME);
+            nameAsProperty.setValue(name);
+            
+            long newContactId = service.createContact(contactClass, Arrays.asList(nameAsProperty), customerClassName, customerId, session.getSessionId());
+            return new LocalContactLight(contactClass, newContactId, "", new LocalObjectLight(customerId, "", customerClassName));
+        } catch(Exception ex) {
+            error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Deletes a contact
+     * @param contactClass Class of the contect
+     * @param contactId Id of the contact
+     * @return True if the operation was successful, false otherwise
+     */
+    public boolean deleteContact(String contactClass, long contactId) {
+        try {
+            service.deleteContact(contactClass, contactId, session.getSessionId());
+            return true;
+        } catch(Exception ex) {
+            error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Searches for contacts given a search string, This string will be searched in the attribute values of all contacts
+     * @param searchString The string to be searched. Use null or an empty string to retrieve all the contacts
+     * @param maxResults Maximum number of results. Use -1 to retrieve all results at once
+     * @return The list of contacts for whom at least one of their attributes matches or null in case of error
+     */
+    public List<LocalContactLight> searchForContacts(String searchString, int maxResults) {
+        try {
+            List<RemoteContactLight> remoteContacts = service.searchForContacts(searchString, maxResults,session.getSessionId());
+            List<LocalContactLight> res = new ArrayList<>();
+            for (RemoteContactLight remoteContact : remoteContacts) {
+                res.add(new LocalContactLight(remoteContact.getClassName(), remoteContact.getId(), 
+                        remoteContact.getName(), new LocalObjectLight(remoteContact.getCustomer().getOid(), 
+                                remoteContact.getCustomer().getName(), remoteContact.getCustomer().getClassName())));
+            }
+            
+            return res;
+        } catch(Exception e){
+            error = e.getMessage();
+            return null;
+        }
+    }
+    //</editor-fold>
     
     /**
      * According to the cached light metadata, finds out if a given class if subclass of another
@@ -2449,7 +2518,6 @@ public class CommunicationsStub {
             }
                             
             return service.createScriptQuery(name, description, script, params, session.getSessionId());
-            
         } catch (Exception ex) {
             error = ex.getMessage();
             return -1;
@@ -2559,7 +2627,6 @@ public class CommunicationsStub {
         try {
             return new LocalScriptQueryResult(
                 service.executeScriptQuery(scriptQueryId, session.getSessionId()).getResult());
-            
         } catch (Exception ex) {
             error = ex.getMessage();
             return null;
@@ -4233,12 +4300,13 @@ public class CommunicationsStub {
     
     public List<LocalObjectLightList> findRoutesUsingTransportLinks(LocalObjectLight aSide, LocalObjectLight bSide) {
         try {
-            List<RemoteBusinessObjectLightList> routes = service.findSDHRoutesUsingTransportLinks(aSide.getClassName(), aSide.getOid(), bSide.getClassName(), bSide.getOid(), session.getSessionId());
-            List<LocalObjectLightList> res = new ArrayList<>();
-            for (RemoteBusinessObjectLightList route : routes) 
-                res.add(new LocalObjectLightList(route));
-            
-            return res;
+//            List<RemoteBusinessObjectLightList> routes = service.findSDHRoutesUsingTransportLinks(aSide.getClassName(), aSide.getOid(), bSide.getClassName(), bSide.getOid(), session.getSessionId());
+//            List<LocalObjectLightList> res = new ArrayList<>();
+//            for (RemoteBusinessObjectLightList route : routes) 
+//                res.add(new LocalObjectLightList(route));
+//            
+//            return res;
+return null;
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -4247,12 +4315,13 @@ public class CommunicationsStub {
     
     public List<LocalObjectLightList> findRoutesUsingContainerLinks(LocalObjectLight aSide, LocalObjectLight bSide) {
         try {
-            List<RemoteBusinessObjectLightList> routes = service.findSDHRoutesUsingContainerLinks(aSide.getClassName(), aSide.getOid(), bSide.getClassName(), bSide.getOid(), session.getSessionId());
-            List<LocalObjectLightList> res = new ArrayList<>();
-            for (RemoteBusinessObjectLightList route : routes) 
-                res.add(new LocalObjectLightList(route));
-            
-            return res;
+//            List<RemoteBusinessObjectLightList> routes = service.findSDHRoutesUsingContainerLinks(aSide.getClassName(), aSide.getOid(), bSide.getClassName(), bSide.getOid(), session.getSessionId());
+//            List<LocalObjectLightList> res = new ArrayList<>();
+//            for (RemoteBusinessObjectLightList route : routes) 
+//                res.add(new LocalObjectLightList(route));
+//            
+//            return res;
+return null;
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -4261,22 +4330,23 @@ public class CommunicationsStub {
     
     public List<LocalSDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId) {
         try {
-            List<SdhContainerLinkDefinition> transportLinkStructure = service.getSDHTransportLinkStructure(transportLinkClass, transportLinkId, session.getSessionId());
-            List<LocalSDHContainerLinkDefinition> res = new ArrayList<>();
-            
-            for (SdhContainerLinkDefinition aContainerDefinition : transportLinkStructure) {
-                RemoteBusinessObjectLight container = aContainerDefinition.getContainer();
-                List<LocalSDHPosition> positions = new ArrayList<>();
-                
-                for (SdhPosition aRemotePosition : aContainerDefinition.getPositions()) 
-                    positions.add(new LocalSDHPosition(aRemotePosition.getConnectionClass(), aRemotePosition.getConnectionId(), aRemotePosition.getPosition()));
-                
-                LocalSDHContainerLinkDefinition aLocalContainerDefinition = 
-                        new LocalSDHContainerLinkDefinition(new LocalObjectLight(container.getId(), container.getName(), container.getClassName()), 
-                                aContainerDefinition.isStructured(), positions);
-                res.add(aLocalContainerDefinition);
-            }            
-            return res;
+//            List<SdhContainerLinkDefinition> transportLinkStructure = service.getSDHTransportLinkStructure(transportLinkClass, transportLinkId, session.getSessionId());
+//            List<LocalSDHContainerLinkDefinition> res = new ArrayList<>();
+//            
+//            for (SdhContainerLinkDefinition aContainerDefinition : transportLinkStructure) {
+//                RemoteBusinessObjectLight container = aContainerDefinition.getContainer();
+//                List<LocalSDHPosition> positions = new ArrayList<>();
+//                
+//                for (SdhPosition aRemotePosition : aContainerDefinition.getPositions()) 
+//                    positions.add(new LocalSDHPosition(aRemotePosition.getConnectionClass(), aRemotePosition.getConnectionId(), aRemotePosition.getPosition()));
+//                
+//                LocalSDHContainerLinkDefinition aLocalContainerDefinition = 
+//                        new LocalSDHContainerLinkDefinition(new LocalObjectLight(container.getId(), container.getName(), container.getClassName()), 
+//                                aContainerDefinition.isStructured(), positions);
+//                res.add(aLocalContainerDefinition);
+//            }            
+//            return res;
+return null;
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -4284,22 +4354,23 @@ public class CommunicationsStub {
     }
     public List<LocalSDHContainerLinkDefinition> getSDHContainerLinkStructure(String containerLinkClass, long containerLinkId) {
         try {
-            List<SdhContainerLinkDefinition> containerLinkStructure = service.getSDHContainerLinkStructure(containerLinkClass, containerLinkId, session.getSessionId());
-            List<LocalSDHContainerLinkDefinition> res = new ArrayList<>();
-            
-            for (SdhContainerLinkDefinition aContainerDefinition : containerLinkStructure) {
-                RemoteBusinessObjectLight container = aContainerDefinition.getContainer();
-                List<LocalSDHPosition> positions = new ArrayList<>();
-                
-                for (SdhPosition aRemotePosition : aContainerDefinition.getPositions()) 
-                    positions.add(new LocalSDHPosition(aRemotePosition.getConnectionClass(), aRemotePosition.getConnectionId(), aRemotePosition.getPosition()));
-                
-                LocalSDHContainerLinkDefinition aLocalContainerDefinition = 
-                        new LocalSDHContainerLinkDefinition(new LocalObjectLight(container.getId(), container.getName(), container.getClassName()), 
-                                aContainerDefinition.isStructured(), positions);
-                res.add(aLocalContainerDefinition);
-            }            
-            return res;
+//            List<SdhContainerLinkDefinition> containerLinkStructure = service.getSDHContainerLinkStructure(containerLinkClass, containerLinkId, session.getSessionId());
+//            List<LocalSDHContainerLinkDefinition> res = new ArrayList<>();
+//            
+//            for (SdhContainerLinkDefinition aContainerDefinition : containerLinkStructure) {
+//                RemoteBusinessObjectLight container = aContainerDefinition.getContainer();
+//                List<LocalSDHPosition> positions = new ArrayList<>();
+//                
+//                for (SdhPosition aRemotePosition : aContainerDefinition.getPositions()) 
+//                    positions.add(new LocalSDHPosition(aRemotePosition.getConnectionClass(), aRemotePosition.getConnectionId(), aRemotePosition.getPosition()));
+//                
+//                LocalSDHContainerLinkDefinition aLocalContainerDefinition = 
+//                        new LocalSDHContainerLinkDefinition(new LocalObjectLight(container.getId(), container.getName(), container.getClassName()), 
+//                                aContainerDefinition.isStructured(), positions);
+//                res.add(aLocalContainerDefinition);
+//            }            
+//            return res;
+return null;
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;

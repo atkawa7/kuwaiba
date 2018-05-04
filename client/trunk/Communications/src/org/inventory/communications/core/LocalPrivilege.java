@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -48,6 +48,7 @@ public class LocalPrivilege {
     public static final String PRIVILEGE_QUERY_MANAGER = "query-manager";
     public static final String PRIVILEGE_TASK_MANAGER = "task-manager";
     public static final String PRIVILEGE_SYNC = "sync";
+    public static final String PRIVILEGE_CONTACTS = "contacts";
     
     /**
      * For now, these privileges will be hard-coded, however in the near future, every module will provide its own set of tokens
