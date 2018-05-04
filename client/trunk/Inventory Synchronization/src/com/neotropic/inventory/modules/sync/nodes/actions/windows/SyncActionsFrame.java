@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -73,8 +73,8 @@ public class SyncActionsFrame extends JFrame {
     private JButton btnSkip;
     private List<LocalSyncFinding> allFindings;
     private List<LocalSyncFinding> findingsToBeProcessed;
-    private static final Border normalBorder = new EmptyBorder(2, 2, 2, 2);
-    private static final Border alarmBorder = new LineBorder(Color.RED, 1);
+    private static final Border BORDER_NORMAL = new EmptyBorder(2, 2, 2, 2);
+    private static final Border BORDER_ALARM = new LineBorder(Color.RED, 1);
     
     /**
      * Default constructor
@@ -194,14 +194,14 @@ public class SyncActionsFrame extends JFrame {
         
         if (finding.getType() == LocalSyncFinding.EVENT_ERROR) {
             btnExecute.setEnabled(false);
-            pnlScrollMain.setBorder(alarmBorder);
+            pnlScrollMain.setBorder(BORDER_ALARM);
             btnSkip.setText("Next");
         }
         if (finding.getType() == LocalSyncFinding.EVENT_DELETE)
-            pnlScrollMain.setBorder(alarmBorder);
+            pnlScrollMain.setBorder(BORDER_ALARM);
         else {
             btnExecute.setEnabled(true);
-            pnlScrollMain.setBorder(normalBorder);
+            pnlScrollMain.setBorder(BORDER_NORMAL);
             btnSkip.setText("Skip");
         }
     }
