@@ -1,6 +1,5 @@
 package com.neotropic.forms;
 
-import com.neotropic.api.forms.ElementBuilder;
 import javax.servlet.annotation.WebServlet;
 
 import com.vaadin.annotations.Theme;
@@ -8,13 +7,9 @@ import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
 
 /**
  * This UI is the application entry point. A UI may either represent a browser window 
@@ -40,43 +35,12 @@ public class MyUI extends UI {
             Button button = new Button(file.getName());
 
             button.addClickListener(e -> {
-
-                try {
-                    Scanner in = new Scanner(file);
-
-                    String line = "";
-
-                    while (in.hasNext())
-                        line += in.nextLine();
-
-                    byte [] structure = line.getBytes();
-
-                    in.close();
-
-                    Window subWindow = new Window(file.getName());
-                    subWindow.setModal(true);
-
-                    ElementBuilder formBuilder = new ElementBuilder(structure);            
-                    formBuilder.build();
-
-                    FormRenderer formRenderer = new FormRenderer(formBuilder);
-
-                    Panel pnlForm = new Panel();
-                    pnlForm.setContent(formRenderer);
-                    pnlForm.setSizeUndefined();
-                    subWindow.setContent(pnlForm);
-
-                    formRenderer.render();
-                    subWindow.setResizable(true);
-                    subWindow.center();
-                    subWindow.setSizeFull();
-                    UI.getCurrent().addWindow(subWindow);
-
-                } catch (FileNotFoundException ex) {
-                }
+                                
+                FormDisplayer.getInstance().display(file, true);
             });
             verticalLayout.addComponents(button);
         }
+        ScriptQueryManager.getInstance().loadScriptQueryFiles();
     }
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)

@@ -44,4 +44,9 @@ public class ElementColumn extends AbstractElement {
 
         caption = attrValue;
     }
+    
+    @Override
+    public String getTagName() {
+        return Constants.Tag.COLUMN;
+    }
 }

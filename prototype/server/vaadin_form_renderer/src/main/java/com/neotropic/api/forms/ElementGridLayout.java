@@ -46,6 +46,8 @@ public class ElementGridLayout extends AbstractElementContainer {
 
     @Override
     public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
+        super.initFromXMl(reader);
+                
         String attrValue = reader.getAttributeValue(null, Constants.Attribute.ROWS);
         if (attrValue == null)
             throw new XMLStreamException(String.format("Missing attribute %s in tag %s", Constants.Attribute.ROWS, Constants.Tag.GRID_LAYOUT));
@@ -57,6 +59,29 @@ public class ElementGridLayout extends AbstractElementContainer {
             throw new XMLStreamException(String.format("Missing attribute %s in tag %s", Constants.Attribute.COLUMNS, Constants.Tag.GRID_LAYOUT));
         
         columns = Integer.valueOf(attrValue);
+    }
+    
+    @Override
+    public void propertyChange() {
+        if (hasProperty(Constants.EventAttribute.ONPROPERTYCHANGE, Constants.Property.REPAINT)) {
+            
+            boolean oldValue = repaint();
+            boolean newValue = (boolean) getNewValue(Constants.EventAttribute.ONPROPERTYCHANGE, Constants.Property.REPAINT);
+
+            setRepaint(newValue);
+
+            firePropertyChangeEvent();
+            
+            fireElementEvent(new EventDescriptor(
+                Constants.EventAttribute.ONPROPERTYCHANGE, 
+                Constants.Property.REPAINT, newValue, oldValue));
+        }
+        super.propertyChange();        
+    }
+    
+    @Override
+    public String getTagName() {
+        return Constants.Tag.GRID_LAYOUT;
     }
         
 }

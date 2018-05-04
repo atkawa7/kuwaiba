@@ -28,4 +28,9 @@ public class ElementTextField extends AbstractElementField {
         return (String) super.getValue();
     }
     
+    @Override
+    public String getTagName() {
+        return Constants.Tag.TEXT_FIELD;
+    }
+    
 }

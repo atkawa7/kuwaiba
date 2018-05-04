@@ -23,5 +23,10 @@ public class ElementHorizontalLayout extends AbstractElementContainer {
     public ElementHorizontalLayout() {
                 
     }
+    
+    @Override
+    public String getTagName() {
+        return Constants.Tag.HORIZONTAL_LAYOUT;
+    }
         
 }

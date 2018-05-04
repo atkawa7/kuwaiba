@@ -16,15 +16,20 @@ package com.neotropic.web.components;
 
 import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
+import com.neotropic.api.forms.Constants;
 import com.neotropic.api.forms.ElementGridLayout;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ComponentGridLayout extends GraphicalComponent {
-    
+public class ComponentGridLayout extends GraphicalComponent implements ComponentContainer {
+    private LinkedHashMap<AbstractElement, Component> children;
+            
     public ComponentGridLayout() {
         super(new GridLayout());
     }
@@ -46,7 +51,65 @@ public class ComponentGridLayout extends GraphicalComponent {
     
     @Override
     public void onElementEvent(EventDescriptor event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+            
+            if (Constants.Property.REPAINT.equals(event.getPropertyName()))
+                repaint();
+        }
     }
-    
+
+    @Override
+    public void addChildren(AbstractElement element, Component component) {
+        if (children == null)
+            children = new LinkedHashMap();
+        
+        children.put(element, component);
+    }
+
+    @Override
+    public LinkedHashMap<AbstractElement, Component> getChildren() {
+        return children;
+    }
+
+    @Override
+    public void repaint() {
+        if (getComponent() == null)
+            return;
+        
+        if (getChildren() != null) {
+            
+            getComponent().removeAllComponents();
+            
+            for (AbstractElement element : getChildren().keySet()) {
+                
+                if (!element.isHidden()) {
+                    
+                    Component component = getChildren().get(element);
+                    
+                    if (component != null) {                    
+                        List<Integer> area = element.getArea();
+
+                        if (area != null) {
+                            if (area.size() == 2) {
+                                int x1 = area.get(0);                                    
+                                int y1 = area.get(1);
+                                
+                                getComponent().addComponent(component, x1, y1);
+                            }
+                            if (area.size() == 4) {
+                                int x1 = area.get(0);                                    
+                                int y1 = area.get(1);
+                                int x2 = area.get(2);                                    
+                                int y2 = area.get(3);
+                                
+                                getComponent().addComponent(component, x1, y1, x2, y2);
+                            }
+                        } else
+                            getComponent().addComponent(component);
+                    }
+                }
+            }
+        }
+    }
+
 }

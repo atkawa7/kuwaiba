@@ -19,8 +19,12 @@ package com.neotropic.api.forms;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ElementVerticalLayout extends AbstractElementContainer {
-    
+        
     public ElementVerticalLayout() {
     }
     
+    @Override
+    public String getTagName() {
+        return Constants.Tag.VERTICAL_LAYOUT;
+    }
 }

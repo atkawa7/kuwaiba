@@ -16,17 +16,18 @@ package com.neotropic.forms;
 
 import com.neotropic.api.forms.AbstractElement;
 import com.neotropic.api.forms.AbstractElementContainer;
-import com.neotropic.api.forms.ElementBuilder;
+import com.neotropic.api.forms.FormLoader;
 import com.neotropic.api.forms.ElementForm;
 import com.neotropic.api.forms.ElementSubform;
+import com.neotropic.web.components.ComponentContainer;
 import com.neotropic.web.components.ComponentFactory;
+import com.neotropic.web.components.GraphicalComponent;
 import com.vaadin.ui.AbstractLayout;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,13 +37,10 @@ import java.util.List;
  */
 public class FormRenderer extends CustomComponent {
     private final VerticalLayout content;
-    private final ElementBuilder builder;
-    private HashMap<String, AbstractElement> elementsIds = new HashMap();
-    private HashMap<AbstractElement, Component> elements = new HashMap();
-    private HashMap<Component, AbstractElement> components = new HashMap();
-    private HashMap<AbstractElement, Window> openedWindows = new HashMap();
+    private final FormLoader builder;
+    private HashMap<Component, GraphicalComponent> components = new HashMap();
     
-    public FormRenderer(ElementBuilder builder) {
+    public FormRenderer(FormLoader builder) {
                         
         this.builder = builder;
         
@@ -59,11 +57,6 @@ public class FormRenderer extends CustomComponent {
     public void render() {
         content.removeAllComponents();
         
-        elements.put(builder.getRoot(), content);
-        
-        if (builder.getRoot().getId() != null)
-            elementsIds.put(builder.getRoot().getId(), builder.getRoot());
-                        
         renderRecursive(builder.getRoot(), content);
         
         builder.fireOnload();
@@ -79,46 +72,57 @@ public class FormRenderer extends CustomComponent {
                 Component childComponent = null;
 
                 if (childElement instanceof ElementForm) {
-                } else
-                    childComponent = ComponentFactory.getInstance().getComponent(childElement);
+                } else {
+                    GraphicalComponent childGraphicalComponent = ComponentFactory.getInstance().getComponent(childElement);
+                    
+                    if (childGraphicalComponent == null)
+                        continue;
+                    
+                    childComponent = childGraphicalComponent.getComponent();
+                    
+                    if (childComponent == null)
+                        continue;
+                    
+                    components.put(childComponent, childGraphicalComponent);
+                                        
+                    if (components.get(parentComponent) instanceof ComponentContainer)
+                        ((ComponentContainer) components.get(parentComponent)).addChildren(childElement, childComponent);
+                }
                 
                 if (childComponent != null) {
-
-                    if (childElement.getId() != null)
-                        elementsIds.put(childElement.getId(), childElement);
-
-                    elements.put(childElement, childComponent);
-                    components.put(childComponent, childElement);
-
+                    
                     if (!(childElement instanceof ElementSubform)) {
                         
-                        if (parentComponent instanceof Panel) {
-                            ((Panel) parentComponent).setContent(childComponent);
+                        if (!childElement.isHidden()) {
                             
-                        } else if (parentComponent instanceof AbstractLayout) {
-                            if (parentComponent instanceof GridLayout) {
+                            if (parentComponent instanceof Panel) {
+                                ((Panel) parentComponent).setContent(childComponent);
 
-                                List<Integer> area = childElement.getArea();
+                            } else if (parentComponent instanceof AbstractLayout) {
+                                if (parentComponent instanceof GridLayout) {
 
-                                if (area != null) {
-                                    if (area.size() == 2) {
-                                        int x1 = area.get(0);                                    
-                                        int y1 = area.get(1);
+                                    List<Integer> area = childElement.getArea();
 
-                                        ((GridLayout) parentComponent).addComponent(childComponent, x1, y1);
-                                    }
-                                    if (area.size() == 4) {
-                                        int x1 = area.get(0);                                    
-                                        int y1 = area.get(1);
-                                        int x2 = area.get(2);                                    
-                                        int y2 = area.get(3);
+                                    if (area != null) {
+                                        if (area.size() == 2) {
+                                            int x1 = area.get(0);                                    
+                                            int y1 = area.get(1);
 
-                                        ((GridLayout) parentComponent).addComponent(childComponent, x1, y1, x2, y2);
-                                    }
+                                            ((GridLayout) parentComponent).addComponent(childComponent, x1, y1);
+                                        }
+                                        if (area.size() == 4) {
+                                            int x1 = area.get(0);                                    
+                                            int y1 = area.get(1);
+                                            int x2 = area.get(2);                                    
+                                            int y2 = area.get(3);
+
+                                            ((GridLayout) parentComponent).addComponent(childComponent, x1, y1, x2, y2);
+                                        }
+                                    } else
+                                        ((GridLayout) parentComponent).addComponent(childComponent);
                                 } else
-                                    ((GridLayout) parentComponent).addComponent(childComponent);
-                            } else
-                                ((AbstractLayout) parentComponent).addComponent(childComponent);
+                                    ((AbstractLayout) parentComponent).addComponent(childComponent);
+                            }
                         }
                     }
                     renderRecursive(childElement, childComponent);

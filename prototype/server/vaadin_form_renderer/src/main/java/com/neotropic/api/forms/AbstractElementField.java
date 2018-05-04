@@ -28,6 +28,7 @@ public abstract class AbstractElementField extends AbstractElement {
     private Object value;
     private boolean mandatory = false;
     private boolean cleanable = true;
+    private String dataType;
     
     public Object getValue() {
         return value;        
@@ -52,7 +53,15 @@ public abstract class AbstractElementField extends AbstractElement {
     public void setCleanable(boolean cleanable) {
         this.cleanable = cleanable;        
     }
-           
+    
+    public String getDataType() {
+        return dataType;                
+    }
+        
+    public void setDataType(String dataType) {
+        this.dataType = dataType;        
+    }
+        
     @Override
     public void onComponentEvent(EventDescriptor event) {
         if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
@@ -130,6 +139,7 @@ public abstract class AbstractElementField extends AbstractElement {
         super.initFromXMl(reader);
         setValue(reader);
         setMandatory(reader);
+        setDataType(reader);
     }
     
     private void setValue(XMLStreamReader reader) {
@@ -141,44 +151,26 @@ public abstract class AbstractElementField extends AbstractElement {
                 
         if (attrValue != null)
             mandatory = Boolean.valueOf(attrValue);
+    }   
+    
+    private void setDataType(XMLStreamReader reader) {
+        dataType = reader.getAttributeValue(null, Constants.Attribute.DATA_TYPE);
     }
     
     @Override
     public void propertyChange() {
-        if (getEvents() != null && getEvents().containsKey(Constants.EventAttribute.ONPROPERTYCHANGE)) {
+        if (hasProperty(Constants.EventAttribute.ONPROPERTYCHANGE, Constants.Property.VALUE)) {
             
-            if (getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE) != null && 
-                getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE).containsKey(Constants.Property.VALUE)) {
-                
-                Object oldValue = getValue();
-                                
-                List<String> list = getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE).get(Constants.Property.VALUE);
-                if (list != null && !list.isEmpty()) {
-                    
-                    String functionName = list.get(0);
-                                        
-                    Runner function = getFormStructure().getElementScript().getFunctionByName(functionName);
-                    
-                    List parameters = new ArrayList();
-                    
-                    for (int i = 1; i < list.size(); i += 1) {
-                        AbstractElement anElement = getFormStructure().getElementById(list.get(i));
-                        parameters.add(anElement != null ? anElement : list.get(i));
-                    }
-                    
-                    Object newValue = function.run(parameters);
+            Object oldValue = getValue();
+            Object newValue = getNewValue(Constants.EventAttribute.ONPROPERTYCHANGE, Constants.Property.VALUE);
 
-                    setValue(newValue);
+            setValue(newValue);
 
-                    firePropertyChangeEvent();
-
-                    fireElementEvent(new EventDescriptor(
-                        Constants.EventAttribute.ONPROPERTYCHANGE, 
-                        Constants.Property.VALUE, newValue, oldValue));
-                    
-
-                }
-            }
+            firePropertyChangeEvent();
+            
+            fireElementEvent(new EventDescriptor(
+                Constants.EventAttribute.ONPROPERTYCHANGE, 
+                Constants.Property.VALUE, newValue, oldValue));
         }
         super.propertyChange();
     }

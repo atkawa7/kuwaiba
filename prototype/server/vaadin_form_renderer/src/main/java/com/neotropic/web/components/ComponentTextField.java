@@ -67,6 +67,9 @@ public class ComponentTextField extends GraphicalComponent {
             
             if (Constants.Property.VALUE.equals(event.getPropertyName()))
                 getComponent().setValue(event.getNewValue() != null ? event.getNewValue().toString() : "");
+            
+            if (Constants.Property.ENABLED.equals(event.getPropertyName()))
+                getComponent().setEnabled((boolean) event.getNewValue());
         }
         
     }

@@ -93,6 +93,15 @@ public class ElementButton extends AbstractElement {
                         ((AbstractElementContainer) anElement).clean();
                         anElement.fireElementEvent(new EventDescriptor(Constants.EventAttribute.ONCLICK, Constants.Function.CLEAN));
                     }
+                } else if (Constants.Function.OPEN_FORM.equals(key)) {
+                    String form = getEvents().get(Constants.EventAttribute.ONCLICK).get(Constants.Function.OPEN_FORM).get(0);
+                    fireElementEvent(new EventDescriptor(Constants.EventAttribute.ONCLICK, Constants.Function.OPEN_FORM, form, null));
+                    
+                } else if (Constants.Function.SAVE.equals(key)) {
+                                                            
+                    byte [] structure = new FormInstanceCreator(getFormStructure()).getStructure();
+                    new String(structure);
+                    int i = 0;
                 }
             }
         }
@@ -105,4 +114,10 @@ public class ElementButton extends AbstractElement {
         
         caption = reader.getAttributeValue(null, Constants.Attribute.CAPTION);
     }
+
+    @Override
+    public String getTagName() {
+        return Constants.Tag.BUTTON;       
+    }
+    
 }

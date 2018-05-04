@@ -21,6 +21,7 @@ package com.neotropic.api.forms;
 public class Constants {
     
     public class Tag {
+        public static final String ROOT = "root"; //NOI18N
         public static final String FORM = "form"; //NOI18N
         public static final String GRID_LAYOUT = "gridLayout"; //NOI18N
         public static final String I18N = "i18n"; //NOI18N
@@ -65,6 +66,20 @@ public class Constants {
         public static final String QUERY_NAME = "queryname"; //NOI18N
         public static final String MESSAGE = "message"; //NOI18N
         public static final String MANDATORY = "mandatory"; //NOI18N
+        public static final String DATA_TYPE = "datatype"; //NOI18N
+        public static final String VERSION = "version"; //NOI18N
+        public static final String OBJECT_ID="object id"; //NOI18N
+        public static final String CLASS_ID="class id"; //NOI18N
+        
+        public class DataType {
+            public static final String REMOTE_OBJECT = "RemoteObject";
+            public static final String REMOTE_OBJECT_LIGTH = "RemoteObjectLight";
+            public static final String CLASS_INFO = "ClassInfo";
+            public static final String CLASS_INFO_LIGTH = "ClassInfoLight";
+            public static final String INTEGER = "Integer";
+            public static final String STRING = "String";
+            public static final String EMAIL = "Email"; // Data type to use default validators
+        }        
     }
     
     public class EventAttribute {
@@ -81,6 +96,8 @@ public class Constants {
         public static final String VALIDATE = "validate"; //NOI18N
         public static final String I18N = "i18n"; //NOI18N
         public static final String ADD_GRID_ROW = "addgridrow"; //NOI18N
+        public static final String OPEN_FORM = "openform"; //NOI18N
+        public static final String SAVE="save"; //NOI18N
         
         public class Type {
             public static final String FUNCTION = "function";
@@ -97,5 +114,7 @@ public class Constants {
         public static final String ROWS = "rows"; //NOI18N
         public static final String HEIGHT = "height"; //NOI18N
         public static final String WIDTH = "width"; //NOI18N
+        public static final String HIDDEN = "hidden"; //NOI18N
+        public static final String REPAINT = "repaint"; //NOI18N
     }
 }

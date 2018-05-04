@@ -22,5 +22,10 @@ public class ElementComboBox extends AbstractElementSelector {
     
     public ElementComboBox() {
     }
-        
+    
+    @Override
+    public String getTagName() {
+        return Constants.Tag.COMBO_BOX;       
+    }
+    
 }

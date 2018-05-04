@@ -24,6 +24,7 @@ import java.util.List;
  */
 public abstract class AbstractElementContainer extends AbstractElement {
     private List<AbstractElement> children;
+    public boolean repaint = false;
 
     public List<AbstractElement> getChildren() {
         return children;
@@ -38,6 +39,14 @@ public abstract class AbstractElementContainer extends AbstractElement {
     public void removeChild(AbstractElement child) {
         if (children != null)
             children.remove(child);
+    }
+    
+    public boolean repaint() {
+        return repaint;        
+    }
+    
+    public void setRepaint(boolean repaint) {
+        this.repaint = repaint;                
     }
     
     public void clean() {
@@ -62,5 +71,28 @@ public abstract class AbstractElementContainer extends AbstractElement {
                     cleanRecursive((AbstractElementContainer) child);                
             }
         }
+    }
+    
+    @Override
+    public void propertyChange() {
+        if (hasProperty(Constants.EventAttribute.ONPROPERTYCHANGE, Constants.Property.REPAINT)) {
+            
+            boolean oldValue = repaint();
+            boolean newValue = (boolean) getNewValue(Constants.EventAttribute.ONPROPERTYCHANGE, Constants.Property.REPAINT);
+
+            setRepaint(newValue);
+
+            firePropertyChangeEvent();
+            
+            fireElementEvent(new EventDescriptor(
+                Constants.EventAttribute.ONPROPERTYCHANGE, 
+                Constants.Property.REPAINT, newValue, oldValue));
+            
+            for (AbstractElement child : getChildren()) {
+                if (child instanceof AbstractElementContainer)
+                    child.propertyChange();
+            }
+        }
+        super.propertyChange();        
     }
 }

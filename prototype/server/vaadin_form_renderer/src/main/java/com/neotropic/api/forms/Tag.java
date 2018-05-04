@@ -22,5 +22,6 @@ import javax.xml.stream.XMLStreamReader;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public interface Tag {
-    void initFromXMl(XMLStreamReader reader) throws XMLStreamException;    
+    void initFromXMl(XMLStreamReader reader) throws XMLStreamException; 
+    String getTagName();
 }

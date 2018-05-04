@@ -18,7 +18,10 @@ import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
 import com.neotropic.api.forms.Constants;
 import com.neotropic.api.forms.ElementButton;
+import com.neotropic.forms.FormDisplayer;
+import com.neotropic.forms.Variable;
 import com.vaadin.ui.Button;
+import java.io.File;
 
 /**
  *
@@ -56,7 +59,14 @@ public class ComponentButton extends GraphicalComponent {
     
     @Override
     public void onElementEvent(EventDescriptor event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        if (Constants.EventAttribute.ONCLICK.equals(event.getEventName())) {
+            
+            if (Constants.Function.OPEN_FORM.equals(event.getPropertyName())) {
+                File file = new File(Variable.FORM_RESOURCE_STRUCTURES + "/" + event.getNewValue() + ".xml");
+                FormDisplayer.getInstance().display(file, false);
+            }
+        }
     }
     
 }

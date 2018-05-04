@@ -47,49 +47,54 @@ public class ComponentFactory {
     }
     
     
-    public Component getComponent(AbstractElement element) {
-        GraphicalComponent component = null;
+    public GraphicalComponent getComponent(AbstractElement element) {
+        GraphicalComponent graphicalComponent = null;
         
         if (element instanceof ElementGridLayout) {
-            component = new ComponentGridLayout();
+            graphicalComponent = new ComponentGridLayout();
         } else if (element instanceof ElementVerticalLayout) {
-            component = new ComponentVerticalLayout();
+            graphicalComponent = new ComponentVerticalLayout();
         } else if (element instanceof ElementLabel) {
-            component = new ComponentLabel();
+            graphicalComponent = new ComponentLabel();
         } else if (element instanceof ElementTextField) {
-            component = new ComponentTextField();            
+            graphicalComponent = new ComponentTextField();            
         } else if (element instanceof ElementTextArea) {
-            component = new ComponentTextArea();            
+            graphicalComponent = new ComponentTextArea();            
         } else if (element instanceof ElementDateField) {
-            component = new ComponentDateField();            
+            graphicalComponent = new ComponentDateField();            
         } else if (element instanceof ElementComboBox) {
-            component = new ComponentComboBox();            
+            graphicalComponent = new ComponentComboBox();            
         } else if (element instanceof ElementGrid) {
-            component = new ComponentGrid();            
+            graphicalComponent = new ComponentGrid();            
         } else if (element instanceof ElementButton) {
-            component = new ComponentButton();            
+            graphicalComponent = new ComponentButton();            
         } else if (element instanceof ElementHorizontalLayout) {
-            component = new ComponentHorizontalLayout();            
+            graphicalComponent = new ComponentHorizontalLayout();            
         } else if (element instanceof ElementImage) {
-            component = new ComponentImage();
+            graphicalComponent = new ComponentImage();
         } else if (element instanceof ElementSubform) {
-            component = new ComponentSubform();            
+            graphicalComponent = new ComponentSubform();            
         } else if (element instanceof ElementPanel) {
-            component = new ComponentPanel();            
+            graphicalComponent = new ComponentPanel();            
         } else if (element instanceof ElementTree) {
-            component = new ComponentTree(new TreeWrapper());            
+            graphicalComponent = new ComponentTree(new TreeWrapper());            
         } else if (element instanceof ElementListSelectFilter) {
-            component = new ComponentListSelectFilter();            
+            graphicalComponent = new ComponentListSelectFilter();            
         }
         
-        if (component != null && element != null) {
-            component.initFromElement(element);
+        if (graphicalComponent != null && element != null) {
             
-            element.setElementEventListener(component);
-            component.setComponentEventListener(element);
+            graphicalComponent.initFromElement(element);
+            
+            if (element.getId() != null)
+                graphicalComponent.getComponent().setId(element.getId());
+            
+            element.setElementEventListener(graphicalComponent);
+            graphicalComponent.setComponentEventListener(element);
         }
-        return component != null && component.getComponent() != null && 
-            component.getComponent() instanceof Component ? component.getComponent() : null;
+        return graphicalComponent;
+////        return component != null && component.getComponent() != null && 
+////            component.getComponent() instanceof Component ? component.getComponent() : null;
     }
         
 }

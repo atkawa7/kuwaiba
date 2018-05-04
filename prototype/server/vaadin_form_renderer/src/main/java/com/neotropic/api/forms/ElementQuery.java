@@ -51,6 +51,7 @@ public class ElementQuery {
         anotherQueries.add("getBillingPeriod");
         anotherQueries.add("getOrders");
         anotherQueries.add("getOrderNumber");
+        anotherQueries.add("getInterfacesType");
                 
         try {
             List<RemoteQueryLight> queriesLight = KuwaibaClient.getInstance().getKuwaibaService().getQueries(true, 
@@ -90,6 +91,9 @@ public class ElementQuery {
                 List<String> orderNumber = new ArrayList();
                 orderNumber.add("1001");
                 return orderNumber;
+            } else if ("getInterfacesType".equals(queryName)) {
+                
+                return getInterfacesType();
             }
                         
         } else if (queries.containsKey(queryName)) {
@@ -183,6 +187,16 @@ public class ElementQuery {
     private List<RemoteObjectLight> getOrders() {
         try {
             return KuwaibaClient.getInstance().getKuwaibaService().getListTypeItems("OrderType",
+                KuwaibaClient.getInstance().getRemoteSession().getSessionId());
+        } catch (ServerSideException_Exception ex) {
+            Logger.getLogger(ElementQuery.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+    
+    private List<RemoteObjectLight> getInterfacesType() {
+        try {
+            return KuwaibaClient.getInstance().getKuwaibaService().getListTypeItems("InterfazType",
                 KuwaibaClient.getInstance().getRemoteSession().getSessionId());
         } catch (ServerSideException_Exception ex) {
             Logger.getLogger(ElementQuery.class.getName()).log(Level.SEVERE, null, ex);

@@ -22,4 +22,9 @@ public class ElementSubform extends AbstractElementContainer {
     
     public ElementSubform() {
     }
+    
+    @Override
+    public String getTagName() {
+        return Constants.Tag.SUBFORM;
+    }
 }

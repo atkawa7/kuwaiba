@@ -14,6 +14,7 @@
  */
 package com.neotropic.api.forms;
 
+import com.neotropic.forms.ScriptQueryManager;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import java.util.ArrayList;
@@ -71,17 +72,18 @@ public class Function implements Runner {
     @Override
     public Object run(List parameters) {
         GroovyShell shell = null;
+        
+        Binding binding = new Binding();
+        binding.setVariable("ScriptQueryManager", ScriptQueryManager.class);
                 
         if (parameterNames != null && parameters != null && parameterNames.size() == parameters.size()) {
-            
-            Binding binding = new Binding();
             
             for (int i = 0; i < parameters.size(); i += 1)
                 binding.setVariable(parameterNames.get(i), parameters.get(i));
             
             shell = new GroovyShell(Function.class.getClassLoader(), binding);
         } else
-            shell = new GroovyShell(Function.class.getClassLoader());
+            shell = new GroovyShell(Function.class.getClassLoader(), binding);
         
         script = script.replace("_AND_", "&&");
         return shell.evaluate(script);

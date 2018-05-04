@@ -21,4 +21,9 @@ package com.neotropic.api.forms;
 public class ElementTree extends AbstractElementField {
     public ElementTree() {
     }
+    
+    @Override
+    public String getTagName() {
+        return Constants.Tag.TREE;
+    }
 }

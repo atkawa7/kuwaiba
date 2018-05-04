@@ -16,14 +16,18 @@ package com.neotropic.web.components;
 
 import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
+import com.neotropic.api.forms.Constants;
 import com.neotropic.api.forms.ElementVerticalLayout;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
+import java.util.LinkedHashMap;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ComponentVerticalLayout extends GraphicalComponent {
+public class ComponentVerticalLayout extends GraphicalComponent implements ComponentContainer {
+    private LinkedHashMap<AbstractElement, Component> children;
     
     public ComponentVerticalLayout() {
         super(new VerticalLayout());
@@ -36,13 +40,54 @@ public class ComponentVerticalLayout extends GraphicalComponent {
 
     @Override
     public void initFromElement(AbstractElement element) {
-        if (element instanceof ElementVerticalLayout) {            
+        if (element instanceof ElementVerticalLayout) {
         }
     }
     
     @Override
     public void onElementEvent(EventDescriptor event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                
+        if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+            
+            if (Constants.Property.REPAINT.equals(event.getPropertyName()))
+                repaint();
+        }                   
+    }
+        
+    @Override
+    public void addChildren(AbstractElement element, Component component) {
+        if (children == null)
+            children = new LinkedHashMap();
+        
+        children.put(element, component);
+    }
+
+    @Override
+    public LinkedHashMap<AbstractElement, Component> getChildren() {
+        return children;
+    }
+    
+    @Override
+    public void repaint() {
+        if (getComponent() == null)
+            return;
+        
+        if (getChildren() != null) {
+            
+            getComponent().removeAllComponents();
+            
+            for (AbstractElement element : getChildren().keySet()) {
+                
+                if (!element.isHidden()) {
+                    
+                    Component component = getChildren().get(element);
+                    
+                    if (component != null) {
+                        getComponent().addComponent(component);
+                    }
+                }
+            }
+        }
     }
     
 }

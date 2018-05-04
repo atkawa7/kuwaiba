@@ -27,5 +27,10 @@ public class ElementTextArea extends AbstractElementField {
     public String getValue() {
         return (String) super.getValue();
     }
+    
+    @Override
+    public String getTagName() {
+        return Constants.Tag.TEXT_AREA;
+    }
         
 }

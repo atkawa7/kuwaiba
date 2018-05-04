@@ -22,6 +22,7 @@ import java.util.List;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class FormStructure {
+    private String version;
     private final HashMap<String, AbstractElement> elementsById;
     private final List<AbstractElement> elements;
     private final ElementScript elementScript;
@@ -55,5 +56,13 @@ public class FormStructure {
         
     public ElementI18N getElementI18N() {
         return elementI18N;
+    }
+    
+    public String getVersion() {
+        return version;                
+    }
+    
+    public void setVersion(String version) {
+        this.version = version;
     }
 }

@@ -30,25 +30,26 @@ import javax.xml.stream.XMLStreamReader;
  * hierarchy.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementBuilder {
-    private final QName tagForm = new QName(Constants.Tag.FORM);
-    private final QName tagGridLayout = new QName(Constants.Tag.GRID_LAYOUT);
-    private final QName tagI18N = new QName(Constants.Tag.I18N);
-    private final QName tagLabel = new QName(Constants.Tag.LABEL);
-    private final QName tagTextField = new QName(Constants.Tag.TEXT_FIELD);
-    private final QName tagVerticalLayout = new QName(Constants.Tag.VERTICAL_LAYOUT);
-    private final QName tagTextArea = new QName(Constants.Tag.TEXT_AREA);
-    private final QName tagDateField = new QName(Constants.Tag.DATE_FIELD);
-    private final QName tagComboBox = new QName(Constants.Tag.COMBO_BOX);
-    private final QName tagGrid = new QName(Constants.Tag.GRID);
-    private final QName tagButton = new QName(Constants.Tag.BUTTON);
-    private final QName tagSubform = new QName(Constants.Tag.SUBFORM);
-    private final QName tagHorizontalLayout = new QName(Constants.Tag.HORIZONTAL_LAYOUT);
-    private final QName tagImage = new QName(Constants.Tag.IMAGE);
-    private final QName tagScript = new QName(Constants.Tag.SCRIPT);
-    private final QName tagPanel = new QName(Constants.Tag.PANEL);
-    private final QName tagTree = new QName(Constants.Tag.TREE);
-    private final QName tagListSelectFilter = new QName(Constants.Tag.LIST_SELECT_FILTER);
+public class FormLoader {
+    public static final QName TAG_ROOT = new QName(Constants.Tag.ROOT);
+    public static final QName TAG_FORM = new QName(Constants.Tag.FORM);
+    public static final QName TAG_GRID_LAYOUT = new QName(Constants.Tag.GRID_LAYOUT);
+    public static final QName TAG_I18N = new QName(Constants.Tag.I18N);
+    public static final QName TAG_LABEL = new QName(Constants.Tag.LABEL);
+    public static final QName TAG_TEXT_FIELD = new QName(Constants.Tag.TEXT_FIELD);
+    public static final QName TAG_VERTICAL_LAYOUT = new QName(Constants.Tag.VERTICAL_LAYOUT);
+    public static final QName TAG_TEXT_AREA = new QName(Constants.Tag.TEXT_AREA);
+    public static final QName TAG_DATE_FIELD = new QName(Constants.Tag.DATE_FIELD);
+    public static final QName TAG_COMBO_BOX = new QName(Constants.Tag.COMBO_BOX);
+    public static final QName TAG_GRID = new QName(Constants.Tag.GRID);
+    public static final QName TAG_BUTTON = new QName(Constants.Tag.BUTTON);
+    public static final QName TAG_SUBFORM = new QName(Constants.Tag.SUBFORM);
+    public static final QName TAG_HORIZONTAL_LAYOUT = new QName(Constants.Tag.HORIZONTAL_LAYOUT);
+    public static final QName TAG_IMAGE = new QName(Constants.Tag.IMAGE);
+    public static final QName TAG_SCRIPT = new QName(Constants.Tag.SCRIPT);
+    public static final QName TAG_PANEL = new QName(Constants.Tag.PANEL);
+    public static final QName TAG_TREE = new QName(Constants.Tag.TREE);
+    public static final QName TAG_LIST_SELECT_FILTER = new QName(Constants.Tag.LIST_SELECT_FILTER);
     
     private final List<QName> containers;
     
@@ -60,14 +61,14 @@ public class ElementBuilder {
     
     private byte[] structure;
         
-    public ElementBuilder(byte[] structure) {
+    public FormLoader(byte[] structure) {
         this.structure = structure;        
         containers = new ArrayList();
-        containers.add(tagGridLayout);
-        containers.add(tagVerticalLayout);
-        containers.add(tagSubform);
-        containers.add(tagHorizontalLayout);
-        containers.add(tagPanel);
+        containers.add(TAG_GRID_LAYOUT);
+        containers.add(TAG_VERTICAL_LAYOUT);
+        containers.add(TAG_SUBFORM);
+        containers.add(TAG_HORIZONTAL_LAYOUT);
+        containers.add(TAG_PANEL);
     }
         
     public ElementForm getRoot() {
@@ -88,55 +89,55 @@ public class ElementBuilder {
                 
                 AbstractElement child = null;                
                 
-                if (reader.getName().equals(tagGridLayout)) {
+                if (reader.getName().equals(TAG_GRID_LAYOUT)) {
                     child = new ElementGridLayout();
                     
-                } else if (reader.getName().equals(tagVerticalLayout)) {
+                } else if (reader.getName().equals(TAG_VERTICAL_LAYOUT)) {
                     child = new ElementVerticalLayout();
                     
-                } else if (reader.getName().equals(tagSubform)) {
+                } else if (reader.getName().equals(TAG_SUBFORM)) {
                     child = new ElementSubform();
                     
-                } else if (reader.getName().equals(tagHorizontalLayout)) {
+                } else if (reader.getName().equals(TAG_HORIZONTAL_LAYOUT)) {
                     child = new ElementHorizontalLayout();
                     
-                } else if (reader.getName().equals(tagLabel)) {
+                } else if (reader.getName().equals(TAG_LABEL)) {
                     child = new ElementLabel();
                     
-                } else if (reader.getName().equals(tagTextField)) {
+                } else if (reader.getName().equals(TAG_TEXT_FIELD)) {
                     child = new ElementTextField();
                     
-                } else if (reader.getName().equals(tagTextArea)) {
+                } else if (reader.getName().equals(TAG_TEXT_AREA)) {
                     child = new ElementTextArea();
                     
-                } else if (reader.getName().equals(tagDateField)) {
+                } else if (reader.getName().equals(TAG_DATE_FIELD)) {
                     child = new ElementDateField();
                     
-                } else if (reader.getName().equals(tagComboBox)) {
+                } else if (reader.getName().equals(TAG_COMBO_BOX)) {
                     child = new ElementComboBox();
                     
-                } else if (reader.getName().equals(tagGrid)) {
+                } else if (reader.getName().equals(TAG_GRID)) {
                     child = new ElementGrid();
                     
-                } else if (reader.getName().equals(tagButton)) {
+                } else if (reader.getName().equals(TAG_BUTTON)) {
                     child = new ElementButton();
                     
-                } else if (reader.getName().equals(tagImage)) {
+                } else if (reader.getName().equals(TAG_IMAGE)) {
                     child = new ElementImage();
                     
-                } else if (reader.getName().equals(tagPanel)) {
+                } else if (reader.getName().equals(TAG_PANEL)) {
                     child = new ElementPanel();
                     
-                } else if (reader.getName().equals(tagTree)) {
+                } else if (reader.getName().equals(TAG_TREE)) {
                     child = new ElementTree();
                     
-                } else if (reader.getName().equals(tagListSelectFilter)) {
+                } else if (reader.getName().equals(TAG_LIST_SELECT_FILTER)) {
                     child = new ElementListSelectFilter();
                     
-                } else if (reader.getName().equals(tagI18N)) {
+                } else if (reader.getName().equals(TAG_I18N)) {
                     return event;
                     
-                } else if (reader.getName().equals(tagScript)) {
+                } else if (reader.getName().equals(TAG_SCRIPT)) {
                     return event;
                     
                 }
@@ -169,7 +170,7 @@ public class ElementBuilder {
                 
                 if (event == XMLStreamConstants.START_ELEMENT) {
                     
-                    if (reader.getName().equals(tagForm)) {
+                    if (reader.getName().equals(TAG_FORM)) {
                         root = new ElementForm();
                         root.initFromXMl(reader);
                                                 
@@ -179,11 +180,11 @@ public class ElementBuilder {
                     }
                 }
                 if (event == XMLStreamConstants.START_ELEMENT) {
-                    if (reader.getName().equals(tagI18N)) {
+                    if (reader.getName().equals(TAG_I18N)) {
                         elementI18N = new ElementI18N();
                         elementI18N.initFromXMl(reader);
                     }
-                    if (reader.getName().equals(tagScript))
+                    if (reader.getName().equals(TAG_SCRIPT))
                         elementScript.initFromXMl(reader);
                 }
             }
@@ -199,7 +200,7 @@ public class ElementBuilder {
                 elementScript.getFunctions().put(Constants.Function.I18N, new FunctionI18N(elementI18N));
                 
         } catch (XMLStreamException ex) {
-            Logger.getLogger(ElementBuilder.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FormLoader.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

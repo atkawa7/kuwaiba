@@ -18,15 +18,18 @@ import com.neotropic.api.forms.EventDescriptor;
 import com.neotropic.api.forms.AbstractElement;
 import com.neotropic.api.forms.Constants;
 import com.neotropic.api.forms.ElementSubform;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import java.util.LinkedHashMap;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ComponentSubform extends GraphicalComponent {
+public class ComponentSubform extends GraphicalComponent implements ComponentContainer {
+    private LinkedHashMap<AbstractElement, Component> children;
     private Window window;
             
     public ComponentSubform() {
@@ -64,6 +67,45 @@ public class ComponentSubform extends GraphicalComponent {
                     window.close();
             } else if (Constants.Function.CLEAN.equals(event.getPropertyName())) {
                 int i = 0;
+            }
+        } else if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+            
+            if (Constants.Property.REPAINT.equals(event.getPropertyName()))
+                repaint();
+        }  
+    }
+        
+    @Override
+    public void addChildren(AbstractElement element, Component component) {
+        if (children == null)
+            children = new LinkedHashMap();
+        
+        children.put(element, component);
+    }
+
+    @Override
+    public LinkedHashMap<AbstractElement, Component> getChildren() {
+        return children;
+    }
+
+    @Override
+    public void repaint() {
+        if (getComponent() == null)
+            return;
+        
+        if (getChildren() != null) {
+            
+            getComponent().removeAllComponents();
+            
+            for (AbstractElement element : getChildren().keySet()) {
+                
+                if (!element.isHidden()) {
+                    
+                    Component component = getChildren().get(element);
+                    
+                    if (component != null)
+                        getComponent().addComponent(component);
+                }
             }
         }
     }

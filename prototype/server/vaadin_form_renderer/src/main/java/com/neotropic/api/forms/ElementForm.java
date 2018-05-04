@@ -42,4 +42,9 @@ public class ElementForm extends AbstractElementContainer {
         title = reader.getAttributeValue(null, Constants.Attribute.TITLE);
     }
     
+    @Override
+    public String getTagName() {
+        return Constants.Tag.FORM;       
+    }
+    
 }

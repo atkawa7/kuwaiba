@@ -12,20 +12,18 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package com.neotropic.api.forms;
+package com.neotropic.web.components;
+
+import com.neotropic.api.forms.AbstractElement;
+import com.vaadin.ui.Component;
+import java.util.LinkedHashMap;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementDateField extends AbstractElementField {
-    
-    public void ElementDateField() {
-    }
-    
-    @Override
-    public String getTagName() {
-        return Constants.Tag.DATE_FIELD;       
-    }
-        
+public interface ComponentContainer {
+    void addChildren(AbstractElement element, Component component);
+    LinkedHashMap<AbstractElement, Component> getChildren();
+    void repaint();
 }

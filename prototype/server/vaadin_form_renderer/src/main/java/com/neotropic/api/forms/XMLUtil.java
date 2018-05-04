@@ -14,42 +14,32 @@
  */
 package com.neotropic.api.forms;
 
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLEventFactory;
+import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementLabel extends AbstractElementField {
+public class XMLUtil {
+    private static XMLUtil instance;
     
-    public ElementLabel() {     
-        setCleanable(false);
+    private XMLUtil() {
     }
     
-    @Override
-    public String getValue() {
-        return (String) super.getValue();
+    public static XMLUtil getInstance() {
+        return instance == null ? instance = new XMLUtil() : instance;
     }
-                
-    @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        super.initFromXMl(reader);
+    
+    public boolean createAttribute(XMLEventWriter xmlew, XMLEventFactory xmlef, String attrName, String attrValue) throws XMLStreamException {
+        if (xmlew == null || xmlef == null || attrName == null || attrValue == null)
+            return false;
         
-        String strValue = getValue();
+        xmlew.add(xmlef.createAttribute(new QName(attrName), attrValue));
                 
-        if (strValue != null) {
-            strValue = strValue.replace("$lt.", "<");
-            strValue = strValue.replace("$gt.", ">");
-            strValue = strValue.replace("$qm.", "\"");
+        return true;
+    }
             
-            setValue(strValue);
-        }
-    }
-    
-    @Override
-    public String getTagName() {
-        return Constants.Tag.LABEL;
-    }
-    
 }

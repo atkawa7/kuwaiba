@@ -91,4 +91,10 @@ public class ElementScript implements Tag {
             }
         }
     }
+    
+    @Override
+    public String getTagName() {
+        return Constants.Tag.SCRIPT;
+    }
+    
 }

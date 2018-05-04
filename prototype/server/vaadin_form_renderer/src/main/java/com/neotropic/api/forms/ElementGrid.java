@@ -82,4 +82,9 @@ public class ElementGrid extends AbstractElement {
         super.onComponentEvent(event);        
     }
     
+    @Override
+    public String getTagName() {
+        return Constants.Tag.GRID;       
+    }
+    
 }

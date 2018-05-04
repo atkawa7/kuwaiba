@@ -22,4 +22,9 @@ public class ElementPanel extends AbstractElementContainer {
     
     public ElementPanel() {
     }
+    
+    @Override
+    public String getTagName() {
+        return Constants.Tag.PANEL;
+    }
 }

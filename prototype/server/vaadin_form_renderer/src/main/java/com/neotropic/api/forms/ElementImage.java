@@ -22,4 +22,9 @@ public class ElementImage extends AbstractElementField {
         
     public ElementImage() {
     }
+    
+    @Override
+    public String getTagName() {
+        return Constants.Tag.IMAGE;
+    }
 }

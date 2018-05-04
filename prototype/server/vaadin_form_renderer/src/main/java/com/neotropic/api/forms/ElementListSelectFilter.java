@@ -23,4 +23,9 @@ public class ElementListSelectFilter extends AbstractElementSelector {
     public ElementListSelectFilter() {
     }
     
+    @Override
+    public String getTagName() {
+        return Constants.Tag.LIST_SELECT_FILTER;
+    }
+        
 }

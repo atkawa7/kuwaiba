@@ -46,6 +46,8 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
     private String width;
     
     private String height;
+    
+    private boolean hidden = false;
     /**
      * event->function->parameters
      */    
@@ -113,6 +115,14 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
         this.width = width;
     }
     
+    public boolean isHidden() {
+        return hidden;
+    }
+        
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
+    
     public void addPropertyChangeListener(String propertyChangeListener) {
         if (propertyChangeListeners == null)
             propertyChangeListeners = new ArrayList();
@@ -143,26 +153,56 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
     
     @Override
     public void propertyChange() {
-        if (getEvents() != null && getEvents().containsKey(Constants.EventAttribute.ONPROPERTYCHANGE)) {
+        if (hasProperty(Constants.EventAttribute.ONPROPERTYCHANGE, Constants.Property.ENABLED)) {
             
-            if (getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE) != null &&
-                    getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE).containsKey(Constants.Property.ENABLED)) {
-                
-                boolean oldValue = isEnabled();
-                boolean newValue = true; // TODO: script runner
-                
-                setEnabled(newValue);
-                
-                firePropertyChangeEvent();
-                
-                fireElementEvent(new EventDescriptor(
-                    Constants.EventAttribute.ONPROPERTYCHANGE, 
-                    Constants.Property.ENABLED, newValue, oldValue));
-                                
-            }
+            boolean oldValue = isEnabled();
+            boolean newValue = (boolean) getNewValue(Constants.EventAttribute.ONPROPERTYCHANGE, Constants.Property.ENABLED);
+
+            setEnabled(newValue);
+
+            firePropertyChangeEvent();
+
+            fireElementEvent(new EventDescriptor(
+                Constants.EventAttribute.ONPROPERTYCHANGE, 
+                Constants.Property.ENABLED, newValue, oldValue));
+            
+        } else if (hasProperty(Constants.EventAttribute.ONPROPERTYCHANGE, Constants.Property.HIDDEN)) {
+            
+            boolean oldValue = isHidden();
+            boolean newValue = (boolean) getNewValue(Constants.EventAttribute.ONPROPERTYCHANGE, Constants.Property.HIDDEN);
+            
+            setHidden(newValue);
+
+            firePropertyChangeEvent();
+           
+            fireElementEvent(new EventDescriptor(
+                Constants.EventAttribute.ONPROPERTYCHANGE, 
+                Constants.Property.HIDDEN, newValue, oldValue));
         }
     }
-    
+        
+    public Object getNewValue(String eventAttribute, String propertyName) {
+        if (hasProperty(eventAttribute, propertyName)) {
+            List<String> list = getEvents().get(eventAttribute).get(propertyName);
+            if (list != null && !list.isEmpty()) {
+                
+                String functionName = list.get(0);
+                
+                Runner function = getFormStructure().getElementScript().getFunctionByName(functionName);
+                
+                // An item of parameters list can be an AbstractElement or a String
+                List parameters = new ArrayList();
+                
+                for (int i = 1; i < list.size(); i += 1) {
+                    AbstractElement anElement = getFormStructure().getElementById(list.get(i));
+                    parameters.add(anElement != null ? anElement : list.get(i));
+                }
+                return function.run(parameters);
+            }
+        }
+        return null;        
+    }    
+        
     public HashMap<String, LinkedHashMap<String, List<String>>> getEvents() {
         return events;
     }
@@ -208,6 +248,7 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
         setEnabled(reader);
         setHeight(reader);
         setWidth(reader);
+        setHidden(reader);
     }
     
     public void setId(XMLStreamReader reader) {
@@ -304,6 +345,10 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
         width = reader.getAttributeValue(null, Constants.Property.WIDTH);
     }
     
+    public void setHidden(XMLStreamReader reader) {
+        hidden = Boolean.valueOf(reader.getAttributeValue(null, Constants.Property.HIDDEN));
+    }
+    
     public void fireOnload() {
     }
     
@@ -315,5 +360,6 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
         return hasEventAttribute(eventAttribute) && 
                getEvents().get(eventAttribute) != null && 
                getEvents().get(eventAttribute).containsKey(propertyName);
-    }    
+    }
+    
 }

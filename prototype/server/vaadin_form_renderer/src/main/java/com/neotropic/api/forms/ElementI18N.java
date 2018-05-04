@@ -105,5 +105,10 @@ public class ElementI18N implements Tag {
                     break;
             }
         }
-    }                
+    }    
+    
+    @Override
+    public String getTagName() {
+        return Constants.Tag.I18N;
+    }
 }
