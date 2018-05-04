@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -339,7 +339,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
             close();
             return;
         }
-        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading The Rack View to %s", rack.toString()));
+        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading rack view for %s", rack));
         RackViewService.setProgressHandle(progressHandle);
         
         RequestProcessor.getDefault().post(new Runnable() {
@@ -370,7 +370,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
     }//GEN-LAST:event_btnRefreshActionPerformed
 
     private void btnShowConnectionsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowConnectionsActionPerformed
-        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading the Rack View for %s", rack.toString()));
+        final ProgressHandle progressHandle = ProgressHandleFactory.createHandle(String.format("Loading rack view for %s", rack));
         
         RequestProcessor.getDefault().post(new Runnable() {
 
