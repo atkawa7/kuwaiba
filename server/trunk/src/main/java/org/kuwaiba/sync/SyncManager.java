@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundExceptio
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 
@@ -43,7 +43,7 @@ public class SyncManager{
         LoadDataFromFile ldf = new LoadDataFromFile(uploadData, commitSize, dataType, IPAddress, sessionId);
         try {
             return ldf.uploadFile();
-        } catch (ApplicationObjectNotFoundException | NotAuthorizedException | RemoteException | MetadataObjectNotFoundException | InvalidArgumentException | ObjectNotFoundException | OperationNotPermittedException | WrongMappingException ex) {
+        } catch (ApplicationObjectNotFoundException | NotAuthorizedException | RemoteException | MetadataObjectNotFoundException | InvalidArgumentException | BusinessObjectNotFoundException | OperationNotPermittedException | WrongMappingException ex) {
             Logger.getLogger(SyncManager.class.getName()).log(Level.SEVERE, null, ex);
         }
          return null;

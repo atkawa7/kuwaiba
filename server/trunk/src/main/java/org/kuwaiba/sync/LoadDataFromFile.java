@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License
@@ -36,13 +36,13 @@ import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
-import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObject;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
-import org.kuwaiba.apis.persistence.exceptions.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
@@ -90,7 +90,7 @@ public final class LoadDataFromFile{
     private ApplicationEntityManager aem;
     private MetadataEntityManager mem;
     
-    private List<RemoteBusinessObject> data;
+    private List<BusinessObject> data;
     
     public LoadDataFromFile(byte [] uploadData,  int commitSize, int dataType, String IPAddress, String sessionId) {
         connect();
@@ -107,7 +107,7 @@ public final class LoadDataFromFile{
     
     public String uploadFile() throws ApplicationObjectNotFoundException, 
             NotAuthorizedException, RemoteException, MetadataObjectNotFoundException, 
-            InvalidArgumentException, ObjectNotFoundException, OperationNotPermittedException, WrongMappingException
+            InvalidArgumentException, BusinessObjectNotFoundException, OperationNotPermittedException, WrongMappingException
     {
         this.userId = aem.getUserInSession(sessionId).getId();
         
@@ -202,8 +202,8 @@ public final class LoadDataFromFile{
                     for (AttributeMetadata classAttribute : classAttributes) {
                         if(!isPrimitive(classAttribute.getType())){
                             String attributeValue = attributes.get(classAttribute.getName());
-                            List<RemoteBusinessObjectLight> listTypeItems = aem.getListTypeItems(classAttribute.getType());
-                            for (RemoteBusinessObjectLight listTypeItem : listTypeItems) {
+                            List<BusinessObjectLight> listTypeItems = aem.getListTypeItems(classAttribute.getType());
+                            for (BusinessObjectLight listTypeItem : listTypeItems) {
                                 if(listTypeItem.getName().equals(attributeValue)){
                                     attributes.put(classAttribute.getName(), Long.toString(listTypeItem.getId()));
                                     break;
