@@ -20,9 +20,11 @@ import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
@@ -38,6 +40,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectLightList;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.actions.CustomAddRemoveControlPointAction;
 import org.inventory.core.visual.actions.CustomMoveAction;
 import org.inventory.core.visual.actions.CustomMoveControlPointAction;
@@ -102,6 +105,10 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
         initSelectionListener();
         
         expandedTransportLinks = new HashMap<>();
+        
+        getActions().addAction(ActionFactory.createZoomAction());
+        getInputBindings().setZoomActionModifiers(0); //No keystroke combinations
+        getActions().addAction(ActionFactory.createPanAction());
     }
     
     @Override
@@ -114,7 +121,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
             
             QName qnameView = new QName("view");
             xmlew.add(xmlef.createStartElement(qnameView, null, null));
-            xmlew.add(xmlef.createAttribute(new QName("version"), Constants.VIEW_FORMAT_VERSION));
+            xmlew.add(xmlef.createAttribute(new QName("version"), Constants.TOPOLOGYVIEW_FORMAT_VERSION));
             
             QName qnameClass = new QName("class");
             xmlew.add(xmlef.createStartElement(qnameClass, null, null));
@@ -140,9 +147,6 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
             xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
             
             for (Widget edgeWidget : edgeLayer.getChildren()) {
-                //Ignore the expanded edges, that is the container links thet were created during the disaggregation of a transporlink
-                if (isExpandedEdge((LocalObjectLight)findObject(edgeWidget)))
-                    continue;
                 
                 LocalObjectLight lolEdge = (LocalObjectLight) findObject(edgeWidget);
                 ObjectConnectionWidget acwEdge = (ObjectConnectionWidget) edgeWidget;
@@ -160,22 +164,49 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                 xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(lolEdge).getOid())));
                 xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(lolEdge).getOid())));
                 
+                //Note that the edges will all be saved, whether they're STMX, physical connnections or ContainerLinks, 
+                //The expanded STMX will be marked as such, but when the view is rendered, they will be invisible by default, 
+                //while the ContainerLinks within will be displayed.
+                xmlew.add(xmlef.createAttribute(new QName("expanded"), Boolean.toString(expandedTransportLinks.containsKey(lolEdge))));
+                
+                QName qnameControlpoints = new QName("controlpoints"); //NOI18N
+
+                xmlew.add(xmlef.createStartElement(qnameControlpoints, null, null));
+
+                QName qnameControlpoint = new QName("controlpoint"); //NOI18N
                 for (Point point : acwEdge.getControlPoints()) {
-                    QName qnameControlpoint = new QName("controlpoint");
                     xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
                     xmlew.add(xmlef.createAttribute(new QName("x"), Integer.toString(point.x)));
                     xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(point.y)));
                     xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
                 }
+
+                xmlew.add(xmlef.createEndElement(qnameControlpoints, null));
+                
+                if (expandedTransportLinks.containsKey(lolEdge)) {
+                    QName qnameExpandedTLs = new QName("expandedTransportLinks"); //NOI18N
+                    
+                    xmlew.add(xmlef.createStartElement(qnameExpandedTLs, null, null));
+                    
+                    QName qnameExpandedTL = new QName("expandedTransportLink"); //NOI18N
+                    for (LocalObjectLight extandedTransportLink : expandedTransportLinks.get(lolEdge)) {
+                        xmlew.add(xmlef.createStartElement(qnameExpandedTL, null, null));
+                        
+                        xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(extandedTransportLink.getOid())));
+                        xmlew.add(xmlef.createAttribute(new QName("class"), extandedTransportLink.getClassName()));
+                        xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(extandedTransportLink).getOid())));
+                        xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(extandedTransportLink).getOid())));
+                        
+                        xmlew.add(xmlef.createEndElement(qnameExpandedTL, null));
+                    }
+                    
+                    xmlew.add(xmlef.createEndElement(qnameExpandedTLs, null));
+                }
+                
+                
                 xmlew.add(xmlef.createEndElement(qnameEdge, null));
             }
             xmlew.add(xmlef.createEndElement(qnameEdges, null));
-            // polygons
-            QName qnamePolygons = new QName("polygons");
-            xmlew.add(xmlef.createStartElement(qnamePolygons, null, null));
-            //Add frames if necessary
-            xmlew.add(xmlef.createEndElement(qnamePolygons, null));
-            
             xmlew.add(xmlef.createEndElement(qnameView, null));
             xmlew.close();
             return baos.toByteArray();
@@ -186,6 +217,8 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
     }
 
 
+    //This method MUST be called after render(LocalObjectLight), since it assumes that the required nodes and connections already exist and it's only
+    //necessary to set their position and control points
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
         //<editor-fold defaultstate="collapsed" desc="Uncomment this for debugging purposes. This outputs the XML view as a file">
@@ -195,13 +228,12 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
         //</editor-fold>
         try {
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-            QName qZoom = new QName("zoom"); //NOI18N
-            QName qCenter = new QName("center"); //NOI18N
             QName qNode = new QName("node"); //NOI18N
             QName qEdge = new QName("edge"); //NOI18N
-            QName qLabel = new QName("label"); //NOI18N
-            QName qPolygon = new QName("polygon"); //NOI18N
             QName qControlPoint = new QName("controlpoint"); //NOI18N
+            QName qControlPoints = new QName("controlpoints"); //NOI18N
+            QName qExtendedTLs = new QName("extendedTransportLinks"); //NOI18N
+            QName qExtendedTL = new QName("extendedTransportLink"); //NOI18N
 
             ByteArrayInputStream bais = new ByteArrayInputStream(structure);
             XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
@@ -215,80 +247,74 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                         int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
                         int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
                         long objectId = Long.valueOf(reader.getElementText());
-
-                        LocalObjectLight lol = CommunicationsStub.getInstance().getObjectInfoLight(objectClass, objectId);
-                        if (lol != null) {
-                            if (getNodes().contains(lol)) //The node in the saved view already exists in the canvas, so either is duplicated or the view was not cleared previously 
-                                NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
-                            else {
-                                Widget widget = addNode(lol);
-                                widget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
-                                widget.setBackground(com.getMetaForClass(objectClass, false).getColor());
-                                validate();
-                            }
-                        } //In case of error, ignore the node
+                        
+                        Widget dummyNodeWidget = findWidget(new LocalObjectLight(objectId, "", objectClass));
+                        
+                        if (dummyNodeWidget != null) { //If the node does not exist, it's ignored because that means that the resource is no longer associated to the service
+                            dummyNodeWidget.setPreferredLocation(new Point(xCoordinate, yCoordinate));
+                            dummyNodeWidget.setBackground(com.getMetaForClass(objectClass, false).getColor());
+                            revalidate();
+                        } else
+                            NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, String.format("Node with id %s could not be found. Save the view to keep the changes", objectId));
                     }else {
                         if (reader.getName().equals(qEdge)) {
                             long objectId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
+                            String objectClass = reader.getAttributeValue(null, "class"); //NOI18N
+                            String expanded = reader.getAttributeValue("", "expanded"); //NOI18N
 
-                            long aSide = Long.valueOf(reader.getAttributeValue(null, "aside")); //NOI18N
-                            long bSide = Long.valueOf(reader.getAttributeValue(null, "bside")); //NOI18N
+                            ObjectConnectionWidget connectionWidget = (ObjectConnectionWidget)findWidget(new LocalObjectLight(objectId, "", objectClass));
 
-                            String className = reader.getAttributeValue(null, "class"); //NOI18N
-
-                            LocalObjectLight container = com.getObjectInfoLight(className, objectId);
-
-                            if (container != null) { // if the connection exist
-                                LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
-                                ObjectNodeWidget aSideWidget = (ObjectNodeWidget) findWidget(aSideObject);
-
-                                LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
-                                ObjectNodeWidget bSideWidget = (ObjectNodeWidget) findWidget(bSideObject);
-
+                            if (connectionWidget != null) { //if the connection exists, update its control points
+                                reader.nextTag();
                                 
-                                if (aSideWidget != null && bSideWidget != null) {//If one of the endpoints is missing, don't render the connection
+                                if (reader.getName().equals(qControlPoints)) {
+                                    List<Point> localControlPoints = new ArrayList<>();
+                                    while(true) {
+                                        reader.nextTag();
 
-                                    if (getEdges().contains(container))
-                                        NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, "The view seems to be corrupted. Self-healing measures were taken");
-                                    else {
-                                        ObjectConnectionWidget newEdge = (ObjectConnectionWidget) addEdge(container);
-                                        setEdgeSource(container, aSideObject);
-                                        setEdgeTarget(container, bSideObject);
-                                        
-                                        List<Point> localControlPoints = new ArrayList<>();
-                                        while(true) {
-                                            reader.nextTag();
-
-                                            if (reader.getName().equals(qControlPoint)) {
-                                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                                                    localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
-                                            } else {
-                                                newEdge.setControlPoints(localControlPoints,false);
-                                                break;
-                                            }
+                                        if (reader.getName().equals(qControlPoint)) {
+                                            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                                localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
+                                        } else {
+                                            connectionWidget.setControlPoints(localControlPoints, true);
+                                            revalidate();
+                                            break;
                                         }
                                     }
                                 }
-                            } 
-                        }
-                        // FREE FRAMES
-                        else if (reader.getName().equals(qPolygon)) { /*Nothing for now*/ }//end qPolygon
+                                                                
+                                //If the current connection is an expanded STMX, make it invisible and trigger an expansion
+                                if (expanded != null && expanded.equals("true")) {
+                                    expandTransportLinks(Arrays.asList(connectionWidget.getLookup().lookup(LocalObjectLight.class)));
+                                    
+                                    
+                                    reader.nextTag();
+                                    if (reader.getName().equals(qExtendedTLs)) {
+                                        while(true) {
+                                            reader.nextTag();
 
-                        else {
-                            if (reader.getName().equals(qLabel)) {
-                                //Unavailable for now
-                            } else {
-                                if (reader.getName().equals(qZoom))
-                                    setZoomFactor(Integer.valueOf(reader.getText()));
-                                else {
-                                    if (reader.getName().equals(qCenter)) {
-                                        double x = Double.valueOf(reader.getAttributeValue(null, "x"));
-                                        double y = Double.valueOf(reader.getAttributeValue(null, "y"));
-                                    } else {
-                                        //Place more tags
+                                            if (reader.getName().equals(qExtendedTL)) {
+                                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
+                                                    long expandedLinkId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
+                                                    String expandedLinkClass = reader.getAttributeValue(null, "class"); //NOI18N
+                                                    
+                                                    ObjectConnectionWidget expandedConnectionWidget = 
+                                                            (ObjectConnectionWidget)findWidget(new LocalObjectLight(expandedLinkId, "", expandedLinkClass));
+                                                    
+                                                    if (expandedConnectionWidget != null)
+                                                        System.out.println("I should be setting the control points now");
+                                                }
+                                            } else 
+                                                break;
+                                        }
                                     }
                                 }
-                            }
+                                
+                            } else
+                                NotificationUtil.getInstance().showSimplePopup("Warning", NotificationUtil.WARNING_MESSAGE, String.format("The connection with id %s could not be found. Save the view to keep the changes", objectId));
+                        }
+                        else  {
+                            //More tags
                         }
                     }
                 }
@@ -297,9 +323,6 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
             if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_INFO)
                 Exceptions.printStackTrace(ex);
         }
-        validate();
-        repaint();
-        
     }
 
     @Override
@@ -308,31 +331,22 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
         if (serviceResources == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
-            List<LocalObjectLight> nodesToBeDeleted = new ArrayList<>(getNodes()); 
-            //We clone the existing nodes to synchronize the view, so saved nodes that are no longer listed as service resources are removed
-            //We assume that render(byte[]) was called before calling render(LocalObjectLight)
-            Map<Long, LocalObjectLight> equipmentByPort = new HashMap<>();
+            Map<Long, LocalObjectLight> portsInDevice = new HashMap<>();
             //We will ignore all resources that are not GenericCommunicationsElement
             for (LocalObjectLight serviceResource : serviceResources) {
                 if (com.isSubclassOf(serviceResource.getClassName(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)) {
                     if (findWidget(serviceResource) == null)
                         addNode(serviceResource);
                     
-                    nodesToBeDeleted.remove(serviceResource);
-                    
                     List<LocalObjectLight> physicalPorts = com.getChildrenOfClassLightRecursive(serviceResource.getOid(), serviceResource.getClassName(), "GenericPhysicalPort");
                     if (physicalPorts == null) 
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
 
                     for (LocalObjectLight physicalPort : physicalPorts)
-                        equipmentByPort.put(physicalPort.getOid(), serviceResource);
+                        portsInDevice.put(physicalPort.getOid(), serviceResource);
                 }
             }
             
-            for (LocalObjectLight nodeToBeDeleted : nodesToBeDeleted) {
-                removeNodeWithEdges(nodeToBeDeleted);
-                validate();
-            }
             
             //Once the nodes have been added, we retrieve the physical and logical (STMX) connections between them and ignore those that end in other elements
             for (LocalObjectLight aNode : getNodes()) {
@@ -348,7 +362,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                         LocalObjectLight targetPort = aConnection.get(aConnection.size() - 1);
                         
                         LocalObjectLight sourceEquipment = aNode;
-                        LocalObjectLight targetEquipment = equipmentByPort.get(targetPort.getOid());
+                        LocalObjectLight targetEquipment = portsInDevice.get(targetPort.getOid());
 
                         if (findWidget(targetEquipment) != null) {
                             
@@ -369,24 +383,25 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                     
                     //Now the logical connections
                     for (LocalObjectLight aConnection : logicalConnections) {
-                        ObjectConnectionWidget connectionWidget = (ObjectConnectionWidget)findWidget(aConnection);
-                        if (connectionWidget == null) { //The connection hasn't already added, so we add it and set the source anchor
+                        ObjectConnectionWidget logicalConnectionWidget = (ObjectConnectionWidget)findWidget(aConnection);
+                        if (logicalConnectionWidget == null) {
                             addEdge(aConnection);
                             setEdgeSource(aConnection, aNode);
-                        } else { //The connection already exists, check the endpoints and connect whatever is left to connect
-                            if (getEdgeTarget(aConnection) == null)
-                                setEdgeTarget(aConnection, aNode);
-                        }
+                        } else
+                            setEdgeTarget(aConnection, aNode);
                     }
+                    
                 }
-            }            
-            //Now we delete the connections to elements that are not in the view. Granted, this is a reprocess, but I prefer and save a few
+            }
+            //Now we delete the connections to elements that are not in the view (they will only have a source, not a target widget). Granted, this is a reprocess, but I prefer and save a few
             //calls to the server doing this at client-side only
             for (LocalObjectLight aConnection : new ArrayList<>(getEdges())) {
                 if (getEdgeTarget(aConnection) == null)
                     removeEdge(aConnection);
             }
         }
+        validate();
+        repaint();
     }
     
     @Override
@@ -437,21 +452,53 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
         return newWidget;
     }
 
+    @Override
+    public void clear() {
+        super.clear(); 
+        expandedTransportLinks.clear();
+    }
+    
+    
+
     public HashMap<LocalObjectLight, List<LocalObjectLight>> getExpandedTransportLinks() {
         return expandedTransportLinks;
     }
     
-    /**
-     * Tells if a given object is a container link product of expanding (a.k.a. disaggregating) a transport link (STMX)
-     * @param edge An object representing the container link
-     * @return A boolean saying if the edge is an expanded edge or not
-     */
-    private boolean isExpandedEdge(LocalObjectLight edge) {
-        for (LocalObjectLight expandedTransportLink : expandedTransportLinks.keySet()) {
-            if (expandedTransportLinks.get(expandedTransportLink).contains(edge))
-                return true;
+    public void expandTransportLinks(List<LocalObjectLight> transportLinks) {
+        for (LocalObjectLight selectedObject : transportLinks) {
+            LocalObjectLight castedTransportLink = (LocalObjectLight)selectedObject;
+            if (!CommunicationsStub.getInstance().isSubclassOf(castedTransportLink.getClassName(), "GenericSDHTransportLink")) {
+                JOptionPane.showMessageDialog(null, String.format("%s is not a transport link", castedTransportLink), 
+                        I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
+                continue;
+            }
+            
+            
+            List<LocalObjectLight> containerLinks = CommunicationsStub.getInstance().
+                    getSpecialAttribute(castedTransportLink.getClassName(), castedTransportLink.getOid(), "sdhTransports"); //NOI18N
+            
+            if (containerLinks != null) {
+                if (!containerLinks.isEmpty()) {
+                    getExpandedTransportLinks().put(castedTransportLink, containerLinks); //This map will be used to gracefully collapse all the STMX that will be expanded in this operation
+
+                    for (LocalObjectLight containerLink : containerLinks) {
+                        if (findWidget(containerLink) == null) { //This validation should not be necessary, but just in case
+                            addEdge(containerLink);
+                            setEdgeSource(containerLink, getEdgeSource(castedTransportLink));
+                            setEdgeTarget(containerLink, getEdgeTarget(castedTransportLink));
+                        }
+                    }
+                    //The STMX is only set invisible if it transports something
+                    findWidget(castedTransportLink).setVisible(false);
+                    validate();
+                } else
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
+                            NotificationUtil.ERROR_MESSAGE, "The selected STM is not transporting any container"); //NOI18N
+                    
+            } else
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError()); //NOI18N
+            
         }
-        return false;
     }
     
     /**

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -18,14 +18,11 @@ package com.neotropic.inventory.modules.sync.nodes.actions;
 import com.neotropic.inventory.modules.sync.nodes.SyncGroupNode;
 import com.neotropic.inventory.modules.sync.nodes.actions.windows.SyncActionsFrame;
 import java.awt.event.ActionEvent;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.communications.core.LocalSyncDataSourceConfiguration;
 import org.inventory.communications.core.LocalSyncFinding;
 import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.runnable.AbstractSyncRunnable;
@@ -33,7 +30,6 @@ import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.netbeans.api.progress.ProgressHandleFactory;
-import org.openide.nodes.Node;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Utilities;
 

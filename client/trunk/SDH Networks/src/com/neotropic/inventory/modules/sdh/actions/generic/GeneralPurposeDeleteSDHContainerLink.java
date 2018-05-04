@@ -1,5 +1,5 @@
 /**
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ public class GeneralPurposeDeleteSDHContainerLink extends GenericObjectNodeActio
 
     @Override
     public String[] appliesTo() {
-        return new String[] {Constants.CLASS_GENERICSDHCONTAINERLINK};        
+        return new String[] { Constants.CLASS_GENERICSDHCONTAINERLINK };        
     }
     
     @Override

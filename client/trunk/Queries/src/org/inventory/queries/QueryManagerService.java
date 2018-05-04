@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -87,8 +87,8 @@ public class QueryManagerService implements ActionListener {
         return res;
     }
 
-    public LocalResultRecord[] executeQuery(LocalTransientQuery oldTrasientQuery) {
-        LocalResultRecord[] res = com.executeQuery(oldTrasientQuery == null ? currentTransientQuery : oldTrasientQuery);
+    public LocalResultRecord[] executeQuery(LocalTransientQuery oldTransientQuery) {
+        LocalResultRecord[] res = com.executeQuery(oldTransientQuery == null ? currentTransientQuery : oldTransientQuery);
         if (res == null)
             qbtc.getNotifier().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         return res;
@@ -98,7 +98,7 @@ public class QueryManagerService implements ActionListener {
          LocalTransientQuery temp = qbtc.getQueryScene().getTransientQuery(qbtc.getQueryScene().getCurrentSearchedClass(),
                         qbtc.getChkAnd().isSelected() ? LocalTransientQuery.CONNECTOR_AND : LocalTransientQuery.CONNECTOR_OR,
                         Integer.valueOf(qbtc.getTxtResultLimit().getText()), page, false);
-        //this keep the last TrasientQuery in case that the top component it been closed
+        //this keep the last TransientQuery in case that the top component it been closed
         if(temp != null)
             currentTransientQuery = temp;
         else

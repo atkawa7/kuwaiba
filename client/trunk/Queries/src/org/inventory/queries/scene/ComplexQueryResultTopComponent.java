@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -72,13 +72,13 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
     /** 
      * To keep the query in case than the top component it been closed
      */
-    LocalTransientQuery actualTrasientQuery;
+    LocalTransientQuery actualTransientQuery;
     
 
-    public ComplexQueryResultTopComponent(LocalTransientQuery actualTrasientQuery, 
+    public ComplexQueryResultTopComponent(LocalTransientQuery actualTransientQuery, 
             LocalResultRecord[] res, int pageSize, QueryManagerService qbs)
     {       
-        this.actualTrasientQuery = actualTrasientQuery;
+        this.actualTransientQuery = actualTransientQuery;
         this.qbs = qbs;
         this.pageSize = pageSize;
         this.em = new ExplorerManager();
@@ -161,8 +161,8 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
      * Actions listeners for buttons
      */
     public void btnNextActionPerformed(){
-        actualTrasientQuery.setPage(++currentPage);
-        LocalResultRecord[] res = qbs.executeQuery(actualTrasientQuery);
+        actualTransientQuery.setPage(++currentPage);
+        LocalResultRecord[] res = qbs.executeQuery(actualTransientQuery);
         if (res != null){
             if (res.length < pageSize)
                 btnNext.setEnabled(false);
@@ -181,8 +181,8 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
     }
 
     public void btnPreviousActionPerformed(){
-        actualTrasientQuery.setPage(--currentPage);
-        LocalResultRecord[] res = qbs.executeQuery(actualTrasientQuery);
+        actualTransientQuery.setPage(--currentPage);
+        LocalResultRecord[] res = qbs.executeQuery(actualTransientQuery);
         if (res != null){
             if (currentPage == 1)
                 btnPrevious.setEnabled(false);
@@ -193,8 +193,8 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
     }
 
     public void btnAllActionPerformed(){
-        actualTrasientQuery.setPage(0);
-        LocalResultRecord[] res = qbs.executeQuery(actualTrasientQuery);
+        actualTransientQuery.setPage(0);
+        LocalResultRecord[] res = qbs.executeQuery(actualTransientQuery);
         if (res != null){
             btnNext.setEnabled(false);
             btnPrevious.setEnabled(false);
@@ -233,8 +233,8 @@ public class ComplexQueryResultTopComponent extends TopComponent implements Expo
         if (range == ExportableTable.Range.CURRENT_PAGE)
             res = getCurrentResults();
         else {
-            actualTrasientQuery.setPage(0);
-            LocalResultRecord[] results = qbs.executeQuery(actualTrasientQuery);
+            actualTransientQuery.setPage(0);
+            LocalResultRecord[] results = qbs.executeQuery(actualTransientQuery);
             if (results == null)
                 res = null;
             else{
