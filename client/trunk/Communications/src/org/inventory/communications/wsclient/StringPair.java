@@ -84,4 +84,11 @@ public class StringPair {
         this.value = value;
     }
 
+	public StringPair() {}
+
+	public StringPair(String key, String value) {
+        	this.key = key;
+        	this.value = value;
+    	}
+
 }

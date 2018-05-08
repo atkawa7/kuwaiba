@@ -1,11 +1,8 @@
 
 package org.inventory.communications.wsclient;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -17,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
  * <pre>
  * &lt;complexType name="remoteContact">
  *   &lt;complexContent>
- *     &lt;extension base="{http://ws.interfaces.kuwaiba.org/}remoteContactLight">
+ *     &lt;extension base="{http://ws.interfaces.kuwaiba.org/}remoteObject">
  *       &lt;sequence>
- *         &lt;element name="properties" type="{http://ws.interfaces.kuwaiba.org/}stringPair" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="customer" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>
@@ -30,42 +27,36 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "remoteContact", propOrder = {
-    "properties"
+    "customer"
 })
 public class RemoteContact
-    extends RemoteContactLight
+    extends RemoteObject
 {
 
-    @XmlElement(nillable = true)
-    protected List<StringPair> properties;
+    protected RemoteObjectLight customer;
 
     /**
-     * Gets the value of the properties property.
+     * Gets the value of the customer property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the properties property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getProperties().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link StringPair }
-     * 
-     * 
+     * @return
+     *     possible object is
+     *     {@link RemoteObjectLight }
+     *     
      */
-    public List<StringPair> getProperties() {
-        if (properties == null) {
-            properties = new ArrayList<StringPair>();
-        }
-        return this.properties;
+    public RemoteObjectLight getCustomer() {
+        return customer;
+    }
+
+    /**
+     * Sets the value of the customer property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link RemoteObjectLight }
+     *     
+     */
+    public void setCustomer(RemoteObjectLight value) {
+        this.customer = value;
     }
 
 }

@@ -41,7 +41,7 @@ import org.inventory.communications.core.LocalBusinessRule;
 import org.inventory.communications.core.LocalFavoritesFolder;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
-import org.inventory.communications.core.LocalContactLight;
+import org.inventory.communications.core.LocalContact;
 import org.inventory.communications.core.LocalLogicalConnectionDetails;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
@@ -90,7 +90,7 @@ import org.inventory.communications.wsclient.PrivilegeInfo;
 import org.inventory.communications.wsclient.RemoteBackgroundJob;
 import org.inventory.communications.wsclient.RemoteFavoritesFolder;
 import org.inventory.communications.wsclient.RemoteBusinessRule;
-import org.inventory.communications.wsclient.RemoteContactLight;
+import org.inventory.communications.wsclient.RemoteContact;
 import org.inventory.communications.wsclient.RemoteObject;
 import org.inventory.communications.wsclient.RemoteObjectLight;
 import org.inventory.communications.wsclient.RemoteObjectLightList;
@@ -108,7 +108,6 @@ import org.inventory.communications.wsclient.RemoteTaskResult;
 import org.inventory.communications.wsclient.ResultRecord;
 import org.inventory.communications.wsclient.SdhPosition;
 import org.inventory.communications.wsclient.ServerSideException_Exception;
-import org.inventory.communications.wsclient.StringArray;
 import org.inventory.communications.wsclient.StringPair;
 import org.inventory.communications.wsclient.SyncFinding;
 import org.inventory.communications.wsclient.SyncResult;
@@ -315,18 +314,21 @@ public class CommunicationsStub {
         }
     }
 
-    public List<LocalObject> getChildrenOfClass(long oid, String parentClassName, String childrenClassName){
+    /**
+     * Gets only the children of a given class of an inventory object as a {@link LocalObject } instances.
+     * @param id The id of the parent object
+     * @param parentClassName The class of the parent object
+     * @param childrenClassName The class used to filter the children. Abstract super classes are supported
+     * @return The list of children filtered using the class provided as parameter
+     */
+    public List<LocalObject> getChildrenOfClass(long id, String parentClassName, String childrenClassName){
         try{
-            List <RemoteObject> children = service.getChildrenOfClass(oid, parentClassName, childrenClassName, 0, this.session.getSessionId());
+            List <RemoteObject> remoteChildren = service.getChildrenOfClass(id, parentClassName, childrenClassName, 0, this.session.getSessionId());
             List <LocalObject> res = new ArrayList<>();
 
-            for (RemoteObject rol : children){
-                List<List<String>> values = new ArrayList<>();
-                for (StringArray value : rol.getValues())
-                    values.add(value.getItem());
-
-                res.add(new LocalObject(rol.getClassName(), rol.getOid(), rol.getAttributes(),
-                        values, getMetaForClass(rol.getClassName(), false)));
+            for (RemoteObject remoteChild : remoteChildren) {
+                LocalClassMetadata classMetadata = getMetaForClass(remoteChild.getClassName(), false);
+                res.add(new LocalObject(remoteChild.getClassName(), id, remoteChild.getAttributes(), classMetadata));
             }
             return res;
         }catch(ServerSideException_Exception | IllegalArgumentException ex){
@@ -404,31 +406,27 @@ public class CommunicationsStub {
 
     /**
      * Updates the attributes of a given object
-     * @param obj is the object to be updated. Note that this object doesn't have
-     *            every field within the "original". it only has the field(s) to be updated
-     * @return 
+     * @param className Class name of the object to be updated
+     * @param id Id of the object to be updated
+     * @param attributesToBeUpdated A key-value dictionary with the attributes and their respective values to be updated
+     * @return True if the operation was successful, false otherwise
      */
-    public boolean saveObject(LocalObject obj){
+    public boolean updateObject(String className, long id, HashMap<String, Object> attributesToBeUpdated) {
 
-        try{
-            List<String> attributeNames = new ArrayList<>();
-            List<String> attributeValues = new ArrayList<>();
-
-            for (String key : obj.getAttributes().keySet()){
-                String value;
-                attributeNames.add(key);
-                Object theValue = obj.getAttribute(key);
+        try {
+            List<StringPair> attributes = new ArrayList<>();
+            for (String attributeToBeUpdated : attributesToBeUpdated.keySet()) {
+                Object theValue = attributesToBeUpdated.get(attributeToBeUpdated);
                 if (theValue instanceof LocalObjectListItem)
-                    value = String.valueOf(((LocalObjectListItem)theValue).getId());
+                    attributes.add(new StringPair(attributeToBeUpdated, String.valueOf(((LocalObjectListItem)theValue).getId())));
                 else {
                     if (theValue instanceof Date)
-                        value = String.valueOf(((Date)theValue).getTime());
+                        attributes.add(new StringPair(attributeToBeUpdated, String.valueOf(((Date)theValue).getTime())));
                     else
-                        value = theValue.toString();
+                        attributes.add(new StringPair(attributeToBeUpdated, theValue.toString()));
                 }
-                attributeValues.add(value);
             }
-            service.updateObject(obj.getClassName(),obj.getOid(), attributeNames, attributeValues, this.session.getSessionId());
+            service.updateObject(className, id, attributes, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -437,42 +435,44 @@ public class CommunicationsStub {
     }
 
     /**
-     * Retrieves the whole object info
+     * Retrieves all the attributes of an inventory object
      * @param objectClass object class
-     * @param oid object id
+     * @param id object id
      * @return The local representation of the object
      */
-    public LocalObject getObjectInfo(String objectClass, long oid) {
+    public LocalObject getObjectInfo(String objectClass, long id) {
         try {
-            LocalClassMetadata lcmd = getMetaForClass(objectClass, false);
-            RemoteObject myObject = service.getObject(objectClass, oid,this.session.getSessionId());
-            List<List<String>> values = new ArrayList<>();
-            for (StringArray value : myObject.getValues())
-                values.add(value.getItem());
-            return new LocalObject(myObject.getClassName(), myObject.getOid(), 
-                    myObject.getAttributes(), values,lcmd);
+            LocalClassMetadata classMetadata = getMetaForClass(objectClass, false);
+            RemoteObject remoteObject = service.getObject(objectClass, id,this.session.getSessionId());
+
+            return new LocalObject(remoteObject.getClassName(), id, remoteObject.getAttributes(), classMetadata);
         } catch(Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
     }
-    
-    public LocalObject getObjectInfoAsync(String objectClass, long oid) {
+
+    /**
+     * Async version of the conventional {@link CommunicationsStub#getObjectInfo(java.lang.String, long) } method
+     * @param objectClass The class of the object
+     * @param id The id of the object
+     * @return The local representation of the object
+     */
+    public LocalObject getObjectInfoAsync(String objectClass, long id) {
         try {
-            LocalClassMetadata lcmd = getMetaForClassAsync(objectClass, false);
+            LocalClassMetadata classMetadata = getMetaForClassAsync(objectClass, false);
             
-            Response<GetObjectResponse> response = service.getObjectAsync(objectClass, oid,this.session.getSessionId());
+            Response<GetObjectResponse> response = service.getObjectAsync(objectClass, id,this.session.getSessionId());
             while (!response.isDone())
                 Thread.sleep(100);
+            
             GetObjectResponse getObjectResponse = response.get();
                         
-            RemoteObject myObject = getObjectResponse.getReturn();
+            RemoteObject remoteObject = getObjectResponse.getReturn();
             
-            List<List<String>> values = new ArrayList<>();
-            for (StringArray value : myObject.getValues())
-                values.add(value.getItem());
-            return new LocalObject(myObject.getClassName(), myObject.getOid(), 
-                    myObject.getAttributes(), values,lcmd);
+            return new LocalObject(remoteObject.getClassName(), remoteObject.getId(), 
+                    remoteObject.getAttributes(), classMetadata);
+            
         } catch(Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -952,26 +952,24 @@ public class CommunicationsStub {
      * @param name The name of the contact
      * @param customerClassName The class of the customer this contact will be associated to
      * @param customerId The id of the customer this contact will be associated to
-     * @return The new contact or null in case of error
+     * @return True if the operation was successful, false otherwise
      */
-    public LocalContactLight createContact(String contactClass, String name, 
+    public boolean createContact(String contactClass, String name, 
             String customerClassName, long customerId) {
         try {
-            StringPair nameAsProperty = new StringPair();
-            nameAsProperty.setKey(Constants.PROPERTY_NAME);
-            nameAsProperty.setValue(name);
+            service.createContact(contactClass, Arrays.asList(new StringPair(Constants.PROPERTY_NAME, name)), 
+                    customerClassName, customerId, session.getSessionId());
             
-            long newContactId = service.createContact(contactClass, Arrays.asList(nameAsProperty), customerClassName, customerId, session.getSessionId());
-            return new LocalContactLight(contactClass, newContactId, "", new LocalObjectLight(customerId, "", customerClassName));
+            return true;
         } catch(Exception ex) {
             error = ex.getMessage();
-            return null;
+            return false;
         }
     }
     
     /**
      * Deletes a contact
-     * @param contactClass Class of the contect
+     * @param contactClass Class of the contact
      * @param contactId Id of the contact
      * @return True if the operation was successful, false otherwise
      */
@@ -991,14 +989,14 @@ public class CommunicationsStub {
      * @param maxResults Maximum number of results. Use -1 to retrieve all results at once
      * @return The list of contacts for whom at least one of their attributes matches or null in case of error
      */
-    public List<LocalContactLight> searchForContacts(String searchString, int maxResults) {
+    public List<LocalContact> searchForContacts(String searchString, int maxResults) {
         try {
-            List<RemoteContactLight> remoteContacts = service.searchForContacts(searchString, maxResults,session.getSessionId());
-            List<LocalContactLight> res = new ArrayList<>();
-            for (RemoteContactLight remoteContact : remoteContacts) {
-                res.add(new LocalContactLight(remoteContact.getClassName(), remoteContact.getId(), 
-                        remoteContact.getName(), new LocalObjectLight(remoteContact.getCustomer().getOid(), 
-                                remoteContact.getCustomer().getName(), remoteContact.getCustomer().getClassName())));
+            List<RemoteContact> remoteContacts = service.searchForContacts(searchString, maxResults, session.getSessionId());
+            List<LocalContact> res = new ArrayList<>();
+            for (RemoteContact remoteContact : remoteContacts) {
+                LocalClassMetadata classMetadata = getMetaForClass(remoteContact.getClassName(), false);
+                res.add(new LocalContact(remoteContact.getClassName(), remoteContact.getId(), remoteContact.getAttributes(), classMetadata, 
+                        new LocalObjectLight(remoteContact.getCustomer().getOid(), remoteContact.getCustomer().getName(), remoteContact.getCustomer().getClassName())));
             }
             
             return res;
@@ -1452,7 +1450,7 @@ public class CommunicationsStub {
     public List<LocalObjectListItem> getCustomShapes(boolean ignoreCache) {
         List<LocalObjectListItem> customShapes = null;
         if (!ignoreCache) {
-            customShapes = new ArrayList();
+            customShapes = new ArrayList<>();
             
             for (LocalObjectListItem customShape : cache.getCustomShapes())
                 customShapes.add(customShape);
@@ -1504,9 +1502,7 @@ public class CommunicationsStub {
             if (parameters !=  null) {
                 remoteParameters = new ArrayList<>();
                 for (String parameter : parameters.keySet()) {
-                    StringPair remoteParameter = new StringPair();
-                    remoteParameter.setKey(parameter);
-                    remoteParameter.setValue(parameters.get(parameter));
+                    StringPair remoteParameter = new StringPair(parameter, parameters.get(parameter));
                     remoteParameters.add(remoteParameter);
                 }
             }
@@ -1515,7 +1511,7 @@ public class CommunicationsStub {
                    remoteParameters, atsd, tnd, session.getSessionId());
             
             return new LocalTask(taskId, name, description, enabled, commitOnExecute, script, 
-                    null, schedule, notificationType, new ArrayList<LocalUserObjectLight>());
+                    null, schedule, notificationType, new ArrayList<>());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
@@ -1607,9 +1603,7 @@ public class CommunicationsStub {
             List<StringPair> remoteParameters = new ArrayList<>();
             
             for (String parameterName : parameters.keySet()) {
-                StringPair remoteParameter = new StringPair();
-                remoteParameter.setKey(parameterName);
-                remoteParameter.setValue(parameters.get(parameterName));
+                StringPair remoteParameter = new StringPair(parameterName, parameters.get(parameterName));
                 remoteParameters.add(remoteParameter);
             }
             
@@ -2506,17 +2500,10 @@ public class CommunicationsStub {
      */
     public long createScriptQuery(String name, String description, String script, HashMap<String, String> parameters) {
         try {
-            List<StringPair> params = new ArrayList();
+            List<StringPair> params = new ArrayList<>();
             
-            for (String parameter : parameters.keySet()) {
-                
-                StringPair stringPair = new StringPair();
-                
-                stringPair.setKey(parameter);
-                stringPair.setValue(parameters.get(parameters));
-                
-                params.add(stringPair);
-            }
+            for (String parameter : parameters.keySet())                 
+                params.add(new StringPair(parameter, parameters.get(parameter)));
                             
             return service.createScriptQuery(name, description, script, params, session.getSessionId());
         } catch (Exception ex) {
@@ -2550,16 +2537,11 @@ public class CommunicationsStub {
      */
     public boolean updateScriptQueryParameters(long scriptQueryId, HashMap<String, String> parameters) {
         try {
-            List<StringPair> params = new ArrayList();
+            List<StringPair> params = new ArrayList<>();
             
-            for (String parameter : parameters.keySet()) {
-                StringPair param = new StringPair();
-                
-                param.setKey(parameter);
-                param.setValue(parameters.get(parameter));
-                
-                params.add(param);
-            }
+            for (String parameter : parameters.keySet()) 
+                params.add(new StringPair(parameter, parameters.get(parameter)));
+
             service.updateScriptQueryParameters(scriptQueryId, params, session.getSessionId());
             return true;
             
@@ -2590,7 +2572,7 @@ public class CommunicationsStub {
      */
     public List<LocalScriptQuery> getScriptQueries() {
         try {
-            List<LocalScriptQuery> result = new ArrayList();
+            List<LocalScriptQuery> result = new ArrayList<>();
             
             for (RemoteScriptQuery remoteScriptQuery : service.getScriptQueries(session.getSessionId()))
                 result.add(new LocalScriptQuery(remoteScriptQuery));
@@ -2622,7 +2604,7 @@ public class CommunicationsStub {
      * @param scriptQueryId The script query id
      * @return The script query result or null
      *         If the script query could not be found,
-     *         If the script property can no be found
+     *         If the script property can not be found
      */
     public LocalScriptQueryResult executeScriptQuery(long scriptQueryId) {
         try {
@@ -3270,7 +3252,7 @@ public class CommunicationsStub {
         try {
             List<RemoteObjectLight> remoteTemplateElements = service.getDeviceLayouts(session.getSessionId());
             
-            List<LocalObjectLight> templateElements = new ArrayList();
+            List<LocalObjectLight> templateElements = new ArrayList<>();
             
             for (RemoteObjectLight remoteTemplateElement : remoteTemplateElements)
                 templateElements.add(new LocalObjectLight(remoteTemplateElement.getOid(), remoteTemplateElement.getName(), remoteTemplateElement.getClassName()));
@@ -3715,12 +3697,8 @@ public class CommunicationsStub {
             List<StringPair> parameters = new ArrayList<>();
             
             if (parameterNames != null) {
-                for (String parameter : parameterNames) {
-                    StringPair stringPair = new StringPair();
-                    stringPair.setKey(parameter);
-                    stringPair.setValue("");
-                    parameters.add(stringPair);
-                }
+                for (String parameter : parameterNames) 
+                    parameters.add(new StringPair(parameter, ""));
             }
             
             long newPoolId  = service.createInventoryLevelReport(reportName, reportDescription, 
@@ -3783,21 +3761,13 @@ public class CommunicationsStub {
             List<StringPair> parameters = new ArrayList<>();
             
             if (parametersToAddOrModify != null) {
-                for (String parameter : parametersToAddOrModify) {
-                    StringPair entry = new StringPair();
-                    entry.setKey(parameter);
-                    entry.setValue("");
-                    parameters.add(entry);
-                }
+                for (String parameter : parametersToAddOrModify) 
+                    parameters.add(new StringPair(parameter, ""));
             }
             
             if (parametersToDelete != null) {
-                for (String parameter : parametersToDelete) {
-                    StringPair entry = new StringPair();
-                    entry.setKey(parameter);
-                    entry.setValue(null);
-                    parameters.add(entry);
-                }
+                for (String parameter : parametersToDelete) 
+                    parameters.add(new StringPair(parameter, null));
             }
                 
             service.updateReportParameters(reportId, parameters, session.getSessionId());
@@ -3910,12 +3880,8 @@ public class CommunicationsStub {
         try {
             List<StringPair> remoteParameters = new ArrayList<>();
             
-            for (String paramName : parameters.keySet()) {
-                StringPair parameter = new StringPair();
-                parameter.setKey(paramName);
-                parameter.setValue(parameters.get(paramName));
-                remoteParameters.add(parameter);
-            }
+            for (String paramName : parameters.keySet()) 
+                remoteParameters.add(new StringPair(paramName, parameters.get(paramName)));
             
             return service.executeInventoryLevelReport(reportId, remoteParameters, session.getSessionId());
         } catch(Exception ex){
@@ -3993,7 +3959,7 @@ public class CommunicationsStub {
      */
     public List<LocalObjectLight> createBulkTemplateElement(String templateElementClassName, String templateElementParentClassName, long templateElementParentId, int numberOfTemplateElements, String templateElementNamePattern) {
         try {
-            List<LocalObjectLight> result = new ArrayList();
+            List<LocalObjectLight> result = new ArrayList<>();
             List<Long> ids = service.createBulkTemplateElement(templateElementClassName, templateElementParentClassName, templateElementParentId, numberOfTemplateElements, templateElementNamePattern, session.getSessionId());
             
             for (Long id : ids) {
@@ -4024,7 +3990,7 @@ public class CommunicationsStub {
      */
     public List<LocalObjectLight> createBulkSpecialTemplateElement(String stElementClass, String stElementParentClassName, long stElementParentId, int numberOfTemplateElements, String stElementNamePattern) {
         try {
-            List<LocalObjectLight> result = new ArrayList();
+            List<LocalObjectLight> result = new ArrayList<>();
             List<Long> ids = service.createBulkSpecialTemplateElement(stElementClass, stElementParentClassName, stElementParentId, numberOfTemplateElements, stElementNamePattern, session.getSessionId());
             
             for (Long id : ids) {
@@ -4143,7 +4109,7 @@ public class CommunicationsStub {
     }
     
     /**
-     * Retrives all the information of a given template element.
+     * Retrieves all the information of a given template element.
      * @param templateElementClass Template element class.
      * @param templateElementId Template element id.
      * @return The template element information. It will return null if something went wrong.
@@ -4151,13 +4117,10 @@ public class CommunicationsStub {
     public LocalObject getTemplateElement(String templateElementClass, long templateElementId) {
         try {
             RemoteObject remoteTemplateElement = service.getTemplateElement(templateElementClass, templateElementId, session.getSessionId());
-            LocalClassMetadata lcmd = getMetaForClass(templateElementClass, false);
-            List<List<String>> values = new ArrayList<>();
-            for (StringArray value : remoteTemplateElement.getValues())
-                values.add(value.getItem());
-            
-            return new LocalObject(remoteTemplateElement.getClassName(), remoteTemplateElement.getOid(), 
-                    remoteTemplateElement.getAttributes(), values,lcmd);
+            LocalClassMetadata classMetadata = getMetaForClass(templateElementClass, false);
+                        
+            return new LocalObject(remoteTemplateElement.getClassName(), remoteTemplateElement.getId(), 
+                    remoteTemplateElement.getAttributes(), classMetadata);
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -4405,15 +4368,18 @@ return null;
         }
     }
     
+    /**
+     * Fetches the information on a given IPv4/IPv6 subnet
+     * @param id The id of the subnet
+     * @param className The class of the subnet
+     * @return The subnet as a LocalObject instance
+     */
     public LocalObject getSubnet(long id, String className){
         try{
-            LocalClassMetadata lcmd = getMetaForClass(className, false);
+            LocalClassMetadata classMetadata = getMetaForClass(className, false);
             RemoteObject subnet = service.getSubnet(id, className, this.session.getSessionId());
-            List<List<String>> values = new ArrayList<>();
-            for (StringArray value : subnet.getValues())
-                values.add(value.getItem());
-            return new LocalObject(subnet.getClassName(), subnet.getOid(), 
-                    subnet.getAttributes(), values,lcmd);
+            return new LocalObject(subnet.getClassName(), subnet.getId(), 
+                    subnet.getAttributes(), classMetadata);
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
@@ -4472,27 +4438,22 @@ return null;
         }
     }
         
-    public LocalObjectLight createSubnet(long poolId, String parentClassName, LocalObject obj){
+    public LocalObjectLight createSubnet(long poolId, String parentClassName, String name, List<StringPair> attributes){
         try {
-            List<String> attributeNames = new ArrayList<>();
-            List<String> attributeValues = new ArrayList<>();
-
-            for (String key : obj.getAttributes().keySet()){
-                String value;
-                attributeNames.add(key);
-                value = obj.getAttribute(key).toString();
-                
-                attributeValues.add(value);
-            }
-            
-            long objectId  = service.createSubnet(poolId, parentClassName, attributeNames, attributeValues, this.session.getSessionId());
-            return new LocalObjectLight(objectId, obj.getName(), parentClassName);
+            long objectId  = service.createSubnet(poolId, parentClassName, attributes, this.session.getSessionId());
+            return new LocalObjectLight(objectId, name, parentClassName);
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
         }
     }
     
+    /**
+     * Deletes an SDH Transport Link
+     * @param transportLinkClass The class of the transport link
+     * @param transportLinkId The id of the transport link
+     * @return True of the operation was successful, false otherwise
+     */
     public boolean deleteSDHTransportLink(String transportLinkClass, long transportLinkId) {
         try {
             service.deleteSDHTransportLink(transportLinkClass, transportLinkId, true, session.getSessionId());
@@ -4503,6 +4464,12 @@ return null;
         }
     }
     
+    /**
+     * Deletes an SDH Container link
+     * @param containerLinkClass Class of the container
+     * @param containerLinkId Id of the container
+     * @return True of the operation was successful, false otherwise
+     */
     public boolean deleteSDHContainerLink(String containerLinkClass, long containerLinkId) {
         try {
             service.deleteSDHContainerLink(containerLinkClass, containerLinkId, true, session.getSessionId());
@@ -4513,6 +4480,12 @@ return null;
         }
     }
     
+    /**
+     * Deletes an SDH Tributary link
+     * @param tributaryLinkClass Class of the link
+     * @param tributaryLinkId Id of the link
+     * @return True if the operation was successful, false otherwise
+     */
     public boolean deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId) {
         try {
             service.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId, true, session.getSessionId());
@@ -4523,18 +4496,10 @@ return null;
         }
     }
     
-    public LocalObjectLight addIP(long id, String className, LocalObject obj){
+    public LocalObjectLight addIPAddress(long id, String className, String name, List<StringPair> attributes){
         try {
-            List<String> attributeNames = new ArrayList<>();
-            List<String> attributeValues = new ArrayList<>();
-
-            for (String key : obj.getAttributes().keySet()){
-                attributeNames.add(key);
-                attributeValues.add(obj.getAttribute(key).toString());
-            }
-            
-            long objectId  = service.addIP(id, className, attributeNames, attributeValues, this.session.getSessionId());
-            return new LocalObjectLight(objectId, obj.getName(), className);
+            long objectId  = service.addIPAddress(id, className, attributes, this.session.getSessionId());
+            return new LocalObjectLight(objectId, name, className);
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
@@ -5180,12 +5145,9 @@ return null;
         try {
             List<StringPair> remoteProperties = new ArrayList<>();
             
-            for (String paramName : syncGroupProperties.keySet()) {
-                StringPair remoteParameter = new StringPair();
-                remoteParameter.setKey(paramName);
-                remoteParameter.setValue(syncGroupProperties.get(paramName));
-                remoteProperties.add(remoteParameter);
-            }
+            for (String paramName : syncGroupProperties.keySet()) 
+                remoteProperties.add(new StringPair(paramName, syncGroupProperties.get(paramName)));
+            
             service.updateSynchronizationGroup(syncGroupId, remoteProperties, session.getSessionId());
             return true;
         } catch (Exception ex) {
@@ -5219,12 +5181,8 @@ return null;
         try {
             List<StringPair> remoteParameters = new ArrayList<>();
             
-            for (String paramName : parameters.keySet()) {
-                StringPair remoteParameter = new StringPair();
-                remoteParameter.setKey(paramName);
-                remoteParameter.setValue(parameters.get(paramName));
-                remoteParameters.add(remoteParameter);
-            }
+            for (String paramName : parameters.keySet()) 
+                remoteParameters.add(new StringPair(paramName, parameters.get(paramName)));
             
             long id = service.createSynchronizationDataSourceConfig(syncDataSourceConfigName, remoteParameters, syncGroupId, session.getSessionId());
             return new LocalSyncDataSourceConfiguration(id, syncDataSourceConfigName, parameters);
@@ -5244,13 +5202,9 @@ return null;
         try {
             List<StringPair> remoteParameters = new ArrayList<>();
             
-            for (String parameterName : parameters.keySet()) {
-                StringPair remoteParameter = new StringPair();
-                remoteParameter.setKey(parameterName);
-                remoteParameter.setValue(parameters.get(parameterName));
-                
-                remoteParameters.add(remoteParameter);
-            }
+            for (String parameterName : parameters.keySet()) 
+                remoteParameters.add(new StringPair(parameterName, parameters.get(parameterName)));
+            
             service.updateSyncDataSourceConfiguration(syncDataSourceConfigId, remoteParameters, session.getSessionId());
             
             return true;
@@ -5362,7 +5316,7 @@ return null;
         try {
             List<RemoteBackgroundJob> remoteJobs = service.getCurrentJobs(session.getSessionId());
             
-            List<LocalBackgroundJob> result = new ArrayList();
+            List<LocalBackgroundJob> result = new ArrayList<>();
             
             for (RemoteBackgroundJob remoteJob : remoteJobs) {
                 result.add(new LocalBackgroundJob(remoteJob.getId(), remoteJob.getJobTag(), remoteJob.getProgress(), remoteJob.isAllowConcurrence(), remoteJob.getStatus(), remoteJob.getStartTime(), remoteJob.getEndTime()));

@@ -1,5 +1,5 @@
-# Neotropic SAS 2017
-# Kuwaiba Open Network Inventory - Web Service Stub Generator v0.4
+# Neotropic SAS 2018
+# Kuwaiba Open Network Inventory - Web Service Stub Generator v0.5
 # This script generates the Java client side stubs necessary to consume the platform's web service. Use -h flag to see the full list of options
 
 # Defaults
@@ -59,7 +59,23 @@ then
     echo "${setters}" >> temp.txt
     echo $'\n}' >> temp.txt
     mv temp.txt "${destination}/org/inventory/communications/wsclient/TransientQuery.java"
-    echo "Patching done."
+    echo "Patching TransientQuery class done"
+
+    #Now let's patch StringPair to be able to set the key and the value at once in a constructor
+    echo "Patching StringPair class..."
+    stringPairConstructors="
+	public StringPair() {}
+
+	public StringPair(String key, String value) {
+        	this.key = key;
+        	this.value = value;
+    	}"
+
+    head -n -2  "${destination}/org/inventory/communications/wsclient/StringPair.java" > temp.txt
+    echo "${stringPairConstructors}" >> temp.txt
+    echo $'\n}' >> temp.txt
+    mv temp.txt "${destination}/org/inventory/communications/wsclient/StringPair.java"
+    echo "Patching StringPair class done"
 else
     echo wsimport failed. Aborting any further actions.
 fi

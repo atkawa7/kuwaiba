@@ -15,14 +15,11 @@
  */
 package org.inventory.communications.core;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
-import org.inventory.communications.wsclient.RemoteObject;
-import org.inventory.communications.wsclient.StringArray;
+import org.inventory.communications.wsclient.StringPair;
 
 /**
  * Represents the whole information related to an object. Instances if this class
@@ -30,17 +27,19 @@ import org.inventory.communications.wsclient.StringArray;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class LocalObject extends LocalObjectLight {
+    /**
+     * A dictionary containing the names of the attributes and their respective values of the current object
+     */
     private HashMap<String, Object> attributes;
-    //Reference to the metadata associated to this object's class
+    /**
+     * The metadata associated to the class the current object belongs to
+     */
     private LocalClassMetadata myMetadata;
 
-    public LocalObject(String className, long oid, String[] atts, Object[] vals){
-        HashMap<String,Object> dict = new HashMap<>();
+    public LocalObject(String className, long id, HashMap<String, Object> attributes){
         this.className = className;
-        this.oid = oid;
-        for(int i = 0; i < atts.length;i++)
-            dict.put(atts[i], vals[i]);
-        this.attributes = dict;
+        this.oid = id;
+        this.attributes = attributes;
     }
 
     /**
@@ -48,25 +47,19 @@ public class LocalObject extends LocalObjectLight {
      * using the metadata
      * @param className object class name
      * @param  id object id
-     * @param  attributeNames list of attributes in that object
-     * @param  attributeValues list of values for the list of attributes
-     * @param lcmdt
+     * @param  remoteAttributes A dictionary with the attributes and values as strings
+     * @param classMetadata The class metadata to be used to map the attributes to actual Java data types
      */
-    public LocalObject(String className, long id, List<String> attributeNames, 
-            List<List<String>> attributeValues, LocalClassMetadata lcmdt) throws IllegalArgumentException{
+    public LocalObject(String className, long id, List<StringPair> remoteAttributes, LocalClassMetadata classMetadata) throws IllegalArgumentException{
         this.className = className;
         this.oid = id;
-        this.myMetadata = lcmdt;
+        this.myMetadata = classMetadata;
         
-        attributes = new HashMap<>();
+        this.attributes = new HashMap<>();
         
-        int i = 0;
-        for (String attribute : attributeNames){
-            attributes.put(attribute,
-                    Utils.getRealValue(lcmdt.getTypeForAttribute(attribute), 
-                    lcmdt.getMappingForAttribute(attribute), attributeValues.get(i)));
-            i++;
-        }
+        for (StringPair remoteAttribute : remoteAttributes)
+            attributes.put(remoteAttribute.getKey(), Utils.getRealValue(classMetadata.getTypeForAttribute(remoteAttribute.getKey()), 
+                                                classMetadata.getMappingForAttribute(remoteAttribute.getKey()), remoteAttribute.getValue()));                            
     }
 
     public LocalClassMetadata getObjectMetadata() {
@@ -103,14 +96,5 @@ public class LocalObject extends LocalObjectLight {
     @Override
     public String getName() {
         return (String)getAttribute(Constants.PROPERTY_NAME);
-    }
-    
-    public static LocalObject toLocalObject(RemoteObject remoteObject) {
-        LocalClassMetadata lcmd = CommunicationsStub.getInstance().getMetaForClass(remoteObject.getClassName(), false);
-            List<List<String>> values = new ArrayList<>();
-            for (StringArray value : remoteObject.getValues())
-                values.add(value.getItem());
-        return new LocalObject(remoteObject.getClassName(), remoteObject.getOid(), 
-                remoteObject.getAttributes(), values, lcmd);
     }
 }

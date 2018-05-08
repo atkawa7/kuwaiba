@@ -62,7 +62,7 @@ public class Cache{
         this.listIndex = new HashMap<>();
         this.reportIndex = new HashMap<>();
         this.templateIndex = new HashMap<>();
-        this.customShapeIndex = new HashMap();
+        this.customShapeIndex = new HashMap<>();
     }
 
     /**

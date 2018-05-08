@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}remoteContactLight" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}remoteContact" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
 public class SearchForContactsResponse {
 
     @XmlElement(name = "return")
-    protected List<RemoteContactLight> _return;
+    protected List<RemoteContact> _return;
 
     /**
      * Gets the value of the return property.
@@ -55,13 +55,13 @@ public class SearchForContactsResponse {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link RemoteContactLight }
+     * {@link RemoteContact }
      * 
      * 
      */
-    public List<RemoteContactLight> getReturn() {
+    public List<RemoteContact> getReturn() {
         if (_return == null) {
-            _return = new ArrayList<RemoteContactLight>();
+            _return = new ArrayList<RemoteContact>();
         }
         return this._return;
     }

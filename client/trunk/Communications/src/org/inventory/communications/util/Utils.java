@@ -34,10 +34,8 @@ import java.util.Collections;
 import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
-import org.inventory.*;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalAttributeMetadata;
-import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 
@@ -78,6 +76,8 @@ public class Utils {
      *
      * If you're porting the client to other language you should map the types
      * as supported by such language.
+     * @param typeAsString The type
+     * @return A Java class equivalent to the type provided
      */
     public static Class getRealType(String typeAsString){
         if (typeAsString.equals("String"))
@@ -142,59 +142,54 @@ public class Utils {
     
     /**
      * Converts a string value to the real type given the mapping and the type
-     * @param type
-     * @param mapping
-     * @param valueAsString
-     * @return
-     * @throws IllegalArgumentException 
+     * @param type The actual type of the attribute (Integer, String, Long, Date, etc)
+     * @param mapping How the value should be mapped locally. Is it an scalar value, or a relationship
+     * @param valueAsString The value
+     * @return The deserialized version of the provided value
+     * @throws IllegalArgumentException If the mapping or the type are invalid or failed to be converted
      */
-    public static Object getRealValue (String type, Integer mapping, List<String> valueAsString) throws IllegalArgumentException{
+    public static Object getRealValue (String type, Integer mapping, String valueAsString) throws IllegalArgumentException{
         if (valueAsString == null)
             return null;
-        if (valueAsString.isEmpty())
-            return null;
-        try{
+        try {
             switch (mapping){
                 case Constants.MAPPING_PRIMITIVE:
                 case Constants.MAPPING_DATE:
                 case Constants.MAPPING_TIMESTAMP:
                 case Constants.MAPPING_BINARY:
                     if (type.equals("Boolean"))
-                        return Boolean.valueOf(valueAsString.get(0));
+                        return Boolean.valueOf(valueAsString);
 
                     if (type.equals("String"))
-                        return valueAsString.get(0);
+                        return valueAsString;
 
                     if (type.equals("Integer"))
-                        return Integer.valueOf(valueAsString.get(0));
+                        return Integer.valueOf(valueAsString);
 
                     if (type.equals("Float"))
-                        return Float.valueOf(valueAsString.get(0));
+                        return Float.valueOf(valueAsString);
 
                     if (type.equals("Long"))
-                        return Long.valueOf(valueAsString.get(0));
+                        return Long.valueOf(valueAsString);
 
                     if (type.equals("Date"))
-                        return new Date(Long.valueOf(valueAsString.get(0)));
+                        return new Date(Long.valueOf(valueAsString));
                     
                     if (type.equals("Timestamp"))
-                        return Timestamp.valueOf(valueAsString.get(0));
+                        return Timestamp.valueOf(valueAsString);
                     
                     if (type.equals("Binary"))
-                        return new Binary(valueAsString.get(0));
+                        return new Binary(valueAsString);
 
                     //In any other case we rise an IllegalArgumentException
                     throw new IllegalArgumentException(String.format("The type %s has a wrong mapping and will be ignored", type));
                 case Constants.MAPPING_MANYTOMANY:
-                    List<Long> res = new ArrayList<>();
-                    for (String value : valueAsString)
-                        res.add(Long.valueOf(value));
+                    List<LocalObjectListItem> res = new ArrayList<>();
+                    for (String value : valueAsString.split(","))
+                        res.add(Utils.getListTypeItem(type, Long.valueOf(value)));
                     return res;
                 case Constants.MAPPING_MANYTOONE:
-                    if (valueAsString.isEmpty())
-                        return null;
-                    //return Long.valueOf(valueAsString.get(0));
-                    return Utils.getListTypeItem(type, Long.valueOf(valueAsString.get(0)));
+                    return Utils.getListTypeItem(type, Long.valueOf(valueAsString));
                 default:
                     throw new Exception();
             }
@@ -240,32 +235,31 @@ public class Utils {
     
     /**
      * Gets the bytes from a file
-     * @param f File object
-     * @param format format to be read
-     * @return The byte array
+     * @param theFile File object
+     * @return The file as a byte array
+     * @throws java.io.IOException If there was a problem reading the file
      */
-    public static byte[] getByteArrayFromFile(File f) throws IOException {
-        InputStream is = new FileInputStream(f);
-        long length = f.length();
+    public static byte[] getByteArrayFromFile(File theFile) throws IOException {
         byte[] bytes;
-        if (length < Integer.MAX_VALUE) { //checks if the file is too big
-            bytes = new byte[(int)length];
-            // Read in the bytes
-            int offset = 0;
-            int numRead = 0;
-            while (offset < bytes.length
-                   && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
-                offset += numRead;
-            }
-
-            // Ensure all the bytes have been read in
-            if (offset < bytes.length) 
-                throw new IOException("Could not completely read file "+f.getName());
-            
-        }else{
-            throw new IOException("File too big "+f.getName());
+        try (InputStream is = new FileInputStream(theFile)) {
+            long length = theFile.length();
+            if (length < Integer.MAX_VALUE) { //checks if the file is too big
+                bytes = new byte[(int)length];
+                // Read in the bytes
+                int offset = 0;
+                int numRead = 0;
+                while (offset < bytes.length
+                        && (numRead=is.read(bytes, offset, bytes.length-offset)) >= 0) {
+                    offset += numRead;
+                }
+                
+                // Ensure all the bytes have been read in
+                if (offset < bytes.length)
+                    throw new IOException(String.format("The file %s could not be read entirely", theFile.getName()));
+                
+            } else
+                throw new IOException(String.format("The file %s is too big", theFile.getName()));
         }
-        is.close();
         return bytes;
     }
 
@@ -332,21 +326,6 @@ public class Utils {
         if (globalFileChooser == null)
             globalFileChooser = new JFileChooser();
         return globalFileChooser;
-    }
-    
-    /**
-     * This is a utility method that sets an object's property. This is used mainly by property sheets
-     * @param className Object class
-     * @param objectId Object Id
-     * @param propertyName Name of the property to be set
-     * @param propertyValue Value of the property to be set
-     * @throws Exception The same exception captured in the CommunicationsStub
-     */
-    public static void updateObject(String className, long objectId, String propertyName, Object propertyValue) throws Exception {
-        LocalObject theUpdate = new LocalObject(className, objectId, new String [] { propertyName }, new Object [] { propertyValue });
-        
-        if(!CommunicationsStub.getInstance().saveObject(theUpdate))
-            throw new Exception(CommunicationsStub.getInstance().getError());
     }
     
     public static LocalObjectListItem getListTypeItem(String listTypeClass, long listTypeItemId) throws IllegalAccessException {

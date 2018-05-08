@@ -24,24 +24,18 @@ import org.inventory.communications.wsclient.StringPair;
  * associated to a customer.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class LocalContact extends LocalContactLight {
+public class LocalContact extends LocalObject {
     /**
-     * Contact attributes
+     * The company (customer) this contact belongs to
      */
-    private List<StringPair> properties;
+    private LocalObjectLight customer;
 
-    public LocalContact(long id, String name, String className, LocalObjectLight customer, List<StringPair> properties) {
-        super(className, id, name, customer);
-        this.properties = properties;
+    public LocalContact(String className, long id, List<StringPair> attributes, LocalClassMetadata classMetadata, LocalObjectLight customer) throws IllegalArgumentException {
+        super(className, id, attributes, classMetadata);
+        this.customer = customer;
     }
 
-    public List<StringPair> getProperties() {
-        return properties;
+    public LocalObjectLight getCustomer() {
+        return customer;
     }
-
-    public void setProperties(List<StringPair> properties) {
-        this.properties = properties;
-    }
-    
-    
 }

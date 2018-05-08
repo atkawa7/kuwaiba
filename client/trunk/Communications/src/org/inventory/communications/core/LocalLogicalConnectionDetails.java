@@ -47,7 +47,7 @@ public class LocalLogicalConnectionDetails {
     private List<LocalObjectLight> physicalPathForEndpointB;
 
     public LocalLogicalConnectionDetails(RemoteLogicalConnectionDetails remoteCircuitDetails) {
-        this.connectionObject = LocalObject.toLocalObject(remoteCircuitDetails.getConnectionObject());
+        //this.connectionObject = LocalObject.toLocalObject(remoteCircuitDetails.getConnectionObject());
         this.endpointA =  new LocalObjectLight(remoteCircuitDetails.getEndpointA().getOid(), remoteCircuitDetails.getEndpointA().getName(), remoteCircuitDetails.getEndpointA().getClassName());
         this.endpointB = new LocalObjectLight(remoteCircuitDetails.getEndpointB().getOid(), remoteCircuitDetails.getEndpointB().getName(), remoteCircuitDetails.getEndpointB().getClassName());
         this.physicalPathForEndpointA = new ArrayList<>();
