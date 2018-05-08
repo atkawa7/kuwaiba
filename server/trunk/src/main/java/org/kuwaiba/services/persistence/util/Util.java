@@ -540,15 +540,19 @@ public class Util {
 
             String relationshipName = (String)relationship.getProperty(Constants.PROPERTY_NAME);              
             
+            boolean hasRelationship = false;
             for (AttributeMetadata myAtt : myClass.getAttributes()) {
                 if (myAtt.getName().equals(relationshipName)) {
                     attributes.put(relationshipName, String.valueOf(relationship.getEndNode().getId()));
+                    hasRelationship = true;
                     break;
-                }
-                                   
-                throw new InvalidArgumentException(String.format("The object with id %s is related to list type %s (%s), but that is not consistent with the data model", 
-                        instance.getId(), relationship.getEndNode().getProperty(Constants.PROPERTY_NAME), relationship.getEndNode().getId()));
+                }                  
             }
+            
+            if (!hasRelationship) //This verification will help us find potential inconsistencies with list types
+                                  //What this does is to verify if is there is a RELATED_TO relationship that shouldn't exist because its name is not an attribute of the class
+                throw new InvalidArgumentException(String.format("The object with %s (%s) is related to list type %s (%s), but that is not consistent with the data model", 
+                            instance.getProperty(Constants.PROPERTY_NAME), instance.getId(), relationship.getEndNode().getProperty(Constants.PROPERTY_NAME), relationship.getEndNode().getId()));
         }
         BusinessObject res = new BusinessObject(myClass.getName(), instance.getId(), name, attributes);
 
