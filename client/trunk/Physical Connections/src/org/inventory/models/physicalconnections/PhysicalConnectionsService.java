@@ -39,29 +39,29 @@ public class PhysicalConnectionsService {
         for (LocalObjectLight element : trace){
             if (!com.isSubclassOf(element.getClassName(), Constants.CLASS_GENERICPHYSICALLINK)) { //It's a port
                 List<LocalObjectLight> ancestors = com.getParents(element.getClassName(), element.getOid());
-                
-                lastPortWidget = (ObjectBoxWidget)scene.addNode(element);
-                
-                if (lastConnectionWidget != null)
-                    lastConnectionWidget.setTargetAnchor(AnchorFactory.createCenterAnchor(lastPortWidget));
-                lastConnectionWidget = null;
-                Widget lastWidget = lastPortWidget;
-                
-                for (int i = 0 ; i < ancestors.size() - 1; i++) { //We ignore the dummy root
-                    Widget possibleParent = scene.findWidget(ancestors.get(i));
-                    if (possibleParent == null){
-                        Widget node = scene.addNode(ancestors.get(i));
-                        ((ObjectBoxWidget)node).addBox(lastWidget);
-                        lastWidget = node;
-                    }else{
-                        ((ObjectBoxWidget)possibleParent).addBox(lastWidget);
-                        break;
-                    }
-                    if (com.getMetaForClass(ancestors.get(i).getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_NODE) == 1 || //Only parents up to the first physical node (say a building) will be displayed
-                                            i == ancestors.size() - 2){ //Or if the next level is the dummy root
-                        scene.addRootWidget(lastWidget);
-                        scene.validate();
-                        break;
+                if(scene.findWidget(element) == null){//we should search if the physical parent port its already in the scene
+                    lastPortWidget = (ObjectBoxWidget)scene.addNode(element);
+                    if (lastConnectionWidget != null)
+                        lastConnectionWidget.setTargetAnchor(AnchorFactory.createCenterAnchor(lastPortWidget));
+                    lastConnectionWidget = null;
+                    Widget lastWidget = lastPortWidget;
+
+                    for (int i = 0 ; i < ancestors.size() - 1; i++) { //We ignore the dummy root
+                        Widget possibleParent = scene.findWidget(ancestors.get(i));
+                        if (possibleParent == null){
+                            Widget node = scene.addNode(ancestors.get(i));
+                            ((ObjectBoxWidget)node).addBox(lastWidget);
+                            lastWidget = node;
+                        }else{
+                            ((ObjectBoxWidget)possibleParent).addBox(lastWidget);
+                            break;
+                        }
+                        if (com.getMetaForClass(ancestors.get(i).getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_NODE) == 1 || //Only parents up to the first physical node (say a building) will be displayed
+                                                i == ancestors.size() - 2){ //Or if the next level is the dummy root
+                            scene.addRootWidget(lastWidget);
+                            scene.validate();
+                            break;
+                        }
                     }
                 }
             }else{

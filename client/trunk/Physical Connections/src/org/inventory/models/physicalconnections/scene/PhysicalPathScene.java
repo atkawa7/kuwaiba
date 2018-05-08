@@ -34,7 +34,7 @@ import org.netbeans.api.visual.widget.Widget;
  * Service class for this module
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class PhysicalPathScene  extends AbstractScene <LocalObjectLight, LocalObjectLight>{
+public class PhysicalPathScene extends AbstractScene <LocalObjectLight, LocalObjectLight>{
     public static final int X_OFFSET = 50;
     private Router router;
 
