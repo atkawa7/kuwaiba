@@ -18,6 +18,7 @@ package org.inventory.core.visual.scene;
 
 import java.awt.BasicStroke;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.visual.decorators.DotLineStroke;
 import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.Scene;
 
@@ -35,6 +36,9 @@ public class ObjectConnectionWidget extends SelectableConnectionWidget {
         super(scene, object);
         createActions(AbstractScene.ACTION_SELECT);
         highContrast = false;
+        if(object.getClassName().equals("RadioLink"))
+            this.setStroke(new DotLineStroke(1));
+        
     }
     
     public void setHighContrast(boolean highContrast) {
@@ -52,20 +56,19 @@ public class ObjectConnectionWidget extends SelectableConnectionWidget {
     public void notifyStateChanged (ObjectState previousState, ObjectState state) {
         super.notifyStateChanged(previousState, state);
 
-        if (state.isSelected()) 
-            setStroke(new BasicStroke(3));
+        if (state.isSelected())
+            setStroke((getStroke() instanceof DotLineStroke) ? new DotLineStroke(3) : new BasicStroke(3));
         else if (previousState.isSelected())
-            setStroke(new BasicStroke(1));
+            setStroke((getStroke() instanceof DotLineStroke) ? new DotLineStroke(1) : new BasicStroke(1));
         
         if (!highContrast) {
             labelWidget.setForeground (getScene().getLookFeel().getForeground (state));
             labelWidget.setBackground(getScene().getLookFeel().getBackground(state));
             labelWidget.setBorder(getScene().getLookFeel().getBorder (state));
-            
         } else {
             labelWidget.setForeground (HighContrastLookAndFeel.getInstance().getForeground (state));
             labelWidget.setBackground(HighContrastLookAndFeel.getInstance().getBackground(state));
             labelWidget.setBorder(HighContrastLookAndFeel.getInstance().getBorder (state));
         }
-    }
+    }    
 }
