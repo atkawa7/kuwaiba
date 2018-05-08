@@ -15,8 +15,6 @@
  */
 package org.kuwaiba.apis.web.gui.wrappers;
 
-import org.kuwaiba.apis.web.gui.util.Utils;
-
 
 /**
  * Represents the metadata associated to a single attribute
@@ -45,7 +43,7 @@ public class LocalAttributeMetadata {
             boolean isVisible, Integer mapping, String description) {
         this.id = oid;
         this.name = name;
-        this.type = Utils.getRealType(type);
+        //this.type = Utils.getRealType(type); <-- This whole class is redundant! Remove it from here
         this.displayName = displayName;
         this.isVisible = isVisible;
         this.mapping = mapping;

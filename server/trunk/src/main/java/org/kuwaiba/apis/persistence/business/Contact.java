@@ -15,33 +15,25 @@
  */
 package org.kuwaiba.apis.persistence.business;
 
-import java.util.List;
-import org.kuwaiba.apis.persistence.util.StringPair;
-
-
 /**
  * Represents a contact in the inventory address book. Contacts (technical, commercial and executive) are always 
  * associated to a customer.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class Contact extends ContactLight {
-    /**
-     * Contact attributes
-     */
-    private List<StringPair> properties;
-
-    public Contact(long id, String name, String className, BusinessObjectLight customer, List<StringPair> properties) {
-        super(id, name, className, customer);
-        this.properties = properties;
-    }
-
-    public List<StringPair> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(List<StringPair> properties) {
-        this.properties = properties;
-    }
+public class Contact extends BusinessObject {
     
-    
+    private BusinessObjectLight customer;
+
+    public Contact(BusinessObject contactInformation, BusinessObjectLight customer) {
+        super(contactInformation.getClassName(), contactInformation.getId(), contactInformation.getName(), contactInformation.getAttributes());
+        this.customer = customer;
+    }
+
+    public BusinessObjectLight getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(BusinessObjectLight customer) {
+        this.customer = customer;
+    }
 }

@@ -88,20 +88,20 @@ public class DefaultReports {
         List<BusinessObjectLight> parents = bem.getParents(theRack.getClassName(), theRack.getId());
         String location = Util.formatLocation(parents);
 
-        totalRackUnits = theRack.getAttributes().get("rackUnits") == null ? 0 : Integer.valueOf(theRack.getAttributes().get("rackUnits").get(0));
+        totalRackUnits = theRack.getAttributes().get("rackUnits") == null ? 0 : Integer.valueOf(theRack.getAttributes().get("rackUnits"));
 
         if (!result.get("rackable").getList().isEmpty()) {
             equipmentList += "<table><tr><th>Name</th><th>Serial Number</th><th>Rack Units</th><th>Operational State</th></tr>\n";
             int i = 0;
             for (BusinessObject leaf : result.get("rackable").getList()) { //This row should contain the equipment
-                usedRackUnits += leaf.getAttributes().get("rackUnits") == null ? 0 : Integer.valueOf(leaf.getAttributes().get("rackUnits").get(0));
+                usedRackUnits += leaf.getAttributes().get("rackUnits") == null ? 0 : Integer.valueOf(leaf.getAttributes().get("rackUnits"));
 
                 String operationalState = leaf.getAttributes().get("state") == null ? "<span class=\"error\">Not Set</span>" : 
-                        bem.getObjectLight("OperationalState", Long.valueOf(leaf.getAttributes().get("state").get(0))).getName();
+                        bem.getObjectLight("OperationalState", Long.valueOf(leaf.getAttributes().get("state"))).getName();
 
                 equipmentList += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") + "\"><td>" + leaf + "</td>"
-                        + "<td>" + (leaf.getAttributes().get("serialNumber") == null ? "<span class=\"error\">Not Set</span>" : leaf.getAttributes().get("serialNumber").get(0)) + "</td>"
-                        + "<td>" + (leaf.getAttributes().get("rackUnits") == null ? "<span class=\"error\">Not Set</span>" : leaf.getAttributes().get("rackUnits").get(0)) + "</td>"
+                        + "<td>" + (leaf.getAttributes().get("serialNumber") == null ? "<span class=\"error\">Not Set</span>" : leaf.getAttributes().get("serialNumber")) + "</td>"
+                        + "<td>" + (leaf.getAttributes().get("rackUnits") == null ? "<span class=\"error\">Not Set</span>" : leaf.getAttributes().get("rackUnits")) + "</td>"
                         + "<td>" + operationalState + "</td></tr>";
                 i++;
             }
@@ -121,7 +121,7 @@ public class DefaultReports {
         //General Info
         rackInfo += "<table>" +
             "<tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\">" + theRack.getName() + "</td></tr>\n" +
-            "<tr><td class=\"generalInfoLabel\">Serial Number</td><td class=\"generalInfoValue\">" + (theRack.getAttributes().get("serialNumber") == null ? "<span class=\"error\">Not Set</span>" : theRack.getAttributes().get("serialNumber").get(0)) + "</td></tr>\n" +
+            "<tr><td class=\"generalInfoLabel\">Serial Number</td><td class=\"generalInfoValue\">" + (theRack.getAttributes().get("serialNumber") == null ? "<span class=\"error\">Not Set</span>" : theRack.getAttributes().get("serialNumber")) + "</td></tr>\n" +
             "<tr><td class=\"generalInfoLabel\">Location</td><td class=\"generalInfoValue\">" + location  + "</td></tr>\n" +
             "<tr><td class=\"generalInfoLabel\">Total Rack Units</td><td class=\"generalInfoValue\">" + (totalRackUnits == 0 ? "<span class=\"error\">Not Set</span>" : totalRackUnits)  + "</td></tr>\n" +
             "<tr><td class=\"generalInfoLabel\">Used Rack Units</td><td class=\"generalInfoValue\">" + usedRackUnits + "</td></tr>\n" +
@@ -479,10 +479,10 @@ public class DefaultReports {
                 networkEquipmentInLocationReportText += "<tr class=\"" + (i % 2 == 0 ? "even" :"odd") + "\">"
                                                             + "<td>" + networkEquipment.getName() + "</td>"
                                                             + "<td>" + networkEquipment.getClassName() + "</td>"
-                                                            + "<td>" + (networkEquipment.getAttributes().get("serialNumber") == null ? asError("Not Set") : networkEquipment.getAttributes().get("serialNumber").get(0)) + "</td>"
+                                                            + "<td>" + (networkEquipment.getAttributes().get("serialNumber") == null ? asError("Not Set") : networkEquipment.getAttributes().get("serialNumber")) + "</td>"
                                                             + "<td>" + Util.formatLocation(bem.getParents(networkEquipment.getClassName(), networkEquipment.getId())) + "</td>"
-                                                            + "<td>" + (networkEquipment.getAttributes().get("vendor") == null ? asError("Not Set") : bem.getObjectLight("EquipmentVendor", Long.valueOf(networkEquipment.getAttributes().get("vendor").get(0))).getName() ) + "</td>"
-                                                            + "<td>" + (networkEquipment.getAttributes().get("state") == null ? asError("Not Set") : bem.getObjectLight("OperationalState", Long.valueOf(networkEquipment.getAttributes().get("state").get(0))).getName() ) + "</td></tr>";
+                                                            + "<td>" + (networkEquipment.getAttributes().get("vendor") == null ? asError("Not Set") : bem.getObjectLight("EquipmentVendor", Long.valueOf(networkEquipment.getAttributes().get("vendor"))).getName() ) + "</td>"
+                                                            + "<td>" + (networkEquipment.getAttributes().get("state") == null ? asError("Not Set") : bem.getObjectLight("OperationalState", Long.valueOf(networkEquipment.getAttributes().get("state"))).getName() ) + "</td></tr>";
                 i ++;
             }
             networkEquipmentInLocationReportText += "</table>";
@@ -528,8 +528,8 @@ public class DefaultReports {
     
         BusinessObject subnet = bem.getObject(className, subnetId);
         List<BusinessObjectLight> subnetChildren = bem.getObjectSpecialChildren(className, subnetId);
-        HashMap<String, List<String>> subnetAttributes = subnet.getAttributes();
-        int hosts = Integer.parseInt(subnetAttributes.get("hosts").get(0));
+        HashMap<String, String> subnetAttributes = subnet.getAttributes();
+        int hosts = Integer.parseInt(subnetAttributes.get("hosts"));
         
         
         int usedIps = 0;
@@ -590,10 +590,10 @@ public class DefaultReports {
             
             subnetUsageReportText += pieChartScript(usedIps, freeIps);
 
-            subnetUsageReportText += "<table><tr><td class=\"generalInfoLabel\">Network IP Addres</td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("networkIp").get(0) + "</b></td>"
+            subnetUsageReportText += "<table><tr><td class=\"generalInfoLabel\">Network IP Addres</td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("networkIp") + "</b></td>"
                     + "<td rowspan=\"8\"><div id=\"piechart\" style=\"width: 350px; height: 250px;\"></div></td></tr>"
-                    + "<tr><td class=\"generalInfoLabel\">Broadcast IP Address</td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("broadcastIp").get(0) + "</b> </td></tr>"
-                    + "<tr><td class=\"generalInfoLabel\">Description </td><td class=\"generalInfoValue\">" + subnetAttributes.get("description").get(0) + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Broadcast IP Address</td><td class=\"generalInfoValue\"><b>" + subnetAttributes.get("broadcastIp") + "</b> </td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Description </td><td class=\"generalInfoValue\">" + subnetAttributes.get("description") + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Number of hosts</td><td class=\"generalInfoValue\">" + hosts + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">IPs Related to some port</td><td class=\"generalInfoValue\"><b>" + (usedIps*100)/hosts + "%</b> ("+ usedIps +")</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Free IPs</td><td class=\"generalInfoValue\"><b>" + (freeIps*100)/hosts +"%</b> ("+ freeIps +")</td></tr>"
@@ -619,10 +619,10 @@ public class DefaultReports {
                     service = subnetServices.get(0).getName() + "[" +  subnetServices.get(0).getClassName() + "]";
                 
                 BusinessObject subnetO = bem.getObject(className, nestedSubnet.getId());
-                HashMap<String, List<String>> attributes = subnetO.getAttributes();
+                HashMap<String, String> attributes = subnetO.getAttributes();
                 
                 nestedSubnets += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + nestedSubnet.getName() + "</td>"
-                              + "<td>" + attributes.get("description").get(0) +"</td>"
+                              + "<td>" + attributes.get("description") +"</td>"
                               + "<td>" + service +"</td></tr>";
                 i ++;
             }
@@ -654,10 +654,10 @@ public class DefaultReports {
                     service = ipServices.get(0).getName() + "[" +  ipServices.get(0).getClassName() + "]";
                 
                 BusinessObject ipO = bem.getObject(Constants.CLASS_IP_ADDRESS, ip.getId());
-                HashMap<String, List<String>> attributes = ipO.getAttributes();
+                HashMap<String, String> attributes = ipO.getAttributes();
                 
                 ipAddresses += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + ip.getName() + "</td>"
-                              + "<td>" + attributes.get("description").get(0) +"</td>"
+                              + "<td>" + attributes.get("description") +"</td>"
                               + "<td>" + device +"</td>"
                               + "<td>" + location +"</td>"
                               + "<td>" + service +"</td></tr>";
@@ -692,7 +692,7 @@ public class DefaultReports {
             for (BusinessObjectLight aContract : contracts) {
                 BusinessObject fullContractInfo = bem.getObject(aContract.getClassName(), aContract.getId());
                 Date startDate =  fullContractInfo.getAttributes().get("startDate") == null ? 
-                        null : new Date(Long.valueOf(fullContractInfo.getAttributes().get("startDate").get(0)));
+                        null : new Date(Long.valueOf(fullContractInfo.getAttributes().get("startDate")));
                 
                 String startDateString;
                 
@@ -703,7 +703,7 @@ public class DefaultReports {
                                 
                 String expirationDateString;
                 Date expirationDate =  fullContractInfo.getAttributes().get("expirationDate") == null ? 
-                        null : new Date(Long.valueOf(fullContractInfo.getAttributes().get("expirationDate").get(0)));
+                        null : new Date(Long.valueOf(fullContractInfo.getAttributes().get("expirationDate")));
                 
                 if (expirationDate == null)
                     expirationDateString = asError("Not Set");
@@ -738,15 +738,14 @@ public class DefaultReports {
                 String providerPhoneNumber = asError("Not Set");
                 String providerEmail = asError("Not Set");
                 
-                List<String> serviceProviderId = fullContractInfo.getAttributes().get("serviceProvider");
-                if (serviceProviderId != null) {
-                    BusinessObject serviceProvider = bem.getObject(Constants.CLASS_SERVICEPROVIDER, Long.valueOf(serviceProviderId.get(0)));
+                if (fullContractInfo.getAttributes().containsKey("serviceProvider")) {
+                    BusinessObject serviceProvider = bem.getObject(Constants.CLASS_SERVICEPROVIDER, Long.valueOf(fullContractInfo.getAttributes().get("serviceProvider")));
                     if (!serviceProvider.getName().isEmpty())
                         providerName = serviceProvider.getName();
                     if (serviceProvider.getAttributes().get(Constants.PROPERTY_SUPPORT_PHONE_NUMBER) != null)
-                        providerPhoneNumber = serviceProvider.getAttributes().get(Constants.PROPERTY_SUPPORT_PHONE_NUMBER).get(0);
+                        providerPhoneNumber = serviceProvider.getAttributes().get(Constants.PROPERTY_SUPPORT_PHONE_NUMBER);
                     if (serviceProvider.getAttributes().get(Constants.PROPERTY_SUPPORT_EMAIL) != null)
-                        providerEmail = serviceProvider.getAttributes().get(Constants.PROPERTY_SUPPORT_EMAIL).get(0);
+                        providerEmail = serviceProvider.getAttributes().get(Constants.PROPERTY_SUPPORT_EMAIL);
                 }
                 
                 contractStatusReportText += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") + "\"><td>" + aContract.getName() + "</td>"
@@ -821,7 +820,7 @@ public class DefaultReports {
             InvalidArgumentException, ApplicationObjectNotFoundException, 
             NotAuthorizedException
     {
-        String logicalConfiguration, title, DetailReportText = "", instance = "", vlan = "  "; 
+        String title, DetailReportText = "", instance = "", vlan = "  "; 
         
         title = "Detail Report for all " + logicalConfigurationClassName + " instances";
         DetailReportText = getHeader(title);
@@ -830,10 +829,9 @@ public class DefaultReports {
         List<BusinessObjectLight> listOflogicalConfigurations = bem.getObjectsOfClassLight(logicalConfigurationClassName, 0);
         
         for (BusinessObjectLight listOflogicalConfiguration : listOflogicalConfigurations) {
-            instance = "";
             BusinessObject logicalConfigurationObject = bem.getObject(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId());
             
-            HashMap<String, List<String>> attributes = logicalConfigurationObject.getAttributes();
+            HashMap<String, String> attributes = logicalConfigurationObject.getAttributes();
             List<BusinessObjectLight> ports = bem.getSpecialAttribute(listOflogicalConfiguration.getClassName(), listOflogicalConfiguration.getId(), IPAMModule.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE);
             
             if (ports == null) 
@@ -848,7 +846,7 @@ public class DefaultReports {
                         vlan += vlanInstance.toString() + ", ";  
                     DetailReportText +=  "<tr><td class=\"generalInfoLabel\">VLAN</td><td class=\"generalInfoValue\"><b>" + vlan.substring(0, vlan.length()-2) + "</b> </td></tr>";
                 }
-                DetailReportText +=  "<tr><td class=\"generalInfoLabel\">Creation date</td><td class=\"generalInfoValue\"><b>" + new Date(Long.valueOf(attributes.get("creationDate").get(0))) + "</b> </td></tr></table>";
+                DetailReportText +=  "<tr><td class=\"generalInfoLabel\">Creation date</td><td class=\"generalInfoValue\"><b>" + new Date(Long.valueOf(attributes.get("creationDate"))) + "</b> </td></tr></table>";
             }
 
             if (ports.isEmpty())
@@ -858,13 +856,10 @@ public class DefaultReports {
 
                 int i = 0;
                 for (BusinessObjectLight relatedPort : ports) {
-                    String device = "";
-                    logicalConfiguration = "";
                     List<BusinessObjectLight> ipAddresses = bem.getSpecialAttribute(relatedPort.getClassName(), relatedPort.getId(), IPAMModule.RELATIONSHIP_IPAMHASADDRESS);
                     BusinessObject port = bem.getObject(relatedPort.getClassName(), relatedPort.getId());
                     String location = "";
-                    if(port != null){
-                        device = port.getName() + " [" + port.getClassName()+"]";
+                    if(port != null) {
                         List<BusinessObjectLight> parents = bem.getParents(port.getClassName(), port.getId());
                         location =  Util.formatLocation(parents);
                     }
@@ -899,12 +894,8 @@ public class DefaultReports {
             InvalidArgumentException, ApplicationObjectNotFoundException, 
             NotAuthorizedException
     {
+        String title, ServiceDetailReportText;
         BusinessObject theService = bem.getObject(serviceClassName, serviceId);
-        
-        List<BusinessObjectLight> serviceInstances = bem.getSpecialAttribute(serviceClassName, serviceId, "uses");
-        HashMap<String, List<String>> serviceAttributes = theService.getAttributes();
-        Set<AttributeMetadata> serviceClassAttributes = mem.getClass(serviceClassName).getAttributes();
-        String service="", title, ServiceDetailReportText;
         
         if (theService == null) {
             title = "Error";
@@ -912,13 +903,14 @@ public class DefaultReports {
             ServiceDetailReportText += "<div class=\"error\">No information about this service could be found</div>";
         }
         else {
-            title = "Service detail Report for " + theService.getName() + "[" + theService.getClassName() + "]";
+            HashMap<String, String> serviceAttributes = theService.getAttributes();
+            Set<AttributeMetadata> serviceClassAttributes = mem.getClass(serviceClassName).getAttributes();
+            title = "Service detail Report for " + theService;
             ServiceDetailReportText = getHeader(title);
             ServiceDetailReportText += "<body>"
                     + "<table><tr><td><h2>" + title +"</h2></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
 
             ServiceDetailReportText += "<table>";
-            String value = "";
             List<BusinessObjectLight> parents = bem.getParents(serviceClassName, serviceId);
             
             BusinessObject serviceCustomer = null;
@@ -930,7 +922,7 @@ public class DefaultReports {
                 }
             }
             
-            HashMap<String, List<String>> customerAttributes = serviceCustomer.getAttributes();
+            HashMap<String, String> customerAttributes = serviceCustomer.getAttributes();
             ClassMetadata customerClass = mem.getClass(serviceCustomer.getClassName());
             Set<AttributeMetadata> customerClassAttributes = customerClass.getAttributes();
             
@@ -942,29 +934,28 @@ public class DefaultReports {
             ServiceDetailReportText += "</table>";
 
         }
-            String instance; 
+        
+        List<BusinessObjectLight> serviceInstances = bem.getSpecialAttribute(serviceClassName, serviceId, "uses");
+        String instance; 
 
-            if (serviceInstances.isEmpty())
-                instance = "<div class=\"error\">There are no instances asossiate to this service</div>";
-            else {
-                instance = "<table><tr><th>Related Instances</th><th>Location</th></tr>";
+        if (serviceInstances.isEmpty())
+            instance = "<div class=\"error\">There are no service instances associated to this service</div>";
+        else {
+            instance = "<table><tr><th>Related Instances</th><th>Location</th></tr>";
 
             int i = 0;
             for (BusinessObjectLight serviceInstance : serviceInstances) {
-                String objectName = "";
-                service = "";
-                
+
                 BusinessObject inventoryObject = bem.getObject(serviceInstance.getClassName(), serviceInstance.getId());
                 String location = "";
-                if(inventoryObject != null){
-                    objectName = inventoryObject.getName() + " [" + inventoryObject.getClassName()+"]";
+                if(inventoryObject != null) {
                     List<BusinessObjectLight> parents = bem.getParents(inventoryObject.getClassName(), inventoryObject.getId());
                     location = Util.formatLocation(parents);
                 }
-                
-                instance += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + serviceInstance.getName() + " [" + serviceInstance.getClassName()+"] </td>"
+
+                instance += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + serviceInstance + "</td>"
                               + "<td>" + location +"</td>";
-                              
+
                 i ++;
             }
             instance += "</table>";
@@ -1119,24 +1110,26 @@ public class DefaultReports {
             return String.format("%s [%s - %s - %s]", position, k, l, m);
         }
     
-    private String createAttributesOfClass(HashMap<String, List<String>> attributes, Set<AttributeMetadata> classAttributes) 
+    private String createAttributesOfClass(HashMap<String, String> attributes, Set<AttributeMetadata> classAttributes) 
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, 
             InvalidArgumentException, ApplicationObjectNotFoundException, 
-            NotAuthorizedException
-    {
-        String ServiceDetailReportText = "", value = "";
+            NotAuthorizedException {
+        String ServiceDetailReportText = "";
         for (AttributeMetadata a : classAttributes) {
-            List<String> values = attributes.get(a.getName());
-                
-            if(values != null){
-                if(!AttributeMetadata.isPrimitive(a.getType()))
-                    value = bem.getObject(a.getType(), Long.valueOf(values.get(0))).getName();
+            String valueAsString = attributes.get(a.getName());
+            String valueToPrint = "";
+            if(valueAsString != null){
+                if(!AttributeMetadata.isPrimitive(a.getType())) //It's a list type
+                    valueToPrint = aem.getListTypeItem(a.getType(), Long.valueOf(valueAsString)).toString();
                 else if(a.getType().equals("Date"))
-                    value = new Date(Long.valueOf(values.get(0))).toString();
+                    valueToPrint = new Date(Long.valueOf(valueAsString)).toString();
                 else 
-                    value = values.get(0);
-                ServiceDetailReportText += "<tr><td class=\"generalInfoLabel\"><b></b>"+a.getName()+"</b></td><td class=\"generalInfoValue\"><b>" + value + "</b></td></tr>";
+                    valueToPrint = valueAsString;
+                
             }
+            
+            ServiceDetailReportText += "<tr><td class=\"generalInfoLabel\"><b></b>" + a.getName() + 
+                    "</b></td><td class=\"generalInfoValue\"><b>" + valueToPrint + "</b></td></tr>";
         }
         return ServiceDetailReportText;
     }

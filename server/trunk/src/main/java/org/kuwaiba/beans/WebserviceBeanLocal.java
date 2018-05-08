@@ -37,7 +37,6 @@ import org.kuwaiba.interfaces.ws.toserialize.application.PrivilegeInfo;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBackgroundJob;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBusinessRule;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContact;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContactLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFavoritesFolder;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObjectLight;
@@ -187,7 +186,7 @@ public interface WebserviceBeanLocal {
     public RemoteObjectSpecialRelationships getSpecialAttributes(String objectClass, long oid, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLight> getObjectSpecialChildren(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
 
-    public void updateObject(String className, long oid, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
+    public void updateObject(String className, long oid, List<StringPair> attributesToBeUpdated, String ipAddress, String sessionId) throws ServerSideException;
 
     public long createObject(String className, String parentClassName, long parentOid, String[] attributeNames, String[] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
     public long createSpecialObject(String className, String parentObjectClassName, long parentOid, String[] attributeNames, String[] attributeValues, long templateId, String ipAddress, String sessionId) throws ServerSideException;
@@ -399,8 +398,8 @@ public interface WebserviceBeanLocal {
     public void updateContact(String contactClass, long contactId, List<StringPair> properties, String ipAddress, String sessionId) throws  ServerSideException;
     public void deleteContact(String contactClass, long contactId, String ipAddress, String sessionId) throws  ServerSideException;
     public RemoteContact getContact(String contactClass, long contactId, String ipAddress, String sessionId) throws  ServerSideException;
-    public List<RemoteContactLight> searchForContacts(String searchString, int maxResults, String ipAddress, String sessionId) throws  ServerSideException;
-    public List<RemoteContactLight> getContactsForCustomer(String customerClass, long customerId, String ipAddress, String sessionId) throws  ServerSideException;
+    public List<RemoteContact> searchForContacts(String searchString, int maxResults, String ipAddress, String sessionId) throws  ServerSideException;
+    public List<RemoteContact> getContactsForCustomer(String customerClass, long customerId, String ipAddress, String sessionId) throws  ServerSideException;
     
     // </editor-fold>
     
@@ -532,12 +531,10 @@ public interface WebserviceBeanLocal {
         public long createSubnetPool(long parentId, String subnetPoolName, 
                 String subnetPoolDescription, String className, String ipAddress, 
                 String sessionId) throws ServerSideException;
-        public long createSubnet(long poolId, String className, String attributeNames[], 
-            String attributeValues[], String ipAddress, String sessionId) throws ServerSideException;
+        public long createSubnet(long poolId, String className, List<StringPair> attributes, String ipAddress, String sessionId) throws ServerSideException;
         public void deleteSubnets(String className, List<Long> ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
         public void deleteSubnetPools(long[] ids, String ipAddress, String sessionId) throws ServerSideException;
-        public long addIP(long id, String parentClassName, String attributeNames[], 
-            String attributeValues[], String ipAddress, String sessionId) throws ServerSideException;
+        public long addIPAddress(long id, String parentClassName, List<StringPair> attributesToBeUpdated, String ipAddress, String sessionId) throws ServerSideException;
         public void removeIP(long[] ids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
         public void relateIPtoPort(long id, String deviceClassName, long deviceId, String ipAddress, String sessionId) throws ServerSideException;
         public void relateSubnetToVlan(long id, String className, long vlanId, String ipAddress, String sessionId) throws ServerSideException;

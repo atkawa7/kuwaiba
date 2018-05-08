@@ -181,7 +181,8 @@ public class SyncAction {
         long deviceId = Long.valueOf(device.getString("deviceId"));
         String deviceClassName = device.getString("deviceClassName");
         JsonObject jsonAttributes = device.getJsonObject("attributes");
-        String name = "";
+        
+        String name;
         if(jsonAttributes.get("name") != null)
            attributes.put("name", jsonAttributes.getString("name"));
         if(jsonAttributes.get("description") != null)
@@ -196,7 +197,7 @@ public class SyncAction {
             try{
                 bem.updateObject(deviceClassName, deviceId, attributes);
                 if(attributes.get("name") == null)
-                    name = bem.getObject(deviceId).getAttributes().get("name").get(0);
+                    name = bem.getObject(deviceId).getAttributes().get("name");
                 else
                     name = attributes.get("name");
                 results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_UPDATED, name, deviceClassName, Long.toString(deviceId)), ACTION_UPDATED));

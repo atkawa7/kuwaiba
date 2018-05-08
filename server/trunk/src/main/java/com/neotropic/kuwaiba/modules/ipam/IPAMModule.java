@@ -325,7 +325,7 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws BusinessObjectNotFoundException Thrown if the parent(the subnet) id is not found
      * @throws OperationNotPermittedException If the update can't be performed due to a format issue
      */
-    public long addIP(long parentSubnetId, String parentSubnetClassName, HashMap<String, String> ipAttributes) 
+    public long addIPAddress(long parentSubnetId, String parentSubnetClassName, HashMap<String, String> ipAttributes) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException, 
             ArraySizeMismatchException, NotAuthorizedException, MetadataObjectNotFoundException, 
             BusinessObjectNotFoundException, OperationNotPermittedException

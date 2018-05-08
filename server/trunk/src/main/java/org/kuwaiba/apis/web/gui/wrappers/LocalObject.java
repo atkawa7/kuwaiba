@@ -17,7 +17,6 @@ package org.kuwaiba.apis.web.gui.wrappers;
 
 import java.util.HashMap;
 import java.util.List;
-import org.kuwaiba.apis.web.gui.util.Utils;
 import org.kuwaiba.services.persistence.util.Constants;
 
 /**
@@ -57,12 +56,12 @@ public class LocalObject extends LocalObjectLight {
         attributes = new HashMap<>();
         
         int i = 0;
-        for (String attribute : attributeNames){
-            attributes.put(attribute,
-                    Utils.getRealValue(lcmdt.getTypeForAttribute(attribute), 
-                    lcmdt.getMappingForAttribute(attribute), attributeValues.get(i)));
-            i++;
-        }
+//        for (String attribute : attributeNames){
+//            attributes.put(attribute,
+//                    Utils.getRealValue(lcmdt.getTypeForAttribute(attribute), 
+//                    lcmdt.getMappingForAttribute(attribute), attributeValues.get(i)));
+//            i++;
+//        }
     }
 
     public LocalClassMetadata getObjectMetadata() {

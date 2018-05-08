@@ -798,15 +798,17 @@ public interface BusinessEntityManager {
      * @return The list of contacts
      * @throws BusinessObjectNotFoundException If the customer could not be found
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the customer class could not be found
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If an error occurs while building the contact objects
      */
-    public List<ContactLight> getContactsForCustomer(String customerClass, long customerId) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException;
+    public List<Contact> getContactsForCustomer(String customerClass, long customerId) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
     /**
      * Searches in all the properties of a contact for a given string
      * @param searchString The string to be matched
      * @param maxResults The max number of results. Use -1 to retrieve al results
      * @return The list of contacts that matches the search criteria
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If an error occurs while building the contact objects
      */
-    public List<ContactLight> searchForContacts(String searchString, int maxResults);
+    public List<Contact> searchForContacts(String searchString, int maxResults) throws InvalidArgumentException;
     
     /**
      * Reporting API. Reports are actually Application Objects, however, the BEM has many utility methods that can be used in the scripts to query for inventory objects

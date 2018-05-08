@@ -506,7 +506,7 @@ public class Util {
      */
     public static BusinessObject createRemoteObjectFromNode(Node instance, ClassMetadata myClass) throws InvalidArgumentException {
         
-        HashMap<String, List<String>> attributes = new HashMap<>();
+        HashMap<String, String> attributes = new HashMap<>();
         String name = "";
         
         for (AttributeMetadata myAtt : myClass.getAttributes()){
@@ -520,17 +520,10 @@ public class Util {
                         if (Constants.PROPERTY_NAME.equals(myAtt.getName()))
                             name = value;
                         
-                        List<String> attributeValue = new ArrayList<>();
-                        attributeValue.add(value);
-                        attributes.put(myAtt.getName(),attributeValue);
+                        attributes.put(myAtt.getName(),value);
                     } else if (myAtt.getType().equals("Binary")) {
                         byte [] byteArray = (byte []) instance.getProperty(myAtt.getName());
-                        
-                        String byteArrayAsString = new String(byteArray);
-                        
-                        List<String> attributeValue = new ArrayList();
-                        attributeValue.add(byteArrayAsString);
-                        attributes.put(myAtt.getName(), attributeValue);
+                        attributes.put(myAtt.getName(), new String(byteArray));
                     }
                 }
             }
@@ -545,13 +538,16 @@ public class Util {
             if (!relationship.hasProperty(Constants.PROPERTY_NAME))
                 throw new InvalidArgumentException(String.format("The object with id %s is malformed", instance.getId()));
 
-            String attributeName = (String)relationship.getProperty(Constants.PROPERTY_NAME);
-            for (AttributeMetadata myAtt : myClass.getAttributes()){
-                if (myAtt.getName().equals(attributeName)){
-                    if (attributes.get(attributeName)==null)
-                        attributes.put(attributeName, new ArrayList<>());
-                    attributes.get(attributeName).add(String.valueOf(relationship.getEndNode().getId()));
+            String relationshipName = (String)relationship.getProperty(Constants.PROPERTY_NAME);              
+            
+            for (AttributeMetadata myAtt : myClass.getAttributes()) {
+                if (myAtt.getName().equals(relationshipName)) {
+                    attributes.put(relationshipName, String.valueOf(relationship.getEndNode().getId()));
+                    break;
                 }
+                                   
+                throw new InvalidArgumentException(String.format("The object with id %s is related to list type %s (%s), but that is not consistent with the data model", 
+                        instance.getId(), relationship.getEndNode().getProperty(Constants.PROPERTY_NAME), relationship.getEndNode().getId()));
             }
         }
         BusinessObject res = new BusinessObject(myClass.getName(), instance.getId(), name, attributes);

@@ -1842,7 +1842,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                             Relationship relationship = relationships.next();
                             BusinessObject remoteObject = Util.createRemoteObjectFromNode(relationship.getStartNode());
                             if(remoteObject.getAttributes().get(attributeName) != null)
-                                uniqueAttributeValue = remoteObject.getAttributes().get(attributeName).get(0);
+                                uniqueAttributeValue = remoteObject.getAttributes().get(attributeName);
                             if(values.contains(uniqueAttributeValue))
                                 return false;
                             else{
@@ -1887,7 +1887,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                             if(remoteObject.getAttributes().get(attribute.getName()) != null)
                                 cm.putUniqueAttributeValueIndex(subClassMetadata.getName(), 
                                         attribute.getName(), 
-                                        remoteObject.getAttributes().get(attribute.getName()).get(0));
+                                        remoteObject.getAttributes().get(attribute.getName()));
                         }
                     }
                 }

@@ -158,7 +158,7 @@ public class Patch09EquipmentModel extends GenericPatch {
                 return result;
             }
             if (object.getAttributes().containsKey("model")) { //NOI18N
-                String currentModel = object.getAttributes().get("model").get(0); //NOI18N
+                String currentModel = object.getAttributes().get("model"); //NOI18N
 
                 result.getMessages().add(" * Fail reason: 2 for object with id = " + object.getName() + " class = " + object.getClassName() + " model = " + "\"" + currentModel + "\"" + " see patch description");
                 classesToRemoveModelAttr.add(object.getClassName());

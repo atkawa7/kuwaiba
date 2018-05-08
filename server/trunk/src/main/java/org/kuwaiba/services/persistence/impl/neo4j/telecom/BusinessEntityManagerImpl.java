@@ -18,7 +18,7 @@ package org.kuwaiba.services.persistence.impl.neo4j.telecom;
 
 import com.neotropic.kuwaiba.modules.reporting.defaults.DefaultReports;
 import com.neotropic.kuwaiba.modules.reporting.InventoryReport;
-import com.neotropic.kuwaiba.modules.reporting.imgs.SceneExporter;
+import com.neotropic.kuwaiba.modules.reporting.img.SceneExporter;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import groovy.lang.Binding;
@@ -42,7 +42,6 @@ import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.ConnectionManager;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.Contact;
-import org.kuwaiba.apis.persistence.business.ContactLight;
 import org.kuwaiba.apis.persistence.application.FileObject;
 import org.kuwaiba.apis.persistence.application.FileObjectLight;
 import org.kuwaiba.apis.persistence.business.AnnotatedBusinessObjectLight;
@@ -151,7 +150,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         try (Transaction tx = graphDb.beginTx()) {        
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
 
             if (myClass.isInDesign())
                 throw new OperationNotPermittedException("Can not create instances of classes marked as inDesign");
@@ -270,7 +269,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
 
             Node newObject;
             if (template <= 0)
@@ -304,7 +303,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
         ClassMetadata classMetadata= mem.getClass(className);
         if (classMetadata == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+            throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
 
         if (classMetadata.isInDesign())
             throw new OperationNotPermittedException("Can not create instances of classes marked as inDesign");
@@ -316,13 +315,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME,className);
             
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
 
             //The object should be created under an instance other than the dummy root
             if (parentClassName != null){
                 ClassMetadata myParentObjectClass= mem.getClass(parentClassName);
                 if (myParentObjectClass == null)
-                    throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+                    throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
             }
 
             Node parentNode = null;
@@ -376,14 +375,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Node pool = Util.findNodeByLabelAndId(poolLabel, poolId);
             
             if (pool == null)
-                throw new ApplicationObjectNotFoundException(String.format("Pool with id %s can not be found", poolId));
+                throw new ApplicationObjectNotFoundException(String.format("Pool with id %s could not be found", poolId));
             
             if (!pool.hasProperty(Constants.PROPERTY_CLASS_NAME))
                 throw new InvalidArgumentException("This pool has not set his class name attribute");
             
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
             
             ClassMetadata classMetadata = mem.getClass(className);
             
@@ -417,7 +416,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
                        
             if (myClass.isInDesign())
                 throw new OperationNotPermittedException("Can not create instances of classes marked as inDesign");
@@ -455,7 +454,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             List<StringPair> createdMirrorPorts = new ArrayList<>();
             
-            for (int i = 0; i < numberOfObjects; i += 1) {
+            for (int i = 0; i < numberOfObjects; i++) {
                 Node newObject = createObject(classNode, myClass, null);
                 newObject.setProperty(Constants.PROPERTY_NAME, dynamicName.getDynamicNames().get(i));
                 
@@ -481,7 +480,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         
         ClassMetadata myClass= mem.getClass(className);
         if (myClass == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+            throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
         
         if (!mem.getPossibleSpecialChildren(parentClassName).contains(myClass))
             throw new OperationNotPermittedException(String.format("An instance of class %s can't be created as child of %s", className, parentClassName == null ? Constants.NODE_DUMMYROOT : parentClassName));
@@ -499,14 +498,14 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME,className);
             
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
 
 
             //The object should be created under an instance other than the dummy root
             if (parentClassName != null){
                 ClassMetadata myParentObjectClass= mem.getClass(parentClassName);
                 if (myParentObjectClass == null)
-                    throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+                    throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
             }
 
             Node parentNode;
@@ -558,7 +557,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Node objectNode = Util.findNodeByLabelAndId(inventoryObjectLabel, oid);
             
             if (objectNode == null)
-                throw new InvalidArgumentException(String.format("The object with id %s can not be found", oid));
+                throw new InvalidArgumentException(String.format("The object with id %s could not be found", oid));
             
             
             if (objectNode.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)) {
@@ -586,7 +585,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         try(Transaction tx = graphDb.beginTx()) {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
             Iterable<Relationship> iterableInstances = classNode.getRelationships(RelTypes.INSTANCE_OF);
             Iterator<Relationship> instances = iterableInstances.iterator();
             while (instances.hasNext()){
@@ -651,8 +650,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             bParents.add(bParent);
         }
         
-        for (int i = 0; i < aParents.size(); i += 1) {
-            for (int j = 0; j < bParents.size(); j += 1) {
+        for (int i = 0; i < aParents.size(); i++) {
+            for (int j = 0; j < bParents.size(); j++) {
                 if (aParents.get(i).getId() == bParents.get(j).getId())
                     return aParents.get(i);                                
             }
@@ -685,7 +684,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     return new BusinessObject(-1L, Constants.NODE_DUMMYROOT, Constants.NODE_DUMMYROOT);
                 }
             }
-            throw new InvalidArgumentException(String.format("The Parent of object with id %s cannot be found", oid));
+            throw new InvalidArgumentException(String.format("The parent of object with id %s could be found", oid));
         }
     }
     
@@ -835,9 +834,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     BusinessObject remoteObject = Util.createRemoteObjectFromNode(instance);
                     for(AttributeMetadata attribute : classMetadata.getAttributes()){
                         if(attribute.isUnique()){
-                            List<String> attributeValues = remoteObject.getAttributes().get(attribute.getName());
+                            String attributeValues = remoteObject.getAttributes().get(attribute.getName());
                             if(attributeValues != null)
-                                CacheManager.getInstance().removeUniqueAttributeValue(className, attribute.getName(), attributeValues.get(0));
+                                CacheManager.getInstance().removeUniqueAttributeValue(className, attribute.getName(), attributeValues);
                         }
                     }
                     Util.deleteObject(instance, releaseRelationships);
@@ -868,7 +867,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         ClassMetadata classMetadata= mem.getClass(className);
         
         if (classMetadata == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+            throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
         
         try(Transaction tx = graphDb.beginTx()) {
             Node instance = getInstanceOfClass(className, oid);
@@ -956,7 +955,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         
         boolean isPool = true;
         if (newParentClass == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", targetClassName));
+            throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", targetClassName));
         
         try(Transaction tx = graphDb.beginTx()) {
             Node newParentNode = Util.findNodeByLabelAndId(poolLabel, targetOid);
@@ -974,7 +973,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 Node instanceClassNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, myClass);
                 
                 if (instanceClassNode == null)
-                    throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", myClass));
+                    throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", myClass));
                 for (long oid : objects.get(myClass)){
                     Node instance = getInstanceOfClass(instanceClassNode, oid);
                     //If the object was specialChild of a poolNode
@@ -998,7 +997,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         ClassMetadata newParentClass = mem.getClass(targetClassName);
         
         if (newParentClass == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", targetClassName));
+            throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", targetClassName));
         
         try(Transaction tx = graphDb.beginTx()) {
             Node newParentNode = getInstanceOfClass(targetClassName, targetOid);
@@ -1009,7 +1008,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 Node instanceClassNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, myClass);
                 
                 if (instanceClassNode == null)
-                    throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", myClass));
+                    throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", myClass));
                 for (long oid : objects.get(myClass)){
                     Node instance = getInstanceOfClass(instanceClassNode, oid);
                     if (instance.getRelationships(RelTypes.CHILD_OF, Direction.OUTGOING).iterator().hasNext()){
@@ -1035,7 +1034,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         ClassMetadata newParentClass = mem.getClass(targetClassName);
         
         if (newParentClass == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", targetClassName));
+            throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", targetClassName));
         
         try(Transaction tx = graphDb.beginTx()) {
             Node newParentNode = getInstanceOfClass(targetClassName, targetOid);
@@ -1050,7 +1049,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 Node instanceClassNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, myClass);
                 
                 if (instanceClassNode == null)
-                    throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", myClass));
+                    throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", myClass));
                 for (long oid : objects.get(myClass)){
                     Node instance = getInstanceOfClass(instanceClassNode, oid);
                     
@@ -1079,7 +1078,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Node poolNode = Util.findNodeByLabelAndId(poolLabel, poolId);
             
             if (poolNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Pool with id %s can not be found", poolId));
+                throw new ApplicationObjectNotFoundException(String.format("Pool with id %s could not be found", poolId));
             
             if (!poolNode.hasProperty(Constants.PROPERTY_CLASS_NAME))
                 throw new InvalidArgumentException("This pool has not set his class name attribute");
@@ -1087,7 +1086,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Node poolItemClassNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, poolItemClassName);
             
             if (poolItemClassNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", poolItemClassName));
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", poolItemClassName));
             
             if (!mem.isSubClass((String) poolNode.getProperty(Constants.PROPERTY_CLASS_NAME), poolItemClassName))
                 throw new InvalidArgumentException(String.format("Class %s is not subclass of %s", poolItemClassName, (String) poolNode.getProperty(Constants.PROPERTY_CLASS_NAME)));
@@ -1111,7 +1110,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         ClassMetadata newParentClass = mem.getClass(targetClassName);
 
         if (newParentClass == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", targetClassName));
+            throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", targetClassName));
 
         try (Transaction tx = graphDb.beginTx()) {
             Node newParentNode = getInstanceOfClass(targetClassName, targetOid);
@@ -1124,7 +1123,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 Node instanceClassNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, myClass);
                 
                 if (instanceClassNode == null)
-                    throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", myClass));
+                    throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", myClass));
                 for (long oid : objects.get(myClass)){
                     Node templateObject = getInstanceOfClass(instanceClassNode, oid);
                     Node newInstance = copyObject(templateObject, recursive);
@@ -1144,7 +1143,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         ClassMetadata newParentClass = mem.getClass(targetClassName);
 
         if (newParentClass == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", targetClassName));
+            throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", targetClassName));
 
         try (Transaction tx = graphDb.beginTx()) {
             Node newParentNode = getInstanceOfClass(targetClassName, targetOid);
@@ -1157,7 +1156,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 Node instanceClassNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, myClass);
                 
                 if (instanceClassNode == null)
-                    throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", myClass));
+                    throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", myClass));
                 for (long oid : objects.get(myClass)){
                     Node templateObject = getInstanceOfClass(instanceClassNode, oid);
                     Node newInstance = copyObject(templateObject, recursive);
@@ -1180,7 +1179,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Node poolNode = Util.findNodeByLabelAndId(poolLabel, poolId);
             
             if (poolNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("Pool with id %s can not be found", poolId));
+                throw new ApplicationObjectNotFoundException(String.format("Pool with id %s could not be found", poolId));
             
             if (!poolNode.hasProperty(Constants.PROPERTY_CLASS_NAME))
                 throw new InvalidArgumentException("This pool has not set his class name attribute");
@@ -1188,7 +1187,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Node poolItemClassNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, poolItemClassName);
             
             if (poolItemClassNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", poolItemClassName));
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", poolItemClassName));
             
             if (!mem.isSubClass((String) poolNode.getProperty(Constants.PROPERTY_CLASS_NAME), poolItemClassName))
                 throw new InvalidArgumentException(String.format("Class %s is not subclass of %s", poolItemClassName, (String) poolNode.getProperty(Constants.PROPERTY_CLASS_NAME)));
@@ -1721,26 +1720,16 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     @Override
     public Contact getContact(String contactClass, long contactId) 
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+        
+        if (!mem.isSubClass("GenericContact", contactClass))
+            throw new InvalidArgumentException(String.format("Class %s is not an instance of GenericContact", contactClass));
+        
         try (Transaction tx = graphDb.beginTx()) {
             Node contactNode = getInstanceOfClass(contactClass, contactId);
-            List<StringPair> properties = new ArrayList<>();
-            
-            String contactName = null;
-            for (String attributeName : contactNode.getPropertyKeys()) {
-                String attributeValue = contactNode.getProperty(attributeName).toString();
-                
-                if (attributeName.equals(Constants.PROPERTY_NAME))
-                    contactName = attributeValue;
-                
-                properties.add(new StringPair(attributeName, attributeValue));
-            }
-            
-            if (contactName == null)
-                throw new InvalidArgumentException("The contact is malformed and the attribute \"name\" is missing");
             
             for (Relationship customerRelationship : contactNode.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.INCOMING)) {
                 if (customerRelationship.hasProperty(Constants.PROPERTY_NAME) && customerRelationship.getProperty(Constants.PROPERTY_NAME).equals("contacts"))
-                    return new Contact(contactNode.getId(), contactClass, contactName, Util.createRemoteObjectLightFromNode(customerRelationship.getStartNode()), properties);
+                    return new Contact(Util.createRemoteObjectFromNode(contactNode), Util.createRemoteObjectLightFromNode(customerRelationship.getStartNode()));
             }
             
             throw new InvalidArgumentException("The contact does not have a customer associated to it, please check its relationships");
@@ -1748,15 +1737,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public List<ContactLight> getContactsForCustomer(String customerClass, long customerId) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException {
+    public List<Contact> getContactsForCustomer(String customerClass, long customerId) 
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             Node customerNode = getInstanceOfClass(customerClass, customerId);
-            List<ContactLight> contacts = new ArrayList<>();
+            List<Contact> contacts = new ArrayList<>();
             for (Relationship contactRelationship : customerNode.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.OUTGOING)) {
                 if (contactRelationship.hasProperty(Constants.PROPERTY_NAME) && contactRelationship.getProperty(Constants.PROPERTY_NAME).equals("contacts")) {
                     Node contactNode = contactRelationship.getEndNode();
-                    contacts.add(new ContactLight(contactNode.getId(), (String)contactNode.getProperty(Constants.PROPERTY_NAME),
-                            Util.getClassName(contactNode), Util.createRemoteObjectLightFromNode(customerNode)));
+                    contacts.add(new Contact(Util.createRemoteObjectFromNode(contactNode), Util.createRemoteObjectLightFromNode(customerNode)));
                 }
             }
             
@@ -1766,7 +1755,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     //TODO: Optimize and improve validations!
     @Override
-    public List<ContactLight> searchForContacts(String searchString, int maxResults) {
+    public List<Contact> searchForContacts(String searchString, int maxResults) throws InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             String cypherQuery;
             if (searchString == null || searchString.trim().isEmpty()) //Return all contacts
@@ -1777,7 +1766,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         "LOWER(n.name) contains LOWER({searchString}) OR LOWER(c.name) contains LOWER({searchString}) RETURN n AS contact ORDER BY c.name, n.name ASC" +
                         (maxResults > 0 ? (" LIMIT " + maxResults) : ""); //NOI18N
             
-            List<ContactLight> res = new ArrayList<>();
+            List<Contact> res = new ArrayList<>();
             
             HashMap<String, Object> parameters = new HashMap();
             parameters.put("searchString", searchString);  //NOI18N
@@ -1788,8 +1777,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             while (contactNodes.hasNext()) {
                 Node contactNode = contactNodes.next();
                 Node customerNode = contactNode.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.INCOMING).iterator().next().getStartNode();
-                res.add(new ContactLight(contactNode.getId(), (String)contactNode.getProperty(Constants.PROPERTY_NAME), 
-                        Util.getClassName(contactNode), Util.createRemoteObjectLightFromNode(customerNode)));
+                
+                res.add(new Contact(Util.createRemoteObjectFromNode(contactNode), Util.createRemoteObjectLightFromNode(customerNode)));
             }
             
             return res;
@@ -2231,7 +2220,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @param className object class name
      * @param oid object id
      * @return a Node representing the entity
-     * @throws MetadataObjectNotFoundException id the class cannot be found
+     * @throws MetadataObjectNotFoundException id the class could not be found
      * @throws org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException if the object could not be found
      */
     public Node getInstanceOfClass(String className, long oid) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException{
@@ -2243,7 +2232,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME,className);
 
         if (classNode == null)
-            throw new MetadataObjectNotFoundException(String.format("Class %s can not be found", className));
+            throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
 
         Iterable<Relationship> iterableInstances = classNode.getRelationships(RelTypes.INSTANCE_OF);
         Iterator<Relationship> instances = iterableInstances.iterator();
@@ -2261,7 +2250,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
      * @param classId object class id
      * @param oid object id
      * @return a Node representing the entity
-     * @throws MetadataObjectNotFoundException if the class cannot be found
+     * @throws MetadataObjectNotFoundException if the class could not be found
      * @throws org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException
      */
     public Node getInstanceOfClass(long classId, long oid) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException{
@@ -2273,7 +2262,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         Node classNode = Util.findNodeByLabelAndId(classLabel, classId);
         
         if (classNode == null)
-            throw new MetadataObjectNotFoundException(String.format("Class with id %s can not be found", classId));
+            throw new MetadataObjectNotFoundException(String.format("Class with id %s could not be found", classId));
 
         Iterable<Relationship> iteratorInstances = classNode.getRelationships(RelTypes.INSTANCE_OF);
         Iterator<Relationship> instances = iteratorInstances.iterator();

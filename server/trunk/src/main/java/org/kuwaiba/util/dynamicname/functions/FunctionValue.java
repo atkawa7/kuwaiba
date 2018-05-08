@@ -79,9 +79,7 @@ public class FunctionValue extends DynamicSectionFunction {
             ApplicationEntityManager aem = PersistenceService.getInstance().getApplicationEntityManager();
             MetadataEntityManager mem = PersistenceService.getInstance().getMetadataEntityManager();
             
-            List<String> lstAttributeValue = remoteBusinessObject.getAttributes().get(attribute);
-            
-            String attributeValue = lstAttributeValue != null ? lstAttributeValue.get(0) : null;
+            String attributeValue = remoteBusinessObject.getAttributes().get(attribute);            
             String attributeType = classMetadata.getAttribute(attribute).getType();
             
             if (attributeValue != null && mem.isSubClass("GenericObjectList", attributeType)) {

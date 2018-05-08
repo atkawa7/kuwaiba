@@ -52,14 +52,12 @@ import org.kuwaiba.interfaces.ws.toserialize.application.PrivilegeInfo;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBackgroundJob;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBusinessRule;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContact;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContactLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFavoritesFolder;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemotePool;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationGroup;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteTask;
@@ -2210,7 +2208,7 @@ public class KuwaibaService {
      * @return The list of contacts for whom at least one of their attributes matches  
      * @throws org.kuwaiba.exceptions.ServerSideException 
      */
-    public List<RemoteContactLight> searchForContacts(@WebParam(name = "searchString")String searchString, 
+    public List<RemoteContact> searchForContacts(@WebParam(name = "searchString")String searchString, 
             @WebParam(name = "maxResults")int maxResults, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.searchForContacts(searchString, maxResults, getIPAddress(), sessionId);
@@ -2232,7 +2230,7 @@ public class KuwaibaService {
      * @return The list of contacts associated to the customer
      * @throws ServerSideException If the customer could not be found
      */
-    public List<RemoteContactLight> getContactsForCustomer(@WebParam(name = "customerClass")String customerClass, 
+    public List<RemoteContact> getContactsForCustomer(@WebParam(name = "customerClass")String customerClass, 
             @WebParam(name = "customerId")long customerId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
             return wsBean.getContactsForCustomer(customerClass, customerId, getIPAddress(), sessionId);
@@ -2771,9 +2769,8 @@ public class KuwaibaService {
     /**
      * Updates attributes of a given object
      * @param className object's class name
-     * @param oid Object's oid
-     * @param  attributeNames attribute names to be changed
-     * @param  attributeValues attribute values for the attributes above
+     * @param id Object id
+     * @param attributes A dictionary with pairs key-value, being <b>key</b>, the attribute name, and <b>value</b>, the serialized version of the attribute value. List types are represented by the id of the list type item (a numeric value).
      * @param sessionId Session token
      * @throws ServerSideException If the object class can't be found
      *                             If the object can't be found
@@ -2782,12 +2779,11 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "updateObject")
     public void updateObject(@WebParam(name = "className")String className,
-            @WebParam(name = "oid")long oid,
-            @WebParam(name = "attributeNames")String[] attributeNames,
-            @WebParam(name = "attributeValues")String[] attributeValues,
+            @WebParam(name = "id")long id,
+            @WebParam(name = "attributes")List<StringPair> attributes,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
-            wsBean.updateObject(className,oid,attributeNames, attributeValues, getIPAddress(), sessionId);
+            wsBean.updateObject(className, id, attributes, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -6445,8 +6441,7 @@ public class KuwaibaService {
      * Creates a subnet
      * @param poolId The id of the pool that will contain the subnet
      * @param className The class name of the subnet (e.g. SubnetIPv4, SubnetIPv6)
-     * @param attributeNames Names of the attributes that will be set on the newly created element.
-     * @param attributeValues The values to be set in the aforementioned attributes.
+     * @param attributes The attributes that will be set on the newly created element as a string-based key-value dictionary
      * @param sessionId Session token.
      * @return The id of the new subnet.
      * @throws ServerSideException If something goes wrong, can't find the 
@@ -6456,11 +6451,10 @@ public class KuwaibaService {
     @WebMethod(operationName = "createSubnet")
     public long createSubnet(@WebParam(name = "poolId")long poolId,
             @WebParam(name = "className")String className,
-            @WebParam(name = "attributeNames")String[] attributeNames,
-            @WebParam(name = "attributeValues")String[] attributeValues,
+            @WebParam(name = "attributes")List<StringPair> attributes,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
-            return wsBean.createSubnet(poolId, className, attributeNames, attributeValues, getIPAddress(), sessionId);
+            return wsBean.createSubnet(poolId, className, attributes, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -6567,28 +6561,26 @@ public class KuwaibaService {
     }
     
     /**
-     * Adds an IP to a Subnet
+     * Adds an IP address to a Subnet
      * @param id ipAddres id
      * @param parentClassName the parent class name
-     * @param attributeNames IP Address Attributes
-     * @param attributeValues IP Addres values
-     * @param sessionId
+     * @param attributes IP address attributes as a String based key-value dictionary
+     * @param sessionId The session token
      * @return the id of the new IP Address
      * @throws ServerSideException 
      */
-    @WebMethod(operationName = "addIP")
-    public long addIP(@WebParam(name = "id")long id,
+    @WebMethod(operationName = "addIPAddress")
+    public long addIPAddress(@WebParam(name = "id")long id,
             @WebParam(name = "parentClassName")String parentClassName,
-            @WebParam(name = "attributeNames")String[] attributeNames,
-            @WebParam(name = "attributeValues")String[] attributeValues,
+            @WebParam(name = "attributes")List<StringPair> attributes,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
-            return wsBean.addIP(id, parentClassName, attributeNames, attributeValues, getIPAddress(), sessionId);
+            return wsBean.addIPAddress(id, parentClassName, attributes, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in addIP: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in addIPAddress: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }

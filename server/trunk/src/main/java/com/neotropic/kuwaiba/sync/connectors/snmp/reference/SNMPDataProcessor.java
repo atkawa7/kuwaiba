@@ -504,7 +504,7 @@ public class SNMPDataProcessor {
                         newAttributes.remove("name"); //NOI18N //the router name won't be changed
                         HashMap<String, String> comparedAttributes = compareAttributes(bem.getObject(id).getAttributes(), newAttributes);
                         if (!comparedAttributes.isEmpty()) {
-                            comparedAttributes.put("name", bem.getObject(id).getAttributes().get("name").get(0)); //we need this to show the name in the results
+                            comparedAttributes.put("name", bem.getObject(id).getAttributes().get("name")); //we need this to show the name in the results
                             findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
                                     I18N.gm("router_has_changes"),
                                     createExtraInfoToUpdateAttributesInObject(Long.toString(id), mappedClass, comparedAttributes, bem.getObject(id).getAttributes()).toString()));
@@ -621,7 +621,7 @@ public class SNMPDataProcessor {
                     for (int i = 0; i < oldBranch.size(); i++) {
                         oldObj = oldBranch.get(i);
                         BusinessObjectLight oldParent = bem.getParent(oldObj.getClassName(), oldObj.getId());
-                        HashMap<String, List<String>> oldAttributes = bem.getObject(oldObj.getId()).getAttributes();
+                        HashMap<String, String> oldAttributes = bem.getObject(oldObj.getId()).getAttributes();
 
                         currentObj = branch.get(i);
                         currentObjClassName = currentObj.getString("className");
@@ -705,7 +705,7 @@ public class SNMPDataProcessor {
             if(foundPath.size() == newBranchToEvalueate.size()){
                 for (int j=0; j<foundPath.size(); j++) { 
                     BusinessObjectLight oldObj = foundPath.get(j);
-                    HashMap<String, List<String>> oldAttributes = bem.getObject(oldObj.getId()).getAttributes();
+                    HashMap<String, String> oldAttributes = bem.getObject(oldObj.getId()).getAttributes();
                     JsonObject newObj = newBranchToEvalueate.get(j); //this is the new object from SNMP
                     updateAttributesInBranch(oldObj, oldAttributes, newObj);//we check if some attributes need to be updated
                 }
@@ -742,9 +742,9 @@ public class SNMPDataProcessor {
                 } 
                 //we find the whole path, if the path si found backwards, the comparation of the attributes should be do it backwards too
                 if(foundPath.size() == newBranchToEvalueate.size()){
-                    for (int j=foundPath.size()-1, r=0; j>-1; j--, r++) { 
+                    for (int j = foundPath.size() - 1, r = 0; j > -1; j--, r++) { 
                         BusinessObjectLight oldObj = foundPath.get(j);
-                        HashMap<String, List<String>> oldAttributes = bem.getObject(oldObj.getId()).getAttributes();
+                        HashMap<String, String> oldAttributes = bem.getObject(oldObj.getId()).getAttributes();
                         JsonObject newObj = newBranchToEvalueate.get(r); //this is the new object from SNMP
                         updateAttributesInBranch(oldObj, oldAttributes, newObj);//we check if some attributes need to be updated
                     }
@@ -827,7 +827,8 @@ public class SNMPDataProcessor {
         return oldBranchesWithMatches;
     }
    
-    private void updateAttributesInBranch(BusinessObjectLight oldObj, HashMap<String, List<String>> oldAttributes, JsonObject newObj) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException{
+    private void updateAttributesInBranch(BusinessObjectLight oldObj, HashMap<String, String> oldAttributes, 
+            JsonObject newObj) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException{
         JsonObject objAttributes = newObj.getJsonObject("attributes");
         HashMap<String, String> attributeChanges = compareAttributes(oldAttributes, objAttributes);
         if(!attributeChanges.isEmpty()){
@@ -922,14 +923,14 @@ public class SNMPDataProcessor {
      * @param newAttributes the attributes to create the JSON
      * @return a json object
      */
-    private JsonObject createExtraInfoToUpdateAttributesInObject(String deviceId, String deviceClassName, HashMap<String, String> newAttributes, HashMap<String, List<String>> oldAttributes) {
+    private JsonObject createExtraInfoToUpdateAttributesInObject(String deviceId, String deviceClassName, HashMap<String, String> newAttributes, HashMap<String, String> oldAttributes) {
         JsonObject jsonObj = Json.createObjectBuilder().add("type", "device").add("deviceId", deviceId).add("deviceClassName", deviceClassName).build();
         JsonObject jNewAttributes = Json.createObjectBuilder().build();
         JsonObject jOldAttributes = Json.createObjectBuilder().build();
         for (String key : newAttributes.keySet()){ 
             jNewAttributes = jsonObjectToBuilder(jNewAttributes).add(key, newAttributes.get(key).trim()).build();
             if(oldAttributes.get(key) != null)
-                jOldAttributes = jsonObjectToBuilder(jOldAttributes).add(key, oldAttributes.get(key).get(0).trim()).build();
+                jOldAttributes = jsonObjectToBuilder(jOldAttributes).add(key, oldAttributes.get(key).trim()).build();
         }
         jsonObj = jsonObjectToBuilder(jsonObj).add("attributes", jNewAttributes).add("oldAttributes", jOldAttributes).build();
         return jsonObj;
@@ -953,10 +954,10 @@ public class SNMPDataProcessor {
      * @param attributes the attributes to create the JSON
      * @return a JSON object with the attributes
      */
-    private JsonObject parseOldAttributesToJson(HashMap<String, List<String>> attributes) {
+    private JsonObject parseOldAttributesToJson(HashMap<String, String> attributes) {
         JsonObject jsonObj = Json.createObjectBuilder().build();
         for (String key : attributes.keySet()) 
-            jsonObj = jsonObjectToBuilder(jsonObj).add(key, attributes.get(key).get(0).trim()).build();
+            jsonObj = jsonObjectToBuilder(jsonObj).add(key, attributes.get(key).trim()).build();
 
         return jsonObj;
     }
@@ -1061,14 +1062,14 @@ public class SNMPDataProcessor {
      * @param newObjectAttributes the list read it from SNMP
      * @return the a map with the attributes changed
      */
-    private HashMap<String, String> compareAttributes(HashMap<String, List<String>> oldObjectAttributes, HashMap<String, String> newObjectAttributes){
+    private HashMap<String, String> compareAttributes(HashMap<String, String> oldObjectAttributes, HashMap<String, String> newObjectAttributes){
         HashMap<String, String> updatedAttributes = new HashMap<>();
         for (String attributeName : newObjectAttributes.keySet()) {
             String newAttributeValue = newObjectAttributes.get(attributeName);
             if (oldObjectAttributes.containsKey(attributeName)) {
-                List<String> oldAttributeValues = oldObjectAttributes.get(attributeName);
+                String oldAttributeValues = oldObjectAttributes.get(attributeName);
                 if (oldAttributeValues != null && newAttributeValue != null) {
-                    if (!oldAttributeValues.get(0).equals(newAttributeValue)) 
+                    if (!oldAttributeValues.equals(newAttributeValue)) 
                         updatedAttributes.put(attributeName, newAttributeValue);
                 }
             } else
@@ -1083,14 +1084,14 @@ public class SNMPDataProcessor {
      * @param newObjectAttributes the list read it from SNMP
      * @return the a map with the attributes changed
      */
-    private HashMap<String, String> compareAttributes(HashMap<String, List<String>> oldObjectAttributes,  JsonObject newObjectAttributes){
+    private HashMap<String, String> compareAttributes(HashMap<String, String> oldObjectAttributes,  JsonObject newObjectAttributes){
         HashMap<String, String> updatedAttributes = new HashMap<>();
         for (String attributeName : newObjectAttributes.keySet()) {
             String newAttributeValue = newObjectAttributes.getString(attributeName);
             if (oldObjectAttributes.containsKey(attributeName)) {
-                List<String> oldAttributeValues = oldObjectAttributes.get(attributeName);
+                String oldAttributeValues = oldObjectAttributes.get(attributeName);
                 if (oldAttributeValues != null && newAttributeValue != null) {
-                    if (!oldAttributeValues.get(0).equals(newAttributeValue)) 
+                    if (!oldAttributeValues.equals(newAttributeValue)) 
                         updatedAttributes.put(attributeName, newAttributeValue);
                 }
             } else
@@ -1226,7 +1227,7 @@ public class SNMPDataProcessor {
                             portFound.toString()));
                 }
                 else{
-                    HashMap<String, List<String>> oldAttributes = bem.getObject(oldPort.getId()).getAttributes();
+                    HashMap<String, String> oldAttributes = bem.getObject(oldPort.getId()).getAttributes();
                     HashMap<String, String> changedAttributes = compareAttributes(oldAttributes, portFound.getJsonObject("attributes"));
                     
                     if(!changedAttributes.isEmpty()){ //if the port its in the rigth place but the attributes have been updated
@@ -1389,8 +1390,8 @@ public class SNMPDataProcessor {
         for(long key : oldObjectStructure.keySet()){
             List<BusinessObjectLight> oldBranch = oldObjectStructure.get(key);
             for (BusinessObjectLight oldObj : oldBranch) {
-                HashMap<String, List<String>> oldAttributes = bem.getObject(oldObj.getId()).getAttributes();
-                if(oldAttributes.get(Constants.PROPERTY_NAME).get(0).equals(objParentName)
+                HashMap<String, String> oldAttributes = bem.getObject(oldObj.getId()).getAttributes();
+                if(oldAttributes.get(Constants.PROPERTY_NAME).equals(objParentName)
                         && objParentClassName.equals(oldObj.getClassName()))
                     return oldObj.getId();
             }

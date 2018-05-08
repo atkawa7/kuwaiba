@@ -48,7 +48,6 @@ import org.kuwaiba.apis.persistence.application.BusinessRule;
 import org.kuwaiba.apis.persistence.application.BusinessRuleConstraint;
 import org.kuwaiba.apis.persistence.application.FavoritesFolder;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
-import org.kuwaiba.apis.persistence.business.ContactLight;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.FileObject;
 import org.kuwaiba.apis.persistence.application.FileObjectLight;
@@ -91,7 +90,6 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBackgroundJob;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBusinessRule;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBusinessRuleConstraint;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContact;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContactLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFavoritesFolder;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObjectLight;
@@ -102,6 +100,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteResultMessage;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult;
 import org.kuwaiba.apis.persistence.application.ScriptQuery;
+import org.kuwaiba.apis.persistence.business.Contact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationGroup;
@@ -964,14 +963,14 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
 
     @Override
-    public List<RemoteContactLight> searchForContacts(String searchString, int maxResults, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteContact> searchForContacts(String searchString, int maxResults, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
-            List<RemoteContactLight> res = new ArrayList();
+            List<RemoteContact> res = new ArrayList();
             aem.validateWebServiceCall("searchForContacts", ipAddress, sessionId);
-            for (ContactLight contact : bem.searchForContacts(searchString, maxResults)) 
-                res.add(new RemoteContactLight(contact));
+            for (Contact contact : bem.searchForContacts(searchString, maxResults)) 
+                res.add(new RemoteContact(contact));
 
             return res;
         } catch (InventoryException ex) {
@@ -980,14 +979,14 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
 
     @Override
-    public List<RemoteContactLight> getContactsForCustomer(String customerClass, long customerId, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteContact> getContactsForCustomer(String customerClass, long customerId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
-            List<RemoteContactLight> res = new ArrayList();
+            List<RemoteContact> res = new ArrayList();
             aem.validateWebServiceCall("getContactsForCustomer", ipAddress, sessionId);
-            for (ContactLight contact : bem.getContactsForCustomer(customerClass, customerId)) 
-                res.add(new RemoteContactLight(contact));
+            for (Contact contact : bem.getContactsForCustomer(customerClass, customerId)) 
+                res.add(new RemoteContact(contact));
 
             return res;
         } catch (InventoryException ex) {
@@ -1577,18 +1576,16 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public void updateObject(String className, long oid, String[] attributeNames, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException{
+    public void updateObject(String className, long oid, List<StringPair> attributesToBeUpdated, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
-        if (attributeNames.length != attributeValues.length)
-            throw new ServerSideException("Attribute names and attribute values arrays sizes doesn't match");
 
         try {
             aem.validateWebServiceCall("updateObject", ipAddress, sessionId);
             HashMap<String, String> attributes = new HashMap<>();
             
-            for (int i = 0; i < attributeNames.length; i++)
-                attributes.put(attributeNames[i], attributeValues[i]);
+            for (StringPair attributeToBeUpdated : attributesToBeUpdated)
+                attributes.put(attributeToBeUpdated.getKey(), attributeToBeUpdated.getValue());
 
             ChangeDescriptor theChange = bem.updateObject(className, oid, attributes);
             
@@ -4120,11 +4117,19 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public long createSubnet(long id, String className, String attributeNames[], 
-            String attributeValues[], String ipAddress, String sessionId) throws ServerSideException{
+    public long createSubnet(long id, String className, List<StringPair> attributes, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("createSubnet", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
+            
+            String[] attributeNames = new String[attributes.size()];
+            String[] attributeValues = new String[attributes.size()];
+            
+            for (int i = 0; i < attributes.size(); i++) {
+                attributeNames[i] = attributes.get(i).getKey();
+                attributeValues[i] = attributes.get(i).getValue();
+            }
+                
             long subnetId = ipamModule.createSubnet(id, className, attributeNames, attributeValues);
             
             String subnameName = bem.getObjectLight(className, subnetId).getName();
@@ -4169,17 +4174,16 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
 
     @Override
-    public long addIP(long id, String parentClassName, String attributeNames[], String attributeValues[], 
-            String ipAddress, String sessionId) throws ServerSideException{
+    public long addIPAddress(long id, String parentClassName, List<StringPair> attributesToBeUpdated, String ipAddress, String sessionId) throws ServerSideException{
         try{
-            aem.validateWebServiceCall("addIP", ipAddress, sessionId);
+            aem.validateWebServiceCall("addIPAddress", ipAddress, sessionId);
             HashMap<String, String> attributes = new HashMap<>();
             
-            for (int i = 0; i < attributeNames.length; i++)
-                attributes.put(attributeNames[i], attributeValues[i]);
+            for (StringPair attribute : attributesToBeUpdated)
+                attributes.put(attribute.getKey(), attribute.getValue());
             
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            long ipAddressId = ipamModule.addIP(id, parentClassName, attributes);
+            long ipAddressId = ipamModule.addIPAddress(id, parentClassName, attributes);
                         
             String ipAddressName = bem.getObjectLight(Constants.CLASS_IP_ADDRESS, ipAddressId).getName();
             

@@ -15,44 +15,40 @@
  */
 package org.kuwaiba.interfaces.ws.toserialize.business;
 
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.business.Contact;
-import org.kuwaiba.apis.persistence.util.StringPair;
 
 /**
  * Wrapper of Contact
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteContact extends RemoteContactLight {
+public class RemoteContact extends RemoteObject {
     /**
-     * Contact attributes
+     * The company the current contact belongs to
      */
-    private List<StringPair> properties;
+    private RemoteObjectLight customer;
 
     /**
-     * Default constructor. Never used
+     * Default constructor. Only used by the WS layer provider
      */
-    private RemoteContact(){}
+    public RemoteContact() {  }
 
     /**
      * Default functional constructor
      * @param contact The object to be serialized
      */
     public RemoteContact(Contact contact){
-        super(contact.getClassName(), contact.getId(), contact.getName());
-        this.properties = contact.getProperties();
+        super(contact);
+        this.customer = new RemoteObjectLight(contact.getCustomer());
     }
 
-    public List<StringPair> getProperties() {
-        return properties;
+    public RemoteObjectLight getCustomer() {
+        return customer;
     }
 
-    public void setProperties(List<StringPair> properties) {
-        this.properties = properties;
+    public void setCustomer(RemoteObjectLight customer) {
+        this.customer = customer;
     }
-
-    
 }

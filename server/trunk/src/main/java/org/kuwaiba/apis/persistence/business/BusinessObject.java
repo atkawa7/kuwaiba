@@ -17,37 +17,35 @@
 package org.kuwaiba.apis.persistence.business;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
- * Contains a business object detailed information
+ * Contains all the attributes (and their values) of an inventory object. Complex data types, like 
+ * list types should be interpreted using the class metadata
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class BusinessObject extends BusinessObjectLight {
 
     /**
-     * Map of attributes and values. Note that there's a little of overhead here, since
-     * the attribute value could be a list of values (many-to-many, one-to-many relationships)
+     * Map of attributes and values. Many-to-one relationships are represented by comma (",") separated long values. These values
+     * are the ids of the list types the object is referring to
      */
-    private HashMap <String, List<String>> attributes;
+    private HashMap <String, String> attributes;
 
     public BusinessObject(long id, String name, String className) {
         super(id, name, className);
     }
 
-    public BusinessObject(String className, long id, String name, HashMap<String, List<String>> attributes) {
-        setId(id);
-        setName(name);
-        setClassName(className);
+    public BusinessObject(String className, long id, String name, HashMap<String, String> attributes) {
+        super(id, name, className);
         this.attributes = attributes;
     }
 
 
-    public HashMap<String, List<String>> getAttributes() {
+    public HashMap<String, String> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(HashMap<String, List<String>> attributes) {
+    public void setAttributes(HashMap<String, String> attributes) {
         this.attributes = attributes;
     }
 }

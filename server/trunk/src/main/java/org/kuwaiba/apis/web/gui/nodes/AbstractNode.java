@@ -19,13 +19,12 @@ import java.util.ArrayList;
 //import com.vaadin.data.util.BeanItem;
 import com.vaadin.server.Page;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
+import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.nodes.properties.NodeProperty;
 import org.kuwaiba.apis.web.gui.nodes.properties.Sheet;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
@@ -209,14 +208,14 @@ public abstract class AbstractNode<T> {
             for (String classAttribute : classAttributes) {
                 if(meta.getAttributesVisibles()[i]){
                     int k = 0;
-                    for (String attribute : remoteObject.getAttributes()) {
-                        if (attribute.equals(classAttribute))
+                    for (StringPair attribute : remoteObject.getAttributes()) {
+                        if (attribute.getKey().equals(classAttribute))
                             break;
                         k++;
                     }
                     String attributeValue = "";
-                    if(k < remoteObject.getAttributes().length)
-                        attributeValue = remoteObject.getValues()[k][0];
+                    if(k < remoteObject.getAttributes().size())
+                        attributeValue = remoteObject.getAttributes().get(k).getValue();
                    
                     AttributeMetadata a =  new AttributeMetadata();
                     String[] attributeTypes = meta.getAttributesTypes();

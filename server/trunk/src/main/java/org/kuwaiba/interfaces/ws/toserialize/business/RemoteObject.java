@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.business.BusinessObject;
+import org.kuwaiba.apis.persistence.util.StringPair;
 
 /**
  * Instances of this class are proxies that represents the entities in the database. This is a wrapper of
@@ -32,57 +33,43 @@ public class RemoteObject implements Serializable {
     /**
      * Object's id
      */
-    private long oid;
+    private long id;
     /**
      * Object's class
      */
     private String className;
     /**
-     * Attribute names in this object. This information is already in the meta, but we don't know
-     * if it's sorted correctly there, so we take it here too
+     * A key-value dictionary with the attributes and values of the current object. 
+     * Take into account that if an attribute does not appear in this list, it's because
+     * it's value is null
      */
-    private String[] attributes;
-    /**
-     * Values for the aforementioned attributes
-     */
-    private String[][] values;
+    private List<StringPair> attributes;
+    
 
     /**
-     * Default constructor. Never used
+     * Default constructor. To be used only by the WS layer provider
      */
-    private RemoteObject(){}
+    public RemoteObject(){}
 
     /**
      *
      * @param object The object to be serialized
      */
     public RemoteObject(BusinessObject object){
-        this.oid = object.getId();
+        this.id = object.getId();
         this.className = object.getClassName();
-        attributes = new String[object.getAttributes().size()];
-        values = new String[object.getAttributes().size()][];
-        int i = 0;
-        for (String key : object.getAttributes().keySet()){
-            attributes[i] = key;
-            values[i] = object.getAttributes().get(key).toArray(new String[0]);
-            i++;
-        }
+        this.attributes = new ArrayList<>();
+        
+        for (String attribute : object.getAttributes().keySet())
+            attributes.add(new StringPair(attribute, object.getAttributes().get(attribute)));
     }
 
-    public String[] getAttributes() {
+    public List<StringPair> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(String[] attributes) {
+    public void setAttributes(List<StringPair> attributes) {
         this.attributes = attributes;
-    }
-
-    public String[][] getValues() {
-        return values;
-    }
-
-    public void setValues(String[][] values) {
-        this.values = values;
     }
 
     public String getClassName() {
@@ -93,12 +80,12 @@ public class RemoteObject implements Serializable {
         this.className = className;
     }
 
-    public long getOid() {
-        return oid;
+    public long getId() {
+        return id;
     }
 
-    public void setOid(long oid) {
-        this.oid = oid;
+    public void setid(long id) {
+        this.id = id;
     }
 
     public static List<RemoteObject> toRemoteObjectArray(List<BusinessObject> toBeWrapped){
