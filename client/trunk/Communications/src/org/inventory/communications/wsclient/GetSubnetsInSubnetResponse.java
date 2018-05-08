@@ -10,12 +10,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getSubnetsInSubentResponse complex type.
+ * <p>Java class for getSubnetsInSubnetResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getSubnetsInSubentResponse">
+ * &lt;complexType name="getSubnetsInSubnetResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -29,10 +29,10 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getSubnetsInSubentResponse", propOrder = {
+@XmlType(name = "getSubnetsInSubnetResponse", propOrder = {
     "_return"
 })
-public class GetSubnetsInSubentResponse {
+public class GetSubnetsInSubnetResponse {
 
     @XmlElement(name = "return")
     protected List<RemoteObjectLight> _return;

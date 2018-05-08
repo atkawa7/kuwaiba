@@ -21,7 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JFrame;
@@ -30,7 +30,6 @@ import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
-import org.inventory.communications.wsclient.StringPair;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
@@ -280,9 +279,12 @@ public class AddIPAddressAction extends GenericInventoryAction {
             }//end else one IP
             if(!ips.isEmpty()){
                 for (String ip : ips) {
-
-                    LocalObjectLight addedIP = CommunicationsStub.getInstance().addIPAddress(parentId, className, ip,
-                            Arrays.asList(new StringPair(Constants.PROPERTY_NAME, ip), new StringPair(Constants.PROPERTY_DESCRIPTION, txtDescription.getText())));
+                    HashMap<String, String> attributes = new HashMap<>();
+                    attributes.put(Constants.PROPERTY_NAME, ip);
+                    attributes.put(Constants.PROPERTY_DESCRIPTION, txtDescription.getText());
+                    
+                    LocalObjectLight addedIP = CommunicationsStub.getInstance().
+                            addIPAddress(parentId, className, ip, attributes);
 
                     if (addedIP == null)
                         NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());

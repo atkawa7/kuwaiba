@@ -4438,9 +4438,14 @@ return null;
         }
     }
         
-    public LocalObjectLight createSubnet(long poolId, String parentClassName, String name, List<StringPair> attributes){
+    public LocalObjectLight createSubnet(long poolId, String parentClassName, String name, HashMap<String, String> attributes){
         try {
-            long objectId  = service.createSubnet(poolId, parentClassName, attributes, this.session.getSessionId());
+            
+            List<StringPair> remoteAttributes = new ArrayList<>();
+            for (String attribute : attributes.keySet())
+                remoteAttributes.add(new StringPair(attribute, attributes.get(attribute)));
+            
+            long objectId  = service.createSubnet(poolId, parentClassName, remoteAttributes, this.session.getSessionId());
             return new LocalObjectLight(objectId, name, parentClassName);
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -4496,9 +4501,13 @@ return null;
         }
     }
     
-    public LocalObjectLight addIPAddress(long id, String className, String name, List<StringPair> attributes){
+    public LocalObjectLight addIPAddress(long id, String className, String name, HashMap<String, String> attributes){
         try {
-            long objectId  = service.addIPAddress(id, className, attributes, this.session.getSessionId());
+            List<StringPair> remoteAttributes = new ArrayList<>();
+            for (String attribute : attributes.keySet())
+                remoteAttributes.add(new StringPair(attribute, attributes.get(attribute)));
+            
+            long objectId  = service.addIPAddress(id, className, remoteAttributes, this.session.getSessionId());
             return new LocalObjectLight(objectId, name, className);
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -4538,7 +4547,7 @@ return null;
         return null;
     }
     
-    public List<LocalObjectLight> getSubnetsInSubent(long id, String className){
+    public List<LocalObjectLight> getSubnetsInSubnet(long id, String className){
         try {
             List<LocalObjectLight> res = new ArrayList<>();
             for (RemoteObjectLight anIp : service.getSubnetsInSubnet(id, 0, className, this.session.getSessionId())) 

@@ -26,13 +26,12 @@ import com.neotropic.inventory.modules.ipam.nodes.SubnetPoolNode;
 import com.neotropic.inventory.modules.ipam.windows.PTextField;
 import java.awt.BorderLayout;
 import java.awt.event.ActionListener;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.communications.wsclient.StringPair;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.AbstractChildren;
@@ -268,12 +267,16 @@ public class CreateSubnetAction extends GenericInventoryAction {
                             createIps = true;
                 }
                 
+                HashMap<String, String> attributes = new HashMap<>();
+                
+                attributes.put(Constants.PROPERTY_NAME, attributeValues[0]);
+                attributes.put(Constants.PROPERTY_DESCRIPTION, attributeValues[1]);
+                attributes.put(Constants.PROPERTY_BROADCASTIP, attributeValues[2]);
+                attributes.put(Constants.PROPERTY_NETWORKIP, attributeValues[3]);
+                attributes.put(Constants.PROPERTY_HOSTS, attributeValues[4]);
+                
                 newSubnet = CommunicationsStub.getInstance().createSubnet(parentId, className,
-                    attributeValues[0], Arrays.asList(new StringPair(Constants.PROPERTY_NAME, attributeValues[0]),
-                                                      new StringPair(Constants.PROPERTY_DESCRIPTION, attributeValues[1]),
-                                                      new StringPair(Constants.PROPERTY_BROADCASTIP, attributeValues[2]),
-                                                      new StringPair(Constants.PROPERTY_NETWORKIP, attributeValues[3]),
-                                                      new StringPair(Constants.PROPERTY_HOSTS, attributeValues[4])));
+                    attributeValues[0], attributes);
                 
                 if(createIps)
                     createIps(ipCIDR, attributeValues, className, newSubnet);
@@ -306,17 +309,22 @@ public class CreateSubnetAction extends GenericInventoryAction {
                     if(ip.trim().equals(attributeValues[2].trim()))
                         break;
                     
-                    CommunicationsStub.getInstance().addIPAddress(newSubnet.getOid(), className, ip, 
-                            Arrays.asList(new StringPair(Constants.PROPERTY_NAME, ip), new StringPair(Constants.PROPERTY_DESCRIPTION, "")));
+                    HashMap<String, String> attributes = new HashMap<>();
+                    attributes.put(Constants.PROPERTY_NAME, ip);
+                    attributes.put(Constants.PROPERTY_DESCRIPTION, "");
+                    
+                    CommunicationsStub.getInstance().addIPAddress(newSubnet.getOid(), className, ip, attributes);
                 }   break;
             case Constants.CLASS_SUBNET_IPV6:
                 ip = SubnetEngine.nextIpv6(attributeValues[3], attributeValues[2], attributeValues[3], Integer.parseInt(split[1]));
-                while(SubnetEngine.belongsToIpv6(attributeValues[3], ip, Integer.parseInt(split[1]))){
+                while(SubnetEngine.belongsToIpv6(attributeValues[3], ip, Integer.parseInt(split[1]))) {
+                    HashMap<String, String> attributes = new HashMap<>();
+                    attributes.put(Constants.PROPERTY_NAME, ip);
+                    attributes.put(Constants.PROPERTY_DESCRIPTION, "");
                     ip =  SubnetEngine.nextIpv6(attributeValues[3], attributeValues[2], ip, Integer.parseInt(split[1]));
                     if(ip.trim().equals(attributeValues[2].trim()))
                         break;
-                    CommunicationsStub.getInstance().addIPAddress(newSubnet.getOid(), className, ip, 
-                            Arrays.asList(new StringPair(Constants.PROPERTY_NAME, ip), new StringPair(Constants.PROPERTY_DESCRIPTION, "")));
+                    CommunicationsStub.getInstance().addIPAddress(newSubnet.getOid(), className, ip, attributes);
             }   break;
         }
     }
