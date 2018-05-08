@@ -6364,21 +6364,19 @@ public class KuwaibaService {
     
         // <editor-fold defaultstate="collapsed" desc="IPAM Module"> 
     /**
-     * Retrieves all the subnet pools
-     * @param limit limit
-     * @param parentId parent id
-     * @param className if is an IPv4 or an IPv6 subnet
-     * @param sessionId the session id
+     * Retrieves all the pools of subnets
+     * @param parentId parent id parent id of the pool, -1 to retrieve the pools from the root nodes
+     * @param className IPv4 or IPv6 subnet
+     * @param sessionId the session token
      * @return a set of subnet pools
-     * @throws ServerSideException 
+     * @throws ServerSideException if there are not IPAM root nodes or if can't get the pools of a subnet pool
      */
     @WebMethod(operationName = "getSubnetPools")
-    public RemotePool[] getSubnetPools(@WebParam(name = "limit")
-            int limit, @WebParam(name = "parentId") long parentId,
+    public RemotePool[] getSubnetPools(@WebParam(name = "parentId") long parentId,
             @WebParam(name = "className") String className,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try{
-            return wsBean.getSubnetPools(limit, parentId, className, getIPAddress(), sessionId);
+            return wsBean.getSubnetPools(parentId, className, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
@@ -6390,12 +6388,12 @@ public class KuwaibaService {
     }
     
     /**
-     * Retrieves the subnets of a same pool of subnets
+     * Retrieves the subnets of a given pool id
      * @param poolId subnet pool id
-     * @param limit limit of returned subnets
-     * @param sessionId
+     * @param limit limit of returned subnets, -1 to no limit
+     * @param sessionId the session token
      * @return a set of subnets
-     * @throws ServerSideException 
+     * @throws ServerSideException if the given subnet pool id is not valid
      */
     @WebMethod(operationName = "getSubnets")
     public List<RemoteObjectLight> getSubnets(@WebParam(name = "poolId")long poolId,
@@ -6414,14 +6412,15 @@ public class KuwaibaService {
     }
     
     /**
-     * Creates a pool of subnets
-     * @param parentId subnet parent Id
+     * Creates a pool of subnets if the parentId is -1 the pool will be created 
+     * in the default root for pools of subnets
+     * @param parentId subnet parent Id, -1 to if want to create the pool in the root node
      * @param subnetPoolName subnet pool name
-     * @param subnetPoolDescription
+     * @param subnetPoolDescription subnet pool description
      * @param className if is a IPv4 or an IPv6 subnet
-     * @param sessionId
+     * @param sessionId session token
      * @return id of the created subnet pool 
-     * @throws ServerSideException 
+     * @throws ServerSideException if the IPAM root nodes doesn't exists, or if the IPv4 or IPv6 classes doesn't exists
      */
     @WebMethod(operationName = "createSubnetPool")
     public long createSubnetPool(
@@ -6450,7 +6449,9 @@ public class KuwaibaService {
      * @param attributeValues The values to be set in the aforementioned attributes.
      * @param sessionId Session token.
      * @return The id of the new subnet.
-     * @throws ServerSideException If something goes wrong.
+     * @throws ServerSideException If something goes wrong, can't find the 
+     * parent id, IPv4 or IPv6 classes doesn't exists, or some problem with 
+     * attributes, different size between attribute names and attribute values.
      */
     @WebMethod(operationName = "createSubnet")
     public long createSubnet(@WebParam(name = "poolId")long poolId,
@@ -6472,8 +6473,8 @@ public class KuwaibaService {
     
     /**
      * Deletes a set of subnet pools
-     * @param ids Pools to be deleted
-     * @param sessionId Session identifier
+     * @param ids ids of the pools to be deleted
+     * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "deleteSubnetPools")
@@ -6519,9 +6520,9 @@ public class KuwaibaService {
     /**
       * Gets the complete information about a given subnet (all its attributes)
       * @param id Subnet id
-      * @param className VPN class
+      * @param className Subnet class IPv4 o IPv6
       * @param sessionId Session token
-      * @return a representation of the entity as a RemoteObject
+      * @return a representation of the subnet as a RemoteObject
       * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
       */
     @WebMethod(operationName = "getSubnet")
@@ -6594,8 +6595,8 @@ public class KuwaibaService {
     }
     
     /**
-     * Removes an IP Address from a subnets. Note that this method must be used only for Subnet objects
-     * @param oids object id from the objects to be deleted
+     * Removes a set of IP Addresses from a subnet. Note that this method must be used only for Subnet objects
+     * @param oids ids of the IPs to be deleted
      * @param releaseRelationships Should the deletion be forced, deleting all the relationships?
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
@@ -6643,33 +6644,33 @@ public class KuwaibaService {
     }
     
     /**
-     * Retrieves the subnets of a subnet
+     * Retrieves the sub-subnets of a subnet
      * @param id subnet id
      * @param limit limit of returned subnets
-     * @param className the class name
-     * @param sessionId the session id
+     * @param className the class name if is IPv6 or IPv4
+     * @param sessionId The session token
      * @return a set of subnets
      * @throws ServerSideException 
      */
-    @WebMethod(operationName = "getSubnetsInSubent")
-    public List<RemoteObjectLight> getSubnetsInSubent(@WebParam(name = "id")long id,
+    @WebMethod(operationName = "getSubnetsInSubnet")
+    public List<RemoteObjectLight> getSubnetsInSubnet(@WebParam(name = "id")long id,
             @WebParam(name = "limit")int limit,
             @WebParam(name = "className")String className,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
-            return wsBean.getSubnetsInSubent(id, className, limit, getIPAddress(), sessionId);
+            return wsBean.getSubnetsInSubnet(id, className, limit, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getSubnetsInSubent: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in getSubnetsInSubnet: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
     }
     
     /**
-     * Associates a Subnet to existing VLAN, this method is also using to 
+     * Creates a relation between a Subnet and a VLAN, this method is also using to 
      * associate VFRs, and BDIs to a VLAN  
      * TODO: check the model, there are redundant relationships
      * @param id Subnet id
@@ -6697,7 +6698,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Releases a subnet from a VLAN that is using it, this method is also using 
+     * Releases the relation between a subnet and a VLAN, this method is also using 
      * to release VFRs, and BDIs from a VLAN  
      * TODO: check the model there are redundant relationships 
      * @param subnetId Subnet id
@@ -6723,7 +6724,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Releases an subnet from a VRF instance associated to it
+     * Releases the relation between a subnet and a VRF
      * @param subnetId Subnet id
      * @param vrfId the VRF id
      * @param sessionId Session token
@@ -6747,9 +6748,9 @@ public class KuwaibaService {
     }
     
     /**
-     * Associates a subnet to existing VRF
+     * Creates a relation between a subnet and a VRF
      * @param id Subnet id
-     * @param className if the subnet has IPv4 or IPv6 IP addresses
+     * @param className if the subnet is IPv4 or IPv6
      * @param vrfId VRF id
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime   
@@ -6773,7 +6774,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Associates a port to an IP address
+     * Creates a relation between an IP address and a port
      * @param id IP address id
      * @param portClassName port class
      * @param portId port id
@@ -6824,9 +6825,9 @@ public class KuwaibaService {
     }
     
     /**
-     * Releases a port from an IP address that is using it
-     * @param deviceClassName device class name
-     * @param deviceId device id
+     * Releases the relation between an IP address and a port
+     * @param deviceClassName port class name
+     * @param deviceId port id
      * @param id Subnet id
      * @param sessionId Session token
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime    

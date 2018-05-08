@@ -525,7 +525,7 @@ public interface WebserviceBeanLocal {
         // </editor-fold>   
     
         // <editor-fold defaultstate="collapsed" desc="IP Address Manager module">
-        public RemotePool[] getSubnetPools(int limit, long parentId, String className, String ipAddress, String sessionId) throws ServerSideException;
+        public RemotePool[] getSubnetPools(long parentId, String className, String ipAddress, String sessionId) throws ServerSideException;
         public List<RemoteObjectLight> getSubnets(long poolId, int limit, String ipAddress, String sessionId) throws ServerSideException;
         public RemoteObject getSubnet(long id, String className, String ipAddress, String sessionId) throws ServerSideException;
         public RemotePool getSubnetPool(long id, String ipAddress, String sessionId) throws ServerSideException;
@@ -546,7 +546,7 @@ public interface WebserviceBeanLocal {
         public void releasePortFromIP(String deviceClassName, long deviceId, long id, String ipAddress, String sessionId) throws ServerSideException;
         public void releaseSubnetFromVRF(long subnetId, long vrfId, String ipAddress, String sessionId) throws ServerSideException;
         public List<RemoteObjectLight> getSubnetUsedIps(long id, String className, int limit, String ipAddress, String sessionId) throws ServerSideException;
-        public List<RemoteObjectLight> getSubnetsInSubent(long id, String className, int limit, String ipAddress, String sessionId)  throws ServerSideException;
+        public List<RemoteObjectLight> getSubnetsInSubnet(long id, String className, int limit, String ipAddress, String sessionId)  throws ServerSideException;
         public boolean itOverlaps(String networkIp, String broadcastIp, String ipAddress, String sessionId) throws ServerSideException;
         // </editor-fold>
         

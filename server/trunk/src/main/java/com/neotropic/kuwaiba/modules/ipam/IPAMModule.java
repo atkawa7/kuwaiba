@@ -210,7 +210,6 @@ public class IPAMModule implements GenericCommercialModule{
     
     /**
      * Get a set of subnet pools from a pool of subnets or from the root
-     * @param limit limit of the result set, -1 no limit
      * @param parentId parent id
      * @param className if is a IPv4 subnet or if is a IPv6 subnet
      * @return a list of subnet pools
@@ -218,9 +217,9 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws ApplicationObjectNotFoundException if can't get the pools of a subnet pool
      * @throws MetadataObjectNotFoundException if there are not IPAM root nodes
      */
-    public List<RemotePool> getSubnetPools(int limit, 
-            long parentId, String className) throws NotAuthorizedException, 
-            ApplicationObjectNotFoundException, MetadataObjectNotFoundException 
+    public List<RemotePool> getSubnetPools(long parentId, String className) 
+            throws NotAuthorizedException, ApplicationObjectNotFoundException, 
+            MetadataObjectNotFoundException 
     {
         List<RemotePool> remotePools = new ArrayList<>();
         if(parentId == -1 && className == null)
@@ -474,7 +473,7 @@ public class IPAMModule implements GenericCommercialModule{
      * @throws BusinessObjectNotFoundException If the object(subnet) could not be found.
      * @throws NotAuthorizedException If the user is not authorized to use the IPAM module
      */
-    public List<BusinessObjectLight> getSubnetsInSubent(long id, String className) 
+    public List<BusinessObjectLight> getSubnetsInSubnet(long id, String className) 
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException,
             NotAuthorizedException
     {

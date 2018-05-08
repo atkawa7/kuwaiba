@@ -18,6 +18,7 @@ package org.kuwaiba.services.persistence.impl.neo4j.telecom;
 
 import com.neotropic.kuwaiba.modules.reporting.defaults.DefaultReports;
 import com.neotropic.kuwaiba.modules.reporting.InventoryReport;
+import com.neotropic.kuwaiba.modules.reporting.imgs.SceneExporter;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import groovy.lang.Binding;
@@ -1819,9 +1820,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     
     //TODO DELETE. This is a business dependant method, should not be here. Don't use it
     @Override
-    public List<BusinessObjectLight> getPhysicalPath(String objectClass, long objectId) {
+    public List<BusinessObjectLight> getPhysicalPath(String objectClass, long objectId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException {
         List<BusinessObjectLight> path = new ArrayList<>();
-        
+        //If the port is a logical port (vitual port, Pseudowire or service instance, we look for the first physcla parent port)
+        long logicalPortId = 0;
+        if(mem.isSubClass(Constants.CLASS_GENERICLOGICALPORT, objectClass)){
+            logicalPortId = objectId;
+            BusinessObjectLight firstPhysicalParentPort = getFirstParentOfClass(objectClass, objectId, Constants.CLASS_GENERICPHYSICALPORT);
+            objectId = firstPhysicalParentPort.getId();
+        }
         //The first part of the query will return many paths, the longest is the one we need. The others are
         //subsets of the longest
         String cypherQuery = "MATCH paths = (o)-[r:" + RelTypes.RELATED_TO_SPECIAL + "*]-(c) "+
@@ -1829,7 +1836,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                              "WITH nodes(paths) as path " +
                              "RETURN path ORDER BY length(path) DESC LIMIT 1";
         try (Transaction tx = graphDb.beginTx()){
-            
+            if(logicalPortId > 0)
+                path.add(Util.createRemoteObjectLightFromNode(Util.findNodeByLabelAndId(inventoryObjectLabel, logicalPortId)));
             Result result = graphDb.execute(cypherQuery);
             Iterator<List<Node>> column = result.columnAs("path");
             
@@ -2151,6 +2159,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             environmentParameters.setVariable("inventoryObjectLabel", inventoryObjectLabel);            
             environmentParameters.setVariable("classLabel", classLabel); //NOI18N
             environmentParameters.setVariable("defaultReports", defaultReports); //NOI18N
+            
+            environmentParameters.setVariable("sceneExporter", SceneExporter.getInstance(this, mem));
             
             //To keep backwards compatibility
             environmentParameters.setVariable("objectClassName", objectClassName); //NOI18N

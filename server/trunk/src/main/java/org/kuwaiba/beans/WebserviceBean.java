@@ -4077,11 +4077,11 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public RemotePool[] getSubnetPools(int limit, long parentId, String className, String ipAddress, String sessionId) throws ServerSideException{
+    public RemotePool[] getSubnetPools(long parentId, String className, String ipAddress, String sessionId) throws ServerSideException{
         try {
             aem.validateWebServiceCall("getSubnetPools", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return RemotePool.toRemotePoolArray(ipamModule.getSubnetPools(limit, parentId, className));
+            return RemotePool.toRemotePoolArray(ipamModule.getSubnetPools(parentId, className));
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -4310,11 +4310,11 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public List<RemoteObjectLight> getSubnetsInSubent(long id, String className, int limit, String ipAddress, String sessionId)  throws ServerSideException{
+    public List<RemoteObjectLight> getSubnetsInSubnet(long id, String className, int limit, String ipAddress, String sessionId)  throws ServerSideException{
         try{
-            aem.validateWebServiceCall("getSubnetsInSubent", ipAddress, sessionId);
+            aem.validateWebServiceCall("getSubnetsInSubnet", ipAddress, sessionId);
             IPAMModule ipamModule = (IPAMModule)aem.getCommercialModule("IPAM Module"); //NOI18N
-            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnetsInSubent(id, className));
+            return RemoteObjectLight.toRemoteObjectLightArray(ipamModule.getSubnetsInSubnet(id, className));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

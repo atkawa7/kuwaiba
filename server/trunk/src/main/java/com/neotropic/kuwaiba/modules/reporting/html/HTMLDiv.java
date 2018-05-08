@@ -23,6 +23,7 @@ public class HTMLDiv extends HTMLComponent {
      * Div attribute
      */
     private String id;
+    private String divClass;
     private Object content;
     
     public HTMLDiv(String id) {
@@ -31,6 +32,12 @@ public class HTMLDiv extends HTMLComponent {
     
     public HTMLDiv(String id, Object content) {
         this.id = id;
+        this.content = content;
+    }
+    
+    public HTMLDiv(String id, String divClass, Object content) {
+        this.id = id;
+        this.divClass = divClass;
         this.content = content;
     }
     
@@ -57,7 +64,7 @@ public class HTMLDiv extends HTMLComponent {
         
         return new StringBuilder().append("<div ") //NOI18N
             .append(style == null ? "" : " style=\"" + style + "\"") //NOI18N
-            .append(cssClass == null ? "" : " class=\"" + cssClass + "\"") //NOI18N
+            .append(divClass == null ? "" : " class=\"" + divClass + "\"") //NOI18N
             .append(id == null ? "" : " id=\"" + id + "\"").append(">") //NOI18N
             .append(theContent == null ? "" : theContent)
             .append("</div>").toString(); //NOI18N

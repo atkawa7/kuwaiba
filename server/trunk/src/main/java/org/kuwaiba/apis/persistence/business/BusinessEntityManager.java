@@ -698,9 +698,13 @@ public interface BusinessEntityManager {
      * @param objectClass The source port class.
      * @param objectId The source port id.
      * @return A list of objects that make part of the physical trace.
+     * @throws MetadataObjectNotFoundException can't f
+     * @throws BusinessObjectNotFoundException 
+     * @throws ApplicationObjectNotFoundException
      * @deprecated This method shouldn't be here since it's context dependant. Don't use it, will be removed in the future
      */
-    public List<BusinessObjectLight> getPhysicalPath(String objectClass, long objectId);
+    public List<BusinessObjectLight> getPhysicalPath(String objectClass, long objectId) 
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException;
     
     //Attachments management
     /**

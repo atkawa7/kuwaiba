@@ -346,6 +346,18 @@ public class Constants {
      */
     public static final String CLASS_GENERICPORT = "GenericPort";
     /**
+     * Class GenericLogicalPort 
+     */
+    public static final String CLASS_VIRTUALPORT = "VirtualPort";
+    /**
+     * Class GenericPhysicalPort 
+     */
+    public static final String CLASS_GENERICPHYSICALPORT = "GenericPhysicalPort";
+        /**
+     * Class GenericPhysicalPort 
+     */
+    public static final String CLASS_GENERICLOGICALPORT = "GenericLogicalPort";
+    /**
      * Class Generic Contract
      */
     public static final String CLASS_GENERICCONTRACT = "GenericContract"; //NOI18N
@@ -365,6 +377,10 @@ public class Constants {
      * Class Generic Physical Link
      */
     public static final String CLASS_GENERICPHYSICALLINK = "GenericPhysicalLink"; //NOI18N
+    /**
+     * Class Generic Physical Node
+     */
+    public static final String CLASS_GENERICPHYSICALNODE = "GenericPhysicalNode"; //NOI18N
     /**
      * Dummy root node name
      */
@@ -417,5 +433,9 @@ public class Constants {
      * Hint in patch file for a cypher query
      */
     public static final String DATABASE_SENTENCE = "!db_sentence";
+    /**
+     * Name of the validator to indicate if a given class is the endpoint to a connection
+     */
+    public static final String VALIDATOR_PHYSICAL_NODE = "physicalNode";
     
 }
