@@ -164,10 +164,10 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
     }
 
 
-    public LocalAttributeMetadata[] getAttributes(){
+    public LocalAttributeMetadata[] getAttributes() {
         LocalAttributeMetadata[] res =
                 new LocalAttributeMetadata[attributesNames.length];
-        for (int i = 0; i < res.length;i++){
+        for (int i = 0; i < res.length; i++){
             res[i] = new LocalAttributeMetadata(
                                     attributesIds[i],
                                     attributesNames[i],

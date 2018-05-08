@@ -24,6 +24,7 @@ import java.util.ResourceBundle;
 import java.util.prefs.Preferences;
 import javax.swing.JOptionPane;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.updates.windows.UpdateCenterOptionsDialog;
 import org.netbeans.api.autoupdate.InstallSupport;
 import org.netbeans.api.autoupdate.InstallSupport.Validator;
@@ -112,17 +113,22 @@ public class Installer extends ModuleInstall {
         }
         
         private void setModules() {
-            List<UpdateUnit> updateUnits = UpdateManager.getDefault().getUpdateUnits();
-            
-            for (UpdateUnit updateUnit : updateUnits) {
-                if (updateUnit.getInstalled() == null) {
-                    modulesForInstall.add(updateUnit.getAvailableUpdates().get(0)); // add module with highest version
-                } else {
-                    if (!updateUnit.getAvailableUpdates().isEmpty()) 
-                        modulesForUpdate.add(updateUnit.getAvailableUpdates().get(0)); // add module with highest version
-                    
+            try {
+                List<UpdateUnit> updateUnits = UpdateManager.getDefault().getUpdateUnits();
+
+                for (UpdateUnit updateUnit : updateUnits) {
+                    if (updateUnit.getInstalled() == null) {
+                        modulesForInstall.add(updateUnit.getAvailableUpdates().get(0)); // add module with highest version
+                    } else {
+                        if (!updateUnit.getAvailableUpdates().isEmpty()) 
+                            modulesForUpdate.add(updateUnit.getAvailableUpdates().get(0)); // add module with highest version
+
+                    }
+
                 }
-                    
+            } catch (Exception ex) {
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
+                        NotificationUtil.WARNING_MESSAGE, String.format("A problem was found retrieving the update descriptor: %s", ex.getMessage()));
             }
         }
         

@@ -37,13 +37,18 @@ public class ContactsTableModel  implements TableModel {
     public ContactsTableModel() throws ConnectException {
         this.currentContactList = new ArrayList<>();
         this.genericContactMetadata = CommunicationsStub.getInstance().getMetaForClass("GenericContact", false); //NOI18N
+        
         if (this.genericContactMetadata == null)
             throw new ConnectException(CommunicationsStub.getInstance().getError());
     }
     
     
-    public ContactsTableModel(List<LocalContact> currentContactList) {
+    public ContactsTableModel(List<LocalContact> currentContactList) throws ConnectException {
         this.currentContactList = currentContactList;
+        this.genericContactMetadata = CommunicationsStub.getInstance().getMetaForClass("GenericContact", false); //NOI18N
+        
+        if (this.genericContactMetadata == null)
+            throw new ConnectException(CommunicationsStub.getInstance().getError());
     }
 
     public List<LocalContact> getCurrentContactList() {
@@ -61,12 +66,17 @@ public class ContactsTableModel  implements TableModel {
 
     @Override
     public int getColumnCount() {
-        return genericContactMetadata.getAttributes().length;
+        return genericContactMetadata.getAttributes().length + 1; // +1 = company
     }
 
     @Override
     public String getColumnName(int columnIndex) {
-        return genericContactMetadata.getAttributes()[columnIndex].getName();
+        switch (columnIndex) {
+            case 0:
+                return "Company";
+            default:
+                return genericContactMetadata.getAttributes()[columnIndex - 1].getDisplayName();
+        }
     }
 
     @Override
@@ -84,6 +94,8 @@ public class ContactsTableModel  implements TableModel {
         switch (columnIndex) {
             case -1: //This refers to the object itself. It's used in the table selection events to update the TC lookup
                 return currentContactList.get(rowIndex);
+            case 0:
+                return currentContactList.get(rowIndex).getCustomer().getName();
             default:
                 return currentContactList.get(rowIndex).getAttribute(getColumnName(columnIndex));
         }

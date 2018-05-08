@@ -1005,6 +1005,29 @@ public class CommunicationsStub {
             return null;
         }
     }
+    
+    /**
+     * Fetches the contacts associated to a given customer
+     * @param customerClass The class of the customer to retrieve the contacts from
+     * @param customerId The id of the customer to retrieve the contacts from
+     * @return The list of contacts associated to the customer provided
+     */
+    public List<LocalContact> getContactsForCustomer(String customerClass, long customerId) {
+        try {
+            List<RemoteContact> remoteContacts = service.getContactsForCustomer(customerClass, customerId, session.getSessionId());
+            List<LocalContact> res = new ArrayList<>();
+            for (RemoteContact remoteContact : remoteContacts) {
+                LocalClassMetadata classMetadata = getMetaForClass(remoteContact.getClassName(), false);
+                res.add(new LocalContact(remoteContact.getClassName(), remoteContact.getId(), remoteContact.getAttributes(), classMetadata, 
+                        new LocalObjectLight(remoteContact.getCustomer().getOid(), remoteContact.getCustomer().getName(), remoteContact.getCustomer().getClassName())));
+            }
+            
+            return res;
+        } catch(Exception e){
+            error = e.getMessage();
+            return null;
+        }
+    }
     //</editor-fold>
     
     /**
@@ -1017,8 +1040,8 @@ public class CommunicationsStub {
         if (className == null || allegedParentClassName == null)
             return false;
         
-        if (allegedParentClassName.equals("RootObject") || 
-            allegedParentClassName.equals("ApplicationObject"))
+        if (allegedParentClassName.equals("RootObject") || //NOI18N
+            allegedParentClassName.equals("ApplicationObject")) //NOI18N
             return false;
         
         if (allegedParentClassName.equals(className))

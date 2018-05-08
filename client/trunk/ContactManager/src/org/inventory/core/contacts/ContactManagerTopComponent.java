@@ -102,6 +102,8 @@ public final class ContactManagerTopComponent extends TopComponent implements Ex
         jToolBar1 = new javax.swing.JToolBar();
         btnGetAllContacts = new javax.swing.JButton();
         btnAddContact = new javax.swing.JButton();
+        btnContactsPerCustomer = new javax.swing.JButton();
+        btnAdvancedFilters = new javax.swing.JButton();
         btnExport = new javax.swing.JButton();
         txtSearch = new javax.swing.JTextField();
         pnlScrollMain = new javax.swing.JScrollPane();
@@ -136,6 +138,27 @@ public final class ContactManagerTopComponent extends TopComponent implements Ex
         });
         jToolBar1.add(btnAddContact);
 
+        btnContactsPerCustomer.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/contacts/res/contactsPerCustomer.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnContactsPerCustomer, org.openide.util.NbBundle.getMessage(ContactManagerTopComponent.class, "ContactManagerTopComponent.btnContactsPerCustomer.text")); // NOI18N
+        btnContactsPerCustomer.setToolTipText(org.openide.util.NbBundle.getMessage(ContactManagerTopComponent.class, "ContactManagerTopComponent.btnContactsPerCustomer.toolTipText")); // NOI18N
+        btnContactsPerCustomer.setFocusable(false);
+        btnContactsPerCustomer.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnContactsPerCustomer.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnContactsPerCustomer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnContactsPerCustomerActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnContactsPerCustomer);
+
+        btnAdvancedFilters.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/contacts/res/advancedFilters.png"))); // NOI18N
+        org.openide.awt.Mnemonics.setLocalizedText(btnAdvancedFilters, org.openide.util.NbBundle.getMessage(ContactManagerTopComponent.class, "ContactManagerTopComponent.btnAdvancedFilters.text")); // NOI18N
+        btnAdvancedFilters.setToolTipText(org.openide.util.NbBundle.getMessage(ContactManagerTopComponent.class, "ContactManagerTopComponent.btnAdvancedFilters.toolTipText")); // NOI18N
+        btnAdvancedFilters.setFocusable(false);
+        btnAdvancedFilters.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnAdvancedFilters.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar1.add(btnAdvancedFilters);
+
         btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/contacts/res/export.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(ContactManagerTopComponent.class, "ContactManagerTopComponent.btnExport.text")); // NOI18N
         btnExport.setToolTipText(org.openide.util.NbBundle.getMessage(ContactManagerTopComponent.class, "ContactManagerTopComponent.btnExport.toolTipText")); // NOI18N
@@ -155,10 +178,21 @@ public final class ContactManagerTopComponent extends TopComponent implements Ex
     private void btnGetAllContactsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGetAllContactsActionPerformed
         List<LocalContact> allContacts = CommunicationsStub.getInstance().searchForContacts(null, -1);
         
-        if (allContacts.isEmpty())
-                    JOptionPane.showMessageDialog(null, "No objects with the given criteria were found", I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
+        if (allContacts == null) {
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 
+                    CommunicationsStub.getInstance().getError());
+            this.contactsTable.removeAll();
+            return;
+        }
         
-        this.contactsTable.setModel(new ContactsTableModel(allContacts));
+        if (allContacts.isEmpty())
+            JOptionPane.showMessageDialog(null, "There are no contacts registered so far", I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
+        
+        try {
+            this.contactsTable.setModel(new ContactsTableModel(allContacts));
+        } catch(ConnectException ex) {
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, ex.getMessage());
+        }
     }//GEN-LAST:event_btnGetAllContactsActionPerformed
 
     private void btnAddContactActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddContactActionPerformed
@@ -199,8 +233,53 @@ public final class ContactManagerTopComponent extends TopComponent implements Ex
         }
     }//GEN-LAST:event_btnAddContactActionPerformed
 
+    private void btnContactsPerCustomerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContactsPerCustomerActionPerformed
+        List<LocalObjectLight> allCustomers = CommunicationsStub.getInstance().getObjectsOfClassLight("GenericCustomer");
+        
+        if (allCustomers == null) {
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 
+                    CommunicationsStub.getInstance().getError());
+            this.contactsTable.removeAll();
+            return;
+        }
+        
+        JComboBox<LocalObjectLight> cmbAllCustomers = new JComboBox<>(allCustomers.toArray(new LocalObjectLight[0]));
+        cmbAllCustomers.setName("cmbAllCustomers"); //NOI18N
+        
+        JComplexDialogPanel pnlCustomerFilter = new JComplexDialogPanel(new String[] { "Company" }, new JComponent[] { cmbAllCustomers });
+        
+        if (JOptionPane.showConfirmDialog(null, pnlCustomerFilter, "Contacts by Customer", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            LocalObjectLight selectedCustomer = (LocalObjectLight)((JComboBox)pnlCustomerFilter.getComponent("cmbAllCustomers")).getSelectedItem();
+            
+            if (selectedCustomer != null) {
+            
+                List<LocalContact> allContacts = CommunicationsStub.getInstance().getContactsForCustomer(selectedCustomer.getClassName(), selectedCustomer.getOid());
+
+                if (allContacts == null) {
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 
+                            CommunicationsStub.getInstance().getError());
+                    this.contactsTable.removeAll();
+                    return;
+                }
+
+                if (allContacts.isEmpty())
+                    JOptionPane.showMessageDialog(null, "The selected company does not have any contact associated to it", I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
+
+                try {
+                    this.contactsTable.setModel(new ContactsTableModel(allContacts));
+                } catch(ConnectException ex) {
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, ex.getMessage());
+                }
+            }
+        }
+        
+        
+    }//GEN-LAST:event_btnContactsPerCustomerActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAddContact;
+    private javax.swing.JButton btnAdvancedFilters;
+    private javax.swing.JButton btnContactsPerCustomer;
     private javax.swing.JButton btnExport;
     private javax.swing.JButton btnGetAllContacts;
     private javax.swing.JToolBar jToolBar1;
@@ -242,7 +321,11 @@ public final class ContactManagerTopComponent extends TopComponent implements Ex
                     if (allContacts.isEmpty())
                         JOptionPane.showMessageDialog(null, "No objects with the given criteria were found", I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
 
-                    contactsTable.setModel(new ContactsTableModel(allContacts));
+                    try {
+                        contactsTable.setModel(new ContactsTableModel(allContacts));
+                    } catch(ConnectException ex) {
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, ex.getMessage());
+                    }
                 }
             });
 
