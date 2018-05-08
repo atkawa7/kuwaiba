@@ -29,6 +29,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.visual.export.ExportScenePanel;
@@ -45,7 +46,7 @@ import org.openide.windows.TopComponent;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class EndToEndViewTopComponent extends TopComponent implements 
-        ExplorerManager.Provider, ActionListener 
+        ExplorerManager.Provider, ActionListener, Refreshable 
 {
     private ExplorerManager em = new ExplorerManager();
     private AbstractScene scene;
@@ -187,6 +188,14 @@ public class EndToEndViewTopComponent extends TopComponent implements
     @Override
     public boolean canClose(){
         return checkForUnsavedView(true);
+    }
+    
+    @Override
+    public void refresh() {
+        if (checkForUnsavedView(true)) {
+            scene.clear();
+            scene.render(currentService);
+        }
     }
     
     @Override
