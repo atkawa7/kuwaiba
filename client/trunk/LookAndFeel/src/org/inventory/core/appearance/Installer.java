@@ -19,7 +19,6 @@ import com.jtattoo.plaf.fast.FastLookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import org.openide.modules.ModuleInstall;
-import org.openide.util.Exceptions;
 
 /**
  * Standard installer class to initialize the application's look and feel
@@ -34,7 +33,7 @@ public class Installer extends ModuleInstall {
             FastLookAndFeel.setTheme("Default", "", ""); //This removes the big "JTattoo" label in the drop-down menus
                                                          //Replace the last argument for any string if you want to actually show something there
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-            Exceptions.printStackTrace(ex); //Should not happen
+             //Should not happen
         }
         
     }

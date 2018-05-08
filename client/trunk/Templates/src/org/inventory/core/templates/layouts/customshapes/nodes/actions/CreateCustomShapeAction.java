@@ -19,12 +19,13 @@ package org.inventory.core.templates.layouts.customshapes.nodes.actions;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
+import java.util.HashMap;
 import javax.xml.bind.DatatypeConverter;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
-import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -68,17 +69,17 @@ public class CreateCustomShapeAction extends GenericInventoryAction {
                 String byteArrayEncode = DatatypeConverter.printBase64Binary(byteArray);                
                 String iconAttributeValue = "defaultIcon" + ";/;" +  "png" + ";/;" + byteArrayEncode; //NOI18N
 
-                LocalObject updateCustomShape = new LocalObject(loli.getClassName(), loli.getId(), 
-                    new String[] {"icon"}, new Object[] {iconAttributeValue});
+                HashMap<String, Object> attributesToUpdate = new HashMap<>();
+                attributesToUpdate.put(Constants.PROPERTY_ICON, iconAttributeValue);
 
-                if (!CommunicationsStub.getInstance().saveObject(updateCustomShape)) {
+                if(!CommunicationsStub.getInstance().updateObject(loli.getClassName(), loli.getOid(), attributesToUpdate)) {
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                     return;
                 }
             } catch (IOException ex) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                    NotificationUtil.ERROR_MESSAGE, "The default icon can not be created");
+                    NotificationUtil.ERROR_MESSAGE, "The default icon could not be created");
                 return;
             }
             ((AbstractChildren) node.getChildren()).addNotify();

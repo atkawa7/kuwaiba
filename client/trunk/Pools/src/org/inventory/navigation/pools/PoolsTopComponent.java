@@ -19,7 +19,6 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
-import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
 import org.inventory.communications.core.LocalPool;
@@ -53,7 +52,7 @@ persistenceType = TopComponent.PERSISTENCE_NEVER)
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
 @ActionID(category = "Window", id = "org.inventory.navigation.pools.PoolsTopComponent")
 @ActionReferences(value = { @ActionReference(path = "Menu/Tools/Navigation"),
-    @ActionReference(path = "Toolbars/01_Navigation", position = 3)})
+    @ActionReference(path = "Toolbars/01_Navigation", position = 4)})
 @TopComponent.OpenActionRegistration(
     displayName = "#CTL_PoolsAction",
 preferredID = "PoolsTopComponent")

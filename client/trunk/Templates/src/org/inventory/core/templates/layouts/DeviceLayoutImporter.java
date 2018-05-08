@@ -35,7 +35,6 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.views.LocalObjectView;
@@ -266,11 +265,12 @@ public class DeviceLayoutImporter {
             Binary customShapeIcon = icons.get(customShapeIdx);            
             String customShapeIconEncode = customShapeIcon.getFileName() + ";/;" + customShapeIcon.getFileExtension() + ";/;" + DatatypeConverter.printBase64Binary(customShapeIcon.getByteArray());
                         
-            LocalObject localCustomShapeObj = new LocalObject(localCustomShape.getClassName(), localCustomShape.getId(), 
-                new String[] {Constants.PROPERTY_NAME, Constants.PROPERTY_ICON}, 
-                new Object[] {customShape.getName(), customShapeIconEncode});
-            
-            if (!CommunicationsStub.getInstance().saveObject(localCustomShapeObj)) {
+            HashMap<String, Object> attributesToUpdate = new HashMap<>();
+            attributesToUpdate.put(Constants.PROPERTY_NAME, customShape.getName());
+            attributesToUpdate.put(Constants.PROPERTY_ICON, customShapeIconEncode);
+
+            if(!CommunicationsStub.getInstance().updateObject(localCustomShape.getClassName(), 
+                    localCustomShape.getOid(), attributesToUpdate)) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }

@@ -1,5 +1,5 @@
 /**
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,12 +16,13 @@
 package org.inventory.design.topology;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
+import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.design.topology.scene.TopologyViewScene;
 import org.openide.util.Lookup;
@@ -67,14 +68,14 @@ public class TopologyViewService {
         return theView;
     }
     
-    public boolean saveNodesOfCurrentView() {
+    public boolean saveNodesInCurrentView() {
         for (LocalObjectLight lol : scene.getNodes()) {
             if (!lol.getName().contains(TopologyViewScene.FREE_FRAME) && !lol.getName().contains(TopologyViewScene.CLOUD_ICON)) {
-                LocalObject update = new LocalObject(lol.getClassName(), lol.getOid(), new String[]{"name"}, new Object[]{lol.getName()});
-                if (!CommunicationsStub.getInstance().saveObject(update)) {
-                    NotificationUtil.getInstance().showSimplePopup("Error", 
-                            NotificationUtil.ERROR_MESSAGE, 
-                            CommunicationsStub.getInstance().getError());
+                HashMap<String, Object> attributesToUpdate = new HashMap<>();
+                attributesToUpdate.put(Constants.PROPERTY_NAME, lol.getName());
+
+                if(!CommunicationsStub.getInstance().updateObject(lol.getClassName(), lol.getOid(), attributesToUpdate)) {
+                    NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                     return false;
                 }
             }
@@ -96,7 +97,7 @@ public class TopologyViewService {
                 
                 TopologyViewConfigurationObject configObject = Lookup.getDefault().lookup(TopologyViewConfigurationObject.class);
                 
-                boolean savedNodes = saveNodesOfCurrentView();
+                boolean savedNodes = saveNodesInCurrentView();
                 configObject.setProperty("saved", savedNodes);
                 return savedNodes;
             }
@@ -118,7 +119,7 @@ public class TopologyViewService {
                 scene.getBackgroundImage())) {
                 TopologyViewConfigurationObject configObject = Lookup.getDefault().lookup(TopologyViewConfigurationObject.class);
                 
-                boolean savedNodes = saveNodesOfCurrentView();
+                boolean savedNodes = saveNodesInCurrentView();
                 configObject.setProperty("saved", savedNodes);
                 return savedNodes;
             }

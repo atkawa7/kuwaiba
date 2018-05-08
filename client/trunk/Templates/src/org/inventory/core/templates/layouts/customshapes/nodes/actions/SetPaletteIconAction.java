@@ -22,6 +22,7 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.HashMap;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -31,9 +32,9 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.xml.bind.DatatypeConverter;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.imports.filters.ImageFileFilter;
@@ -106,10 +107,11 @@ public class SetPaletteIconAction extends GenericInventoryAction {
 
                         String iconAttributeValue = fileName + ";/;" +  fileExtension + ";/;" + byteArrayEncode;
 
-                        LocalObject updateCustomShape = new LocalObject(customShape.getClassName(), customShape.getId(), 
-                            new String[] {"icon"}, new Object[] {iconAttributeValue});
+                        HashMap<String, Object> attributesToUpdate = new HashMap<>();
+                        attributesToUpdate.put(Constants.PROPERTY_ICON, iconAttributeValue);
 
-                        if (!CommunicationsStub.getInstance().saveObject(updateCustomShape)) {
+                        if(!CommunicationsStub.getInstance().updateObject(customShape.getClassName(), 
+                                customShape.getOid(), attributesToUpdate)) {
                             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                         } else {

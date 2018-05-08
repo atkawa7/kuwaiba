@@ -46,7 +46,7 @@ class ExecuteTaskAction extends GenericInventoryAction {
             ExecuteTaskResultTopComponent tc = new ExecuteTaskResultTopComponent(taskResult);
             tc.setDisplayName(String.format("Result for task %s", selectedTask.getName()));
             tc.open();
-            tc.requestAttention(true);
+            tc.requestActive();
         }
     }
 

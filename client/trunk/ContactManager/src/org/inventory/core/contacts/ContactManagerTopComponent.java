@@ -22,6 +22,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
+import java.net.ConnectException;
 import java.util.List;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -30,7 +31,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
-import org.inventory.communications.core.LocalContactLight;
+import org.inventory.communications.core.LocalContact;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.export.ExportableTable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -64,7 +65,7 @@ import org.openide.util.Utilities;
 @TopComponent.Registration(mode = "editor", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.core.contacts.ContactManagerTopComponent")
 @ActionReferences(value = { @ActionReference(path = "Menu/Tools"),
-    @ActionReference(path = "Toolbars/00_General", position = 2)})
+    @ActionReference(path = "Toolbars/01_Navigation", position = 3)})
 
 @TopComponent.OpenActionRegistration(
         displayName = "#CTL_ContactManagerAction",
@@ -78,9 +79,11 @@ import org.openide.util.Utilities;
 public final class ContactManagerTopComponent extends TopComponent implements ExportableTable, ExplorerManager.Provider {
     private ExplorerManager em;
     private ETable contactsTable;
+    private MouseAdapter mouseAdapter;
     
     public ContactManagerTopComponent() {
         this.em = new ExplorerManager();
+        this.mouseAdapter = new PopupProvider();
         initComponents();
         initCustomComponents();
         setName(Bundle.CTL_ContactManagerTopComponent());
@@ -109,6 +112,7 @@ public final class ContactManagerTopComponent extends TopComponent implements Ex
 
         btnGetAllContacts.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/contacts/res/all.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnGetAllContacts, org.openide.util.NbBundle.getMessage(ContactManagerTopComponent.class, "ContactManagerTopComponent.btnGetAllContacts.text")); // NOI18N
+        btnGetAllContacts.setToolTipText(org.openide.util.NbBundle.getMessage(ContactManagerTopComponent.class, "ContactManagerTopComponent.btnGetAllContacts.toolTipText")); // NOI18N
         btnGetAllContacts.setFocusable(false);
         btnGetAllContacts.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnGetAllContacts.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -121,6 +125,7 @@ public final class ContactManagerTopComponent extends TopComponent implements Ex
 
         btnAddContact.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/contacts/res/add.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnAddContact, org.openide.util.NbBundle.getMessage(ContactManagerTopComponent.class, "ContactManagerTopComponent.btnAddContact.text")); // NOI18N
+        btnAddContact.setToolTipText(org.openide.util.NbBundle.getMessage(ContactManagerTopComponent.class, "ContactManagerTopComponent.btnAddContact.toolTipText")); // NOI18N
         btnAddContact.setFocusable(false);
         btnAddContact.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnAddContact.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -133,12 +138,14 @@ public final class ContactManagerTopComponent extends TopComponent implements Ex
 
         btnExport.setIcon(new javax.swing.ImageIcon(getClass().getResource("/org/inventory/core/contacts/res/export.png"))); // NOI18N
         org.openide.awt.Mnemonics.setLocalizedText(btnExport, org.openide.util.NbBundle.getMessage(ContactManagerTopComponent.class, "ContactManagerTopComponent.btnExport.text")); // NOI18N
+        btnExport.setToolTipText(org.openide.util.NbBundle.getMessage(ContactManagerTopComponent.class, "ContactManagerTopComponent.btnExport.toolTipText")); // NOI18N
         btnExport.setFocusable(false);
         btnExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         btnExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar1.add(btnExport);
 
         txtSearch.setText(org.openide.util.NbBundle.getMessage(ContactManagerTopComponent.class, "ContactManagerTopComponent.txtSearch.text")); // NOI18N
+        txtSearch.setToolTipText(org.openide.util.NbBundle.getMessage(ContactManagerTopComponent.class, "ContactManagerTopComponent.txtSearch.toolTipText")); // NOI18N
         jToolBar1.add(txtSearch);
 
         add(jToolBar1, java.awt.BorderLayout.PAGE_START);
@@ -146,7 +153,7 @@ public final class ContactManagerTopComponent extends TopComponent implements Ex
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnGetAllContactsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGetAllContactsActionPerformed
-        List<LocalContactLight> allContacts = CommunicationsStub.getInstance().searchForContacts(null, -1);
+        List<LocalContact> allContacts = CommunicationsStub.getInstance().searchForContacts(null, -1);
         
         if (allContacts.isEmpty())
                     JOptionPane.showMessageDialog(null, "No objects with the given criteria were found", I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
@@ -185,10 +192,7 @@ public final class ContactManagerTopComponent extends TopComponent implements Ex
             LocalClassMetadataLight contactType = (LocalClassMetadataLight)((JComboBox)pnlNewContact.getComponent("cmbContactTypes")).getSelectedItem();
             LocalObjectLight customer = (LocalObjectLight)((JComboBox)pnlNewContact.getComponent("cmbCustomers")).getSelectedItem();
             
-            LocalContactLight newContact = CommunicationsStub.getInstance().
-                    createContact(contactType.getClassName(), contactName, customer.getClassName(), customer.getOid());
-            
-            if (newContact == null) 
+            if(!CommunicationsStub.getInstance().createContact(contactType.getClassName(), contactName, customer.getClassName(), customer.getOid()))
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else 
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "The contact was created successfully");
@@ -205,12 +209,13 @@ public final class ContactManagerTopComponent extends TopComponent implements Ex
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        // TODO add custom code on component opening
+        this.contactsTable.addMouseListener(mouseAdapter);
     }
 
     @Override
     public void componentClosed() {
         contactsTable.removeAll();
+        this.contactsTable.removeMouseListener(mouseAdapter);
     }
 
     void writeProperties(java.util.Properties p) {
@@ -226,23 +231,25 @@ public final class ContactManagerTopComponent extends TopComponent implements Ex
     }
 
     private void initCustomComponents() {
-        this.contactsTable = new ETable(new ContactsTableModel());
-        this.contactsTable.addMouseListener(new PopupProvider());
-        pnlScrollMain.setViewportView(contactsTable);
-        
-        txtSearch.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                List<LocalContactLight> allContacts = CommunicationsStub.getInstance().searchForContacts(txtSearch.getText(), -1);
-                
-                if (allContacts.isEmpty())
-                    JOptionPane.showMessageDialog(null, "No objects with the given criteria were found", I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
-                
-                contactsTable.setModel(new ContactsTableModel(allContacts));
-            }
-        });
-        
-        associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
+        try {
+            this.contactsTable = new ETable(new ContactsTableModel());
+            pnlScrollMain.setViewportView(contactsTable);
+            txtSearch.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    List<LocalContact> allContacts = CommunicationsStub.getInstance().searchForContacts(txtSearch.getText(), -1);
+
+                    if (allContacts.isEmpty())
+                        JOptionPane.showMessageDialog(null, "No objects with the given criteria were found", I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
+
+                    contactsTable.setModel(new ContactsTableModel(allContacts));
+                }
+            });
+
+            associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
+        } catch (ConnectException ex) {
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, ex.getMessage());
+        }
     }
 
     @Override

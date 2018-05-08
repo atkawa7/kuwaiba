@@ -23,6 +23,7 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
@@ -41,7 +42,7 @@ import org.netbeans.api.visual.widget.Widget;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class RackUnitWidget extends RackViewWidget {
-    private static final Color rackUnitColor = new Color(112, 112, 112);
+    private static final Color COLOR_RACKUNIT = new Color(112, 112, 112);
     private final int rackUnitIndex;
     // Used to verify if a rack unit are in used
     private boolean available = true;
@@ -50,7 +51,7 @@ public class RackUnitWidget extends RackViewWidget {
         super(scene);
         this.rackUnitIndex = rackUnitIndex;        
         setOpaque(true);
-        setBackground(rackUnitColor);                
+        setBackground(COLOR_RACKUNIT);                
         setMinimumSize(new Dimension(parentRack.getRackUnitWidth(), parentRack.getRackUnitHeight()));
         getActions().addAction(getAcceptAction());
     }
@@ -133,9 +134,11 @@ public class RackUnitWidget extends RackViewWidget {
                 }                                
             }                            
             // Updates the position of the equipment
-            LocalObject update = new LocalObject(equipment.getClassName(), equipment.getOid(), new String [] {Constants.PROPERTY_POSITION}, new Object [] {position});
+            HashMap<String, Object> attributesToUpdate = new HashMap<>();
+            attributesToUpdate.put(Constants.PROPERTY_POSITION, position);
 
-            if (!CommunicationsStub.getInstance().saveObject(update)) {
+            if(!CommunicationsStub.getInstance().updateObject(equipment.getClassName(), 
+                    equipment.getOid(), attributesToUpdate)) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 return;

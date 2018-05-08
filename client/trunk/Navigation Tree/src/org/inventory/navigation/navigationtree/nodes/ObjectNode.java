@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
@@ -436,8 +437,12 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
 
     @Override
     public void setName(String newName) {
-        LocalObject update = new LocalObject(getObject().getClassName(), getObject().getOid(), new String[]{Constants.PROPERTY_NAME}, new Object[]{ newName });
-        if (com.saveObject(update)) {
+        
+        HashMap<String, Object> attributesToUpdate = new HashMap<>();
+        attributesToUpdate.put(Constants.PROPERTY_NAME, newName);
+        
+        if (CommunicationsStub.getInstance().updateObject(getObject().getClassName(), 
+                getObject().getOid(), attributesToUpdate)) {
             getObject().setName(newName);
             if (getSheet() != null)
                 setSheet(createSheet());

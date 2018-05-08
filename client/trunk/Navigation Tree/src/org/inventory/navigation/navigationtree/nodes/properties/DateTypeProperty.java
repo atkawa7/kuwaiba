@@ -18,8 +18,9 @@ package org.inventory.navigation.navigationtree.nodes.properties;
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
+import java.util.HashMap;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.util.Constants;
-import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.nodes.PropertySupport;
@@ -46,13 +47,14 @@ public class DateTypeProperty extends PropertySupport.ReadWrite<Date> {
 
     @Override
     public void setValue(Date value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-        try {
-            Utils.updateObject(node.getObject().getClassName(), node.getObject().getOid(), getName(), value);
+        HashMap<String, Object> attributesToUpdate = new HashMap<>();
+        attributesToUpdate.put(getName(), value);
+
+        if(CommunicationsStub.getInstance().updateObject(node.getObject().getClassName(), 
+                node.getObject().getOid(), attributesToUpdate))
             this.value = value;
-        } catch (Exception ex) {
-            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, ex.getMessage());
-        }
-        
+        else
+            NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
     }
     @Override
     public PropertyEditor getPropertyEditor(){        
