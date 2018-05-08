@@ -17,6 +17,7 @@ package org.inventory.communications;
 
 import com.neotropic.inventory.modules.sdh.LocalSDHContainerLinkDefinition;
 import com.neotropic.inventory.modules.sdh.LocalSDHPosition;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -219,7 +220,7 @@ public class CommunicationsStub {
             
             this.session = new LocalSession(this.service.createSession(user, password));
             return true;
-        }catch(Exception ex) { 
+        }catch(MalformedURLException | ServerSideException_Exception ex) { 
             this.error =  ex.getMessage();
             return false;
         }
@@ -328,7 +329,7 @@ public class CommunicationsStub {
                         values, getMetaForClass(rol.getClassName(), false)));
             }
             return res;
-        }catch(Exception ex){
+        }catch(ServerSideException_Exception | IllegalArgumentException ex){
             this.error = ex.getMessage();
             return null;
         }
@@ -2837,7 +2838,7 @@ public class CommunicationsStub {
         try{
             List<ClassInfoLight> listTypes;
             listTypes = service.getInstanceableListTypes(this.session.getSessionId());
-
+            
             List<LocalClassMetadataLight> res = new ArrayList<>();
             for (ClassInfoLight cil : listTypes){
                 HashMap<String, Integer> validators = new HashMap<>();
@@ -4380,7 +4381,7 @@ return null;
         // <editor-fold defaultstate="collapsed" desc="IPAM Module">
     public List<LocalPool> getSubnetPools(long parentId, String className){
         try{
-            List <RemotePool> pools = service.getSubnetPools(-1, parentId, className, this.session.getSessionId());
+            List <RemotePool> pools = service.getSubnetPools(parentId, className, this.session.getSessionId());
             List <LocalPool> res = new ArrayList<>();
             
             for (RemotePool pool : pools)
@@ -4575,7 +4576,7 @@ return null;
     public List<LocalObjectLight> getSubnetsInSubent(long id, String className){
         try {
             List<LocalObjectLight> res = new ArrayList<>();
-            for (RemoteObjectLight anIp : service.getSubnetsInSubent(id, 0, className, this.session.getSessionId())) 
+            for (RemoteObjectLight anIp : service.getSubnetsInSubnet(id, 0, className, this.session.getSessionId())) 
                 res.add(new LocalObjectLight(anIp.getOid(), anIp.getName(), anIp.getClassName()));
             return res;
         }catch(Exception ex){
@@ -5469,6 +5470,7 @@ return null;
                         progress.setFindings(null);
                         progress.getProgressHandle().finish();                        
                         progress.runSync();
+                        
                     }
                 }
             });

@@ -92,6 +92,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICPORT = "GenericPort";
     /**
+     * Virtual port
+     */
+    public static final String CLASS_GENERICLOGICALPORT = "GenericLogicalPort";
+    /**
      * Root class to all physical containers (wire, wireless, etc)
      */
     public static final String CLASS_GENERICPHYSICALCONTAINER = "GenericPhysicalContainer";
