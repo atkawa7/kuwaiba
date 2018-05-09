@@ -734,7 +734,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
        try(Transaction tx = graphDb.beginTx()) {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             if (classNode ==  null)
-                throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s",className));
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.",className));
 
             if (myClass == null) {
                  myClass = Util.createClassMetadataFromNode(classNode);
@@ -787,7 +787,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             
             if (classNode ==  null)
-                throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s",className));
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.",className));
 
             if (!Util.isSubClass(Constants.CLASS_GENERICOBJECTLIST, classNode))
                 throw new InvalidArgumentException(String.format("Class %s is not a list type", className));
@@ -811,7 +811,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, listTypeClassName);
             
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", listTypeClassName));
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", listTypeClassName));
             
             if (!Util.isSubClass(Constants.CLASS_GENERICOBJECTLIST, classNode))
                 throw new InvalidArgumentException(String.format("Class %s is not a list type", listTypeClassName));
@@ -863,7 +863,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, listTypeItemClassName);
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", listTypeItemClassName));
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", listTypeItemClassName));
             
             if (!Util.isSubClass(Constants.CLASS_GENERICOBJECTLIST, classNode))
                 throw new InvalidArgumentException(String.format("Class %s is not a list type", listTypeItemClassName));

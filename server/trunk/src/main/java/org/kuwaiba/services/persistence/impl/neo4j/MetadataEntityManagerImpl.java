@@ -208,7 +208,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             
             if (classMetadata == null)
                 throw new MetadataObjectNotFoundException(String.format(
-                        "Can not find a class with id %s", newClassDefinition.getName()));
+                        "The class with id %s could not be found. Contact your administrator.", newClassDefinition.getName()));
             
             String formerName = (String)classMetadata.getProperty(Constants.PROPERTY_NAME);
             
@@ -322,7 +322,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
             if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
-                        "Can not find a class with id %s", classId));
+                        "The class with id %s could not be found. Contact your administrator.", classId));
                       
             if (!(Boolean)node.getProperty(Constants.PROPERTY_CUSTOM))
                 throw new InvalidArgumentException(String.format(
@@ -387,7 +387,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
             if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
-                        "Can not find a class with name %s", className));
+                        "Class %s could not be found. Contact your administrator.", className));
             
             if (!(Boolean)node.getProperty(Constants.PROPERTY_CUSTOM))
                 throw new InvalidArgumentException(String.format(
@@ -455,14 +455,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         
             if (myClassInventoryObjectNode == null) {
                 throw new MetadataObjectNotFoundException(String.format(
-                         "Can not find a class with name %s", Constants.CLASS_INVENTORYOBJECT));
+                         "Class %s could not be found. Contact your administrator.", Constants.CLASS_INVENTORYOBJECT));
             }
             else
                 cml.add(Util.createClassMetadataLightFromNode(myClassInventoryObjectNode));
                             
             if (includeListTypes && myClassGenericObjectListNode == null) {
                 throw new MetadataObjectNotFoundException(String.format(
-                         "Can not find a class with name %s", Constants.CLASS_GENERICOBJECTLIST));
+                         "Class %s could not be found. Contact your administrator.", Constants.CLASS_GENERICOBJECTLIST));
             }
             
             if (includeListTypes && myClassGenericObjectListNode != null)
@@ -547,7 +547,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             throws MetadataObjectNotFoundException {
         ClassMetadata aClass = cm.getClass(className);
         if (aClass == null)
-            throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", className));
+            throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", className));
         
         List<ClassMetadataLight> subclasses = cm.getSubclassesNorecursive(className);        
         List<ClassMetadataLight> classManagerResultList = new ArrayList<>();
@@ -632,7 +632,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             
             if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
-                        "Can not find a class with id %s", classId));
+                        "The class with id %s could not be found. Contact your administrator.", classId));
             
             clmt = Util.createClassMetadataFromNode(node);
         } 
@@ -651,7 +651,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             
             if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
-                        "Can not find a class with name %s", className));
+                        "Class %s could not be found. Contact your administrator.", className));
             clmt = Util.createClassMetadataFromNode(node);
             cm.putClass(clmt);
         }
@@ -672,7 +672,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", className));
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", className));
             
             Util.createAttribute(classNode, attributeDefinition, recursive);
             //Refresh cache for the affected classes
@@ -690,7 +690,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             Node classNode = Util.findNodeByLabelAndId(classLabel, classId);
             
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Can not find a class with id %s", classId));
+                throw new MetadataObjectNotFoundException(String.format("The class with id %s could not be found. Contact your administrator.", classId));
         
             Util.createAttribute(classNode, attributeDefinition, true);
             //Refresh cache for the affected classes
@@ -707,7 +707,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format(
-                    "Can not find a class with name %s", className));
+                    "Class %s could not be found. Contact your administrator.", className));
             
             for (Relationship relationship : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE)) {
                 Node attrNode = relationship.getEndNode();
@@ -729,7 +729,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format(
-                        "Can not find a class with name %s", className));
+                        "Class %s could not be found. Contact your administrator.", className));
             
             Iterable<Relationship> relationships = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE);
             for (Relationship relationship : relationships) {
@@ -757,7 +757,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             Node classNode = Util.findNodeByLabelAndId(classLabel, classId);
             if (classNode == null) 
                 throw new MetadataObjectNotFoundException(String.format(
-                        "Can not find a class with id %s", classId));
+                        "The class with id %s could not be found. Contact your administrator.", classId));
             
             Iterable<Relationship> relationships = classNode.getRelationships(RelTypes.HAS_ATTRIBUTE);
             for (Relationship relationship : relationships) {
@@ -784,7 +784,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         try(Transaction tx = graphDb.beginTx()) {
             Node classNode = Util.findNodeByLabelAndId(classLabel, classId);
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Can not find a class with id %s", classId));
+                throw new MetadataObjectNotFoundException(String.format("The class with id %s could not be found. Contact your administrator.", classId));
 
             for (Relationship relationship : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE)) {
                 Node attrNode = relationship.getEndNode();
@@ -911,7 +911,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", className));
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", className));
 
             for (Relationship relationship : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE)) {
                 Node attrNode = relationship.getEndNode();
@@ -1039,7 +1039,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, attributeName);
 
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", className));
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", className));
 
             for (Relationship relationship : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE)) {
                 Node attrNode = relationship.getEndNode();
@@ -1067,7 +1067,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             Node classNode = Util.findNodeByLabelAndId(classLabel, classId);
 
             if (classNode == null)
-                throw new MetadataObjectNotFoundException(String.format("Can not find a class with id %s", classId));
+                throw new MetadataObjectNotFoundException(String.format("The class with id %s could not be found. Contact your administrator.", classId));
 
             for (Relationship relationship : classNode.getRelationships(RelTypes.HAS_ATTRIBUTE)) {
                 Node attrNode = relationship.getEndNode();
@@ -1218,7 +1218,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
-                            "Can not find a class with id %s", parentClassId));
+                            "The class with id %s could not be found. Contact your administrator.", parentClassId));
                 if (!isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)parentNode.getProperty(Constants.PROPERTY_NAME)))
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
@@ -1285,7 +1285,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
-                            "Can not find a class with id %s", parentClassId));
+                            "The class with id %s could not be found. Contact your administrator.", parentClassId));
                 if (!isSubClass(Constants.CLASS_INVENTORYOBJECT, (String)parentNode.getProperty(Constants.PROPERTY_NAME)))
                     throw new InvalidArgumentException(
                             String.format("%s is not a business class, thus can not be added to the containment hierarchy", (String)parentNode.getProperty(Constants.PROPERTY_NAME)));
@@ -1481,7 +1481,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
-                            "Can not find a class with id %s", parentClassId));
+                            "The class with id %s could not be found. Contact your administrator.", parentClassId));
             }
             for (long id : childrenToBeRemoved) {
                 Node childNode = Util.findNodeByLabelAndId(classLabel, id);
@@ -1516,7 +1516,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 
                 if (parentNode == null)
                     throw new MetadataObjectNotFoundException(String.format(
-                            "Can not find a class with id %s", parentClassId));
+                            "The class with id %s could not be found. Contact your administrator.", parentClassId));
             }
             for (long id : specialChildrenToBeRemoved) {
                 Node childNode = Util.findNodeByLabelAndId(classLabel, id);
@@ -1742,7 +1742,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         
         String attributeType = Util.createClassMetadataFromNode(classNode).getAttribute(attributeName).getType();
         if (classNode == null)
-            throw new MetadataObjectNotFoundException(String.format("Can not find a class with name %s", className));
+            throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", className));
         
         if (!objectsHasAttribute(classNode, attributeName, attributeType))// check every object for the given class
             return false;
