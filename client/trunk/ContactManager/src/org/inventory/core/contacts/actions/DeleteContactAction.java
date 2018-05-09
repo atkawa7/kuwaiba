@@ -38,8 +38,6 @@ public class DeleteContactAction extends GenericObjectNodeAction {
         this.putValue(NAME, "Delete Contact"); 
     }
     
-    
-
     @Override
     public String[] getValidators() {
         return null;

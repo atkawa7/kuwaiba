@@ -17,9 +17,12 @@ package org.kuwaiba.management.services.nodes;
 
 import javax.swing.Action;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.core.contacts.actions.AddContactAction;
+import org.inventory.core.contacts.actions.ShowContactsAction;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.kuwaiba.management.services.nodes.actions.ServiceManagerActionFactory;
+import org.openide.util.Lookup;
 
 /**
  * Node representing a customer
@@ -36,6 +39,10 @@ public class CustomerNode extends ObjectNode {
     public Action[] getActions(boolean context) {
         return new Action [] { ServiceManagerActionFactory.getCreateServicePoolAction(),
             ServiceManagerActionFactory.getDeleteCustomerAction(),
+            null,
+            Lookup.getDefault().lookup(AddContactAction.class),
+            Lookup.getDefault().lookup(ShowContactsAction.class),
+            null,
             ShowMoreInformationAction.getInstance(getObject().getOid(), getObject().getClassName())
         };        
     }

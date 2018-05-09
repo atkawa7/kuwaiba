@@ -66,16 +66,18 @@ public class ContactsTableModel  implements TableModel {
 
     @Override
     public int getColumnCount() {
-        return genericContactMetadata.getAttributes().length + 1; // +1 = company
-    }
+        return genericContactMetadata.getAttributes().length + 2; // +1 = company, +1 = type
+     }
 
     @Override
     public String getColumnName(int columnIndex) {
         switch (columnIndex) {
             case 0:
-                return "Company";
+                return "company";
+            case 1:
+                return "type";
             default:
-                return genericContactMetadata.getAttributes()[columnIndex - 1].getDisplayName();
+                return genericContactMetadata.getAttributes()[columnIndex - 2].getDisplayName();
         }
     }
 
@@ -96,8 +98,11 @@ public class ContactsTableModel  implements TableModel {
                 return currentContactList.get(rowIndex);
             case 0:
                 return currentContactList.get(rowIndex).getCustomer().getName();
+            case 1:
+                return currentContactList.get(rowIndex).getClassName();
             default:
-                return currentContactList.get(rowIndex).getAttribute(getColumnName(columnIndex));
+                return currentContactList.get(rowIndex).getAttribute(getColumnName(columnIndex)) != null ?
+                        currentContactList.get(rowIndex).getAttribute(getColumnName(columnIndex)).toString() : "";
         }
     }
 
@@ -105,6 +110,32 @@ public class ContactsTableModel  implements TableModel {
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) { 
         this.currentContactList.clear();
         this.currentContactList.addAll((List<LocalContact>)aValue);
+    }
+    
+    public String[] getColumnNames() {
+        String[] columnNames = new String[getColumnCount()];
+        
+        for (int i = 0; i < getColumnCount(); i++)
+            columnNames[i] = getColumnName(i);
+        
+        return columnNames;
+    }
+    
+    /**
+     * Returns the unique (non-repeated) values in a table column
+     * @param columnIndex The index of the column
+     * @return The list of non-repeated values
+     */
+    public String[] collectColumnValuesForColumn(int columnIndex) {
+        List<String> valuesAsList = new ArrayList<>();
+        
+        for (int i = 0; i < getRowCount(); i++) {
+            String valueAtCell = (String)getValueAt(i, columnIndex);
+            if (!valuesAsList.contains(valueAtCell))
+                valuesAsList.add(valueAtCell);
+        }
+        
+        return valuesAsList.toArray(new String[0]);
     }
 
     @Override
