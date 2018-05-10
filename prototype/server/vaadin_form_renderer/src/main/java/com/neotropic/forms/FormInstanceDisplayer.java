@@ -15,27 +15,26 @@
  */
 package com.neotropic.forms;
 
+import com.neotropic.api.forms.FormInstanceLoader;
 import com.neotropic.api.forms.FormLoader;
 import com.neotropic.api.forms.XMLUtil;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.Window;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Scanner;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class FormDisplayer {
-    private static FormDisplayer instance;
+public class FormInstanceDisplayer {
+    private static FormInstanceDisplayer instance;
     
-    private FormDisplayer() {
+    private FormInstanceDisplayer() {
     }
     
-    public static FormDisplayer getInstance() {
-        return instance == null ? instance = new FormDisplayer() : instance;        
+    public static FormInstanceDisplayer getInstance() {
+        return instance == null ? instance = new FormInstanceDisplayer() : instance;        
     }
     
     public void display(File file, boolean sizeFull) {
@@ -47,12 +46,12 @@ public class FormDisplayer {
                 
         Window subWindow = new Window(file.getName());
         subWindow.setModal(true);
-
-        FormLoader formBuilder = new FormLoader(structure);            
-        formBuilder.build();
-
-        FormRenderer formRenderer = new FormRenderer(formBuilder);
-
+        
+        FormInstanceLoader fil = new FormInstanceLoader();
+        FormLoader formLoader = fil.load(structure);
+        
+        FormRenderer formRenderer = new FormRenderer(formLoader);
+        
         Panel pnlForm = new Panel();
         pnlForm.setContent(formRenderer);
         pnlForm.setSizeUndefined();
@@ -67,5 +66,5 @@ public class FormDisplayer {
 
         UI.getCurrent().addWindow(subWindow);
     }
-        
+    
 }

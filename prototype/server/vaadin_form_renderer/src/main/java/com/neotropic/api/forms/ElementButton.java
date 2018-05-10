@@ -14,8 +14,14 @@
  */
 package com.neotropic.api.forms;
 
+import com.neotropic.forms.Variable;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -100,18 +106,29 @@ public class ElementButton extends AbstractElement {
                 } else if (Constants.Function.SAVE.equals(key)) {
                                                             
                     byte [] structure = new FormInstanceCreator(getFormStructure()).getStructure();
-                    new String(structure);
-                    int i = 0;
+                    
+                    // TODO: save by form id instance
+                    try {
+                        String fileName = Variable.FORM_RESOURCE_INSTANCES + "/" + "instance" + String.valueOf(new Date().getTime()) + ".xml";
+                        PrintWriter printWriter = new PrintWriter(fileName);
+                        printWriter.print(new String(structure));
+                        printWriter.close();
+                        
+                    } catch (FileNotFoundException ex) {
+                        Logger.getLogger(ElementButton.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         }
     }
     
     @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        setId(reader);
-        setEvents(reader);
-        
+    public void initFromXML(XMLStreamReader reader) throws XMLStreamException {
+        super.initFromXML(reader);
+        setCaption(reader);
+    }
+    
+    private void setCaption(XMLStreamReader reader) {
         caption = reader.getAttributeValue(null, Constants.Attribute.CAPTION);
     }
 

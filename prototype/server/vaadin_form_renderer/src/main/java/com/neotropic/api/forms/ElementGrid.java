@@ -50,8 +50,8 @@ public class ElementGrid extends AbstractElement {
     }
     
     @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        super.initFromXMl(reader);
+    public void initFromXML(XMLStreamReader reader) throws XMLStreamException {
+        super.initFromXML(reader);
         
         columns = new ArrayList();
         QName tagGrid = new QName(Constants.Tag.GRID);
@@ -63,7 +63,7 @@ public class ElementGrid extends AbstractElement {
             if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
                 if (reader.getName().equals(tagColumn)) {
                     ElementColumn column = new ElementColumn();
-                    column.initFromXMl(reader);
+                    column.initFromXML(reader);
                                         
                     columns.add(column);
                 }

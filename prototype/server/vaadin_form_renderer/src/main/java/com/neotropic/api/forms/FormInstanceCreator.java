@@ -14,7 +14,9 @@
  */
 package com.neotropic.api.forms;
 
+import com.neotropic.forms.KuwaibaClient;
 import java.io.ByteArrayOutputStream;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +25,8 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import org.inventory.communications.wsclient.ClassInfo;
+import org.inventory.communications.wsclient.ClassInfoLight;
 import org.inventory.communications.wsclient.RemoteObjectLight;
 
 /**
@@ -64,10 +68,18 @@ public class FormInstanceCreator {
     
     private void getStructureRecursive(XMLEventWriter xmlew, XMLEventFactory xmlef, AbstractElement parent) throws XMLStreamException {
         if (parent != null) {
-            QName tag = new QName(parent.getTagName());
+            String tagName = parent.getTagName();
             
+            if (Constants.Tag.FORM.equals(tagName))
+                tagName = Constants.Tag.FORM_INSTANCE;
+                        
+            QName tag = new QName(tagName);
+                        
             xmlew.add(xmlef.createStartElement(tag, null, null));
             XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.ID, parent.getId());
+            
+            if (Constants.Tag.FORM_INSTANCE.equals(tagName))
+                XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.FORM_ID, ((ElementForm) parent).getFormId());
             
             if (parent instanceof AbstractElementField) {
                                 
@@ -98,12 +110,56 @@ public class FormInstanceCreator {
         
         switch(element.getDataType()) {
             case Constants.Attribute.DataType.REMOTE_OBJECT_LIGTH:
-                if (element.getValue() instanceof RemoteObjectLight) {
-                    RemoteObjectLight remoteObjectLight = (RemoteObjectLight) element.getValue();
+                addRemoteObjectLight(xmlew, xmlef, element);                
+            break;
+            case Constants.Attribute.DataType.CLASS_INFO_LIGTH:
+                addClassInfoLight(xmlew, xmlef, element);
+            break;
+            case Constants.Attribute.DataType.STRING:
+                if (element.getValue() instanceof String)
+                    XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.VALUE, String.valueOf(element.getValue()));
+            break;
+            case Constants.Attribute.DataType.INTEGER:
+                try {
                     
-                    XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.OBJECT_ID, String.valueOf(remoteObjectLight.getOid()));
+                    if (Integer.valueOf(String.valueOf(element.getValue())) instanceof Integer)                    
+                        XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.VALUE, String.valueOf(element.getValue()));
+                    
+                } catch(NumberFormatException nfe) {
+                    
                 }
             break;
+            case Constants.Attribute.DataType.DATE:
+                if (element.getValue() instanceof LocalDate) {
+                    LocalDate localDate = (LocalDate) element.getValue();
+                                        
+                    XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.VALUE, localDate.toString());
+                }
+            break;
+        }
+    }
+    
+    private void addRemoteObjectLight(XMLEventWriter xmlew, XMLEventFactory xmlef, AbstractElementField element) throws XMLStreamException {
+        
+        if (element.getValue() instanceof RemoteObjectLight) {
+            
+            RemoteObjectLight remoteObjectLight = (RemoteObjectLight) element.getValue();
+
+            ClassInfo classInfo = KuwaibaClient.getInstance().getClass(remoteObjectLight.getClassName());
+            
+            XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.OBJECT_ID, String.valueOf(remoteObjectLight.getOid()));
+            XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.OBJECT_NAME, remoteObjectLight.getName());
+            XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.CLASS_ID, String.valueOf(classInfo.getId()));
+        }
+    }
+    
+    private void addClassInfoLight(XMLEventWriter xmlew, XMLEventFactory xmlef, AbstractElementField element) throws XMLStreamException {
+        if (element.getValue() instanceof ClassInfoLight) {
+            
+            ClassInfoLight classInfoLight = (ClassInfoLight) element.getValue();
+            
+            XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.CLASS_ID, String.valueOf(classInfoLight.getId()));
+            XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.CLASS_NAME, classInfoLight.getClassName());
         }
     }
     

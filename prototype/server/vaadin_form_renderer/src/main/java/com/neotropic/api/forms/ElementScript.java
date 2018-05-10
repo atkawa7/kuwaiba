@@ -46,7 +46,7 @@ public class ElementScript implements Tag {
     }
     
     @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
+    public void initFromXML(XMLStreamReader reader) throws XMLStreamException {
         QName tagScript = new QName(Constants.Tag.SCRIPT);
         QName tagFunction = new QName(Constants.Tag.FUNCTION);
                         

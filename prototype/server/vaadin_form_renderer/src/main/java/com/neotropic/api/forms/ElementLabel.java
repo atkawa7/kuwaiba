@@ -33,8 +33,8 @@ public class ElementLabel extends AbstractElementField {
     }
                 
     @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        super.initFromXMl(reader);
+    public void initFromXML(XMLStreamReader reader) throws XMLStreamException {
+        super.initFromXML(reader);
         
         String strValue = getValue();
                 

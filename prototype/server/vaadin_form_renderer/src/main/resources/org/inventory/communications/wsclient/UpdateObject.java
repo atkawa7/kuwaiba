@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -20,9 +19,8 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="oid" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="attributeNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="attributeValues" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="attributes" type="{http://ws.interfaces.kuwaiba.org/}stringPair" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -35,19 +33,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "updateObject", propOrder = {
     "className",
-    "oid",
-    "attributeNames",
-    "attributeValues",
+    "id",
+    "attributes",
     "sessionId"
 })
 public class UpdateObject {
 
     protected String className;
-    protected long oid;
-    @XmlElement(nillable = true)
-    protected List<String> attributeNames;
-    @XmlElement(nillable = true)
-    protected List<String> attributeValues;
+    protected long id;
+    protected List<StringPair> attributes;
     protected String sessionId;
 
     /**
@@ -75,77 +69,48 @@ public class UpdateObject {
     }
 
     /**
-     * Gets the value of the oid property.
+     * Gets the value of the id property.
      * 
      */
-    public long getOid() {
-        return oid;
+    public long getId() {
+        return id;
     }
 
     /**
-     * Sets the value of the oid property.
+     * Sets the value of the id property.
      * 
      */
-    public void setOid(long value) {
-        this.oid = value;
+    public void setId(long value) {
+        this.id = value;
     }
 
     /**
-     * Gets the value of the attributeNames property.
+     * Gets the value of the attributes property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attributeNames property.
+     * This is why there is not a <CODE>set</CODE> method for the attributes property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getAttributeNames().add(newItem);
+     *    getAttributes().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link String }
+     * {@link StringPair }
      * 
      * 
      */
-    public List<String> getAttributeNames() {
-        if (attributeNames == null) {
-            attributeNames = new ArrayList<String>();
+    public List<StringPair> getAttributes() {
+        if (attributes == null) {
+            attributes = new ArrayList<StringPair>();
         }
-        return this.attributeNames;
-    }
-
-    /**
-     * Gets the value of the attributeValues property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the attributeValues property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAttributeValues().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
-     */
-    public List<String> getAttributeValues() {
-        if (attributeValues == null) {
-            attributeValues = new ArrayList<String>();
-        }
-        return this.attributeValues;
+        return this.attributes;
     }
 
     /**

@@ -29,8 +29,8 @@ import com.neotropic.api.forms.ElementSubform;
 import com.neotropic.api.forms.ElementTextArea;
 import com.neotropic.api.forms.ElementTextField;
 import com.neotropic.api.forms.ElementTree;
+import com.neotropic.api.forms.ElementUpload;
 import com.neotropic.api.forms.ElementVerticalLayout;
-import com.vaadin.ui.Component;
 
 /**
  *
@@ -80,6 +80,8 @@ public class ComponentFactory {
             graphicalComponent = new ComponentTree(new TreeWrapper());            
         } else if (element instanceof ElementListSelectFilter) {
             graphicalComponent = new ComponentListSelectFilter();            
+        } else if (element instanceof ElementUpload) {
+            graphicalComponent = new ComponentUpload();            
         }
         
         if (graphicalComponent != null && element != null) {

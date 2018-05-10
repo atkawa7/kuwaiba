@@ -23,6 +23,7 @@ import javax.xml.stream.XMLStreamReader;
  */
 public class ElementForm extends AbstractElementContainer {
     private String title;
+    private String formId;
     
     public ElementForm() {
     }
@@ -34,12 +35,29 @@ public class ElementForm extends AbstractElementContainer {
     public String getTitle() {
         return title;
     }
+    
+    public String getFormId() {
+        return formId;
+    }
+    
+    public void setFormId(String formId) {
+        this.formId = formId;
+    }
 
     @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        super.initFromXMl(reader);
+    public void initFromXML(XMLStreamReader reader) throws XMLStreamException {
+        super.initFromXML(reader);
         
+        setTitle(reader);
+        setFormId(reader);
+    }
+    
+    private void setTitle(XMLStreamReader reader) {
         title = reader.getAttributeValue(null, Constants.Attribute.TITLE);
+    }
+    
+    private void setFormId(XMLStreamReader reader) {
+        formId = reader.getAttributeValue(null, Constants.Attribute.FORM_ID);
     }
     
     @Override

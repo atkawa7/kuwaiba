@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for remoteBusinessObjectLightList complex type.
+ * <p>Java class for getFilesForObjectResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="remoteBusinessObjectLightList">
+ * &lt;complexType name="getFilesForObjectResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="list" type="{http://ws.interfaces.kuwaiba.org/}remoteBusinessObjectLight" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}remoteFileObjectLight" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,41 +29,41 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "remoteBusinessObjectLightList", propOrder = {
-    "list"
+@XmlType(name = "getFilesForObjectResponse", propOrder = {
+    "_return"
 })
-public class RemoteBusinessObjectLightList {
+public class GetFilesForObjectResponse {
 
-    @XmlElement(nillable = true)
-    protected List<RemoteBusinessObjectLight> list;
+    @XmlElement(name = "return")
+    protected List<RemoteFileObjectLight> _return;
 
     /**
-     * Gets the value of the list property.
+     * Gets the value of the return property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the list property.
+     * This is why there is not a <CODE>set</CODE> method for the return property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getList().add(newItem);
+     *    getReturn().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link RemoteBusinessObjectLight }
+     * {@link RemoteFileObjectLight }
      * 
      * 
      */
-    public List<RemoteBusinessObjectLight> getList() {
-        if (list == null) {
-            list = new ArrayList<RemoteBusinessObjectLight>();
+    public List<RemoteFileObjectLight> getReturn() {
+        if (_return == null) {
+            _return = new ArrayList<RemoteFileObjectLight>();
         }
-        return this.list;
+        return this._return;
     }
 
 }

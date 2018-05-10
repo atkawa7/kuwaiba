@@ -50,6 +50,7 @@ public class FormLoader {
     public static final QName TAG_PANEL = new QName(Constants.Tag.PANEL);
     public static final QName TAG_TREE = new QName(Constants.Tag.TREE);
     public static final QName TAG_LIST_SELECT_FILTER = new QName(Constants.Tag.LIST_SELECT_FILTER);
+    public static final QName TAG_UPLOAD = new QName(Constants.Tag.UPLOAD);
     
     private final List<QName> containers;
     
@@ -134,6 +135,9 @@ public class FormLoader {
                 } else if (reader.getName().equals(TAG_LIST_SELECT_FILTER)) {
                     child = new ElementListSelectFilter();
                     
+                } else if (reader.getName().equals(TAG_UPLOAD)) {
+                    child = new ElementUpload();
+                    
                 } else if (reader.getName().equals(TAG_I18N)) {
                     return event;
                     
@@ -143,7 +147,7 @@ public class FormLoader {
                 }
                                 
                 if (child != null) {
-                    child.initFromXMl(reader);
+                    child.initFromXML(reader);
                     
                     elements.add(child);
                                                             
@@ -172,7 +176,7 @@ public class FormLoader {
                     
                     if (reader.getName().equals(TAG_FORM)) {
                         root = new ElementForm();
-                        root.initFromXMl(reader);
+                        root.initFromXML(reader);
                                                 
                         elements.add(root);
                                                                                     
@@ -182,10 +186,10 @@ public class FormLoader {
                 if (event == XMLStreamConstants.START_ELEMENT) {
                     if (reader.getName().equals(TAG_I18N)) {
                         elementI18N = new ElementI18N();
-                        elementI18N.initFromXMl(reader);
+                        elementI18N.initFromXML(reader);
                     }
                     if (reader.getName().equals(TAG_SCRIPT))
-                        elementScript.initFromXMl(reader);
+                        elementScript.initFromXML(reader);
                 }
             }
             reader.close();

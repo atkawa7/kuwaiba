@@ -20,10 +20,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.inventory.communications.wsclient.ClassInfoLight;
 import org.inventory.communications.wsclient.RemoteObjectLight;
 import org.inventory.communications.wsclient.RemoteScriptQuery;
 import org.inventory.communications.wsclient.RemoteScriptQueryResult;
+import org.inventory.communications.wsclient.RemoteScriptQueryResultCollection;
 import org.inventory.communications.wsclient.ServerSideException_Exception;
 import org.inventory.communications.wsclient.StringPair;
 
@@ -165,6 +168,16 @@ public class ScriptQueryManager {
         }
     }
     
+    public RemoteScriptQueryResultCollection executeScriptQueryCollection(long scriptQueryId) {
+        try {
+            return KuwaibaClient.getInstance().getKuwaibaService().executeScriptQueryCollection(scriptQueryId, 
+                KuwaibaClient.getInstance().getRemoteSession().getSessionId());
+        
+        }   catch (ServerSideException_Exception ex) {
+            return null;
+        }
+    }
+        
     public boolean updateScriptQueryParameters(long scriptQueryId, List<StringPair> parameters) {
         try {
             
@@ -201,6 +214,16 @@ public class ScriptQueryManager {
             return null;
         }
     }
+    
+    public List<RemoteObjectLight> getSpecialAttribute(String objectClassName, long objectId, String attributeName) {
+        try {
+            return KuwaibaClient.getInstance().getKuwaibaService().getSpecialAttribute(objectClassName, objectId, attributeName,
+                    KuwaibaClient.getInstance().getRemoteSession().getSessionId());
+        } catch (ServerSideException_Exception ex) {
+            
+            return null;
+        }
+    }
         
     public Object excecuteScriptQuery(String scriptQueryName, HashMap<String, String> parameters) {
         if (!scriptQueryMap.containsKey(scriptQueryName))
@@ -219,14 +242,48 @@ public class ScriptQueryManager {
                 if (parameters.containsKey(param.getKey()))
                     param.setValue(parameters.get(param.getKey()));
             }
-        }
-        
-        if (updateScriptQueryParameters(remoteScriptQuery.getId(), params)) {
-            RemoteScriptQueryResult rsqr = executeScriptQuery(remoteScriptQuery.getId());
             
-            if (rsqr != null)
-                return rsqr.getResult();
+            updateScriptQueryParameters(remoteScriptQuery.getId(), params);
         }
+                
+        RemoteScriptQueryResult rsqr = executeScriptQuery(remoteScriptQuery.getId());
+
+        if (rsqr != null)
+            return rsqr.getResult();
+        
+        return null;
+    }
+    
+    public List executeScriptQueryCollection(String scriptQueryName, HashMap<String, String> parameters) {
+        if (!scriptQueryMap.containsKey(scriptQueryName)) {
+            List<String> result = new ArrayList();            
+            result.add(String.format("The Script Query with name %s not exist", scriptQueryName));
+            return result;
+        }
+        RemoteScriptQuery remoteScriptQuery = scriptQueryMap.get(scriptQueryName);
+        
+        List<StringPair> params = remoteScriptQuery.getParameters();
+        
+        if (params != null && parameters != null) { 
+            
+            if (params.size() != parameters.size()) {
+                List<String> result = new ArrayList();            
+                result.add(String.format("The number of parameters no match", scriptQueryName));
+                return result;
+            }
+            for (StringPair param : params) {
+                if (parameters.containsKey(param.getKey()))
+                    param.setValue(parameters.get(param.getKey()));
+            }
+            
+            updateScriptQueryParameters(remoteScriptQuery.getId(), params);
+        }
+                
+        RemoteScriptQueryResultCollection rsqr = executeScriptQueryCollection(remoteScriptQuery.getId());
+
+        if (rsqr != null)
+            return rsqr.getResult();
+        
         return null;
     }
 }

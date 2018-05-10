@@ -6,6 +6,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -19,10 +20,9 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="oid" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="attributes" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="values" type="{http://jaxb.dev.java.net/array}stringArray" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="attributes" type="{http://ws.interfaces.kuwaiba.org/}stringPair" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,34 +33,34 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "remoteObject", propOrder = {
-    "oid",
+    "id",
     "className",
-    "attributes",
-    "values"
+    "attributes"
+})
+@XmlSeeAlso({
+    RemoteContact.class
 })
 public class RemoteObject {
 
-    protected long oid;
+    protected long id;
     protected String className;
     @XmlElement(nillable = true)
-    protected List<String> attributes;
-    @XmlElement(nillable = true)
-    protected List<StringArray> values;
+    protected List<StringPair> attributes;
 
     /**
-     * Gets the value of the oid property.
+     * Gets the value of the id property.
      * 
      */
-    public long getOid() {
-        return oid;
+    public long getId() {
+        return id;
     }
 
     /**
-     * Sets the value of the oid property.
+     * Sets the value of the id property.
      * 
      */
-    public void setOid(long value) {
-        this.oid = value;
+    public void setId(long value) {
+        this.id = value;
     }
 
     /**
@@ -105,44 +105,15 @@ public class RemoteObject {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link String }
+     * {@link StringPair }
      * 
      * 
      */
-    public List<String> getAttributes() {
+    public List<StringPair> getAttributes() {
         if (attributes == null) {
-            attributes = new ArrayList<String>();
+            attributes = new ArrayList<StringPair>();
         }
         return this.attributes;
-    }
-
-    /**
-     * Gets the value of the values property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the values property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getValues().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link StringArray }
-     * 
-     * 
-     */
-    public List<StringArray> getValues() {
-        if (values == null) {
-            values = new ArrayList<StringArray>();
-        }
-        return this.values;
     }
 
 }

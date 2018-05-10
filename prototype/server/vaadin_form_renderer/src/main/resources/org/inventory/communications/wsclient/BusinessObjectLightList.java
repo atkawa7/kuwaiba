@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for stringArray complex type.
+ * <p>Java class for businessObjectLightList complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="stringArray">
+ * &lt;complexType name="businessObjectLightList">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="item" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="list" type="{http://ws.interfaces.kuwaiba.org/}businessObjectLight" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,41 +29,41 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "stringArray", namespace = "http://jaxb.dev.java.net/array", propOrder = {
-    "item"
+@XmlType(name = "businessObjectLightList", propOrder = {
+    "list"
 })
-public class StringArray {
+public class BusinessObjectLightList {
 
     @XmlElement(nillable = true)
-    protected List<String> item;
+    protected List<BusinessObjectLight> list;
 
     /**
-     * Gets the value of the item property.
+     * Gets the value of the list property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the item property.
+     * This is why there is not a <CODE>set</CODE> method for the list property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getItem().add(newItem);
+     *    getList().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link String }
+     * {@link BusinessObjectLight }
      * 
      * 
      */
-    public List<String> getItem() {
-        if (item == null) {
-            item = new ArrayList<String>();
+    public List<BusinessObjectLight> getList() {
+        if (list == null) {
+            list = new ArrayList<BusinessObjectLight>();
         }
-        return this.item;
+        return this.list;
     }
 
 }

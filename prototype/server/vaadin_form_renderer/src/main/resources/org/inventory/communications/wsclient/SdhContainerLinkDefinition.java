@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="container" type="{http://ws.interfaces.kuwaiba.org/}remoteBusinessObjectLight" minOccurs="0"/>
+ *         &lt;element name="container" type="{http://ws.interfaces.kuwaiba.org/}businessObjectLight" minOccurs="0"/>
  *         &lt;element name="structured" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="positions" type="{http://ws.interfaces.kuwaiba.org/}sdhPosition" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class SdhContainerLinkDefinition {
 
-    protected RemoteBusinessObjectLight container;
+    protected BusinessObjectLight container;
     protected boolean structured;
     @XmlElement(nillable = true)
     protected List<SdhPosition> positions;
@@ -48,10 +48,10 @@ public class SdhContainerLinkDefinition {
      * 
      * @return
      *     possible object is
-     *     {@link RemoteBusinessObjectLight }
+     *     {@link BusinessObjectLight }
      *     
      */
-    public RemoteBusinessObjectLight getContainer() {
+    public BusinessObjectLight getContainer() {
         return container;
     }
 
@@ -60,10 +60,10 @@ public class SdhContainerLinkDefinition {
      * 
      * @param value
      *     allowed object is
-     *     {@link RemoteBusinessObjectLight }
+     *     {@link BusinessObjectLight }
      *     
      */
-    public void setContainer(RemoteBusinessObjectLight value) {
+    public void setContainer(BusinessObjectLight value) {
         this.container = value;
     }
 

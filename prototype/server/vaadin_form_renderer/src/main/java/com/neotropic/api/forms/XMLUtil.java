@@ -14,6 +14,13 @@
  */
 package com.neotropic.api.forms;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.util.Scanner;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
@@ -40,6 +47,45 @@ public class XMLUtil {
         xmlew.add(xmlef.createAttribute(new QName(attrName), attrValue));
                 
         return true;
+    }
+    
+    public static byte[] getFileAsByteArray(File file) {
+        try {
+            Scanner in = new Scanner(file);
+
+            String line = "";
+
+            while (in.hasNext())
+                line += in.nextLine();
+
+            byte [] structure = line.getBytes();
+
+            in.close();
+
+            return structure;
+
+        } catch (FileNotFoundException ex) {
+
+            return null;
+        }
+    }
+    
+    /**
+     * Saves a file, receiving the file name and the contents as parameters. If the directory structure doesn't exist, it's created
+     * @param directory path to the directory
+     * @param fileName the file name
+     * @param content the file content
+     * @throws FileNotFoundException 
+     * @throws IOException
+     */
+    public static void saveFile(String directory, String fileName, byte[] content) throws FileNotFoundException, IOException {
+        java.nio.file.Path directoryPath = FileSystems.getDefault().getPath(directory);
+        if (!Files.exists(directoryPath) || !Files.isWritable(directoryPath))
+            throw new FileNotFoundException(String.format("Path %s does not exist or is not writeable", directoryPath.toAbsolutePath()));
+
+        try (FileOutputStream fos = new FileOutputStream(directory + "/" + fileName)) { //NOI18N
+            fos.write(content);
+        }
     }
             
 }

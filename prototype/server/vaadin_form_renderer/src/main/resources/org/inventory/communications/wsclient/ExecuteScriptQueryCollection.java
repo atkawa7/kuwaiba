@@ -7,17 +7,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getSubnetPools complex type.
+ * <p>Java class for executeScriptQueryCollection complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getSubnetPools">
+ * &lt;complexType name="executeScriptQueryCollection">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="parentId" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="scriptQueryId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -28,55 +27,29 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getSubnetPools", propOrder = {
-    "parentId",
-    "className",
+@XmlType(name = "executeScriptQueryCollection", propOrder = {
+    "scriptQueryId",
     "sessionId"
 })
-public class GetSubnetPools {
+public class ExecuteScriptQueryCollection {
 
-    protected long parentId;
-    protected String className;
+    protected long scriptQueryId;
     protected String sessionId;
 
     /**
-     * Gets the value of the parentId property.
+     * Gets the value of the scriptQueryId property.
      * 
      */
-    public long getParentId() {
-        return parentId;
+    public long getScriptQueryId() {
+        return scriptQueryId;
     }
 
     /**
-     * Sets the value of the parentId property.
+     * Sets the value of the scriptQueryId property.
      * 
      */
-    public void setParentId(long value) {
-        this.parentId = value;
-    }
-
-    /**
-     * Gets the value of the className property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getClassName() {
-        return className;
-    }
-
-    /**
-     * Sets the value of the className property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setClassName(String value) {
-        this.className = value;
+    public void setScriptQueryId(long value) {
+        this.scriptQueryId = value;
     }
 
     /**

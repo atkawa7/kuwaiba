@@ -45,7 +45,7 @@ public class ElementI18N implements Tag {
     }
     
     @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
+    public void initFromXML(XMLStreamReader reader) throws XMLStreamException {
         QName tagMessageKey = new QName(Constants.Tag.MESSAGES);
         QName tagMessageValue = new QName(Constants.Tag.MESSAGE);
         QName tagI18N = new QName(Constants.Tag.I18N);

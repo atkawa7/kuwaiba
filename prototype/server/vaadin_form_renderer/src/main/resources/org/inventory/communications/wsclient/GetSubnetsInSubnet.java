@@ -7,12 +7,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getSubnetsInSubent complex type.
+ * <p>Java class for getSubnetsInSubnet complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getSubnetsInSubent">
+ * &lt;complexType name="getSubnetsInSubnet">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -29,13 +29,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getSubnetsInSubent", propOrder = {
+@XmlType(name = "getSubnetsInSubnet", propOrder = {
     "id",
     "limit",
     "className",
     "sessionId"
 })
-public class GetSubnetsInSubent {
+public class GetSubnetsInSubnet {
 
     protected long id;
     protected int limit;

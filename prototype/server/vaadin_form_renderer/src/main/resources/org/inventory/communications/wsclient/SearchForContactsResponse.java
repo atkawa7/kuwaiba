@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getSubnetsInSubentResponse complex type.
+ * <p>Java class for searchForContactsResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getSubnetsInSubentResponse">
+ * &lt;complexType name="searchForContactsResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}remoteContact" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,13 +29,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getSubnetsInSubentResponse", propOrder = {
+@XmlType(name = "searchForContactsResponse", propOrder = {
     "_return"
 })
-public class GetSubnetsInSubentResponse {
+public class SearchForContactsResponse {
 
     @XmlElement(name = "return")
-    protected List<RemoteObjectLight> _return;
+    protected List<RemoteContact> _return;
 
     /**
      * Gets the value of the return property.
@@ -55,13 +55,13 @@ public class GetSubnetsInSubentResponse {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link RemoteObjectLight }
+     * {@link RemoteContact }
      * 
      * 
      */
-    public List<RemoteObjectLight> getReturn() {
+    public List<RemoteContact> getReturn() {
         if (_return == null) {
-            _return = new ArrayList<RemoteObjectLight>();
+            _return = new ArrayList<RemoteContact>();
         }
         return this._return;
     }

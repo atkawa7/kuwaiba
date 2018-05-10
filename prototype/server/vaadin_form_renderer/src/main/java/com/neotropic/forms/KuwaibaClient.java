@@ -24,6 +24,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.inventory.communications.wsclient.ClassInfo;
 
 /**
  *
@@ -73,4 +74,32 @@ public class KuwaibaClient {
             return null;
         }
     }    
+    
+    public ClassInfo getClass(String className) {
+        try {
+            return getKuwaibaService().getClass(className, getRemoteSession().getSessionId());
+        } catch (ServerSideException_Exception ex) {
+            return null;
+        }
+    }
+    
+    public ClassInfo getClass(long classId) {
+        try {
+            return getKuwaibaService().getClassWithId(classId, getRemoteSession().getSessionId());
+            
+        } catch (ServerSideException_Exception ex) {
+            
+            return null;
+        }
+    }
+    
+    public RemoteObjectLight getObjectLight(String objectClass, long objectId) {
+        try {
+            return getKuwaibaService().getObjectLight(objectClass, objectId, getRemoteSession().getSessionId());
+            
+        } catch (ServerSideException_Exception ex) {
+                        
+            return null;
+        }
+    }
 }

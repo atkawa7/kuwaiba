@@ -239,7 +239,7 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
     }    
     
     @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
+    public void initFromXML(XMLStreamReader reader) throws XMLStreamException {
         setId(reader);
         setArea(reader);
         setEvents(reader);

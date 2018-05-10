@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for findSDHRoutesUsingContainerLinksResponse complex type.
+ * <p>Java class for getSubnetsInSubnetResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="findSDHRoutesUsingContainerLinksResponse">
+ * &lt;complexType name="getSubnetsInSubnetResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}businessObjectLightList" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,13 +29,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "findSDHRoutesUsingContainerLinksResponse", propOrder = {
+@XmlType(name = "getSubnetsInSubnetResponse", propOrder = {
     "_return"
 })
-public class FindSDHRoutesUsingContainerLinksResponse {
+public class GetSubnetsInSubnetResponse {
 
     @XmlElement(name = "return")
-    protected List<BusinessObjectLightList> _return;
+    protected List<RemoteObjectLight> _return;
 
     /**
      * Gets the value of the return property.
@@ -55,13 +55,13 @@ public class FindSDHRoutesUsingContainerLinksResponse {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link BusinessObjectLightList }
+     * {@link RemoteObjectLight }
      * 
      * 
      */
-    public List<BusinessObjectLightList> getReturn() {
+    public List<RemoteObjectLight> getReturn() {
         if (_return == null) {
-            _return = new ArrayList<BusinessObjectLightList>();
+            _return = new ArrayList<RemoteObjectLight>();
         }
         return this._return;
     }

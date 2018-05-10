@@ -7,12 +7,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for remoteBusinessObjectLight complex type.
+ * <p>Java class for businessObjectLight complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="remoteBusinessObjectLight">
+ * &lt;complexType name="businessObjectLight">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -28,12 +28,12 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "remoteBusinessObjectLight", propOrder = {
+@XmlType(name = "businessObjectLight", propOrder = {
     "className",
     "id",
     "name"
 })
-public class RemoteBusinessObjectLight {
+public class BusinessObjectLight {
 
     protected String className;
     protected long id;

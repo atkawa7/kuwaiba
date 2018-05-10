@@ -45,8 +45,8 @@ public class ElementGridLayout extends AbstractElementContainer {
     }
 
     @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        super.initFromXMl(reader);
+    public void initFromXML(XMLStreamReader reader) throws XMLStreamException {
+        super.initFromXML(reader);
                 
         String attrValue = reader.getAttributeValue(null, Constants.Attribute.ROWS);
         if (attrValue == null)

@@ -7,17 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getSubnetPools complex type.
+ * <p>Java class for searchForContacts complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getSubnetPools">
+ * &lt;complexType name="searchForContacts">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="parentId" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="searchString" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="maxResults" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -28,55 +28,55 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getSubnetPools", propOrder = {
-    "parentId",
-    "className",
+@XmlType(name = "searchForContacts", propOrder = {
+    "searchString",
+    "maxResults",
     "sessionId"
 })
-public class GetSubnetPools {
+public class SearchForContacts {
 
-    protected long parentId;
-    protected String className;
+    protected String searchString;
+    protected int maxResults;
     protected String sessionId;
 
     /**
-     * Gets the value of the parentId property.
-     * 
-     */
-    public long getParentId() {
-        return parentId;
-    }
-
-    /**
-     * Sets the value of the parentId property.
-     * 
-     */
-    public void setParentId(long value) {
-        this.parentId = value;
-    }
-
-    /**
-     * Gets the value of the className property.
+     * Gets the value of the searchString property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getClassName() {
-        return className;
+    public String getSearchString() {
+        return searchString;
     }
 
     /**
-     * Sets the value of the className property.
+     * Sets the value of the searchString property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setClassName(String value) {
-        this.className = value;
+    public void setSearchString(String value) {
+        this.searchString = value;
+    }
+
+    /**
+     * Gets the value of the maxResults property.
+     * 
+     */
+    public int getMaxResults() {
+        return maxResults;
+    }
+
+    /**
+     * Sets the value of the maxResults property.
+     * 
+     */
+    public void setMaxResults(int value) {
+        this.maxResults = value;
     }
 
     /**

@@ -7,17 +7,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getSubnetPools complex type.
+ * <p>Java class for deleteContact complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getSubnetPools">
+ * &lt;complexType name="deleteContact">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="parentId" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="contactClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="contactId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -28,55 +28,55 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getSubnetPools", propOrder = {
-    "parentId",
-    "className",
+@XmlType(name = "deleteContact", propOrder = {
+    "contactClass",
+    "contactId",
     "sessionId"
 })
-public class GetSubnetPools {
+public class DeleteContact {
 
-    protected long parentId;
-    protected String className;
+    protected String contactClass;
+    protected long contactId;
     protected String sessionId;
 
     /**
-     * Gets the value of the parentId property.
-     * 
-     */
-    public long getParentId() {
-        return parentId;
-    }
-
-    /**
-     * Sets the value of the parentId property.
-     * 
-     */
-    public void setParentId(long value) {
-        this.parentId = value;
-    }
-
-    /**
-     * Gets the value of the className property.
+     * Gets the value of the contactClass property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getClassName() {
-        return className;
+    public String getContactClass() {
+        return contactClass;
     }
 
     /**
-     * Sets the value of the className property.
+     * Sets the value of the contactClass property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setClassName(String value) {
-        this.className = value;
+    public void setContactClass(String value) {
+        this.contactClass = value;
+    }
+
+    /**
+     * Gets the value of the contactId property.
+     * 
+     */
+    public long getContactId() {
+        return contactId;
+    }
+
+    /**
+     * Sets the value of the contactId property.
+     * 
+     */
+    public void setContactId(long value) {
+        this.contactId = value;
     }
 
     /**

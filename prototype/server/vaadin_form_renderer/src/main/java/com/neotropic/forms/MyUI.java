@@ -40,6 +40,21 @@ public class MyUI extends UI {
             });
             verticalLayout.addComponents(button);
         }
+        
+        path = Variable.FORM_RESOURCE_INSTANCES;
+        folder = new File(path);
+        listOfFiles = folder.listFiles();
+        
+        for (File file : listOfFiles) {
+            Button button = new Button(file.getName());
+
+            button.addClickListener(e -> {
+                                
+                FormInstanceDisplayer.getInstance().display(file, true);
+            });
+            verticalLayout.addComponents(button);
+        }
+        
         ScriptQueryManager.getInstance().loadScriptQueryFiles();
     }
 

@@ -135,8 +135,8 @@ public abstract class AbstractElementField extends AbstractElement {
     }
             
     @Override
-    public void initFromXMl(XMLStreamReader reader) throws XMLStreamException {
-        super.initFromXMl(reader);
+    public void initFromXML(XMLStreamReader reader) throws XMLStreamException {
+        super.initFromXML(reader);
         setValue(reader);
         setMandatory(reader);
         setDataType(reader);

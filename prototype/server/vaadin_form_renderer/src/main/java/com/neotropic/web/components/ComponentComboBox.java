@@ -47,6 +47,9 @@ public class ComponentComboBox extends GraphicalComponent {
             if (comboBox.getItems() != null)
                 getComponent().setItems(comboBox.getItems());
             
+            if (comboBox.getValue() != null)
+                getComponent().setValue(comboBox.getValue());
+            
             getComponent().setRequiredIndicatorVisible(comboBox.isMandatory());
             
             getComponent().addValueChangeListener(new ValueChangeListener() {

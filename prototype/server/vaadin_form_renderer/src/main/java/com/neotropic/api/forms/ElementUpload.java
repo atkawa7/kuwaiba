@@ -21,32 +21,33 @@ import javax.xml.stream.XMLStreamReader;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ElementColumn extends AbstractElement {
+public class ElementUpload extends AbstractElementField {
     private String caption;
     
-    public ElementColumn() {
-    }
-    
-    public void setCaption(String caption) {
-        this.caption = caption;        
+    public ElementUpload() {
     }
     
     public String getCaption() {
         return caption;
     }
     
-    @Override
-    public void initFromXML(XMLStreamReader reader) throws XMLStreamException {
-        String attrValue = reader.getAttributeValue(null, Constants.Attribute.CAPTION);
-                
-        if (attrValue == null)
-            throw new XMLStreamException(String.format("Missing attribute %s in tag %s", Constants.Attribute.CAPTION, Constants.Tag.COLUMN));
-
-        caption = attrValue;
+    public void setCaption(String caption) {
+        this.caption = caption;        
     }
     
     @Override
     public String getTagName() {
-        return Constants.Tag.COLUMN;
+        return Constants.Tag.UPLOAD;
     }
+    
+    @Override
+    public void initFromXML(XMLStreamReader reader) throws XMLStreamException {
+        super.initFromXML(reader);
+        setCaption(reader);
+    }
+    
+    private void setCaption(XMLStreamReader reader) {
+        caption = reader.getAttributeValue(null, Constants.Attribute.CAPTION);
+    }
+    
 }

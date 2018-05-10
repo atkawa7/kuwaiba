@@ -80,10 +80,8 @@ public class Function implements Runner {
             
             for (int i = 0; i < parameters.size(); i += 1)
                 binding.setVariable(parameterNames.get(i), parameters.get(i));
-            
-            shell = new GroovyShell(Function.class.getClassLoader(), binding);
-        } else
-            shell = new GroovyShell(Function.class.getClassLoader(), binding);
+        }
+        shell = new GroovyShell(Function.class.getClassLoader(), binding);
         
         script = script.replace("_AND_", "&&");
         return shell.evaluate(script);
