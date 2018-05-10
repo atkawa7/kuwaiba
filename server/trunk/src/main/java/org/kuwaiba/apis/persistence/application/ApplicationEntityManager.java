@@ -996,7 +996,7 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException If the script property can no be found
      */
     public ScriptQueryResult executeScriptQuery(long scriptQueryId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
-    
+        
     /**
      * Creates a template.
      * @param templateClass The class you want to create a template for.

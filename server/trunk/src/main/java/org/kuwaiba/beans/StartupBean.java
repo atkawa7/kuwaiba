@@ -94,6 +94,13 @@ public class StartupBean {
                 System.out.println("[KUWAIBA] Error reading the enableSecurityManager configuration variable. Using the default value instead: " + ne.getMessage());
             }
             
+            try {
+                persistenceServiceProperties.put("formFilesPath", (String)context.lookup("java:comp/env/formFilesPath")); //NOI18N
+            }catch (NamingException ne) {
+                persistenceServiceProperties.put("formFilesPath", "/data/form/files"); //NOI18N
+                System.out.println("[KUWAIBA] Error reading the formFilesPath configuration variable. Using the default value instead: " + ne.getMessage());
+            }
+            
             persistenceService.setConfiguration(persistenceServiceProperties);
             persistenceService.start();
         } catch (IllegalStateException | NamingException ex) {

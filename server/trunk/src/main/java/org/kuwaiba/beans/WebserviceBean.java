@@ -101,6 +101,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult;
 import org.kuwaiba.apis.persistence.application.ScriptQuery;
 import org.kuwaiba.apis.persistence.business.Contact;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationGroup;
@@ -3463,6 +3464,21 @@ public class WebserviceBean implements WebserviceBeanLocal {
         try {
             aem.validateWebServiceCall("executeScriptQuery", ipAddress, sessionId);
             return new RemoteScriptQueryResult(aem.executeScriptQuery(scriptQueryId).getResult());
+                        
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteScriptQueryResultCollection executeScriptQueryCollection(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("executeScriptQueryCollection", ipAddress, sessionId);
+            
+            return new RemoteScriptQueryResultCollection((List) aem.executeScriptQuery(scriptQueryId).getResult());
                         
         } catch(InventoryException ex) {
             throw new ServerSideException(ex.getMessage());

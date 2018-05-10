@@ -2871,6 +2871,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public ScriptQueryResult executeScriptQuery(long scriptQueryId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        
         try (Transaction tx = graphDb.beginTx()) {
             Node scriptQueryNode = Util.findNodeByLabelAndId(scriptQueryLabel, scriptQueryId);
             
