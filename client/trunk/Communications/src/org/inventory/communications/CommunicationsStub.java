@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -42,6 +43,8 @@ import org.inventory.communications.core.LocalFavoritesFolder;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalContact;
+import org.inventory.communications.core.LocalFileObject;
+import org.inventory.communications.core.LocalFileObjectLight;
 import org.inventory.communications.core.LocalLogicalConnectionDetails;
 import org.inventory.communications.core.LocalObject;
 import org.inventory.communications.core.LocalObjectLight;
@@ -1025,6 +1028,27 @@ public class CommunicationsStub {
             return res;
         } catch(Exception e){
             error = e.getMessage();
+            return null;
+        }
+    }
+    //</editor-fold>
+    
+    //<editor-fold desc="File attachments" defaultstate="collapsed">
+    /**
+     * Attaches a file to an inventory object
+     * @param name The name of the file. It's more like its title, instead of the file name
+     * @param tags A semicolon (";") separated string with the tags associated to this document. These tags can be used to help find documents in a search
+     * @param file The actual file
+     * @param className The class name of the inventory object the file will be attached to
+     * @param objectId The id of the inventory object the file will be attached to
+     * @return The file object that was created or null if the file can not be saved or if there's already a file with that name related to the object
+     */
+    public LocalFileObjectLight attachFileToObject(String name, String tags, byte[] file, String className, long objectId) {
+        try {
+            long fileObjectId = service.attachFileToObject(name, tags, file, className, objectId, session.getSessionId());
+            return new LocalFileObjectLight(fileObjectId, name, Calendar.getInstance().getTimeInMillis(), tags);
+        }catch(Exception ex){
+            this.error = ex.getMessage();
             return null;
         }
     }
