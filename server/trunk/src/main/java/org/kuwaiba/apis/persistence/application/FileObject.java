@@ -15,8 +15,6 @@
  */
 package org.kuwaiba.apis.persistence.application;
 
-import java.util.List;
-
 /**
  * This is the basic metadata about a file attached to an inventory object, plus the actual object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
@@ -27,8 +25,8 @@ public class FileObject extends FileObjectLight {
      */
     private byte[] file;
     
-    public FileObject(long fileOjectId, String name, List<String> tags, byte[] file) {
-        super(fileOjectId, name, tags);
+    public FileObject(long fileOjectId, String name, String tags, long creationDate, byte[] file) {
+        super(fileOjectId, name, tags, creationDate);
         this.file = file;
     }
 

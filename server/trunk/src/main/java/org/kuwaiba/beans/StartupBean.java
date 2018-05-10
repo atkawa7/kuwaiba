@@ -53,6 +53,20 @@ public class StartupBean {
             }
             
             try {
+                persistenceServiceProperties.put("attachmentsPath", (String)context.lookup("java:comp/env/attachmentsPath")); //NOI18N
+            }catch (NamingException ne) {
+                persistenceServiceProperties.put("attachmentsPath", "/data/attachments"); //NOI18N
+                System.out.println("[KUWAIBA] Error reading the attachmentsPath configuration variable. Using the default value instead: " + ne.getMessage());
+            }
+            
+            try {
+                persistenceServiceProperties.put("maxAttachmentSize", (String)context.lookup("java:comp/env/maxAttachmentSize")); //NOI18N
+            }catch (NamingException ne) {
+                persistenceServiceProperties.put("maxAttachmentSize", "10"); //NOI18N
+                System.out.println("[KUWAIBA] Error reading the maxAttachmentSize configuration variable. Using the default value instead: " + ne.getMessage());
+            }
+            
+            try {
                 persistenceServiceProperties.put("corporateLogo", (String)context.lookup("java:comp/env/corporateLogo")); //NOI18N
             }catch (NamingException ne) {
                 persistenceServiceProperties.put("corporateLogo", "http://neotropic.co/img/logo_blue.png"); //NOI18N

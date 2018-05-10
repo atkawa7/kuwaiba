@@ -170,6 +170,10 @@ public class Constants {
      */
     public static final String LABEL_CONTACTS = "contacts";
     /**
+     * Label used for file attachments
+     */
+    public static final String LABEL_ATTACHMENTS = "attachments";
+    /**
      * Property "background path" for views
      */
     public static final String PROPERTY_BACKGROUND_FILE_NAME = "backgroundPath";
@@ -236,6 +240,7 @@ public class Constants {
     public static final String PROPERTY_SCOPE = "scope"; //NOI18N
     public static final String PROPERTY_VERSION = "version"; //NOI18N
     public static final String PROPERTY_APPLIES_TO = "appliesTo"; //NOI18N
+    public static final String PROPERTY_TAGS = "tags"; //NOI18N
     /**
      * Property SNMP version
      */

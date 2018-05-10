@@ -23,6 +23,8 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -32,6 +34,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -76,6 +79,10 @@ import org.neo4j.helpers.collection.Iterators;
  */
 public class BusinessEntityManagerImpl implements BusinessEntityManager {
     /**
+     * Default attachment location
+     */
+    private static String DEFAULT_ATTACHMENTS_PATH = "/data/files";
+    /**
      * Reference to the Application Entity Manager
      */
     private final ApplicationEntityManager aem;
@@ -110,13 +117,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     /**
      * Contacts index
      */
-    private Label contactsLabel;
-    
+    private Label contactsLabel;    
     /**
      * As a temporary workaround, the old hard-coded reports are wrapped instead of being completely migrated to Groovy scripts
      */
     private final DefaultReports defaultReports;
-
+    /**
+     * Global configuration variables
+     */
+    private Properties configuration;
 
     /**
      * Main constructor. It receives references to the other entity managers
@@ -130,12 +139,19 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         this.defaultReports = new DefaultReports(mem, this, aem);
         this.graphDb = (GraphDatabaseService)cmn.getConnectionHandler();
         
+        this.configuration = new Properties();
+        
         this.inventoryObjectLabel = Label.label(Constants.LABEL_INVENTORY_OBJECT);
         this.classLabel = Label.label(Constants.LABEL_CLASS);
         this.poolLabel = Label.label(Constants.LABEL_POOL);
         this.specialNodeLabel = Label.label(Constants.LABEL_SPECIAL_NODE);
         this.reportsLabel = Label.label(Constants.LABEL_REPORTS);
-        contactsLabel = Label.label(Constants.LABEL_CONTACTS);
+        this.contactsLabel = Label.label(Constants.LABEL_CONTACTS);
+    }
+    
+    @Override
+    public void setConfiguration(Properties configuration) {
+        this.configuration = configuration;
     }
 
     @Override
@@ -889,7 +905,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public void createSpecialRelationship(String aObjectClass, long aObjectId, String bObjectClass, long bObjectId, String name, boolean unique)
             throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
         
-        createSpecialRelationship(aObjectClass, aObjectId, bObjectClass, bObjectId, name, unique, new HashMap<String, Object>());
+        createSpecialRelationship(aObjectClass, aObjectId, bObjectClass, bObjectId, name, unique, new HashMap<>());
     }
     
     @Override
@@ -1786,23 +1802,92 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
 
     @Override
-    public long attachFileToObject(String name, String tags, byte[] file, String className, long objectId) throws BusinessObjectNotFoundException, OperationNotPermittedException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public long attachFileToObject(String name, String tags, byte[] file, String className, long objectId) 
+            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node objectNode = getInstanceOfClass(className, objectId);
+            
+            Node fileObjectNode = graphDb.createNode(Label.label(Constants.LABEL_ATTACHMENTS));
+            fileObjectNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
+            fileObjectNode.setProperty(Constants.PROPERTY_NAME, name == null ? "" : name);
+            fileObjectNode.setProperty(Constants.PROPERTY_TAGS, tags == null ? "" : tags);
+            
+            Relationship hasAttachmentRelationship = objectNode.createRelationshipTo(fileObjectNode, RelTypes.HAS_ATTACHMENT);
+            hasAttachmentRelationship.setProperty(Constants.PROPERTY_NAME, "attachments");
+            
+            String fileName = objectNode.getId() + "_" + fileObjectNode.getId();
+                    Util.saveFile(configuration.getProperty("attachmentsPath", DEFAULT_ATTACHMENTS_PATH), fileName, file);
+            
+            tx.success();
+            return fileObjectNode.getId();
+        } catch(IOException ex) {
+            throw new OperationNotPermittedException(ex.getMessage());
+        }
     }
 
     @Override
-    public List<FileObjectLight> getFilesForObject(String className, long objectId) throws BusinessObjectNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<FileObjectLight> getFilesForObject(String className, long objectId) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node objectNode = getInstanceOfClass(className, objectId);
+            List<FileObjectLight> res = new ArrayList<>();
+            
+            for (Relationship fileObjectRelationship : objectNode.getRelationships(RelTypes.HAS_ATTACHMENT, Direction.OUTGOING)) {
+                Node fileObjectNode = fileObjectRelationship.getEndNode();
+                res.add(new FileObjectLight(fileObjectNode.getId(), (String)fileObjectNode.getProperty(Constants.PROPERTY_NAME), 
+                        (String)fileObjectNode.getProperty(Constants.PROPERTY_TAGS), (long)fileObjectNode.getProperty(Constants.PROPERTY_CREATION_DATE)));
+            }
+            
+            return res;
+        }
     }
 
     @Override
-    public FileObject getFile(long fileObjectId, String className, long objectId) throws BusinessObjectNotFoundException, InvalidArgumentException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public FileObject getFile(long fileObjectId, String className, long objectId) throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node objectNode = getInstanceOfClass(className, objectId);
+
+            for (Relationship fileObjectRelationship : objectNode.getRelationships(RelTypes.HAS_ATTACHMENT, Direction.OUTGOING)) {
+                if (fileObjectRelationship.getEndNode().getId() == fileObjectId) {
+                    String fileName = objectNode.getId() + "_" + fileObjectId;
+                    try {
+                        byte[] background = Util.readBytesFromFile(configuration.getProperty("attachmentsPath", DEFAULT_ATTACHMENTS_PATH) + "/" + fileName);
+                        return new FileObject(fileObjectId, (String)fileObjectRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME), 
+                                (String)fileObjectRelationship.getEndNode().getProperty(Constants.PROPERTY_TAGS), 
+                                (long)fileObjectRelationship.getEndNode().getProperty(Constants.PROPERTY_CREATION_DATE), 
+                                background);
+                    }catch(IOException ex){
+                        throw new InvalidArgumentException(String.format("File with id %s could not be retrieved: %s", fileObjectId, ex.getMessage()));
+                    }
+                }
+            }
+            
+            throw new InvalidArgumentException(String.format("The file with id %s could not be found", fileObjectId));
+        }
     }
 
     @Override
-    public void detachFileFromObject(long fileObjectId, String className, long objectId) throws BusinessObjectNotFoundException, InvalidArgumentException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void detachFileFromObject(long fileObjectId, String className, long objectId) 
+            throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node objectNode = getInstanceOfClass(className, objectId);
+
+            for (Relationship fileObjectRelationship : objectNode.getRelationships(RelTypes.HAS_ATTACHMENT, Direction.OUTGOING)) {
+                if (fileObjectRelationship.getEndNode().getId() == fileObjectId) {
+                    fileObjectRelationship.delete();
+                    fileObjectRelationship.getEndNode().delete();
+                    
+                    try {
+                        String fileName = objectNode.getId() + "_" + fileObjectId;
+                        new File(configuration.getProperty("attachmentsPath", DEFAULT_ATTACHMENTS_PATH) + "/" + fileName).delete();
+                    }catch(Exception ex){
+                        throw new InvalidArgumentException(String.format("File with id %s could not be retrieved: %s", fileObjectId, ex.getMessage()));
+                    }
+                    tx.success();
+                }
+            }
+            
+            throw new InvalidArgumentException(String.format("The file with id %s could not be found", fileObjectId));
+        }
     }
     
     

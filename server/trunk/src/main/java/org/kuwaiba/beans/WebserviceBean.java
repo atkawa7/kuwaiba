@@ -3093,7 +3093,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
             aem.validateWebServiceCall("getFilesForObject", ipAddress, sessionId);
             List<FileObjectLight>filesForObject = bem.getFilesForObject(className, objectId);
             for (FileObjectLight objectFile :filesForObject)
-                res.add(new RemoteFileObjectLight(objectFile.getFileOjectId(), objectFile.getName(), objectFile.getTags()));
+                res.add(new RemoteFileObjectLight(objectFile.getFileOjectId(), objectFile.getName(), objectFile.getCreationDate(), objectFile.getTags()));
             return res;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -3107,7 +3107,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
         try {
             aem.validateWebServiceCall("getFile", ipAddress, sessionId);
             FileObject  fileForObject = bem.getFile(fileObjectId, className, objectId);
-            return new RemoteFileObject(fileForObject.getFileOjectId(), fileForObject.getName(), fileForObject.getTags(), fileForObject.getFile());
+            return new RemoteFileObject(fileForObject.getFileOjectId(), fileForObject.getName(), fileForObject.getCreationDate(), fileForObject.getTags(), fileForObject.getFile());
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

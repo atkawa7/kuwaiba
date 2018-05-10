@@ -84,10 +84,22 @@
 
         <!-- Other -->
         <env-entry>
-           <description>Background path</description>
+           <description>Path of the folder where background images are saved</description>
            <env-entry-name>backgroundsPath</env-entry-name>
            <env-entry-type>java.lang.String</env-entry-type>
            <env-entry-value>/data/img/backgrounds</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Path of the folder where files attached to inventory objects are saved</description>
+           <env-entry-name>attachmentsPath</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>/data/files/attachments</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Max number size in MB of the attachments</description>
+           <env-entry-name>maxAttachmentSize</env-entry-name>
+           <env-entry-type>java.lang.Float</env-entry-type>
+           <env-entry-value>10</env-entry-value>
         </env-entry>
         <env-entry>
            <description>Corporate Logo</description>

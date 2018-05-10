@@ -118,7 +118,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     /**
      * Default background path
      */
-    private static String DEFAULT_BACKGROUNDS_PATH = "../img/backgrounds";
+    private static String DEFAULT_BACKGROUNDS_PATH = "/data/img/backgrounds";
     /**
      * Users index
      */
@@ -1584,7 +1584,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 try {
                     background = Util.readBytesFromFile(configuration.getProperty("backgroundsPath", DEFAULT_BACKGROUNDS_PATH) + "/" + fileName);
                 }catch(Exception e){
-                    System.out.println(e.getMessage());
+                    System.out.println("[KUWAIBA] " + e.getMessage());
                 }
                 aView.setBackground(background);
             }

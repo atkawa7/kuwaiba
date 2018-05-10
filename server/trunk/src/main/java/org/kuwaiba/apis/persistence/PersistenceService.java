@@ -90,6 +90,10 @@ public class PersistenceService {
             applicationConfiguration.put("maxRoutes", configuration.get("maxRoutes"));
             aem.setConfiguration(applicationConfiguration);
             
+            Properties businessConfiguration = new Properties();
+            businessConfiguration.put("attachmentsPath", configuration.get("attachmentsPath"));
+            businessConfiguration.put("maxAttachmentSize", configuration.get("maxAttachmentSize"));
+            
             dataModelLoader = new DataModelLoader(connectionManager, mem);
             System.out.println(String.format("[KUWAIBA] [%s] Detecting advanced modules...", Calendar.getInstance().getTime()));
             //Place here some fancy OSGi stuff instead of this horrid hardcoded list

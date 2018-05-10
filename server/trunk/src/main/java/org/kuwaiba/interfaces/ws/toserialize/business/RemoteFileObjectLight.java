@@ -16,7 +16,6 @@
 package org.kuwaiba.interfaces.ws.toserialize.business;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -37,18 +36,20 @@ public class RemoteFileObjectLight implements Serializable {
     /**
     * Tags associated to the binary file that can be used to index it or find it in searches
     */
-    protected List<String> tags;
-    
+    protected String tags;
+    /**
+     * Creation date
+     */
+    protected long creationDate;
 
     public RemoteFileObjectLight() { }
 
-    public RemoteFileObjectLight(long fileOjectId, String name, List<String> tags) {
+    public RemoteFileObjectLight(long fileOjectId, String name, long creationDate, String tags) {
         this.fileOjectId = fileOjectId;
         this.name = name;
         this.tags = tags;
+        this.creationDate = creationDate;
     }
-
-    
 
     public String getName() {
         return name;
@@ -66,11 +67,19 @@ public class RemoteFileObjectLight implements Serializable {
         this.fileOjectId = fileOjectId;
     }
 
-    public List<String> getTags() {
+    public String getTags() {
         return tags;
     }
 
-    public void setTags(List<String> tags) {
+    public void setTags(String tags) {
         this.tags = tags;
+    }
+
+    public long getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(long creationDate) {
+        this.creationDate = creationDate;
     }
 }

@@ -20,6 +20,7 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 import org.kuwaiba.apis.persistence.application.FileObject;
 import org.kuwaiba.apis.persistence.application.FileObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
@@ -36,6 +37,11 @@ import org.kuwaiba.apis.persistence.util.StringPair;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public interface BusinessEntityManager {
+    /**
+     * Sets the global configuration options 
+     * @param configuration The set of configuration variables
+     */
+    public void setConfiguration(Properties configuration);
     /**
      * Creates a new inventory object
      * @param className Name of the class which this object will be instantiated from
@@ -717,16 +723,19 @@ public interface BusinessEntityManager {
      * @return The id of the resulting file object
      * @throws BusinessObjectNotFoundException If the inventory object could not be found
      * @throws OperationNotPermittedException If there's some sort of system restriction that prevented the file to be created
+     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the class provided does not exist
      */
-    public long attachFileToObject(String name, String tags, byte[] file, String className, long objectId) throws BusinessObjectNotFoundException, OperationNotPermittedException;
+    public long attachFileToObject(String name, String tags, byte[] file, String className, 
+            long objectId) throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException;
     /**
      * Fetches the files associated to an inventory object. Note that this call won't retrieve the actual files, but only references to them
      * @param className The class of the object whose files will be fetched from
      * @param objectId The id of the object whose files will be fetched from
      * @return The list of files
      * @throws org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException If the object could not be found
+     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the class provided does not exist
      */
-    public List<FileObjectLight> getFilesForObject(String className, long objectId) throws BusinessObjectNotFoundException;
+    public List<FileObjectLight> getFilesForObject(String className, long objectId) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException;
     /**
      * Retrieves a particular file associated to an inventory object. This call returns the actual file
      * @param fileObjectId The id of the file object
@@ -735,8 +744,9 @@ public interface BusinessEntityManager {
      * @return The file
      * @throws org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException If the object could not be found
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If for some low level reason, the file could not be read from its original location
+     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the class provided does not exist
      */
-    public FileObject getFile(long fileObjectId, String className, long objectId) throws BusinessObjectNotFoundException, InvalidArgumentException;
+    public FileObject getFile(long fileObjectId, String className, long objectId) throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
     /**
      * Releases (and deletes) a file associated to an inventory object
      * @param fileObjectId The id of the file object
@@ -744,8 +754,9 @@ public interface BusinessEntityManager {
      * @param objectId The id of the object the file is associated to
      * @throws org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException If the object could not be found
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If for some low level reason, the file could not be deleted from disk
+     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the class provided does not exist
      */
-    public void detachFileFromObject(long fileObjectId, String className, long objectId) throws BusinessObjectNotFoundException, InvalidArgumentException;
+    public void detachFileFromObject(long fileObjectId, String className, long objectId) throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
 
     /**
      * Creates a contact. Contacts are always associated to a customer

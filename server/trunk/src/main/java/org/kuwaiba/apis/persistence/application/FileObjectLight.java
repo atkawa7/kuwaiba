@@ -33,13 +33,17 @@ public class FileObjectLight {
     /**
     * Tags associated to the binary file that can be used to index it or find it in searches
     */
-    protected List<String> tags;
-    
+    protected String tags;
+    /**
+     * Creation date
+     */
+    protected long creationDate;
 
-    public FileObjectLight(long fileOjectId, String name, List<String> tags) {
+    public FileObjectLight(long fileOjectId, String name, String tags, long creationDate) {
         this.fileOjectId = fileOjectId;
         this.name = name;
         this.tags = tags;
+        this.creationDate = creationDate;
     }
 
     public String getName() {
@@ -58,11 +62,19 @@ public class FileObjectLight {
         this.fileOjectId = fileOjectId;
     }
 
-    public List<String> getTags() {
+    public String getTags() {
         return tags;
     }
 
-    public void setTags(List<String> tags) {
+    public void setTags(String tags) {
         this.tags = tags;
+    }
+
+    public long getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(long creationDate) {
+        this.creationDate = creationDate;
     }
 }

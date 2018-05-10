@@ -46,6 +46,7 @@ public enum RelTypes implements RelationshipType {
     PRIVILEGE, //Used to associate the privilege nodes with privilege root node
     SUBSCRIBED_TO, //Used to relate a user to a task, so it can be notified about the result of its execution
     HAS_TEMPLATE, //Used to related a class to a template (which is basically a normal object)
+    HAS_ATTACHMENT, //Used to relate inventory object with file attachments
     HAS_REPORT, //Relates a class or the dummy root (depending on if it's a class or inventory level report) to a report
     INSTANCE_OF_SPECIAL, //Used to relate a class with an instance that makes part of a template. These instances are not indexed and can not be searched, that's why they need a special relationship
     HAS_BOOKMARK, //Used to relate a bookmark with an user

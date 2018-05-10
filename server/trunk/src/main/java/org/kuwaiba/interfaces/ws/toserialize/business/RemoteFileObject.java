@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.interfaces.ws.toserialize.business;
 
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -33,8 +32,8 @@ public class RemoteFileObject extends RemoteFileObjectLight {
 
     public RemoteFileObject() { }
 
-    public RemoteFileObject(long fileOjectId, String name, List<String> tags, byte[] file) {
-        super(fileOjectId, name, tags);
+    public RemoteFileObject(long fileOjectId, String name, long creationDate, String tags, byte[] file) {
+        super(fileOjectId, name, creationDate, tags);
         this.file = file;
     }
 
