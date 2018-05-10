@@ -60,9 +60,9 @@ public class StartupBean {
             }
             
             try {
-                persistenceServiceProperties.put("maxAttachmentSize", (String)context.lookup("java:comp/env/maxAttachmentSize")); //NOI18N
+                persistenceServiceProperties.put("maxAttachmentSize", (float)context.lookup("java:comp/env/maxAttachmentSize")); //NOI18N
             }catch (NamingException ne) {
-                persistenceServiceProperties.put("maxAttachmentSize", "10"); //NOI18N
+                persistenceServiceProperties.put("maxAttachmentSize", 10); //NOI18N
                 System.out.println("[KUWAIBA] Error reading the maxAttachmentSize configuration variable. Using the default value instead: " + ne.getMessage());
             }
             
