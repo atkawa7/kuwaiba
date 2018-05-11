@@ -73,7 +73,12 @@
             <artifactId>javax.batch-api</artifactId>
             <version>1.0.1</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.vaadin</groupId>
+            <artifactId>viritin</artifactId>
+            <version>2.4</version>
+            <type>jar</type>
+        </dependency>
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
@@ -98,13 +103,13 @@
             <artifactId>vaadin-themes</artifactId>
             <version>${vaadin.version}</version>
         </dependency>
-        
+                              
         <dependency>
-            <artifactId>cdi-helpers</artifactId>
-            <groupId>org.vaadin</groupId>
-            <version>1.4</version>
+           <groupId>com.vaadin</groupId>
+           <artifactId>vaadin-cdi</artifactId>
+           <version>3.0.0</version>
         </dependency>
-        
+                
         <dependency>
             <groupId>org.apache.deltaspike.core</groupId>
             <artifactId>deltaspike-core-api</artifactId>

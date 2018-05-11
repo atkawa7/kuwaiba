@@ -39,7 +39,7 @@
         </env-entry>
         <!-- Outside Plant -->
         <env-entry>
-           <description>Google Maps API Key</description>
+           <description>Google Maps Platform API Key</description>
            <env-entry-name>googleMapsApiKey</env-entry-name>
            <env-entry-type>java.lang.String</env-entry-type>
            <env-entry-value></env-entry-value>

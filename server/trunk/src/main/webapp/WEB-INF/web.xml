@@ -1,26 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="WebApp_ID" version="3.0" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
     <display-name>Kuwaiba Open Inventory</display-name>
-    <servlet>
-        <servlet-name>UI</servlet-name>
-        <servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
-        <!--<init-param>
-            <param-name>widgetset</param-name>
-            <param-value>org.kuwaiba.KuwaibaWidgetSet</param-value>
-        </init-param>-->
-        <init-param>
-            <param-name>UIProvider</param-name>
-            <param-value>com.vaadin.cdi.CDIUIProvider</param-value>
-        </init-param>
-        <init-param>
-            <param-name>UI</param-name>
-            <param-value>org.kuwaiba.web.IndexUI</param-value>
-        </init-param>
-    </servlet>
-    
-    <servlet-mapping>
-        <servlet-name>UI</servlet-name>
-        <url-pattern>/*</url-pattern>
-    </servlet-mapping>
-    
 </web-app>

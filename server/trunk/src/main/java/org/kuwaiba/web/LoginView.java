@@ -40,7 +40,7 @@ import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.vaadin.maddon.layouts.MVerticalLayout;
+import org.vaadin.viritin.layouts.MVerticalLayout;
 
 /**
  * Login form
@@ -104,7 +104,7 @@ class LoginView extends CustomComponent implements View {
             }
         });
         
-        VerticalLayout lytForm = new VerticalLayout(txtUsername, txtPassword);
+        VerticalLayout lytForm = new VerticalLayout(txtUsername, txtPassword, btnLogin);
         lytForm.setSpacing(true);
         
         VerticalLayout lytloginPanel = new VerticalLayout();
