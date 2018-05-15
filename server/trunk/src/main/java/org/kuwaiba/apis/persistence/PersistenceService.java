@@ -94,6 +94,7 @@ public class PersistenceService {
             Properties businessConfiguration = new Properties();
             businessConfiguration.put("attachmentsPath", configuration.get("attachmentsPath"));
             businessConfiguration.put("maxAttachmentSize", configuration.get("maxAttachmentSize"));
+            bem.setConfiguration(businessConfiguration);
             
             dataModelLoader = new DataModelLoader(connectionManager, mem);
             System.out.println(String.format("[KUWAIBA] [%s] Detecting advanced modules...", Calendar.getInstance().getTime()));

@@ -81,7 +81,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     /**
      * Default attachment location
      */
-    private static String DEFAULT_ATTACHMENTS_PATH = "/data/files";
+    private static String DEFAULT_ATTACHMENTS_PATH = "/data/files/attachments";
     /**
      * Reference to the Application Entity Manager
      */
@@ -1803,7 +1803,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
     @Override
     public long attachFileToObject(String name, String tags, byte[] file, String className, long objectId) 
-            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException {
+            throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException {
+        
+        if (file.length > (float)configuration.get("maxAttachmentSize") * 1048576) //Size converted to MB
+            throw new InvalidArgumentException(String.format("The file size exceeds the maximum size allowed (%s MB)", configuration.get("maxAttachmentSize")));
+        
         try (Transaction tx = graphDb.beginTx()) {
             Node objectNode = getInstanceOfClass(className, objectId);
             
@@ -1816,7 +1820,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             hasAttachmentRelationship.setProperty(Constants.PROPERTY_NAME, "attachments");
             
             String fileName = objectNode.getId() + "_" + fileObjectNode.getId();
-                    Util.saveFile(configuration.getProperty("attachmentsPath", DEFAULT_ATTACHMENTS_PATH), fileName, file);
+                    Util.saveFile((String)configuration.get("attachmentsPath"), fileName, file);
             
             tx.success();
             return fileObjectNode.getId();
@@ -1883,6 +1887,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         throw new InvalidArgumentException(String.format("File with id %s could not be retrieved: %s", fileObjectId, ex.getMessage()));
                     }
                     tx.success();
+                    return;
                 }
             }
             

@@ -3803,14 +3803,14 @@ public class KuwaibaService {
      * @param objectId The id of the inventory object the file will be attached to
      * @param sessionId Session token
      * @return The id of the file object that was created
-     * @throws ServerSideException If the file can not be saved or if there's already a file with that name related to the object
+     * @throws ServerSideException If the file can not be saved or if there's already a file with that name related to the object or if the file exceeds the max size configured
      */
     @WebMethod(operationName = "attachFileToObject")
     public long attachFileToObject(@WebParam(name = "name")String name, 
             @WebParam(name = "tags")String tags, @WebParam(name = "file")byte[] file, 
             @WebParam(name = "className")String className, @WebParam(name = "objectId")long objectId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
-        try{
+        try {
             return wsBean.attachFileToObject(name, tags, file, className, objectId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
@@ -3822,6 +3822,14 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Detaches a file from an inventory object. Note that the file will also be deleted. 
+     * @param fileObjectId The id of the file object
+     * @param className The class of the object the file will be detached from
+     * @param objectId The id of the object the file will be detached from
+     * @param sessionId The session token
+     * @throws ServerSideException If the object or its class could not be found, or if the file object could not be found or if there was a problem physically deleting the file from disk
+     */
     @WebMethod(operationName = "detachFileFromObject")
     public void detachFileFromObject(@WebParam(name = "fileObjectId")long fileObjectId,
             @WebParam(name = "className")String className, @WebParam(name = "objectId")long objectId,
@@ -3838,6 +3846,14 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Retrieves the files associated to a given inventory object
+     * @param className The class of the object o retrieve the files from
+     * @param objectId The id of the object o retrieve the files from
+     * @param sessionId The session token
+     * @return A list of light file objects
+     * @throws ServerSideException If the object or its class could not be found
+     */
     @WebMethod(operationName = "getFilesForObject")
     public List<RemoteFileObjectLight> getFilesForObject(@WebParam(name = "className")String className, @WebParam(name = "objectId")long objectId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
@@ -3853,6 +3869,15 @@ public class KuwaibaService {
         }
     }
     
+    /**
+     * Retrieves a particular file from those attached to an inventory object. The returned object contains the contents of the file
+     * @param fileObjectId The id of the file object
+     * @param className The class of the object the file will be detached from
+     * @param objectId The id of the object the file will be detached from
+     * @param sessionId The session token
+     * @return The object file encapsulating the contents of the file.
+     * @throws ServerSideException If the object or its class could not be found, or if the file object could not be found or if there was a problem physically deleting the file from disk
+     */
     @WebMethod(operationName = "getFile")
     public RemoteFileObject getFile(@WebParam(name = "fileObjectId")long fileObjectId, 
             @WebParam(name = "className")String className, @WebParam(name = "objectId")long objectId,

@@ -55,7 +55,7 @@ public class StartupBean {
             try {
                 persistenceServiceProperties.put("attachmentsPath", (String)context.lookup("java:comp/env/attachmentsPath")); //NOI18N
             }catch (NamingException ne) {
-                persistenceServiceProperties.put("attachmentsPath", "/data/attachments"); //NOI18N
+                persistenceServiceProperties.put("attachmentsPath", "/data/files/attachments"); //NOI18N
                 System.out.println("[KUWAIBA] Error reading the attachmentsPath configuration variable. Using the default value instead: " + ne.getMessage());
             }
             

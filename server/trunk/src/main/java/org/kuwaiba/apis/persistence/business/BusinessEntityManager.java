@@ -724,9 +724,10 @@ public interface BusinessEntityManager {
      * @throws BusinessObjectNotFoundException If the inventory object could not be found
      * @throws OperationNotPermittedException If there's some sort of system restriction that prevented the file to be created
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the class provided does not exist
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the file size exceeds the max permitted (default value is 10MB)
      */
     public long attachFileToObject(String name, String tags, byte[] file, String className, 
-            long objectId) throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException;
+            long objectId) throws BusinessObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException;
     /**
      * Fetches the files associated to an inventory object. Note that this call won't retrieve the actual files, but only references to them
      * @param className The class of the object whose files will be fetched from
