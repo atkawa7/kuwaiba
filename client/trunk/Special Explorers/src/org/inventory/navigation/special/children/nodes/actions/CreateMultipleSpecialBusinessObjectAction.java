@@ -51,7 +51,7 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericObjectNode
         putValue(NAME, "New Special Multiple");
         com = CommunicationsStub.getInstance();
     }
-        
+    
     public static CreateMultipleSpecialBusinessObjectAction getInstance() {
         return instance == null ? instance = new CreateMultipleSpecialBusinessObjectAction() : instance;
     }

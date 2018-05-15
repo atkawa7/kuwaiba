@@ -30,6 +30,7 @@ public class ObjectFactory {
     private final static QName _MovePoolItemToPoolResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "movePoolItemToPoolResponse");
     private final static QName _CopyTemplateSpecialElementsResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "copyTemplateSpecialElementsResponse");
     private final static QName _GetAllClasses_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "getAllClasses");
+    private final static QName _ExecuteScriptQueryCollectionResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "executeScriptQueryCollectionResponse");
     private final static QName _RemoveUserFromGroup_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "removeUserFromGroup");
     private final static QName _CreateQueryResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "createQueryResponse");
     private final static QName _DisconnectPhysicalConnection_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "disconnectPhysicalConnection");
@@ -171,8 +172,8 @@ public class ObjectFactory {
     private final static QName _ReleasePortFromIPResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "releasePortFromIPResponse");
     private final static QName _ReleaseMirrorPort_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "releaseMirrorPort");
     private final static QName _CreateRootPoolResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "createRootPoolResponse");
-    private final static QName _CopySyncGroup_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "copySyncGroup");
     private final static QName _SearchForContacts_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "searchForContacts");
+    private final static QName _CopySyncGroup_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "copySyncGroup");
     private final static QName _GetClassResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "getClassResponse");
     private final static QName _GetParentResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "getParentResponse");
     private final static QName _GetPoolsInPoolResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "getPoolsInPoolResponse");
@@ -282,6 +283,7 @@ public class ObjectFactory {
     private final static QName _ExecuteInventoryLevelReport_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "executeInventoryLevelReport");
     private final static QName _RelateSubnetToVrfResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "relateSubnetToVrfResponse");
     private final static QName _CreateTask_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "createTask");
+    private final static QName _Results_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "results");
     private final static QName _DeletePools_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "deletePools");
     private final static QName _GetSynchronizationGroup_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "getSynchronizationGroup");
     private final static QName _GetTemplateElementChildrenResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "getTemplateElementChildrenResponse");
@@ -386,8 +388,8 @@ public class ObjectFactory {
     private final static QName _KillJob_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "killJob");
     private final static QName _CreateObjectRelatedView_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "createObjectRelatedView");
     private final static QName _GetParentOfClass_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "getParentOfClass");
-    private final static QName _AddUserToGroupResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "addUserToGroupResponse");
     private final static QName _GetDeviceLayoutsResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "getDeviceLayoutsResponse");
+    private final static QName _AddUserToGroupResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "addUserToGroupResponse");
     private final static QName _CreateBulkSpecialObjectsResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "createBulkSpecialObjectsResponse");
     private final static QName _ExecuteScriptQuery_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "executeScriptQuery");
     private final static QName _GetListTypeItemRelatedViewsResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "getListTypeItemRelatedViewsResponse");
@@ -514,6 +516,7 @@ public class ObjectFactory {
     private final static QName _CreateSubnetPoolResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "createSubnetPoolResponse");
     private final static QName _DeleteSynchronizationGroupResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "deleteSynchronizationGroupResponse");
     private final static QName _ReleasePortFromIP_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "releasePortFromIP");
+    private final static QName _ExecuteScriptQueryCollection_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "executeScriptQueryCollection");
     private final static QName _DeleteSubnetsResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "deleteSubnetsResponse");
     private final static QName _UpdateSyncDataSourceConfigurationResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "updateSyncDataSourceConfigurationResponse");
     private final static QName _GetServiceResourcesResponse_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "getServiceResourcesResponse");
@@ -573,13 +576,13 @@ public class ObjectFactory {
     private final static QName _CreateClass_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "createClass");
     private final static QName _CreateSDHTransportLink_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "createSDHTransportLink");
     private final static QName _GetObjectLight_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "getObjectLight");
-    private final static QName _BulkUploadFile_QNAME = new QName("", "file");
-    private final static QName _UpdateListTypeItemRelatedViewStructure_QNAME = new QName("", "structure");
-    private final static QName _UpdateListTypeItemRelatedViewBackground_QNAME = new QName("", "background");
+    private final static QName _SaveQueryQueryStructure_QNAME = new QName("", "queryStructure");
+    private final static QName _AttachFileToObjectFile_QNAME = new QName("", "file");
     private final static QName _SetClassPropertiesIcon_QNAME = new QName("", "icon");
     private final static QName _SetClassPropertiesSmallIcon_QNAME = new QName("", "smallIcon");
-    private final static QName _SaveQueryQueryStructure_QNAME = new QName("", "queryStructure");
     private final static QName _ExecuteClassLevelReportResponseReturn_QNAME = new QName("", "return");
+    private final static QName _UpdateListTypeItemRelatedViewStructure_QNAME = new QName("", "structure");
+    private final static QName _UpdateListTypeItemRelatedViewBackground_QNAME = new QName("", "background");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.inventory.communications.wsclient
@@ -1082,6 +1085,14 @@ public class ObjectFactory {
      */
     public RemoveUserFromGroup createRemoveUserFromGroup() {
         return new RemoveUserFromGroup();
+    }
+
+    /**
+     * Create an instance of {@link ExecuteScriptQueryCollectionResponse }
+     * 
+     */
+    public ExecuteScriptQueryCollectionResponse createExecuteScriptQueryCollectionResponse() {
+        return new ExecuteScriptQueryCollectionResponse();
     }
 
     /**
@@ -2290,6 +2301,14 @@ public class ObjectFactory {
      */
     public GetPhysicalConnectionsInObject createGetPhysicalConnectionsInObject() {
         return new GetPhysicalConnectionsInObject();
+    }
+
+    /**
+     * Create an instance of {@link RemoteScriptQueryResultCollection }
+     * 
+     */
+    public RemoteScriptQueryResultCollection createRemoteScriptQueryResultCollection() {
+        return new RemoteScriptQueryResultCollection();
     }
 
     /**
@@ -4909,6 +4928,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ExecuteScriptQueryCollection }
+     * 
+     */
+    public ExecuteScriptQueryCollection createExecuteScriptQueryCollection() {
+        return new ExecuteScriptQueryCollection();
+    }
+
+    /**
      * Create an instance of {@link DeleteSubnetsResponse }
      * 
      */
@@ -5440,6 +5467,15 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://ws.interfaces.kuwaiba.org/", name = "getAllClasses")
     public JAXBElement<GetAllClasses> createGetAllClasses(GetAllClasses value) {
         return new JAXBElement<GetAllClasses>(_GetAllClasses_QNAME, GetAllClasses.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ExecuteScriptQueryCollectionResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.interfaces.kuwaiba.org/", name = "executeScriptQueryCollectionResponse")
+    public JAXBElement<ExecuteScriptQueryCollectionResponse> createExecuteScriptQueryCollectionResponse(ExecuteScriptQueryCollectionResponse value) {
+        return new JAXBElement<ExecuteScriptQueryCollectionResponse>(_ExecuteScriptQueryCollectionResponse_QNAME, ExecuteScriptQueryCollectionResponse.class, null, value);
     }
 
     /**
@@ -6712,21 +6748,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link CopySyncGroup }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://ws.interfaces.kuwaiba.org/", name = "copySyncGroup")
-    public JAXBElement<CopySyncGroup> createCopySyncGroup(CopySyncGroup value) {
-        return new JAXBElement<CopySyncGroup>(_CopySyncGroup_QNAME, CopySyncGroup.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link SearchForContacts }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://ws.interfaces.kuwaiba.org/", name = "searchForContacts")
     public JAXBElement<SearchForContacts> createSearchForContacts(SearchForContacts value) {
         return new JAXBElement<SearchForContacts>(_SearchForContacts_QNAME, SearchForContacts.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link CopySyncGroup }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.interfaces.kuwaiba.org/", name = "copySyncGroup")
+    public JAXBElement<CopySyncGroup> createCopySyncGroup(CopySyncGroup value) {
+        return new JAXBElement<CopySyncGroup>(_CopySyncGroup_QNAME, CopySyncGroup.class, null, value);
     }
 
     /**
@@ -7711,6 +7747,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link RemoteScriptQueryResultCollection }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.interfaces.kuwaiba.org/", name = "results")
+    public JAXBElement<RemoteScriptQueryResultCollection> createResults(RemoteScriptQueryResultCollection value) {
+        return new JAXBElement<RemoteScriptQueryResultCollection>(_Results_QNAME, RemoteScriptQueryResultCollection.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DeletePools }{@code >}}
      * 
      */
@@ -8647,21 +8692,21 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link AddUserToGroupResponse }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://ws.interfaces.kuwaiba.org/", name = "addUserToGroupResponse")
-    public JAXBElement<AddUserToGroupResponse> createAddUserToGroupResponse(AddUserToGroupResponse value) {
-        return new JAXBElement<AddUserToGroupResponse>(_AddUserToGroupResponse_QNAME, AddUserToGroupResponse.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link GetDeviceLayoutsResponse }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://ws.interfaces.kuwaiba.org/", name = "getDeviceLayoutsResponse")
     public JAXBElement<GetDeviceLayoutsResponse> createGetDeviceLayoutsResponse(GetDeviceLayoutsResponse value) {
         return new JAXBElement<GetDeviceLayoutsResponse>(_GetDeviceLayoutsResponse_QNAME, GetDeviceLayoutsResponse.class, null, value);
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link AddUserToGroupResponse }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.interfaces.kuwaiba.org/", name = "addUserToGroupResponse")
+    public JAXBElement<AddUserToGroupResponse> createAddUserToGroupResponse(AddUserToGroupResponse value) {
+        return new JAXBElement<AddUserToGroupResponse>(_AddUserToGroupResponse_QNAME, AddUserToGroupResponse.class, null, value);
     }
 
     /**
@@ -9799,6 +9844,15 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link ExecuteScriptQueryCollection }{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "http://ws.interfaces.kuwaiba.org/", name = "executeScriptQueryCollection")
+    public JAXBElement<ExecuteScriptQueryCollection> createExecuteScriptQueryCollection(ExecuteScriptQueryCollection value) {
+        return new JAXBElement<ExecuteScriptQueryCollection>(_ExecuteScriptQueryCollection_QNAME, ExecuteScriptQueryCollection.class, null, value);
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DeleteSubnetsResponse }{@code >}}
      * 
      */
@@ -10333,27 +10387,18 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "file", scope = BulkUpload.class)
-    public JAXBElement<byte[]> createBulkUploadFile(byte[] value) {
-        return new JAXBElement<byte[]>(_BulkUploadFile_QNAME, byte[].class, BulkUpload.class, ((byte[]) value));
+    @XmlElementDecl(namespace = "", name = "queryStructure", scope = SaveQuery.class)
+    public JAXBElement<byte[]> createSaveQueryQueryStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_SaveQueryQueryStructure_QNAME, byte[].class, SaveQuery.class, ((byte[]) value));
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "structure", scope = UpdateListTypeItemRelatedView.class)
-    public JAXBElement<byte[]> createUpdateListTypeItemRelatedViewStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewStructure_QNAME, byte[].class, UpdateListTypeItemRelatedView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "background", scope = UpdateListTypeItemRelatedView.class)
-    public JAXBElement<byte[]> createUpdateListTypeItemRelatedViewBackground(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewBackground_QNAME, byte[].class, UpdateListTypeItemRelatedView.class, ((byte[]) value));
+    @XmlElementDecl(namespace = "", name = "file", scope = AttachFileToObject.class)
+    public JAXBElement<byte[]> createAttachFileToObjectFile(byte[] value) {
+        return new JAXBElement<byte[]>(_AttachFileToObjectFile_QNAME, byte[].class, AttachFileToObject.class, ((byte[]) value));
     }
 
     /**
@@ -10378,18 +10423,99 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "queryStructure", scope = SaveQuery.class)
-    public JAXBElement<byte[]> createSaveQueryQueryStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_SaveQueryQueryStructure_QNAME, byte[].class, SaveQuery.class, ((byte[]) value));
+    @XmlElementDecl(namespace = "", name = "return", scope = ExecuteClassLevelReportResponse.class)
+    public JAXBElement<byte[]> createExecuteClassLevelReportResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, ExecuteClassLevelReportResponse.class, ((byte[]) value));
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "return", scope = ExecuteClassLevelReportResponse.class)
-    public JAXBElement<byte[]> createExecuteClassLevelReportResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, ExecuteClassLevelReportResponse.class, ((byte[]) value));
+    @XmlElementDecl(namespace = "", name = "icon", scope = CreateClass.class)
+    public JAXBElement<byte[]> createCreateClassIcon(byte[] value) {
+        return new JAXBElement<byte[]>(_SetClassPropertiesIcon_QNAME, byte[].class, CreateClass.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "smallIcon", scope = CreateClass.class)
+    public JAXBElement<byte[]> createCreateClassSmallIcon(byte[] value) {
+        return new JAXBElement<byte[]>(_SetClassPropertiesSmallIcon_QNAME, byte[].class, CreateClass.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "return", scope = GetClassHierarchyResponse.class)
+    public JAXBElement<byte[]> createGetClassHierarchyResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, GetClassHierarchyResponse.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "queryStructure", scope = CreateQuery.class)
+    public JAXBElement<byte[]> createCreateQueryQueryStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_SaveQueryQueryStructure_QNAME, byte[].class, CreateQuery.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "structure", scope = UpdateListTypeItemRelatedView.class)
+    public JAXBElement<byte[]> createUpdateListTypeItemRelatedViewStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewStructure_QNAME, byte[].class, UpdateListTypeItemRelatedView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "background", scope = UpdateListTypeItemRelatedView.class)
+    public JAXBElement<byte[]> createUpdateListTypeItemRelatedViewBackground(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewBackground_QNAME, byte[].class, UpdateListTypeItemRelatedView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "structure", scope = CreateObjectRelatedView.class)
+    public JAXBElement<byte[]> createCreateObjectRelatedViewStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewStructure_QNAME, byte[].class, CreateObjectRelatedView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "background", scope = CreateObjectRelatedView.class)
+    public JAXBElement<byte[]> createCreateObjectRelatedViewBackground(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewBackground_QNAME, byte[].class, CreateObjectRelatedView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "return", scope = GetDeviceLayoutStructureResponse.class)
+    public JAXBElement<byte[]> createGetDeviceLayoutStructureResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, GetDeviceLayoutStructureResponse.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "file", scope = BulkUpload.class)
+    public JAXBElement<byte[]> createBulkUploadFile(byte[] value) {
+        return new JAXBElement<byte[]>(_AttachFileToObjectFile_QNAME, byte[].class, BulkUpload.class, ((byte[]) value));
     }
 
     /**
@@ -10423,42 +10549,6 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "icon", scope = CreateClass.class)
-    public JAXBElement<byte[]> createCreateClassIcon(byte[] value) {
-        return new JAXBElement<byte[]>(_SetClassPropertiesIcon_QNAME, byte[].class, CreateClass.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "smallIcon", scope = CreateClass.class)
-    public JAXBElement<byte[]> createCreateClassSmallIcon(byte[] value) {
-        return new JAXBElement<byte[]>(_SetClassPropertiesSmallIcon_QNAME, byte[].class, CreateClass.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "return", scope = GetDeviceLayoutStructureResponse.class)
-    public JAXBElement<byte[]> createGetDeviceLayoutStructureResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, GetDeviceLayoutStructureResponse.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "queryStructure", scope = CreateQuery.class)
-    public JAXBElement<byte[]> createCreateQueryQueryStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_SaveQueryQueryStructure_QNAME, byte[].class, CreateQuery.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
     @XmlElementDecl(namespace = "", name = "structure", scope = UpdateObjectRelatedView.class)
     public JAXBElement<byte[]> createUpdateObjectRelatedViewStructure(byte[] value) {
         return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewStructure_QNAME, byte[].class, UpdateObjectRelatedView.class, ((byte[]) value));
@@ -10486,33 +10576,6 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "structure", scope = UpdateGeneralView.class)
-    public JAXBElement<byte[]> createUpdateGeneralViewStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewStructure_QNAME, byte[].class, UpdateGeneralView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "background", scope = UpdateGeneralView.class)
-    public JAXBElement<byte[]> createUpdateGeneralViewBackground(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewBackground_QNAME, byte[].class, UpdateGeneralView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "return", scope = GetClassHierarchyResponse.class)
-    public JAXBElement<byte[]> createGetClassHierarchyResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, GetClassHierarchyResponse.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
     @XmlElementDecl(namespace = "", name = "structure", scope = CreateGeneralView.class)
     public JAXBElement<byte[]> createCreateGeneralViewStructure(byte[] value) {
         return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewStructure_QNAME, byte[].class, CreateGeneralView.class, ((byte[]) value));
@@ -10531,27 +10594,18 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "file", scope = AttachFileToObject.class)
-    public JAXBElement<byte[]> createAttachFileToObjectFile(byte[] value) {
-        return new JAXBElement<byte[]>(_BulkUploadFile_QNAME, byte[].class, AttachFileToObject.class, ((byte[]) value));
+    @XmlElementDecl(namespace = "", name = "structure", scope = UpdateGeneralView.class)
+    public JAXBElement<byte[]> createUpdateGeneralViewStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewStructure_QNAME, byte[].class, UpdateGeneralView.class, ((byte[]) value));
     }
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "structure", scope = CreateObjectRelatedView.class)
-    public JAXBElement<byte[]> createCreateObjectRelatedViewStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewStructure_QNAME, byte[].class, CreateObjectRelatedView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "background", scope = CreateObjectRelatedView.class)
-    public JAXBElement<byte[]> createCreateObjectRelatedViewBackground(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewBackground_QNAME, byte[].class, CreateObjectRelatedView.class, ((byte[]) value));
+    @XmlElementDecl(namespace = "", name = "background", scope = UpdateGeneralView.class)
+    public JAXBElement<byte[]> createUpdateGeneralViewBackground(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewBackground_QNAME, byte[].class, UpdateGeneralView.class, ((byte[]) value));
     }
 
 }

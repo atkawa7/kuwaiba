@@ -26,6 +26,7 @@ public class LocalPrivilege {
     public static final String PRIVILEGE_NAVIGATION_TREE = "navigation-tree";
     public static final String PRIVILEGE_OBJECT_PROPERTIES = "object-properties";
     public static final String PRIVILEGE_SPECIAL_EXPLORERS = "special-explorers";
+    public static final String PRIVILEGE_ATTACHMENTS = "attachments";
     public static final String PRIVILEGE_PHYSICAL_VIEW = "physical-view";
     public static final String PRIVILEGE_TOPOLOGY_DESIGNER = "topology-designer";
     public static final String PRIVILEGE_DATA_MODEL_MANAGER = "data-model-manager";

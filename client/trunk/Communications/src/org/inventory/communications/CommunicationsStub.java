@@ -94,6 +94,8 @@ import org.inventory.communications.wsclient.RemoteBackgroundJob;
 import org.inventory.communications.wsclient.RemoteFavoritesFolder;
 import org.inventory.communications.wsclient.RemoteBusinessRule;
 import org.inventory.communications.wsclient.RemoteContact;
+import org.inventory.communications.wsclient.RemoteFileObject;
+import org.inventory.communications.wsclient.RemoteFileObjectLight;
 import org.inventory.communications.wsclient.RemoteObject;
 import org.inventory.communications.wsclient.RemoteObjectLight;
 import org.inventory.communications.wsclient.RemoteObjectLightList;
@@ -1052,6 +1054,62 @@ public class CommunicationsStub {
             return null;
         }
     }
+    
+    /**
+     * Detaches a file from an inventory object. Note that the file will also be deleted. 
+     * @param fileObjectId The id of the file object
+     * @param className The class of the object the file will be detached from
+     * @param objectId The id of the object the file will be detached from
+     * @return True if the operation was successful, false otherwise
+     */
+    public boolean detachFileFromObject(long fileObjectId, String className, long objectId) {
+        try{
+            service.detachFileFromObject(fileObjectId, className, objectId, session.getSessionId());
+            return true;
+        } catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Retrieves the files associated to a given inventory object
+     * @param className The class of the object o retrieve the files from
+     * @param objectId The id of the object o retrieve the files from
+     * @return  The list of files or null in case of error
+     */
+    public List<LocalFileObjectLight> getFilesForObject(String className, long objectId) {
+        try {
+            List<LocalFileObjectLight> res = new ArrayList<>();
+            List<RemoteFileObjectLight> remoteFiles = service.getFilesForObject(className, objectId, session.getSessionId());
+            for (RemoteFileObjectLight remoteFile : remoteFiles)
+                res.add(new LocalFileObjectLight(remoteFile.getFileOjectId(), remoteFile.getName(), remoteFile.getCreationDate(), remoteFile.getTags()));
+            
+            return res;
+        } catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Retrieves a particular file from those attached to an inventory object. The returned object contains the contents of the file
+     * @param fileObjectId The id of the file object
+     * @param className The class of the object the file will be detached from
+     * @param objectId The id of the object the file will be detached from
+     * @return The object file encapsulating the contents of the file or null otherwise.
+     */
+    public LocalFileObject getFile(long fileObjectId, String className, long objectId) {
+        try {
+            RemoteFileObject remoteObject = service.getFile(fileObjectId, className, objectId, session.getSessionId());
+            return new LocalFileObject(remoteObject.getFileOjectId(), remoteObject.getName(), 
+                    remoteObject.getCreationDate(), remoteObject.getTags(), remoteObject.getFile());
+        } catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
     //</editor-fold>
     
     /**

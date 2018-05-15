@@ -19,7 +19,7 @@ package org.inventory.communications.core;
  * Local representation of a file object. A file object represents a file attached to an inventory object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class LocalFileObjectLight {
+public class LocalFileObjectLight implements Comparable<LocalFileObjectLight>{
     /**
      * File object id
      */
@@ -74,5 +74,15 @@ public class LocalFileObjectLight {
 
     public void setCreationDate(long creationDate) {
         this.creationDate = creationDate;
+    }
+    
+    @Override
+    public String toString() {
+        return String.format("%s [%s]", name, tags == null || tags.trim().isEmpty() ? "No tags defined" : tags);
+    }
+
+    @Override
+    public int compareTo(LocalFileObjectLight o) {
+        return Long.compare(creationDate, o.getCreationDate());
     }
 }

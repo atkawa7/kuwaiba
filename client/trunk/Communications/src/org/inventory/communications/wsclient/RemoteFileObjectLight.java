@@ -1,11 +1,8 @@
 
 package org.inventory.communications.wsclient;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
@@ -22,7 +19,8 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="fileOjectId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="tags" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="tags" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="creationDate" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,7 +33,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "remoteFileObjectLight", propOrder = {
     "fileOjectId",
     "name",
-    "tags"
+    "tags",
+    "creationDate"
 })
 @XmlSeeAlso({
     RemoteFileObject.class
@@ -44,8 +43,8 @@ public class RemoteFileObjectLight {
 
     protected long fileOjectId;
     protected String name;
-    @XmlElement(nillable = true)
-    protected List<String> tags;
+    protected String tags;
+    protected long creationDate;
 
     /**
      * Gets the value of the fileOjectId property.
@@ -90,30 +89,41 @@ public class RemoteFileObjectLight {
     /**
      * Gets the value of the tags property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the tags property.
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTags() {
+        return tags;
+    }
+
+    /**
+     * Sets the value of the tags property.
      * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getTags().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTags(String value) {
+        this.tags = value;
+    }
+
+    /**
+     * Gets the value of the creationDate property.
      * 
      */
-    public List<String> getTags() {
-        if (tags == null) {
-            tags = new ArrayList<String>();
-        }
-        return this.tags;
+    public long getCreationDate() {
+        return creationDate;
+    }
+
+    /**
+     * Sets the value of the creationDate property.
+     * 
+     */
+    public void setCreationDate(long value) {
+        this.creationDate = value;
     }
 
 }
