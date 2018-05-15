@@ -163,3 +163,6 @@
 * Added action to create and delete connections in the rack view
 * It's now possible to create multiple template elements and delete multiple special children at once
 * Multiple bug fixes and improvements
+
+2.0
+* Added Script Query Manager

@@ -76,6 +76,78 @@ then
     echo $'\n}' >> temp.txt
     mv temp.txt "${destination}/org/inventory/communications/wsclient/StringPair.java"
     echo "Patching StringPair class done"
+    
+    #Here we patch the ClassInfoLight class with the missing hashCode, equals and toString that wsimport does not generate
+    echo "Patching ClassInfoLight class..."
+    setters="public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (int) (this.id ^ (this.id >>> 32));
+        return hash;
+    }
+    
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ClassInfoLight other = (ClassInfoLight) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
+    }
+        
+    public String toString() {
+        return displayName != null && !displayName.isEmpty() ? displayName : className;
+    }"
+
+    head -n -2  "${destination}/org/inventory/communications/wsclient/ClassInfoLight.java" > temp.txt
+
+    echo "${setters}" >> temp.txt
+    echo $'\n}' >> temp.txt
+    mv temp.txt "${destination}/org/inventory/communications/wsclient/ClassInfoLight.java"
+    echo "Patching ClassInfoLight class done"
+    
+    #Here we patch the RemoteObjectLight class with the missing hashCode, equals and toString that wsimport does not generate
+    echo "Patching RemoteObjectLight class..."
+    setters="public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + (int) (this.oid ^ (this.oid >>> 32));
+        return hash;
+    }
+    
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final RemoteObjectLight other = (RemoteObjectLight) obj;
+        if (this.oid != other.oid) {
+            return false;
+        }
+        return true;
+    }
+    
+    public String toString() {
+        return name + \" [\" + className + \"]\";
+    }"
+
+    head -n -2  "${destination}/org/inventory/communications/wsclient/RemoteObjectLight.java" > temp.txt
+
+    echo "${setters}" >> temp.txt
+    echo $'\n}' >> temp.txt
+    mv temp.txt "${destination}/org/inventory/communications/wsclient/RemoteObjectLight.java"
+    echo "Patching RemoteObjectLight class done"
 else
     echo wsimport failed. Aborting any further actions.
 fi

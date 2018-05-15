@@ -2607,9 +2607,10 @@ public class CommunicationsStub {
         try {
             List<StringPair> params = new ArrayList<>();
             
-            for (String parameter : parameters.keySet())                 
-                params.add(new StringPair(parameter, parameters.get(parameter)));
-                            
+            if (parameters != null) {
+                for (String parameter : parameters.keySet())
+                    params.add(new StringPair(parameter, parameters.get(parameter)));
+            }
             return service.createScriptQuery(name, description, script, params, session.getSessionId());
         } catch (Exception ex) {
             error = ex.getMessage();
@@ -2692,7 +2693,7 @@ public class CommunicationsStub {
     /**
      * Deletes a script query
      * @param scriptQueryId The script query id
-     * @return If the script query can no be deleted
+     * @return False if the script query can no be deleted
      */
     public boolean deleteScriptQuery(long scriptQueryId) {
         try {
@@ -2715,6 +2716,17 @@ public class CommunicationsStub {
         try {
             return new LocalScriptQueryResult(
                 service.executeScriptQuery(scriptQueryId, session.getSessionId()).getResult());
+        } catch (Exception ex) {
+            error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    public LocalScriptQueryResult executeScriptQueryCollection(long scriptQueryId) {
+        try {
+            return new LocalScriptQueryResult(
+                service.executeScriptQueryCollection(scriptQueryId, session.getSessionId()).getResult());
+            
         } catch (Exception ex) {
             error = ex.getMessage();
             return null;

@@ -138,5 +138,31 @@ public class RemoteObjectLight {
         }
         return this.validators;
     }
+public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + (int) (this.oid ^ (this.oid >>> 32));
+        return hash;
+    }
+    
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final RemoteObjectLight other = (RemoteObjectLight) obj;
+        if (this.oid != other.oid) {
+            return false;
+        }
+        return true;
+    }
+    
+    public String toString() {
+        return name + " [" + className + "]";
+    }
 
 }

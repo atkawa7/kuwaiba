@@ -348,5 +348,31 @@ public class ClassInfoLight {
     public void setSmallIcon(byte[] value) {
         this.smallIcon = value;
     }
+public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (int) (this.id ^ (this.id >>> 32));
+        return hash;
+    }
+    
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ClassInfoLight other = (ClassInfoLight) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
+    }
+        
+    public String toString() {
+        return displayName != null && !displayName.isEmpty() ? displayName : className;
+    }
 
 }

@@ -16,6 +16,8 @@
 package org.inventory.automation.tasks.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import static javax.swing.Action.NAME;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import org.inventory.automation.tasks.nodes.TaskManagerRootNode;
 import org.inventory.automation.tasks.nodes.TaskNode;
@@ -24,16 +26,28 @@ import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.core.LocalTask;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.utils.ImageIconResource;
 import org.openide.util.Utilities;
+import org.openide.util.actions.Presenter;
 
 /**
  * Deletes a task
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-class DeleteTaskAction extends GenericInventoryAction {
+class DeleteTaskAction extends GenericInventoryAction implements Presenter.Popup {
+    
+    private final JMenuItem popupPresenter;
     
     DeleteTaskAction() {
         putValue(NAME, "Delete Task");
+        
+        popupPresenter = new JMenuItem((String) getValue(NAME), ImageIconResource.WARNING_ICON);
+        popupPresenter.addActionListener(this);
+    }
+    
+    @Override
+    public JMenuItem getPopupPresenter() {
+        return popupPresenter;
     }
     
     @Override
