@@ -23,8 +23,13 @@ import org.inventory.core.services.api.actions.GenericInventoryAction;
  */
 public class AttachmentsActionFactory {
     private static GenericInventoryAction detachFileAction;
+    private static GenericInventoryAction downloadAttachmentAction;
     
     public static GenericInventoryAction getDetachAction() {
         return detachFileAction == null ? detachFileAction = new DetachFileAction() : detachFileAction;
+    }
+    
+    public static GenericInventoryAction getDownloadAttachment() {
+        return downloadAttachmentAction == null ? downloadAttachmentAction = new DownloadAttachmentAction(): downloadAttachmentAction;
     }
 }

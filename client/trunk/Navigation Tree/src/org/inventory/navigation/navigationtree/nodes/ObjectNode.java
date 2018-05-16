@@ -284,7 +284,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             if (action.appliesTo() != null) {
                 for (String className : action.appliesTo()) {
                     if (CommunicationsStub.getInstance().isSubclassOf(object.getClassName(), className)) {
-                        System.out.println("Nom is" + action.getClass().getName());
                         actions.add(action);
                         break;
                     }

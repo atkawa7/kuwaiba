@@ -34,22 +34,26 @@ import org.openide.util.lookup.Lookups;
  */
 public class AttachmentsRootNode extends AbstractNode {
 
-    public AttachmentsRootNode(LocalObjectLight inventoryObject, AttachmentsRootNodeChildren attachedFiles) {
-        super(attachedFiles, Lookups.singleton(inventoryObject));
+    public AttachmentsRootNode(LocalObjectLight inventoryObject) {
+        super(new AttachmentsRootNodeChildren(), Lookups.singleton(inventoryObject));
         setDisplayName(PROP_NAME);
     }
     
     public static class AttachmentsRootNodeChildren extends Children.Keys<LocalFileObjectLight> {
-        List<LocalFileObjectLight> attachedFiles;
 
-        public AttachmentsRootNodeChildren(List<LocalFileObjectLight> attachedFiles) {
-            this.attachedFiles = attachedFiles;
-        }
-        
         @Override
         public void addNotify() {
-            Collections.sort(attachedFiles);
-            setKeys(attachedFiles);
+            LocalObjectLight inventoryObject = getNode().getLookup().lookup(LocalObjectLight.class);
+            List<LocalFileObjectLight> attachedFiles = CommunicationsStub.getInstance().getFilesForObject(inventoryObject.getClassName(), inventoryObject.getOid());
+            
+            if (attachedFiles == null) {
+                setKeys(Collections.EMPTY_LIST);
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            }
+            else {
+                Collections.sort(attachedFiles);
+                setKeys(attachedFiles);
+            }
         }
         
         @Override

@@ -325,6 +325,7 @@ public class Utils {
     public static JFileChooser getGlobalFileChooser() {
         if (globalFileChooser == null)
             globalFileChooser = new JFileChooser();
+        
         return globalFileChooser;
     }
     

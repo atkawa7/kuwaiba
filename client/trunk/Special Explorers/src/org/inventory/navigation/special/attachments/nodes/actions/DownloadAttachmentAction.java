@@ -16,54 +16,68 @@
 package org.inventory.navigation.special.attachments.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Collection;
-import javax.swing.JOptionPane;
+import javax.swing.JFileChooser;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalFileObject;
 import org.inventory.communications.core.LocalFileObjectLight;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
-import org.inventory.navigation.special.attachments.nodes.AttachmentsRootNode;
 import org.inventory.navigation.special.attachments.nodes.FileObjectNode;
 import org.openide.util.Utilities;
 
 /**
- * Detaches a file from an inventory object
+ * Downloads a file associated to an inventory object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class DetachFileAction extends GenericInventoryAction {
+public class DownloadAttachmentAction extends GenericInventoryAction {
 
-    public DetachFileAction() {
-        putValue(NAME, I18N.gm("detach_from_object"));
+    public DownloadAttachmentAction() {
+        putValue(NAME, I18N.gm("download_attachment"));
     }
-
     
+    
+
     @Override
     public LocalPrivilege getPrivilege() {
-        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_ATTACHMENTS, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
+        return new LocalPrivilege(LocalPrivilege.PRIVILEGE_ATTACHMENTS, LocalPrivilege.ACCESS_LEVEL_READ);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        
-        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to detach and delete this file?", "Detach File", JOptionPane.OK_OPTION) 
-                == JOptionPane.CANCEL_OPTION)
-            return;
-        
         Collection<? extends FileObjectNode> selectedFileObjectNodes = Utilities.actionsGlobalContext().lookupResult(FileObjectNode.class).allInstances();
         CommunicationsStub com = CommunicationsStub.getInstance();
         
         for (FileObjectNode fileObjectNode : selectedFileObjectNodes) {
             LocalFileObjectLight selectedFileObject = fileObjectNode.getLookup().lookup(LocalFileObjectLight.class);
             LocalObjectLight inventoryObject = fileObjectNode.getParentNode().getLookup().lookup(LocalObjectLight.class);
-            if (com.detachFileFromObject(selectedFileObject.getFileOjectId(),  inventoryObject.getClassName(), inventoryObject.getOid())) {
-                ((AttachmentsRootNode.AttachmentsRootNodeChildren)fileObjectNode.getParentNode().getChildren()).addNotify();
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "Files detached and deleted successfully");
+            
+            JFileChooser globalFileChooser = Utils.getGlobalFileChooser();
+            globalFileChooser.setDialogTitle("Select a location to save the file");
+            globalFileChooser.setSelectedFile(new File(selectedFileObject.getName()));
+
+            int option = globalFileChooser.showSaveDialog(null);
+            
+            if (option == JFileChooser.APPROVE_OPTION) {
+                LocalFileObject theFile = com.getFile(selectedFileObject.getFileOjectId(), inventoryObject.getClassName(), inventoryObject.getOid());
+                if (theFile != null) {
+                    try (FileOutputStream fos = new FileOutputStream(globalFileChooser.getSelectedFile().getAbsolutePath())) {
+                        fos.write(theFile.getFile());
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, I18N.gm("file_saved_successfully"));
+                    } catch (IOException ex) {
+                        NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, ex.getMessage());
+                    }
+                }
+                else
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
             }
-            else
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
         }
     }
     

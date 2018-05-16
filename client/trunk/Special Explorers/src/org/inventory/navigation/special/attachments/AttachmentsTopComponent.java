@@ -16,7 +16,13 @@
 package org.inventory.navigation.special.attachments;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JToolBar;
+import javax.swing.ListSelectionModel;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalFileObjectLight;
 import org.inventory.communications.core.LocalObjectLight;
@@ -51,7 +57,7 @@ import org.openide.windows.WindowManager;
 @TopComponent.Description(
         preferredID = "AttachmentsTopComponent",
         iconBase="org/inventory/navigation/special/res/attachments_explorer.png", 
-        persistenceType = TopComponent.PERSISTENCE_NEVER)
+        persistenceType = TopComponent.PERSISTENCE_ALWAYS)
 @TopComponent.Registration(mode = "navigator", openAtStartup = false)
 @ActionID(category = "Tools", id = "org.inventory.navigation.special.attachments.AttachmentsTopComponent")
 @ActionReferences(value = { @ActionReference(path = "Menu/Tools/Navigation"),
@@ -63,6 +69,8 @@ import org.openide.windows.WindowManager;
 public class AttachmentsTopComponent extends TopComponent 
         implements ExplorerManager.Provider, LookupListener {
     
+    private static ImageIcon ICON_REFRESH = new ImageIcon(AttachmentsTopComponent.class.getResource("/org/inventory/navigation/special/res/refresh.png"));
+    
     private ExplorerManager em;
     private ListView lstAttachments;
     //Singleton
@@ -73,6 +81,20 @@ public class AttachmentsTopComponent extends TopComponent
     private AttachmentsTopComponent() {
         this.em = new ExplorerManager();
         this.lstAttachments = new ListView();
+        this.lstAttachments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+        JToolBar barMain = new JToolBar();
+        JButton btnRefresh = new JButton(ICON_REFRESH);
+        btnRefresh.setToolTipText(I18N.gm("refresh")); //NOI18N
+        btnRefresh.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ((AttachmentsRootNode.AttachmentsRootNodeChildren)em.getRootContext().getChildren()).addNotify();
+            }
+        });
+        
+        barMain.add(btnRefresh);
+        
         this.em.setRootContext(Node.EMPTY);
         this.em.getRootContext().setDisplayName(I18N.gm("select_a_node_from_a_view_or_tree"));  //NO18N
         
@@ -80,14 +102,14 @@ public class AttachmentsTopComponent extends TopComponent
         setDisplayName(I18N.gm("attachment_explorer")); //NOI18N
         
         setLayout(new BorderLayout());
-        add(lstAttachments);
-        
+        add(barMain, BorderLayout.NORTH);
+        add(lstAttachments, BorderLayout.CENTER);
     }
     
     public static AttachmentsTopComponent getInstance() {
         if (self  == null) {
             self = new AttachmentsTopComponent();
-            Mode navigator = WindowManager.getDefault().findMode("navigator");
+            Mode navigator = WindowManager.getDefault().findMode("navigator"); //NOI18N
             navigator.dockInto(self);
         }
         return self;
@@ -120,13 +142,8 @@ public class AttachmentsTopComponent extends TopComponent
     @Override
     public void resultChanged(LookupEvent ev) {
         if(lookupResult.allInstances().size() == 1) {
-            //Don't update if the same object is selected
             LocalObjectLight inventoryObject = (LocalObjectLight)lookupResult.allInstances().iterator().next();
-            List<LocalFileObjectLight> attachedFiles = CommunicationsStub.getInstance().getFilesForObject(inventoryObject.getClassName(), inventoryObject.getOid());
-            if (attachedFiles == null) 
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            else 
-                em.setRootContext(new AttachmentsRootNode(inventoryObject, new AttachmentsRootNode.AttachmentsRootNodeChildren(attachedFiles)));
+            em.setRootContext(new AttachmentsRootNode(inventoryObject));
         }
     }
     

@@ -45,6 +45,8 @@ public class FileObjectNode extends AbstractNode {
     @Override
     public Action[] getActions(boolean context) {
         return new Action[] {
+            AttachmentsActionFactory.getDownloadAttachment(),
+            null,
             AttachmentsActionFactory.getDetachAction()
         };
     }
