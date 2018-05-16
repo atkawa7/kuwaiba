@@ -16,6 +16,8 @@
 
 package org.kuwaiba.apis.persistence.application;
 
+import org.kuwaiba.apis.persistence.application.forms.FormDefinition;
+import org.kuwaiba.apis.persistence.application.forms.FormInstance;
 import com.neotropic.kuwaiba.modules.GenericCommercialModule;
 import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
@@ -936,7 +938,77 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException  If the task doesn't have a script
      */
     public TaskResult executeTask(long taskId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
-    
+    /**
+     * Creates a form
+     * @param name Form name
+     * @param description Form description
+     * @param structure Form structure
+     * @return The created form id
+     */
+    public long createForm(String name, String description, byte[] structure);
+    /**
+     * Updates a form
+     * @param formId The id
+     * @param name Form name
+     * @param description Form description
+     * @param structure Form structure
+     * @throws ApplicationObjectNotFoundException If the id to the form can not be found
+     */
+    public void updateForm(long formId, String name, String description, byte[] structure) throws ApplicationObjectNotFoundException;
+    /**
+     * Gets a form
+     * @param formId Form Id
+     * @return The form to the given id
+     * @throws ApplicationObjectNotFoundException If the id to the form can not be found
+     */
+    public FormDefinition getForm(long formId) throws ApplicationObjectNotFoundException;
+    /**
+     * Gets all the forms
+     * @return A Set of forms
+     */
+    public List<FormDefinition> getForms();
+    /**
+     * Deletes a form
+     * @param formId Form's id
+     * @throws ApplicationObjectNotFoundException If the id to the form can not be found
+     */
+    public void deleteForm(long formId) throws ApplicationObjectNotFoundException;
+    /**
+     * Creates a Form Instance
+     * @param formId Form Instance Id
+     * @param name Form Instance Name
+     * @param description Form Instance Description
+     * @param structure Form Instance Structure
+     * @return The created Form Instance Id
+     */
+    public long createFormInstance(long formId, String name, String description, byte[] structure);
+    /**
+     * Updates a Form Instance
+     * @param formInstanceId The Form Instance Id
+     * @param name Form Instance Name
+     * @param description Form Instance Description
+     * @param structure Form Instance Structure
+     * @throws ApplicationObjectNotFoundException If the id to the Form Instance can not be found
+     */
+    public void updateFormInstance(long formInstanceId, String name, String description, byte[] structure) throws ApplicationObjectNotFoundException;
+    /**
+     * Gets a Form Instance
+     * @param formInstanceId Form Id
+     * @return The Form Instance to the given id
+     * @throws ApplicationObjectNotFoundException If the id to the Form Instance can not be found
+     */
+    public FormInstance getFormInstance(long formInstanceId) throws ApplicationObjectNotFoundException;
+    /**
+     * Gets all the Form Instances
+     * @return A Set of Forms Instances
+     */
+    public List<FormInstance> getFormInstances();
+    /**
+     * Deletes a Form Instance
+     * @param formInstanceId Form Instance Id
+     * @throws ApplicationObjectNotFoundException If the id to the Form Instance can not be found
+     */
+    public void deleteFormInstance(long formInstanceId) throws ApplicationObjectNotFoundException;
     /**
      * Creates a script query
      * @param name The script query name

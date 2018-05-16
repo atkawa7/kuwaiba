@@ -125,6 +125,12 @@
             <env-entry-type>java.lang.String</env-entry-type>
             <env-entry-value>/data/form/files</env-entry-value>
         </env-entry>
+        <env-entry>
+            <description>Form Images path</description>
+            <env-entry-name>formImagesPath</env-entry-name>
+            <env-entry-type>java.lang.String</env-entry-type>
+            <env-entry-value>/data/form/img</env-entry-value>
+        </env-entry>
      </session>
 </enterprise-beans>
 </ejb-jar>

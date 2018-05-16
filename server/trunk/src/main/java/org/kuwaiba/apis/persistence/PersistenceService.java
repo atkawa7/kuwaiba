@@ -89,6 +89,7 @@ public class PersistenceService {
             applicationConfiguration.put("enforceBusinessRules", configuration.get("enforceBusinessRules"));
             applicationConfiguration.put("maxRoutes", configuration.get("maxRoutes"));
             applicationConfiguration.put("formFilesPath", configuration.get("formFilesPath"));
+            applicationConfiguration.put("formImagesPath", configuration.get("formImagesPath"));
             aem.setConfiguration(applicationConfiguration);
             
             Properties businessConfiguration = new Properties();

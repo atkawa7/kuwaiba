@@ -166,6 +166,14 @@ public class Constants {
      */
     public static final String LABEL_SCRIPT_QUERY = "scriptQuery";
     /**
+     * Label used for Form nodes
+     */
+    public static final String LABEL_FORM = "forms";
+    /**
+     * Label used for Form Instance nodes
+     */
+    public static final String LABEL_FORM_INSTANCE = "formInstance";
+    /**
      * label used for contacts
      */
     public static final String LABEL_CONTACTS = "contacts";

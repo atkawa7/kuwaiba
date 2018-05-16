@@ -24,6 +24,7 @@ import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.ui.UI;
 import javax.inject.Inject;
+import org.kuwaiba.web.forms.FormManagerView;
 
 /**
  * Main application entry point. It also serves as the fallback controller

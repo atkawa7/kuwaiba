@@ -34,6 +34,7 @@ import org.kuwaiba.apis.web.gui.nodes.properties.PropertySheetModule;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.web.custom.CustomButton;
+import org.kuwaiba.web.forms.FormManagerView;
 import org.kuwaiba.web.modules.lists.ListManagerModule;
 import org.kuwaiba.web.modules.navtree.NavigationTreeModule;
 import org.kuwaiba.web.modules.osp.OutsidePlantModule;
@@ -63,6 +64,11 @@ class ApplicationView extends CustomComponent implements View {
     
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
+        if (true) {
+            getUI().getNavigator().navigateTo(FormManagerView.VIEW_NAME);
+            return;
+        }
+        
         final RemoteSession session = (RemoteSession)getSession().getAttribute("session");
         
         if (session == null) //NOI18N

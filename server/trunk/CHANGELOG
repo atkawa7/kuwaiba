@@ -131,3 +131,6 @@
 * It's now possible also move links out of a container choosing the links container from the object view.
 * It's now possible to move one or several links into a container from the object view. 
 * The tasks can now make commit if something is created in the task.
+
+2.0
+* Added Script Query Manager
