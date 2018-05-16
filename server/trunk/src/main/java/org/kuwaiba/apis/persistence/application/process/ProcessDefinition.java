@@ -13,19 +13,13 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.interfaces.ws.toserialize.application;
-
-import java.io.Serializable;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+package org.kuwaiba.apis.persistence.application.process;
 
 /**
- * Wrapper of ProcessDefinition. A process definition is the metadata of a process. It contains the set of 
- * activities, conditionals and the flow that connects everything
+ * Wraps the definition of a process. The activities are represented as a linked list
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteProcessDefinition implements Serializable {
+public class ProcessDefinition {
     /**
      * Process id
      */
@@ -53,12 +47,10 @@ public class RemoteProcessDefinition implements Serializable {
     /**
      * Reference to the start activity (typically a TYPE_START type of activity). The rest will be linked from this one
      */
-    private RemoteActivityDefinition startAction;
+    private ActivityDefinition startAction;
 
-    public RemoteProcessDefinition() { }
-
-    public RemoteProcessDefinition(long id, String name, String description, long creationDate, 
-            String version, boolean enabled, RemoteActivityDefinition startAction) {
+    public ProcessDefinition(long id, String name, String description, long creationDate, 
+            String version, boolean enabled, ActivityDefinition startAction) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -116,11 +108,11 @@ public class RemoteProcessDefinition implements Serializable {
         this.enabled = enabled;
     }
 
-    public RemoteActivityDefinition getStartAction() {
+    public ActivityDefinition getStartAction() {
         return startAction;
     }
 
-    public void setStartAction(RemoteActivityDefinition startAction) {
+    public void setStartAction(ActivityDefinition startAction) {
         this.startAction = startAction;
     }
 }

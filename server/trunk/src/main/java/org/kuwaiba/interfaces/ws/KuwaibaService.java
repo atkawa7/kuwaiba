@@ -49,6 +49,9 @@ import org.kuwaiba.interfaces.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfo;
 import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.PrivilegeInfo;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBackgroundJob;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBusinessRule;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContact;
@@ -56,6 +59,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFavoritesFolder;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemotePool;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
@@ -7776,44 +7780,88 @@ public class KuwaibaService {
         }
         //</editor-fold>
         //<editor-fold desc="Process Manager" defaultstate="collapsed">
-//        @WebMethod(operationName = "createProcessDefinition")
-//        public long createProcessDefinition(String name, String description, String version, boolean enabled, 
-//                byte[] structure, String sessionId) throws ServerSideException {
-//        }
         
-//        @WebMethod(operationName = "updateProcessDefinition")
-//        public void updateProcessDefinition(long processDefinitionId, List<StringPair> properties, 
-//                byte[] structure, String sessionId) throws ServerSideException {
-//        }
-//        
-//        @WebMethod(operationName = "deleteProcessDefinition")
-//        public void deleteProcessDefinition(long processDefinitionId, String sessionId) throws ServerSideException {
-//        }
-//        
-//        @WebMethod(operationName = "getProcessDefinition")
-//        public RemoteProcessDefinition getProcessDefinition(long processDefinitionId, String sessionId) throws ServerSideException {
-//        }
-//        
-//        @WebMethod(operationName = "startProcess")
-//        public long startProcess(long processDefinitionId, String processInstanceName, 
-//                String processInstanceDescription, String sessionId) throws ServerSideException {
-//        }
-//        
-//        @WebMethod(operationName = "getNextActivity")
-//        public RemoteActivityDefinition getNextActivity(long processInstanceId, String sessionId) throws ServerSideException {
-//        }
-//        
-//        @WebMethod(operationName = "commitActivity")
-//        public void commitActivity(long processInstanceId, String activityId, RemoteArtifact artifact) throws ServerSideException {
-//        }
-//        
-//        public RemoteArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, 
-//                String activityDefinitionId, String sessionId) throws ServerSideException {
-//        }
-//        
-//        public RemoteArtifact getArtifactForActivity(long processInstanceId, String activityId, 
-//                String sessionId) throws ServerSideException {
-//        }
+        @WebMethod(operationName = "createProcessDefinition")
+        public long createProcessDefinition(@WebParam(name = "name")String name, 
+                @WebParam(name="description")String description, @WebParam(name="version")String version, 
+                @WebParam(name="enabled")boolean enabled, @WebParam(name="enabled")byte[] structure, 
+                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+            return -1;
+        }
+        
+        @WebMethod(operationName = "updateProcessDefinition")
+        public void updateProcessDefinition(@WebParam(name="processDefinitionId")long processDefinitionId, 
+                @WebParam(name="properties")List<StringPair> properties, @WebParam(name="structure")byte[] structure, 
+                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+        }
+        
+        @WebMethod(operationName = "deleteProcessDefinition")
+        public void deleteProcessDefinition(@WebParam(name="processDefinitionId")long processDefinitionId, 
+                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+        }
+        
+        @WebMethod(operationName = "getProcessDefinition")
+        public RemoteProcessDefinition getProcessDefinition(@WebParam(name="processDefinitionId")long processDefinitionId, 
+                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+            return null;
+        }
+        
+        /**
+         * Creates an instance of a process, that is, starts one
+         * @param processDefinitionId The id of the process to be started
+         * @param processInstanceName The name of the new process
+         * @param processInstanceDescription The description of the new process
+         * @param sessionId The session token
+         * @return The id of the newly created process instance
+         * @throws ServerSideException If the process definition could not be found or if it's disabled
+         */
+        @WebMethod(operationName = "createProcessInstance")
+        public long createProcessInstance(@WebParam(name="processDefinitionId")long processDefinitionId, 
+                @WebParam(name="processInstancename")String processInstanceName, 
+                @WebParam(name="processInstanceDescription")String processInstanceDescription, 
+                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+            return -1;
+        }
+        
+        /**
+         * Requests for the next activity to be executed in a process instance.
+         * @param processInstanceId The running process to get the next activity from
+         * @param sessionId The session id
+         * @return The activity definition
+         * @throws ServerSideException If the process instance could not be found, or if the process already ended
+         */
+        @WebMethod(operationName = "getNextActivityForProcessInstance")
+        public RemoteActivityDefinition getNextActivityForProcessInstance(@WebParam(name="processInstanceId")long processInstanceId,
+                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+            return null;
+        }
+        
+        /**
+         * Saves the artifact generated once an activity has been completed (for example, the user filled in a form). 
+         * @param processInstanceId The process instance the activity belongs to
+         * @param activityDefinitionId The activity id
+         * @param artifact The artifact to be saved
+         * @throws ServerSideException If the process could not be found, or if the activity had been already executed, or if the activity definition could not be found, or of there's a mismatch in the artifact versions
+         */
+        @WebMethod(operationName = "commitActivity")
+        public void commitActivity(@WebParam(name="processInstanceId")long processInstanceId, 
+                @WebParam(name="activityDefinitionId")String activityDefinitionId, 
+                @WebParam(name="artifact")RemoteArtifact artifact) throws ServerSideException {
+        }
+        
+        @WebMethod(operationName = "getArtifactDefinitionForActivity")
+        public RemoteArtifactDefinition getArtifactDefinitionForActivity(@WebParam(name="processDefinitionId")long processDefinitionId, 
+                @WebParam(name="activityDefinitionId")String activityDefinitionId, 
+                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+            return null;
+        }
+        
+        @WebMethod(operationName = "getArtifactForActivity")
+        public RemoteArtifact getArtifactForActivity(@WebParam(name="processinstanceId")long processInstanceId, 
+                @WebParam(name="activityId")String activityId, 
+                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+            return null;
+        }
         //</editor-fold>
     // </editor-fold>
         

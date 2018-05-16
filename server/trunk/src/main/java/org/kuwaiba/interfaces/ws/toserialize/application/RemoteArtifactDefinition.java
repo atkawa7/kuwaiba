@@ -20,52 +20,44 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
- * Wrapper of ProcessDefinition. A process definition is the metadata of a process. It contains the set of 
- * activities, conditionals and the flow that connects everything
+ * Wrapper of {@link org.kuwaiba.apis.persistence.application.process.ArtifactDefinition}. Represents an artifact associated to an activity. An artifact is the product of the execution of an activity. 
+ * Most of the times, it will be a form filled in by the user.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteProcessDefinition implements Serializable {
+public class RemoteArtifactDefinition implements Serializable {
     /**
-     * Process id
+     * Artifact id
      */
     private long id;
     /**
-     * Process name
+     * Artifact name
      */
     private String name;
     /**
-     * Process description
+     * Artifact description
      */
     private String description;
     /**
-     * Process creation date
-     */
-    private long creationDate;
-    /**
-     * Process version, expressed as a three numeric sections separated by a dot (e.g. 1.3.1)
+     * The version of the artifact, expressed as a three numeric sections separated by a dot (e.g. 1.3.1)
      */
     private String version;
     /**
-     * If instances of the current process can be created or not
+     * Artifact type. See ArtifactDefinition.TYPE_* for valid values
      */
-    private boolean enabled;
+    private int type;
     /**
-     * Reference to the start activity (typically a TYPE_START type of activity). The rest will be linked from this one
+     * The actual definition. It's an XML document 
      */
-    private RemoteActivityDefinition startAction;
+    private byte[] definition;
 
-    public RemoteProcessDefinition() { }
-
-    public RemoteProcessDefinition(long id, String name, String description, long creationDate, 
-            String version, boolean enabled, RemoteActivityDefinition startAction) {
+    public RemoteArtifactDefinition(long id, String name, String description, String version, int type, byte[] definition) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.creationDate = creationDate;
         this.version = version;
-        this.enabled = enabled;
-        this.startAction = startAction;
+        this.type = type;
+        this.definition = definition;
     }
 
     public long getId() {
@@ -92,14 +84,6 @@ public class RemoteProcessDefinition implements Serializable {
         this.description = description;
     }
 
-    public long getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(long creationDate) {
-        this.creationDate = creationDate;
-    }
-
     public String getVersion() {
         return version;
     }
@@ -108,19 +92,19 @@ public class RemoteProcessDefinition implements Serializable {
         this.version = version;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public int getType() {
+        return type;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setType(int type) {
+        this.type = type;
+    }
+    
+    public byte[] getDefinition() {
+        return definition;
     }
 
-    public RemoteActivityDefinition getStartAction() {
-        return startAction;
-    }
-
-    public void setStartAction(RemoteActivityDefinition startAction) {
-        this.startAction = startAction;
+    public void setDefinition(byte[] definition) {
+        this.definition = definition;
     }
 }
