@@ -7784,7 +7784,7 @@ public class KuwaibaService {
         @WebMethod(operationName = "createProcessDefinition")
         public long createProcessDefinition(@WebParam(name = "name")String name, 
                 @WebParam(name="description")String description, @WebParam(name="version")String version, 
-                @WebParam(name="enabled")boolean enabled, @WebParam(name="enabled")byte[] structure, 
+                @WebParam(name="enabled")boolean enabled, @WebParam(name="structure")byte[] structure, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
             return -1;
         }
