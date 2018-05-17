@@ -72,6 +72,10 @@ import org.kuwaiba.apis.persistence.application.TaskResult;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
+import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
+import org.kuwaiba.apis.persistence.application.process.Artifact;
+import org.kuwaiba.apis.persistence.application.process.ArtifactDefinition;
+import org.kuwaiba.apis.persistence.application.process.ProcessDefinition;
 import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessObjectList;
@@ -88,6 +92,7 @@ import org.kuwaiba.services.persistence.util.Util;
 import org.kuwaiba.util.ChangeDescriptor;
 import org.kuwaiba.util.dynamicname.DynamicName;
 import org.kuwaiba.apis.persistence.util.StringPair;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.UserInfoLight;
@@ -4422,6 +4427,49 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             tx.success();
         }
     }
+    //</editor-fold>
+    //<editor-fold desc="Process API" defaultstate="collapsed">
+
+    @Override
+    public Artifact getArtifactForActivity(long processInstanceId, String activityId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, String activityDefinitionId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void commitActivity(long processInstanceId, String activityDefinitionId, RemoteArtifact artifact) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ActivityDefinition getNextActivityForProcessInstance(long processInstanceId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ProcessDefinition getProcessDefinition(long processDefinitionId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteProcessDefinition(long processDefinitionId) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateProcessDefinition(long processDefinitionId, List<StringPair> properties, byte[] structure) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public long createProcessDefinition(String name, String description, String version, boolean enabled, byte[] structure) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
     //</editor-fold>
     //</editor-fold>
 //Helpers

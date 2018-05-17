@@ -7780,30 +7780,100 @@ public class KuwaibaService {
         }
         //</editor-fold>
         //<editor-fold desc="Process Manager" defaultstate="collapsed">
-        
+        /**
+         * Creates a process definition. A process definition is the metadata that defines the steps and constraints 
+         * of a given project
+         * @param name The name of the new process definition
+         * @param description The description of the new process definition
+         * @param version The version of the new process definition. This is a three numbers, dot separated string (e.g. 2.4.1)
+         * @param enabled If the project is enabled to create instances from it
+         * @param structure The structure of the process definition. It's an XML document that represents a BPMN process definition
+         * @param sessionId The session token
+         * @return The id of the newly created process definition
+         * @throws ServerSideException If the process structure defines a malformed process or if the version is invalid
+         */
         @WebMethod(operationName = "createProcessDefinition")
         public long createProcessDefinition(@WebParam(name = "name")String name, 
                 @WebParam(name="description")String description, @WebParam(name="version")String version, 
                 @WebParam(name="enabled")boolean enabled, @WebParam(name="structure")byte[] structure, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
-            return -1;
+            try {
+                return wsBean.createProcessDefinition(name, description, version, enabled, structure, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in createProcessDefinition: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
         }
         
+        /**
+         * Updates a process definition, either its standard properties or its structure
+         * @param processDefinitionId The process definition id
+         * @param properties A key value dictionary with the standard properties to be updated. These properties are: name, description, version and enabled (use 'true' or 'false' for the latter)
+         * @param structure A byte array withe XML process definition body
+         * @param sessionId The session token
+         * @throws ServerSideException If the structure is invalid, or the process definition could not be found or one of the properties is malformed or have an unexpected name
+         */
         @WebMethod(operationName = "updateProcessDefinition")
         public void updateProcessDefinition(@WebParam(name="processDefinitionId")long processDefinitionId, 
                 @WebParam(name="properties")List<StringPair> properties, @WebParam(name="structure")byte[] structure, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+            try {
+                wsBean.updateProcessDefinition(processDefinitionId, properties, structure, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in updateProcessDefinition: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
         }
         
+        /**
+         * Deletes a process definition
+         * @param processDefinitionId The process definition to be deleted
+         * @param sessionId The session token
+         * @throws ServerSideException If the process definition could not be found or if there are process instances related to the process definition
+         */
         @WebMethod(operationName = "deleteProcessDefinition")
         public void deleteProcessDefinition(@WebParam(name="processDefinitionId")long processDefinitionId, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+            try {
+                wsBean.deleteProcessDefinition(processDefinitionId, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in deleteProcessDefinition: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
         }
         
+        /**
+         * Retrieves a process definition
+         * @param processDefinitionId The id of the process
+         * @param sessionId The session token
+         * @return The process definition. It contains an XML document to be parsed by the consumer
+         * @throws ServerSideException If the process could not be found or if it's malformed
+         */
         @WebMethod(operationName = "getProcessDefinition")
         public RemoteProcessDefinition getProcessDefinition(@WebParam(name="processDefinitionId")long processDefinitionId, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
-            return null;
+            try {
+                return wsBean.getProcessDefinition(processDefinitionId, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in getProcessDefinition: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
         }
         
         /**
@@ -7820,7 +7890,16 @@ public class KuwaibaService {
                 @WebParam(name="processInstancename")String processInstanceName, 
                 @WebParam(name="processInstanceDescription")String processInstanceDescription, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
-            return -1;
+            try {
+                return wsBean.createProcessInstance(processDefinitionId, processInstanceName, processInstanceDescription, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in createProcessInstance: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
         }
         
         /**
@@ -7833,7 +7912,16 @@ public class KuwaibaService {
         @WebMethod(operationName = "getNextActivityForProcessInstance")
         public RemoteActivityDefinition getNextActivityForProcessInstance(@WebParam(name="processInstanceId")long processInstanceId,
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
-            return null;
+            try {
+                return wsBean.getNextActivityForProcessInstance(processInstanceId, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in getNextActivityForProcessInstance: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
         }
         
         /**
@@ -7841,26 +7929,71 @@ public class KuwaibaService {
          * @param processInstanceId The process instance the activity belongs to
          * @param activityDefinitionId The activity id
          * @param artifact The artifact to be saved
+         * @param sessionId The session token
          * @throws ServerSideException If the process could not be found, or if the activity had been already executed, or if the activity definition could not be found, or of there's a mismatch in the artifact versions
          */
         @WebMethod(operationName = "commitActivity")
         public void commitActivity(@WebParam(name="processInstanceId")long processInstanceId, 
                 @WebParam(name="activityDefinitionId")String activityDefinitionId, 
-                @WebParam(name="artifact")RemoteArtifact artifact) throws ServerSideException {
+                @WebParam(name="artifact")RemoteArtifact artifact, @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+            try {
+                wsBean.commitActivity(processInstanceId, activityDefinitionId, artifact, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in commitActivity: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
         }
         
+        /**
+         * Given an activity definition, returns the artifact definition associated to it
+         * @param processDefinitionId The id of the process the activity is related to
+         * @param activityDefinitionId The id of the activity
+         * @param sessionId The session token
+         * @return An object containing the artifact definition
+         * @throws ServerSideException If the process or the activity could not be found
+         */
         @WebMethod(operationName = "getArtifactDefinitionForActivity")
         public RemoteArtifactDefinition getArtifactDefinitionForActivity(@WebParam(name="processDefinitionId")long processDefinitionId, 
                 @WebParam(name="activityDefinitionId")String activityDefinitionId, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
-            return null;
+            try {
+                return wsBean.getArtifactDefinitionForActivity(processDefinitionId, activityDefinitionId, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in getArtifactDefinitionForActivity: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
         }
         
+        /**
+         * Gets the artifact associated to an activity (for example, a form that was already filled in by a user in a previous, already committed activity)
+         * @param processInstanceId The id of the process instance. This process may have been ended already.
+         * @param activityId The id of the activity the artifact belongs to
+         * @param sessionId The session token
+         * @return The artifact corresponding to the given activity
+         * @throws ServerSideException If the process instance or activity couldn't be found.
+         */
         @WebMethod(operationName = "getArtifactForActivity")
         public RemoteArtifact getArtifactForActivity(@WebParam(name="processinstanceId")long processInstanceId, 
                 @WebParam(name="activityId")String activityId, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
-            return null;
+            try {
+                return wsBean.getArtifactForActivity(processInstanceId, activityId, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in getArtifactForActivity: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
         }
         //</editor-fold>
     // </editor-fold>

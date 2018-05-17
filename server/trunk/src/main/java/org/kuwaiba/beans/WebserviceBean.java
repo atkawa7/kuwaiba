@@ -102,9 +102,17 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteResultMessage;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult;
 import org.kuwaiba.apis.persistence.application.ScriptQuery;
+import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
+import org.kuwaiba.apis.persistence.application.process.Artifact;
+import org.kuwaiba.apis.persistence.application.process.ArtifactDefinition;
+import org.kuwaiba.apis.persistence.application.process.ProcessDefinition;
 import org.kuwaiba.apis.persistence.business.Contact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteForm;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFormInstance;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
@@ -5124,6 +5132,128 @@ public class WebserviceBean implements WebserviceBeanLocal {
         }
     }
         //</editor-fold>
+        //<editor-fold desc="Process API" defaultstate="collapsed">
+
+    @Override
+    public RemoteArtifact getArtifactForActivity(long processInstanceId, String activityId, 
+            String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getArtifactForActivity", ipAddress, sessionId);
+            Artifact artifact = aem.getArtifactForActivity(processInstanceId, activityId);
+            return new RemoteArtifact(artifact.getId(), artifact.getName(), artifact.getContentType(), artifact.getContent());
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public RemoteArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, 
+            String activityDefinitionId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getArtifactDefinitionForActivity", ipAddress, sessionId);
+            ArtifactDefinition artifactDefinition = aem.getArtifactDefinitionForActivity(processDefinitionId, activityDefinitionId);
+            return new RemoteArtifactDefinition(artifactDefinition.getId(), artifactDefinition.getName(), 
+                    artifactDefinition.getDescription(), artifactDefinition.getVersion(), artifactDefinition.getType(), 
+                    artifactDefinition.getDefinition());
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void commitActivity(long processInstanceId, String activityDefinitionId, 
+            RemoteArtifact artifact, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("commitActivity", ipAddress, sessionId);
+            aem.commitActivity(processInstanceId, activityDefinitionId, artifact);
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public RemoteActivityDefinition getNextActivityForProcessInstance(long processInstanceId, 
+            String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getNextActivityForProcessInstance", ipAddress, sessionId);
+            ActivityDefinition activityDefinition = aem.getNextActivityForProcessInstance(processInstanceId);
+            return RemoteActivityDefinition.asRemoteActivityDefinition(activityDefinition);
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public long createProcessInstance(long processDefinitionId, String processInstanceName, 
+            String processInstanceDescription, String ipAddress, String sessionId) throws ServerSideException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public RemoteProcessDefinition getProcessDefinition(long processDefinitionId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getProcessDefinition", ipAddress, sessionId);
+            ProcessDefinition processDefinition = aem.getProcessDefinition(processDefinitionId);
+            
+            
+            return new RemoteProcessDefinition(processDefinitionId, processDefinition.getName(), 
+                    processDefinition.getDescription(), processDefinition.getCreationDate(), 
+                    processDefinition.getVersion(), processDefinition.isEnabled(), 
+                    RemoteActivityDefinition.asRemoteActivityDefinition(processDefinition.getStartAction()));
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteProcessDefinition(long processDefinitionId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("deleteProcessDefinition", ipAddress, sessionId);
+            aem.deleteProcessDefinition(processDefinitionId);
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void updateProcessDefinition(long processDefinitionId, List<StringPair> properties, 
+            byte[] structure, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("updateProcessDefinition", ipAddress, sessionId);
+            aem.updateProcessDefinition(processDefinitionId, properties, structure);
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public long createProcessDefinition(String name, String description, String version, 
+            boolean enabled, byte[] structure, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("createProcessDefinition", ipAddress, sessionId);
+            return aem.createProcessDefinition(name, description, version, enabled, structure);
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+        //</editor-fold>
         // <editor-fold defaultstate="collapsed" desc="Fault Management Integration">
 
     @Override
@@ -5194,7 +5324,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
                     BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getOid(), Constants.CLASS_GENERICCUSTOMER);
                     if (customer != null) {//Services without customers will be ignored. This shouldn't happen, though
                         if (!rawCorrelatedInformation.containsKey(customer))
-                            rawCorrelatedInformation.put(customer, new ArrayList<RemoteObjectLight>());
+                            rawCorrelatedInformation.put(customer, new ArrayList<>());
                         
                         rawCorrelatedInformation.get(customer).add(rawService);
                     }

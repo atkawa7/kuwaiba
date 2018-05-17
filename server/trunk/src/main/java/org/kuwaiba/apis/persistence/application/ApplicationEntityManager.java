@@ -25,6 +25,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
+import org.kuwaiba.apis.persistence.application.process.Artifact;
+import org.kuwaiba.apis.persistence.application.process.ArtifactDefinition;
+import org.kuwaiba.apis.persistence.application.process.ProcessDefinition;
 import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessObjectList;
@@ -39,6 +43,7 @@ import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.util.ChangeDescriptor;
 import org.kuwaiba.apis.persistence.util.StringPair;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.UserInfoLight;
@@ -1459,4 +1464,20 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException If the sync group is malformed, or some sync data source configuration is malformed
      */
     public void moveSyncDataSourceConfiguration(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+
+    public Artifact getArtifactForActivity(long processInstanceId, String activityId);
+
+    public ArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, String activityDefinitionId);
+
+    public void commitActivity(long processInstanceId, String activityDefinitionId, RemoteArtifact artifact);
+
+    public ActivityDefinition getNextActivityForProcessInstance(long processInstanceId);
+
+    public ProcessDefinition getProcessDefinition(long processDefinitionId);
+
+    public void deleteProcessDefinition(long processDefinitionId);
+
+    public void updateProcessDefinition(long processDefinitionId, List<StringPair> properties, byte[] structure);
+
+    public long createProcessDefinition(String name, String description, String version, boolean enabled, byte[] structure);
 }

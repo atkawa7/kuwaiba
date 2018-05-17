@@ -18,6 +18,7 @@ package org.kuwaiba.interfaces.ws.toserialize.application;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 
 /**
  * wrapper of ActivityDefinition. An activity is an step in a process. Conditionals are a particular type of activities from the point of view of this API. This class
@@ -120,5 +121,18 @@ public class RemoteActivityDefinition implements Serializable {
 
     public void setNextActivity(RemoteActivityDefinition nextActivity) {
         this.nextActivity = nextActivity;
+    }
+    
+    public static RemoteActivityDefinition asRemoteActivityDefinition(ActivityDefinition activityDefinition) {
+        RemoteActivityDefinition res = new RemoteActivityDefinition(activityDefinition.getId(), activityDefinition.getName(), 
+                activityDefinition.getDescription(), activityDefinition.getType(), 
+                new RemoteArtifactDefinition(activityDefinition.getArfifact().getId(), activityDefinition.getArfifact().getName(), activityDefinition.getArfifact().getDescription(), activityDefinition.getArfifact().getVersion(), activityDefinition.getArfifact().getType(), activityDefinition.getArfifact().getDefinition()), 
+                new RemoteActor(activityDefinition.getActor().getId(), activityDefinition.getActor().getName(), activityDefinition.getActor().getType()));
+        
+        //Recursively build the linked list of activities
+        while (activityDefinition.getNextActivity() != null) 
+            res.setNextActivity(RemoteActivityDefinition.asRemoteActivityDefinition(activityDefinition.getNextActivity()));
+        
+        return res;
     }
 }
