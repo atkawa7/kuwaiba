@@ -15,7 +15,7 @@
  */
 package org.inventory.scriptqueries;
 
-//import org.inventory.scriptqueries.nodes.ScriptQueryRootNode;
+import org.inventory.scriptqueries.nodes.ScriptQueryRootNode;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -76,7 +76,7 @@ public final class ScriptQueriesManagerTopComponent extends TopComponent impleme
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-    //    em.setRootContext(new ScriptQueryRootNode());
+        em.setRootContext(new ScriptQueryRootNode());
     }
 
     @Override
