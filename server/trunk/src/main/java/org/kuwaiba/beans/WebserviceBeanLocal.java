@@ -408,7 +408,7 @@ public interface WebserviceBeanLocal {
     
     public void deleteFormInstance(long formInstanceId, String ipAddress, String sessionId) throws ServerSideException;
                 
-    public long createScriptQuery(String name, String description, String script, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
+    public long createScriptQuery(String name, String description, String script, String countable, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
     
     public void updateScriptQueryProperties(long scriptQueryId, String propertyName, String propertyValue, String ipAddress, String sessionId) throws ServerSideException;
     

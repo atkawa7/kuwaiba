@@ -18,11 +18,13 @@ import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.CustomComponent;
+import javax.inject.Inject;
 import org.kuwaiba.apis.forms.FormRenderer;
 import org.kuwaiba.apis.forms.elements.FormInstanceLoader;
 import org.kuwaiba.apis.forms.elements.FormLoader;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteForm;
+import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFormInstance;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
  *
@@ -30,8 +32,11 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFormInstance;
  */
 @CDIView("forminstance")
 public class FormInstanceView extends CustomComponent implements View {
-    public static String VIEW_NAME = "forminstance";    
+    public static String VIEW_NAME = "forminstance";  
     
+    @Inject
+    private WebserviceBeanLocal wsBean;
+        
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         RemoteFormInstance remoteFormInstance = (RemoteFormInstance) getSession().getAttribute("currentforminstance");
@@ -43,7 +48,9 @@ public class FormInstanceView extends CustomComponent implements View {
         FormLoader formLoader = fil.load(remoteFormInstance.getStructure());
         
         FormRenderer formRenderer = new FormRenderer(formLoader);
-        formRenderer.render();
+        
+        RemoteSession remoteSession = (RemoteSession) getSession().getAttribute("session");
+        formRenderer.render(wsBean, remoteSession);
         
         setCompositionRoot(formRenderer);        
     }

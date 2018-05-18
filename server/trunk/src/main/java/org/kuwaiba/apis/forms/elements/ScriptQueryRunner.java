@@ -22,12 +22,14 @@ import java.util.List;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class Query implements Runner {
+public class ScriptQueryRunner implements Runner {
     private String name;
     private String queryName;
     private List<String> parameterNames;
     
-    public Query(String name, String queryName, String paramNames) {
+    private ScriptQueryExecutor scriptQueryExecutor;
+    
+    public ScriptQueryRunner(String name, String queryName, String paramNames) {
         this.name = name;
         this.queryName = queryName;
         if (paramNames != null) {
@@ -67,7 +69,16 @@ public class Query implements Runner {
 
     @Override
     public Object run(List parameters) {
-//        return ElementQuery.getInstance().executeQuery(queryName);
-        return null;
+        return scriptQueryExecutor.execute(queryName, parameterNames, parameters);
+    }
+
+    @Override
+    public ScriptQueryExecutor getScriptQueryExecutor() {
+        return scriptQueryExecutor;
+    }
+
+    @Override
+    public void setScriptQueryExecutor(ScriptQueryExecutor scriptQueryExecutor) {
+        this.scriptQueryExecutor = scriptQueryExecutor;        
     }
 }

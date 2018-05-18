@@ -20,9 +20,12 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.VerticalLayout;
+import javax.inject.Inject;
 import org.kuwaiba.apis.forms.FormRenderer;
 import org.kuwaiba.apis.forms.elements.FormLoader;
+import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteForm;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
  *
@@ -31,6 +34,9 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteForm;
 @CDIView("form")
 public class FormView extends CustomComponent implements View {
     public static String VIEW_NAME = "form";
+    
+    @Inject
+    private WebserviceBeanLocal wsBean;
         
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -43,7 +49,9 @@ public class FormView extends CustomComponent implements View {
         formBuilder.build();
 
         FormRenderer formRenderer = new FormRenderer(formBuilder);
-        formRenderer.render();
+        
+        RemoteSession remoteSession = (RemoteSession) getSession().getAttribute("session");
+        formRenderer.render(wsBean, remoteSession);
 //        Panel pnlForm = new Panel();
 //        pnlForm.setContent(formRenderer);
 //        pnlForm.setSizeUndefined();

@@ -3356,7 +3356,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public long createScriptQuery(String name, String description, String script, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException {
+    public long createScriptQuery(String name, String description, String script, String countable, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -3364,7 +3364,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
             aem.validateWebServiceCall("createScriptQuery", ipAddress, sessionId);
             
             
-            long result = aem.createScriptQuery(name, description, script, parameters);
+            long result = aem.createScriptQuery(name, description, script, countable, parameters);
                         
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
@@ -3626,7 +3626,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
         try {
-            aem.validateWebServiceCall("executeScriptQuery", ipAddress, sessionId);
+            aem.validateWebServiceCall("executeScriptQuery", ipAddress, sessionId);            
             return new RemoteScriptQueryResult(aem.executeScriptQuery(scriptQueryId).getResult());
                         
         } catch(InventoryException ex) {
@@ -3642,7 +3642,19 @@ public class WebserviceBean implements WebserviceBeanLocal {
         try {
             aem.validateWebServiceCall("executeScriptQueryCollection", ipAddress, sessionId);
             
-            return new RemoteScriptQueryResultCollection((List) aem.executeScriptQuery(scriptQueryId).getResult());
+            List collection = (List) aem.executeScriptQuery(scriptQueryId).getResult();
+            
+            if (collection != null && !collection.isEmpty()) {
+                if (collection.get(0) instanceof BusinessObjectLight) {
+                    List<RemoteObjectLight> result = new ArrayList();                    
+                    
+                    for (Object item : collection)
+                        result.add(new RemoteObjectLight((BusinessObjectLight) item));
+                    
+                    return new RemoteScriptQueryResultCollection(result);
+                }
+            }
+            return new RemoteScriptQueryResultCollection(collection);
                         
         } catch(InventoryException ex) {
             throw new ServerSideException(ex.getMessage());

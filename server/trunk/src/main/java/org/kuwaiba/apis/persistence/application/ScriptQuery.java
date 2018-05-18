@@ -40,15 +40,20 @@ public class ScriptQuery implements Serializable {
      */
     private String script;
     /**
+     * Used to know if the Script Query return a collection
+     */
+    private String countable;
+    /**
      * Script Query Parameters name/value pair
      */
     private List<StringPair> parameters;
     
-    public ScriptQuery(Long id, String name, String description, String script, List<StringPair> parameters) {
+    public ScriptQuery(Long id, String name, String description, String script, String countable, List<StringPair> parameters) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.script = script;
+        this.countable = countable;
         this.parameters = parameters;
     }
     
@@ -84,6 +89,14 @@ public class ScriptQuery implements Serializable {
         this.script = script;        
     }
     
+    public String getCountable() {
+        return countable;
+    }
+    
+    public void setCountable(String countable) {
+        this.countable = countable;        
+    }
+            
     public List<StringPair> getParameters() {
         return parameters;
     }

@@ -44,6 +44,10 @@ public class RemoteScriptQuery implements Serializable {
      */
     private String script;
     /**
+     * Used to know if the Script Query return a collection
+     */
+    private String countable;
+    /**
      * Script Query Parameters name/value pair
      */
     private List<StringPair> parameters;
@@ -56,13 +60,16 @@ public class RemoteScriptQuery implements Serializable {
         this.name = scriptQuery.getName();
         this.description = scriptQuery.getDescription();
         this.script = scriptQuery.getScript();
+        this.countable = scriptQuery.getCountable();
         this.parameters = scriptQuery.getParameters();
     }
     
-    public RemoteScriptQuery(Long id, String name, String description, String script, List<StringPair> parameters) {
+    public RemoteScriptQuery(Long id, String name, String description, String script, String countable, List<StringPair> parameters) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.script = script;
+        this.countable = countable;
         this.parameters = parameters;
     }
     
@@ -96,6 +103,14 @@ public class RemoteScriptQuery implements Serializable {
     
     public void setScript(String script) {
         this.script = script;        
+    }
+    
+    public String getCountable() {
+        return countable;
+    }
+    
+    public void setCountable(String countable) {
+        this.countable = countable;        
     }
     
     public List<StringPair> getParameters() {

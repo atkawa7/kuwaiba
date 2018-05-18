@@ -18,7 +18,6 @@ import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.Constants;
 import org.kuwaiba.apis.forms.elements.ElementUpload;
 import org.kuwaiba.apis.forms.elements.EventDescriptor;
-import org.kuwaiba.apis.forms.Variable;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.Upload.Receiver;
 import com.vaadin.ui.Upload.SucceededListener;
@@ -73,7 +72,8 @@ public class ComponentUpload extends GraphicalComponent {
         public OutputStream receiveUpload(String filename, String mimeType) {
             FileOutputStream fileOutputStream = null;
             try {
-                file = new File(Variable.FORM_FILES + "/" + filename);
+                //TODO:
+//                file = new File(Variable.FORM_FILES + "/" + filename);
                 fileOutputStream = new FileOutputStream(file);
 
             } catch (FileNotFoundException ex) {

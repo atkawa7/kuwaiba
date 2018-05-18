@@ -19,18 +19,13 @@ import org.kuwaiba.apis.forms.elements.EventDescriptor;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.Constants;
 import org.kuwaiba.apis.forms.elements.ElementButton;
-import org.kuwaiba.apis.forms.FormDisplayer;
-import org.kuwaiba.apis.forms.Variable;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Notification;
-import java.io.File;
 import java.util.Date;
-import javax.inject.Inject;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.apis.forms.elements.FormInstanceCreator;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.openide.util.Exceptions;
 
 /**
  *
@@ -74,8 +69,8 @@ public class ComponentButton extends GraphicalComponent {
         if (Constants.EventAttribute.ONCLICK.equals(event.getEventName())) {
             
             if (Constants.Function.OPEN_FORM.equals(event.getPropertyName())) {
-                File file = new File(Variable.FORM_RESOURCE_STRUCTURES + "/" + event.getNewValue() + ".xml");
-                FormDisplayer.getInstance().display(file, false);
+////                File file = new File(Variable.FORM_RESOURCE_STRUCTURES + "/" + event.getNewValue() + ".xml");
+////                FormDisplayer.getInstance().display(file, false);
             }
             if (Constants.Function.SAVE.equals(event.getPropertyName())) {
                 

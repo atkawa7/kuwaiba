@@ -71,15 +71,15 @@ public class ElementScript implements Tag {
                         
                         if (Constants.Function.Type.FUNCTION.equals(functionType)) {
                             if (blockOfCode != null)
-                                functions.put(functionName, new Function(functionName, parameterNames, blockOfCode));
+                                functions.put(functionName, new FunctionRunner(functionName, parameterNames, blockOfCode));
                         }
                         if (Constants.Function.Type.QUERY.equals(functionType)) {
                             if (queryName != null)
-                                functions.put(functionName, new Query(functionName, queryName, parameterNames));
+                                functions.put(functionName, new ScriptQueryRunner(functionName, queryName, parameterNames));
                         }
                         if (Constants.Function.Type.VALIDATOR.equals(functionType)) {
                             if (message != null)
-                                functions.put(functionName, new Validator(functionName, parameterNames, blockOfCode, message));
+                                functions.put(functionName, new ValidatorRunner(functionName, parameterNames, blockOfCode, message));
                         }
                     }
                 }

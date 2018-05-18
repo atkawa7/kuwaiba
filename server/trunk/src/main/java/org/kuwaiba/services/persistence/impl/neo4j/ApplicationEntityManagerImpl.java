@@ -2908,13 +2908,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
             
     @Override    
-    public long createScriptQuery(String name, String description, String script, List<StringPair> parameters) {
+    public long createScriptQuery(String name, String description, String script, String countable, List<StringPair> parameters) {
         try (Transaction tx = graphDb.beginTx()) {
             
             Node scriptQueryNode = graphDb.createNode(scriptQueryLabel);
             
             scriptQueryNode.setProperty(Constants.PROPERTY_NAME, name == null ? "" : name);
             scriptQueryNode.setProperty(Constants.PROPERTY_DESCRIPTION, description == null ? "" : description);
+            scriptQueryNode.setProperty(Constants.PROPERTY_COUNTABLE, countable);
             
             if (script != null)            
                 scriptQueryNode.setProperty(Constants.PROPERTY_SCRIPT, script);
@@ -2942,7 +2943,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             if (Constants.PROPERTY_NAME.equals(propertyName) || 
                 Constants.PROPERTY_DESCRIPTION.equals(propertyName) || 
-                Constants.PROPERTY_SCRIPT.equals(propertyName)) {
+                Constants.PROPERTY_SCRIPT.equals(propertyName) ||
+                Constants.PROPERTY_COUNTABLE.equals(propertyName)) {
                                 
                 String oldPropertyValue = scriptQueryNode.hasProperty(propertyName) ? (String) scriptQueryNode.getProperty(propertyName) : " ";            
                 

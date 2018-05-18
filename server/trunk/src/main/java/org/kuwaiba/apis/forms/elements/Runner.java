@@ -17,9 +17,11 @@ package org.kuwaiba.apis.forms.elements;
 import java.util.List;
 
 /**
- *
+ * Executes a function which return something
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public interface Runner {
-    Object run(List parameters);
+    ScriptQueryExecutor getScriptQueryExecutor();
+    void setScriptQueryExecutor(ScriptQueryExecutor scriptQueryExecutor);
+    Object run(List parametersValues);
 }

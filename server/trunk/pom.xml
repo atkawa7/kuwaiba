@@ -26,6 +26,25 @@
     </properties>
     
     <dependencies>
+        <!--
+        <dependency>
+           <groupId>org.vaadin</groupId>
+           <artifactId>diagram-builder</artifactId>
+           <version>1.2</version>
+        </dependency>
+        -->        
+        <dependency>
+           <groupId>com.vaadin.pontus</groupId>
+           <artifactId>vizcomponent</artifactId>
+           <version>2.0</version>
+        </dependency>
+        
+        <dependency>
+           <groupId>com.vaadin</groupId>
+           <artifactId>vaadin-context-menu</artifactId>
+           <version>2.0.0</version>
+        </dependency>
+        
         <dependency>
            <groupId>de.steinwedel.vaadin.addon</groupId>
            <artifactId>messagebox</artifactId>
@@ -246,7 +265,8 @@
                 <artifactId>vaadin-maven-plugin</artifactId>
                 <version>${vaadin.plugin.version}</version>
                 <configuration>
-                    <extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
+                    <!--<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>-->
+                    <extraJvmArgs>-Xmx1g</extraJvmArgs>
                     <webappDirectory>${basedir}/src/main/webapp/VAADIN/widgetsets</webappDirectory>
                     <hostedWebapp>${basedir}/src/main/webapp/VAADIN/widgetsets</hostedWebapp>
                     <noServer>true</noServer>
@@ -262,9 +282,9 @@
                     <execution>
                         <goals>
                             <goal>resources</goal>
-                            <goal>update-theme</goal>
                             <goal>update-widgetset</goal>
                             <goal>compile</goal>
+                            <goal>update-theme</goal>
                             <!-- Comment out compile-theme goal to use on-the-fly theme compilation -->
                             <goal>compile-theme</goal>
                         </goals>

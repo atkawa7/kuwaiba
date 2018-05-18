@@ -1938,6 +1938,7 @@ public class KuwaibaService {
      * @param name The script query name
      * @param description The script query description
      * @param script The script query block of code
+     * @param countable Sets if the Script Query return a collection
      * @param parameters Set of parameters to the script query
      * @param sessionId The session token
      * @return The id of the new script query
@@ -1948,11 +1949,12 @@ public class KuwaibaService {
         @WebParam(name = "name") String name, 
         @WebParam(name = "description") String description, 
         @WebParam(name = "script") String script, 
+        @WebParam(name = "countable") String countable, 
         @WebParam(name = "parameters") List<StringPair> parameters, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
         try {                
-            return wsBean.createScriptQuery(name, description, script, parameters, getIPAddress(), sessionId);
+            return wsBean.createScriptQuery(name, description, script, countable, parameters, getIPAddress(), sessionId);
             
         } catch(Exception e) {
             if (e instanceof ServerSideException)

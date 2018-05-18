@@ -17,7 +17,6 @@ package org.kuwaiba.apis.forms.components.impl;
 import org.kuwaiba.apis.forms.elements.EventDescriptor;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.ElementImage;
-import org.kuwaiba.apis.forms.Variable;
 import com.vaadin.server.FileResource;
 import com.vaadin.ui.Image;
 import java.io.File;
@@ -41,10 +40,10 @@ public class ComponentImage extends GraphicalComponent {
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementImage) {
             ElementImage image = (ElementImage) element;
-            
-            FileResource resource = new FileResource(new File(Variable.FORM_RESOURCE_IMAGES + "/" + image.getValue()));
+            //TODO:
+////            FileResource resource = new FileResource(new File(Variable.FORM_RESOURCE_IMAGES + "/" + image.getValue()));
                         
-            getComponent().setSource(resource);
+////            getComponent().setSource(resource);
             
             if (image.getHeight() != null)
                 getComponent().setWidth(image.getHeight());

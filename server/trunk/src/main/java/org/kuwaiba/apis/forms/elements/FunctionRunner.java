@@ -14,7 +14,6 @@
  */
 package org.kuwaiba.apis.forms.elements;
 
-import org.kuwaiba.apis.forms.ScriptQueryManager;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import java.util.ArrayList;
@@ -25,12 +24,14 @@ import java.util.List;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class Function implements Runner {
+public class FunctionRunner implements Runner {
     private String functionName;
     private List<String> parameterNames;
     private String script;
+        
+    private ScriptQueryExecutor scriptQueryExecutor;
     
-    public Function(String functionName, String paramNames, String script) {
+    public FunctionRunner(String functionName, String paramNames, String script) {
         this.functionName = functionName;
         
         if (paramNames != null) {
@@ -71,19 +72,28 @@ public class Function implements Runner {
     
     @Override
     public Object run(List parameters) {
-        GroovyShell shell = null;
         
         Binding binding = new Binding();
-        binding.setVariable("ScriptQueryManager", ScriptQueryManager.class);
+        
+        binding.setVariable("scriptQueryExecutor", scriptQueryExecutor);
                 
         if (parameterNames != null && parameters != null && parameterNames.size() == parameters.size()) {
             
             for (int i = 0; i < parameters.size(); i += 1)
                 binding.setVariable(parameterNames.get(i), parameters.get(i));
         }
-        shell = new GroovyShell(Function.class.getClassLoader(), binding);
+        GroovyShell shell = new GroovyShell(FunctionRunner.class.getClassLoader(), binding);
         
-        script = script.replace("_AND_", "&&");
         return shell.evaluate(script);
+    }
+
+    @Override
+    public ScriptQueryExecutor getScriptQueryExecutor() {
+        return scriptQueryExecutor;
+    }
+    
+    @Override
+    public void setScriptQueryExecutor(ScriptQueryExecutor scriptQueryExecutor) {
+        this.scriptQueryExecutor = scriptQueryExecutor;
     }
 }

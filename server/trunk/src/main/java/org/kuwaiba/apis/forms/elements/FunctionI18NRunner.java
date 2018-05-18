@@ -12,19 +12,35 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.kuwaiba.apis.forms;
+package org.kuwaiba.apis.forms.elements;
+
+import java.util.List;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class Variable {
-    public static final String FORM_RESOURCES = "/data/form_resources";
-    public static final String FORM_RESOURCE_STRUCTURES = FORM_RESOURCES + "/structures";
-    public static final String FORM_RESOURCE_INSTANCES = FORM_RESOURCES + "/instances";
-    public static final String FORM_RESOURCE_IMAGES = FORM_RESOURCES + "/images";
-    public static final String FORM_RESOURCE_SCRIPT_QUERIES = FORM_RESOURCES + "/scriptQueries";
-    public static final String FORM_FILES = "/data/form/files";
-    public static final String USER = "anUser";
-    public static final String PASS = "aPass";
+public class FunctionI18NRunner implements Runner {
+    private final ElementI18N i18n;
+    
+    public FunctionI18NRunner(ElementI18N i18n) {
+        this.i18n = i18n;
+    }
+
+    @Override
+    public Object run(List parameters) {
+        if (i18n != null && parameters != null && !parameters.isEmpty())
+            return i18n.getMessage((String) parameters.get(0), i18n.getLang());
+        return null;
+    }
+
+    @Override
+    public ScriptQueryExecutor getScriptQueryExecutor() {
+        return null;
+    }
+
+    @Override
+    public void setScriptQueryExecutor(ScriptQueryExecutor scriptQueryExecutor) {
+    }
+        
 }

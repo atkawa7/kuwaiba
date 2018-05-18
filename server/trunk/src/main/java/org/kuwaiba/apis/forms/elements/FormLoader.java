@@ -60,7 +60,7 @@ public class FormLoader {
     private final ElementScript elementScript = new ElementScript();
     private ElementI18N elementI18N;
     
-    private byte[] structure;
+    private final byte[] structure;
         
     public FormLoader(byte[] structure) {
         this.structure = structure;        
@@ -201,14 +201,17 @@ public class FormLoader {
                 element.setFormStructure(formStructure);
                 
             if (elementScript != null && elementScript.getFunctions() != null)
-                elementScript.getFunctions().put(Constants.Function.I18N, new FunctionI18N(elementI18N));
+                elementScript.getFunctions().put(Constants.Function.I18N, new FunctionI18NRunner(elementI18N));
                 
         } catch (XMLStreamException ex) {
             Logger.getLogger(FormLoader.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
-    public void fireOnload() {
+    public void fireOnload(ScriptQueryExecutor scriptQueryExecutor) {
+        for (Runner runner : elementScript.getFunctions().values())
+            runner.setScriptQueryExecutor(scriptQueryExecutor);
+        
         for (AbstractElement element : elements)
             element.fireOnload();
     }

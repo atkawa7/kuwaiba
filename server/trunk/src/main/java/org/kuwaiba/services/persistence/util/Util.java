@@ -490,9 +490,10 @@ public class Util {
         }
         return new ScriptQuery(
             scriptQueryNode.getId(), 
-            (String) scriptQueryNode.getProperty(Constants.PROPERTY_NAME), 
-            (String) scriptQueryNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
-            (String) scriptQueryNode.getProperty(Constants.PROPERTY_SCRIPT), 
+            scriptQueryNode.hasProperty(Constants.PROPERTY_NAME) ? (String) scriptQueryNode.getProperty(Constants.PROPERTY_NAME) : null, 
+            scriptQueryNode.hasProperty(Constants.PROPERTY_DESCRIPTION) ? (String) scriptQueryNode.getProperty(Constants.PROPERTY_DESCRIPTION) : null, 
+            scriptQueryNode.hasProperty(Constants.PROPERTY_SCRIPT) ? (String) scriptQueryNode.getProperty(Constants.PROPERTY_SCRIPT) : null, 
+            scriptQueryNode.hasProperty(Constants.PROPERTY_COUNTABLE) ? (String) scriptQueryNode.getProperty(Constants.PROPERTY_COUNTABLE) : null, 
             parameters);
     }
     

@@ -16,10 +16,7 @@ package org.kuwaiba.apis.forms.elements;
 
 //import org.kuwaiba.apis.forms.KuwaibaClient;
 import com.vaadin.server.Page;
-import com.vaadin.ui.UI;
-import org.kuwaiba.apis.forms.Variable;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;

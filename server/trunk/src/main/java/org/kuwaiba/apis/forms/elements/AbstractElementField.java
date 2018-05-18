@@ -79,7 +79,7 @@ public abstract class AbstractElementField extends AbstractElement {
 
                             String functionName = list.get(0);
 
-                            Validator validator = (Validator) getFormStructure().getElementScript().getFunctionByName(functionName);
+                            ValidatorRunner validator = (ValidatorRunner) getFormStructure().getElementScript().getFunctionByName(functionName);
 
                             List parameters = new ArrayList();
 

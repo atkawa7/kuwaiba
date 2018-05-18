@@ -30,6 +30,8 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import java.util.HashMap;
 import java.util.List;
+import org.kuwaiba.beans.WebserviceBeanLocal;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
  *
@@ -54,12 +56,12 @@ public class FormRenderer extends CustomComponent {
         setCompositionRoot(content);
     }
     
-    public void render() {
+    public void render(WebserviceBeanLocal wsBean, RemoteSession session) {
         content.removeAllComponents();
         
         renderRecursive(builder.getRoot(), content);
         
-        builder.fireOnload();
+        builder.fireOnload(new ScriptQueryExecutorImpl(wsBean, session));
     }
         
     private void renderRecursive(AbstractElement parentElement, Component parentComponent) {

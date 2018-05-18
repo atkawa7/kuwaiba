@@ -24,13 +24,15 @@ import java.util.List;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class Validator implements Runner {
+public class ValidatorRunner implements Runner {
     private String validatorName;
     private List<String> parameterNames;
     private String script;
     private String message;
     
-    public Validator(String validatorName, String paramNames, String script, String message) {
+    private ScriptQueryExecutor scriptQueryExecutor;
+    
+    public ValidatorRunner(String validatorName, String paramNames, String script, String message) {
         this.validatorName = validatorName;
         if (paramNames != null) {
             
@@ -80,19 +82,31 @@ public class Validator implements Runner {
     @Override
     public Object run(List parameters) {
         GroovyShell shell = null;
+        
+        Binding binding = new Binding();        
+        
+        binding.setVariable("scriptQueryExecutor", scriptQueryExecutor);
                 
         if (parameterNames != null && parameters != null && parameterNames.size() == parameters.size()) {
-            
-            Binding binding = new Binding();
             
             for (int i = 0; i < parameters.size(); i += 1)
                 binding.setVariable(parameterNames.get(i), parameters.get(i));
             
-            shell = new GroovyShell(Function.class.getClassLoader(), binding);
+            shell = new GroovyShell(FunctionRunner.class.getClassLoader(), binding);
         } else
-            shell = new GroovyShell(Function.class.getClassLoader());
+            shell = new GroovyShell(FunctionRunner.class.getClassLoader());
                 
         return shell.evaluate(script);
+    }
+
+    @Override
+    public ScriptQueryExecutor getScriptQueryExecutor() {
+        return scriptQueryExecutor;
+    }
+
+    @Override
+    public void setScriptQueryExecutor(ScriptQueryExecutor scriptQueryExecutor) {
+        this.scriptQueryExecutor = scriptQueryExecutor;
     }
     
 }

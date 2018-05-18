@@ -4,7 +4,14 @@
     <!-- Inherit DefaultWidgetSet 
     <inherits name="com.vaadin.DefaultWidgetSet" /> -->
     
-    <set-property name="user.agent" value="gecko1_8"/>
-
+    <!--<set-property name="user.agent" value="gecko1_8"/>-->
+    <!--
+    
+    -->
+    <!--
+    <inherits name="com.google.gwt.precompress.Precompress"/>-->
+    <inherits name="com.vaadin.pontus.vizcomponent.WidgetSet" />
+    <inherits name="com.vaadin.contextmenu.WidgetSet" />
+    <inherits name="com.vaadin.DefaultWidgetSet" />
     
 </module>
