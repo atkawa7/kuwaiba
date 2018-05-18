@@ -90,10 +90,22 @@
            <env-entry-value>/data/img/backgrounds</env-entry-value>
         </env-entry>
         <env-entry>
-           <description>Path of the folder where files attached to inventory objects are saved</description>
+            <description>Path of the folder where images used in forms are stored</description>
+            <env-entry-name>formImagesPath</env-entry-name>
+            <env-entry-type>java.lang.String</env-entry-type>
+            <env-entry-value>/data/img/forms</env-entry-value>
+        </env-entry>
+        <env-entry>
+           <description>Path of the folder where files attached to inventory objects are stored</description>
            <env-entry-name>attachmentsPath</env-entry-name>
            <env-entry-type>java.lang.String</env-entry-type>
            <env-entry-value>/data/files/attachments</env-entry-value>
+        </env-entry>
+        <env-entry>
+            <description>Path of the folder where files included in forms are stored</description>
+            <env-entry-name>formFilesPath</env-entry-name>
+            <env-entry-type>java.lang.String</env-entry-type>
+            <env-entry-value>/data/files/forms</env-entry-value>
         </env-entry>
         <env-entry>
            <description>Max number size in MB of the attachments</description>
@@ -108,6 +120,12 @@
            <env-entry-value>http://neotropic.co/img/logo_small.png</env-entry-value>
         </env-entry>
         <env-entry>
+           <description>Company Name</description>
+           <env-entry-name>companyName</env-entry-name>
+           <env-entry-type>java.lang.String</env-entry-type>
+           <env-entry-value>Neotropic SAS</env-entry-value>
+        </env-entry>
+        <env-entry>
            <description>Global locale. Use a hifen to separate the language from the region. E.g. en-US, es-CO, pt-BR</description>
            <env-entry-name>locale</env-entry-name>
            <env-entry-type>java.lang.String</env-entry-type>
@@ -119,18 +137,7 @@
            <env-entry-type>java.lang.Boolean</env-entry-type>
            <env-entry-value>false</env-entry-value>
         </env-entry>
-        <env-entry>
-            <description>Form Files path</description>
-            <env-entry-name>formFilesPath</env-entry-name>
-            <env-entry-type>java.lang.String</env-entry-type>
-            <env-entry-value>/data/form/files</env-entry-value>
-        </env-entry>
-        <env-entry>
-            <description>Form Images path</description>
-            <env-entry-name>formImagesPath</env-entry-name>
-            <env-entry-type>java.lang.String</env-entry-type>
-            <env-entry-value>/data/form/img</env-entry-value>
-        </env-entry>
+        
      </session>
 </enterprise-beans>
 </ejb-jar>

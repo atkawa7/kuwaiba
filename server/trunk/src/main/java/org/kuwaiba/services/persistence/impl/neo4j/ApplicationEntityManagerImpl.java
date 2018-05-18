@@ -4469,6 +4469,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public long createProcessDefinition(String name, String description, String version, boolean enabled, byte[] structure) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public long createProcessInstance(long processDefinitionId, String processInstanceName, String processInstanceDescription) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     //</editor-fold>
     //</editor-fold>

@@ -95,6 +95,7 @@ public class PersistenceService {
             Properties businessConfiguration = new Properties();
             businessConfiguration.put("attachmentsPath", configuration.get("attachmentsPath"));
             businessConfiguration.put("maxAttachmentSize", configuration.get("maxAttachmentSize"));
+            businessConfiguration.put("companyName", configuration.get("companyName"));
             bem.setConfiguration(businessConfiguration);
             
             dataModelLoader = new DataModelLoader(connectionManager, mem);

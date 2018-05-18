@@ -74,6 +74,13 @@ public class StartupBean {
             }
             
             try {
+                persistenceServiceProperties.put("companyName", (String)context.lookup("java:comp/env/companyName")); //NOI18N
+            }catch (NamingException ne) {
+                persistenceServiceProperties.put("companyName", "Neotropic SAS"); //NOI18N
+                System.out.println("[KUWAIBA] Error reading the companyName configuration variable. Using the default value instead: " + ne.getMessage());
+            }
+            
+            try {
                 persistenceServiceProperties.put("enforceBusinessRules", context.lookup("java:comp/env/enforceBusinessRules")); //NOI18N
             }catch (NamingException ne) {
                 persistenceServiceProperties.put("enforceBusinessRules", false); //NOI18N
@@ -97,14 +104,14 @@ public class StartupBean {
             try {
                 persistenceServiceProperties.put("formFilesPath", (String)context.lookup("java:comp/env/formFilesPath")); //NOI18N
             }catch (NamingException ne) {
-                persistenceServiceProperties.put("formFilesPath", "/data/form/files"); //NOI18N
+                persistenceServiceProperties.put("formFilesPath", "/data/files/forms"); //NOI18N
                 System.out.println("[KUWAIBA] Error reading the formFilesPath configuration variable. Using the default value instead: " + ne.getMessage());
             }
             
             try {
                 persistenceServiceProperties.put("formImagesPath", (String)context.lookup("java:comp/env/formImagesPath")); //NOI18N
             }catch (NamingException ne) {
-                persistenceServiceProperties.put("formImagesPath", "/data/form/img"); //NOI18N
+                persistenceServiceProperties.put("formImagesPath", "/data/img/forms"); //NOI18N
                 System.out.println("[KUWAIBA] Error reading the formImagesPath configuration variable. Using the default value instead: " + ne.getMessage());
             }
             

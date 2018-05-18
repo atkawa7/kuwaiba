@@ -1464,20 +1464,87 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException If the sync group is malformed, or some sync data source configuration is malformed
      */
     public void moveSyncDataSourceConfiguration(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+    * Gets the artifact associated to an activity (for example, a form that was already filled in by a user in a previous, already committed activity)
+    * @param processInstanceId The id of the process instance. This process may have been ended already.
+    * @param activityId The id of the activity the artifact belongs to
+    * @return The artifact corresponding to the given activity
+    * @throws ApplicationObjectNotFoundException If the process instance or activity couldn't be found.
+    */
+    public Artifact getArtifactForActivity(long processInstanceId, String activityId) throws ApplicationObjectNotFoundException;
+    /**
+    * Given an activity definition, returns the artifact definition associated to it
+    * @param processDefinitionId The id of the process the activity is related to
+    * @param activityDefinitionId The id of the activity
+    * @return An object containing the artifact definition
+    * @throws ApplicationObjectNotFoundException If the process or the activity could not be found
+    */
+    public ArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, String activityDefinitionId) throws ApplicationObjectNotFoundException;
+    /**
+    * Saves the artifact generated once an activity has been completed (for example, the user filled in a form). 
+    * @param processInstanceId The process instance the activity belongs to
+    * @param activityDefinitionId The activity id
+    * @param artifact The artifact to be saved
+    * @throws ApplicationObjectNotFoundException If the process could not be found or if the activity definition could not be found
+    * @throws InvalidArgumentException If the activity had been already executed,  of there's a mismatch in the artifact versions or if the user is not an authorized actor to carry on with the activity
+    */
+    public void commitActivity(long processInstanceId, String activityDefinitionId, RemoteArtifact artifact) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+    * Requests for the next activity to be executed in a process instance.
+    * @param processInstanceId The running process to get the next activity from
+    * @return The activity definition
+    * @throws ApplicationObjectNotFoundException If the process instance could not be found
+    * @throws InvalidArgumentException If the process already ended
+    */
+    public ActivityDefinition getNextActivityForProcessInstance(long processInstanceId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+    * Retrieves a process definition
+    * @param processDefinitionId The id of the process
+    * @return The process definition. It contains an XML document to be parsed by the consumer
+    * @throws ApplicationObjectNotFoundException If the process could not be found or if it's malformed
+    */
+    public ProcessDefinition getProcessDefinition(long processDefinitionId) throws ApplicationObjectNotFoundException;
+    /**
+    * Deletes a process definition
+    * @param processDefinitionId The process definition to be deleted
+    * @throws ApplicationObjectNotFoundException If the process definition could not be found
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException if there are process instances related to the process definition
+    */
+    public void deleteProcessDefinition(long processDefinitionId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
 
-    public Artifact getArtifactForActivity(long processInstanceId, String activityId);
+    /**
+    * Updates a process definition, either its standard properties or its structure
+    * @param processDefinitionId The process definition id
+    * @param properties A key value dictionary with the standard properties to be updated. These properties are: name, description, version and enabled (use 'true' or 'false' for the latter)
+    * @param structure A byte array withe XML process definition body
+    * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException If the process definition could not be found
+    * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the structure is invalid or If one of the properties is malformed or has an unexpected name
+    */
+    public void updateProcessDefinition(long processDefinitionId, List<StringPair> properties, byte[] structure) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Creates a process definition. A process definition is the metadata that defines the steps and constraints 
+     * of a given project
+     * @param name The name of the new process definition
+     * @param description The description of the new process definition
+     * @param version The version of the new process definition. This is a three numbers, dot separated string (e.g. 2.4.1)
+     * @param enabled If the project is enabled to create instances from it
+     * @param structure The structure of the process definition. It's an XML document that represents a BPMN process definition
+     * @return The id of the newly created process definition
+     * @throws InvalidArgumentException If the process structure defines a malformed process or if the version is invalid
+     */    
+    public long createProcessDefinition(String name, String description, String version, boolean enabled, byte[] structure) 
+            throws InvalidArgumentException;
 
-    public ArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, String activityDefinitionId);
-
-    public void commitActivity(long processInstanceId, String activityDefinitionId, RemoteArtifact artifact);
-
-    public ActivityDefinition getNextActivityForProcessInstance(long processInstanceId);
-
-    public ProcessDefinition getProcessDefinition(long processDefinitionId);
-
-    public void deleteProcessDefinition(long processDefinitionId);
-
-    public void updateProcessDefinition(long processDefinitionId, List<StringPair> properties, byte[] structure);
-
-    public long createProcessDefinition(String name, String description, String version, boolean enabled, byte[] structure);
+    /**
+    * Creates an instance of a process, that is, starts one
+    * @param processDefinitionId The id of the process to be started
+    * @param processInstanceName The name of the new process
+    * @param processInstanceDescription The description of the new process
+    * @return The id of the newly created process instance
+    * @throws ApplicationObjectNotFoundException If the process definition could not be found
+    * @throws InvalidArgumentException If the process definition is disabled
+    */
+    public long createProcessInstance(long processDefinitionId, String processInstanceName, String processInstanceDescription) 
+            throws ApplicationObjectNotFoundException, InvalidArgumentException;
 }

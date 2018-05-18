@@ -5194,7 +5194,13 @@ public class WebserviceBean implements WebserviceBeanLocal {
     @Override
     public long createProcessInstance(long processDefinitionId, String processInstanceName, 
             String processInstanceDescription, String ipAddress, String sessionId) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            aem.validateWebServiceCall("createProcessInstance", ipAddress, sessionId);
+            return aem.createProcessInstance(processDefinitionId, processInstanceName, processInstanceDescription);
+            
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override

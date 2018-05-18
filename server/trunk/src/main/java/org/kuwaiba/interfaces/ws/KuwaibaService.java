@@ -7930,7 +7930,8 @@ public class KuwaibaService {
          * @param activityDefinitionId The activity id
          * @param artifact The artifact to be saved
          * @param sessionId The session token
-         * @throws ServerSideException If the process could not be found, or if the activity had been already executed, or if the activity definition could not be found, or of there's a mismatch in the artifact versions
+         * @throws ServerSideException If the process could not be found, or if the activity had been already executed, 
+         * or if the activity definition could not be found, or of there's a mismatch in the artifact versions or if the user is not an authorized actor to carry on with the activity
          */
         @WebMethod(operationName = "commitActivity")
         public void commitActivity(@WebParam(name="processInstanceId")long processInstanceId, 
