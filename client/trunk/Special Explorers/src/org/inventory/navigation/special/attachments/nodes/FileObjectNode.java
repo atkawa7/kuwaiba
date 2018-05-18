@@ -15,11 +15,11 @@
  */
 package org.inventory.navigation.special.attachments.nodes;
 
-import java.awt.Color;
 import java.awt.Image;
+import java.awt.Toolkit;
 import javax.swing.Action;
 import org.inventory.communications.core.LocalFileObjectLight;
-import org.inventory.communications.util.Utils;
+import org.inventory.navigation.special.attachments.AttachmentsTopComponent;
 import org.inventory.navigation.special.attachments.nodes.actions.AttachmentsActionFactory;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
@@ -31,10 +31,32 @@ import org.openide.util.lookup.Lookups;
  */
 public class FileObjectNode extends AbstractNode {
 
-    public static Image ICON = Utils.createCircleIcon(Color.GRAY, 10);
+    //public static Image ICON = Utils.createCircleIcon(Color.GRAY, 10);
+    private static Image ICON_OTHER = Toolkit.getDefaultToolkit().createImage(AttachmentsTopComponent.class.getResource("/org/inventory/navigation/special/res/icon_other.png"));
+    private static Image ICON_IMAGE = Toolkit.getDefaultToolkit().createImage(AttachmentsTopComponent.class.getResource("/org/inventory/navigation/special/res/icon_image.png"));
+    private static Image ICON_PDF = Toolkit.getDefaultToolkit().createImage(AttachmentsTopComponent.class.getResource("/org/inventory/navigation/special/res/icon_pdf.png"));
+    
+    private Image icon;
     
     public FileObjectNode(LocalFileObjectLight fileObject) {
         super(Children.LEAF, Lookups.singleton(fileObject));
+        int fileNameLength = fileObject.getName().length();
+        if (fileNameLength < 3)
+            this.icon = ICON_OTHER;
+        else {
+            switch (fileObject.getName().substring(fileObject.getName().lastIndexOf('.') + 1, fileNameLength)) {
+                case "jpg":
+                case "png":
+                case "jpeg":
+                    this.icon = ICON_IMAGE;
+                    break;
+                case "pdf":
+                    this.icon = ICON_PDF;
+                    break;
+                default:
+                    this.icon = ICON_OTHER;
+            }
+        }
     }
 
     @Override
@@ -73,12 +95,12 @@ public class FileObjectNode extends AbstractNode {
 
     @Override
     public Image getOpenedIcon(int type) {
-        return ICON;
+        return this.icon;
     }
 
     @Override
     public Image getIcon(int type) {
-        return ICON; 
+        return this.icon;
     }
     
 }
