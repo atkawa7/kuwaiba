@@ -42,7 +42,7 @@ public class CreateScriptQueryAction extends GenericInventoryAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        long scriptQueryId = CommunicationsStub.getInstance().createScriptQuery("", "", "", null);
+        long scriptQueryId = CommunicationsStub.getInstance().createScriptQuery("", "", "", "false", null);
         if (scriptQueryId == -1)
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="script" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="countable" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="parameters" type="{http://ws.interfaces.kuwaiba.org/}stringPair" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -36,6 +37,7 @@ import javax.xml.bind.annotation.XmlType;
     "name",
     "description",
     "script",
+    "countable",
     "parameters",
     "sessionId"
 })
@@ -44,6 +46,7 @@ public class CreateScriptQuery {
     protected String name;
     protected String description;
     protected String script;
+    protected String countable;
     protected List<StringPair> parameters;
     protected String sessionId;
 
@@ -117,6 +120,30 @@ public class CreateScriptQuery {
      */
     public void setScript(String value) {
         this.script = value;
+    }
+
+    /**
+     * Gets the value of the countable property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getCountable() {
+        return countable;
+    }
+
+    /**
+     * Sets the value of the countable property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setCountable(String value) {
+        this.countable = value;
     }
 
     /**

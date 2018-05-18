@@ -47,6 +47,7 @@ public class ScriptQueriesManagerService implements VetoableChangeListener {
             case Constants.PROPERTY_NAME:
             case Constants.PROPERTY_DESCRIPTION:
             case Constants.PROPERTY_SCRIPT:
+            case Constants.PROPERTY_COUNTABLE:
                 if (!CommunicationsStub.getInstance().updateScriptQueryProperties(scriptQuery.getId(), evt.getPropertyName(), (String) evt.getNewValue())) {
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

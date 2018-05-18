@@ -84,6 +84,9 @@ public class ScriptQueryNode extends AbstractNode implements VetoableChangeListe
             PropertySupport.Reflection<String> scriptProperty = new PropertySupport.Reflection(scriptQuery, String.class, Constants.PROPERTY_SCRIPT);
             generalPropertySet.put(scriptProperty);
             
+            PropertySupport.Reflection<String> countableProperty = new PropertySupport.Reflection(scriptQuery, String.class, Constants.PROPERTY_COUNTABLE);
+            generalPropertySet.put(countableProperty);
+            
             Sheet.Set parametersPropertySet = Sheet.createPropertiesSet();
             parametersPropertySet.setName("Parameters");
             parametersPropertySet.setDisplayName("Parameters");

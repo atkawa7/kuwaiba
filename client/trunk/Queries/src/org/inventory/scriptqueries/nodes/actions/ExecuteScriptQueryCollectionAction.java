@@ -15,7 +15,6 @@
  */
 package org.inventory.scriptqueries.nodes.actions;
 
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.List;
 import javax.swing.BoxLayout;

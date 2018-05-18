@@ -2600,10 +2600,11 @@ public class CommunicationsStub {
      * @param name The script query name
      * @param description The script query description
      * @param script The script query block of code
+     * @param countable Sets if the Script Query return a collection
      * @param parameters Set of parameters to the script query
      * @return The id of the new script query
      */
-    public long createScriptQuery(String name, String description, String script, HashMap<String, String> parameters) {
+    public long createScriptQuery(String name, String description, String script, String countable, HashMap<String, String> parameters) {
         try {
             List<StringPair> params = new ArrayList<>();
             
@@ -2611,7 +2612,7 @@ public class CommunicationsStub {
                 for (String parameter : parameters.keySet())
                     params.add(new StringPair(parameter, parameters.get(parameter)));
             }
-            return service.createScriptQuery(name, description, script, params, session.getSessionId());
+            return service.createScriptQuery(name, description, script, countable, params, session.getSessionId());
         } catch (Exception ex) {
             error = ex.getMessage();
             return -1;

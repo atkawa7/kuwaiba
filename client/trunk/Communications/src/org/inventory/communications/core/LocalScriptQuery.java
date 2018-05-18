@@ -46,6 +46,10 @@ public class LocalScriptQuery implements Comparable<LocalScriptQuery> {
      */
     private String script;
     /**
+     * Used to know if the Script Query return a collection
+     */
+    private String countable;
+    /**
      * Script Query Parameters name/value pair
      */
     private HashMap<String, String> parameters;
@@ -63,6 +67,7 @@ public class LocalScriptQuery implements Comparable<LocalScriptQuery> {
             this.name = remoteScriptQuery.getName();
             this.description = remoteScriptQuery.getDescription();
             this.script = remoteScriptQuery.getScript();
+            this.countable = remoteScriptQuery.getCountable();
 
             if (remoteScriptQuery.getParameters() != null) {
                 parameters = new HashMap();
@@ -117,6 +122,18 @@ public class LocalScriptQuery implements Comparable<LocalScriptQuery> {
         } catch (PropertyVetoException ex) {}       
     }
     
+    public String getCountable() {
+        return countable;
+    }
+    
+    public void setCountable(String countable) {
+        String oldCountable = this.countable;
+        try {
+            firePropertyChange(Constants.PROPERTY_COUNTABLE, oldCountable, countable);
+            this.countable = countable;
+        } catch (PropertyVetoException ex) {}        
+    }
+        
     public HashMap<String, String> getParameters() {
         return parameters;
     }
