@@ -3126,6 +3126,18 @@ public class WebserviceBean implements WebserviceBeanLocal {
         }
     }
     
+    public void updateFileProperties(long fileObjectId, List<StringPair> properties, 
+            String className, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getFile", ipAddress, sessionId);
+            bem.updateFileProperties(fileObjectId, properties, className, objectId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
     @Override
     public long createTask(String name, String description, boolean enabled, boolean commitOnExecute, String script, 
             List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType, 

@@ -362,6 +362,8 @@ public interface WebserviceBeanLocal {
 
     public RemoteFileObject getFile(long fileObjectId, String className, long objectId, String ipAddress, String sessionId) throws ServerSideException;
     
+    public void updateFileProperties(long fileObjectId, List<StringPair> properties,String className, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    
     public long createTask(String name, String description, boolean enabled, boolean commitOnExecute, String script, List<StringPair> parameters, TaskScheduleDescriptor schedule, TaskNotificationDescriptor notificationType, String ipAddress, String sessionId) throws ServerSideException;
 
     public void updateTaskProperties(long taskId, String propertyName, String propertyValue, String ipAddress, String sessionId) throws ServerSideException;

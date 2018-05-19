@@ -3888,8 +3888,33 @@ public class KuwaibaService {
     public RemoteFileObject getFile(@WebParam(name = "fileObjectId")long fileObjectId, 
             @WebParam(name = "className")String className, @WebParam(name = "objectId")long objectId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
-        try{
+        try {
             return wsBean.getFile(fileObjectId, className, objectId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getFilesForObject: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Updates the properties of a file object (name or tags)
+     * @param fileObjectId The id of the file object
+     * @param properties The set of properties as a dictionary key-value. Valid keys are "name" and "tags"
+     * @param className The class of the object the file is attached to
+     * @param objectId The id of the object the file is attached to
+     * @param sessionId The session token
+     * @throws ServerSideException If the object file is attached to could not be found or if the file object could not be found or if any of the properties has an invalid name or if the file name is empty or if the class of the object file is attached to could not be found
+     */
+    @WebMethod(operationName = "updateFileProperties")
+    public void updateFileProperties(@WebParam(name = "fileObjectId") long fileObjectId, 
+            @WebParam(name = "properties")List<StringPair> properties, @WebParam(name = "className")String className, 
+            @WebParam(name = "objectId")long objectId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.updateFileProperties(fileObjectId, properties, className, objectId, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

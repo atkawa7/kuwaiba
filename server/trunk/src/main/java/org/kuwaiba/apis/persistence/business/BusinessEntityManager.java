@@ -758,7 +758,18 @@ public interface BusinessEntityManager {
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the class provided does not exist
      */
     public void detachFileFromObject(long fileObjectId, String className, long objectId) throws BusinessObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
-
+    /**
+     * Updates the properties of a file object (name or tags)
+     * @param fileObjectId The id of the file object
+     * @param properties The set of properties as a dictionary key-value. Valid keys are "name" and "tags"
+     * @param className The class of the object the file is attached to
+     * @param objectId The id of the object the file is attached to
+     * @throws BusinessObjectNotFoundException If the object file is attached to could not be found
+     * @throws ApplicationObjectNotFoundException If the file object could not be found
+     * @throws InvalidArgumentException if any of the properties has an invalid name or if the file name is empty
+     * @throws MetadataObjectNotFoundException If the class of the object file is attached to could not be found
+     */
+    public void updateFileProperties(long fileObjectId, List<StringPair> properties, String className, long objectId) throws BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException;
     /**
      * Creates a contact. Contacts are always associated to a customer
      * @param contactClass Class of the contact. This class should always be a subclass of GenericContact

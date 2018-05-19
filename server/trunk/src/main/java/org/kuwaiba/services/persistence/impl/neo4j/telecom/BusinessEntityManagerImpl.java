@@ -1808,6 +1808,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         if (file.length > (float)configuration.get("maxAttachmentSize") * 1048576) //Size converted to MB
             throw new InvalidArgumentException(String.format("The file size exceeds the maximum size allowed (%s MB)", configuration.get("maxAttachmentSize")));
         
+        if (name == null || name.trim().isEmpty())
+            throw new InvalidArgumentException("The file name can not be an empty string");
+        
         try (Transaction tx = graphDb.beginTx()) {
             Node objectNode = getInstanceOfClass(className, objectId);
             
@@ -1895,7 +1898,36 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         }
     }
     
-    
+    @Override
+    public void updateFileProperties(long fileObjectId, List<StringPair> properties, String className, long objectId) throws BusinessObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node objectNode = getInstanceOfClass(className, objectId);
+
+            for (Relationship fileObjectRelationship : objectNode.getRelationships(RelTypes.HAS_ATTACHMENT, Direction.OUTGOING)) {
+                if (fileObjectRelationship.getEndNode().getId() == fileObjectId) {
+                    for (StringPair property : properties) {
+                        switch (property.getKey()) {
+                            case Constants.PROPERTY_NAME:
+                                if (property.getValue().trim().isEmpty())
+                                    throw new InvalidArgumentException("The file name can not be an empty string");
+                                
+                                fileObjectRelationship.getEndNode().setProperty(Constants.PROPERTY_NAME, property.getValue());
+                                break;
+                            case Constants.PROPERTY_TAGS:
+                                fileObjectRelationship.getEndNode().setProperty(Constants.PROPERTY_TAGS, property.getValue());
+                                break;
+                            default:
+                                throw new InvalidArgumentException(String.format("The property %s is not valid", property.getKey()));
+                        }
+                    }
+                    tx.success();
+                    return;
+                }
+            }
+            
+            throw new InvalidArgumentException(String.format("The file with id %s could not be found", fileObjectId));
+        }
+    }
     
     //TODO DELETE. This is a business dependant method, should not be here. Don't use it
     @Override
