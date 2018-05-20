@@ -69,6 +69,7 @@ public class AttachmentsTopComponent extends TopComponent
     
     private ExplorerManager em;
     private ListView lstAttachments;
+    private JButton btnRefresh;
     //Singleton
     private static AttachmentsTopComponent self;
     private Lookup.Result<LocalObjectLight> lookupResult;
@@ -80,7 +81,7 @@ public class AttachmentsTopComponent extends TopComponent
         this.lstAttachments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         
         JToolBar barMain = new JToolBar();
-        JButton btnRefresh = new JButton(ICON_REFRESH);
+        btnRefresh = new JButton(ICON_REFRESH);
         btnRefresh.setToolTipText(I18N.gm("refresh")); //NOI18N
         btnRefresh.addActionListener(new ActionListener() {
             @Override
@@ -113,17 +114,18 @@ public class AttachmentsTopComponent extends TopComponent
 
     @Override
     public void componentOpened() {
-        open = true;
-        lookupResult = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
-        lookupResult.addLookupListener(this);
-        resultChanged(null);
+        this.open = true;
+        this.lookupResult = Utilities.actionsGlobalContext().lookupResult(LocalObjectLight.class);
+        this.lookupResult.addLookupListener(this);
+        this.resultChanged(null);
     }
     
     @Override
     public void componentClosed() {
-        em.setRootContext(Node.EMPTY);
-        lookupResult.removeLookupListener(this);
-        open = false;
+        this.em.setRootContext(Node.EMPTY);
+        this.lookupResult.removeLookupListener(this);
+        this.open = false;
+        this.btnRefresh.setEnabled(false);
     }
 
     @Override
@@ -140,7 +142,9 @@ public class AttachmentsTopComponent extends TopComponent
         if(lookupResult.allInstances().size() == 1) {
             LocalObjectLight inventoryObject = (LocalObjectLight)lookupResult.allInstances().iterator().next();
             em.setRootContext(new AttachmentsRootNode(inventoryObject));
-        }
+            this.btnRefresh.setEnabled(true);
+        } else
+            this.btnRefresh.setEnabled(false);
     }
     
     public void refresh() {

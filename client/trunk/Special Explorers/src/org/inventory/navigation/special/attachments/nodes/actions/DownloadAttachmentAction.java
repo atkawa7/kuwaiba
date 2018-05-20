@@ -15,12 +15,14 @@
  */
 package org.inventory.navigation.special.attachments.nodes.actions;
 
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Collection;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalFileObject;
 import org.inventory.communications.core.LocalFileObjectLight;
@@ -71,6 +73,11 @@ public class DownloadAttachmentAction extends GenericInventoryAction {
                     try (FileOutputStream fos = new FileOutputStream(globalFileChooser.getSelectedFile().getAbsolutePath())) {
                         fos.write(theFile.getFile());
                         NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, I18N.gm("file_saved_successfully"));
+                        if (Desktop.getDesktop().isSupported(Desktop.Action.OPEN))
+                            Desktop.getDesktop().open(globalFileChooser.getSelectedFile());
+                        else
+                            JOptionPane.showMessageDialog(null, I18N.gm("cant_open_file"), 
+                                    I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
                     } catch (IOException ex) {
                         NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, ex.getMessage());
                     }

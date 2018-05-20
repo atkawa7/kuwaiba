@@ -45,7 +45,7 @@ import org.openide.util.lookup.Lookups;
  */
 public class TaskNode extends AbstractNode {
     
-    private static final Image defaultIcon = Utils.createRectangleIcon(Color.PINK, 10, 10);
+    private static final Image ICON_DEFAULT = Utils.createRectangleIcon(Color.PINK, 10, 10);
     private static final IntegerEntry[] NOTIFICATION_TYPES 
                         = new IntegerEntry[] { new IntegerEntry(LocalTaskNotificationDescriptor.TYPE_NOTHING, "No Notification"), 
                                                new IntegerEntry(LocalTaskNotificationDescriptor.TYPE_CLIENT, "Client Managed"), 
@@ -75,12 +75,12 @@ public class TaskNode extends AbstractNode {
     
     @Override
     public Image getOpenedIcon(int type) {
-        return defaultIcon;
+        return ICON_DEFAULT;
     }
 
     @Override
     public Image getIcon(int type) {
-        return defaultIcon;
+        return ICON_DEFAULT;
     }
     
     @Override

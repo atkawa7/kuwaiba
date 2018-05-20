@@ -1110,6 +1110,30 @@ public class CommunicationsStub {
         }
     }
     
+    /**
+     * Updates the properties of a file object (name or tags)
+     * @param fileObjectId The id of the file object
+     * @param propertyName  Name of the property ti be updated
+     * @param propertyValue  Value of the property ti be updated
+     * @param className The class of the object the file is attached to
+     * @param objectId The id of the object the file is attached to
+     * @return True if the operation was completed successfully, false otherwise
+     */
+    public boolean updateFileProperties(long fileObjectId, String propertyName, String propertyValue, String className, long objectId) {
+        try {
+            
+            List<StringPair> remoteProperties = new ArrayList<>();
+            remoteProperties.add(new StringPair(propertyName, propertyValue));
+            
+            service.updateFileProperties(fileObjectId, remoteProperties, className, objectId, session.getSessionId());
+            
+            return true;
+        } catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
     //</editor-fold>
     
     /**

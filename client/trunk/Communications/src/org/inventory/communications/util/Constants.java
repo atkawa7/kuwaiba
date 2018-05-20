@@ -396,6 +396,10 @@ public class Constants {
      */
     public static final String PROPERTY_RACK_UNITS = "rackUnits";
     /**
+     * Property tags (as in File Object tags)
+     */
+    public static final String PROPERTY_TAGS = "tags";
+    /**
      * Property numberingAscending
      */
     public static final String PROPERTY_RACK_UNITS_NUMBERING = "rackUnitsNumberingDescending";

@@ -15,6 +15,13 @@
  */
 package org.inventory.communications.core;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
+import java.util.ArrayList;
+import java.util.List;
+import org.inventory.communications.util.Constants;
+
 /**
  * Local representation of a file object. A file object represents a file attached to an inventory object
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
@@ -36,19 +43,23 @@ public class LocalFileObjectLight implements Comparable<LocalFileObjectLight>{
      * Creation date
      */
     protected long creationDate;
+    
+    private List<VetoableChangeListener> listeners;
 
     public LocalFileObjectLight(long fileOjectId, String name, long creationDate, String tags) {
         this.fileOjectId = fileOjectId;
         this.name = name;
         this.tags = tags;
         this.creationDate = creationDate;
+        this.listeners = new ArrayList<>();
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(String name) throws PropertyVetoException {
+        firePropertyChangeEvent(Constants.PROPERTY_NAME, this.name, name);
         this.name = name;
     }
 
@@ -56,24 +67,34 @@ public class LocalFileObjectLight implements Comparable<LocalFileObjectLight>{
         return fileOjectId;
     }
 
-    public void setFileOjectId(long fileOjectId) {
-        this.fileOjectId = fileOjectId;
-    }
-
     public String getTags() {
         return tags;
     }
 
-    public void setTags(String tags) {
+    public void setTags(String tags) throws PropertyVetoException {
+        firePropertyChangeEvent(Constants.PROPERTY_TAGS, this.tags, tags);
         this.tags = tags;
     }
 
     public long getCreationDate() {
         return creationDate;
     }
-
-    public void setCreationDate(long creationDate) {
-        this.creationDate = creationDate;
+    
+    public void addActionListener(VetoableChangeListener listener) {
+        listeners.add(listener);
+    }
+    
+    public void removeActionListener(VetoableChangeListener listener) {
+        listeners.remove(listener);
+    }
+    
+    public void RemoveAllListeners() {
+        listeners.clear();
+    }
+    
+    public void firePropertyChangeEvent(String property, String oldValue, String newValue) throws PropertyVetoException {
+        for (VetoableChangeListener listener : listeners)
+            listener.vetoableChange(new PropertyChangeEvent(this, property, oldValue, newValue));
     }
     
     @Override
