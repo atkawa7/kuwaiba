@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -85,6 +85,7 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
             setCompositionRoot(map);
             setDropHandler(dropHandler);
         } catch (NamingException ex){
+            System.out.println(String.format("[KUWAIBA] Unexpected exception while loading a map in the OSP module: %s", ex.getMessage()));
             Notification.show("An error occurred while loading the map default settings. Please contact your administrator", 
                     Notification.Type.ERROR_MESSAGE);
         }
@@ -128,14 +129,14 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
     public void register() {
         if (parentComponent != null) {
             parentComponent.getEventBus().register(this);
-            map.register();
+//            map.register();
         }
     }
     
     public void unregister() {
         if (parentComponent != null) {
             parentComponent.getEventBus().unregister(this);
-            map.unregister();
+//            map.unregister();
         }
     }
     

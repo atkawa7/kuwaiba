@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import java.io.Serializable;
  * Contains a business object basic information
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class RemoteBusinessObjectLight implements Serializable, Comparable<RemoteBusinessObjectLight> {
+public class BusinessObjectLight implements Serializable, Comparable<BusinessObjectLight> {
 
     /**
      * Object's id
@@ -37,9 +37,9 @@ public class RemoteBusinessObjectLight implements Serializable, Comparable<Remot
      */
     private String className;
 
-    protected RemoteBusinessObjectLight() {}
+    protected BusinessObjectLight() {}
 
-    public RemoteBusinessObjectLight(long id, String name, String className) {
+    public BusinessObjectLight(Long id, String name, String className) {
         this.id = id;
         this.name = name;
         this.className = className;
@@ -75,33 +75,23 @@ public class RemoteBusinessObjectLight implements Serializable, Comparable<Remot
     }
 
     @Override
-    public int compareTo(RemoteBusinessObjectLight o) {
+    public int compareTo(BusinessObjectLight o) {
         return getName().compareTo(o.getName());
     }
+    
+    @Override
+    public boolean equals(Object obj){
+       if(obj == null)
+           return false;
+       if (!(obj instanceof BusinessObjectLight))
+           return false;
+       return (this.getId() == ((BusinessObjectLight)obj).getId());
+   }
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 17 * hash + (int) (this.id ^ (this.id >>> 32));
+        int hash = 5;
+        hash = 47 * hash + (int) (this.id ^ (this.id >>> 32));
         return hash;
     }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final RemoteBusinessObjectLight other = (RemoteBusinessObjectLight) obj;
-        if (this.id != other.id) {
-            return false;
-        }
-        return true;
-    }
-    
 }

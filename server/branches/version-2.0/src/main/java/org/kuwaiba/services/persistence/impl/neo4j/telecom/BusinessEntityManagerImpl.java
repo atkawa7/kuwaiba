@@ -333,11 +333,34 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     throw new ObjectNotFoundException(parentClassName, parentOid);
             }
         
-            Node newObject = createObject(classNode, myClass, attributes);
+//            Node newObject = createObject(classNode, myClass, attributes);
+//            if (parentNode !=null)
+//                newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
+//
+//            objectIndex.putIfAbsent(newObject, Constants.PROPERTY_ID, newObject.getId());
+            Node newObject;
+            
+            if (template == -1) 
+                newObject = createObject(classNode, myClass, attributes);
+                
+            else {
+                Node templateNode = null;
+                for (Relationship hasTemplateRelationship : classNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_TEMPLATE)) {
+                    Node endNode = hasTemplateRelationship.getEndNode();
+                    if (endNode.getId() == template){
+                        templateNode = endNode;
+                        break;
+                    }
+                }
+                
+                if (templateNode == null)
+                    throw new ApplicationObjectNotFoundException(String.format("No template with id %s was found for class %s", template, className));
+                
+                newObject = copyTemplateElement(templateNode, true);
+                updateObject(className, newObject.getId(), attributes); //Override the template values with those provided, if any
+            }
             if (parentNode !=null)
                 newObject.createRelationshipTo(parentNode, RelTypes.CHILD_OF_SPECIAL);
-
-            objectIndex.putIfAbsent(newObject, Constants.PROPERTY_ID, newObject.getId());
                        
             tx.success();
             return newObject.getId();
@@ -479,19 +502,54 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             throw new ObjectNotFoundException(className, oid);
         }
     }
+////    TODO:REMOVE
+////    @Override
+////    public RemoteBusinessObject getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid)
+////            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+////        // while we will find a better way to do the query, we use this way
+////        RemoteBusinessObject aParent = getParent(aObjectClass, aOid);
+////        RemoteBusinessObject bParent = getParent(bObjectClass, bOid);
+////        
+////        if (aParent.getId() == bParent.getId())
+////            return aParent;
+////        
+////        List<RemoteBusinessObject> aParents = new ArrayList();
+////        List<RemoteBusinessObject> bParents = new ArrayList();
+////        
+////        aParents.add(aParent);
+////        while (aParent.getId() != -1L) {
+////            aParent = getParent(aParent.getClassName(), aParent.getId());
+////            aParents.add(aParent);
+////        }
+////        
+////        bParents.add(bParent);
+////        while (bParent.getId() != -1L) {
+////            bParent = getParent(bParent.getClassName(), bParent.getId());
+////            bParents.add(bParent);
+////        }
+////        
+////        for (int i = 0; i < aParents.size(); i += 1) {
+////            for (int j = 0; j < bParents.size(); j += 1) {
+////                if (aParents.get(i).getId() == bParents.get(j).getId())
+////                    return aParents.get(i);                                
+////            }
+////        }
+////                        
+////        return null;
+////    }
     
     @Override
-    public RemoteBusinessObject getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid)
+    public RemoteBusinessObjectLight getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
         // while we will find a better way to do the query, we use this way
-        RemoteBusinessObject aParent = getParent(aObjectClass, aOid);
-        RemoteBusinessObject bParent = getParent(bObjectClass, bOid);
+        RemoteBusinessObjectLight aParent = getParent(aObjectClass, aOid);
+        RemoteBusinessObjectLight bParent = getParent(bObjectClass, bOid);
         
         if (aParent.getId() == bParent.getId())
             return aParent;
         
-        List<RemoteBusinessObject> aParents = new ArrayList();
-        List<RemoteBusinessObject> bParents = new ArrayList();
+        List<RemoteBusinessObjectLight> aParents = new ArrayList();
+        List<RemoteBusinessObjectLight> bParents = new ArrayList();
         
         aParents.add(aParent);
         while (aParent.getId() != -1L) {
@@ -505,8 +563,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             bParents.add(bParent);
         }
         
-        for (int i = 0; i < aParents.size(); i += 1) {
-            for (int j = 0; j < bParents.size(); j += 1) {
+        for (int i = 0; i < aParents.size(); i++) {
+            for (int j = 0; j < bParents.size(); j++) {
                 if (aParents.get(i).getId() == bParents.get(j).getId())
                     return aParents.get(i);                                
             }

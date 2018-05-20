@@ -155,20 +155,34 @@ public interface BusinessEntityManager {
      */
     public RemoteBusinessObjectLight getObjectLight(String className, long oid)
             throws MetadataObjectNotFoundException, ObjectNotFoundException;
+////    TODO:REMOVE    
+////    /**
+////     * Gets the common parent between an a object and b object
+////     * 
+////     * @param aObjectClass Object class a
+////     * @param aOid Object id a
+////     * @param bObjectClass Object class b
+////     * @param bOid Object id a
+////     * @return The common parent
+////     * @throws ObjectNotFoundException
+////     * @throws MetadataObjectNotFoundException
+////     * @throws InvalidArgumentException
+////     */
+////    public RemoteBusinessObject getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid)
+////            throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
      * Gets the common parent between an a object and b object
-     * 
-     * @param aObjectClass Object class a
-     * @param aOid Object id a
-     * @param bObjectClass Object class b
-     * @param bOid Object id a
+     * @param aObjectClass Object a class name
+     * @param aOid Object a id
+     * @param bObjectClass Object b class name
+     * @param bOid Object a id
      * @return The common parent
-     * @throws ObjectNotFoundException
-     * @throws MetadataObjectNotFoundException
-     * @throws InvalidArgumentException
+     * @throws ObjectNotFoundException If the requested object can't be found
+     * @throws MetadataObjectNotFoundException If any of the class nodes involved is malformed
+     * @throws InvalidArgumentException If the database object could not be properly mapped into a serializable java object.
      */
-    public RemoteBusinessObject getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid)
+    public RemoteBusinessObjectLight getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid)
             throws ObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
 
     /**

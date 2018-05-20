@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.web.custom.wizards.physicalconnection.PhysicalConnectionConfiguration;
+import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.web.modules.osp.google.actions.ActionsFactory;
 import org.kuwaiba.web.modules.osp.google.actions.DeletePhysicalConnectionAction;
 
@@ -83,8 +83,8 @@ public class ConnectionPolyline extends GoogleMapPolyline {
     public List<AbstractAction> getActions() {
         boolean isLink = true;
         
-        if (connectionInfo.getClassName().equals(PhysicalConnectionConfiguration.CLASS_WIRECONTAINER) || 
-            connectionInfo.getClassName().equals(PhysicalConnectionConfiguration.CLASS_WIRELESSCONTAINER))
+        if (connectionInfo.getClassName().equals(Constants.CLASS_WIRECONTAINER) || 
+            connectionInfo.getClassName().equals(Constants.CLASS_WIRELESSCONTAINER))
             isLink = false;
         
         DeletePhysicalConnectionAction delete = null;

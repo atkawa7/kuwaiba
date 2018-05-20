@@ -29,6 +29,11 @@ public class ActionsFactory {
     private static ConnectLinksAction connectLinksAction;
     private static ShowObjectIdAction showObjectIdAction;
     private static MeasureConnectionDistanceAction measureConnectionDistanceAction;
+    private static GetViewAction getViewAction;
+    
+    public static GetViewAction getViewAction() {
+        return getViewAction == null ? getViewAction = new GetViewAction() : getViewAction;
+    }
     
     public static NewObjectAction createNewObjectAction() {
         if (newObjectAction == null)

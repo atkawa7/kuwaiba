@@ -46,6 +46,7 @@ public class MarkerNode extends GoogleMapMarker {
             actions.add(ActionsFactory.createNewObjectAction());
             actions.add(ActionsFactory.createDeleteMarkerNodeAction());
             actions.add(ActionsFactory.createShowObjectIdAction());
+            actions.add(ActionsFactory.getViewAction());
         }
         return actions;
     }

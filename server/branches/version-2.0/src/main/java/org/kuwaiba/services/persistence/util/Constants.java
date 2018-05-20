@@ -302,6 +302,22 @@ public class Constants {
      */
     public static final String CLASS_GENERICCONTRACT = "GenericContract"; //NOI18N
     /**
+     * Class Generic Physical Container
+     */
+    public static final String CLASS_GENERICPHYSICALCONTAINER = "GenericPhysicalContainer"; //NOI18N
+    /**
+     * Class Generic Physical Link
+     */
+    public static final String CLASS_GENERICPHYSICALLINK = "GenericPhysicalLink"; //NOI18N
+    /**
+     * Class WireContainer
+     */
+    public static final String CLASS_WIRECONTAINER = "WireContainer";
+    /**
+     * Class WirelessContainer
+     */
+    public static final String CLASS_WIRELESSCONTAINER="WirelessContainer";
+    /**
      * Dummy root node name
      */
     public static final String NODE_DUMMYROOT = "DummyRoot"; //NOI18N

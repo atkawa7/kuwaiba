@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.Reindeer;
 import com.vaadin.ui.themes.ValoTheme;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -68,7 +69,7 @@ public class ConnectLinksWindow extends Window {
     private Property.ValueChangeListener generalValueChangeListener;
         
     public ConnectLinksWindow(TopComponent parentComponent, RemoteObjectLight connection) {
-        super("Connecting links");
+        super("Connecting Links");
         this.parentComponent = parentComponent;
         
         generalValueChangeListener = (Property.ValueChangeEvent event) -> {
@@ -80,8 +81,8 @@ public class ConnectLinksWindow extends Window {
         setWidth("80%");
         setModal(true);
         
-        List<RemoteObjectLight> links = null;
-        RemoteObjectLight [] containerEndpoints = null;        
+        List<RemoteObjectLight> links;
+        RemoteObjectLight [] containerEndpoints;        
         try {
             links = this.parentComponent.getWsBean().getObjectSpecialChildren(
                     connection.getClassName(), 
@@ -426,18 +427,21 @@ public class ConnectLinksWindow extends Window {
     }
     
     private EndpointNode [] getASelectedNodes() {
-        return ((Collection<EndpointNode>) treeEndpointA.getValue())
-                .toArray(new EndpointNode[0]);
+        return Arrays.asList(treeEndpointA.getValue()).toArray(new EndpointNode[0]);
+////        return ((Collection<EndpointNode>) treeEndpointA.getValue())
+////                .toArray(new EndpointNode[0]);
     }
     
     private RemoteObjectLight [] getLinksSelected() {
-        return ((Collection<RemoteObjectLight>) tblAvailableConnections.getValue())
-                .toArray(new RemoteObjectLight[0]);
+        return Arrays.asList(tblAvailableConnections.getValue()).toArray(new RemoteObjectLight[0]);
+////        return ((Collection<RemoteObjectLight>) tblAvailableConnections.getValue())
+////                .toArray(new RemoteObjectLight[0]);
     }
     
     private EndpointNode [] getBSelectedNodes() {
-        return ((Collection<EndpointNode>) treeEndpointB.getValue())
-                .toArray(new EndpointNode[0]);
+        return Arrays.asList(treeEndpointB.getValue()).toArray(new EndpointNode[0]);
+////        return ((Collection<EndpointNode>) treeEndpointB.getValue())
+////                .toArray(new EndpointNode[0]);
     }
     
     private int currentNumberOfLinks() {
@@ -461,6 +465,7 @@ public class ConnectLinksWindow extends Window {
             else
                 return numberNodesB;
         }
+//        return 0;
     }
     
     private void updateLstResult() {
@@ -628,7 +633,7 @@ public class ConnectLinksWindow extends Window {
     @Override    
     public void close() {
         treeEndpointA.removeValueChangeListener(generalValueChangeListener);
-        tblAvailableConnections.removeValueChangeListener(generalValueChangeListener);
+        //tblAvailableConnections.removeValueChangeListener(generalValueChangeListener);
         treeEndpointB.removeValueChangeListener(generalValueChangeListener);
         super.close();
     }

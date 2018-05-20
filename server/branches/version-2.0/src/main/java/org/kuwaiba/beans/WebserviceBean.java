@@ -87,6 +87,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfoLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
@@ -825,17 +826,34 @@ public class WebserviceBean implements WebserviceBeanLocal {
         }
     }
     
+////    TODO:REMOVE    
+////    @Override
+////    public RemoteObject getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid, String ipAddress, String sessionId) throws ServerSideException {
+////        if (bem == null || aem == null)
+////            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+////        try {
+////            aem.validateCall("getCommonParent", ipAddress, sessionId);
+////            RemoteBusinessObject rbo = bem.getCommonParent(aObjectClass, aOid, bObjectClass, bOid);
+////            if (rbo.getId() != -1) // is not DummyRoot
+////                return new RemoteObject(rbo);
+////            else
+////                return null;
+////        } catch (InventoryException ex) {
+////            throw new ServerSideException(ex.getMessage());
+////        }
+////    }
+    
     @Override
-    public RemoteObject getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteObjectLight getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
         try {
             aem.validateCall("getCommonParent", ipAddress, sessionId);
-            RemoteBusinessObject rbo = bem.getCommonParent(aObjectClass, aOid, bObjectClass, bOid);
-            if (rbo.getId() != -1) // is not DummyRoot
-                return new RemoteObject(rbo);
+            RemoteBusinessObjectLight commonParent = bem.getCommonParent(aObjectClass, aOid, bObjectClass, bOid);
+            if (commonParent.getId() != -1) // is not DummyRoot
+                return new RemoteObjectLight(commonParent.getId(), commonParent.getName(), commonParent.getClassName());
             else
-                return null;
+                return new RemoteObjectLight(-1L, "", "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1157,6 +1175,76 @@ public class WebserviceBean implements WebserviceBeanLocal {
     @Override
     public long createPhysicalConnection(String aObjectClass, long aObjectId,
             String bObjectClass, long bObjectId, String parentClass, long parentId,
+            String name, String connectionClass, long templateId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        
+        long newConnectionId = -1;
+        
+        try {
+            aem.validateCall("createPhysicalConnection", ipAddress, sessionId);
+            
+            if (!mem.isSubClass("GenericPhysicalConnection", connectionClass)) //NOI18N
+                throw new ServerSideException("Class %s is not subclass of GenericPhysicalConnection"); //NOI18N
+
+            //boolean isLink = false;
+            
+            //Check if the endpoints are already connected, but only if the connection is a link (the endpoints are ports)
+            if (mem.isSubClass("GenericPhysicalLink", connectionClass)) { //NOI18N
+                
+                if (!mem.isSubClass("GenericPort", aObjectClass) || !mem.isSubClass("GenericPort", bObjectClass)) //NOI18N
+                    throw new ServerSideException("One of the endpoints provided is not a port");
+                
+                if (!bem.getSpecialAttribute(aObjectClass, aObjectId, "endpointA").isEmpty()) //NOI18N
+                    
+                    throw new ServerSideException(String.format("The selected endpoint %s is already connected", bem.getObjectLight(aObjectClass, aObjectId)));
+
+                if (!bem.getSpecialAttribute(bObjectClass, bObjectId, "endpointB").isEmpty()) //NOI18N
+                    throw new ServerSideException(String.format("The selected endpoint %s is already connected", bem.getObjectLight(bObjectClass, bObjectId)));
+                
+                //isLink = true;
+            }
+
+            
+            //HashMap<String, String> attributes = new HashMap<>();
+            HashMap<String, List<String>> attributes = new HashMap();
+            
+            if (name == null || name.isEmpty())
+                throw new ServerSideException("The name of the connection can not be empty");
+            
+            //attributes.put(Constants.PROPERTY_NAME, name);
+            attributes.put(Constants.PROPERTY_NAME, Arrays.asList(new String [] {name}));
+            
+            templateId = templateId == 0 ? -1 : templateId;
+            
+            newConnectionId = bem.createSpecialObject(connectionClass, parentClass, parentId, attributes, templateId);
+            // Function unnecessary and unimplemented 
+            /*
+            if (isLink) { //Check connector mappings only if it's a link
+                aem.checkRelationshipByAttributeValueBusinessRules(connectionClass, newConnectionId, aObjectClass, aObjectId);
+                aem.checkRelationshipByAttributeValueBusinessRules(connectionClass, newConnectionId, bObjectClass, bObjectId);
+            }
+            */
+            bem.createSpecialRelationship(connectionClass, newConnectionId, aObjectClass, aObjectId, "endpointA", true);
+            bem.createSpecialRelationship(connectionClass, newConnectionId, bObjectClass, bObjectId, "endpointB", true);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                    ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.format("%s [%s] (%s)", name, connectionClass, newConnectionId));
+            
+            return newConnectionId;
+        } catch (InventoryException e) {
+            //If the new connection was successfully created, but there's a problem creating the relationships,
+            //delete the connection and throw an exception
+            if (newConnectionId != -1)
+                deleteObjects(new String[]{ connectionClass }, new long[]{ newConnectionId }, true, ipAddress, sessionId);
+
+            throw new ServerSideException(e.getMessage());
+        }
+    }
+    
+    @Override
+    public long createPhysicalConnection(String aObjectClass, long aObjectId,
+            String bObjectClass, long bObjectId, String parentClass, long parentId,
             String[] attributeNames, String[][] attributeValues, String connectionClass, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException("Can't reach the backend. Contact your administrator");
@@ -1186,7 +1274,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
                     throw new ServerSideException(String.format("The selected endpoint %s [%s] is already connected", bObjectClass, bObjectId));
             }
 
-            newConnectionId = bem.createSpecialObject(connectionClass, parentClass, parentId, attributes, 0);
+            newConnectionId = bem.createSpecialObject(connectionClass, parentClass, parentId, attributes, -1);
             bem.createSpecialRelationship(connectionClass, newConnectionId, aObjectClass, aObjectId, "endpointA", true);
             bem.createSpecialRelationship(connectionClass, newConnectionId, bObjectClass, bObjectId, "endpointB", true);
             
@@ -1343,6 +1431,62 @@ public class WebserviceBean implements WebserviceBeanLocal {
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
+    }
+    
+    @Override
+    public List<RemoteObjectLight> getContainersBetweenObjects(String objectAClassName, long objectAId,
+         String objectBClassName, long objectBId, String containerClassName, String ipAddress, String sessionId) throws ServerSideException {
+        
+        if (bem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator"); //NOI18N
+        try {
+            aem.validateCall("getContainersBetweenObjects", ipAddress, sessionId); //NOI18N
+            List<RemoteObjectLight> res = new ArrayList<>();
+
+            HashMap<String, List<RemoteBusinessObjectLight>> specialAttributesA = bem.getSpecialAttributes(objectAClassName, objectAId);
+            HashMap<String, List<RemoteBusinessObjectLight>> specialAttributesB = bem.getSpecialAttributes(objectBClassName, objectBId);
+            
+            if(!specialAttributesA.isEmpty() && !specialAttributesB.isEmpty()){
+                List<RemoteBusinessObjectLight> wireContainersListA = new  ArrayList<>();
+
+                if(specialAttributesA.get("endpointA") != null){
+                    for(RemoteBusinessObjectLight container : specialAttributesA.get("endpointA")){
+                        if(container.getClassName().equals(containerClassName))
+                            wireContainersListA.add(container);
+                    }
+                }
+
+                if(specialAttributesA.get("endpointB") != null){
+                    for(RemoteBusinessObjectLight container : specialAttributesA.get("endpointB")){
+                        if(container.getClassName().equals(containerClassName))
+                            wireContainersListA.add(container);
+                    }
+                }
+
+                if(specialAttributesB.get("endpointA") != null){
+                    for(RemoteBusinessObjectLight container : specialAttributesB.get("endpointA")){
+                        if(container.getClassName().equals(containerClassName)){
+                            if(wireContainersListA.contains(container))
+                                res.add(new RemoteObjectLight(container));
+                        }
+                    }
+                }
+
+                if(specialAttributesB.get("endpointB") != null){
+                    for(RemoteBusinessObjectLight container : specialAttributesB.get("endpointB")){
+                        if(container.getClassName().equals(containerClassName)){
+                            if(wireContainersListA.contains(container))
+                                res.add(new RemoteObjectLight(container));
+                        }
+                    }
+                }
+            }
+            
+            return res;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+                
     }
     
     @Override

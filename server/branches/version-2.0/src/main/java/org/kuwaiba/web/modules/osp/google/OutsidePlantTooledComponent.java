@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -58,6 +58,8 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
     public static final String BUTTON_CAPTION_CONN_LABELS = "Show/hide connection labels";
     public static final String BUTTON_CAPTION_SELECT = "Select";
     public static final String BUTTON_CAPTION_CONNECT = "Connect";
+    public static final String BUTTON_CAPTION_NEW_CONTAINER = "Connect Using a Container";
+    public static final String BUTTON_CAPTION_NEW_LINK = "Connect Using a Link";
     public static final String BUTTON_CAPTION_POLYGON = "Draw polygon";
     public static final String BUTTON_CAPTION_MEASURE = "Measure distance";
     public static final String BUTTON_CAPTION_CLEAN = "Clean";
@@ -67,6 +69,8 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
     public static final String BUTTON_ICON_CONN_LABELS = "img/mod_osp_icon_hide_connection_labels.png";
     public static final String BUTTON_ICON_SELECT = "img/mod_osp_icon_select.png";
     public static final String BUTTON_ICON_CONNECT = "img/mod_osp_icon_connect.png";
+    public static final String BUTTON_ICON_NEW_CONTAINER = "img/mod_osp_new_container.png";
+    public static final String BUTTON_ICON_NEW_LINK = "img/mod_osp_new_link.png";
     public static final String BUTTON_ICON_POLYGON = "img/mod_osp_icon_polygon.png";
     public static final String BUTTON_ICON_MEASURE = "img/mod_osp_icon_measure.png";
     public static final String BUTTON_ICON_CLEAN = "img/mod_osp_icon_clean.png";
@@ -79,7 +83,9 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
     private Button btnNodeLabels;
     private Button btnConnLabels;
     private Button btnSelect;
-    private Button btnConnect;
+////    private Button btnConnect;
+    private Button btnNewContainer;
+    private Button btnNewLink;
     private Button btnPolygon;
     private Button btnMeasure;
     private Button btnFilter;
@@ -105,7 +111,9 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
         createButtonShowNodeLabels();
         createButtonShowConnectionLabels();
         createButtonSelect();
-        createButtonConnect();
+////        createButtonConnect();
+        createButtonNewContainer();
+        createButtonNewLink();
         createButtonPolygon();
         createButtonMeasure();
         createButtonFilter();
@@ -216,8 +224,10 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
         btnSelect.setIcon(new ThemeResource(BUTTON_ICON_SELECT));
         btnSelect.setDescription(BUTTON_CAPTION_SELECT);
         btnSelect.addClickListener((Button.ClickEvent event) -> {
-            setButtonSelected(btnSelect, true);
-            setButtonSelected(btnConnect, false);
+            setButtonSelected(btnSelect, true);            
+////            setButtonSelected(btnConnect, false);
+            setButtonSelected(btnNewContainer, false);
+            setButtonSelected(btnNewLink, false);
             setButtonSelected(btnPolygon, false);
             setButtonSelected(btnMeasure, false);
             
@@ -225,19 +235,36 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
                     .getMap().enableSelectTool();
         });
     }
-    
-    private void createButtonConnect() {
-        btnConnect = createButton(null);
-        btnConnect.setIcon(new ThemeResource(BUTTON_ICON_CONNECT));
-        btnConnect.setDescription(BUTTON_CAPTION_CONNECT);
-        btnConnect.addClickListener((Button.ClickEvent event) -> {
+        
+    private void createButtonNewContainer() {
+        btnNewContainer = createButton(null);
+        btnNewContainer.setIcon(new ThemeResource(BUTTON_ICON_NEW_CONTAINER));
+        btnNewContainer.setDescription(BUTTON_CAPTION_NEW_CONTAINER);
+        btnNewContainer.addClickListener((Button.ClickEvent event) -> {
             setButtonSelected(btnSelect, false);
-            setButtonSelected(btnConnect, true);
+            setButtonSelected(btnNewContainer, true);
+            setButtonSelected(btnNewLink, false);
             setButtonSelected(btnPolygon, false);
             setButtonSelected(btnMeasure, false);
             
             ((OutsidePlantComponent) parentComponent).getGoogleMapWrapper()
-                    .getMap().enableConnectionTool();
+                    .getMap().enableConnectionTool(true);
+        });
+    }
+    
+    private void createButtonNewLink() {
+        btnNewLink = createButton(null);
+        btnNewLink.setIcon(new ThemeResource(BUTTON_ICON_NEW_LINK));
+        btnNewLink.setDescription(BUTTON_CAPTION_NEW_LINK);
+        btnNewLink.addClickListener((Button.ClickEvent event) -> {
+            setButtonSelected(btnSelect, false);
+            setButtonSelected(btnNewContainer, false);
+            setButtonSelected(btnNewLink, true);
+            setButtonSelected(btnPolygon, false);
+            setButtonSelected(btnMeasure, false);
+            
+            ((OutsidePlantComponent) parentComponent).getGoogleMapWrapper()
+                    .getMap().enableConnectionTool(false);
         });
     }
     
@@ -247,7 +274,9 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
         btnPolygon.setDescription(BUTTON_CAPTION_POLYGON);
         btnPolygon.addClickListener((Button.ClickEvent event) -> {
             setButtonSelected(btnSelect, false);
-            setButtonSelected(btnConnect, false);
+////            setButtonSelected(btnConnect, false);            
+            setButtonSelected(btnNewContainer, false);
+            setButtonSelected(btnNewLink, false);
             setButtonSelected(btnPolygon, true);
             setButtonSelected(btnMeasure, false);
             
@@ -263,7 +292,9 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
         btnMeasure.addClickListener((Button.ClickEvent event) -> {
             CustomGoogleMap map = ((OutsidePlantComponent) parentComponent).getGoogleMapWrapper().getMap();
                         
-            setButtonSelected(btnConnect, false);
+////            setButtonSelected(btnConnect, false);
+            setButtonSelected(btnNewContainer, false);
+            setButtonSelected(btnNewLink, false);
             setButtonSelected(btnPolygon, false);
             
             setButtonSelected(btnSelect, map.getMeasureDistance());
@@ -377,7 +408,9 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
         btnSelect.setEnabled(enable);
         setButtonSelected(btnSelect, true);
         
-        btnConnect.setEnabled(enable);
+////        btnConnect.setEnabled(enable);
+        btnNewContainer.setEnabled(enable);
+        btnNewLink.setEnabled(enable);
         btnPolygon.setEnabled(enable);
         btnMeasure.setEnabled(enable);
         btnFilter.setEnabled(enable);
