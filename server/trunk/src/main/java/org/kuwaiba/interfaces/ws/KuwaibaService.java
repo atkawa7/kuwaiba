@@ -3470,7 +3470,29 @@ public class KuwaibaService {
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getPhysicalConnectionsInCommunicationsEquipment: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in getPhysicalConnectionsInObject: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Convenience method that returns the link connected to a port (if any). It serves to avoid calling {@link getSpecialAttribute} two times.
+     * @param portClassName The class of the port
+     * @param portId The id of the port
+     * @param sessionId The session token
+     * @return The link connected to the port or null if there isn't any
+     * @throws org.kuwaiba.exceptions.ServerSideException If the port could not be found or if the class provided does not exist or if The class provided is not a subclass of GenericPort
+     */
+    @WebMethod(operationName = "getLinkConnectedToPort")
+    public RemoteObject getLinkConnectedToPort(String portClassName, long portId, String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getLinkConnectedToPort(portClassName, portId, getIPAddress(), sessionId);
+        } catch(Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getLinkConnectedToPort: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }

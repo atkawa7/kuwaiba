@@ -712,6 +712,18 @@ public interface BusinessEntityManager {
     public List<BusinessObjectLight> getPhysicalPath(String objectClass, long objectId) 
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException;
     
+    /**
+     * Convenience method that returns the link connected to a port (if any). It serves to avoid calling {@link getSpecialAttribute} two times.
+     * @param portClassName The class of the port
+     * @param portId The id of the port
+     * @return The link connected to the port or null if there isn't any
+     * @throws BusinessObjectNotFoundException If the port could not be found
+     * @throws MetadataObjectNotFoundException If the class provided does not exist
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If The class provided is not a subclass of GenericPort
+     */
+    public BusinessObject getLinkConnectedToPort(String portClassName, long portId) 
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException;
+    
     //Attachments management
     /**
      * Relates a file to an inventory object

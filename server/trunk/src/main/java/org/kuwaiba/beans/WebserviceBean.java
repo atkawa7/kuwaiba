@@ -2119,6 +2119,25 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
+    public RemoteObject getLinkConnectedToPort(String portClassName, long portId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
+        try {
+            aem.validateWebServiceCall("getLinkConnectedToPort", ipAddress, sessionId); //NOI18N
+            
+            BusinessObject connectedLink = bem.getLinkConnectedToPort(portClassName, portId);
+            
+            if (connectedLink == null)
+                return null;
+            else
+                return new RemoteObject(connectedLink);
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
     public void deletePhysicalConnection(String objectClassName, long objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));

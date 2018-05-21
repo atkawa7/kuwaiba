@@ -1427,7 +1427,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         List<BusinessObjectLight> res = new ArrayList<>();
         
         getChildrenOfClassRecursive(parentOid, parentClass, classToFilter, maxResults, res);
-        
+        Collections.sort(res);
         return res;
     }
     
@@ -1959,6 +1959,27 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         }
         return path;
 
+    }
+    
+    @Override
+    public BusinessObject getLinkConnectedToPort(String portClassName, long portId) throws MetadataObjectNotFoundException, 
+            BusinessObjectNotFoundException, InvalidArgumentException {
+        
+        if (!mem.isSubClass(Constants.CLASS_GENERICPORT, portClassName))
+            throw new InvalidArgumentException(String.format("Class %s is not a subclass of GenericPort", portClassName));
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            Node portNode = getInstanceOfClass(portClassName, portId);
+            
+            for (Relationship relatedToSpecialRelationship : portNode.getRelationships(RelTypes.RELATED_TO_SPECIAL)) {
+                if (relatedToSpecialRelationship.getProperty(Constants.PROPERTY_NAME).equals("endpointA")  //NOI18N
+                        || relatedToSpecialRelationship.getProperty(Constants.PROPERTY_NAME).equals("endpointB")) //NOI18N
+                    return Util.createRemoteObjectFromNode(relatedToSpecialRelationship.getStartNode()); //A port should have only one aEndpoint || bEndpoint relationship
+            }
+        }
+        
+        return null; //If the port does not have any connections attached to it
     }
 
     @Override
@@ -2717,7 +2738,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 }
                 getChildrenOfClassRecursive(child.getId(), childClassName, classToFilter, maxResults, res);
             }
-            tx.success();
         }
     }
 }
