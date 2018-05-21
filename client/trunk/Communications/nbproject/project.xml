@@ -21,6 +21,7 @@
                 <package>org.inventory.communications</package>
                 <package>org.inventory.communications.core</package>
                 <package>org.inventory.communications.core.caching</package>
+                <package>org.inventory.communications.core.exceptions</package>
                 <package>org.inventory.communications.core.queries</package>
                 <package>org.inventory.communications.core.views</package>
                 <package>org.inventory.communications.runnable</package>

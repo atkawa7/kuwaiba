@@ -69,6 +69,7 @@ import org.inventory.communications.core.LocalUserGroupObject;
 import org.inventory.communications.core.LocalUserObject;
 import org.inventory.communications.core.LocalUserObjectLight;
 import org.inventory.communications.core.caching.Cache;
+import org.inventory.communications.core.exceptions.InventoryException;
 import org.inventory.communications.core.queries.LocalQuery;
 import org.inventory.communications.core.queries.LocalQueryLight;
 import org.inventory.communications.core.queries.LocalResultRecord;
@@ -2342,6 +2343,31 @@ public class CommunicationsStub {
         }catch(Exception ex){
             this.error =  ex.getMessage();
             return null;
+        }
+    }
+    
+    /**
+     * Convenience method that returns the link connected to a port (if any). It serves to avoid calling {@link getSpecialAttribute} two times.
+     * @param portClassName The class of the port
+     * @param portId The id of the port
+     * @return The link connected to the port or null if there isn't any
+     * @throws InventoryException If the port could not be found or if the class provided does not exist or if The class provided is not a subclass of GenericPort
+     */
+    public LocalObject getLinkConnectedToPort(String portClassName, long portId) throws InventoryException {
+        try {
+            RemoteObject remoteLink = service.getLinkConnectedToPort(portClassName, portId, session.getSessionId());
+            
+            if (remoteLink == null)
+                return null;
+            
+            else {
+                LocalClassMetadata classMetadata = getMetaForClass(remoteLink.getClassName(), false);
+                return new LocalObject(remoteLink.getClassName(), remoteLink.getId(), 
+                    remoteLink.getAttributes(), classMetadata);
+            }
+            
+        }catch(Exception ex) {
+            throw new InventoryException((ex.getMessage()));
         }
     }
     
