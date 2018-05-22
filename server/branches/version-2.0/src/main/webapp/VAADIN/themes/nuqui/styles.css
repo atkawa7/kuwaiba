@@ -351,6 +351,30 @@
 	text-align: center;
 }
 
+@font-face {
+	font-family: "Open Sans";
+	src: url(../valo/fonts/open-sans/OpenSans-Light-webfont.eot);
+	src: url(../valo/fonts/open-sans/OpenSans-Light-webfont.eot?#iefix) format("embedded-opentype"), url(../valo/fonts/open-sans/OpenSans-Light-webfont.woff) format("woff"), url(../valo/fonts/open-sans/OpenSans-Light-webfont.ttf) format("truetype");
+	font-weight: 300;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "Open Sans";
+	src: url(../valo/fonts/open-sans/OpenSans-Regular-webfont.eot);
+	src: url(../valo/fonts/open-sans/OpenSans-Regular-webfont.eot?#iefix) format("embedded-opentype"), url(../valo/fonts/open-sans/OpenSans-Regular-webfont.woff) format("woff"), url(../valo/fonts/open-sans/OpenSans-Regular-webfont.ttf) format("truetype");
+	font-weight: 400;
+	font-style: normal;
+}
+
+@font-face {
+	font-family: "Open Sans";
+	src: url(../valo/fonts/open-sans/OpenSans-Semibold-webfont.eot);
+	src: url(../valo/fonts/open-sans/OpenSans-Semibold-webfont.eot?#iefix) format("embedded-opentype"), url(../valo/fonts/open-sans/OpenSans-Semibold-webfont.woff) format("woff"), url(../valo/fonts/open-sans/OpenSans-Semibold-webfont.ttf) format("truetype");
+	font-weight: 600;
+	font-style: normal;
+}
+
 @-webkit-keyframes v-rotate-360 {
 		to {
 		-webkit-transform: rotate(360deg);
@@ -1539,7 +1563,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .stepper input[type=text] {
 	line-height: 1.55;
-	font-size: 13px;
+	font-size: 12px;
 	width: inherit;
 }
 
@@ -1563,7 +1587,7 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .stepper .stepper-up, .nuqui .stepper .stepper-down {
 	display: block;
 	outline: none;
-	font-size: 13px;
+	font-size: 12px;
 	line-height: 0.775;
 }
 
@@ -1591,7 +1615,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .stepper input[type=text] {
 	line-height: 1.55;
-	font-size: 13px;
+	font-size: 12px;
 	width: inherit;
 }
 
@@ -1615,7 +1639,7 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .stepper .stepper-up, .nuqui .stepper .stepper-down {
 	display: block;
 	outline: none;
-	font-size: 13px;
+	font-size: 12px;
 	line-height: 0.775;
 }
 
@@ -1638,7 +1662,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui.v-app, .nuqui.v-app-loading {
-	font: 400 13px/1.55 lato-normal, sans-serif;
+	font: 300 12px/1.55 "Open Sans", sans-serif;
 	color: #464646;
 	background-color: #fafafa;
 	cursor: default;
@@ -1747,7 +1771,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-caption {
-	font-size: 12px;
+	font-size: 11px;
 	font-weight: 400;
 	padding-bottom: 0.3em;
 	padding-left: 1px;
@@ -1865,7 +1889,7 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 4px 8px;
 	max-height: 10em;
 	overflow: auto;
-	font-weight: 500;
+	font-weight: 400;
 }
 
 .nuqui .v-tooltip .v-errormessage h2:only-child {
@@ -1967,7 +1991,7 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 11px 13px;
 	background-color: #444;
 	background-color: rgba(68, 68, 68, 0.9);
-	line-height: 18px;
+	line-height: 17px;
 	text-align: center;
 }
 
@@ -2128,7 +2152,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 32px;
 	padding: 0 14px;
 	color: #191919;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -2219,7 +2243,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 32px;
 	padding: 0 14px;
 	color: #f2f6fa;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -2265,7 +2289,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 32px;
 	padding: 0 14px;
 	color: #edf6ef;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -2304,7 +2328,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 32px;
 	padding: 0 14px;
 	color: #f9eef2;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -2443,7 +2467,7 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 0 11px;
 	
 	
-	font-size: 10px;
+	font-size: 9px;
 	
 	border-radius: 4px;
 }
@@ -2461,7 +2485,7 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 0 12px;
 	
 	
-	font-size: 12px;
+	font-size: 11px;
 	
 	border-radius: 4px;
 }
@@ -2479,7 +2503,7 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 0 17px;
 	
 	
-	font-size: 16px;
+	font-size: 15px;
 	
 	border-radius: 4px;
 }
@@ -2497,7 +2521,7 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 0 22px;
 	
 	
-	font-size: 21px;
+	font-size: 20px;
 	
 	border-radius: 4px;
 }
@@ -2625,7 +2649,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 16px;
 	padding: 0 8px;
 	color: #191919;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -2700,7 +2724,7 @@ div.v-layout.v-horizontal.v-widget {
 	position: relative;
 	line-height: 14px;
 	white-space: nowrap;
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .nuqui .v-checkbox-small.v-has-width label {
@@ -2745,7 +2769,7 @@ div.v-layout.v-horizontal.v-widget {
 	top: 0;
 	left: 0;
 	border-radius: 4px;
-	font-size: 9px;
+	font-size: 8px;
 	text-align: center;
 }
 
@@ -2753,7 +2777,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 13.5px;
 	padding: 0 7px;
 	color: #191919;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -2828,7 +2852,7 @@ div.v-layout.v-horizontal.v-widget {
 	position: relative;
 	line-height: 19px;
 	white-space: nowrap;
-	font-size: 16px;
+	font-size: 15px;
 }
 
 .nuqui .v-checkbox-large.v-has-width label {
@@ -2873,7 +2897,7 @@ div.v-layout.v-horizontal.v-widget {
 	top: 0;
 	left: 0;
 	border-radius: 4px;
-	font-size: 12px;
+	font-size: 11px;
 	text-align: center;
 }
 
@@ -2881,7 +2905,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 19px;
 	padding: 0 9px;
 	color: #191919;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -3226,7 +3250,7 @@ div.v-layout.v-horizontal.v-widget {
 	border-radius: 0 0 4px 4px;
 	height: 20px;
 	bottom: -20px;
-	font-size: 10px;
+	font-size: 9px;
 	line-height: 20px;
 	padding: 0 5px;
 	cursor: default;
@@ -3414,7 +3438,7 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .v-filterselect-tiny {
 	height: 24px;
 	
-	font-size: 10px;
+	font-size: 9px;
 }
 
 .nuqui .v-filterselect-tiny [class*="input"] {
@@ -3667,13 +3691,13 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-filterselect-small {
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .nuqui .v-filterselect-large {
 	height: 38px;
 	
-	font-size: 16px;
+	font-size: 15px;
 }
 
 .nuqui .v-filterselect-large [class*="input"] {
@@ -3801,7 +3825,7 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .v-filterselect-huge {
 	height: 51px;
 	
-	font-size: 21px;
+	font-size: 20px;
 }
 
 .nuqui .v-filterselect-huge [class*="input"] {
@@ -4096,7 +4120,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-formlayout-contentcell .v-checkbox, .nuqui .v-formlayout-contentcell .v-radiobutton {
-	font-weight: 500;
+	font-weight: 400;
 }
 
 .nuqui .v-formlayout-contentcell  > .v-label-h2, .nuqui .v-formlayout-contentcell  > .v-label-h3, .nuqui .v-formlayout-contentcell  > .v-label-h4 {
@@ -4346,7 +4370,7 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 	overflow: hidden;
-	font-size: 13px;
+	font-size: 12px;
 }
 
 .nuqui .v-grid-cell.frozen {
@@ -4457,7 +4481,7 @@ div.v-layout.v-horizontal.v-widget {
 	content: "\f0c9";
 	display: block;
 	font-family: ThemeIcons, sans-serif;
-	font-size: 11px;
+	font-size: 10px;
 }
 
 .nuqui .v-grid-sidebar.v-contextmenu.closed {
@@ -4470,7 +4494,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-grid-sidebar.v-contextmenu.open .v-grid-sidebar-button:after {
 	content: "\f0c9";
-	font-size: 11px;
+	font-size: 10px;
 	line-height: 1;
 }
 
@@ -4551,7 +4575,7 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .v-grid-header th {
 	position: relative;
 	background-color: #fafafa;
-	font-size: 11px;
+	font-size: 10px;
 	font-weight: inherit;
 	border-left: 1px solid #d4d4d4;
 	border-bottom: 1px solid #d4d4d4;
@@ -4564,7 +4588,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-grid-header .sort-asc, .nuqui .v-grid-header .sort-desc {
-	padding-right: 29.5px;
+	padding-right: 28.5px;
 }
 
 .nuqui .v-grid-header .sort-asc:after, .nuqui .v-grid-header .sort-desc:after {
@@ -4596,7 +4620,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-grid-footer td {
 	background-color: #fafafa;
-	font-size: 11px;
+	font-size: 10px;
 	font-weight: inherit;
 	border-left: 1px solid #d4d4d4;
 	border-top: 1px solid #d4d4d4;
@@ -4922,7 +4946,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-grid-editor-footer {
-	font-size: 12px;
+	font-size: 11px;
 	padding: 0 9px;
 	background: #fafafa;
 	-webkit-animation: valo-grid-editor-footer-animate-in 200ms 120ms backwards;
@@ -5018,7 +5042,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-transition: color 140ms;
 	-moz-transition: color 140ms;
 	transition: color 140ms;
-	font-weight: 500;
+	font-weight: 400;
 	text-decoration: none;
 	border: none;
 	background: transparent;
@@ -5188,7 +5212,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-transition: box-shadow 180ms, border 180ms;
 	-moz-transition: box-shadow 180ms, border 180ms;
 	transition: box-shadow 180ms, border 180ms;
-	font-size: 10px;
+	font-size: 9px;
 }
 
 .v-ie8 .nuqui .v-textfield-tiny, .v-ie9 .nuqui .v-textfield-tiny {
@@ -5229,7 +5253,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-textfield-small {
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .nuqui .v-textfield-large {
@@ -5255,7 +5279,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-transition: box-shadow 180ms, border 180ms;
 	-moz-transition: box-shadow 180ms, border 180ms;
 	transition: box-shadow 180ms, border 180ms;
-	font-size: 16px;
+	font-size: 15px;
 }
 
 .v-ie8 .nuqui .v-textfield-large, .v-ie9 .nuqui .v-textfield-large {
@@ -5287,7 +5311,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-transition: box-shadow 180ms, border 180ms;
 	-moz-transition: box-shadow 180ms, border 180ms;
 	transition: box-shadow 180ms, border 180ms;
-	font-size: 21px;
+	font-size: 20px;
 }
 
 .v-ie8 .nuqui .v-textfield-huge, .v-ie9 .nuqui .v-textfield-huge {
@@ -5305,7 +5329,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-caption-inline-icon .v-captiontext {
-	font-size: 12px;
+	font-size: 11px;
 	font-weight: 400;
 	padding-bottom: 0.3em;
 	padding-left: 1px;
@@ -5323,7 +5347,7 @@ div.v-layout.v-horizontal.v-widget {
 	width: 32px;
 	line-height: 30px;
 	text-align: center;
-	font-size: 13px;
+	font-size: 12px;
 }
 
 .nuqui .v-caption-inline-icon img.v-icon {
@@ -5344,7 +5368,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-caption-inline-icon.v-caption-tiny .v-captiontext {
-	font-size: 12px;
+	font-size: 11px;
 	font-weight: 400;
 	padding-bottom: 0.3em;
 	padding-left: 1px;
@@ -5362,7 +5386,7 @@ div.v-layout.v-horizontal.v-widget {
 	width: 24px;
 	line-height: 22px;
 	text-align: center;
-	font-size: 10px;
+	font-size: 9px;
 }
 
 .nuqui .v-caption-inline-icon.v-caption-tiny img.v-icon {
@@ -5383,7 +5407,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-caption-inline-icon.v-caption-compact .v-captiontext {
-	font-size: 12px;
+	font-size: 11px;
 	font-weight: 400;
 	padding-bottom: 0.3em;
 	padding-left: 1px;
@@ -5401,7 +5425,7 @@ div.v-layout.v-horizontal.v-widget {
 	width: 27px;
 	line-height: 25px;
 	text-align: center;
-	font-size: 13px;
+	font-size: 12px;
 }
 
 .nuqui .v-caption-inline-icon.v-caption-compact img.v-icon {
@@ -5422,7 +5446,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-caption-inline-icon.v-caption-small .v-captiontext {
-	font-size: 12px;
+	font-size: 11px;
 	font-weight: 400;
 	padding-bottom: 0.3em;
 	padding-left: 1px;
@@ -5440,7 +5464,7 @@ div.v-layout.v-horizontal.v-widget {
 	width: 27px;
 	line-height: 25px;
 	text-align: center;
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .nuqui .v-caption-inline-icon.v-caption-small img.v-icon {
@@ -5461,7 +5485,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-caption-inline-icon.v-caption-large .v-captiontext {
-	font-size: 12px;
+	font-size: 11px;
 	font-weight: 400;
 	padding-bottom: 0.3em;
 	padding-left: 1px;
@@ -5479,7 +5503,7 @@ div.v-layout.v-horizontal.v-widget {
 	width: 38px;
 	line-height: 36px;
 	text-align: center;
-	font-size: 16px;
+	font-size: 15px;
 }
 
 .nuqui .v-caption-inline-icon.v-caption-large img.v-icon {
@@ -5500,7 +5524,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-caption-inline-icon.v-caption-huge .v-captiontext {
-	font-size: 12px;
+	font-size: 11px;
 	font-weight: 400;
 	padding-bottom: 0.3em;
 	padding-left: 1px;
@@ -5518,7 +5542,7 @@ div.v-layout.v-horizontal.v-widget {
 	width: 51px;
 	line-height: 49px;
 	text-align: center;
-	font-size: 21px;
+	font-size: 20px;
 }
 
 .nuqui .v-caption-inline-icon.v-caption-huge img.v-icon {
@@ -5666,7 +5690,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: auto;
 	resize: none;
 	white-space: pre-wrap;
-	font-size: 10px;
+	font-size: 9px;
 }
 
 .v-ie8 .nuqui .v-textarea-tiny, .v-ie9 .nuqui .v-textarea-tiny {
@@ -5708,7 +5732,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: auto;
 	resize: none;
 	white-space: pre-wrap;
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .v-ie8 .nuqui .v-textarea-small, .v-ie9 .nuqui .v-textarea-small {
@@ -5750,7 +5774,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: auto;
 	resize: none;
 	white-space: pre-wrap;
-	font-size: 16px;
+	font-size: 15px;
 }
 
 .v-ie8 .nuqui .v-textarea-large, .v-ie9 .nuqui .v-textarea-large {
@@ -5792,7 +5816,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: auto;
 	resize: none;
 	white-space: pre-wrap;
-	font-size: 21px;
+	font-size: 20px;
 }
 
 .v-ie8 .nuqui .v-textarea-huge, .v-ie9 .nuqui .v-textarea-huge {
@@ -5980,7 +6004,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-datefield-full {
-	width: 195px;
+	width: 180px;
 }
 
 .nuqui .v-datefield-day {
@@ -5988,11 +6012,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-datefield-month {
-	width: 98px;
+	width: 90px;
 }
 
 .nuqui .v-datefield-year {
-	width: 85px;
+	width: 78px;
 }
 
 .nuqui .v-datefield-popup {
@@ -6036,7 +6060,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-datefield-popup .v-datefield-calendarpanel {
-	font-size: 13px;
+	font-size: 12px;
 	text-align: center;
 }
 
@@ -6053,7 +6077,7 @@ div.v-layout.v-horizontal.v-widget {
 	border: 1px solid transparent;
 	line-height: 22px;
 	text-align: center;
-	font-size: 12px;
+	font-size: 11px;
 	background: #fafafa;
 	border-radius: 2px;
 	-webkit-transition: color 200ms;
@@ -6110,7 +6134,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-datefield-popup .v-datefield-calendarpanel-weekdays strong {
 	font: inherit;
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .nuqui .v-datefield-popup .v-datefield-calendarpanel-header {
@@ -6139,8 +6163,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-datefield-popup td[class*="year"] button:before, .nuqui .v-datefield-popup td[class*="month"] button:before {
 	color: #a0a0a0;
-	font-size: 17px;
-	line-height: 20px;
+	font-size: 16px;
+	line-height: 18px;
 	-webkit-transition: color 200ms;
 	-moz-transition: color 200ms;
 	transition: color 200ms;
@@ -6192,7 +6216,7 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .v-datefield-popup .v-datefield-calendarpanel-weeknumber, .nuqui .v-datefield-popup .v-datefield-calendarpanel-weekdays.v-datefield-calendarpanel-weeknumbers td:first-child {
 	width: 26px;
 	color: rgba(133, 133, 133, 0.85);
-	font-size: 12px;
+	font-size: 11px;
 	display: inline-block;
 	text-align: left;
 }
@@ -6217,7 +6241,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-datefield-popup td.v-datefield-calendarpanel-time {
 	width: 100%;
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .nuqui .v-datefield-popup td.v-datefield-calendarpanel-time .v-label {
@@ -6227,7 +6251,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-datefield-calendarpanel {
-	font-size: 13px;
+	font-size: 12px;
 	text-align: center;
 }
 
@@ -6244,7 +6268,7 @@ div.v-layout.v-horizontal.v-widget {
 	border: 1px solid transparent;
 	line-height: 22px;
 	text-align: center;
-	font-size: 12px;
+	font-size: 11px;
 	background: #fafafa;
 	border-radius: 2px;
 	-webkit-transition: color 200ms;
@@ -6301,7 +6325,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-datefield-calendarpanel-weekdays strong {
 	font: inherit;
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .nuqui .v-datefield-calendarpanel-header {
@@ -6330,8 +6354,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui td[class*="year"] button:before, .nuqui td[class*="month"] button:before {
 	color: #a0a0a0;
-	font-size: 17px;
-	line-height: 20px;
+	font-size: 16px;
+	line-height: 18px;
 	-webkit-transition: color 200ms;
 	-moz-transition: color 200ms;
 	transition: color 200ms;
@@ -6383,7 +6407,7 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .v-datefield-calendarpanel-weeknumber, .nuqui .v-datefield-calendarpanel-weekdays.v-datefield-calendarpanel-weeknumbers td:first-child {
 	width: 26px;
 	color: rgba(133, 133, 133, 0.85);
-	font-size: 12px;
+	font-size: 11px;
 	display: inline-block;
 	text-align: left;
 }
@@ -6408,7 +6432,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui td.v-datefield-calendarpanel-time {
 	width: 100%;
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .nuqui td.v-datefield-calendarpanel-time .v-label {
@@ -6455,7 +6479,7 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .v-datefield-tiny {
 	height: 24px;
 	border-radius: 4px;
-	font-size: 10px;
+	font-size: 9px;
 }
 
 .nuqui .v-datefield-tiny [class*="textfield"] {
@@ -6684,13 +6708,13 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-datefield-small {
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .nuqui .v-datefield-large {
 	height: 38px;
 	border-radius: 4px;
-	font-size: 16px;
+	font-size: 15px;
 }
 
 .nuqui .v-datefield-large [class*="textfield"] {
@@ -6806,7 +6830,7 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .v-datefield-huge {
 	height: 51px;
 	border-radius: 4px;
-	font-size: 21px;
+	font-size: 20px;
 }
 
 .nuqui .v-datefield-huge [class*="textfield"] {
@@ -6920,7 +6944,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-inline-datefield-calendarpanel {
-	font-size: 13px;
+	font-size: 12px;
 	text-align: center;
 }
 
@@ -6937,7 +6961,7 @@ div.v-layout.v-horizontal.v-widget {
 	border: 1px solid transparent;
 	line-height: 22px;
 	text-align: center;
-	font-size: 12px;
+	font-size: 11px;
 	background: #fafafa;
 	border-radius: 2px;
 	-webkit-transition: color 200ms;
@@ -6994,7 +7018,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-inline-datefield-calendarpanel-weekdays strong {
 	font: inherit;
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .nuqui .v-inline-datefield-calendarpanel-header {
@@ -7023,8 +7047,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui td[class*="year"] button:before, .nuqui td[class*="month"] button:before {
 	color: #a0a0a0;
-	font-size: 17px;
-	line-height: 20px;
+	font-size: 16px;
+	line-height: 18px;
 	-webkit-transition: color 200ms;
 	-moz-transition: color 200ms;
 	transition: color 200ms;
@@ -7076,7 +7100,7 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .v-inline-datefield-calendarpanel-weeknumber, .nuqui .v-inline-datefield-calendarpanel-weekdays.v-inline-datefield-calendarpanel-weeknumbers td:first-child {
 	width: 26px;
 	color: rgba(133, 133, 133, 0.85);
-	font-size: 12px;
+	font-size: 11px;
 	display: inline-block;
 	text-align: left;
 }
@@ -7101,7 +7125,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui td.v-inline-datefield-calendarpanel-time {
 	width: 100%;
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .nuqui td.v-inline-datefield-calendarpanel-time .v-label {
@@ -7148,7 +7172,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 32px;
 	padding: 0 14px;
 	color: #191919;
-	font-weight: 500;
+	font-weight: 400;
 	
 	cursor: default;
 	border-radius: 4px;
@@ -7228,7 +7252,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 32px;
 	padding: 0 13px;
 	color: inherit;
-	font-weight: 500;
+	font-weight: 400;
 	
 	cursor: pointer;
 	border-radius: 0;
@@ -7478,14 +7502,14 @@ div.v-layout.v-horizontal.v-widget {
 	height: 27px;
 	padding: 0 12px;
 	
-	font-weight: 500;
+	font-weight: 400;
 	
 	cursor: default;
 	border-radius: 4px;
 	padding: 0;
 	text-align: left;
 	line-height: 25px;
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .nuqui .v-menubar-small:after {
@@ -7627,7 +7651,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 16px;
 	padding: 0 8px;
 	color: #191919;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -7713,7 +7737,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-select-optiongroup .v-radiobutton, .nuqui .v-select-optiongroup .v-checkbox {
 	display: block;
-	margin: 8px 13px 0 0;
+	margin: 8px 12px 0 0;
 }
 
 .nuqui .v-select-optiongroup .v-radiobutton:first-child, .nuqui .v-select-optiongroup .v-checkbox:first-child {
@@ -7729,7 +7753,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-select-optiongroup-small {
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .nuqui .v-select-optiongroup-small .v-checkbox {
@@ -7780,7 +7804,7 @@ div.v-layout.v-horizontal.v-widget {
 	top: 0;
 	left: 0;
 	border-radius: 4px;
-	font-size: 9px;
+	font-size: 8px;
 	text-align: center;
 }
 
@@ -7788,7 +7812,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 13.5px;
 	padding: 0 7px;
 	color: #191919;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -7907,7 +7931,7 @@ div.v-layout.v-horizontal.v-widget {
 	top: 0;
 	left: 0;
 	border-radius: 4px;
-	font-size: 9px;
+	font-size: 8px;
 	text-align: center;
 }
 
@@ -7915,7 +7939,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 13.5px;
 	padding: 0 7px;
 	color: #191919;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -8001,7 +8025,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-select-optiongroup-small .v-radiobutton, .nuqui .v-select-optiongroup-small .v-checkbox {
 	display: block;
-	margin: 7px 13px 0 0;
+	margin: 7px 12px 0 0;
 }
 
 .nuqui .v-select-optiongroup-small .v-radiobutton:first-child, .nuqui .v-select-optiongroup-small .v-checkbox:first-child {
@@ -8017,7 +8041,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-select-optiongroup-large {
-	font-size: 16px;
+	font-size: 15px;
 }
 
 .nuqui .v-select-optiongroup-large .v-checkbox {
@@ -8068,7 +8092,7 @@ div.v-layout.v-horizontal.v-widget {
 	top: 0;
 	left: 0;
 	border-radius: 4px;
-	font-size: 12px;
+	font-size: 11px;
 	text-align: center;
 }
 
@@ -8076,7 +8100,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 19px;
 	padding: 0 9px;
 	color: #191919;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -8195,7 +8219,7 @@ div.v-layout.v-horizontal.v-widget {
 	top: 0;
 	left: 0;
 	border-radius: 4px;
-	font-size: 12px;
+	font-size: 11px;
 	text-align: center;
 }
 
@@ -8203,7 +8227,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 19px;
 	padding: 0 9px;
 	color: #191919;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -8289,7 +8313,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-select-optiongroup-large .v-radiobutton, .nuqui .v-select-optiongroup-large .v-checkbox {
 	display: block;
-	margin: 10px 13px 0 0;
+	margin: 10px 12px 0 0;
 }
 
 .nuqui .v-select-optiongroup-large .v-radiobutton:first-child, .nuqui .v-select-optiongroup-large .v-checkbox:first-child {
@@ -8353,11 +8377,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-link-small {
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .nuqui .v-link-large {
-	font-size: 16px;
+	font-size: 15px;
 }
 
 .nuqui .v-window {
@@ -8490,7 +8514,7 @@ div.v-layout.v-horizontal.v-widget {
 	line-height: 29px;
 	text-align: center;
 	cursor: pointer;
-	font-size: 17px;
+	font-size: 16px;
 	color: #999999;
 	-webkit-transition: color 140ms;
 	-moz-transition: color 140ms;
@@ -8889,7 +8913,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 2px;
 	width: 100%;
 	background: #60a0ea;
-	font-size: 26px;
+	font-size: 24px;
 	line-height: 2px;
 	color: #60a0ea;
 	text-indent: -3px;
@@ -8943,7 +8967,7 @@ div.v-layout.v-horizontal.v-widget {
 	background-image: -webkit-linear-gradient(top, #fafafa 2%, #efefef 98%);
 	background-image: linear-gradient(to bottom,#fafafa 2%, #efefef 98%);
 	white-space: nowrap;
-	font-size: 11px;
+	font-size: 10px;
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
@@ -9166,7 +9190,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 32px;
 	padding: 0 14px;
 	color: #191919;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -9384,16 +9408,16 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-table-compact .v-table-header-wrap, .nuqui .v-table-compact .v-table-footer-wrap, .nuqui .v-table-compact .v-table-header-drag, .nuqui .v-table-small .v-table-header-wrap, .nuqui .v-table-small .v-table-footer-wrap, .nuqui .v-table-small .v-table-header-drag {
-	font-size: 11px;
+	font-size: 10px;
 }
 
 .nuqui .v-table-compact .v-table-footer-container, .nuqui .v-table-small .v-table-footer-container {
-	padding: 7px 7px 8px;
+	padding: 8px 7px 9px;
 }
 
 .nuqui .v-table-compact .v-table-caption-container, .nuqui .v-table-compact .v-table-header-drag, .nuqui .v-table-small .v-table-caption-container, .nuqui .v-table-small .v-table-header-drag {
-	padding-top: 8px;
-	padding-bottom: 7px;
+	padding-top: 9px;
+	padding-bottom: 8px;
 	padding-left: 6px;
 	padding-right: 6px;
 }
@@ -9440,7 +9464,7 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .v-table-compact.v-treetable .v-table-cell-wrapper, .nuqui .v-table-small.v-treetable .v-table-cell-wrapper {
 	padding-left: 0;
 	padding-right: 0;
-	min-height: 13px;
+	min-height: 12px;
 }
 
 .nuqui .v-table-compact.v-treetable .v-table-cell-content, .nuqui .v-table-small.v-treetable .v-table-cell-content {
@@ -9462,11 +9486,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-table-small {
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .nuqui .v-table-small.v-treetable .v-table-cell-wrapper {
-	min-height: 12px;
+	min-height: 11px;
 }
 
 .nuqui .v-treetable [class*="caption-container"], .nuqui .v-treetable [class*="footer-container"], .nuqui .v-treetable [class*="cell-wrapper"] {
@@ -9482,7 +9506,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-treetable [class*="cell-wrapper"] {
-	min-height: 13px;
+	min-height: 12px;
 }
 
 .nuqui .v-treetable [class*="caption-container"] {
@@ -9538,7 +9562,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 32px;
 	padding: 0 14px;
 	color: #191919;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -9596,7 +9620,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 32px;
 	padding: 0 14px;
 	color: #191919;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -9647,7 +9671,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 32px;
 	padding: 0 14px;
 	color: #191919;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -9719,7 +9743,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 32px;
 	padding: 0 14px;
 	color: #191919;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -9951,7 +9975,7 @@ div.v-layout.v-horizontal.v-widget {
 	height: 32px;
 	padding: 0 14px;
 	color: #191919;
-	font-weight: 500;
+	font-weight: 400;
 	
 	
 	border-radius: 4px;
@@ -10132,8 +10156,8 @@ div.v-layout.v-horizontal.v-widget {
 	cursor: pointer;
 	text-align: center;
 	line-height: 32px;
-	font-size: 12px;
-	font-weight: 400;
+	font-size: 11px;
+	font-weight: 300;
 	color: #696969;
 	width: auto !important;
 	overflow: hidden;
@@ -10182,7 +10206,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-tabsheet-tabitemcell .v-caption-closable {
-	padding-right: 17px;
+	padding-right: 16px;
 }
 
 .nuqui .v-tabsheet-tabitemcell.icons-on-top .v-caption-closable {
@@ -10193,10 +10217,10 @@ div.v-layout.v-horizontal.v-widget {
 	position: absolute;
 	right: 0;
 	top: 50%;
-	margin: -7px 0 0;
-	font-size: 14px;
-	line-height: 14px;
-	width: 14px;
+	margin: -6px 0 0;
+	font-size: 13px;
+	line-height: 13px;
+	width: 13px;
 	text-align: center;
 	border-radius: 2px;
 	color: #969696;
@@ -10377,7 +10401,7 @@ div.v-layout.v-horizontal.v-widget {
 	border: 1px solid transparent;
 	line-height: 31px;
 	border-radius: 4px 4px 0 0;
-	font-weight: 500;
+	font-weight: 400;
 	-webkit-transition: background-color 160ms;
 	-moz-transition: background-color 160ms;
 	transition: background-color 160ms;
@@ -10393,7 +10417,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-tabsheet-framed  > .v-tabsheet-tabcontainer .v-caption-closable {
-	padding-right: 32px;
+	padding-right: 31px;
 }
 
 .nuqui .v-tabsheet-framed  > .v-tabsheet-tabcontainer .v-tabsheet-caption-close {
@@ -10503,22 +10527,22 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-colorpicker-popup [class$="sliders"] .v-has-caption {
 	white-space: nowrap;
-	padding-left: 39px;
+	padding-left: 36px;
 }
 
 .nuqui .v-colorpicker-popup [class$="sliders"] .v-caption {
 	display: inline-block;
-	margin-left: -39px;
-	width: 39px;
+	margin-left: -36px;
+	width: 36px;
 }
 
 .nuqui .v-colorpicker-popup [class$="sliders"] .v-slot-hue-slider + .v-slot .v-has-caption {
-	padding-left: 65px;
+	padding-left: 60px;
 }
 
 .nuqui .v-colorpicker-popup [class$="sliders"] .v-slot-hue-slider + .v-slot .v-caption {
-	margin-left: -65px;
-	width: 65px;
+	margin-left: -60px;
+	width: 60px;
 }
 
 .nuqui .v-colorpicker-popup .v-slider-red .v-slider-base:after {
@@ -10614,11 +10638,11 @@ div.v-layout.v-horizontal.v-widget {
 	right: auto;
 	bottom: auto;
 	left: auto;
-	width: 13px;
-	height: 13px;
+	width: 12px;
+	height: 12px;
 	display: inline-block;
 	vertical-align: middle;
-	margin: 0 -7px;
+	margin: 0 -6px;
 }
 
 .v-ie8 .nuqui .v-colorpicker-button-color  + .v-button-caption {
@@ -10647,7 +10671,7 @@ div.v-layout.v-horizontal.v-widget {
 	background-image: linear-gradient(to bottom,#fafafa 2%, #f6f6f6 98%);
 	color: #464646;
 	font-weight: 400;
-	font-size: 12px;
+	font-size: 11px;
 	-webkit-box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #eeeeee;
 	box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #eeeeee;
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -10812,7 +10836,7 @@ div.v-layout.v-horizontal.v-widget {
 	background-image: linear-gradient(to bottom,#fafafa 2%, #f6f6f6 98%);
 	color: #464646;
 	font-weight: 400;
-	font-size: 12px;
+	font-size: 11px;
 	-webkit-box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #eeeeee;
 	box-shadow: inset 0 1px 0 white, inset 0 -1px 0 #eeeeee;
 	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -10905,7 +10929,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-select-twincol-caption-left, .nuqui .v-select-twincol-caption-right {
-	font-size: 12px;
+	font-size: 11px;
 	font-weight: 400;
 	padding-bottom: 0.3em;
 	padding-left: 1px;
@@ -11004,7 +11028,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-calendar-header-day {
-	font-weight: 500;
+	font-weight: 400;
 	text-align: center;
 	padding: 6px 0;
 }
@@ -11082,7 +11106,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-calendar-bottom-spacer, .nuqui .v-calendar-spacer, .nuqui .v-calendar-bottom-spacer-empty {
-	height: 16px;
+	height: 14px;
 	margin-bottom: 3px;
 }
 
@@ -11098,7 +11122,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-calendar-day-number {
 	line-height: 21px;
-	font-size: 13px;
+	font-size: 12px;
 	text-align: right;
 	margin: 0 4px;
 	white-space: nowrap;
@@ -11115,7 +11139,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-calendar-month-day-today .v-calendar-day-number {
-	font-weight: 500;
+	font-weight: 400;
 	color: #60a0ea;
 	border-top: 2px solid #60a0ea;
 	line-height: 20px;
@@ -11141,7 +11165,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-calendar-weekly-longevents .v-calendar-event-all-day {
-	height: 18px;
+	height: 16px;
 	line-height: 1.6;
 	margin-bottom: 3px;
 }
@@ -11253,14 +11277,14 @@ div.v-layout.v-horizontal.v-widget {
 	margin-bottom: 3px;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-	height: 16px;
-	line-height: 16px;
+	height: 14px;
+	line-height: 14px;
 }
 
 .nuqui .v-calendar-event-month .v-calendar-event-time {
 	float: right;
 	font-size: 0.9em;
-	line-height: 16px;
+	line-height: 14px;
 	opacity: 0.5;
 	filter: alpha(opacity=50) ;
 }
@@ -11275,8 +11299,8 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
-	height: 16px;
-	line-height: 16px;
+	height: 14px;
+	line-height: 14px;
 	border-radius: 0;
 	margin-left: -1px;
 	white-space: nowrap;
@@ -11309,7 +11333,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-calendar-event-caption {
-	font-weight: 600;
+	font-weight: 500;
 	line-height: 1.2;
 	padding: 4px 0;
 	position: absolute;
@@ -11321,7 +11345,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-calendar-event-caption span {
-	font-weight: 400;
+	font-weight: 300;
 	white-space: nowrap;
 }
 
@@ -11454,7 +11478,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui h1, .nuqui .v-label-h1, .nuqui h2, .nuqui .v-label-h2, .nuqui h3, .nuqui .v-label-h3 {
 	line-height: 1.1;
-	font-weight: 300;
+	font-weight: 200;
 	color: #141414;
 }
 
@@ -11484,8 +11508,8 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui h4, .nuqui .v-label-h4 {
 	line-height: 1.1;
-	font-weight: 600;
-	font-size: 12px;
+	font-weight: 500;
+	font-size: 11px;
 	color: #414141;
 	text-transform: uppercase;
 	letter-spacing: 0;
@@ -11494,11 +11518,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-csslayout  > h1:first-child, .nuqui .v-csslayout  > h2:first-child, .nuqui .v-csslayout  > h3:first-child, .nuqui .v-csslayout  > h4 > .v-label-h1:first-child, .nuqui .v-csslayout  > .v-label-h2:first-child, .nuqui .v-csslayout  > .v-label-h3:first-child, .nuqui .v-csslayout  > .v-label-h4:first-child {
-	margin-top: 13px;
+	margin-top: 12px;
 }
 
 .nuqui .v-verticallayout > .v-slot:first-child h1, .nuqui .v-verticallayout > .v-slot:first-child .v-label-h1, .nuqui .v-verticallayout > .v-slot:first-child h2, .nuqui .v-verticallayout > .v-slot:first-child .v-label-h2, .nuqui .v-verticallayout > .v-slot:first-child h3, .nuqui .v-verticallayout > .v-slot:first-child .v-label-h3, .nuqui .v-verticallayout > .v-slot:first-child h4, .nuqui .v-verticallayout > .v-slot:first-child .v-label-h4, .nuqui .v-verticallayout > div > .v-slot:first-child h1, .nuqui .v-verticallayout > div > .v-slot:first-child .v-label-h1, .nuqui .v-verticallayout > div > .v-slot:first-child h2, .nuqui .v-verticallayout > div > .v-slot:first-child .v-label-h2, .nuqui .v-verticallayout > div > .v-slot:first-child h3, .nuqui .v-verticallayout > div > .v-slot:first-child .v-label-h3, .nuqui .v-verticallayout > div > .v-slot:first-child h4, .nuqui .v-verticallayout > div > .v-slot:first-child .v-label-h4 {
-	margin-top: 13px;
+	margin-top: 12px;
 }
 
 .nuqui .v-verticallayout > .v-slot:first-child .v-formlayout-contentcell h1, .nuqui .v-verticallayout > .v-slot:first-child .v-formlayout-contentcell .v-label-h1, .nuqui .v-verticallayout > .v-slot:first-child .v-formlayout-contentcell h2, .nuqui .v-verticallayout > .v-slot:first-child .v-formlayout-contentcell .v-label-h2, .nuqui .v-verticallayout > .v-slot:first-child .v-formlayout-contentcell h3, .nuqui .v-verticallayout > .v-slot:first-child .v-formlayout-contentcell .v-label-h3, .nuqui .v-verticallayout > .v-slot:first-child .v-formlayout-contentcell h4, .nuqui .v-verticallayout > .v-slot:first-child .v-formlayout-contentcell .v-label-h4, .nuqui .v-verticallayout > div > .v-slot:first-child .v-formlayout-contentcell h1, .nuqui .v-verticallayout > div > .v-slot:first-child .v-formlayout-contentcell .v-label-h1, .nuqui .v-verticallayout > div > .v-slot:first-child .v-formlayout-contentcell h2, .nuqui .v-verticallayout > div > .v-slot:first-child .v-formlayout-contentcell .v-label-h2, .nuqui .v-verticallayout > div > .v-slot:first-child .v-formlayout-contentcell h3, .nuqui .v-verticallayout > div > .v-slot:first-child .v-formlayout-contentcell .v-label-h3, .nuqui .v-verticallayout > div > .v-slot:first-child .v-formlayout-contentcell h4, .nuqui .v-verticallayout > div > .v-slot:first-child .v-formlayout-contentcell .v-label-h4 {
@@ -11514,27 +11538,28 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-label-large {
-	font-size: 16px;
+	font-size: 15px;
 }
 
 .nuqui .v-label-small {
-	font-size: 12px;
+	font-size: 11px;
 }
 
 .nuqui .v-label-tiny {
-	font-size: 10px;
+	font-size: 9px;
 }
 
 .nuqui .v-label-huge {
-	font-size: 21px;
+	font-size: 20px;
 }
 
 .nuqui .v-label-bold {
-	font-weight: 600;
+	font-weight: 500;
 }
 
 .nuqui .v-label-light {
-	font-weight: 300;
+	font-weight: 200;
+	color: #7d7d7d;
 }
 
 .nuqui .v-label-align-right {
@@ -11579,8 +11604,8 @@ div.v-layout.v-horizontal.v-widget {
 	border: 2px solid #36b955;
 	border-radius: 4px;
 	padding: 6px 16px 6px 32px;
-	font-weight: 500;
-	font-size: 12px;
+	font-weight: 400;
+	font-size: 11px;
 }
 
 .nuqui .v-label-success:before, .nuqui .v-label-failure:before {
@@ -12083,7 +12108,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-Notification .v-Notification-caption {
 	color: #60a0ea;
-	font-size: 16px;
+	font-size: 14px;
 	line-height: 1;
 }
 
@@ -12112,11 +12137,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-Notification-caption ~ .v-Notification-description, .nuqui .v-Notification-caption ~ .v-Notification-details {
-	margin-left: 20px;
+	margin-left: 18px;
 }
 
 .nuqui .v-icon + .v-Notification-caption {
-	margin-left: 13px;
+	margin-left: 12px;
 }
 
 .nuqui .v-Notification-system {
@@ -12130,8 +12155,8 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 11px 13px;
 	background-color: #444;
 	background-color: rgba(68, 68, 68, 0.9);
-	font-weight: 500;
-	line-height: 18px;
+	font-weight: 400;
+	line-height: 17px;
 }
 
 .nuqui .v-Notification-system .v-Notification-description, .nuqui .v-Notification-system .v-Notification-details {
@@ -12206,7 +12231,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-Notification.error {
 	background: #eb2977;
-	font-weight: 500;
+	font-weight: 400;
 	-webkit-box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.25);
 	box-shadow: 0px 5px 15px 0px rgba(0, 0, 0, 0.25);
 }
@@ -12222,8 +12247,8 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .v-Notification.dark {
 	background-color: #444;
 	background-color: rgba(68, 68, 68, 0.9);
-	font-weight: 500;
-	line-height: 18px;
+	font-weight: 400;
+	line-height: 17px;
 }
 
 .nuqui .v-Notification.dark .v-Notification-caption {
@@ -12287,11 +12312,11 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .v-Notification.small .v-Notification-caption {
-	font-size: 13px;
+	font-size: 12px;
 }
 
 .nuqui .v-Notification.small .v-Notification-description {
-	font-size: 11px;
+	font-size: 10px;
 }
 
 .nuqui .v-Notification.closable {
@@ -12362,7 +12387,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .v-Notification.success .v-Notification-caption, .nuqui .v-Notification.failure .v-Notification-caption {
 	color: #36b955;
-	font-weight: 500;
+	font-weight: 400;
 }
 
 .nuqui .v-Notification.success .v-Notification-caption:before, .nuqui .v-Notification.failure .v-Notification-caption:before {
@@ -12393,7 +12418,7 @@ div.v-layout.v-horizontal.v-widget {
 	background-image: -webkit-linear-gradient(right, #313537 0%, #3b3f42 8px);
 	background-image: linear-gradient(to left,#313537 0%, #3b3f42 8px);
 	color: #9b9fa3;
-	font-size: 12px;
+	font-size: 11px;
 	line-height: 26px;
 	border-right: 1px solid #2e3134;
 	white-space: nowrap;
@@ -12439,7 +12464,7 @@ div.v-layout.v-horizontal.v-widget {
 	color: white;
 	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
 	padding: 11px 16px;
-	font-size: 12px;
+	font-size: 11px;
 	border-bottom: 1px solid #4b7eb8;
 	-webkit-box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
 	box-shadow: 0 2px 3px rgba(0, 0, 0, 0.05);
@@ -12460,7 +12485,7 @@ div.v-layout.v-horizontal.v-widget {
 	-webkit-box-shadow: inset 0 1px 0 #93bbed, inset 0 -1px 0 #4f8cd8;
 	box-shadow: inset 0 1px 0 #93bbed, inset 0 -1px 0 #4f8cd8;
 	text-shadow: inherit;
-	font-size: 13px;
+	font-size: 12px;
 	border-color: inherit;
 }
 
@@ -12587,7 +12612,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .valo-menu-item {
 	outline: none;
-	font-weight: 500;
+	font-weight: 400;
 	padding: 0 32px 0 16px;
 	cursor: pointer;
 	position: relative;
@@ -12650,9 +12675,9 @@ div.v-layout.v-horizontal.v-widget {
 	transition: background-color 300ms;
 	line-height: 1;
 	padding: 4px 5px;
-	min-width: 9px;
+	min-width: 8px;
 	text-align: center;
-	top: 3px;
+	top: 3.5px;
 	border-radius: 4px;
 }
 
@@ -12663,7 +12688,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .valo-menu-part.large-icons .valo-menu-title {
-	font-size: 10px;
+	font-size: 9px;
 }
 
 .nuqui .valo-menu-part.large-icons .valo-menu-title .v-label-undef-w {
@@ -12673,7 +12698,7 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .valo-menu-part.large-icons .v-menubar-user-menu {
 	margin-left: 0;
 	margin-right: 0;
-	font-size: 9px;
+	font-size: 8px;
 }
 
 .nuqui .valo-menu-part.large-icons .v-menubar-user-menu img.v-icon {
@@ -12703,7 +12728,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .valo-menu-part.large-icons .valo-menu-item {
 	display: block;
-	font-size: 21px;
+	font-size: 19px;
 	line-height: 1;
 	padding: 11px;
 	text-align: center;
@@ -12719,7 +12744,7 @@ div.v-layout.v-horizontal.v-widget {
 	width: auto;
 	margin: 0.3em 0 0;
 	padding: 0;
-	font-size: 9px;
+	font-size: 8px;
 	line-height: 1.3;
 }
 
@@ -12780,7 +12805,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part .valo-menu-title {
-	font-size: 10px;
+	font-size: 9px;
 }
 
 .nuqui .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part .valo-menu-title .v-label-undef-w {
@@ -12790,7 +12815,7 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part .v-menubar-user-menu {
 	margin-left: 0;
 	margin-right: 0;
-	font-size: 9px;
+	font-size: 8px;
 }
 
 .nuqui .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part .v-menubar-user-menu img.v-icon {
@@ -12820,7 +12845,7 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .valo-menu-responsive[width-range~="801px-1100px"] .valo-menu-part .valo-menu-item {
 	display: block;
-	font-size: 21px;
+	font-size: 19px;
 	line-height: 1;
 	padding: 11px;
 	text-align: center;
@@ -12836,7 +12861,7 @@ div.v-layout.v-horizontal.v-widget {
 	width: auto;
 	margin: 0.3em 0 0;
 	padding: 0;
-	font-size: 9px;
+	font-size: 8px;
 	line-height: 1.3;
 }
 
@@ -12939,7 +12964,7 @@ div.v-layout.v-horizontal.v-widget {
 	background-image: -webkit-linear-gradient(right, #313537 0%, #3b3f42 8px);
 	background-image: linear-gradient(to left,#313537 0%, #3b3f42 8px);
 	color: #9b9fa3;
-	font-size: 12px;
+	font-size: 11px;
 	line-height: 26px;
 	border-right: 1px solid #2e3134;
 	white-space: nowrap;
@@ -13025,8 +13050,7 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .h1 {
-	color: gold;
-	font-size: 1em;
+	font-size: 32px;
 }
 
 .nuqui .login-form {
@@ -13076,6 +13100,11 @@ div.v-layout.v-horizontal.v-widget {
 	position: absolute;
 }
 
+.nuqui .dashboard {
+	text-align: center;
+	vertical-align: middle;
+}
+
 .nuqui .right-area {
 	z-index: 9999;
 	position: absolute;
@@ -13108,8 +13137,8 @@ div.v-layout.v-horizontal.v-widget {
 	position: absolute;
 	left: 0;
 	height: 100%;
-	min-width: 30%;
-	background: #f0f0f0;
+	min-width: 35%;
+	background: #fff;
 	-webkit-transition: all 300ms;
 	-moz-transition: all 300ms;
 	transition: all 300ms;
@@ -13118,6 +13147,41 @@ div.v-layout.v-horizontal.v-widget {
 	-ms-transform: translatex(-100%);
 	-o-transform: translatex(-100%);
 	transform: translatex(-100%);
+}
+
+.nuqui .thix {
+	background: red !important;
+}
+
+.nuqui .button-header {
+	transition: all 0.5s;
+	cursor: pointer;
+}
+
+.nuqui .button-header span {
+	cursor: pointer;
+	display: inline-block;
+	position: relative;
+	transition: 0.5s;
+}
+
+.nuqui .button-header span:after {
+	position: absolute;
+	opacity: 0;
+	top: 0;
+	right: -5px;
+	transition: 0.5s;
+}
+
+.nuqui .button-header:hover span {
+	padding-right: 25px;
+	color: #55d400;
+	font-size: 20px;
+}
+
+.nuqui .button-header:hover span:after {
+	opacity: 1;
+	right: 0;
 }
 
 .nuqui .visible-left {

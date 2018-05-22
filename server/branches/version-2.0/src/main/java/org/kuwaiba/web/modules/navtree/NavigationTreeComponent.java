@@ -23,7 +23,6 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectRootNode;
-import org.kuwaiba.apis.web.gui.nodes.properties.PropertySheetComponent;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -65,14 +64,13 @@ class NavigationTreeComponent extends AbstractTopComponent {
                         ((AbstractAction) action).actionPerformed(sender, target);
                     }
                 });
-                
-                
-
+                addStyleName("v-scrollable");
                 setCompositionRoot(tree);
         } catch (ServerSideException ex) {
             NotificationsUtil.showError(ex.getMessage());
         }
-        this.setSizeFull();
+        setHeight("95%");
+        setWidth("100%");
     }
         
     @Override

@@ -89,6 +89,8 @@ import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.index.Index;
 import org.neo4j.graphdb.index.IndexHits;
 import org.neo4j.helpers.collection.IteratorUtil;
+import org.neo4j.kernel.impl.query.QueryExecutionMonitor;
+
 
 /**
  * Application Entity Manager reference implementation
@@ -684,7 +686,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             params.put("className", Constants.CLASS_GENERICOBJECTLIST);//NOI18N
             List<ClassMetadataLight> res = new ArrayList<>();
             Result result = graphDb.execute(cypherQuery, params);
-        
+            
             Iterator<Node> n_column = result.columnAs("listType");
             
             for (Node node : IteratorUtil.asIterable(n_column)) {
@@ -693,7 +695,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             }
             return res;
         }
-        
     }
 
     @Override

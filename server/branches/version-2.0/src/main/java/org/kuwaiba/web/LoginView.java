@@ -74,12 +74,14 @@ class LoginView extends CustomComponent implements View {
     }
     
     private Component buildLoginForm(){
-        Label lblTitle = new Label("<h1>Log into Kuwaiba</h1>",ContentMode.HTML);
+        Label lblTitle = new Label("<h1>Kuwaiba</h1>",ContentMode.HTML);
         //Label lblText = new Label("Open Network Inventory");
         
         txtUsername = new TextField();
+        txtUsername.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
         txtUsername.setWidth(18, Unit.EM);
         txtUsername.setInputPrompt("Type your username");
+        txtUsername.setIcon(FontAwesome.USER);
         
         txtPassword = new PasswordField();
         txtPassword.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
@@ -128,9 +130,7 @@ class LoginView extends CustomComponent implements View {
      }
     
     private Component buildLoginFoot(){
-                       
-        Image logo = new Image(null, 
-                        new ThemeResource("img/neotropic_logo.png"));
+        Image logo = new Image(null, new ThemeResource("img/neotropic_logo.png"));
         logo.addStyleName("foot-label");
         logo.addStyleName("v-align-right");
      

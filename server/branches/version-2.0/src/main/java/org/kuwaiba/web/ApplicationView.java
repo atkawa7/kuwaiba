@@ -15,25 +15,54 @@
  */
 package org.kuwaiba.web;
 
+import com.byteowls.vaadin.chartjs.ChartJs;
+import com.byteowls.vaadin.chartjs.config.BarChartConfig;
+import com.byteowls.vaadin.chartjs.config.LineChartConfig;
+import com.byteowls.vaadin.chartjs.config.PolarAreaChartConfig;
+import com.byteowls.vaadin.chartjs.data.BarDataset;
+import com.byteowls.vaadin.chartjs.data.Dataset;
+import com.byteowls.vaadin.chartjs.data.LineDataset;
+import com.byteowls.vaadin.chartjs.data.PolarAreaDataset;
+import com.byteowls.vaadin.chartjs.options.InteractionMode;
+import com.byteowls.vaadin.chartjs.options.Position;
+import com.byteowls.vaadin.chartjs.options.scale.Axis;
+import com.byteowls.vaadin.chartjs.options.scale.DefaultScale;
+import com.byteowls.vaadin.chartjs.options.scale.LinearScale;
+import com.byteowls.vaadin.chartjs.options.scale.RadialLinearScale;
+import com.byteowls.vaadin.chartjs.utils.ColorUtils;
 import com.google.common.eventbus.EventBus;
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
+import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Image;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Notification;
+import com.vaadin.ui.Notification.Type;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 import org.kuwaiba.apis.web.gui.nodes.properties.PropertySheetModule;
+import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
+import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.util.ChartUtil;
 import org.kuwaiba.web.custom.CustomButton;
+import org.kuwaiba.web.modules.containment.ContainmentManagerModule;
 import org.kuwaiba.web.modules.lists.ListManagerModule;
 import org.kuwaiba.web.modules.navtree.NavigationTreeModule;
 import org.kuwaiba.web.modules.osp.OutsidePlantModule;
@@ -47,6 +76,9 @@ import org.kuwaiba.web.modules.osp.OutsidePlantModule;
 class ApplicationView extends CustomComponent implements View {
     static String VIEW_NAME = "app";
     
+    static final String PATH = "localhost:8080/imgs/";
+    
+    
     EventBus eventBus = new EventBus();
     @Inject
     private WebserviceBeanLocal wsBean;
@@ -55,15 +87,24 @@ class ApplicationView extends CustomComponent implements View {
     private CssLayout lytTop;
     private CssLayout lytRight;
     private CssLayout lytBottom;
-    private CssLayout lytWorkarea;
-    CustomButton btnShowLeft;
-    CustomButton btnHideLeft;
-    CustomButton btnShowRight;
-    CustomButton btnHideRight;
+    private CssLayout lytWrapper;
+    private CssLayout lytWorkArea;
+    private CustomButton btnHideLeft;
+    private CustomButton btnHideRight;
+    private Button btnSingout;
+    private Button btnListType;
+    private Button btnHierarchyContainment;
+    private Button btnNavigationTree;
+    private Button btnPropertySheet;
+    private Button btnMap;
+    private RemoteSession session;
+    private boolean isMapAlreadyAdded;
+    
     
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        final RemoteSession session = (RemoteSession)getSession().getAttribute("session");
+        session = (RemoteSession)getSession().getAttribute("session");
+        isMapAlreadyAdded = false;
         
         if (session == null) //NOI18N
              getUI().getNavigator().navigateTo(LoginView.class.getName());
@@ -72,96 +113,61 @@ class ApplicationView extends CustomComponent implements View {
             setSizeFull();
             buttons();
             initLayouts();
-            
-            //MenuBar mnuMain = new MenuBar();
-            
-            //MenuBar.MenuItem mnuTools =  mnuMain.addItem("Tools", null, null);
-            //mnuMain.addItem("Logout", null, new MenuBar.Command() {
-
-//                @Override
-//                public void menuSelected(MenuBar.MenuItem selectedItem) {
-//                    try {
-//                        wsBean.closeSession(session.getSessionId(), Page.getCurrent().getWebBrowser().getAddress());
-//                        getSession().setAttribute("session", null);
-//                        getUI().getNavigator().navigateTo(LoginView.VIEW_NAME);
-//                    } catch (ServerSideException ex) {
-//                        NotificationsUtil.showError(ex.getMessage());
-//                    }
-//                }
-//            });
-            
-            // final HorizontalSplitPanel pnlSplitMain = new HorizontalSplitPanel();
-            final NavigationTreeModule mdlNavTree = new NavigationTreeModule(eventBus, wsBean, session);
-            final OutsidePlantModule mdlOutsidePlant = new OutsidePlantModule(eventBus, wsBean, session);
-            //final ContainmentManagerModule mdlContainment = new ContainmentManagerModule(eventBus, wsBean, session);
-            final PropertySheetModule mdlPropertySheet = new PropertySheetModule(eventBus, wsBean, session);
             final ListManagerModule mdlListManager = new ListManagerModule(eventBus, wsBean, session);
-
-//            mnuTools.addItem(mdlNavTree.getName(), mdlNavTree.getIcon(), new MenuBar.Command() {
-//
-//                @Override
-//                public void menuSelected(MenuBar.MenuItem selectedItem) {
-//                    pnlSplitMain.setFirstComponent(mdlNavTree.open());
-//                }
-//            });
-//            
-//            mnuTools.addItem(mdlListManager.getName(), mdlListManager.getIcon(), new MenuBar.Command() {
-//
-//                @Override
-//                public void menuSelected(MenuBar.MenuItem selectedItem) {
-//                    pnlSplitMain.setFirstComponent(mdlListManager.open());
-//                }
-//            });
-//            
-//            mnuTools.addItem(mdlContainment.getName(), mdlContainment.getIcon(), new MenuBar.Command() {
-//
-//                @Override
-//                public void menuSelected(MenuBar.MenuItem selectedItem) {
-//                    pnlSplitMain.setSecondComponent(mdlContainment.open());
-//                }
-//            });
-//            
-//            MenuBar.MenuItem mnuNavigation = mnuTools.addItem("Navigation", null);
-//            mnuNavigation.addItem(mdlOutsidePlant.getName(), mdlOutsidePlant.getIcon(), new MenuBar.Command() {
-//
-//                @Override
-//                public void menuSelected(MenuBar.MenuItem selectedItem) {
-//                    pnlSplitMain.setSecondComponent(mdlOutsidePlant.open());
-//                }
-//            });
+            //Component listType = mdlListManager.open();
+           
+            final OutsidePlantModule mdlOutsidePlant = new OutsidePlantModule(eventBus, wsBean, session);
+            final NavigationTreeModule mdlNavTree = new NavigationTreeModule(eventBus, wsBean, session);
+            final ContainmentManagerModule mdlContainment = new ContainmentManagerModule(eventBus, wsBean, session);
+            final PropertySheetModule mdlPropertySheet = new PropertySheetModule(eventBus, wsBean, session);
+            Component navtree = mdlNavTree.open();
             
-//            MenuBar.MenuItem mnuNavigation = mnuTools.addItem("Advanced", null);
-//            mnuNavigation.addItem(mdlOutsidePlant.getName(), mdlOutsidePlant.getIcon(), new MenuBar.Command() {
-//
-//                @Override
-//                public void menuSelected(MenuBar.MenuItem selectedItem) {
-//                    //pnlSplitMain.setSecondComponent(mdlOutsidePlant.open());
-//                }
-//            });
-            //nav tree
-            Panel panel = new Panel();
-            panel.setContent(mdlNavTree.open());
-            lytLeft.addComponent(panel);
-            Component map = mdlOutsidePlant.open();
+            //Main tool bar
+            createToolbar();
+            btnMap.addClickListener(click -> {
+                if(!isMapAlreadyAdded){
+                    lytWorkArea.removeAllComponents();
+                    lytWorkArea.addComponent(mdlOutsidePlant.open());
+                    isMapAlreadyAdded = true;
+                }
+            });
+            
+            btnHierarchyContainment.addClickListener(click -> {
+                lytWorkArea.removeAllComponents();
+                lytWorkArea.addComponent(mdlContainment.open());
+                isMapAlreadyAdded = false;
+            });
+            
+            btnNavigationTree.addClickListener(click -> {
+               // lytLeft.removeComponent(listType);
+                lytLeft.addComponent(navtree);
+            });
+            
+            btnListType.addClickListener(click -> {
+                lytLeft.removeComponent(navtree);
+                //lytLeft.addComponent(listType);
+            });
             
             lytRight.addComponent(mdlPropertySheet.open());
             
-            HorizontalLayout headerButtons = new HorizontalLayout();
-            headerButtons.addComponent(btnShowLeft);
-            headerButtons.setComponentAlignment(btnShowLeft, Alignment.TOP_LEFT);
-            headerButtons.setWidth("100%");
-            headerButtons.addComponent(btnShowRight);
-            headerButtons.setComponentAlignment(btnShowRight, Alignment.TOP_RIGHT);
+            HorizontalLayout toolBar = new HorizontalLayout();
+            //MainToolBar.addStyleName("thix");
+            toolBar.addComponents(btnNavigationTree, btnMap, btnListType, btnHierarchyContainment, btnPropertySheet, btnSingout);
+            toolBar.setWidth("100%");
+            toolBar.setComponentAlignment(btnSingout, Alignment.TOP_RIGHT);
             
-            VerticalLayout content = new VerticalLayout(headerButtons, map);
-            content.setSizeFull();
-            content.addStyleName("red");
-            content.setExpandRatio(headerButtons, 0.05f);
-            content.setExpandRatio(map, 0.95f);
-            lytWorkarea.addComponent(lytLeft);
-            lytWorkarea.addComponent(content);
-            lytWorkarea.addComponent(lytRight);
-            setCompositionRoot(lytWorkarea);
+            lytWorkArea = new CssLayout();
+            lytWorkArea.setSizeFull();
+            lytWorkArea.addStyleName("v-scrollable");
+            lytWorkArea.addComponent(addChartsLayout());
+            VerticalLayout mainLayout = new VerticalLayout(toolBar, lytWorkArea);
+            mainLayout.setSizeFull();
+            mainLayout.setExpandRatio(toolBar, 0.05f);
+            mainLayout.setExpandRatio(lytWorkArea, 0.95f);
+            lytWrapper.addComponent(lytLeft);
+            lytWrapper.addComponent(mainLayout);
+            lytWrapper.addComponent(lytRight);
+            setCompositionRoot(lytWrapper);
         }
     }
     
@@ -207,9 +213,12 @@ class ApplicationView extends CustomComponent implements View {
     }
     
     private void buttons(){
-        btnShowLeft = new CustomButton();
-        btnShowLeft.setIcon(FontAwesome.CHEVRON_RIGHT);
-        btnShowLeft.addClickListener((Button.ClickEvent event1) -> {
+        btnNavigationTree = new CustomButton();
+        btnNavigationTree = new Button(FontAwesome.CODE_FORK);
+        btnNavigationTree.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        btnNavigationTree.addStyleName("button-header");
+        btnNavigationTree.setDescription("Navigation Tree");
+        btnNavigationTree.addClickListener((Button.ClickEvent event1) -> {
             show(false, 1);
         });
 
@@ -222,9 +231,11 @@ class ApplicationView extends CustomComponent implements View {
             }
         });
 
-        btnShowRight = new CustomButton();
-        btnShowRight.setIcon(FontAwesome.CHEVRON_LEFT);
-        btnShowRight.addClickListener(new Button.ClickListener() {
+        btnPropertySheet = new CustomButton();
+        btnPropertySheet.setIcon(FontAwesome.TH_LIST);
+        btnPropertySheet.addStyleName("button-header");
+        btnPropertySheet.setDescription("Property Sheet");
+        btnPropertySheet.addClickListener(new Button.ClickListener() {
         @Override
             public void buttonClick(Button.ClickEvent event) {
                 show(false,3);
@@ -245,7 +256,7 @@ class ApplicationView extends CustomComponent implements View {
         lytLeft = new CssLayout();
         lytLeft.addStyleName("left-area");
         lytLeft.addComponent(btnHideLeft);
-        
+                
         lytTop = new CssLayout();
         lytTop.addStyleName("top-area");
         
@@ -256,8 +267,210 @@ class ApplicationView extends CustomComponent implements View {
         lytBottom = new CssLayout();
         lytBottom.addStyleName("bottom-area");
 
-        lytWorkarea = new CssLayout();
-        lytWorkarea.addStyleName("work-area");
-        lytWorkarea.setSizeFull();
+        lytWrapper = new CssLayout();
+        lytWrapper.addStyleName("dashboard");
+        lytWrapper.setSizeFull();
     }
+    
+    private void createToolbar(){
+        btnSingout = new Button();
+        btnSingout.setIcon(FontAwesome.SIGN_OUT);
+        btnSingout.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        btnSingout.addStyleName("button-header");
+        btnSingout.setDescription("Close Session");
+        
+        btnSingout.addClickListener((Button.ClickEvent event) -> {
+            try {
+                wsBean.closeSession(session.getSessionId(), Page.getCurrent().getWebBrowser().getAddress());
+                getSession().setAttribute("session", null);
+                getUI().getNavigator().navigateTo(LoginView.VIEW_NAME);
+            } catch (ServerSideException ex) {
+                NotificationsUtil.showError(ex.getMessage());
+            }
+        });
+        
+        btnListType =  new Button(FontAwesome.LIST_ALT);
+        btnListType.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        btnListType.addStyleName("button-header");
+        btnListType.setDescription("List Types Editor");
+                
+        btnHierarchyContainment =  new Button();
+        btnHierarchyContainment.setIcon(FontAwesome.SITEMAP);
+        btnHierarchyContainment.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        btnHierarchyContainment.addStyleName("button-header");
+        btnHierarchyContainment.setDescription("Containment Hierarchy");
+        
+        btnMap = new Button();
+        btnMap.setIcon(FontAwesome.MAP);
+        btnMap.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        btnMap.addStyleName("button-header");
+        btnMap.setDescription("Outside Plant Module");
+    }
+
+    private void popup(){
+        Window subWindow = new Window("Registrar Nueva Empresa");
+        subWindow.setResizable(false);
+        subWindow.setClosable(false);
+        VerticalLayout subContent = new VerticalLayout();
+        subContent.setMargin(true);
+        subContent.setSpacing(true);
+        // Use the resource
+        Image image = new Image(null, new ThemeResource(PATH));
+        subContent.addComponent(image); //put the image here.
+        subWindow.setContent(subContent);
+        subWindow.setModal(true);
+        subWindow.center(); // Center it in the browser window
+        getUI().addWindow(subWindow); // Open it in the UI
+    }
+    
+    private VerticalLayout addChartsLayout(){
+        
+        VerticalLayout chartsLayout = new VerticalLayout();
+        chartsLayout.setSizeUndefined();
+        
+        chartsLayout.addStyleName("dashboard");
+        Label dummyMessage = new Label("Dashboard");
+        dummyMessage.addStyleName(ValoTheme.LABEL_HUGE);
+        chartsLayout.addComponent(dummyMessage);
+        ChartJs ndaCoverageChart = addNdaCoverageChart();
+        ChartJs activatedServicesLayout = addActivatedServicesLayout();
+        ChartJs ipAddressesUsageChart = addIpAddressesUsageChart();
+        chartsLayout.addComponent(ndaCoverageChart);
+        chartsLayout.addComponent(activatedServicesLayout);
+        chartsLayout.addComponent(ipAddressesUsageChart);
+        
+        return chartsLayout;
+    }
+    
+    private ChartJs addActivatedServicesLayout(){
+         BarChartConfig config = new BarChartConfig();
+        config.data()
+            .labels("January", "February", "March", "April", "May", "June", "July")
+            .addDataset(new BarDataset().label("ELINE").backgroundColor(ColorUtils.randomColor(0.7)))
+            .addDataset(new BarDataset().label("IP-TRANSIT").backgroundColor(ColorUtils.randomColor(0.7)))
+            .addDataset(new BarDataset().label("EoMPLS").backgroundColor(ColorUtils.randomColor(0.7)))
+            .and()
+        .options()
+            .responsive(true)
+            .title()
+                .display(true)
+                .text("Activated Services")
+                .and()
+            .tooltips()
+                .mode(InteractionMode.INDEX)
+                .intersect(false)
+                .and()
+            .scales()
+            .add(Axis.X, new DefaultScale()
+                    .stacked(true))
+            .add(Axis.Y, new DefaultScale()
+                    .stacked(true))
+            .and()
+            .done();
+        
+        // add random data for demo
+        List<String> labels = config.data().getLabels();
+        for (Dataset<?, ?> ds : config.data().getDatasets()) {
+            BarDataset lds = (BarDataset) ds;
+            List<Double> data = new ArrayList<>();
+            for (int i = 0; i < labels.size(); i++) {
+                data.add((double) (Math.random() > 0.5 ? -1 : 1) * Math.round(Math.random() * 100));
+            }
+            lds.dataAsList(data);
+        }
+
+        ChartJs chart = new ChartJs(config);
+        chart.addClickListener((a, b) -> {
+            BarDataset dataset = (BarDataset) config.data().getDatasets().get(a);
+            ChartUtil.notification(a, b, dataset);
+        });
+        chart.setJsLoggingEnabled(true);
+        chart.setWidth("850px");
+        return  chart;
+    }
+    
+    private ChartJs addNdaCoverageChart(){
+        BarChartConfig config = new BarChartConfig();
+        config
+            .data()
+                .labels("January", "February", "March", "April", "May", "June", "July")
+                .addDataset(new BarDataset().type().label("Devices no SLA").backgroundColor(ColorUtils.randomColor(0.7)))
+                .addDataset(new LineDataset().type().label("SLA Coverage").backgroundColor("rgba(151,187,205,0.5)").borderColor("white").borderWidth(2))
+                .addDataset(new BarDataset().type().label("Devecies with SLA").backgroundColor(ColorUtils.randomColor(0.7)))
+                .and();
+        
+        config.
+            options()
+                .responsive(true)
+                .title()
+                    .display(true)
+                    .position(Position.TOP)
+                    .text("SLA Contracts Coverage")
+                    .and()
+               .done();
+        
+        List<String> labels = config.data().getLabels();
+        for (Dataset<?, ?> ds : config.data().getDatasets()) {
+            List<Double> data = new ArrayList<>();
+            for (int i = 0; i < labels.size(); i++) {
+                data.add((double) (Math.random() > 0.5 ? 1.0 : -1.0) * Math.round(Math.random() * 100));
+            }
+            
+            if (ds instanceof BarDataset) {
+                BarDataset bds = (BarDataset) ds;
+                bds.dataAsList(data);    
+            }
+                
+            if (ds instanceof LineDataset) {
+                LineDataset lds = (LineDataset) ds;
+                lds.dataAsList(data);    
+            }
+        }
+        
+        ChartJs chart = new ChartJs(config);
+        chart.setJsLoggingEnabled(true);
+        chart.setWidth("850px");
+        return chart;
+    }
+    
+    private ChartJs addIpAddressesUsageChart(){
+        PolarAreaChartConfig config = new PolarAreaChartConfig();
+        config
+            .data()
+                .labels("185.30.144.1/26", "185.19.130.0/28", "185.49.141.1/30", "10.19.140.0/28", "20:F::29/128")
+                .addDataset(new PolarAreaDataset().label("IPs Added in use").backgroundColor(ColorUtils.randomColor(0.7), ColorUtils.randomColor(0.7), ColorUtils.randomColor(0.7), ColorUtils.randomColor(0.7), ColorUtils.randomColor(0.7)))
+                .and();
+
+        config.
+            options()
+                .responsive(true)
+                .title()
+                    .display(true)
+                    .text("Subnet Usage")
+                    .and()
+                .scale(new RadialLinearScale().ticks().beginAtZero(true).and().reverse(false))
+                .animation()
+                    .animateScale(true)
+                    .animateRotate(false)
+                    .and()
+               .done();
+
+        List<String> labels = config.data().getLabels();
+        for (Dataset<?, ?> ds : config.data().getDatasets()) {
+            PolarAreaDataset lds = (PolarAreaDataset) ds;
+            List<Double> data = new ArrayList<>();
+            for (int i = 0; i < labels.size(); i++) {
+                data.add((double) (Math.round(Math.random() * 100)));
+            }
+            lds.dataAsList(data);
+        }
+
+        ChartJs chart = new ChartJs(config);
+        chart.setJsLoggingEnabled(true);
+        chart.addClickListener((a,b) ->
+        ChartUtil.notification(a, b, config.data().getDatasets().get(a)));
+        chart.setWidth("450px");
+        return chart;
+    }
+    
 }

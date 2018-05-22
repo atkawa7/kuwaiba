@@ -3,9 +3,9 @@
 // Global variable overrides. Must be declared before importing Valo.
 
 // Defines the plaintext font size, weight and family. Font size affects general component sizing.
-$v-font-size: 13px !default;
-//$v-font-weight: 300;
-$v-font-family: lato-normal, sans-serif;
+$v-font-size: 12px !default;
+$v-font-weight: 300;
+//$v-font-family: "Open Sans", sans-serif;
 
 // Defines the border used by all components.
 //$v-border: 1px solid (v-shade 0.7);
@@ -118,8 +118,7 @@ $v-layout-spacing-horizontal: round($v-unit-size / 1.8) !default;
     }
 
     .h1{
-        color: gold;
-        font-size: 1em;
+        font-size: 32px;
     }
     
     .login-form {
@@ -171,6 +170,12 @@ $v-layout-spacing-horizontal: round($v-unit-size / 1.8) !default;
         position: absolute;
     }
     
+    .dashboard{
+        text-align: center;
+        vertical-align: middle;
+        padding-left: 37px;
+    }
+    
     .right-area {
       z-index:9999;
       position: absolute;
@@ -193,11 +198,48 @@ $v-layout-spacing-horizontal: round($v-unit-size / 1.8) !default;
       position: absolute;
       left: 0;
       height: 100%;
-      min-width: 30%;
-      background: #f0f0f0;
+      min-width: 35%;
+      background: #fff;
+      //overflow-y: auto !important;
       @include transition(all 300ms);
       @include transform(translatex(-100%));
     }
+    
+    .thix{
+        background: red !important;
+    }
+    
+    .button-header {
+        transition: all 0.5s;
+        cursor: pointer;
+    }
+
+    .button-header span {
+      cursor: pointer;
+      display: inline-block;
+      position: relative;
+      transition: 0.5s;
+    }
+
+    .button-header span:after {
+      //content: "("attr(title)")";
+      position: absolute;
+      opacity: 0;
+      top: 0;
+      right: -5px;
+      transition: 0.5s;
+    }
+
+      .button-header:hover span {
+        padding-right: 25px;
+        color:  #55d400;
+        font-size:20px;
+      }
+
+      .button-header:hover span:after {
+        opacity: 1;
+        right: 0;
+      }
     
     // Enables animation for opening left panel 
     .visible-left {
@@ -233,4 +275,6 @@ $v-layout-spacing-horizontal: round($v-unit-size / 1.8) !default;
     .v-button-selected {
         background: #999999;
     }
+    
+    
 }
