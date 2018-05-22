@@ -23,6 +23,7 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.NativeSelect;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import java.util.Collections;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
@@ -136,6 +137,8 @@ public class LinkInformationStep implements WizardStep {
                         ClassInfoLight selectedLinkClass = (ClassInfoLight) txtLinkClass.getValue();
                         
                         List<RemoteObjectLight> templates = wsBean.getTemplatesForClass(selectedLinkClass.getClassName(), ipAddress, sessionId);
+                        
+                        txtLinkTemplate.removeAllItems();
                         
                         for (RemoteObjectLight template : templates) {
                             txtLinkTemplate.addItem(template);

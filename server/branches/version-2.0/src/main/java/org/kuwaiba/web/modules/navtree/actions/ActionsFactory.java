@@ -26,6 +26,9 @@ public class ActionsFactory {
     static CreateInventoryObjectAction createInventoryObjectAction;
     static DeleteInventoryObjectAction deleteInventoryObjectAction;
     static MoreInformationAction showObjectIdAction;
+    static ConnectMirrorPortAction connectMirrorPortAction;
+    static ReleaseMirrorPortAction releaseMirrorPortAction;
+    static GetViewNavTreeAction getViewNavTreeAction;
         
     public static AbstractAction createCreateInventoryObjectAction() {
         if (createInventoryObjectAction == null)
@@ -43,5 +46,17 @@ public class ActionsFactory {
         if (showObjectIdAction == null)
             showObjectIdAction = new MoreInformationAction();
         return showObjectIdAction;
+    }
+    
+    public static ConnectMirrorPortAction createConnectMirrorPortAction() {
+        return connectMirrorPortAction == null ? connectMirrorPortAction = new ConnectMirrorPortAction() : connectMirrorPortAction;
+    }
+    
+    public static ReleaseMirrorPortAction createReleaseMirrorPortAction() {
+        return releaseMirrorPortAction == null ? releaseMirrorPortAction = new ReleaseMirrorPortAction() : releaseMirrorPortAction;
+    }
+    
+    public static GetViewNavTreeAction getViewNavTreeAction() {
+        return getViewNavTreeAction == null ? getViewNavTreeAction = new GetViewNavTreeAction() : getViewNavTreeAction;
     }
 }

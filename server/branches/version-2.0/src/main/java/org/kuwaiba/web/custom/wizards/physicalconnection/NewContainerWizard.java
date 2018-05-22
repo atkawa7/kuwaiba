@@ -100,7 +100,7 @@ public class NewContainerWizard extends Window implements WizardProgressListener
             templateId = -1L;
         
         InventoryObjectNode aObjectNode = (InventoryObjectNode) containerEndpointsStep.getTreeEndPointA().getValue();
-        InventoryObjectNode bObjectNode = (InventoryObjectNode) containerEndpointsStep.getTreeEndPointA().getValue();
+        InventoryObjectNode bObjectNode = (InventoryObjectNode) containerEndpointsStep.getTreeEndPointB().getValue();
         
         RemoteObjectLight endpointA = (RemoteObjectLight) aObjectNode.getObject();
         RemoteObjectLight endpointB = (RemoteObjectLight) bObjectNode.getObject();

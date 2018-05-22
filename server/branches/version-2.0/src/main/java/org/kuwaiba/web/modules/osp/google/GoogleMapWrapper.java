@@ -129,14 +129,14 @@ public class GoogleMapWrapper extends DragAndDropWrapper implements EmbeddableCo
     public void register() {
         if (parentComponent != null) {
             parentComponent.getEventBus().register(this);
-//            map.register();
+            map.register();
         }
     }
     
     public void unregister() {
         if (parentComponent != null) {
             parentComponent.getEventBus().unregister(this);
-//            map.unregister();
+            map.unregister();
         }
     }
     

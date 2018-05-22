@@ -32,7 +32,6 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.Reindeer;
 import com.vaadin.ui.themes.ValoTheme;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -84,11 +83,21 @@ public class ConnectLinksWindow extends Window {
         List<RemoteObjectLight> links;
         RemoteObjectLight [] containerEndpoints;        
         try {
+            /*
+            Important!20180521mon To Current Versions Links are special children
+            */
             links = this.parentComponent.getWsBean().getObjectSpecialChildren(
                     connection.getClassName(), 
                     connection.getOid(), 
                     Page.getCurrent().getWebBrowser().getAddress(), 
                     this.parentComponent.getApplicationSession().getSessionId());
+            
+            links.addAll(this.parentComponent.getWsBean().getObjectChildren(
+                    connection.getClassName(), 
+                    connection.getOid(), 
+                    -1,
+                    Page.getCurrent().getWebBrowser().getAddress(), 
+                    this.parentComponent.getApplicationSession().getSessionId()));
                         
             containerEndpoints = this.parentComponent.getWsBean().getConnectionEndpoints(
                     connection.getClassName(), 
@@ -179,7 +188,7 @@ public class ConnectLinksWindow extends Window {
     private void initTreeEndPointA(RemoteObjectLight object) {
         EndpointNode rootNodeA = new EndpointNode(object);
         treeEndpointA = new DynamicTree(rootNodeA, parentComponent);
-        treeEndpointA.setDragMode(Tree.TreeDragMode.NONE);
+////        treeEndpointA.setDragMode(Tree.TreeDragMode.NONE);
         rootNodeA.setTree(treeEndpointA);
         treeEndpointA.setSelectable(true);
         treeEndpointA.setImmediate(true);
@@ -381,7 +390,7 @@ public class ConnectLinksWindow extends Window {
     private void initTreeEndPointB(RemoteObjectLight object) {
         EndpointNode rootNodeB = new EndpointNode(object);
         treeEndpointB = new DynamicTree(rootNodeB, parentComponent);
-        treeEndpointB.setDragMode(Tree.TreeDragMode.NONE);
+////        treeEndpointB.setDragMode(Tree.TreeDragMode.NONE);
         rootNodeB.setTree(treeEndpointB);
         treeEndpointB.setSelectable(true);
         treeEndpointB.setImmediate(true);
@@ -427,21 +436,18 @@ public class ConnectLinksWindow extends Window {
     }
     
     private EndpointNode [] getASelectedNodes() {
-        return Arrays.asList(treeEndpointA.getValue()).toArray(new EndpointNode[0]);
-////        return ((Collection<EndpointNode>) treeEndpointA.getValue())
-////                .toArray(new EndpointNode[0]);
+        return ((Collection<EndpointNode>) treeEndpointA.getValue())
+                .toArray(new EndpointNode[0]);
     }
     
     private RemoteObjectLight [] getLinksSelected() {
-        return Arrays.asList(tblAvailableConnections.getValue()).toArray(new RemoteObjectLight[0]);
-////        return ((Collection<RemoteObjectLight>) tblAvailableConnections.getValue())
-////                .toArray(new RemoteObjectLight[0]);
+        return ((Collection<RemoteObjectLight>) tblAvailableConnections.getValue())
+                .toArray(new RemoteObjectLight[0]);
     }
     
     private EndpointNode [] getBSelectedNodes() {
-        return Arrays.asList(treeEndpointB.getValue()).toArray(new EndpointNode[0]);
-////        return ((Collection<EndpointNode>) treeEndpointB.getValue())
-////                .toArray(new EndpointNode[0]);
+        return ((Collection<EndpointNode>) treeEndpointB.getValue())
+                .toArray(new EndpointNode[0]);
     }
     
     private int currentNumberOfLinks() {
@@ -465,7 +471,6 @@ public class ConnectLinksWindow extends Window {
             else
                 return numberNodesB;
         }
-//        return 0;
     }
     
     private void updateLstResult() {
@@ -479,10 +484,10 @@ public class ConnectLinksWindow extends Window {
             RemoteObjectLight [] connections = getLinksSelected();
             EndpointNode [] bSelectedNodes = getBSelectedNodes();
             // 4 new labels for make a blank space
-//            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
-//            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
-//            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
-//            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
+            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
+            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
+            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
+            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
             
             for (int i = 0; i < rows; i += 1) {
                 String aSelectedObject;
@@ -623,7 +628,6 @@ public class ConnectLinksWindow extends Window {
             treeEndpointB.addValueChangeListener(generalValueChangeListener);
         }
     }
-    
     /*
     @Override
     public String getValidator() {
@@ -633,7 +637,7 @@ public class ConnectLinksWindow extends Window {
     @Override    
     public void close() {
         treeEndpointA.removeValueChangeListener(generalValueChangeListener);
-        //tblAvailableConnections.removeValueChangeListener(generalValueChangeListener);
+        tblAvailableConnections.removeValueChangeListener(generalValueChangeListener);
         treeEndpointB.removeValueChangeListener(generalValueChangeListener);
         super.close();
     }

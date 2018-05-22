@@ -114,7 +114,7 @@ class ApplicationView extends CustomComponent implements View {
             buttons();
             initLayouts();
             final ListManagerModule mdlListManager = new ListManagerModule(eventBus, wsBean, session);
-            //Component listType = mdlListManager.open();
+            Component listType = mdlListManager.open();
            
             final OutsidePlantModule mdlOutsidePlant = new OutsidePlantModule(eventBus, wsBean, session);
             final NavigationTreeModule mdlNavTree = new NavigationTreeModule(eventBus, wsBean, session);
@@ -139,13 +139,13 @@ class ApplicationView extends CustomComponent implements View {
             });
             
             btnNavigationTree.addClickListener(click -> {
-               // lytLeft.removeComponent(listType);
+                lytLeft.removeComponent(listType);
                 lytLeft.addComponent(navtree);
             });
             
             btnListType.addClickListener(click -> {
                 lytLeft.removeComponent(navtree);
-                //lytLeft.addComponent(listType);
+                lytLeft.addComponent(listType);
             });
             
             lytRight.addComponent(mdlPropertySheet.open());

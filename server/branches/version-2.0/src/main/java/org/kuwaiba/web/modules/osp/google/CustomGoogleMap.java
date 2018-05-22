@@ -132,7 +132,7 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
                 MarkerNode clickedMarkerNode = (MarkerNode) clickedMarker;
                 RemoteObjectLight clickedObjectNode = clickedMarkerNode.getRemoteObjectLight();
                 
-                //updatePropertySheet(clickedObjectNode);
+                updatePropertySheet(clickedObjectNode);
             }
         }
     };
@@ -194,7 +194,7 @@ public class CustomGoogleMap extends GoogleMap implements AbstractGISView,
             ConnectionPolyline clickedPhyConn = (ConnectionPolyline) clickedEdge;
             RemoteObjectLight clickedPhyConnObject = clickedPhyConn.getConnectionInfo();
 
-            //updatePropertySheet(clickedPhyConnObject);
+            updatePropertySheet(clickedPhyConnObject);
         }
     };
         

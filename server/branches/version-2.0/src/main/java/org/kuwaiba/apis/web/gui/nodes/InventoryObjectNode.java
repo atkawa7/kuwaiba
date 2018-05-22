@@ -101,10 +101,40 @@ public class InventoryObjectNode extends AbstractNode<RemoteObjectLight>{
 
     @Override
     public AbstractAction[] getActions() {
+        
+        if (getTree().getTopComponent().getWsBean().isSubclassOf(
+            ((RemoteObjectLight) getObject()).getClassName(), 
+            "GenericPhysicalPort", 
+            Page.getCurrent().getWebBrowser().getAddress(),
+            getTree().getTopComponent().getApplicationSession().getSessionId())) {
+            
+            return new AbstractAction[]{ 
+                ActionsFactory.createCreateInventoryObjectAction(), 
+                ActionsFactory.createDeleteInventoryObjectAction(), 
+                ActionsFactory.createShowObjectIdAction(),
+                ActionsFactory.createConnectMirrorPortAction(),
+                ActionsFactory.createReleaseMirrorPortAction()
+            };
+            
+        } else if (getTree().getTopComponent().getWsBean().isSubclassOf(
+            ((RemoteObjectLight) getObject()).getClassName(), 
+            "SpliceBox", 
+            Page.getCurrent().getWebBrowser().getAddress(),
+            getTree().getTopComponent().getApplicationSession().getSessionId())) {
+            
+            return new AbstractAction[]{ 
+                ActionsFactory.createCreateInventoryObjectAction(), 
+                ActionsFactory.createDeleteInventoryObjectAction(), 
+                ActionsFactory.createShowObjectIdAction(),
+                ActionsFactory.getViewNavTreeAction()
+            };
+        }
+            
         return new AbstractAction[]{ 
             ActionsFactory.createCreateInventoryObjectAction(), 
             ActionsFactory.createDeleteInventoryObjectAction(), 
-            ActionsFactory.createShowObjectIdAction() };
+            ActionsFactory.createShowObjectIdAction(),
+        };
     }
 
     @Override

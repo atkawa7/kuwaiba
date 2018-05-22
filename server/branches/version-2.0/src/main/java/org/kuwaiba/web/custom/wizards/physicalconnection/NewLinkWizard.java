@@ -103,7 +103,7 @@ public class NewLinkWizard extends Window implements WizardProgressListener, Wiz
             templateId = -1L;            
         
         InventoryObjectNode aObjectNode = (InventoryObjectNode) linkEndpointsStep.getTreeEndPointA().getValue();
-        InventoryObjectNode bObjectNode = (InventoryObjectNode) linkEndpointsStep.getTreeEndPointA().getValue();
+        InventoryObjectNode bObjectNode = (InventoryObjectNode) linkEndpointsStep.getTreeEndPointB().getValue();
         
         RemoteObjectLight endpointA = (RemoteObjectLight) aObjectNode.getObject();
         RemoteObjectLight endpointB = (RemoteObjectLight) bObjectNode.getObject();
@@ -137,8 +137,15 @@ public class NewLinkWizard extends Window implements WizardProgressListener, Wiz
             wizardCompleted = false;
             return;
         }
-        connectionId = existingWireContainerStep.isUseWireContainer() ? -1 : connectionId;
-        
+        if (existingWireContainerStep.isUseWireContainer()) {
+            if (connectionId != -1l)
+                Notification.show("The connection was created successfully", Notification.Type.HUMANIZED_MESSAGE);                
+            else
+                Notification.show("The connection was not created", Notification.Type.ERROR_MESSAGE);                
+            close();
+            return;            
+        }
+                
         if (connectionId != -1l) {
             ClassInfo connectionClass = null;
             try {
@@ -158,6 +165,8 @@ public class NewLinkWizard extends Window implements WizardProgressListener, Wiz
             Notification.show("The connection was created successfully", Notification.Type.HUMANIZED_MESSAGE);
             wizardCompleted = true;
             close();
+        } else {
+            Notification.show("The connection was not created", Notification.Type.ERROR_MESSAGE);
         }
     }
     

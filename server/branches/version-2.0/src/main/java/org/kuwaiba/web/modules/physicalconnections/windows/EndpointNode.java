@@ -83,7 +83,7 @@ public class EndpointNode extends InventoryObjectNode {
             for (RemoteObjectLight child : children) {
                 EndpointNode childNode = new EndpointNode(child);
                 childNode.setTree(getTree());
-//                getTree().setParent(childNode, this);
+                getTree().setParent(childNode, this);
             }
         }catch (ServerSideException ex) {
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);

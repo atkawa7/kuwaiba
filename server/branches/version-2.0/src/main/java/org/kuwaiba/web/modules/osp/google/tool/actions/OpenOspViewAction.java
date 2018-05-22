@@ -41,9 +41,13 @@ public class OpenOspViewAction extends AbstractComposedAction {
     private final Property.ValueChangeListener valueChangeListener;
     private MessageBox mbChooseView;
     private ViewInfoLight viewChoosed;
+    private final String caption;
+    private final String resourceId;
     
     public OpenOspViewAction(String caption, String resourceId) {
         super(caption, new ThemeResource(resourceId));
+        this.caption = caption;
+        this.resourceId = resourceId;
                 
         availableViews = new ListSelect("Choose a view");
                 
@@ -62,11 +66,14 @@ public class OpenOspViewAction extends AbstractComposedAction {
 
     @Override
     public void finalActionPerformed(Object sourceComponent, Object targetObject, Object selectedOption) {
+        
         try {
+            CustomGoogleMap map = ((GoogleMapWrapper) targetObject).getMap();
+            
             OutsidePlantComponent parentComponent = (OutsidePlantComponent) sourceComponent;
             parentComponent.addMainComponentToTooledComponent();
-            
-            CustomGoogleMap map = ((GoogleMapWrapper) targetObject).getMap();
+            ((GoogleMapWrapper) targetObject).initNewMap();
+            ((OutsidePlantComponent) sourceComponent).enableTools(true);
             
             if (selectedOption == null) {
                 Notification.show("Choose a view", Notification.Type.ERROR_MESSAGE);
@@ -80,7 +87,7 @@ public class OpenOspViewAction extends AbstractComposedAction {
                 Page.getCurrent().getWebBrowser().getAddress(), 
                 parentComponent.getApplicationSession().getSessionId());
             
-            map.newMap();
+////            map.newMap();
             map.render(view.getStructure());
             
             if (map.getUpdateView()) {
@@ -100,7 +107,7 @@ public class OpenOspViewAction extends AbstractComposedAction {
             }
             map.setUpdateView(false);
             ((GoogleMapWrapper) targetObject).setCurrentView(view);
-            parentComponent.enableTools(true);
+////            parentComponent.enableTools(true);
             Notification.show("Open OSP View", Notification.Type.TRAY_NOTIFICATION);
             
         } catch (ServerSideException ex) {
