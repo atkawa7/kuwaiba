@@ -33,7 +33,8 @@ public class GoogleGwtMapLabel {
             Point p = projection.fromLatLngToDivPixel(latLng);
             pnlLabel.getElement().getStyle().setPosition(Position.ABSOLUTE);
             pnlLabel.getElement().getStyle().setLeft(p.getX(), Unit.PX);
-            pnlLabel.getElement().getStyle().setTop(p.getY(), Unit.PX);            
+            pnlLabel.getElement().getStyle().setTop(p.getY(), Unit.PX);   
+            pnlLabel.getElement().getStyle().setHeight(35, Unit.PX);
             pnlLabel.clear();
             pnlLabel.add(htmlCaption);
         }
@@ -57,7 +58,7 @@ public class GoogleGwtMapLabel {
         
     public GoogleGwtMapLabel(MapWidget mapWidget, LatLng latLng, String caption) {
         this.caption = caption;
-        htmlCaption = new HTML("<b style=\"background-color:white\">" + caption + "</b>");
+        htmlCaption = new HTML("<b style=\"font-size: 20px; background-color:white\">" + caption + "</b>");
                         
         this.mapWidget = mapWidget;
         this.latLng = latLng;
@@ -85,6 +86,6 @@ public class GoogleGwtMapLabel {
     
     public void setCaption(String caption) {
         this.caption = caption;
-        htmlCaption.setHTML("<b style=\"background-color:white\">" + caption + "</b>");
+        htmlCaption.setHTML("<b style=\"font-size: 20px; background-color:white\">" + caption + "</b>");
     }
 }
