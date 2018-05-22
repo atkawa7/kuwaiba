@@ -73,7 +73,7 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
     /**
      * Default font
      */
-    public static final Font defaultFont = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
+    public static final Font DEFAULT_FONT = new Font(Font.SANS_SERIF, Font.PLAIN, 12);
     /**
      * Color to be assigned to the new lines 
      */

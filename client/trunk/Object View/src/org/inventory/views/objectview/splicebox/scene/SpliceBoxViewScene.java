@@ -20,6 +20,7 @@ import java.awt.Color;
 import java.awt.Point;
 import java.util.HashMap;
 import java.util.List;
+import java.util.TreeMap;
 import javax.swing.border.LineBorder;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObject;
@@ -34,7 +35,6 @@ import org.netbeans.api.visual.action.ActionFactory;
 import org.netbeans.api.visual.action.ConnectProvider;
 import org.netbeans.api.visual.action.WidgetAction;
 import org.netbeans.api.visual.layout.LayoutFactory;
-import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
@@ -55,11 +55,11 @@ public class SpliceBoxViewScene extends AbstractScene<LocalObjectLight, String> 
     /**
      * Dictionary with the pairs input port - Link connected to it
      */
-    private HashMap<LocalObjectLight, LocalObject> inputPorts;
+    private TreeMap<LocalObjectLight, LocalObject> inputPorts;
     /**
      * Dictionary with the pairs output port - Link connected to it
      */
-    private HashMap<LocalObjectLight, LocalObject> outputPorts;
+    private TreeMap<LocalObjectLight, LocalObject> outputPorts;
     /**
      * Dictionary containing the mirror ports of every input port
      */
@@ -78,8 +78,8 @@ public class SpliceBoxViewScene extends AbstractScene<LocalObjectLight, String> 
     private WidgetAction selectAction;
 
     public SpliceBoxViewScene() {
-        this.inputPorts = new HashMap<>();
-        this.outputPorts = new HashMap<>();
+        this.inputPorts = new TreeMap<>();
+        this.outputPorts = new TreeMap<>();
         this.mirrors = new HashMap<>();
         this.inputPortsContainer = new Widget(this);
         this.inputPortsContainer.setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.JUSTIFY, 2));
@@ -92,10 +92,13 @@ public class SpliceBoxViewScene extends AbstractScene<LocalObjectLight, String> 
         this.outputPortsContainer.setBorder(inputPortsContainer.getBorder());
         
         this.edgeLayer = new LayerWidget(this);
+        this.nodeLayer = new LayerWidget(this);
         
-        addChild(inputPortsContainer);
-        addChild(outputPortsContainer);
         addChild(edgeLayer);
+        addChild(nodeLayer);
+        nodeLayer.addChild(inputPortsContainer);
+        nodeLayer.addChild(outputPortsContainer);
+        
         
         selectAction = ActionFactory.createSelectAction(new CustomSelectProvider(this), true);
         
@@ -201,11 +204,9 @@ public class SpliceBoxViewScene extends AbstractScene<LocalObjectLight, String> 
     @Override
     protected Widget attachEdgeWidget(String e) {
         ConnectionWidget newEdge = new ConnectionWidget(this);
-        newEdge.setLineColor(Color.RED);
-        newEdge.setRouter(RouterFactory.createFreeRouter());
-        newEdge.setStroke(new BasicStroke(1));
+        newEdge.setStroke(new BasicStroke(4));
         edgeLayer.addChild(newEdge);
         validate();
-        return new ConnectionWidget(this);
+        return newEdge;
     }  
 }
