@@ -201,7 +201,9 @@ public interface WebserviceBeanLocal {
     public long createService(String serviceClass, String customerClass, long customerId, String[] attributes, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
     public long createCustomer(String serviceClass, String[] attributes, String[] attributeValues, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLight> getServices(String customerClass, long customerId, String ipAddress, String sessionId) throws ServerSideException;
-    // </editor-fold>
+    public RemoteObject getLinkConnectedToPort(String portClassName, long portId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getChildrenOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
+// </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
     public void setUserProperties(long oid, String userName, String password, String firstName,

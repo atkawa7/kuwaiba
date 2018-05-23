@@ -492,6 +492,32 @@ public interface BusinessEntityManager {
             throws ObjectNotFoundException, MetadataObjectNotFoundException;
 
     /**
+     * Gets all class and abstract class children of a given class to filter in 
+     * a hierarchy with root in the given parent.
+     * Use case: used in some class level and inventory level reports script 
+     * @param parentOid Object id of the root parent of the hierarchy
+     * @param parentClass Class name of the root parent of the hierarchy
+     * @param classToFilter Class name of the expected children
+     * @param maxResults Maximum number of results, -1 no limit
+     * @return The list of object instance of the given class to filter
+     * @throws MetadataObjectNotFoundException If the parent class is not found
+     * @throws ObjectNotFoundException If the parent is not found
+     */
+    public List<RemoteBusinessObjectLight> getChildrenOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException;
+    
+    /**
+     * Convenience method that returns the link connected to a port (if any). It serves to avoid calling {@link getSpecialAttribute} two times.
+     * @param portClassName The class of the port
+     * @param portId The id of the port
+     * @return The link connected to the port or null if there isn't any
+     * @throws BusinessObjectNotFoundException If the port could not be found
+     * @throws MetadataObjectNotFoundException If the class provided does not exist
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If The class provided is not a subclass of GenericPort
+     */
+    public RemoteBusinessObject getLinkConnectedToPort(String portClassName, long portId) 
+            throws MetadataObjectNotFoundException, ObjectNotFoundException, InvalidArgumentException;
+    /**
      * Checks if an object has a given number of special relationships with another object
      * @param objectClass Object class
      * @param objectId Object id

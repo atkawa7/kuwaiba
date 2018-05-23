@@ -42,6 +42,7 @@ import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.ConnectionManager;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.AnnotatedRemoteBusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObject;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLightList;
@@ -1219,6 +1220,39 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
+    public List<RemoteBusinessObjectLight> getChildrenOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException {
+        
+        List<RemoteBusinessObjectLight> res = new ArrayList<>();
+        
+        getChildrenOfClassRecursive(parentOid, parentClass, classToFilter, maxResults, res);
+        
+        return res;
+    }
+    
+    
+    @Override
+    public RemoteBusinessObject getLinkConnectedToPort(String portClassName, long portId) throws MetadataObjectNotFoundException, 
+            ObjectNotFoundException, InvalidArgumentException {
+        
+        if (!mem.isSubClass(Constants.CLASS_GENERICPORT, portClassName))
+            throw new InvalidArgumentException(String.format("Class %s is not a subclass of GenericPort", portClassName));
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            Node portNode = getInstanceOfClass(portClassName, portId);
+            
+            for (Relationship relatedToSpecialRelationship : portNode.getRelationships(RelTypes.RELATED_TO_SPECIAL)) {
+                if (relatedToSpecialRelationship.getProperty(Constants.PROPERTY_NAME).equals("endpointA")  //NOI18N
+                        || relatedToSpecialRelationship.getProperty(Constants.PROPERTY_NAME).equals("endpointB")) //NOI18N
+                    return Util.createRemoteObjectFromNode(relatedToSpecialRelationship.getStartNode()); //A port should have only one aEndpoint || bEndpoint relationship
+            }
+        }
+        
+        return null; //If the port does not have any connections attached to it
+    }
+    
+    @Override
     public boolean hasSpecialRelationship(String objectClass, long objectId, String relationshipName, int numberOfRelationships) 
             throws ObjectNotFoundException, MetadataObjectNotFoundException  {
         try (Transaction tx = graphDb.beginTx()) {
@@ -1775,6 +1809,35 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
         public void setAttributes(HashMap<String, String[]> attributes) {
             this.attributes = attributes;
+        }
+    }
+    
+    private void getChildrenOfClassRecursive(long parentOid, String parentClass, String classToFilter, int maxResults, List<RemoteBusinessObjectLight> res) 
+        throws MetadataObjectNotFoundException, ObjectNotFoundException {
+        
+        if (maxResults > 0 && res.size() == maxResults)
+            return;
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node parentNode = getInstanceOfClass(parentClass, parentOid);
+            Iterable<Relationship> relationshipsChildOf = parentNode.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING);
+            
+            for (Relationship relatioshipChildOf : relationshipsChildOf) {
+                Node child = relatioshipChildOf.getStartNode();
+                String childClassName = Util.getClassName(child);
+                
+                if (childClassName == null)
+                    throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found", child.getId()));
+                
+                if (mem.isSubClass(classToFilter, childClassName)) {
+                    res.add(new RemoteBusinessObjectLight(child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME), childClassName));
+                    
+                    if (maxResults > 0 && res.size() == maxResults)
+                        break;
+                }
+                getChildrenOfClassRecursive(child.getId(), childClassName, classToFilter, maxResults, res);
+            }
+            tx.success();
         }
     }
 }

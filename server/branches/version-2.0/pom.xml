@@ -62,6 +62,24 @@
             <version>0.9.4</version>
             <type>jar</type>
         </dependency>
+        
+        <!-- Visual API for reporting purposes -->
+        <dependency>
+            <groupId>com.googlecode.sarasvati.thirdparty.netbeans</groupId>
+            <artifactId>org-openide-util</artifactId>
+            <version>7.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.sarasvati.thirdparty.netbeans</groupId>
+            <artifactId>org-openide-util-lookup</artifactId>
+            <version>7.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codeartisans.thirdparties.swing</groupId>
+            <artifactId>org-netbeans-api-visual</artifactId>
+            <version>2.23.1</version>
+        </dependency>
+        
         <!--
         <dependency>
             <groupId>org.mindrot.jbcrypt</groupId>

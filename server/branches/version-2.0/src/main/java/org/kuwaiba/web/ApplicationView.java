@@ -17,7 +17,6 @@ package org.kuwaiba.web;
 
 import com.byteowls.vaadin.chartjs.ChartJs;
 import com.byteowls.vaadin.chartjs.config.BarChartConfig;
-import com.byteowls.vaadin.chartjs.config.LineChartConfig;
 import com.byteowls.vaadin.chartjs.config.PolarAreaChartConfig;
 import com.byteowls.vaadin.chartjs.data.BarDataset;
 import com.byteowls.vaadin.chartjs.data.Dataset;
@@ -27,7 +26,6 @@ import com.byteowls.vaadin.chartjs.options.InteractionMode;
 import com.byteowls.vaadin.chartjs.options.Position;
 import com.byteowls.vaadin.chartjs.options.scale.Axis;
 import com.byteowls.vaadin.chartjs.options.scale.DefaultScale;
-import com.byteowls.vaadin.chartjs.options.scale.LinearScale;
 import com.byteowls.vaadin.chartjs.options.scale.RadialLinearScale;
 import com.byteowls.vaadin.chartjs.utils.ColorUtils;
 import com.google.common.eventbus.EventBus;
@@ -36,21 +34,14 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
-import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
 import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
-import com.vaadin.ui.Notification.Type;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,6 +87,7 @@ class ApplicationView extends CustomComponent implements View {
     private Button btnHierarchyContainment;
     private Button btnNavigationTree;
     private Button btnPropertySheet;
+    private Button btnDashboard;
     private Button btnMap;
     private RemoteSession session;
     private boolean isMapAlreadyAdded;
@@ -114,16 +106,23 @@ class ApplicationView extends CustomComponent implements View {
             buttons();
             initLayouts();
             final ListManagerModule mdlListManager = new ListManagerModule(eventBus, wsBean, session);
-            Component listType = mdlListManager.open();
-           
             final OutsidePlantModule mdlOutsidePlant = new OutsidePlantModule(eventBus, wsBean, session);
             final NavigationTreeModule mdlNavTree = new NavigationTreeModule(eventBus, wsBean, session);
             final ContainmentManagerModule mdlContainment = new ContainmentManagerModule(eventBus, wsBean, session);
             final PropertySheetModule mdlPropertySheet = new PropertySheetModule(eventBus, wsBean, session);
             Component navtree = mdlNavTree.open();
-            
+            Component listType = mdlListManager.open();
+            VerticalLayout chartsLayout = addChartsLayout();
             //Main tool bar
             createToolbar();
+            btnDashboard.addClickListener(click -> {
+                if(!isMapAlreadyAdded){
+                    lytWorkArea.removeAllComponents();
+                    lytWorkArea.addComponent(chartsLayout);
+                    isMapAlreadyAdded = true;
+                }
+            });
+            
             btnMap.addClickListener(click -> {
                 if(!isMapAlreadyAdded){
                     lytWorkArea.removeAllComponents();
@@ -151,15 +150,15 @@ class ApplicationView extends CustomComponent implements View {
             lytRight.addComponent(mdlPropertySheet.open());
             
             HorizontalLayout toolBar = new HorizontalLayout();
-            //MainToolBar.addStyleName("thix");
-            toolBar.addComponents(btnNavigationTree, btnMap, btnListType, btnHierarchyContainment, btnPropertySheet, btnSingout);
+            
+            toolBar.addComponents(btnNavigationTree, btnDashboard, btnMap, btnListType, btnHierarchyContainment, btnPropertySheet, btnSingout);
             toolBar.setWidth("100%");
             toolBar.setComponentAlignment(btnSingout, Alignment.TOP_RIGHT);
             
             lytWorkArea = new CssLayout();
             lytWorkArea.setSizeFull();
             lytWorkArea.addStyleName("v-scrollable");
-            lytWorkArea.addComponent(addChartsLayout());
+            lytWorkArea.addComponent(chartsLayout);
             VerticalLayout mainLayout = new VerticalLayout(toolBar, lytWorkArea);
             mainLayout.setSizeFull();
             mainLayout.setExpandRatio(toolBar, 0.05f);
@@ -289,6 +288,11 @@ class ApplicationView extends CustomComponent implements View {
             }
         });
         
+        btnDashboard = new Button(FontAwesome.DASHBOARD);
+        btnDashboard.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+        btnDashboard.addStyleName("button-header");
+        btnDashboard.setDescription("Dashboard");
+        
         btnListType =  new Button(FontAwesome.LIST_ALT);
         btnListType.addStyleName(ValoTheme.BUTTON_BORDERLESS);
         btnListType.addStyleName("button-header");
@@ -307,38 +311,20 @@ class ApplicationView extends CustomComponent implements View {
         btnMap.setDescription("Outside Plant Module");
     }
 
-    private void popup(){
-        Window subWindow = new Window("Registrar Nueva Empresa");
-        subWindow.setResizable(false);
-        subWindow.setClosable(false);
-        VerticalLayout subContent = new VerticalLayout();
-        subContent.setMargin(true);
-        subContent.setSpacing(true);
-        // Use the resource
-        Image image = new Image(null, new ThemeResource(PATH));
-        subContent.addComponent(image); //put the image here.
-        subWindow.setContent(subContent);
-        subWindow.setModal(true);
-        subWindow.center(); // Center it in the browser window
-        getUI().addWindow(subWindow); // Open it in the UI
-    }
-    
     private VerticalLayout addChartsLayout(){
         
         VerticalLayout chartsLayout = new VerticalLayout();
         chartsLayout.setSizeUndefined();
-        
-        chartsLayout.addStyleName("dashboard");
         Label dummyMessage = new Label("Dashboard");
         dummyMessage.addStyleName(ValoTheme.LABEL_HUGE);
         chartsLayout.addComponent(dummyMessage);
         ChartJs ndaCoverageChart = addNdaCoverageChart();
         ChartJs activatedServicesLayout = addActivatedServicesLayout();
         ChartJs ipAddressesUsageChart = addIpAddressesUsageChart();
+        chartsLayout.addComponent(ipAddressesUsageChart);
         chartsLayout.addComponent(ndaCoverageChart);
         chartsLayout.addComponent(activatedServicesLayout);
-        chartsLayout.addComponent(ipAddressesUsageChart);
-        
+
         return chartsLayout;
     }
     

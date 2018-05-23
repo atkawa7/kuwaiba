@@ -1615,6 +1615,39 @@ public class WebserviceBean implements WebserviceBeanLocal {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    
+    @Override
+    public RemoteObject getLinkConnectedToPort(String portClassName, long portId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator"); //NOI18N
+        try {
+            aem.validateCall("getLinkConnectedToPort", ipAddress, sessionId); //NOI18N
+            
+            RemoteBusinessObject connectedLink = bem.getLinkConnectedToPort(portClassName, portId);
+            
+            if (connectedLink == null)
+                return null;
+            else
+                return new RemoteObject(connectedLink);
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public List<RemoteObjectLight> getChildrenOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults, String ipAddress, String sessionId) 
+        throws ServerSideException {
+        
+        if (bem == null || aem == null)
+            throw new ServerSideException("Can't reach the backend. Contact your administrator");
+        try {
+            aem.validateCall("getChildrenOfClassLightRecursive", ipAddress, sessionId);
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getChildrenOfClassLightRecursive(parentOid, parentClass,classToFilter, maxResults));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">

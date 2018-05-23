@@ -18,6 +18,7 @@ package org.kuwaiba.interfaces.ws.toserialize.business;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.business.RemoteBusinessObjectLight;
@@ -28,7 +29,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.Validator;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteObjectLight implements Serializable {
+public class RemoteObjectLight implements Serializable, Comparable<RemoteObjectLight> {
     /**
      * Object's oid
      */
@@ -127,10 +128,19 @@ public class RemoteObjectLight implements Serializable {
     public boolean equals(Object obj){
         if (obj == null)
             return false;
-        if (!(obj instanceof RemoteObjectLight))
-            return false;
-        if (((RemoteObjectLight)obj).getOid() == getOid())
-            return true;
-        return false;
+        return RemoteObjectLight.class.isInstance(obj) ? (((RemoteObjectLight)obj).getOid() == getOid()) : false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (int) (this.oid ^ (this.oid >>> 32));
+        hash = 37 * hash + Objects.hashCode(this.className);
+        return hash;
+    }
+
+    @Override
+    public int compareTo(RemoteObjectLight o) {
+        return name.compareTo(o.getName());
     }
 }
