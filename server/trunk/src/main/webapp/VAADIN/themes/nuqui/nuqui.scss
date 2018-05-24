@@ -64,6 +64,7 @@ $v-layout-margin-left: $v-layout-margin-top !default;
 $v-layout-spacing-vertical: round($v-unit-size / 1.8) !default;
 $v-layout-spacing-horizontal: round($v-unit-size / 1.8) !default;
 
+$v-field-background-color: #ccffe6;
 //nice pink color color: #eb2977;
 
 @import "../valo/valo.scss";
@@ -232,5 +233,139 @@ $v-layout-spacing-horizontal: round($v-unit-size / 1.8) !default;
     
     .v-button-selected {
         background: #999999;
+    }
+    // PROCESS MANAGER STYLE DEFINITION
+    .v-layout {
+        padding: 0 0 0 0;      
+    }
+    
+    .processmanager {
+        .v-layout {
+            /*font-size: 24px;*/
+            padding: 0 0 0 0;
+        }       
+        
+        .v-button-activity {
+            border-radius: 0px;
+            /*font-size: 17px;*/
+            text-align: left;
+            /*font-weight: bold;*/
+            background: transparent;
+            box-shadow: 0px 0px 0px 0px;
+            
+            background-color: Transparent;
+            background-repeat:no-repeat;
+            border: none;
+            cursor:pointer;
+            overflow: hidden;
+            outline:none;
+        }
+        
+        .v-button-activity-current {
+            background: #d1e7cd;                        
+        }
+                        
+        .v-menubar { 
+            /*font-size: 21px;*/
+        }
+            .v-menubar-submenu { 
+                                
+            }
+                .v-menubar-menuitem { 
+                    border-radius: 0px;
+                }
+                
+        .v-label {
+            /*font-size: 24pt;*/
+            line-height: 24pt;
+            padding: 5px;
+        }
+    }
+    
+    .activitylist {
+        .v-layout {
+        }
+    }
+    
+    .formmanager {
+        .v-vertical {
+            font-size: 14px;            
+        }
+        
+        .v-label.empty {
+            border-radius: 0px;
+            border: 0px solid white;
+        }
+
+        .v-label {
+            font-size: 11pt;
+            line-height: 11pt;
+            padding: 5px 5px 5px 5px; 
+            padding-bottom: 15px;
+            margin: 5px 5px 5px 5px; 
+        }
+
+        .v-label.bold {
+            font-weight: bold;        
+        }
+
+        .v-label.title {
+            color: green;
+            font-size: 24pt;
+        }
+
+        .v-label.subtitle {
+            color: green;
+        }
+
+        .v-verticallayout, .v-horizontallayout, .v-gridlayout {
+            padding: 1px 1px 1px 1px;
+            margin: 1px 1px 1px 1px;
+        }
+
+        .v-button {
+            border: 2px solid lightgray;
+            font-size: 11pt;
+            line-height: 11pt;
+            padding: 5px 5px 5px 5px; 
+            padding-bottom: 15px;
+            margin: 5px 5px 5px 5px; 
+            height: 30px;
+        }
+
+        .v-textfield, .v-datefield, .v-filterselect { 
+            font-size: 11pt;
+            line-height: 11pt;
+
+            height: 40px;
+            width: 250px;
+            padding: 1px 1px 1px 1px;
+            padding-bottom: 10px;
+            background-color: $v-field-background-color;
+            margin: 1px 1px 1px 1px; 
+        }
+
+        .v-filterselect-input, .v-filterselect-button, .v-datefield-textfield, .v-datefield-button {
+            background-color: $v-field-background-color;        
+        }
+
+        .v-grid-cell {
+            background-color: $v-field-background-color;
+
+        }
+
+        .v-image {
+            padding-left: 30px;        
+            padding-bottom: 30px;
+            margin: 5px 5px 5px 5px; 
+        }
+    }
+    
+    .darklayout {
+        .v-layout {
+        }                
+        .addpadding {
+            padding: 100px 50px;            
+        }
     }
 }

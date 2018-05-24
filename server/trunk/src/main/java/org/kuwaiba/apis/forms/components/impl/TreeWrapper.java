@@ -33,7 +33,11 @@ public class TreeWrapper {
     private final TreeData<RemoteObjectLight> treeData;
     private final TreeDataProvider<RemoteObjectLight> treeDataProvider;
     
+    private final HierarchyProvider hierarchyProvider;
+    
     public TreeWrapper() {
+        hierarchyProvider = ObjectHierarchyProvider.getInstance();
+        
         tree = new Tree();
         tree.setSizeUndefined();
         
@@ -41,10 +45,7 @@ public class TreeWrapper {
         treeDataProvider = new TreeDataProvider(treeData);
         
         RemoteObjectLight root = new RemoteObjectLight(-1, "DummyRoot", "DummyRoot");
-//        root.setClassName("DummyRoot"); //NOI18N
-//        root.setName("DummyRoot"); //NOI18N
-//        root.setOid(-1);
-        
+                
         tree.setDataProvider(treeDataProvider);
                 
         treeData.addItem(null, root);
@@ -66,7 +67,7 @@ public class TreeWrapper {
     }
     
     public void addChildren(RemoteObjectLight parent) {
-        List<RemoteObjectLight> children = null;//KuwaibaClient.getInstance().getObjectChildren(parent.getClassName(), parent.getOid());
+        List<RemoteObjectLight> children = hierarchyProvider.getChildren(parent);
         
         if (children == null)
             return;
@@ -76,7 +77,7 @@ public class TreeWrapper {
             if (!treeData.contains(child))
                 treeData.addItem(parent, child);
             
-            List<RemoteObjectLight> subchildren = null;//KuwaibaClient.getInstance().getObjectChildren(child.getClassName(), child.getOid());
+            List<RemoteObjectLight> subchildren = hierarchyProvider.getChildren(child);
             
             if (subchildren == null)
                 continue;

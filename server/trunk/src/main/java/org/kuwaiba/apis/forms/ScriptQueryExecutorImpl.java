@@ -28,7 +28,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
- *
+ * An Implementation of Script Query Executor to the Web Client of Kuwaiba
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
@@ -97,27 +97,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                 }
             }
         }
-        return null;        
+        return null;
     }
-//    public List<ClassInfoLight> getSubClassesLight(String className, boolean includeAbstractClasses, boolean includeSelf) {
-//        try {
-//            
-//            return KuwaibaClient.getInstance().getKuwaibaService().getSubClassesLight(className, includeAbstractClasses, includeSelf, 
-//                KuwaibaClient.getInstance().getRemoteSession().getSessionId());
-//            
-//        } catch (ServerSideException_Exception ex) {
-//            
-//            return null;
-//        }
-//    }
-//    
-//    public List<RemoteObjectLight> getSpecialAttribute(String objectClassName, long objectId, String attributeName) {
-//        try {
-//            return KuwaibaClient.getInstance().getKuwaibaService().getSpecialAttribute(objectClassName, objectId, attributeName,
-//                    KuwaibaClient.getInstance().getRemoteSession().getSessionId());
-//        } catch (ServerSideException_Exception ex) {
-//            
-//            return null;
-//        }
-//    }
+    
 }

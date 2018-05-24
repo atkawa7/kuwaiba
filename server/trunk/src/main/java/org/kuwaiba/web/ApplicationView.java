@@ -39,6 +39,7 @@ import org.kuwaiba.web.modules.lists.ListManagerModule;
 import org.kuwaiba.web.modules.navtree.NavigationTreeModule;
 import org.kuwaiba.web.modules.osp.OutsidePlantModule;
 import org.kuwaiba.web.processes.ProcessInstanceView;
+import org.kuwaiba.web.view.MainView;
 
 /**
  * Main application component
@@ -67,7 +68,9 @@ class ApplicationView extends CustomComponent implements View {
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         if (true) {
             //getUI().getNavigator().navigateTo(FormManagerView.VIEW_NAME);
-            getUI().getNavigator().navigateTo(ProcessInstanceView.VIEW_NAME);
+            //getUI().getNavigator().navigateTo(ProcessInstanceView.VIEW_NAME);
+            getUI().getNavigator().navigateTo(MainView.VIEW_NAME);
+            
             return;
         }
         

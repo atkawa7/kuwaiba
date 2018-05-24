@@ -16,8 +16,10 @@
 package org.kuwaiba.interfaces.ws.toserialize.application;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.kuwaiba.apis.persistence.util.StringPair;
 
 /**
  * Wrapper of {@link org.kuwaiba.apis.persistence.application.process.Artifact}. Every process activity has at least one artifact. An artifact is the result of 
@@ -43,6 +45,11 @@ public class RemoteArtifact implements Serializable {
      * containing a binary file
      */
     private byte[] content;
+    /**
+     * In the current process. Information which can be shared between an activity 
+     * instance and to other activity instances or the process instance.
+     */
+    private List<StringPair> sharedInformation;
 
     public RemoteArtifact() { }
     
@@ -75,5 +82,13 @@ public class RemoteArtifact implements Serializable {
 
     public void setContent(byte[] content) {
         this.content = content;
+    }
+    
+    public List<StringPair> getSharedInformation() {
+        return sharedInformation;
+    }
+    
+    public void setSharedInformation(List<StringPair> sharedInformation) {
+        this.sharedInformation = sharedInformation;
     }
 }

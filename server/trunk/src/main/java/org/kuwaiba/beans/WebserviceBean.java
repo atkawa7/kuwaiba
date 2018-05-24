@@ -3677,11 +3677,30 @@ public class WebserviceBean implements WebserviceBeanLocal {
             
             if (collection != null && !collection.isEmpty()) {
                 if (collection.get(0) instanceof BusinessObjectLight) {
+                    
                     List<RemoteObjectLight> result = new ArrayList();                    
                     
                     for (Object item : collection)
                         result.add(new RemoteObjectLight((BusinessObjectLight) item));
                     
+                    return new RemoteScriptQueryResultCollection(result);
+                    
+                } else if (collection.get(0) instanceof ClassMetadataLight) {
+                    
+                    List<ClassInfoLight> result = new ArrayList();
+                    
+                    for (Object item : collection) {
+                        ClassMetadataLight classMetadataLight = (ClassMetadataLight) item;
+                        
+                        List<Validator> validators = new ArrayList();
+                        
+                        for (String mapping : bre.getSubclassOfValidators().keySet()) {
+                            
+                            if (mem.isSubClass(mapping, classMetadataLight.getName()))
+                                validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
+                        }
+                        result.add(new ClassInfoLight(classMetadataLight, validators.toArray(new Validator[0])));
+                    }
                     return new RemoteScriptQueryResultCollection(result);
                 }
             }

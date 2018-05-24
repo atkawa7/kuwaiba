@@ -16,6 +16,7 @@
 package org.kuwaiba.interfaces.ws.toserialize.application;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -50,6 +51,11 @@ public class RemoteArtifactDefinition implements Serializable {
      * The actual definition. It's an XML document 
      */
     private byte[] definition;
+    /**
+     * In the current process. Information which can be shared between an activity 
+     * instance and to other activity instances or the process instance.
+     */
+    private List<String> sharedInformation;
 
     public RemoteArtifactDefinition(long id, String name, String description, String version, int type, byte[] definition) {
         this.id = id;
@@ -106,5 +112,13 @@ public class RemoteArtifactDefinition implements Serializable {
 
     public void setDefinition(byte[] definition) {
         this.definition = definition;
+    }
+    
+    public List<String> getSharedInformation() {
+        return sharedInformation;
+    }
+    
+    public void setSharedInformation(List<String> sharedInformation) {
+        this.sharedInformation = sharedInformation;
     }
 }

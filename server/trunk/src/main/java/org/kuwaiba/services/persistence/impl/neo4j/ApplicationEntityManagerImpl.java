@@ -52,6 +52,7 @@ import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.ConnectionManager;
+import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.BusinessRule;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
@@ -107,6 +108,7 @@ import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.collection.Iterators;
+import org.openide.util.Exceptions;
 
 /**
  * Application Entity Manager reference implementation
@@ -3074,9 +3076,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             environmentParameters.setVariable("classLabel", classLabel); //NOI18N
             environmentParameters.setVariable("Constants", Constants.class); //NOI18N
             environmentParameters.setVariable("Direction", Direction.class); //NOI18N
-            environmentParameters.setVariable("RelTypes", RelTypes.class); //NOI18N
+            environmentParameters.setVariable("RelTypes", RelTypes.class); //NOI18N            
             environmentParameters.setVariable("scriptParameters", scriptParameters); //NOI18N
-                     
+            environmentParameters.setVariable("Iterators", Iterators.class); //NOI18N
+                                 
             GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
             Object theResult = shell.evaluate(script);
             
