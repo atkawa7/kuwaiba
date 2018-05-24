@@ -72,13 +72,14 @@ public class NewProcessInstanceView extends HorizontalSplitPanel implements Butt
                     activities.get(nextActivity.getNextActivity()).addStyleName("activity-current");
                     if (nextActivity != null)
                         renderArtifact(nextActivity.getNextActivity());
-                    else
-                        ((MainView) getUI().getContent()).setSecondComponent(new ProcessInstancesView(UtilProcess.getProcessInstances(UtilProcess.getProcessDefinition1()), wsBean));
+                                            
                     return;
                 }
             }
             nextActivity = nextActivity.getNextActivity();
-        }        
+        }
+        if (nextActivity == null)
+            ((MainView) getUI().getContent()).setSecondComponent(new ProcessInstancesView(UtilProcess.getProcessInstances(UtilProcess.getProcessDefinition1()), wsBean));
     }
         
     private void render(VerticalLayout activitiesLayout, RemoteActivityDefinition nextActivity) {
