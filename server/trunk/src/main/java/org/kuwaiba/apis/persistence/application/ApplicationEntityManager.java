@@ -1472,7 +1472,7 @@ public interface ApplicationEntityManager {
     * @return The artifact corresponding to the given activity
     * @throws ApplicationObjectNotFoundException If the process instance or activity couldn't be found.
     */
-    public Artifact getArtifactForActivity(long processInstanceId, String activityId) throws ApplicationObjectNotFoundException;
+    public Artifact getArtifactForActivity(long processInstanceId, long activityId) throws ApplicationObjectNotFoundException;
     /**
     * Given an activity definition, returns the artifact definition associated to it
     * @param processDefinitionId The id of the process the activity is related to
@@ -1480,7 +1480,7 @@ public interface ApplicationEntityManager {
     * @return An object containing the artifact definition
     * @throws ApplicationObjectNotFoundException If the process or the activity could not be found
     */
-    public ArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, String activityDefinitionId) throws ApplicationObjectNotFoundException;
+    public ArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, long activityDefinitionId) throws ApplicationObjectNotFoundException;
     /**
     * Saves the artifact generated once an activity has been completed (for example, the user filled in a form). 
     * @param processInstanceId The process instance the activity belongs to
@@ -1489,7 +1489,7 @@ public interface ApplicationEntityManager {
     * @throws ApplicationObjectNotFoundException If the process could not be found or if the activity definition could not be found
     * @throws InvalidArgumentException If the activity had been already executed,  of there's a mismatch in the artifact versions or if the user is not an authorized actor to carry on with the activity
     */
-    public void commitActivity(long processInstanceId, String activityDefinitionId, RemoteArtifact artifact) 
+    public void commitActivity(long processInstanceId, long activityDefinitionId, RemoteArtifact artifact) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
     * Requests for the next activity to be executed in a process instance.

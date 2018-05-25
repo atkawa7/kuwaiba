@@ -113,6 +113,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinitio
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
@@ -137,6 +138,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.ServiceLevelCorrelatedInfo
 import org.kuwaiba.interfaces.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.web.view.ProcessTest;
 
 /**
  * Session bean to give primary support to the web service calls
@@ -5197,14 +5199,15 @@ public class WebserviceBean implements WebserviceBeanLocal {
         //<editor-fold desc="Process API" defaultstate="collapsed">
 
     @Override
-    public RemoteArtifact getArtifactForActivity(long processInstanceId, String activityId, 
+    public RemoteArtifact getArtifactForActivity(long processInstanceId, long activityId, 
             String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getArtifactForActivity", ipAddress, sessionId);
             Artifact artifact = aem.getArtifactForActivity(processInstanceId, activityId);
-            return new RemoteArtifact(artifact.getId(), artifact.getName(), artifact.getContentType(), artifact.getContent());
+//            return new RemoteArtifact(artifact.getId(), artifact.getName(), artifact.getContentType(), artifact.getContent());
+            return ProcessTest.getInstance().getArtifactForActivity(processInstanceId, activityId);
         } catch(InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -5212,28 +5215,30 @@ public class WebserviceBean implements WebserviceBeanLocal {
 
     @Override
     public RemoteArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, 
-            String activityDefinitionId, String ipAddress, String sessionId) throws ServerSideException {
+            long activityDefinitionId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getArtifactDefinitionForActivity", ipAddress, sessionId);
             ArtifactDefinition artifactDefinition = aem.getArtifactDefinitionForActivity(processDefinitionId, activityDefinitionId);
-            return new RemoteArtifactDefinition(artifactDefinition.getId(), artifactDefinition.getName(), 
-                    artifactDefinition.getDescription(), artifactDefinition.getVersion(), artifactDefinition.getType(), 
-                    artifactDefinition.getDefinition());
+//            return new RemoteArtifactDefinition(artifactDefinition.getId(), artifactDefinition.getName(), 
+//                    artifactDefinition.getDescription(), artifactDefinition.getVersion(), artifactDefinition.getType(), 
+//                    artifactDefinition.getDefinition());
+            return ProcessTest.getInstance().getArtifactDefinitionForActivity(processDefinitionId, activityDefinitionId);
         } catch(InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
 
     @Override
-    public void commitActivity(long processInstanceId, String activityDefinitionId, 
+    public void commitActivity(long processInstanceId, long activityDefinitionId, 
             RemoteArtifact artifact, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("commitActivity", ipAddress, sessionId);
-            aem.commitActivity(processInstanceId, activityDefinitionId, artifact);
+//            aem.commitActivity(processInstanceId, activityDefinitionId, artifact);
+            ProcessTest.getInstance().commitActivity(processInstanceId, activityDefinitionId, artifact);
         } catch(InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -5247,7 +5252,8 @@ public class WebserviceBean implements WebserviceBeanLocal {
         try {
             aem.validateWebServiceCall("getNextActivityForProcessInstance", ipAddress, sessionId);
             ActivityDefinition activityDefinition = aem.getNextActivityForProcessInstance(processInstanceId);
-            return RemoteActivityDefinition.asRemoteActivityDefinition(activityDefinition);
+//            return RemoteActivityDefinition.asRemoteActivityDefinition(activityDefinition);
+            return ProcessTest.getInstance().getNextActivityForProcessInstance(processInstanceId);
         } catch(InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -5258,7 +5264,8 @@ public class WebserviceBean implements WebserviceBeanLocal {
             String processInstanceDescription, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateWebServiceCall("createProcessInstance", ipAddress, sessionId);
-            return aem.createProcessInstance(processDefinitionId, processInstanceName, processInstanceDescription);
+//            return aem.createProcessInstance(processDefinitionId, processInstanceName, processInstanceDescription);
+            return ProcessTest.getInstance().createProcessInstance(processDefinitionId, processInstanceName, processInstanceDescription);
             
         } catch(InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -5273,11 +5280,13 @@ public class WebserviceBean implements WebserviceBeanLocal {
             aem.validateWebServiceCall("getProcessDefinition", ipAddress, sessionId);
             ProcessDefinition processDefinition = aem.getProcessDefinition(processDefinitionId);
             
-            
+            return ProcessTest.getInstance().getProcessDefinition(processDefinitionId);
+            /*
             return new RemoteProcessDefinition(processDefinitionId, processDefinition.getName(), 
                     processDefinition.getDescription(), processDefinition.getCreationDate(), 
                     processDefinition.getVersion(), processDefinition.isEnabled(), 
                     RemoteActivityDefinition.asRemoteActivityDefinition(processDefinition.getStartAction()));
+            */
         } catch(InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -5321,6 +5330,47 @@ public class WebserviceBean implements WebserviceBeanLocal {
         }
     }
     
+    @Override
+    public List<RemoteProcessInstance> getProcessInstances(long processDefinitionId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getProcessInstances", ipAddress, sessionId);
+            
+            return ProcessTest.getInstance().getProcessInstances(processDefinitionId);
+            
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }        
+    }
+    
+    @Override
+    public List<RemoteProcessDefinition> getProcessDefinitions(String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getProcessDefinitions", ipAddress, sessionId);
+            
+            return ProcessTest.getInstance().getProcessDefinitions();
+            
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteProcessInstance getProcessInstance(long processInstanceId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getProcessInstance", ipAddress, sessionId);
+            
+            return ProcessTest.getInstance().getProcessInstance(processInstanceId);
+            
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
         //</editor-fold>
         // <editor-fold defaultstate="collapsed" desc="Fault Management Integration">
 

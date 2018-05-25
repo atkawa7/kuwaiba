@@ -7984,7 +7984,7 @@ public class KuwaibaService {
          */
         @WebMethod(operationName = "commitActivity")
         public void commitActivity(@WebParam(name="processInstanceId")long processInstanceId, 
-                @WebParam(name="activityDefinitionId")String activityDefinitionId, 
+                @WebParam(name="activityDefinitionId")long activityDefinitionId, 
                 @WebParam(name="artifact")RemoteArtifact artifact, @WebParam(name="sessionId")String sessionId) throws ServerSideException {
             try {
                 wsBean.commitActivity(processInstanceId, activityDefinitionId, artifact, getIPAddress(), sessionId);
@@ -8008,7 +8008,7 @@ public class KuwaibaService {
          */
         @WebMethod(operationName = "getArtifactDefinitionForActivity")
         public RemoteArtifactDefinition getArtifactDefinitionForActivity(@WebParam(name="processDefinitionId")long processDefinitionId, 
-                @WebParam(name="activityDefinitionId")String activityDefinitionId, 
+                @WebParam(name="activityDefinitionId")long activityDefinitionId, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
             try {
                 return wsBean.getArtifactDefinitionForActivity(processDefinitionId, activityDefinitionId, getIPAddress(), sessionId);
@@ -8032,7 +8032,7 @@ public class KuwaibaService {
          */
         @WebMethod(operationName = "getArtifactForActivity")
         public RemoteArtifact getArtifactForActivity(@WebParam(name="processinstanceId")long processInstanceId, 
-                @WebParam(name="activityId")String activityId, 
+                @WebParam(name="activityId")long activityId, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
             try {
                 return wsBean.getArtifactForActivity(processInstanceId, activityId, getIPAddress(), sessionId);

@@ -14,22 +14,28 @@
  */
 package org.kuwaiba.web.view;
 
+import com.vaadin.server.Page;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import java.util.List;
-import javax.inject.Inject;
 import org.kuwaiba.beans.WebserviceBeanLocal;
+import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.openide.util.Exceptions;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ProcessInstancesView extends VerticalLayout {
+    private RemoteProcessDefinition processDefinition;
     private List<RemoteProcessInstance> processes;
     private Grid<RemoteProcessInstance> grid;
         
@@ -38,9 +44,10 @@ public class ProcessInstancesView extends VerticalLayout {
     
     private final WebserviceBeanLocal wsBean;
             
-    public ProcessInstancesView(List<RemoteProcessInstance> processes, WebserviceBeanLocal wsBean) {
+    public ProcessInstancesView(RemoteProcessDefinition processDefinition, List<RemoteProcessInstance> processes, WebserviceBeanLocal wsBean) {
         setStyleName("darklayout");
         setSizeFull();
+        this.processDefinition = processDefinition;
         this.processes = processes;
         this.wsBean = wsBean;
         initView();
@@ -60,13 +67,40 @@ public class ProcessInstancesView extends VerticalLayout {
         btnCreateProcessInstance.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                ((MainView) getUI().getContent()).setSecondComponent(new NewProcessInstanceView(UtilProcess.getProcessDefinition1(), wsBean));
+                MessageBox.getInstance().showMessage(new Label("Create an instance of the process")).addClickListener(new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        if (MessageBox.getInstance().continues()) {
+                            try {
+                                long id = wsBean.createProcessInstance
+                                        (processDefinition.getId(),
+                                                "",
+                                                "",
+                                                Page.getCurrent().getWebBrowser().getAddress(),
+                                                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+                                
+                                RemoteProcessInstance processInstance = wsBean.getProcessInstance(
+                                        id, 
+                                        Page.getCurrent().getWebBrowser().getAddress(),
+                                        ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+                                
+                                ((MainView) getUI().getContent()).setSecondComponent(new NewProcessInstanceView(processInstance, processDefinition, wsBean));
+                                                                                                
+                            } catch (ServerSideException ex) {
+                                Exceptions.printStackTrace(ex);
+                            }
+                            
+                        }
+                    }
+                });
+                    
             }
         });
         grid = new Grid<>();
         grid.setWidth("100%");
         
         grid.setItems(processes);
+        grid.addColumn(RemoteProcessInstance::getId).setCaption("Process Instance Id");
         grid.addColumn(RemoteProcessInstance::getName).setCaption("Order number");
         
         tools.addComponent(txtFilter);        

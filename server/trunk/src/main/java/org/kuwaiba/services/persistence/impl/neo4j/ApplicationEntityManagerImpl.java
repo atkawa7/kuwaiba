@@ -4436,17 +4436,17 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     //<editor-fold desc="Process API" defaultstate="collapsed">
 
     @Override
-    public Artifact getArtifactForActivity(long processInstanceId, String activityId) {
+    public Artifact getArtifactForActivity(long processInstanceId, long activityId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public ArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, String activityDefinitionId) {
+    public ArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, long activityDefinitionId) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void commitActivity(long processInstanceId, String activityDefinitionId, RemoteArtifact artifact) {
+    public void commitActivity(long processInstanceId, long activityDefinitionId, RemoteArtifact artifact) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

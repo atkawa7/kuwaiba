@@ -32,7 +32,7 @@ public class RemoteActor implements Serializable {
     /**
      * The id of the actor. If it is an external agent, this value will be -1
      */
-    private int id;
+    private long id;
     /**
      * Alias used to identify the actor. Most of the times, it will be the name of the user/group
      */
@@ -42,17 +42,17 @@ public class RemoteActor implements Serializable {
      */
     private int type;
 
-    public RemoteActor(int id, String name, int type) {
+    public RemoteActor(long id, String name, int type) {
         this.id = id;
         this.name = name;
         this.type = type;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

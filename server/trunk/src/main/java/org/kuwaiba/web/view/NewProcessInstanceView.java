@@ -22,6 +22,7 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import java.util.HashMap;
+import java.util.List;
 import org.kuwaiba.apis.forms.FormRenderer;
 import org.kuwaiba.apis.forms.elements.FormLoader;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
@@ -45,13 +46,13 @@ public class NewProcessInstanceView extends HorizontalSplitPanel implements Butt
     
     private final WebserviceBeanLocal wsBean;
     
-    public NewProcessInstanceView(RemoteProcessDefinition processDefinition, WebserviceBeanLocal wsBean) {
+    public NewProcessInstanceView(RemoteProcessInstance processInstance, RemoteProcessDefinition processDefinition, WebserviceBeanLocal wsBean) {
         setStyleName("processmanager");
         addStyleName("activitylist");
         setSizeFull();
         this.wsBean = wsBean;
         this.processDefinition = processDefinition;
-        processInstance = UtilProcess.getProcessInstance(processDefinition);
+        this.processInstance = processInstance;
         activities = new HashMap();
                         
         setSplitPosition(20, Unit.PERCENTAGE);
@@ -78,8 +79,19 @@ public class NewProcessInstanceView extends HorizontalSplitPanel implements Butt
             }
             nextActivity = nextActivity.getNextActivity();
         }
-        if (nextActivity == null)
-            ((MainView) getUI().getContent()).setSecondComponent(new ProcessInstancesView(UtilProcess.getProcessInstances(UtilProcess.getProcessDefinition1()), wsBean));
+        if (nextActivity == null) {
+            try {
+                 List<RemoteProcessInstance>  processInstances = wsBean.getProcessInstances(
+                        processDefinition.getId(),
+                        Page.getCurrent().getWebBrowser().getAddress(),
+                        ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+                
+                ((MainView) getUI().getContent()).setSecondComponent(new ProcessInstancesView(processDefinition, processInstances, wsBean));
+            } catch (ServerSideException ex) {
+                NotificationsUtil.showError(ex.getMessage());
+            }
+            
+        }
     }
         
     private void render(VerticalLayout activitiesLayout, RemoteActivityDefinition nextActivity) {
@@ -115,7 +127,7 @@ public class NewProcessInstanceView extends HorizontalSplitPanel implements Butt
         Panel artifactDefContainer = new Panel();
         artifactDefContainer.setStyleName("formmanager");
         artifactDefContainer.setSizeFull();
-        artifactDefContainer.setContent(getFormRenderer(nextActivity));                
+//        artifactDefContainer.setContent(getFormRenderer(nextActivity));                
 
         VerticalLayout secondVerticalLayout = new VerticalLayout();
         secondVerticalLayout.setSizeFull();
@@ -163,7 +175,7 @@ public class NewProcessInstanceView extends HorizontalSplitPanel implements Butt
         }
         setFirstComponent(wrapper);
     }      
-    
+    /*
     private FormRenderer getFormRenderer(RemoteActivityDefinition activityDefinition) {
         String address = Page.getCurrent().getWebBrowser().getAddress();
         
@@ -217,4 +229,5 @@ public class NewProcessInstanceView extends HorizontalSplitPanel implements Butt
         }
         return null;
     }
+    */
 }

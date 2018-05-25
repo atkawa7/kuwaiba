@@ -47,6 +47,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemotePool;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteQueryLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQuery;
@@ -647,14 +648,17 @@ public interface WebserviceBeanLocal {
     public List<RemoteBusinessRule> getBusinessRules(int type, String ipAddress, String sessionId) throws ServerSideException;
     public AssetLevelCorrelatedInformation getAffectedServices(int resourceType, String resourceDefinition, String ipAddress, String sessionId) throws ServerSideException;
     //<editor-fold desc="Process API" defaultstate="collapsed">
-    public RemoteArtifact getArtifactForActivity(long processInstanceId, String activityId, String ipAddress, String sessionId) throws ServerSideException;
-    public RemoteArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, String activityDefinitionId, String ipAddress, String sessionId) throws ServerSideException;
-    public void commitActivity(long processInstanceId, String activityDefinitionId, RemoteArtifact artifact, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteArtifact getArtifactForActivity(long processInstanceId, long activityId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, long activityDefinitionId, String ipAddress, String sessionId) throws ServerSideException;
+    public void commitActivity(long processInstanceId, long activityDefinitionId, RemoteArtifact artifact, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteActivityDefinition getNextActivityForProcessInstance(long processInstanceId, String ipAddress, String sessionId) throws ServerSideException;
     public long createProcessInstance(long processDefinitionId, String processInstanceName, String processInstanceDescription, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteProcessDefinition getProcessDefinition(long processDefinitionId, String ipAddress, String sessionId) throws ServerSideException;
     public void deleteProcessDefinition(long processDefinitionId, String ipAddress, String sessionId) throws ServerSideException;
     public void updateProcessDefinition(long processDefinitionId, List<StringPair> properties, byte[] structure, String ipAddress, String sessionId) throws ServerSideException;
     public long createProcessDefinition(String name, String description, String version, boolean enabled, byte[] structure, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteProcessInstance> getProcessInstances(long processDefinitionId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteProcessDefinition> getProcessDefinitions(String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteProcessInstance getProcessInstance(long processInstanceId, String ipAddress, String sessionId) throws ServerSideException;
     //</editor-fold>
 }
