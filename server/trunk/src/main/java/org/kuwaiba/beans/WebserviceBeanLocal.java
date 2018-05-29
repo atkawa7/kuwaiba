@@ -18,14 +18,11 @@ package org.kuwaiba.beans;
 
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
-import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
-import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import com.neotropic.kuwaiba.scheduling.BackgroundJob;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
 import java.util.List;
 import javax.ejb.Local;
-import org.kuwaiba.apis.persistence.business.BusinessObjectLightList;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.apis.persistence.util.StringPair;
@@ -71,6 +68,8 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
+import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHContainerLinkDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHPosition;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
@@ -530,10 +529,10 @@ public interface WebserviceBeanLocal {
             String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
     
     public long createSDHContainerLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, List<SDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
+            String classNameEndpointB, long idEndpointB, String linkType, List<RemoteSDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
     
     public long createSDHTributaryLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, List<SDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
+            String classNameEndpointB, long idEndpointB, String linkType, List<RemoteSDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException;
     
     public void deleteSDHTransportLink(String transportLinkClass, long transportLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
     
@@ -541,17 +540,17 @@ public interface WebserviceBeanLocal {
     
     public void deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId, boolean forceDelete, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<BusinessObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
+    public List<RemoteObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
                                             long  communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<BusinessObjectLightList> findSDHRoutesUsingContainerLinks(String communicationsEquipmentClassA, 
+    public List<RemoteObjectLightList> findSDHRoutesUsingContainerLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
                                             long  communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<SDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteSDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<SDHContainerLinkDefinition> getSDHContainerLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteSDHContainerLinkDefinition> getSDHContainerLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) throws ServerSideException;
         // </editor-fold>   
     
         // <editor-fold defaultstate="collapsed" desc="IP Address Manager module">

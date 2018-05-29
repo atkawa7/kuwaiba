@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLightList;
 
 
 /**
@@ -34,6 +36,12 @@ public class RemoteObjectLightList implements  Serializable {
 
     public RemoteObjectLightList() {
         list = new ArrayList<>();
+    }
+    
+    public RemoteObjectLightList (BusinessObjectLightList list) {
+        this.list = new ArrayList<>();
+        for (BusinessObjectLight item : list.getList())
+            this.list.add(new RemoteObjectLight(item));
     }
     
     public RemoteObjectLightList(List<RemoteObjectLight> list) {

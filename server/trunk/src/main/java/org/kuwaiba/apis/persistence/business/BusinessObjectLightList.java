@@ -47,4 +47,12 @@ public class BusinessObjectLightList implements  Serializable {
     public boolean remove(BusinessObjectLight element) {
         return list.remove(element);
     }
+
+    public List<BusinessObjectLight> getList() {
+        return list;
+    }
+
+    public void setList(List<BusinessObjectLight> list) {
+        this.list = list;
+    }
 }

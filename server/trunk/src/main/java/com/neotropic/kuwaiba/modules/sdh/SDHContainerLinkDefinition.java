@@ -15,18 +15,14 @@
  */
 package com.neotropic.kuwaiba.modules.sdh;
 
-import java.io.Serializable;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 
 /**
  * Instances of this class define a container
  * @author Charles Edward Bedon Cortazar<charles.bedon@kuwaiba.org>
  */
-@XmlAccessorType(XmlAccessType.FIELD)
-public class SDHContainerLinkDefinition implements Serializable {
+public class SDHContainerLinkDefinition {
     /**
      * Container object
      */

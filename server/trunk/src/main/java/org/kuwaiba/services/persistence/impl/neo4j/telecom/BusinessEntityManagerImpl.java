@@ -1816,7 +1816,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             Node fileObjectNode = graphDb.createNode(Label.label(Constants.LABEL_ATTACHMENTS));
             fileObjectNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
-            fileObjectNode.setProperty(Constants.PROPERTY_NAME, name == null ? "" : name);
+            fileObjectNode.setProperty(Constants.PROPERTY_NAME, name);
             fileObjectNode.setProperty(Constants.PROPERTY_TAGS, tags == null ? "" : tags);
             
             Relationship hasAttachmentRelationship = objectNode.createRelationshipTo(fileObjectNode, RelTypes.HAS_ATTACHMENT);
@@ -1986,9 +1986,9 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public List<BusinessObjectLightList> findRoutesThroughSpecialRelationships(String objectAClassName, 
             long objectAId, String objectBClassName, long objectBId, String relationshipName) {
         List<BusinessObjectLightList> paths = new ArrayList<>();
-        String cypherQuery = String.format("MATCH path = a-[r:%s*1..10{name:\"%s\"}]-b " +
-                            "WHERE id(a) = %s AND id(b) = %s AND all(x in nodes(path) where 1 = size (filter(y in nodes(path) where x = y))) " +
-                            "RETURN nodes(path) as path ORDER BY length(path) ASC LIMIT %s", RelTypes.RELATED_TO_SPECIAL, relationshipName, objectAId, objectBId, 
+        String cypherQuery = String.format("MATCH path = (a)-[:%s*1..10{name:\"%s\"}]-(b) " +
+                            "WHERE id(a) = %s AND id(b) = %s " +
+                            "RETURN nodes(path) as path ORDER BY size(path) ASC LIMIT %s", RelTypes.RELATED_TO_SPECIAL, relationshipName, objectAId, objectBId, 
                                                                     aem.getConfiguration().get("maxRoutes")); //NOI18N
                                 
         try (Transaction tx = graphDb.beginTx()){

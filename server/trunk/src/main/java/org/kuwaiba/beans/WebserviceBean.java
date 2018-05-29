@@ -135,6 +135,8 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
 import org.kuwaiba.interfaces.ws.toserialize.business.ServiceLevelCorrelatedInformation;
+import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHContainerLinkDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHPosition;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
@@ -4144,7 +4146,8 @@ public class WebserviceBean implements WebserviceBeanLocal {
     // <editor-fold defaultstate="collapsed" desc="Commercial modules data methods">
         // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
     @Override
-    public long createSDHTransportLink(String classNameEndpointA, long idEndpointA, String classNameEndpointB, long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
+    public long createSDHTransportLink(String classNameEndpointA, long idEndpointA, String classNameEndpointB, 
+            long idEndpointB, String linkType, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateWebServiceCall("createSDHTransportLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
@@ -4161,11 +4164,18 @@ public class WebserviceBean implements WebserviceBeanLocal {
     
     @Override
     public long createSDHContainerLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, List<SDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
+            String classNameEndpointB, long idEndpointB, String linkType, List<RemoteSDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateWebServiceCall("createSDHContainerLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
-            long SDHContainerLinkId = sdhModule.createSDHContainerLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, positions, defaultName);
+            
+            List<SDHPosition> remotePositions = new ArrayList<>();
+            
+            for (RemoteSDHPosition position : positions)
+                remotePositions.add(new SDHPosition(position.getLinkClass(), position.getLinkId(), position.getPosition()));
+            
+            long SDHContainerLinkId = sdhModule.createSDHContainerLink(classNameEndpointA, idEndpointA, 
+                    classNameEndpointB, idEndpointB, linkType, remotePositions, defaultName);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
@@ -4178,11 +4188,18 @@ public class WebserviceBean implements WebserviceBeanLocal {
 
     @Override
     public long createSDHTributaryLink(String classNameEndpointA, long idEndpointA, 
-            String classNameEndpointB, long idEndpointB, String linkType, List<SDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
+            String classNameEndpointB, long idEndpointB, String linkType, List<RemoteSDHPosition> positions, String defaultName, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateWebServiceCall("createSDHTributaryLink", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
-            long SDHTributaryLinkId = sdhModule.createSDHTributaryLink(classNameEndpointA, idEndpointA, classNameEndpointB, idEndpointB, linkType, positions, defaultName);
+            
+            List<SDHPosition> remotePositions = new ArrayList<>();
+            
+            for (RemoteSDHPosition position : positions)
+                remotePositions.add(new SDHPosition(position.getLinkClass(), position.getLinkId(), position.getPosition()));
+            
+            long SDHTributaryLinkId = sdhModule.createSDHTributaryLink(classNameEndpointA, idEndpointA, classNameEndpointB, 
+                    idEndpointB, linkType, remotePositions, defaultName);
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
@@ -4245,50 +4262,74 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public List<BusinessObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
+    public List<RemoteObjectLightList> findSDHRoutesUsingTransportLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
                                             long  communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateWebServiceCall("findSDHRoutesUsingTransportLinks", ipAddress, sessionId);
+            
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
-            return sdhModule.findSDHRoutesUsingTransportLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB);
+            List<RemoteObjectLightList> res  = new ArrayList<>();
+            
+            List<BusinessObjectLightList> routes = sdhModule.findSDHRoutesUsingTransportLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB);
+            for (BusinessObjectLightList route : routes)
+                res.add(new RemoteObjectLightList(route));
+            return res;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
     
     @Override
-    public List<BusinessObjectLightList> findSDHRoutesUsingContainerLinks(String communicationsEquipmentClassA, 
+    public List<RemoteObjectLightList> findSDHRoutesUsingContainerLinks(String communicationsEquipmentClassA, 
                                             long  communicationsEquipmentIdA, String communicationsEquipmentClassB, 
                                             long  communicationsEquipmentIB, String ipAddress, String sessionId) throws ServerSideException {
         try {
             aem.validateWebServiceCall("findSDHRoutesUsingContainerLinks", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
-            return sdhModule.findSDHRoutesUsingContainerLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB);
+            List<RemoteObjectLightList> res  = new ArrayList<>();
+            List<BusinessObjectLightList> routes = sdhModule.findSDHRoutesUsingContainerLinks(communicationsEquipmentClassA, communicationsEquipmentIdA, communicationsEquipmentClassB, communicationsEquipmentIB);
+            for (BusinessObjectLightList route : routes)
+                res.add(new RemoteObjectLightList(route));
+            
+            return res;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
     
     @Override
-    public List<SDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) 
+    public List<RemoteSDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) 
             throws ServerSideException {
         try {
             aem.validateWebServiceCall("getSDHTransportLinkStructure", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
-            return sdhModule.getSDHTransportLinkStructure(transportLinkClass, transportLinkId);
+            List<SDHContainerLinkDefinition> containerLinks = sdhModule.getSDHTransportLinkStructure(transportLinkClass, transportLinkId);
+            
+            List<RemoteSDHContainerLinkDefinition> res = new ArrayList<>();
+            
+            for (SDHContainerLinkDefinition containerLink : containerLinks)
+                res.add(new RemoteSDHContainerLinkDefinition(containerLink));
+            
+            return res;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
     
     @Override
-    public List<SDHContainerLinkDefinition> getSDHContainerLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) 
+    public List<RemoteSDHContainerLinkDefinition> getSDHContainerLinkStructure(String transportLinkClass, long transportLinkId, String ipAddress, String sessionId) 
             throws ServerSideException {
         try {
             aem.validateWebServiceCall("getSDHContainerLinkStructure", ipAddress, sessionId);
             SDHModule sdhModule = (SDHModule)aem.getCommercialModule("SDH Networks Module"); //NOI18N
-            return sdhModule.getSDHContainerLinkStructure(transportLinkClass, transportLinkId);
+            List<SDHContainerLinkDefinition> containerLinks = sdhModule.getSDHContainerLinkStructure(transportLinkClass, transportLinkId);
+            List<RemoteSDHContainerLinkDefinition> res = new ArrayList<>();
+            
+            for (SDHContainerLinkDefinition containerLink : containerLinks)
+                res.add(new RemoteSDHContainerLinkDefinition(containerLink));
+            
+            return res;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

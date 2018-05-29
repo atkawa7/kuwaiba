@@ -13,15 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.modules.sdh;
+package org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh;
 
+import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import java.io.Serializable;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
- * It's a simple class representing a single position used by a container within a transport link
+ * Wrapper of {@link SDHPosition}
  * @author Charles Edward Bedon Cortazar<charles.bedon@kuwaiba.org>
  */
-public class SDHPosition implements Serializable {
+@XmlAccessorType(XmlAccessType.FIELD)
+public class RemoteSDHPosition implements Serializable {
     /**
      * Id of the connection being used (a TransportLink or a ContainerLink)
      */
@@ -35,7 +39,15 @@ public class SDHPosition implements Serializable {
      */
     private int position;
 
-    public SDHPosition(String connectionClass, long connectionId, int position) {
+    public RemoteSDHPosition() { } //Required by JAX-WS
+    
+    public RemoteSDHPosition(SDHPosition position) {
+        this.connectionId = position.getLinkId();
+        this.connectionClass = position.getLinkClass();
+        this.position = position.getPosition();
+    }
+    
+    public RemoteSDHPosition(String connectionClass, long connectionId, int position) {
         this.connectionId = connectionId;
         this.connectionClass = connectionClass;
         this.position = position;

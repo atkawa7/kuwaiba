@@ -18,8 +18,6 @@ package org.kuwaiba.interfaces.ws;
 
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
-import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
-import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
 import com.neotropic.kuwaiba.scheduling.BackgroundJob;
 import com.neotropic.kuwaiba.scheduling.JobManager;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
@@ -33,7 +31,6 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
-import org.kuwaiba.apis.persistence.business.BusinessObjectLightList;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.beans.WebserviceBeanLocal;
@@ -79,6 +76,8 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
+import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHContainerLinkDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHPosition;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
@@ -6214,7 +6213,7 @@ public class KuwaibaService {
             @WebParam(name = "classNameEndpointB") String classNameEndpointB,
             @WebParam(name = "idEndpointB") long idEndpointB,
             @WebParam(name = "linkType") String linkType, 
-            @WebParam(name = "positions") List<SDHPosition> positions, 
+            @WebParam(name = "positions") List<RemoteSDHPosition> positions, 
             @WebParam(name = "defaultName") String defaultName,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
@@ -6251,7 +6250,7 @@ public class KuwaibaService {
             @WebParam(name = "classNameEndpointB") String classNameEndpointB, 
             @WebParam(name = "idEndpointB") long idEndpointB, 
             @WebParam(name = "linkType") String linkType, 
-            @WebParam(name = "positions") List<SDHPosition> positions, 
+            @WebParam(name = "positions") List<RemoteSDHPosition> positions, 
             @WebParam(name = "defaultName") String defaultName, 
             @WebParam(name = "sessionId")  String sessionId) throws ServerSideException {
         try {
@@ -6356,7 +6355,7 @@ public class KuwaibaService {
      *                             If the given communication equipment is no subclass of GenericCommunicationsEquipment
      */
     @WebMethod(operationName = "findSDHRoutesUsingTransportLinks")
-    public List<BusinessObjectLightList> findSDHRoutesUsingTransportLinks(@WebParam(name = "communicationsEquipmentClassA") String communicationsEquipmentClassA, 
+    public List<RemoteObjectLightList> findSDHRoutesUsingTransportLinks(@WebParam(name = "communicationsEquipmentClassA") String communicationsEquipmentClassA, 
                                             @WebParam(name = "communicationsEquipmentIdA") long  communicationsEquipmentIdA, 
                                             @WebParam(name = "communicationsEquipmentClassB") String communicationsEquipmentClassB, 
                                             @WebParam(name = "communicationsEquipmentIB") long  communicationsEquipmentIB, 
@@ -6385,7 +6384,7 @@ public class KuwaibaService {
      *                             If the given communication equipment is no subclass of GenericCommunicationsEquipment
      */
     @WebMethod(operationName = "findSDHRoutesUsingContainerLinks")
-    public List<BusinessObjectLightList> findSDHRoutesUsingContainerLinks(@WebParam(name = "communicationsEquipmentClassA") String communicationsEquipmentClassA, 
+    public List<RemoteObjectLightList> findSDHRoutesUsingContainerLinks(@WebParam(name = "communicationsEquipmentClassA") String communicationsEquipmentClassA, 
                                             @WebParam(name = "communicationsEquipmentIdA") long  communicationsEquipmentIdA, 
                                             @WebParam(name = "communicationsEquipmentClassB") String communicationsEquipmentClassB, 
                                             @WebParam(name = "communicationsEquipmentIB") long  communicationsEquipmentIB, 
@@ -6412,7 +6411,7 @@ public class KuwaibaService {
      *                             If the given transport link is no subclass of GenericSDHTransportLink
      */
     @WebMethod(operationName = "getSDHTransportLinkStructure")
-    public List<SDHContainerLinkDefinition> getSDHTransportLinkStructure(@WebParam(name = "transportLinkClass")String transportLinkClass, 
+    public List<RemoteSDHContainerLinkDefinition> getSDHTransportLinkStructure(@WebParam(name = "transportLinkClass")String transportLinkClass, 
             @WebParam(name = "transportLinkId")long transportLinkId, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -6438,7 +6437,7 @@ public class KuwaibaService {
      *                             if the container could not be found or if the class could not be found
      */
     @WebMethod(operationName = "getSDHContainerLinkStructure")
-    public List<SDHContainerLinkDefinition> getSDHContainerLinkStructure(@WebParam(name = "containerLinkClass")String containerLinkClass, 
+    public List<RemoteSDHContainerLinkDefinition> getSDHContainerLinkStructure(@WebParam(name = "containerLinkClass")String containerLinkClass, 
             @WebParam(name = "containerLinkId")long containerLinkId, 
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
