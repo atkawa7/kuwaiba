@@ -20,8 +20,12 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.renderers.ButtonRenderer;
+import com.vaadin.ui.renderers.ClickableRenderer;
+import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
+import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -31,25 +35,26 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.openide.util.Exceptions;
 
 /**
- *
+ * Shows a set of process instances
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ProcessInstancesView extends VerticalLayout {
-    private RemoteProcessDefinition processDefinition;
-    private List<RemoteProcessInstance> processes;
-    private Grid<RemoteProcessInstance> grid;
-        
-    private TextField txtFilter;
+    private final RemoteProcessDefinition processDefinition;
+    private final List<RemoteProcessInstance> processes;
+    private Grid<ProcessInstanceBean> grid;
+    
     private Button btnCreateProcessInstance;
     
     private final WebserviceBeanLocal wsBean;
+    private final RemoteSession session;
             
-    public ProcessInstancesView(RemoteProcessDefinition processDefinition, List<RemoteProcessInstance> processes, WebserviceBeanLocal wsBean) {
+    public ProcessInstancesView(RemoteProcessDefinition processDefinition, List<RemoteProcessInstance> processes, WebserviceBeanLocal wsBean, RemoteSession session) {
         setStyleName("darklayout");
         setSizeFull();
         this.processDefinition = processDefinition;
         this.processes = processes;
         this.wsBean = wsBean;
+        this.session = session;
         initView();
     }
     
@@ -60,9 +65,7 @@ public class ProcessInstancesView extends VerticalLayout {
         
         HorizontalLayout tools = new HorizontalLayout();
         tools.setWidth("100%");
-        
-        txtFilter = new TextField();
-        
+                
         btnCreateProcessInstance = new Button("Crear Alta de un servicio");
         btnCreateProcessInstance.addClickListener(new Button.ClickListener() {
             @Override
@@ -84,7 +87,7 @@ public class ProcessInstancesView extends VerticalLayout {
                                         Page.getCurrent().getWebBrowser().getAddress(),
                                         ((RemoteSession) getSession().getAttribute("session")).getSessionId());
                                 
-                                ((MainView) getUI().getContent()).setSecondComponent(new NewProcessInstanceView(processInstance, processDefinition, wsBean));
+                                ((MainView) getUI().getContent()).setSecondComponent(new ProcessInstanceView(processInstance, processDefinition, wsBean,session));
                                                                                                 
                             } catch (ServerSideException ex) {
                                 Exceptions.printStackTrace(ex);
@@ -97,15 +100,42 @@ public class ProcessInstancesView extends VerticalLayout {
             }
         });
         grid = new Grid<>();
+        grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.setWidth("100%");
         
-        grid.setItems(processes);
-        grid.addColumn(RemoteProcessInstance::getId).setCaption("Process Instance Id");
-        grid.addColumn(RemoteProcessInstance::getName).setCaption("Order number");
+        List<ProcessInstanceBean> beans = new ArrayList();
         
-        tools.addComponent(txtFilter);        
+        for (RemoteProcessInstance process : processes)
+            beans.add(new ProcessInstanceBean(process, wsBean, session));
+        
+        grid.setItems(beans);
+        grid.addColumn(ProcessInstanceBean::getCurrentActivity).setCaption("Current Activity");
+        grid.addColumn(ProcessInstanceBean::getCurrentActivityActor).setCaption("Actor");
+        grid.addColumn(ProcessInstanceBean::getViewButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
+            @Override
+            public void click(ClickableRenderer.RendererClickEvent event) {
+                Notification.show("Hola");
+            }
+        })).setCaption("View");
+        
+        grid.addColumn(ProcessInstanceBean::getEditButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
+            @Override
+            public void click(ClickableRenderer.RendererClickEvent event) {
+                ProcessInstanceBean processInstanceBean = (ProcessInstanceBean) event.getItem();
+                ((MainView) getUI().getContent()).setSecondComponent(
+                new ProcessInstanceView(processInstanceBean.getProcessInstance(), processInstanceBean.getProcessDefinition(), wsBean, session)
+                );
+            }
+        })).setCaption("Edit");
+        
+        grid.addColumn(ProcessInstanceBean::getDeleteButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
+            @Override
+            public void click(ClickableRenderer.RendererClickEvent event) {
+                Notification.show("Hola");
+            }
+        })).setCaption("Delete");
+        
         tools.addComponent(btnCreateProcessInstance);
-        tools.setComponentAlignment(txtFilter, Alignment.MIDDLE_LEFT);
         tools.setComponentAlignment(btnCreateProcessInstance, Alignment.MIDDLE_RIGHT);
         wrapper.addComponent(tools);
         wrapper.addComponent(grid);
@@ -113,5 +143,3 @@ public class ProcessInstancesView extends VerticalLayout {
         addComponent(wrapper);
     }
 }
-
-

@@ -22,7 +22,7 @@ import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.VerticalLayout;
 import javax.inject.Inject;
 import org.kuwaiba.apis.forms.FormRenderer;
-import org.kuwaiba.apis.forms.elements.FormLoader;
+import org.kuwaiba.apis.forms.elements.FormDefinitionLoader;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteForm;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -45,16 +45,14 @@ public class FormView extends CustomComponent implements View {
         if (remoteForm == null || remoteForm.getStructure() == null)
             return;
                 
-        FormLoader formBuilder = new FormLoader(remoteForm.getStructure());            
+        FormDefinitionLoader formBuilder = new FormDefinitionLoader(remoteForm.getStructure());            
         formBuilder.build();
 
         FormRenderer formRenderer = new FormRenderer(formBuilder);
         
         RemoteSession remoteSession = (RemoteSession) getSession().getAttribute("session");
         formRenderer.render(wsBean, remoteSession);
-//        Panel pnlForm = new Panel();
-//        pnlForm.setContent(formRenderer);
-//        pnlForm.setSizeUndefined();
+        
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.addComponent(formRenderer);
         verticalLayout.setComponentAlignment(formRenderer, Alignment.BOTTOM_CENTER);

@@ -18,39 +18,47 @@ import com.vaadin.server.Page;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalSplitPanel;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
 import java.util.HashMap;
 import java.util.List;
-import org.kuwaiba.apis.forms.FormRenderer;
-import org.kuwaiba.apis.forms.elements.FormLoader;
+import org.kuwaiba.apis.persistence.application.process.Actor;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteForm;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActor;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.openide.util.Exceptions;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class NewProcessInstanceView extends HorizontalSplitPanel implements Button.ClickListener {
-    private RemoteProcessDefinition processDefinition;
+public class ProcessInstanceView extends HorizontalSplitPanel implements Button.ClickListener {
+    private final RemoteProcessDefinition processDefinition;
     private RemoteProcessInstance processInstance;
-    private HashMap<RemoteActivityDefinition, Button> activities;
+    private final HashMap<RemoteActivityDefinition, Button> activities;
     
     private final WebserviceBeanLocal wsBean;
+    private final RemoteSession remoteSession;
     
-    public NewProcessInstanceView(RemoteProcessInstance processInstance, RemoteProcessDefinition processDefinition, WebserviceBeanLocal wsBean) {
+    private RemoteArtifactDefinition artifactDefinition;
+    private RemoteArtifact artifact;
+    
+    private ArtifactView artifactView;
+    
+    public ProcessInstanceView(RemoteProcessInstance processInstance, RemoteProcessDefinition processDefinition, WebserviceBeanLocal wsBean, RemoteSession remoteSession) {
         setStyleName("processmanager");
         addStyleName("activitylist");
         setSizeFull();
         this.wsBean = wsBean;
+        this.remoteSession = remoteSession;
+        
         this.processDefinition = processDefinition;
         this.processInstance = processInstance;
         activities = new HashMap();
@@ -67,13 +75,56 @@ public class NewProcessInstanceView extends HorizontalSplitPanel implements Butt
         while (nextActivity != null) {
             
             if (processInstance.getCurrentActivity() == nextActivity.getId()) {
-                //TODO:Process to save activity
+                
+                try {
+                    RemoteActor actor = nextActivity.getActor();
+                    
+                    List<GroupInfoLight> groups = wsBean.getGroupsForUser(
+                        remoteSession.getUserId(), 
+                        Page.getCurrent().getWebBrowser().getAddress(),
+                        ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+                    
+                    boolean belongsToGroup = false;
+                    
+                    for (GroupInfoLight group : groups) {
+                        if (actor.getName().equals(group.getName())) {
+                            belongsToGroup = true;
+                            break;
+                        }
+                    }
+                    
+                    
+                    if (actor.getType() == Actor.TYPE_GROUP && belongsToGroup) {
+                        
+                        if (artifactView != null && artifactView.getArtifactRenderer() != null) {
+                        
+                            wsBean.commitActivity(
+                                processInstance.getId(),
+                                nextActivity.getId(),
+                                new RemoteArtifact(ProcessTest.artifactCounter++, "", "", artifactView.getArtifactRenderer().getContent()),
+                                Page.getCurrent().getWebBrowser().getAddress(),
+                                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+
+                            processInstance = wsBean.getProcessInstance(
+                                processInstance.getId(), 
+                                Page.getCurrent().getWebBrowser().getAddress(),
+                                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+                        }
+                    
+                    } else {
+                        NotificationsUtil.showError("The User are not authorized to commit the current activity");
+                        return;
+                    }
+                    
+                } catch (ServerSideException ex) {
+                    NotificationsUtil.showError(ex.getMessage());
+                }
+                
                 if (nextActivity.getNextActivity() != null) {
-                    processInstance.setCurrentActivity(nextActivity.getNextActivity().getId());
+                    
                     activities.get(nextActivity.getNextActivity()).addStyleName("activity-current");
-                    if (nextActivity != null)
-                        renderArtifact(nextActivity.getNextActivity());
-                                            
+                    renderArtifact(nextActivity.getNextActivity());
+                    
                     return;
                 }
             }
@@ -86,11 +137,11 @@ public class NewProcessInstanceView extends HorizontalSplitPanel implements Butt
                         Page.getCurrent().getWebBrowser().getAddress(),
                         ((RemoteSession) getSession().getAttribute("session")).getSessionId());
                 
-                ((MainView) getUI().getContent()).setSecondComponent(new ProcessInstancesView(processDefinition, processInstances, wsBean));
+                ((MainView) getUI().getContent()).setSecondComponent(new ProcessInstancesView(processDefinition, processInstances, wsBean, ((RemoteSession) getSession().getAttribute("session"))));
             } catch (ServerSideException ex) {
                 NotificationsUtil.showError(ex.getMessage());
             }
-            
+            int i = 0;
         }
     }
         
@@ -114,7 +165,31 @@ public class NewProcessInstanceView extends HorizontalSplitPanel implements Butt
         activities.put(nextActivity, btnActivity);
     }
     
-    private void renderArtifact(RemoteActivityDefinition nextActivity) {
+    private void renderArtifact(RemoteActivityDefinition currentActivity) {
+        try {
+            artifactDefinition = wsBean.getArtifactDefinitionForActivity(
+                processDefinition.getId(),
+                currentActivity.getId(),
+                Page.getCurrent().getWebBrowser().getAddress(),
+                remoteSession.getSessionId());
+        } catch (ServerSideException ex) {
+            NotificationsUtil.showError(ex.getMessage());
+        }
+
+        if (artifactDefinition != null) {
+
+            try {
+                artifact = wsBean.getArtifactForActivity(
+                    processInstance.getId(),
+                    currentActivity.getId(),
+                    Page.getCurrent().getWebBrowser().getAddress(),
+                    remoteSession.getSessionId());
+            } catch (ServerSideException ex) {
+                artifact = null;
+                //NotificationsUtil.showError(ex.getMessage());
+            }
+        }
+        
         VerticalLayout artifactWrapperLayout = new VerticalLayout();
         artifactWrapperLayout.setHeight("100%");
         artifactWrapperLayout.setStyleName("formmanager");
@@ -122,26 +197,20 @@ public class NewProcessInstanceView extends HorizontalSplitPanel implements Butt
         VerticalSplitPanel artifactContainer = new VerticalSplitPanel();
         artifactContainer.setSizeFull();
         artifactContainer.setSplitPosition(91, Unit.PERCENTAGE);
-
-
-        Panel artifactDefContainer = new Panel();
-        artifactDefContainer.setStyleName("formmanager");
-        artifactDefContainer.setSizeFull();
-//        artifactDefContainer.setContent(getFormRenderer(nextActivity));                
-
+        
         VerticalLayout secondVerticalLayout = new VerticalLayout();
         secondVerticalLayout.setSizeFull();
         Button btnSave = new Button("Save");
-        btnSave.addClickListener(NewProcessInstanceView.this);
+        btnSave.addClickListener(ProcessInstanceView.this);
         secondVerticalLayout.addComponent(btnSave);
         secondVerticalLayout.setComponentAlignment(btnSave, Alignment.MIDDLE_CENTER);
-
-        artifactContainer.setFirstComponent(artifactDefContainer);
+                
+        artifactContainer.setFirstComponent(artifactView = new ArtifactView(artifactDefinition, artifact, wsBean, remoteSession));
         artifactContainer.setSecondComponent(secondVerticalLayout);
 
         artifactWrapperLayout.addComponent(artifactContainer);
 
-        NewProcessInstanceView.this.setSecondComponent(artifactWrapperLayout);
+        ProcessInstanceView.this.setSecondComponent(artifactWrapperLayout);
         
     }
     
@@ -155,8 +224,11 @@ public class NewProcessInstanceView extends HorizontalSplitPanel implements Butt
         wrapper.addComponent(activitiesLayout);
         
         RemoteActivityDefinition nextActivity = processDefinition.getStartAction();
+        RemoteActivityDefinition currentActivity = nextActivity;        
         
         while (nextActivity != null) {
+            if (nextActivity.getId() == processInstance.getCurrentActivity())
+                currentActivity = nextActivity;
                         
             render(activitiesLayout, nextActivity);
                                     
@@ -164,70 +236,12 @@ public class NewProcessInstanceView extends HorizontalSplitPanel implements Butt
         }
         nextActivity = processDefinition.getStartAction();
         
-        while (nextActivity != null) {
+        if (currentActivity != null) {
             
-            if (processInstance.getCurrentActivity() == nextActivity.getId()) {
-                activities.get(nextActivity).addStyleName("activity-current");
-//                if (nextActivity != null)
-//                    renderArtifact(nextActivity);
-            }
-            nextActivity = nextActivity.getNextActivity();
+            activities.get(nextActivity).addStyleName("activity-current");
+            renderArtifact(nextActivity);
         }
         setFirstComponent(wrapper);
-    }      
-    /*
-    private FormRenderer getFormRenderer(RemoteActivityDefinition activityDefinition) {
-        String address = Page.getCurrent().getWebBrowser().getAddress();
-        
-        RemoteSession remoteSession = (RemoteSession) getSession().getAttribute("session");
-        
-        RemoteForm remoteForm = null;
-        
-        if (activityDefinition.getId() == 1) {
-            try {
-                remoteForm = wsBean.getForm(50479, address, remoteSession.getSessionId());
-            } catch (ServerSideException ex) {
-                NotificationsUtil.showError(ex.getMessage());
-            }
-        } else if (activityDefinition.getId() == 2) {
-            try {
-                remoteForm = wsBean.getForm(39750, address, remoteSession.getSessionId());
-            } catch (ServerSideException ex) {
-                NotificationsUtil.showError(ex.getMessage());
-            }
-        } else if (activityDefinition.getId() == 3) {
-            try {
-                remoteForm = wsBean.getForm(39770, address, remoteSession.getSessionId());
-            } catch (ServerSideException ex) {
-                NotificationsUtil.showError(ex.getMessage());
-            }
-        } else if (activityDefinition.getId() == 4) {
-            try {
-                remoteForm = wsBean.getForm(39790, address, remoteSession.getSessionId());
-            } catch (ServerSideException ex) {
-                NotificationsUtil.showError(ex.getMessage());
-            }
-        } else if (activityDefinition.getId() == 5) {
-            try {
-                remoteForm = wsBean.getForm(50499, address, remoteSession.getSessionId());
-            } catch (ServerSideException ex) {
-                NotificationsUtil.showError(ex.getMessage());
-            }
-        }
-        if (remoteForm != null) {
-            
-            if (remoteForm.getStructure() == null)
-                return null;
-
-            FormLoader formBuilder = new FormLoader(remoteForm.getStructure());            
-            formBuilder.build();
-
-            FormRenderer formRenderer = new FormRenderer(formBuilder);
-            formRenderer.render(wsBean, remoteSession);
-
-            return formRenderer;
-        }
-        return null;
     }
-    */
+    
 }

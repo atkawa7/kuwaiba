@@ -16,7 +16,7 @@ package org.kuwaiba.apis.forms;
 
 import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.AbstractElementContainer;
-import org.kuwaiba.apis.forms.elements.FormLoader;
+import org.kuwaiba.apis.forms.elements.FormDefinitionLoader;
 import org.kuwaiba.apis.forms.elements.ElementForm;
 import org.kuwaiba.apis.forms.elements.ElementSubform;
 import org.kuwaiba.apis.forms.components.ComponentContainer;
@@ -31,6 +31,7 @@ import com.vaadin.ui.VerticalLayout;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.forms.components.impl.ObjectHierarchyProvider;
+import org.kuwaiba.apis.forms.elements.FormStructure;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
@@ -40,21 +41,29 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
  */
 public class FormRenderer extends CustomComponent {
     private final VerticalLayout content;
-    private final FormLoader builder;
+    private final FormDefinitionLoader formLoader;
     private HashMap<Component, GraphicalComponent> components = new HashMap();
     
-    public FormRenderer(FormLoader builder) {
+    public FormRenderer(FormDefinitionLoader formLoader) {
                         
-        this.builder = builder;
+        this.formLoader = formLoader;
         
-        if (builder.getRoot() != null && 
-            builder.getRoot().getFormStructure() != null &&
-            builder.getRoot().getFormStructure().getElementI18N() != null) {
+        if (formLoader.getRoot() != null && 
+            formLoader.getRoot().getFormStructure() != null &&
+            formLoader.getRoot().getFormStructure().getElementI18N() != null) {
             
-            builder.getRoot().getFormStructure().getElementI18N().setLang("en_US");
+            formLoader.getRoot().getFormStructure().getElementI18N().setLang("en_US");
         }        
         content = new VerticalLayout();
         setCompositionRoot(content);
+    }
+    
+    public FormStructure getFormStructure() {
+        
+        if (formLoader.getRoot() != null)
+            return formLoader.getRoot().getFormStructure();
+        
+        return null;
     }
     
     public void render(WebserviceBeanLocal wsBean, RemoteSession session) {
@@ -63,9 +72,9 @@ public class FormRenderer extends CustomComponent {
         
         content.removeAllComponents();
         
-        renderRecursive(builder.getRoot(), content);
+        renderRecursive(formLoader.getRoot(), content);
         
-        builder.fireOnload(new ScriptQueryExecutorImpl(wsBean, session));
+        formLoader.fireOnload(new ScriptQueryExecutorImpl(wsBean, session));
     }
         
     private void renderRecursive(AbstractElement parentElement, Component parentComponent) {

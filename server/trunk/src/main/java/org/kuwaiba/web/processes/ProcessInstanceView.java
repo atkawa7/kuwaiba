@@ -36,7 +36,7 @@ import java.util.Date;
 import java.util.HashMap;
 import javax.inject.Inject;
 import org.kuwaiba.apis.forms.FormRenderer;
-import org.kuwaiba.apis.forms.elements.FormLoader;
+import org.kuwaiba.apis.forms.elements.FormDefinitionLoader;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.application.process.Actor;
 import org.kuwaiba.apis.persistence.application.process.ArtifactDefinition;
@@ -224,7 +224,7 @@ public class ProcessInstanceView extends CustomComponent implements View {
                     if (remoteForm.getStructure() == null)
                         return;
 
-                    FormLoader formBuilder = new FormLoader(remoteForm.getStructure());            
+                    FormDefinitionLoader formBuilder = new FormDefinitionLoader(remoteForm.getStructure());            
                     formBuilder.build();
 
                     FormRenderer formRenderer = new FormRenderer(formBuilder);

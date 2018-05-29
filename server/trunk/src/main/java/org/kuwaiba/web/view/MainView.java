@@ -28,8 +28,7 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.openide.util.Exceptions;
-
+import org.kuwaiba.web.LoginView;
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
@@ -74,7 +73,7 @@ public class MainView extends VerticalSplitPanel implements View {
                                 Page.getCurrent().getWebBrowser().getAddress(), 
                                 ((RemoteSession) getSession().getAttribute("session")).getSessionId());
                             
-                            setSecondComponent(new ProcessInstancesView(processDefinition, processInstances, wsBean));
+                            setSecondComponent(new ProcessInstancesView(processDefinition, processInstances, wsBean, ((RemoteSession) getSession().getAttribute("session"))));
                                                         
                         } catch (ServerSideException ex) {
                             NotificationsUtil.showError(ex.getMessage());
@@ -87,6 +86,20 @@ public class MainView extends VerticalSplitPanel implements View {
             NotificationsUtil.showError(ex.getMessage());
         }
         menuBar.addItem("Service Manager", null, null);
+        menuBar.addItem("Log out", null, new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                RemoteSession session = (RemoteSession) getSession().getAttribute("session");
+                try {
+                    wsBean.closeSession(session.getSessionId(), Page.getCurrent().getWebBrowser().getAddress());
+                    getSession().setAttribute("session", null);
+                    getUI().getNavigator().navigateTo(LoginView.VIEW_NAME);
+                    
+                } catch (ServerSideException ex) {
+                    NotificationsUtil.showError(ex.getMessage());
+                }
+            }
+        });
                 
         setFirstComponent(menuBar);
     }

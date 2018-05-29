@@ -30,7 +30,7 @@ import javax.xml.stream.XMLStreamReader;
  * hierarchy.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class FormLoader {
+public class FormDefinitionLoader {
     public static final QName TAG_ROOT = new QName(Constants.Tag.ROOT);
     public static final QName TAG_FORM = new QName(Constants.Tag.FORM);
     public static final QName TAG_GRID_LAYOUT = new QName(Constants.Tag.GRID_LAYOUT);
@@ -62,7 +62,7 @@ public class FormLoader {
     
     private final byte[] structure;
         
-    public FormLoader(byte[] structure) {
+    public FormDefinitionLoader(byte[] structure) {
         this.structure = structure;        
         containers = new ArrayList();
         containers.add(TAG_GRID_LAYOUT);
@@ -204,7 +204,7 @@ public class FormLoader {
                 elementScript.getFunctions().put(Constants.Function.I18N, new FunctionI18NRunner(elementI18N));
                 
         } catch (XMLStreamException ex) {
-            Logger.getLogger(FormLoader.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(FormDefinitionLoader.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     

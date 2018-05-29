@@ -24,15 +24,15 @@ public class ArtifactDefinition {
     /**
      * The artifact is a form that should be filled in and submitted by the user
      */
-    public static int TYPE_FORM = 1;
+    public static final int TYPE_FORM = 1;
     /**
      * The type used for the TYPE_CONTIDIONAL activities, and simply asks a question expecting a yes/no answer
      */
-    public static int TYPE_CONDITIONAL = 2;
+    public static final int TYPE_CONDITIONAL = 2;
     /**
      * The activity only requires the user to submits a file
      */
-    public static int TYPE_ATTACHMENT = 3;
+    public static final int TYPE_ATTACHMENT = 3;
     /**
      * Artifact id
      */

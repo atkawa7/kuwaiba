@@ -14,10 +14,13 @@
  */
 package org.kuwaiba.web.view;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.application.process.Actor;
 import org.kuwaiba.apis.persistence.application.process.ArtifactDefinition;
@@ -35,10 +38,11 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
  */
 public class ProcessTest {
     public static long processDefinitionCounter = 1;
-    public static long processInstancesCounter = 1;
-    public static long activityDefinitionCounter = 1;
-    public static long artifactDefinitionCounter = 1;
-    public static long actorCounter = 1;
+    public static long processInstancesCounter = 10;
+    public static long activityDefinitionCounter = 100;
+    public static long artifactDefinitionCounter = 1000;
+    public static long actorCounter = 10000;
+    public static long artifactCounter = 100000;
     private final List<RemoteProcessDefinition> processDefinitions = new ArrayList();
     private final HashMap<Long, RemoteProcessInstance> processInstances = new HashMap();
     private final HashMap<RemoteProcessDefinition, List<RemoteProcessInstance>> relatedProcessInstances = new HashMap();
@@ -46,62 +50,108 @@ public class ProcessTest {
     private final HashMap<RemoteProcessInstance, List<RemoteArtifact>> processArtifacts = new HashMap();
     
     private static ProcessTest instance;
-    private final RemoteActor commercial;
-    private final RemoteActor engineering;
-    private final RemoteActor serviceDelivery;
+    private final RemoteActor commercial = new RemoteActor(actorCounter++, "Commercial", Actor.TYPE_GROUP);
+    private final RemoteActor engineering = new RemoteActor(actorCounter++, "Engineering", Actor.TYPE_GROUP);
+    private final RemoteActor serviceDelivery = new RemoteActor(actorCounter++, "ServiceDelivery", Actor.TYPE_GROUP);
     
     private ProcessTest() {
         RemoteProcessDefinition altaServicioProcess = createAltaServicioProcess();
                 
         processDefinitions.add(altaServicioProcess);
         relatedProcessInstances.put(altaServicioProcess, new ArrayList());
-        
-        commercial = new RemoteActor(actorCounter, "commercial", Actor.TYPE_GROUP); actorCounter += 1;
-        
-        engineering = new RemoteActor(actorCounter, "engineering", Actor.TYPE_GROUP); actorCounter += 1;
-        
-        serviceDelivery = new RemoteActor(actorCounter, "serviceDelivery", Actor.TYPE_GROUP); actorCounter += 1;
     }
     
     public static ProcessTest getInstance() {
         return instance == null ? instance = new ProcessTest() : instance;
     }
     
+    private RemoteArtifactDefinition getArtifactDefinitionIncio() {
+        File file = new File("/data/formDefinitions/incio.xml");
+        byte [] definition = getFileAsByteArray(file);
+        
+        return new RemoteArtifactDefinition(artifactDefinitionCounter++, "", "", "", ArtifactDefinition.TYPE_FORM, definition);
+    }
+    
+    private RemoteArtifactDefinition getArtifactDefinitionOrdenServicio() {
+        File file = new File("/data/formDefinitions/1_formcustomerorder.xml");
+        byte [] definition = getFileAsByteArray(file);
+        
+        return new RemoteArtifactDefinition(artifactDefinitionCounter++, "", "", "", ArtifactDefinition.TYPE_FORM, definition);
+    }
+    
+    private RemoteArtifactDefinition getArtifactDefinitionFin() {
+        File file = new File("/data/formDefinitions/fin.xml");
+        byte [] definition = getFileAsByteArray(file);
+        
+        return new RemoteArtifactDefinition(artifactDefinitionCounter++, "", "", "", ArtifactDefinition.TYPE_FORM, definition);
+    }
+    
     private RemoteActivityDefinition getActivityDefinitionInicio() {
         
-        RemoteArtifactDefinition inicioArtifact = new RemoteArtifactDefinition(artifactDefinitionCounter, "", "", "0", ArtifactDefinition.TYPE_FORM, null);
+        RemoteArtifactDefinition inicioArtifact = getArtifactDefinitionIncio();
+        artifacts.put(inicioArtifact, new ArrayList());
                 
         RemoteActivityDefinition inicio = new RemoteActivityDefinition(
-            activityDefinitionCounter, "Incio", "Inicio", ActivityDefinition.TYPE_START, inicioArtifact, commercial);                
+            activityDefinitionCounter++, "Incio", "Inicio", ActivityDefinition.TYPE_START, inicioArtifact, commercial);                
         
-        artifactDefinitionCounter += 1;
-        activityDefinitionCounter += 1;
+        return inicio;
+    }
+    
+    private RemoteActivityDefinition getActivityDefinitionNuevaOrdenDeServicio() {
+        
+        RemoteArtifactDefinition ordenServicioArtifact = getArtifactDefinitionOrdenServicio();
+        artifacts.put(ordenServicioArtifact, new ArrayList());
+                
+        RemoteActivityDefinition ordenServicio = new RemoteActivityDefinition(
+            activityDefinitionCounter++, "Orden de Servicio", "Orden de Servicio", ActivityDefinition.TYPE_START, ordenServicioArtifact, commercial);                
+                
+        return ordenServicio;
+    }
+    
+    private RemoteActivityDefinition getActivityDefinitionSeleccionDeEquipo() {
+        
+        RemoteArtifactDefinition inicioArtifact = new RemoteArtifactDefinition(artifactDefinitionCounter, "", "", "0", ArtifactDefinition.TYPE_FORM, null);
+        artifacts.put(inicioArtifact, new ArrayList());
+                
+        RemoteActivityDefinition inicio = new RemoteActivityDefinition(
+            activityDefinitionCounter++, "Seleccion de Equipos", "Seleccion de Equipos", ActivityDefinition.TYPE_START, inicioArtifact, commercial);                
+                
+        return inicio;
+    }
+    
+    private RemoteActivityDefinition getActivityDefinitionAsignacionDeEquipo() {
+        
+        RemoteArtifactDefinition inicioArtifact = new RemoteArtifactDefinition(artifactDefinitionCounter++, "", "", "0", ArtifactDefinition.TYPE_FORM, null);
+        artifacts.put(inicioArtifact, new ArrayList());
+                
+        RemoteActivityDefinition inicio = new RemoteActivityDefinition(
+            activityDefinitionCounter++, "Asignacion de Equipos", "Asignacion de Equipos", ActivityDefinition.TYPE_START, inicioArtifact, commercial);                
         
         return inicio;
     }
     
     private RemoteActivityDefinition getActivityDefinitionFin() {
         
-        RemoteArtifactDefinition inicioArtifact = new RemoteArtifactDefinition(artifactDefinitionCounter, "", "", "0", ArtifactDefinition.TYPE_FORM, null);
+        RemoteArtifactDefinition finArtifact = getArtifactDefinitionFin();
+        artifacts.put(finArtifact, new ArrayList());
                 
         RemoteActivityDefinition fin = new RemoteActivityDefinition(
-            activityDefinitionCounter, "Fin", "Fin", ActivityDefinition.TYPE_START, inicioArtifact, commercial);                
-        
-        artifactDefinitionCounter += 1;
-        activityDefinitionCounter += 1;
-        
+            activityDefinitionCounter++, "Fin", "Fin", ActivityDefinition.TYPE_START, finArtifact, commercial);                
+                
         return fin;
     }
     
     private RemoteProcessDefinition createAltaServicioProcess() {
         
         RemoteActivityDefinition inicio = getActivityDefinitionInicio();
-        inicio.setNextActivity(getActivityDefinitionFin());
+        RemoteActivityDefinition ordenServicio = getActivityDefinitionNuevaOrdenDeServicio();
+        RemoteActivityDefinition fin = getActivityDefinitionFin();
         
-        RemoteProcessDefinition processDefinition = new RemoteProcessDefinition(processDefinitionCounter, "Alta de Servicio", "Alta de Servicio", new Date().getTime(), "0.0", true, inicio);
+        inicio.setNextActivity(ordenServicio);
+        ordenServicio.setNextActivity(fin);
         
-
-        processDefinitionCounter += 1;
+        RemoteProcessDefinition processDefinition = new RemoteProcessDefinition(processDefinitionCounter++, "Alta de Servicio", "Alta de Servicio", new Date().getTime(), "0.0", true, inicio);
+        
         return processDefinition;
     }
     
@@ -118,7 +168,7 @@ public class ProcessTest {
         
         long currentActivity = processDef.getStartAction().getId();
         
-        RemoteProcessInstance processInstance = new RemoteProcessInstance(processInstancesCounter, name, description, currentActivity, processDefId);
+        RemoteProcessInstance processInstance = new RemoteProcessInstance(processInstancesCounter++, name, description, currentActivity, processDefId);
         
         if (!relatedProcessInstances.containsKey(processDef))
             relatedProcessInstances.put(processDef, new ArrayList());
@@ -126,8 +176,8 @@ public class ProcessTest {
         relatedProcessInstances.get(processDef).add(processInstance);
         
         processInstances.put(processInstance.getId(), processInstance);
+        processArtifacts.put(processInstance, new ArrayList());
         
-        processInstancesCounter += 1;
         return processInstance.getId();
     }
     
@@ -219,6 +269,9 @@ public class ProcessTest {
 
             processArtifacts.get(processInstance).add(artifact);
             artifacts.get(activity.getArfifact()).add(artifact);
+            
+            if (activity.getNextActivity() != null)
+                processInstance.setCurrentActivity(activity.getNextActivity().getId());
         }
     }
     
@@ -233,5 +286,26 @@ public class ProcessTest {
     
     public List<RemoteProcessDefinition> getProcessDefinitions() throws InventoryException {
         return processDefinitions;
+    }
+    
+    public static byte[] getFileAsByteArray(File file) {
+        try {
+            Scanner in = new Scanner(file);
+
+            String line = "";
+
+            while (in.hasNext())
+                line += in.nextLine();
+
+            byte [] structure = line.getBytes();
+
+            in.close();
+
+            return structure;
+
+        } catch (FileNotFoundException ex) {
+
+            return null;
+        }
     }
 }

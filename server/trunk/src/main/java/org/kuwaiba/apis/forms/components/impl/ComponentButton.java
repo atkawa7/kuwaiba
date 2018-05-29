@@ -22,8 +22,8 @@ import org.kuwaiba.apis.forms.elements.ElementButton;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Notification;
 import java.util.Date;
+import org.kuwaiba.apis.forms.FormInstanceCreator;
 import org.kuwaiba.beans.WebserviceBeanLocal;
-import org.kuwaiba.apis.forms.elements.FormInstanceCreator;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
@@ -32,9 +32,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ComponentButton extends GraphicalComponent {
-////    @Inject
-////    private WebserviceBeanLocal wsBean;
-            
+    
     public ComponentButton() {
         super(new Button());
     }
@@ -75,13 +73,14 @@ public class ComponentButton extends GraphicalComponent {
             if (Constants.Function.SAVE.equals(event.getPropertyName())) {
                 
                 try {
-                    byte [] structure = new FormInstanceCreator(((ElementButton) getComponentEventListener()).getFormStructure()).getStructure();
+                    WebserviceBeanLocal wsBean = (WebserviceBeanLocal) getComponent().getUI().getSession().getAttribute("wsBean");
+                    RemoteSession session = (RemoteSession) getComponent().getUI().getSession().getAttribute("session");
+                                        
+                    byte [] structure = new FormInstanceCreator(((ElementButton) getComponentEventListener()).getFormStructure(), wsBean, session).getStructure();
                     
                     String address = Page.getCurrent().getWebBrowser().getAddress();
-                    RemoteSession remoteSession = (RemoteSession) getComponent().getUI().getSession().getAttribute("session");
-                    
-                    WebserviceBeanLocal wsBean = (WebserviceBeanLocal) getComponent().getUI().getSession().getAttribute("wsBean");
-                    wsBean.createFormInstance(-1, String.valueOf(new Date().getTime()), String.valueOf(new Date().getTime()), structure, address, remoteSession.getSessionId());
+
+                    wsBean.createFormInstance(-1, String.valueOf(new Date().getTime()), String.valueOf(new Date().getTime()), structure, address, session.getSessionId());
                                                             
                 } catch (ServerSideException ex) {
                     

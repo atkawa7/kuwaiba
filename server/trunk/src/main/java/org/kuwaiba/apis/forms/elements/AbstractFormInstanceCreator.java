@@ -14,7 +14,6 @@
  */
 package org.kuwaiba.apis.forms.elements;
 
-//import org.kuwaiba.apis.forms.KuwaibaClient;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.List;
@@ -25,18 +24,15 @@ import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-//import org.inventory.communications.wsclient.ClassInfo;
-//import org.inventory.communications.wsclient.ClassInfoLight;
-//import org.inventory.communications.wsclient.RemoteObjectLight;
 
 /**
  * Create an instance of a Form layout
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class FormInstanceCreator {
+public abstract class AbstractFormInstanceCreator {
     private final FormStructure formStructure;            
     
-    public FormInstanceCreator(FormStructure formStructure) {
+    public AbstractFormInstanceCreator(FormStructure formStructure) {
         this.formStructure = formStructure;
     }
         
@@ -48,19 +44,19 @@ public class FormInstanceCreator {
             XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
             XMLEventFactory xmlef = XMLEventFactory.newInstance();
             
-            xmlew.add(xmlef.createStartElement(FormLoader.TAG_ROOT, null, null));
+            xmlew.add(xmlef.createStartElement(FormDefinitionLoader.TAG_ROOT, null, null));
             
             XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.VERSION, formStructure.getVersion());
             
             getStructureRecursive(xmlew, xmlef, formStructure.getElements().get(0));
                         
-            xmlew.add(xmlef.createEndElement(FormLoader.TAG_ROOT, null));
+            xmlew.add(xmlef.createEndElement(FormDefinitionLoader.TAG_ROOT, null));
             
             xmlew.close();
             return baos.toByteArray();
             
         } catch (XMLStreamException ex) {
-            Logger.getLogger(FormInstanceCreator.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(AbstractFormInstanceCreator.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         return null;
@@ -139,28 +135,8 @@ public class FormInstanceCreator {
         }
     }
     
-    private void addRemoteObjectLight(XMLEventWriter xmlew, XMLEventFactory xmlef, AbstractElementField element) throws XMLStreamException {
-        
-//        if (element.getValue() instanceof RemoteObjectLight) {
-//            
-//            RemoteObjectLight remoteObjectLight = (RemoteObjectLight) element.getValue();
-//
-//            ClassInfo classInfo = KuwaibaClient.getInstance().getClass(remoteObjectLight.getClassName());
-//            
-//            XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.OBJECT_ID, String.valueOf(remoteObjectLight.getOid()));
-//            XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.OBJECT_NAME, remoteObjectLight.getName());
-//            XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.CLASS_ID, String.valueOf(classInfo.getId()));
-//        }
-    }
+    protected abstract void addRemoteObjectLight(XMLEventWriter xmlew, XMLEventFactory xmlef, AbstractElementField element) throws XMLStreamException;
     
-    private void addClassInfoLight(XMLEventWriter xmlew, XMLEventFactory xmlef, AbstractElementField element) throws XMLStreamException {
-//        if (element.getValue() instanceof ClassInfoLight) {
-//            
-//            ClassInfoLight classInfoLight = (ClassInfoLight) element.getValue();
-//            
-//            XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.CLASS_ID, String.valueOf(classInfoLight.getId()));
-//            XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.CLASS_NAME, classInfoLight.getClassName());
-//        }
-    }
+    protected abstract void addClassInfoLight(XMLEventWriter xmlew, XMLEventFactory xmlef, AbstractElementField element) throws XMLStreamException;
     
 }

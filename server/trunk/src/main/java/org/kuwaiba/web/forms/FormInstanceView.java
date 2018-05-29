@@ -19,12 +19,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.CustomComponent;
 import javax.inject.Inject;
-import org.kuwaiba.apis.forms.FormRenderer;
-import org.kuwaiba.apis.forms.elements.FormInstanceLoader;
-import org.kuwaiba.apis.forms.elements.FormLoader;
 import org.kuwaiba.beans.WebserviceBeanLocal;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFormInstance;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
  *
@@ -39,19 +34,19 @@ public class FormInstanceView extends CustomComponent implements View {
         
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        RemoteFormInstance remoteFormInstance = (RemoteFormInstance) getSession().getAttribute("currentforminstance");
-        
-        if (remoteFormInstance == null || remoteFormInstance.getStructure() == null)
-            return;
-        
-        FormInstanceLoader fil = new FormInstanceLoader();
-        FormLoader formLoader = fil.load(remoteFormInstance.getStructure());
-        
-        FormRenderer formRenderer = new FormRenderer(formLoader);
-        
-        RemoteSession remoteSession = (RemoteSession) getSession().getAttribute("session");
-        formRenderer.render(wsBean, remoteSession);
-        
-        setCompositionRoot(formRenderer);        
+//        RemoteFormInstance remoteFormInstance = (RemoteFormInstance) getSession().getAttribute("currentforminstance");
+//        
+//        if (remoteFormInstance == null || remoteFormInstance.getStructure() == null)
+//            return;
+//        
+//        FormInstanceLoader fil = new FormInstanceLoader();
+//        FormDefinitionLoader formLoader = fil.load(remoteFormInstance.getStructure());
+//        
+//        FormRenderer formRenderer = new FormRenderer(formLoader);
+//        
+//        RemoteSession remoteSession = (RemoteSession) getSession().getAttribute("session");
+//        formRenderer.render(wsBean, remoteSession);
+//        
+//        setCompositionRoot(formRenderer);        
     }
 }

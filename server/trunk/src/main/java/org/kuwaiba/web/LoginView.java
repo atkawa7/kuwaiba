@@ -48,7 +48,7 @@ import org.vaadin.viritin.layouts.MVerticalLayout;
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
 @CDIView("")
-class LoginView extends CustomComponent implements View {
+public class LoginView extends CustomComponent implements View {
     
     public static String VIEW_NAME = "";
     @Inject
