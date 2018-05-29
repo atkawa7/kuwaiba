@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="classNameEndpointB" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="idEndpointB" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="linkType" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="positions" type="{http://ws.interfaces.kuwaiba.org/}sdhPosition" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="positions" type="{http://ws.interfaces.kuwaiba.org/}remoteSDHPosition" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="defaultName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -52,7 +52,7 @@ public class CreateSDHTributaryLink {
     protected String classNameEndpointB;
     protected long idEndpointB;
     protected String linkType;
-    protected List<SdhPosition> positions;
+    protected List<RemoteSDHPosition> positions;
     protected String defaultName;
     protected String sessionId;
 
@@ -178,13 +178,13 @@ public class CreateSDHTributaryLink {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link SdhPosition }
+     * {@link RemoteSDHPosition }
      * 
      * 
      */
-    public List<SdhPosition> getPositions() {
+    public List<RemoteSDHPosition> getPositions() {
         if (positions == null) {
-            positions = new ArrayList<SdhPosition>();
+            positions = new ArrayList<RemoteSDHPosition>();
         }
         return this.positions;
     }

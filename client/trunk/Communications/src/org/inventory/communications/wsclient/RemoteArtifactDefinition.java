@@ -1,8 +1,11 @@
 
 package org.inventory.communications.wsclient;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -22,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="definition" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
+ *         &lt;element name="sharedInformation" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -37,7 +41,8 @@ import javax.xml.bind.annotation.XmlType;
     "description",
     "version",
     "type",
-    "definition"
+    "definition",
+    "sharedInformation"
 })
 public class RemoteArtifactDefinition {
 
@@ -47,6 +52,8 @@ public class RemoteArtifactDefinition {
     protected String version;
     protected int type;
     protected byte[] definition;
+    @XmlElement(nillable = true)
+    protected List<String> sharedInformation;
 
     /**
      * Gets the value of the id property.
@@ -172,6 +179,35 @@ public class RemoteArtifactDefinition {
      */
     public void setDefinition(byte[] value) {
         this.definition = value;
+    }
+
+    /**
+     * Gets the value of the sharedInformation property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the sharedInformation property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getSharedInformation().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link String }
+     * 
+     * 
+     */
+    public List<String> getSharedInformation() {
+        if (sharedInformation == null) {
+            sharedInformation = new ArrayList<String>();
+        }
+        return this.sharedInformation;
     }
 
 }

@@ -113,6 +113,7 @@ public abstract class AbstractScene<N, E> extends GraphScene<N, E> {
 
     public AbstractScene() {
         this.lookup = new SceneLookup();
+        this.setBackground(Color.WHITE);
         setActiveTool(ACTION_SELECT);
     }
     

@@ -106,13 +106,14 @@ import org.inventory.communications.wsclient.RemoteQueryLight;
 import org.inventory.communications.wsclient.RemoteReport;
 import org.inventory.communications.wsclient.RemoteReportLight;
 import org.inventory.communications.wsclient.RemoteResultMessage;
+import org.inventory.communications.wsclient.RemoteSDHContainerLinkDefinition;
+import org.inventory.communications.wsclient.RemoteSDHPosition;
 import org.inventory.communications.wsclient.RemoteScriptQuery;
 import org.inventory.communications.wsclient.RemoteSynchronizationConfiguration;
 import org.inventory.communications.wsclient.RemoteSynchronizationGroup;
 import org.inventory.communications.wsclient.RemoteTask;
 import org.inventory.communications.wsclient.RemoteTaskResult;
 import org.inventory.communications.wsclient.ResultRecord;
-import org.inventory.communications.wsclient.SdhPosition;
 import org.inventory.communications.wsclient.ServerSideException_Exception;
 import org.inventory.communications.wsclient.StringPair;
 import org.inventory.communications.wsclient.SyncFinding;
@@ -2322,6 +2323,7 @@ public class CommunicationsStub {
      */
     public LocalLogicalConnectionDetails getLogicalLinkDetails(String linkClass, long linkId) { 
         try {
+            
             return new LocalLogicalConnectionDetails(service.getLogicalLinkDetails(linkClass, linkId, session.getSessionId()));
         }catch(Exception ex) {
             this.error =  ex.getMessage();
@@ -4386,10 +4388,10 @@ public class CommunicationsStub {
             String containerLinkType, List<LocalSDHPosition> positions, String defaultName){
         
         try { 
-            List<SdhPosition> remotepositions = new ArrayList<>();
+            List<RemoteSDHPosition> remotepositions = new ArrayList<>();
             
             for (LocalSDHPosition aLocalPosition : positions) {
-                SdhPosition aRemotePosition = new SdhPosition();
+                RemoteSDHPosition aRemotePosition = new RemoteSDHPosition();
                 aRemotePosition.setConnectionClass(aLocalPosition.getLinkClass());
                 aRemotePosition.setConnectionId(aLocalPosition.getLinkId());
                 aRemotePosition.setPosition(aLocalPosition.getPosition());
@@ -4410,10 +4412,10 @@ public class CommunicationsStub {
             String containerLinkType, List<LocalSDHPosition> positions, String defaultName){
         
         try { 
-            List<SdhPosition> remotepositions = new ArrayList<>();
+            List<RemoteSDHPosition> remotepositions = new ArrayList<>();
             
             for (LocalSDHPosition aLocalPosition : positions) {
-                SdhPosition aRemotePosition = new SdhPosition();
+                RemoteSDHPosition aRemotePosition = new RemoteSDHPosition();
                 aRemotePosition.setConnectionClass(aLocalPosition.getLinkClass());
                 aRemotePosition.setConnectionId(aLocalPosition.getLinkId());
                 aRemotePosition.setPosition(aLocalPosition.getPosition());
@@ -4432,13 +4434,12 @@ public class CommunicationsStub {
     
     public List<LocalObjectLightList> findRoutesUsingTransportLinks(LocalObjectLight aSide, LocalObjectLight bSide) {
         try {
-//            List<RemoteBusinessObjectLightList> routes = service.findSDHRoutesUsingTransportLinks(aSide.getClassName(), aSide.getOid(), bSide.getClassName(), bSide.getOid(), session.getSessionId());
-//            List<LocalObjectLightList> res = new ArrayList<>();
-//            for (RemoteBusinessObjectLightList route : routes) 
-//                res.add(new LocalObjectLightList(route));
-//            
-//            return res;
-return null;
+            List<RemoteObjectLightList> routes = service.findSDHRoutesUsingTransportLinks(aSide.getClassName(), aSide.getOid(), bSide.getClassName(), bSide.getOid(), session.getSessionId());
+            List<LocalObjectLightList> res = new ArrayList<>();
+            for (RemoteObjectLightList route : routes) 
+                res.add(new LocalObjectLightList(route));
+            
+            return res;
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -4447,13 +4448,12 @@ return null;
     
     public List<LocalObjectLightList> findRoutesUsingContainerLinks(LocalObjectLight aSide, LocalObjectLight bSide) {
         try {
-//            List<RemoteBusinessObjectLightList> routes = service.findSDHRoutesUsingContainerLinks(aSide.getClassName(), aSide.getOid(), bSide.getClassName(), bSide.getOid(), session.getSessionId());
-//            List<LocalObjectLightList> res = new ArrayList<>();
-//            for (RemoteBusinessObjectLightList route : routes) 
-//                res.add(new LocalObjectLightList(route));
-//            
-//            return res;
-return null;
+            List<RemoteObjectLightList> routes = service.findSDHRoutesUsingContainerLinks(aSide.getClassName(), aSide.getOid(), bSide.getClassName(), bSide.getOid(), session.getSessionId());
+            List<LocalObjectLightList> res = new ArrayList<>();
+            for (RemoteObjectLightList route : routes) 
+                res.add(new LocalObjectLightList(route));
+            
+            return res;
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -4462,23 +4462,22 @@ return null;
     
     public List<LocalSDHContainerLinkDefinition> getSDHTransportLinkStructure(String transportLinkClass, long transportLinkId) {
         try {
-//            List<SdhContainerLinkDefinition> transportLinkStructure = service.getSDHTransportLinkStructure(transportLinkClass, transportLinkId, session.getSessionId());
-//            List<LocalSDHContainerLinkDefinition> res = new ArrayList<>();
-//            
-//            for (SdhContainerLinkDefinition aContainerDefinition : transportLinkStructure) {
-//                RemoteBusinessObjectLight container = aContainerDefinition.getContainer();
-//                List<LocalSDHPosition> positions = new ArrayList<>();
-//                
-//                for (SdhPosition aRemotePosition : aContainerDefinition.getPositions()) 
-//                    positions.add(new LocalSDHPosition(aRemotePosition.getConnectionClass(), aRemotePosition.getConnectionId(), aRemotePosition.getPosition()));
-//                
-//                LocalSDHContainerLinkDefinition aLocalContainerDefinition = 
-//                        new LocalSDHContainerLinkDefinition(new LocalObjectLight(container.getId(), container.getName(), container.getClassName()), 
-//                                aContainerDefinition.isStructured(), positions);
-//                res.add(aLocalContainerDefinition);
-//            }            
-//            return res;
-return null;
+            List<RemoteSDHContainerLinkDefinition> transportLinkStructure = service.getSDHTransportLinkStructure(transportLinkClass, transportLinkId, session.getSessionId());
+            List<LocalSDHContainerLinkDefinition> res = new ArrayList<>();
+            
+            for (RemoteSDHContainerLinkDefinition aContainerDefinition : transportLinkStructure) {
+                RemoteObjectLight container = aContainerDefinition.getContainer();
+                List<LocalSDHPosition> positions = new ArrayList<>();
+                
+                for (RemoteSDHPosition aRemotePosition : aContainerDefinition.getPositions()) 
+                    positions.add(new LocalSDHPosition(aRemotePosition.getConnectionClass(), aRemotePosition.getConnectionId(), aRemotePosition.getPosition()));
+                
+                LocalSDHContainerLinkDefinition aLocalContainerDefinition = 
+                        new LocalSDHContainerLinkDefinition(new LocalObjectLight(container.getOid(), container.getName(), container.getClassName()), 
+                                aContainerDefinition.isStructured(), positions);
+                res.add(aLocalContainerDefinition);
+            }            
+            return res;
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -4486,23 +4485,22 @@ return null;
     }
     public List<LocalSDHContainerLinkDefinition> getSDHContainerLinkStructure(String containerLinkClass, long containerLinkId) {
         try {
-//            List<SdhContainerLinkDefinition> containerLinkStructure = service.getSDHContainerLinkStructure(containerLinkClass, containerLinkId, session.getSessionId());
-//            List<LocalSDHContainerLinkDefinition> res = new ArrayList<>();
-//            
-//            for (SdhContainerLinkDefinition aContainerDefinition : containerLinkStructure) {
-//                RemoteBusinessObjectLight container = aContainerDefinition.getContainer();
-//                List<LocalSDHPosition> positions = new ArrayList<>();
-//                
-//                for (SdhPosition aRemotePosition : aContainerDefinition.getPositions()) 
-//                    positions.add(new LocalSDHPosition(aRemotePosition.getConnectionClass(), aRemotePosition.getConnectionId(), aRemotePosition.getPosition()));
-//                
-//                LocalSDHContainerLinkDefinition aLocalContainerDefinition = 
-//                        new LocalSDHContainerLinkDefinition(new LocalObjectLight(container.getId(), container.getName(), container.getClassName()), 
-//                                aContainerDefinition.isStructured(), positions);
-//                res.add(aLocalContainerDefinition);
-//            }            
-//            return res;
-return null;
+            List<RemoteSDHContainerLinkDefinition> containerLinkStructure = service.getSDHContainerLinkStructure(containerLinkClass, containerLinkId, session.getSessionId());
+            List<LocalSDHContainerLinkDefinition> res = new ArrayList<>();
+            
+            for (RemoteSDHContainerLinkDefinition aContainerDefinition : containerLinkStructure) {
+                RemoteObjectLight container = aContainerDefinition.getContainer();
+                List<LocalSDHPosition> positions = new ArrayList<>();
+                
+                for (RemoteSDHPosition aRemotePosition : aContainerDefinition.getPositions()) 
+                    positions.add(new LocalSDHPosition(aRemotePosition.getConnectionClass(), aRemotePosition.getConnectionId(), aRemotePosition.getPosition()));
+                
+                LocalSDHContainerLinkDefinition aLocalContainerDefinition = 
+                        new LocalSDHContainerLinkDefinition(new LocalObjectLight(container.getOid(), container.getName(), container.getClassName()), 
+                                aContainerDefinition.isStructured(), positions);
+                res.add(aLocalContainerDefinition);
+            }            
+            return res;
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;

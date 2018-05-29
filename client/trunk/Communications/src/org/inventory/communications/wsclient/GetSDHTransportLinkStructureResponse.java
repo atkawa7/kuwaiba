@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}sdhContainerLinkDefinition" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}remoteSDHContainerLinkDefinition" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
 public class GetSDHTransportLinkStructureResponse {
 
     @XmlElement(name = "return")
-    protected List<SdhContainerLinkDefinition> _return;
+    protected List<RemoteSDHContainerLinkDefinition> _return;
 
     /**
      * Gets the value of the return property.
@@ -55,13 +55,13 @@ public class GetSDHTransportLinkStructureResponse {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link SdhContainerLinkDefinition }
+     * {@link RemoteSDHContainerLinkDefinition }
      * 
      * 
      */
-    public List<SdhContainerLinkDefinition> getReturn() {
+    public List<RemoteSDHContainerLinkDefinition> getReturn() {
         if (_return == null) {
-            _return = new ArrayList<SdhContainerLinkDefinition>();
+            _return = new ArrayList<RemoteSDHContainerLinkDefinition>();
         }
         return this._return;
     }

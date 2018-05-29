@@ -10,18 +10,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for sdhContainerLinkDefinition complex type.
+ * <p>Java class for remoteSDHContainerLinkDefinition complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="sdhContainerLinkDefinition">
+ * &lt;complexType name="remoteSDHContainerLinkDefinition">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="container" type="{http://ws.interfaces.kuwaiba.org/}businessObjectLight" minOccurs="0"/>
+ *         &lt;element name="container" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" minOccurs="0"/>
  *         &lt;element name="structured" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
- *         &lt;element name="positions" type="{http://ws.interfaces.kuwaiba.org/}sdhPosition" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="positions" type="{http://ws.interfaces.kuwaiba.org/}remoteSDHPosition" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -31,27 +31,27 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "sdhContainerLinkDefinition", propOrder = {
+@XmlType(name = "remoteSDHContainerLinkDefinition", propOrder = {
     "container",
     "structured",
     "positions"
 })
-public class SdhContainerLinkDefinition {
+public class RemoteSDHContainerLinkDefinition {
 
-    protected BusinessObjectLight container;
+    protected RemoteObjectLight container;
     protected boolean structured;
     @XmlElement(nillable = true)
-    protected List<SdhPosition> positions;
+    protected List<RemoteSDHPosition> positions;
 
     /**
      * Gets the value of the container property.
      * 
      * @return
      *     possible object is
-     *     {@link BusinessObjectLight }
+     *     {@link RemoteObjectLight }
      *     
      */
-    public BusinessObjectLight getContainer() {
+    public RemoteObjectLight getContainer() {
         return container;
     }
 
@@ -60,10 +60,10 @@ public class SdhContainerLinkDefinition {
      * 
      * @param value
      *     allowed object is
-     *     {@link BusinessObjectLight }
+     *     {@link RemoteObjectLight }
      *     
      */
-    public void setContainer(BusinessObjectLight value) {
+    public void setContainer(RemoteObjectLight value) {
         this.container = value;
     }
 
@@ -101,13 +101,13 @@ public class SdhContainerLinkDefinition {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link SdhPosition }
+     * {@link RemoteSDHPosition }
      * 
      * 
      */
-    public List<SdhPosition> getPositions() {
+    public List<RemoteSDHPosition> getPositions() {
         if (positions == null) {
-            positions = new ArrayList<SdhPosition>();
+            positions = new ArrayList<RemoteSDHPosition>();
         }
         return this.positions;
     }

@@ -24,7 +24,7 @@ import org.inventory.communications.wsclient.RemoteObjectLightList;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class LocalObjectLightList extends ArrayList<LocalObjectLight> {
-   
+    
     public LocalObjectLightList(RemoteObjectLightList objectChain) {
         for (RemoteObjectLight anElement : objectChain.getList()) 
             add(new LocalObjectLight(anElement.getOid(), anElement.getName(), anElement.getClassName()));

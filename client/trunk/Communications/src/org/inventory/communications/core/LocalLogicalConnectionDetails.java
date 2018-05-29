@@ -17,6 +17,7 @@ package org.inventory.communications.core;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.wsclient.RemoteLogicalConnectionDetails;
 import org.inventory.communications.wsclient.RemoteObjectLight;
 
@@ -47,7 +48,9 @@ public class LocalLogicalConnectionDetails {
     private List<LocalObjectLight> physicalPathForEndpointB;
 
     public LocalLogicalConnectionDetails(RemoteLogicalConnectionDetails remoteCircuitDetails) {
-        //this.connectionObject = LocalObject.toLocalObject(remoteCircuitDetails.getConnectionObject());
+        LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(remoteCircuitDetails.getConnectionObject().getClassName(), false);
+        this.connectionObject =  new LocalObject(remoteCircuitDetails.getConnectionObject().getClassName(), remoteCircuitDetails.getConnectionObject().getId(),
+                                    remoteCircuitDetails.getConnectionObject().getAttributes(), classMetadata);
         this.endpointA =  new LocalObjectLight(remoteCircuitDetails.getEndpointA().getOid(), remoteCircuitDetails.getEndpointA().getName(), remoteCircuitDetails.getEndpointA().getClassName());
         this.endpointB = new LocalObjectLight(remoteCircuitDetails.getEndpointB().getOid(), remoteCircuitDetails.getEndpointB().getName(), remoteCircuitDetails.getEndpointB().getClassName());
         this.physicalPathForEndpointA = new ArrayList<>();
