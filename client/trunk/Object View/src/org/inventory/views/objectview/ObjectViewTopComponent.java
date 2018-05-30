@@ -33,6 +33,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.util.Constants;
+import org.inventory.communications.util.Utils;
 import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
@@ -319,7 +320,7 @@ public final class ObjectViewTopComponent extends TopComponent
     }//GEN-LAST:event_btnSelectActionPerformed
 
     private void btnAddBackgroundImageActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddBackgroundImageActionPerformed
-        JFileChooser fChooser = new JFileChooser();
+        JFileChooser fChooser = Utils.getGlobalFileChooser();
         fChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         fChooser.setFileFilter(new FileNameExtensionFilter("Image files", "gif","jpg", "png"));
         if (fChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {

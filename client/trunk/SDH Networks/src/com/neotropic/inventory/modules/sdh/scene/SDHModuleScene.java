@@ -101,12 +101,15 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
         interactionLayer = new LayerWidget(this);
+        backgroundLayer = new LayerWidget(this);
         
         moduleActions = new SDHModuleActionsFactory(this);
         
+        addChild(backgroundLayer);
         addChild(interactionLayer);
         addChild(edgeLayer);
         addChild(nodeLayer);
+        
         moveProvider = new CustomMoveProvider(this);
         selectAction = ActionFactory.createSelectAction(new CustomSelectProvider(this), true);
         addRemoveControlPointAction = new CustomAddRemoveControlPointAction(this);
@@ -114,6 +117,9 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         
         connectProvider = new SDHModuleConnectProvider();
         
+        getActions().addAction(ActionFactory.createZoomAction());
+        getInputBindings ().setZoomActionModifiers(0); //No keystroke combinations
+
         setState (ObjectState.createNormal ());
     }
 
@@ -130,9 +136,13 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         newNode.getActions(ACTION_SELECT).addAction(selectAction);
         newNode.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction(moveProvider, moveProvider));
         newNode.getActions(ACTION_SELECT).addAction(ActionFactory.createPopupMenuAction(moduleActions.createMenuForNode()));
+        
         newNode.getActions(ACTION_CONNECT).addAction(selectAction);
         newNode.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, connectProvider));
         newNode.getActions(ACTION_CONNECT).addAction(ActionFactory.createPopupMenuAction(moduleActions.createMenuForNode()));
+        
+        newNode.setHighContrast(true);
+        
         return newNode;
     }
 
@@ -143,7 +153,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         newEdge.getActions().addAction(addRemoveControlPointAction);
         newEdge.getActions().addAction(moveControlPointAction);
         newEdge.getActions().addAction(ActionFactory.createPopupMenuAction(moduleActions.createMenuForConnection()));
-        newEdge.setStroke(new BasicStroke(1));
+        newEdge.setStroke(new BasicStroke(3));
         newEdge.setControlPointShape(PointShape.SQUARE_FILLED_BIG);
         newEdge.setEndPointShape(PointShape.SQUARE_FILLED_BIG);
         newEdge.setRouter(RouterFactory.createFreeRouter());
@@ -333,6 +343,12 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
     public ConnectProvider getConnectProvider() {
         return connectProvider;
     }
+    
+    @Override
+    public void clear(){
+        backgroundLayer.removeChildren();
+        super.clear();
+    }
 
     @Override
     public boolean supportsConnections() {
@@ -341,7 +357,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
 
     @Override
     public boolean supportsBackgrounds() {
-        return false;
+        return true;
     }
 
     @Override

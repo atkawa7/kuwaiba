@@ -117,20 +117,20 @@ public class SDHModuleService {
     
     public boolean saveCurrentView() {
         if (view == null || view.getId() == -1) { //New view
-            long newViewId = com.createGeneralView(CLASS_VIEW, view.getName(), view.getDescription(), scene.getAsXML(), null);
+            long newViewId = com.createGeneralView(CLASS_VIEW, view.getName(), view.getDescription(), scene.getAsXML(), scene.getBackgroundImage());
             if (newViewId == -1) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                 return false;
             }
             else {
-                view = new LocalObjectView(newViewId, CLASS_VIEW, view.getName(), view.getDescription(), scene.getAsXML(), null);
+                view = new LocalObjectView(newViewId, CLASS_VIEW, view.getName(), view.getDescription(), scene.getAsXML(), scene.getBackgroundImage());
                 SDHConfigurationObject configObject = Lookup.getDefault().lookup(SDHConfigurationObject.class);
                 configObject.setProperty("saved", true);
                 return true;
             }
         }
         else {
-            if (com.updateGeneralView(view.getId(), view.getName(), view.getDescription(), scene.getAsXML(), null)) {
+            if (com.updateGeneralView(view.getId(), view.getName(), view.getDescription(), scene.getAsXML(), scene.getBackgroundImage())) {
                 SDHConfigurationObject configObject = Lookup.getDefault().lookup(SDHConfigurationObject.class);
                 configObject.setProperty("saved", true);
                 return true;

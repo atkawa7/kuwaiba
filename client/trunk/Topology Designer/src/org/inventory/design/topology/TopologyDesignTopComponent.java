@@ -406,7 +406,7 @@ public final class TopologyDesignTopComponent extends TopComponent implements Ex
         List<LocalObjectViewLight> views = service.getViews();
         JComboBox<LocalObjectViewLight> lstViews = new JComboBox<>(views.toArray(new LocalObjectViewLight[0]));
         lstViews.setName("lstViews"); //NOI18N
-        JComplexDialogPanel viewsDialog = new JComplexDialogPanel(new String[] {"Available topologies"}, new JComponent[] {lstViews});
+        JComplexDialogPanel viewsDialog = new JComplexDialogPanel(new String[] {"Available Topologies"}, new JComponent[] {lstViews});
         if (JOptionPane.showConfirmDialog(null, viewsDialog, "Choose a Topology", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             LocalObjectViewLight selectedView = (LocalObjectViewLight) ((JComboBox)viewsDialog.getComponent("lstViews")).getSelectedItem();
             if (selectedView != null) {

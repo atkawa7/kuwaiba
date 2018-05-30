@@ -67,8 +67,9 @@ public class ObjectNodeWidget extends SelectableNodeWidget {
         this.nodeWidget.setBackground(iconColor);
         this.nodeWidget.setOpaque(true);
         
-        this.labelWidget = new LabelWidget(scene);
-        this.labelWidget.setLabel(businessObject.toString());
+        this.labelWidget = new LabelWidget(scene, businessObject.toString());
+        this.labelWidget.setBorder(getScene().getLookFeel().getBorder(getState()));
+        this.labelWidget.setOpaque(true);
         
         //Centers the text, and makes the widgets to stack one onto another
         setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 1 - lookFeel.getMargin()));
@@ -117,7 +118,6 @@ public class ObjectNodeWidget extends SelectableNodeWidget {
 
     public void setHighContrast(boolean highContrast) {
         this.highContrast = highContrast;
-        this.labelWidget.setOpaque(highContrast);
         notifyStateChanged(getState(), getState());
     }
     
