@@ -5284,6 +5284,17 @@ public class WebserviceBean implements WebserviceBeanLocal {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    
+    public void updateActivity(long processInstanceId, long activityDefinitionId, RemoteArtifact artifact, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("updateActivity", ipAddress, sessionId);
+            ProcessTest.getInstance().commitActivity(processInstanceId, activityDefinitionId, artifact);
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
 
     @Override
     public RemoteActivityDefinition getNextActivityForProcessInstance(long processInstanceId, 

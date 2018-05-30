@@ -111,13 +111,15 @@ public class ProcessInstancesView extends VerticalLayout {
         grid.setItems(beans);
         grid.addColumn(ProcessInstanceBean::getCurrentActivity).setCaption("Current Activity");
         grid.addColumn(ProcessInstanceBean::getCurrentActivityActor).setCaption("Actor");
+        grid.addColumn(ProcessInstanceBean::getOrderNumber).setCaption("Order Number");
+        /*
         grid.addColumn(ProcessInstanceBean::getViewButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
             @Override
             public void click(ClickableRenderer.RendererClickEvent event) {
                 Notification.show("Hola");
             }
         })).setCaption("View");
-        
+        */
         grid.addColumn(ProcessInstanceBean::getEditButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
             @Override
             public void click(ClickableRenderer.RendererClickEvent event) {
@@ -127,14 +129,14 @@ public class ProcessInstancesView extends VerticalLayout {
                 );
             }
         })).setCaption("Edit");
-        
+        /*
         grid.addColumn(ProcessInstanceBean::getDeleteButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
             @Override
             public void click(ClickableRenderer.RendererClickEvent event) {
                 Notification.show("Hola");
             }
         })).setCaption("Delete");
-        
+        */
         tools.addComponent(btnCreateProcessInstance);
         tools.setComponentAlignment(btnCreateProcessInstance, Alignment.MIDDLE_RIGHT);
         wrapper.addComponent(tools);

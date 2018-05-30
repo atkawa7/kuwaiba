@@ -15,6 +15,8 @@
 package org.kuwaiba.web.view;
 
 import com.vaadin.ui.Component;
+import java.util.List;
+import org.kuwaiba.apis.persistence.util.StringPair;
 
 /**
  * Renders an artifact type
@@ -23,10 +25,17 @@ import com.vaadin.ui.Component;
 public interface ArtifactRenderer {
     /**
      * Return the Vaadin Component to render
+     * @return
      */
     public Component renderArtifact();
     /**
      * Gets the content
+     * @return
      */
     public byte[] getContent();
+    /**
+     * Gets the shared information
+     * @return
+     */
+    public List<StringPair> getSharedInformation();
 }

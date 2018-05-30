@@ -650,6 +650,7 @@ public interface WebserviceBeanLocal {
     public RemoteArtifact getArtifactForActivity(long processInstanceId, long activityId, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, long activityDefinitionId, String ipAddress, String sessionId) throws ServerSideException;
     public void commitActivity(long processInstanceId, long activityDefinitionId, RemoteArtifact artifact, String ipAddress, String sessionId) throws ServerSideException;
+    public void updateActivity(long processInstanceId, long activityDefinitionId, RemoteArtifact artifact, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteActivityDefinition getNextActivityForProcessInstance(long processInstanceId, String ipAddress, String sessionId) throws ServerSideException;
     public long createProcessInstance(long processDefinitionId, String processInstanceName, String processInstanceDescription, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteProcessDefinition getProcessDefinition(long processDefinitionId, String ipAddress, String sessionId) throws ServerSideException;

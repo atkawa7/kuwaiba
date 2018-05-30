@@ -18,11 +18,12 @@ import com.vaadin.server.Page;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalSplitPanel;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.VerticalSplitPanel;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.kuwaiba.apis.persistence.application.process.Actor;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -34,12 +35,13 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinitio
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.openide.util.Exceptions;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ProcessInstanceView extends HorizontalSplitPanel implements Button.ClickListener {
+public class ProcessInstanceView extends HorizontalSplitPanel {
     private final RemoteProcessDefinition processDefinition;
     private RemoteProcessInstance processInstance;
     private final HashMap<RemoteActivityDefinition, Button> activities;
@@ -67,41 +69,66 @@ public class ProcessInstanceView extends HorizontalSplitPanel implements Button.
         initView();
     }
     
+    private boolean actorEnabled(RemoteActor actor) {
+        try {
+            List<GroupInfoLight> groups = wsBean.getGroupsForUser(
+                    remoteSession.getUserId(),
+                    Page.getCurrent().getWebBrowser().getAddress(),
+                    remoteSession.getSessionId());
+            
+            if (actor != null) {
+                
+                for (GroupInfoLight group : groups) {
+
+                    if (actor.getName().equals(group.getName()))
+                        return true;
+                }
+            }
+        } catch (ServerSideException ex) {
+            NotificationsUtil.showError(ex.getMessage());
+        }
+        return false;
+    }
+    /*        
     @Override
     public void buttonClick(Button.ClickEvent event) {
-        
-        RemoteActivityDefinition nextActivity = processDefinition.getStartAction();
+                        
+        RemoteActivityDefinition nextActivity = processDefinition.getStartActivity();
         
         while (nextActivity != null) {
             
             if (processInstance.getCurrentActivity() == nextActivity.getId()) {
-                
                 try {
                     RemoteActor actor = nextActivity.getActor();
-                    
-                    List<GroupInfoLight> groups = wsBean.getGroupsForUser(
-                        remoteSession.getUserId(), 
-                        Page.getCurrent().getWebBrowser().getAddress(),
-                        ((RemoteSession) getSession().getAttribute("session")).getSessionId());
-                    
-                    boolean belongsToGroup = false;
-                    
-                    for (GroupInfoLight group : groups) {
-                        if (actor.getName().equals(group.getName())) {
-                            belongsToGroup = true;
-                            break;
-                        }
-                    }
-                    
-                    
-                    if (actor.getType() == Actor.TYPE_GROUP && belongsToGroup) {
+                                                            
+                    if (actor != null && actor.getType() == Actor.TYPE_GROUP && actorEnabled(actor)) {
                         
                         if (artifactView != null && artifactView.getArtifactRenderer() != null) {
+                            RemoteArtifact remoteArtifact = null;
+                            
+                            try {
+                                remoteArtifact = wsBean.getArtifactForActivity(
+                                    processInstance.getId(),
+                                    nextActivity.getId(),
+                                    Page.getCurrent().getWebBrowser().getAddress(),
+                                    remoteSession.getSessionId());
+
+                                remoteArtifact.setContent(artifactView.getArtifactRenderer().getContent());
+                                remoteArtifact.setSharedInformation(artifactView.getArtifactRenderer().getSharedInformation());
+
+                            } catch (ServerSideException ex) {
+                                remoteArtifact = new RemoteArtifact(
+                                    ProcessTest.artifactCounter++, 
+                                    "", 
+                                    "", 
+                                    artifactView.getArtifactRenderer().getContent(), 
+                                    artifactView.getArtifactRenderer().getSharedInformation());
+                            }
                         
                             wsBean.commitActivity(
                                 processInstance.getId(),
                                 nextActivity.getId(),
-                                new RemoteArtifact(ProcessTest.artifactCounter++, "", "", artifactView.getArtifactRenderer().getContent()),
+                                remoteArtifact,
                                 Page.getCurrent().getWebBrowser().getAddress(),
                                 ((RemoteSession) getSession().getAttribute("session")).getSessionId());
 
@@ -144,6 +171,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel implements Button.
             int i = 0;
         }
     }
+    */
         
     private void render(VerticalLayout activitiesLayout, RemoteActivityDefinition nextActivity) {
         
@@ -164,6 +192,29 @@ public class ProcessInstanceView extends HorizontalSplitPanel implements Button.
         
         activities.put(nextActivity, btnActivity);
     }
+    
+    private List<RemoteArtifact> getRemoteArtifacts() {
+        RemoteActivityDefinition activity = processDefinition.getStartActivity();
+        
+        List<RemoteArtifact> res = new ArrayList();
+        
+        while (activity != null) {
+            try {
+                RemoteArtifact remoteArtifact = wsBean.getArtifactForActivity(
+                        processInstance.getId(),
+                        activity.getId(),
+                        Page.getCurrent().getWebBrowser().getAddress(),
+                        remoteSession.getSessionId());
+                
+                res.add(remoteArtifact);
+                
+            } catch (ServerSideException ex) {
+            }
+            activity = activity.getNextActivity();
+        }
+        return res;
+    }
+    
     
     private void renderArtifact(RemoteActivityDefinition currentActivity) {
         try {
@@ -190,28 +241,102 @@ public class ProcessInstanceView extends HorizontalSplitPanel implements Button.
             }
         }
         
-        VerticalLayout artifactWrapperLayout = new VerticalLayout();
-        artifactWrapperLayout.setHeight("100%");
-        artifactWrapperLayout.setStyleName("formmanager");
+        if (actorEnabled(currentActivity.getActor())) {
+            
+            VerticalLayout artifactWrapperLayout = new VerticalLayout();
+            artifactWrapperLayout.setHeight("100%");
+            artifactWrapperLayout.setStyleName("formmanager");
 
-        VerticalSplitPanel artifactContainer = new VerticalSplitPanel();
-        artifactContainer.setSizeFull();
-        artifactContainer.setSplitPosition(91, Unit.PERCENTAGE);
-        
-        VerticalLayout secondVerticalLayout = new VerticalLayout();
-        secondVerticalLayout.setSizeFull();
-        Button btnSave = new Button("Save");
-        btnSave.addClickListener(ProcessInstanceView.this);
-        secondVerticalLayout.addComponent(btnSave);
-        secondVerticalLayout.setComponentAlignment(btnSave, Alignment.MIDDLE_CENTER);
-                
-        artifactContainer.setFirstComponent(artifactView = new ArtifactView(artifactDefinition, artifact, wsBean, remoteSession));
-        artifactContainer.setSecondComponent(secondVerticalLayout);
+            VerticalSplitPanel artifactContainer = new VerticalSplitPanel();
+            artifactContainer.setSizeFull();
+            artifactContainer.setSplitPosition(91, Unit.PERCENTAGE);
 
-        artifactWrapperLayout.addComponent(artifactContainer);
+            VerticalLayout secondVerticalLayout = new VerticalLayout();
+            secondVerticalLayout.setSizeFull();
+            Button btnSave = new Button(artifact == null ? "Save" : "Update");
 
-        ProcessInstanceView.this.setSecondComponent(artifactWrapperLayout);
-        
+            if (!actorEnabled(currentActivity.getActor()))
+                btnSave.setEnabled(false);
+
+            btnSave.addClickListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    RemoteArtifact remoteArtifact = null;
+
+                    try {
+                        remoteArtifact = wsBean.getArtifactForActivity(
+                            processInstance.getId(),
+                            currentActivity.getId(),
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            remoteSession.getSessionId());
+
+                        remoteArtifact.setContent(artifactView.getArtifactRenderer().getContent());
+                        remoteArtifact.setSharedInformation(artifactView.getArtifactRenderer().getSharedInformation());
+
+                    } catch (ServerSideException ex) {
+                        remoteArtifact = new RemoteArtifact(
+                            ProcessTest.artifactCounter++, 
+                            "", 
+                            "", 
+                            artifactView.getArtifactRenderer().getContent(), 
+                            artifactView.getArtifactRenderer().getSharedInformation());
+                    }
+
+                    try {
+                        if (artifact == null) {
+
+                            wsBean.commitActivity(
+                                    processInstance.getId(),
+                                    currentActivity.getId(),
+                                    remoteArtifact,
+                                    Page.getCurrent().getWebBrowser().getAddress(),
+                                    ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+
+                            if (currentActivity.getNextActivity() != null) {
+
+                                activities.get(currentActivity.getNextActivity()).addStyleName("activity-current");
+                                renderArtifact(currentActivity.getNextActivity());
+
+                            } else {
+
+                                activities.get(currentActivity.getNextActivity()).addStyleName("activity-current");
+                                renderArtifact(currentActivity.getNextActivity());
+                            }
+
+                        } else {
+
+                            wsBean.updateActivity(
+                                    processInstance.getId(),
+                                    currentActivity.getId(),
+                                    remoteArtifact,
+                                    Page.getCurrent().getWebBrowser().getAddress(),
+                                    ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+
+                            Notification.show("Update", "The artifact was updated", Notification.Type.TRAY_NOTIFICATION);
+
+                        }
+                        processInstance = wsBean.getProcessInstance(
+                            processInstance.getId(), 
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+
+                    } catch (ServerSideException ex) {
+                        NotificationsUtil.showError(ex.getMessage());
+                    }
+                }
+            });
+            secondVerticalLayout.addComponent(btnSave);
+            secondVerticalLayout.setComponentAlignment(btnSave, Alignment.MIDDLE_CENTER);
+
+            artifactContainer.setFirstComponent(artifactView = new ArtifactView(artifactDefinition, artifact, wsBean, remoteSession, getRemoteArtifacts()));
+            artifactContainer.setSecondComponent(secondVerticalLayout);
+
+            artifactWrapperLayout.addComponent(artifactContainer);
+
+            ProcessInstanceView.this.setSecondComponent(artifactWrapperLayout);
+        } else {
+            
+        }
     }
     
     public void initView() {
@@ -223,7 +348,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel implements Button.
         activitiesLayout.setSpacing(false);
         wrapper.addComponent(activitiesLayout);
         
-        RemoteActivityDefinition nextActivity = processDefinition.getStartAction();
+        RemoteActivityDefinition nextActivity = processDefinition.getStartActivity();
         RemoteActivityDefinition currentActivity = nextActivity;        
         
         while (nextActivity != null) {
@@ -234,7 +359,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel implements Button.
                                     
             nextActivity = nextActivity.getNextActivity();
         }
-        nextActivity = processDefinition.getStartAction();
+        nextActivity = processDefinition.getStartActivity();
         
         if (currentActivity != null) {
             

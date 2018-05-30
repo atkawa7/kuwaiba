@@ -15,11 +15,13 @@
 package org.kuwaiba.web.view;
 
 import com.vaadin.server.Page;
+import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActor;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -58,7 +60,7 @@ public class ProcessInstanceBean {
         
         if (processDefinition != null) {
             
-            RemoteActivityDefinition activityDefinition = processDefinition.getStartAction();
+            RemoteActivityDefinition activityDefinition = processDefinition.getStartActivity();
 
             while (activityDefinition != null) {
                 if (activityDefinition.getId() == processInstance.getCurrentActivity())
@@ -85,6 +87,38 @@ public class ProcessInstanceBean {
             
             if (actor != null)
                 return actor.getName();
+        }
+        return null;
+    }
+    
+    public String getOrderNumber() {
+        try {
+            RemoteProcessDefinition processDefinition = getProcessDefinition();
+            
+            if (processDefinition != null) {
+                RemoteActivityDefinition activityDefinition = processDefinition.getStartActivity();
+                
+                if (activityDefinition != null) {
+                    
+                    RemoteArtifact artifact = wsBean.getArtifactForActivity(
+                            processInstance.getId(),
+                            activityDefinition.getId(),
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            session.getSessionId());
+
+                    if (artifact.getSharedInformation() != null) {
+
+                        for (StringPair pair : artifact.getSharedInformation()) {
+
+                            if (pair.getKey().equals("txtX"))
+                                return pair.getValue();
+                        }
+                    }
+                }
+            }
+        } catch (ServerSideException ex) {
+            
+            NotificationsUtil.showError(ex.getMessage());
         }
         return null;
     }

@@ -15,6 +15,8 @@
 package org.kuwaiba.web.view;
 
 import com.vaadin.ui.Panel;
+import java.util.HashMap;
+import java.util.List;
 import org.kuwaiba.apis.persistence.application.process.ArtifactDefinition;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
@@ -31,12 +33,15 @@ public class ArtifactView extends Panel {
     private final WebserviceBeanLocal wsBean;
     private final RemoteSession session;
     private ArtifactRenderer artifactRenderer;
+    private final List<RemoteArtifact> remoteArtifacts;
     
-    public ArtifactView(RemoteArtifactDefinition artifactDefinition, RemoteArtifact artifact, WebserviceBeanLocal wsBean, RemoteSession session) {
+    public ArtifactView(RemoteArtifactDefinition artifactDefinition, RemoteArtifact artifact, WebserviceBeanLocal wsBean, RemoteSession session, List<RemoteArtifact> remoteArtifacts) {
         this.artifactDefinition = artifactDefinition;
         this.artifact = artifact;
         this.wsBean = wsBean;
         this.session = session;
+        
+        this.remoteArtifacts = remoteArtifacts;
         
         setStyleName("formmanager");
         setSizeFull();
@@ -50,7 +55,7 @@ public class ArtifactView extends Panel {
             case ArtifactDefinition.TYPE_CONDITIONAL: 
             break;
             case ArtifactDefinition.TYPE_FORM: 
-                artifactRenderer = new FormArtifactRenderer(artifactDefinition, artifact, wsBean, session);
+                artifactRenderer = new FormArtifactRenderer(artifactDefinition, artifact, wsBean, session, remoteArtifacts);
                 setContent(artifactRenderer.renderArtifact());
             break;
         }

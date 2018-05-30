@@ -22,6 +22,7 @@ import org.kuwaiba.apis.forms.elements.ScriptQueryExecutor;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
@@ -37,9 +38,12 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
     
     private List<RemoteScriptQuery> scriptQueries;
     
-    public ScriptQueryExecutorImpl(WebserviceBeanLocal wsBean, RemoteSession session) {
+    private final List<RemoteArtifact> remoteArtifacts;
+    
+    public ScriptQueryExecutorImpl(WebserviceBeanLocal wsBean, RemoteSession session, List<RemoteArtifact> remoteArtifacts) {
         this.wsBean = wsBean;
         this.session = session;
+        this.remoteArtifacts = remoteArtifacts;
         
         try {
             scriptQueries = wsBean.getScriptQueries(Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
@@ -52,6 +56,18 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
     
     @Override
     public Object execute(String scriptQueryName, List<String> parameterNames, List<String> parameterValues) {
+        if ("shared".equals(scriptQueryName)) {
+            if (remoteArtifacts != null && !remoteArtifacts.isEmpty()) {
+                List<StringPair> sharedInformation = remoteArtifacts.get(0).getSharedInformation();
+                if (sharedInformation != null) {
+                    for (StringPair pair : sharedInformation) {
+                        if ("txtX".equals(pair.getKey()))
+                            return pair.getValue();
+                    }
+                }
+            }
+        }
+        
         if (scriptQueries != null) {
             
             for (RemoteScriptQuery scriptQuery : scriptQueries) {

@@ -166,7 +166,7 @@ public class ProcessTest {
     public long createProcessInstance(long processDefId, String name, String description) throws InventoryException {
         RemoteProcessDefinition processDef = getProcessDefinition(processDefId);
         
-        long currentActivity = processDef.getStartAction().getId();
+        long currentActivity = processDef.getStartActivity().getId();
         
         RemoteProcessInstance processInstance = new RemoteProcessInstance(processInstancesCounter++, name, description, currentActivity, processDefId);
         
@@ -193,7 +193,7 @@ public class ProcessTest {
         
         RemoteProcessDefinition processDef = getProcessDefinition(processInstance.getProcessDefinition());
         
-        RemoteActivityDefinition activity = processDef.getStartAction();
+        RemoteActivityDefinition activity = processDef.getStartActivity();
         
         while ((activity != null) && (activity.getId() != activityId))
             activity = activity.getNextActivity();
@@ -221,7 +221,7 @@ public class ProcessTest {
     public RemoteArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, long activityDefinitionId) throws InventoryException {
         RemoteProcessDefinition processDef = getProcessDefinition(processDefinitionId);
         
-        RemoteActivityDefinition activityDefinition = processDef.getStartAction();
+        RemoteActivityDefinition activityDefinition = processDef.getStartActivity();
         
         while (activityDefinition != null && activityDefinition.getId() != activityDefinitionId)
             activityDefinition = activityDefinition.getNextActivity();
@@ -237,7 +237,7 @@ public class ProcessTest {
         
         RemoteProcessDefinition processDefinition = getProcessDefinition(processInstance.getProcessDefinition());
         
-        RemoteActivityDefinition activity = processDefinition.getStartAction();
+        RemoteActivityDefinition activity = processDefinition.getStartActivity();
         
         while (activity != null) {
             
@@ -249,12 +249,13 @@ public class ProcessTest {
         throw new InventoryException("Next Activity can not be found") {};
     }
     
-    public void commitActivity(long processInstanceId, long activityDefinitionId, RemoteArtifact artifact) throws InventoryException {
+    
+    public void updateActivity(long processInstanceId, long activityDefinitionId, RemoteArtifact artifact) throws InventoryException {
         RemoteProcessInstance processInstance = getProcessInstance(processInstanceId);
         
         RemoteProcessDefinition processDefinition = getProcessDefinition(processInstance.getProcessDefinition());
         
-        RemoteActivityDefinition activity = processDefinition.getStartAction();
+        RemoteActivityDefinition activity = processDefinition.getStartActivity();
         
         while (activity != null && activity.getId() != activityDefinitionId)
             activity = activity.getNextActivity();
@@ -266,10 +267,39 @@ public class ProcessTest {
 
             if (!artifacts.containsKey(activity.getArfifact()))
                 artifacts.put(activity.getArfifact(), new ArrayList());
-
-            processArtifacts.get(processInstance).add(artifact);
-            artifacts.get(activity.getArfifact()).add(artifact);
             
+            if (!processArtifacts.get(processInstance).contains(artifact))
+                processArtifacts.get(processInstance).add(artifact);
+            
+            if (!artifacts.get(activity.getArfifact()).contains(artifact))
+                artifacts.get(activity.getArfifact()).add(artifact);
+        }
+    }
+    
+    public void commitActivity(long processInstanceId, long activityDefinitionId, RemoteArtifact artifact) throws InventoryException {
+        RemoteProcessInstance processInstance = getProcessInstance(processInstanceId);
+        
+        RemoteProcessDefinition processDefinition = getProcessDefinition(processInstance.getProcessDefinition());
+        
+        RemoteActivityDefinition activity = processDefinition.getStartActivity();
+        
+        while (activity != null && activity.getId() != activityDefinitionId)
+            activity = activity.getNextActivity();
+        
+        if (activity != null) {
+            
+            if (!processArtifacts.containsKey(processInstance))
+                processArtifacts.put(processInstance, new ArrayList());
+
+            if (!artifacts.containsKey(activity.getArfifact()))
+                artifacts.put(activity.getArfifact(), new ArrayList());
+            
+            if (!processArtifacts.get(processInstance).contains(artifact))
+                processArtifacts.get(processInstance).add(artifact);
+            
+            if (!artifacts.get(activity.getArfifact()).contains(artifact))
+                artifacts.get(activity.getArfifact()).add(artifact);
+                        
             if (activity.getNextActivity() != null)
                 processInstance.setCurrentActivity(activity.getNextActivity().getId());
         }

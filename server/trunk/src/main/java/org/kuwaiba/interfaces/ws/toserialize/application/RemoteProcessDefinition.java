@@ -116,11 +116,37 @@ public class RemoteProcessDefinition implements Serializable {
         this.enabled = enabled;
     }
 
-    public RemoteActivityDefinition getStartAction() {
+    public RemoteActivityDefinition getStartActivity() {
         return startActivity;
     }
 
     public void setStartAction(RemoteActivityDefinition startActivity) {
         this.startActivity = startActivity;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 71 * hash + (int) (this.id ^ (this.id >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final RemoteProcessDefinition other = (RemoteProcessDefinition) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
+    }
+        
 }

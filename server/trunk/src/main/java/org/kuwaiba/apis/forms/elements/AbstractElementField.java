@@ -29,6 +29,7 @@ public abstract class AbstractElementField extends AbstractElement {
     private boolean mandatory = false;
     private boolean cleanable = true;
     private String dataType;
+    private boolean shared = false;
     
     public Object getValue() {
         return value;        
@@ -61,7 +62,15 @@ public abstract class AbstractElementField extends AbstractElement {
     public void setDataType(String dataType) {
         this.dataType = dataType;        
     }
-        
+    
+    public boolean isShared() {
+        return shared;
+    }
+    
+    public void setShared(boolean shared) {
+        this.shared = shared;        
+    }
+    
     @Override
     public void onComponentEvent(EventDescriptor event) {
         if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
@@ -140,6 +149,7 @@ public abstract class AbstractElementField extends AbstractElement {
         setValue(reader);
         setMandatory(reader);
         setDataType(reader);
+        setShared(reader);
     }
     
     private void setValue(XMLStreamReader reader) {
@@ -155,6 +165,10 @@ public abstract class AbstractElementField extends AbstractElement {
     
     private void setDataType(XMLStreamReader reader) {
         dataType = reader.getAttributeValue(null, Constants.Attribute.DATA_TYPE);
+    }
+    
+    private void setShared(XMLStreamReader reader) {
+        shared = Boolean.valueOf(reader.getAttributeValue(null, Constants.Attribute.SHARED));
     }
     
     @Override

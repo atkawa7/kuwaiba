@@ -75,6 +75,7 @@ public class Constants {
         public static final String CLASS_ID = "classid"; //NOI18N
         public static final String CLASS_NAME = "classname"; //NOI18N
         public static final String FORM_ID = "formid"; //NOI18N
+        public static final String SHARED = "shared"; //NOI18N
         
         public class DataType {
             public static final String REMOTE_OBJECT = "RemoteObject"; //NOI18N

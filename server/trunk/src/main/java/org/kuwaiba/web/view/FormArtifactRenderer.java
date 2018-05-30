@@ -16,11 +16,15 @@ package org.kuwaiba.web.view;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import org.kuwaiba.apis.forms.FormInstanceCreator;
 import org.kuwaiba.apis.forms.FormInstanceLoader;
 import org.kuwaiba.apis.forms.FormRenderer;
 import org.kuwaiba.apis.forms.elements.FormDefinitionLoader;
 import org.kuwaiba.apis.forms.elements.AbstractFormInstanceLoader;
+import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
@@ -37,12 +41,32 @@ public class FormArtifactRenderer implements ArtifactRenderer {
     private final RemoteSession session;
     
     private FormRenderer formRenderer;
+    private FormInstanceCreator formInstanceCreator;
+    private final List<RemoteArtifact> remoteArtifacts;
+    //TODO: only to test the concept the communicator share the information of one form
+    //in the future it can be suport many forms
+//    public class FormInformationCommunicator {
+//        private HashMap<String, String> publicInformation;   
+//        
+//        public FormInformationCommunicator(HashMap<String, String> publicInformation) {
+//            this.publicInformation = publicInformation;
+//        }
+//        
+//        public HashMap<String, String> getPublicInformation() {
+//            return publicInformation;
+//        }
+//        
+//        public void getPublicInformation(HashMap<String, String> publicInformation) {
+//            this.publicInformation = publicInformation;
+//        }
+//    }
     
-    public FormArtifactRenderer(RemoteArtifactDefinition artifactDefinition, RemoteArtifact artifact, WebserviceBeanLocal wsBean, RemoteSession session) {
+    public FormArtifactRenderer(RemoteArtifactDefinition artifactDefinition, RemoteArtifact artifact, WebserviceBeanLocal wsBean, RemoteSession session, List<RemoteArtifact> remoteArtifacts) {
         this.artifactDefinition = artifactDefinition;
         this.artifact = artifact;
         this.wsBean = wsBean;
         this.session = session;
+        this.remoteArtifacts = remoteArtifacts;
     }
         
     @Override
@@ -61,7 +85,7 @@ public class FormArtifactRenderer implements ArtifactRenderer {
                     
                     FormDefinitionLoader formLoader = fil.load(artifactDefinition.getDefinition(), artifact.getContent());
                                         
-                    formRenderer = new FormRenderer(formLoader);
+                    formRenderer = new FormRenderer(formLoader, remoteArtifacts);
                     formRenderer.render(wsBean, session);
 
                     return formRenderer;
@@ -74,7 +98,7 @@ public class FormArtifactRenderer implements ArtifactRenderer {
                     FormDefinitionLoader formLoader = new FormDefinitionLoader(artifactDefinition.getDefinition());
                     formLoader.build();
                     
-                    formRenderer = new FormRenderer(formLoader);
+                    formRenderer = new FormRenderer(formLoader, remoteArtifacts);
                     formRenderer.render(wsBean, session);
 
                     return formRenderer;
@@ -87,7 +111,23 @@ public class FormArtifactRenderer implements ArtifactRenderer {
 
     @Override
     public byte[] getContent() {
-        return new FormInstanceCreator(formRenderer.getFormStructure(), wsBean, session).getStructure();
+        formInstanceCreator = new FormInstanceCreator(formRenderer.getFormStructure(), wsBean, session);
+        return formInstanceCreator.getStructure();
+    }
+    
+    @Override
+    public List<StringPair> getSharedInformation() {
+        
+        List<StringPair> pairs = new ArrayList();
+        
+        for (String pair : formInstanceCreator.getSharedInformation().keySet()) {
+            
+            String key = pair;
+            String value = formInstanceCreator.getSharedInformation().get(pair);
+            
+            pairs.add(new StringPair(key, value));
+        }
+        return pairs;
     }
     
 }

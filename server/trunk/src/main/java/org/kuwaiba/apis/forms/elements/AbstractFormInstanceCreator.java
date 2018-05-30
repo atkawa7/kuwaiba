@@ -16,6 +16,7 @@ package org.kuwaiba.apis.forms.elements;
 
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,10 +31,15 @@ import javax.xml.stream.XMLStreamException;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public abstract class AbstractFormInstanceCreator {
-    private final FormStructure formStructure;            
+    private final FormStructure formStructure;
+    HashMap<String, String> sharedInformation = new HashMap();
     
     public AbstractFormInstanceCreator(FormStructure formStructure) {
         this.formStructure = formStructure;
+    }
+    
+    public HashMap<String, String> getSharedInformation() {
+        return sharedInformation;        
     }
         
     public byte[] getStructure() {
@@ -61,7 +67,7 @@ public abstract class AbstractFormInstanceCreator {
         
         return null;
     }
-    
+        
     private void getStructureRecursive(XMLEventWriter xmlew, XMLEventFactory xmlef, AbstractElement parent) throws XMLStreamException {
         if (parent != null) {
             String tagName = parent.getTagName();
@@ -78,7 +84,14 @@ public abstract class AbstractFormInstanceCreator {
                 XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.FORM_ID, ((ElementForm) parent).getFormId());
             
             if (parent instanceof AbstractElementField) {
-                                
+                
+                AbstractElementField elementField = (AbstractElementField) parent;
+                
+                if (elementField.isShared()) {
+                    
+                    if (elementField.getId() != null && elementField.getValue() != null)
+                        sharedInformation.put(elementField.getId(), elementField.getValue().toString());
+                }
                 XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.DATA_TYPE, ((AbstractElementField) parent).getDataType());
                 addTagAttributes(xmlew, xmlef, ((AbstractElementField) parent));
                 

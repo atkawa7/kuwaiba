@@ -48,7 +48,7 @@ public class FormView extends CustomComponent implements View {
         FormDefinitionLoader formBuilder = new FormDefinitionLoader(remoteForm.getStructure());            
         formBuilder.build();
 
-        FormRenderer formRenderer = new FormRenderer(formBuilder);
+        FormRenderer formRenderer = new FormRenderer(formBuilder, null);
         
         RemoteSession remoteSession = (RemoteSession) getSession().getAttribute("session");
         formRenderer.render(wsBean, remoteSession);

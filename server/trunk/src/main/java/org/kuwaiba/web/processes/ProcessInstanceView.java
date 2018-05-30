@@ -117,7 +117,7 @@ public class ProcessInstanceView extends CustomComponent implements View {
         Graph graph = new Graph("G" + String.valueOf(processDef.getId()), Graph.DIGRAPH);
         
         
-        RemoteActivityDefinition currentActivity = processDef.getStartAction();
+        RemoteActivityDefinition currentActivity = processDef.getStartActivity();
         while (true) {
             RemoteActivityDefinition nextActivity = currentActivity.getNextActivity();
             
@@ -170,7 +170,7 @@ public class ProcessInstanceView extends CustomComponent implements View {
         for (Graph.Node node : nodes.keySet())
             vizComponent.addCss(node, "stroke", "#62c192");
         
-        vizComponent.addCss(activities.get(processDef.getStartAction()), "stroke", "#f4a742");
+        vizComponent.addCss(activities.get(processDef.getStartActivity()), "stroke", "#f4a742");
         
         vizComponent.addClickListener(new NodeClickListener() {
             @Override
@@ -227,7 +227,7 @@ public class ProcessInstanceView extends CustomComponent implements View {
                     FormDefinitionLoader formBuilder = new FormDefinitionLoader(remoteForm.getStructure());            
                     formBuilder.build();
 
-                    FormRenderer formRenderer = new FormRenderer(formBuilder);
+                    FormRenderer formRenderer = new FormRenderer(formBuilder, null);
                     formRenderer.render(wsBean, remoteSession);
                                     
                     Window subWindow = new Window(remoteForm.getName());

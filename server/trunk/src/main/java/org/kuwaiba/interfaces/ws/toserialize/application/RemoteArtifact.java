@@ -53,11 +53,12 @@ public class RemoteArtifact implements Serializable {
 
     public RemoteArtifact() { }
     
-    public RemoteArtifact(long id, String name, String contentType, byte[] content) {
+    public RemoteArtifact(long id, String name, String contentType, byte[] content, List<StringPair> sharedInformation) {
         this.name = name;
         this.contentType = contentType;
         this.content = content;
         this.id = id;
+        this.sharedInformation = sharedInformation;
     }
     
     public long getId() {
@@ -99,4 +100,30 @@ public class RemoteArtifact implements Serializable {
     public void setSharedInformation(List<StringPair> sharedInformation) {
         this.sharedInformation = sharedInformation;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (int) (this.id ^ (this.id >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final RemoteArtifact other = (RemoteArtifact) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
+    }
+    
 }
