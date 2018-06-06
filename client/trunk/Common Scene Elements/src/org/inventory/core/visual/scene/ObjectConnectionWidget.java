@@ -57,9 +57,9 @@ public class ObjectConnectionWidget extends SelectableConnectionWidget {
         super.notifyStateChanged(previousState, state);
 
         if (state.isSelected())
-            setStroke((getStroke() instanceof DotLineStroke) ? new DotLineStroke(3) : new BasicStroke(3));
+            setStroke((getStroke() instanceof DotLineStroke) ? new DotLineStroke(4) : new BasicStroke(4));
         else if (previousState.isSelected())
-            setStroke((getStroke() instanceof DotLineStroke) ? new DotLineStroke(1) : new BasicStroke(1));
+            setStroke((getStroke() instanceof DotLineStroke) ? new DotLineStroke(3) : new BasicStroke(3));
         
         if (!highContrast) {
             labelWidget.setForeground (getScene().getLookFeel().getForeground (state));
