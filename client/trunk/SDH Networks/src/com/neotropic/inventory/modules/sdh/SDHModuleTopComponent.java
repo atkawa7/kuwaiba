@@ -113,7 +113,6 @@ public final class SDHModuleTopComponent extends TopComponent implements Explore
         scene.setActiveTool(SDHModuleScene.ACTION_SELECT);
         
         pnlScrollMain.setViewportView(scene.createView());
-        add(scene.createSatelliteView(), BorderLayout.SOUTH);
     }
 
     /**

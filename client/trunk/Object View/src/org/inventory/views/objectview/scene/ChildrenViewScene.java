@@ -18,6 +18,7 @@ package org.inventory.views.objectview.scene;
 
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -106,6 +107,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         getActions().addAction(ActionFactory.createZoomAction());
         getInputBindings ().setZoomActionModifiers(0); //No keystroke combinations
         getActions().addAction(ActionFactory.createPanAction());
+        getInputBindings ().setPanActionButton(MouseEvent.BUTTON1); //Pan using the left click
 
         defaultPopupMenuProvider = new ObjectWidgetMenu();
         

@@ -18,6 +18,7 @@ package org.inventory.views.rackview.scene;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
+import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.JPopupMenu;
 import org.inventory.communications.CommunicationsStub;
@@ -70,6 +71,8 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
         getActions().addAction(ActionFactory.createZoomAction());
         getInputBindings().setZoomActionModifiers(0); //No keystroke combinations
         getActions().addAction(ActionFactory.createPanAction());
+        getInputBindings ().setPanActionButton(MouseEvent.BUTTON1); //Pan using the left click
+        
         setActiveTool(ACTION_SELECT);
         initSelectionListener();
         

@@ -21,6 +21,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -118,8 +119,10 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         connectProvider = new SDHModuleConnectProvider();
         
         getActions().addAction(ActionFactory.createZoomAction());
+        getActions().addAction(ActionFactory.createPanAction());
         getInputBindings ().setZoomActionModifiers(0); //No keystroke combinations
-
+        getInputBindings ().setPanActionButton(MouseEvent.BUTTON1); //Pan using the left click
+        
         setState (ObjectState.createNormal ());
     }
 
@@ -331,6 +334,13 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
             reader.close();
             validate();
             repaint();
+//            for (LocalObjectLight edge : getEdges()) {
+//                ObjectConnectionWidget conn = (ObjectConnectionWidget)findWidget(edge);
+//                System.out.println(String.format("%s, %s, %s", edge.getOid(), 
+//                        conn.getSourceAnchor().getRelatedWidget().getLookup().lookup(LocalObjectLight.class).getOid(), 
+//                        conn.getTargetAnchor().getRelatedWidget().getLookup().lookup(LocalObjectLight.class).getOid()));
+//            }
+            
         } catch (NumberFormatException | XMLStreamException ex) {
             NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.ERROR_MESSAGE, "The view seems corrupted and could not be loaded");
             clear();
