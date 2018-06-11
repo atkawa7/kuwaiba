@@ -34,41 +34,42 @@ import com.neotropic.vaadin.lienzo.client.events.FrameWidgetDblClickListener;
 import com.neotropic.vaadin.lienzo.client.events.FrameWidgetRightClickListener;
 import com.neotropic.vaadin.lienzo.client.events.FrameWidgetUpdateListener;
 import com.neotropic.vaadin.lienzo.client.events.NodeWidgetUpdateListener;
-import com.vaadin.event.dd.DragAndDropEvent;
-import com.vaadin.event.dd.DropHandler;
-import com.vaadin.event.dd.acceptcriteria.AcceptAll;
-import com.vaadin.event.dd.acceptcriteria.AcceptCriterion;
-import com.vaadin.ui.DragAndDropWrapper;
+import com.neotropic.vaadin.lienzo.demo.model.SampleBusinessObject;
+import com.vaadin.shared.ui.dnd.DropEffect;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.dnd.DropTargetExtension;
+import com.vaadin.ui.dnd.event.DropEvent;
+import com.vaadin.ui.dnd.event.DropListener;
+import java.util.Optional;
 
 /**
- * 
+ * A wrapper UI component used to contain the Lienzo component. It basically manages the events.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class LienzoDropWrapper extends DragAndDropWrapper {
+public final class LienzoDropWrapper extends Panel {
     private final LienzoComponent lienzoComponent;
     private SrvNodeWidget srvNodeWidget = null;
-    
-    private final DropHandler dropHandler = new DropHandler() {
-
-        @Override
-        public void drop(DragAndDropEvent event) {
-            String caption = (String) event.getTransferable().getData("itemId");
-            
-            String url = "http://localhost:8080/vaadin-lienzo-demo/VAADIN/themes/demo/images/node.png";
-            srvNodeWidget = new SrvNodeWidget();
-            srvNodeWidget.setUrlIcon(url);
-            srvNodeWidget.setCaption(caption + " id = " + srvNodeWidget.getId());
-        }
-
-        @Override
-        public AcceptCriterion getAcceptCriterion() {
-            return AcceptAll.get();
-        }
-    };
-    
+      
     public LienzoDropWrapper() {
+        
         lienzoComponent = new LienzoComponent();        
-        setCompositionRoot(lienzoComponent);
+        DropTargetExtension<LienzoComponent> dropTarget = new DropTargetExtension<>(lienzoComponent);
+        dropTarget.setDropEffect(DropEffect.MOVE);
+        
+        dropTarget.addDropListener(new DropListener<LienzoComponent>() {
+            @Override
+            public void drop(DropEvent<LienzoComponent> event) {
+                Optional<String> dataTransferData = event.getDataTransferData(SampleBusinessObject.DATA_TYPE); //Only get this type of data. Note that the type of the data to be trasferred is set in the drag source
+                
+                if (dataTransferData != null) {
+                    SampleBusinessObject droppedObject = SampleBusinessObject.deserialize(dataTransferData.get());
+                    String url = "http://localhost:8080/vaadin-lienzo-demo/VAADIN/themes/demo/images/node.png";
+                    srvNodeWidget = new SrvNodeWidget();
+                    srvNodeWidget.setUrlIcon(url);
+                    srvNodeWidget.setCaption(droppedObject.toString());
+                }
+            }
+        });
         
         String url = "http://localhost:8080/vaadin-lienzo-demo/VAADIN/themes/demo/images/background.png";        
         lienzoComponent.addBackground(url, 0, 0);
@@ -86,7 +87,6 @@ public class LienzoDropWrapper extends DragAndDropWrapper {
         cloudNode.setHeight(34);
         lienzoComponent.addNodeWidget(cloudNode);
         
-        setDropHandler(dropHandler);
         lienzoComponent.addLienzoMouseOverListener(lienzoMouseOverListener);
         
         lienzoComponent.addNodeWidgetClickListener(nodeWidgetClickListener);
@@ -106,6 +106,9 @@ public class LienzoDropWrapper extends DragAndDropWrapper {
         lienzoComponent.addEdgeWidgetUpdateListener(edgeWidgetUpdateListener);
         
         lienzoComponent.setEnableConnectionTool(true);
+        
+        setSizeFull();
+        setContent(lienzoComponent);
     }
     
     public LienzoComponent getLienzoComponent() {

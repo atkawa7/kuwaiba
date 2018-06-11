@@ -28,22 +28,37 @@ public class ServerElement implements Serializable {
     private ServerElement parent;
     private List<ServerElement> children;
     /**
-     * x position.
+     * X position.
      */
     private double x;
     /**
-     * y position.
+     * Y position.
      */
     private double y;
+    /**
+     * Width
+     */
     private double width;
+    /**
+     * Height
+     */
     private double height;
-    private boolean resizable = false;
-    private boolean draggable = true;   
+    /**
+     * Is the shape resizeable? Default value is false.
+     */
+    private boolean resizable;
+    /**
+     * Is the shape draggable? Default value true.
+     */
+    private boolean draggable;   
     
     public ServerElement() {
+        this.resizable = false;
+        this.draggable = true;
     }
     
     public ServerElement(long id) {
+        this();
         this.id = id;
     }
     
@@ -76,10 +91,8 @@ public class ServerElement implements Serializable {
     }
     
     public void removeChild(ServerElement child) {
-        if (children == null)
-            return;
-        
-        children.remove(child);
+        if (children != null)
+            children.remove(child);
     }
     
     public double getX() {

@@ -5,12 +5,12 @@
 	<groupId>com.neotropic</groupId>
 	<artifactId>vaadin-lienzo</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.0</version>
+	<version>0.1</version>
 	<name>Vaadin Lienzo</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<vaadin.version>7.7.3</vaadin.version>
+		<vaadin.version>8.3.1</vaadin.version>
 		<vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
 
 		<!-- ZIP Manifest fields -->
@@ -45,6 +45,11 @@
 		<license>
 			<name>Apache 2</name>
 			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution>repo</distribution>
+		</license>
+                <license>
+			<name>GPL 3</name>
+			<url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
@@ -83,7 +88,7 @@
             <dependency>
               <groupId>com.ahome-it</groupId>
               <artifactId>lienzo-core</artifactId>
-              <version>2.0.286-RELEASE</version>
+              <version>2.0.300-RELEASE</version>
             </dependency>
 		<dependency>
 			<groupId>com.vaadin</groupId>
