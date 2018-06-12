@@ -28,5 +28,5 @@ public interface EdgeWidgetAddListener extends Serializable {
      * 
      * @param clntNewEdge server edge widget
      */
-    public void edgeWidetAdded(SrvEdgeWidget clntNewEdge);    
+    public void edgeWidgetAdded(SrvEdgeWidget clntNewEdge);    
 }

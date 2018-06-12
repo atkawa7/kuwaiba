@@ -172,7 +172,7 @@ public class LienzoComponent extends AbstractComponent {
         @Override
         public void edgeWidgetAdded(SrvEdgeWidget clntEdge) {
             for (EdgeWidgetAddListener listener : edgeWidgetAddListeners)
-                listener.edgeWidetAdded(clntEdge);
+                listener.edgeWidgetAdded(clntEdge);
         }
     };
     private final EdgeWidgetClickedServerRpc edgeWidgetClickedServerRpc = new EdgeWidgetClickedServerRpc() {

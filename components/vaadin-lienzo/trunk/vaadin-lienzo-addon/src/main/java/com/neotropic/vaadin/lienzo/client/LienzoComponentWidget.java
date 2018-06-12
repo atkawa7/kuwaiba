@@ -163,7 +163,7 @@ public class LienzoComponentWidget extends LienzoPanel implements ClntFrameWidge
             target = null;
             line = null;
             // inform to server side that a new edge was drawn
-            edgeWidgetAddListener.edgeWidetAdded(clntNewEdge);
+            edgeWidgetAddListener.edgeWidgetAdded(clntNewEdge);
 	}
         
         public void cancelEdgeWidget() {

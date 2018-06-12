@@ -288,7 +288,7 @@ public class LienzoComponentConnector extends AbstractComponentConnector impleme
     }
 
     @Override
-    public void edgeWidetAdded(SrvEdgeWidget srvEdge) {
+    public void edgeWidgetAdded(SrvEdgeWidget srvEdge) {
         edgeWidgetAddedServerRpc.edgeWidgetAdded(srvEdge);
     }
 

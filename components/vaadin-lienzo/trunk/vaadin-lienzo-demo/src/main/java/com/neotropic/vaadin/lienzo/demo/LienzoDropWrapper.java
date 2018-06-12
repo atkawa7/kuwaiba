@@ -217,7 +217,7 @@ public final class LienzoDropWrapper extends Panel {
     private EdgeWidgetAddListener edgeWidgetAddListener = new EdgeWidgetAddListener() {
 
         @Override
-        public void edgeWidetAdded(SrvEdgeWidget clntNewEdge) {
+        public void edgeWidgetAdded(SrvEdgeWidget clntNewEdge) {
             if (clntNewEdge.getId() == 0)
                 clntNewEdge.setColor("RED");
             if (clntNewEdge.getId() == 2)

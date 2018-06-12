@@ -1,0 +1,62 @@
+Vaadin Lienzo Addon
+
+ Enables Lienzo Panel to be used as an add-on for Vaadin 8 via Lienzo Structure Graphics GWT Toolkit
+
+Getting started
+ See the demo application included.
+
+Workflow
+
+ Add the dependency
+  <dependency>
+   <groupId>com.neotropic</groupId>
+   <artifactId>vaadin-lienzo</artifactId>
+   <version>0.</version>
+  </dependency>
+ 
+ GWT inherits
+  <inherits name="com.neotropic.vaadin.lienzo.WidgetSet" />
+
+Supported Features
+ Add and Remove Background
+ Add, Update and Remove Node Widgets
+ Add, Update and Remove Edge Widgets
+ Add, Update and Remove Frame Widgets
+
+Supported Events
+
+ Lienzo Component Mouse Over
+
+ Node Widget Click
+ Node Widget Right Click
+ Node Widget Double Click
+ Node Widget Update
+ 
+ Edge Widget Click
+ Edge Widget Right Click
+ Edge Widget Double Click
+ Edge Widget Update
+
+ Frame Widget Click
+ Frame Widget Right Click
+ Frame Widget Double Click 
+ Frame Widget Update
+License:
+ 
+ Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+
+Licensed under the APL License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+ 
+http://www.apache.org/licenses/LICENSE-2.0.txt
+ 
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+ 
+Author(s):
+ Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ Charles Edward Bedon <charles.bedon@kuwaiba.org>
