@@ -450,6 +450,220 @@ public class DefaultReports {
         return new RawReport("Tributary Link Details", "Neotropic SAS","1.1", tributaryLinkUsageReportText);
     }
     
+    public RawReport buildHighOrderTributaryLinkDetailReport2 (String tributaryLinkClass, long tributaryLinkId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException, NotAuthorizedException {
+        String query = String.format("MATCH (customerSuperClass)<-[:%s*]-(customerClass)<-[:%s]-(customer)<-[:%s*]-(service)-[relationA:%s]->(tributaryLink)-[relationB:%s]-(port)-[:%s*]->(equipment)-[:%s]->(class)-[:%s*]->(superClass) "
+                + "WHERE id(tributaryLink) = %s AND superClass.name=\"%s\" AND relationA.name = \"%s\" AND (relationB.name = \"%s\" OR relationB.name = \"%s\") AND customerSuperClass.name=\"%s\" RETURN tributaryLink, customer, service, port, equipment", 
+                    RelTypes.EXTENDS, RelTypes.INSTANCE_OF, RelTypes.CHILD_OF_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, 
+                    RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, tributaryLinkId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, "uses", 
+                    SDHModule.RELATIONSHIP_SDHTTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTTLENDPOINTB, Constants.CLASS_GENERICCUSTOMER);
+        HashMap<String, BusinessObjectList> theResult = aem.executeCustomDbCode(query, true);
+        
+        String title, tributaryLinkUsageReportText;
+        BusinessObject theTributaryLink;
+        
+        if (theResult.get("tributaryLink").getList().isEmpty()) {
+            title = "Error";
+            tributaryLinkUsageReportText = getHeader(title);
+            tributaryLinkUsageReportText += "<div class=\"error\">No information about this tributary link could be found</div>";
+        }
+        else {
+            theTributaryLink = theResult.get("tributaryLink").getList().get(0);
+            title = "Tributary Link Details Report for " + theTributaryLink.getName();
+            tributaryLinkUsageReportText = getHeader(title);
+            tributaryLinkUsageReportText += 
+                                "  <body><table><tr><td><h1>" + title + "</h1></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
+            
+            tributaryLinkUsageReportText += "<link rel=\"stylesheet\" href=\"https://149.6.144.166:9191/css/report_01.css\" type=\"text/css\">";
+            tributaryLinkUsageReportText += "<script type=\"text/javascript\" src=\"https://149.6.144.166:9191/js/jsplumb.min.js\"></script>";
+            
+            //Demarcation points
+            query = String.format("MATCH (tributaryLink)-[relationA:%s]-(equipmentPort)-[relationB:%s]-(physicalConnection)-[relationC:%s]-(nextEquipmentPort)-[:%s*]->(nextEquipment)-[:%s]->(class)-[:%s*]->(superClass) "
+                + "WHERE id(tributaryLink) = %s AND (relationA.name = \"%s\" OR relationA.name = \"%s\") "
+                    + "AND (relationB.name = \"%s\" OR relationB.name = \"%s\") "
+                    + "AND (relationC.name = \"%s\" OR relationC.name = \"%s\") "
+                    + "AND superClass.name=\"%s\" "
+                + "RETURN nextEquipmentPort, nextEquipment", RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.RELATED_TO_SPECIAL, RelTypes.CHILD_OF, RelTypes.INSTANCE_OF, RelTypes.EXTENDS, 
+                                    tributaryLinkId, SDHModule.RELATIONSHIP_SDHTTLENDPOINTA, SDHModule.RELATIONSHIP_SDHTTLENDPOINTB,
+                                    "endpointA", "endpointB", "endpointA", "endpointB", Constants.CLASS_GENERICDISTRIBUTIONFRAME);
+            
+            HashMap<String, BusinessObjectList> demarcationPoints = aem.executeCustomDbCode(query, true);
+            String demarcationPointsAsSring = "";
+            for (int i = 0; i < demarcationPoints.get("nextEquipmentPort").getList().size(); i++)
+                demarcationPointsAsSring += "<b>" + demarcationPoints.get("nextEquipment").getList().get(i) + "</b>:" + demarcationPoints.get("nextEquipmentPort").getList().get(i) + "<br/>";
+
+            //General Info
+            tributaryLinkUsageReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\">" + theTributaryLink.getName() + "</td><td class=\"generalInfoLabel\">Demarcation Points</td><td class=\"generalInfoValue\">" + demarcationPointsAsSring + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Type</td><td class=\"generalInfoValue\">" + theTributaryLink.getClassName() + "</td><td class=\"generalInfoLabel\">Service</td><td class=\"generalInfoValue\">" + theResult.get("service").getList().get(0).getName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Endpoint A</td><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(0) + "</b>:" + theResult.get("port").getList().get(0).getName() + "</td><td class=\"generalInfoLabel\">Customer</td><td class=\"generalInfoValue\">" + theResult.get("customer").getList().get(0).getName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Endpoint B</td><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(1) + "</b>:" + theResult.get("port").getList().get(1).getName() + "</td><td></td></tr></table>";
+        
+            tributaryLinkUsageReportText += "<div class=\"container\">\n" +
+"        <div class=\"crossconnection\">\n" +
+"            <div id=\"41760\" class=\"connectable\"><div class=\"label\">Cape Town <br />(Teraco)</div></div>\n" +
+"            <div id=\"41674\" class=\"connectable important\"><div class=\"label\">Cape Town <br />(Duynefontein)</div></div>\n" +
+"        </div>\n" +
+"        <div class=\"segment segment1\">\n" +
+"            <div id=\"41763\" class=\"connectable\"><div class=\"label\">Namibia <br />(Swakopmund)</div></div>\n" +
+"            <div id=\"41770\" class=\"connectable\"><div class=\"label\">Angola <br />(Luanda)</div></div>\n" +
+"            <div id=\"41718\" class=\"connectable\"><div class=\"label\">D.R. Congo <br />(Muanda)</div></div>\n" +
+"            <div class=\"segment-text\">Segment 4</div> \n" +
+"        </div>\n" +
+"        <div class=\"crossconnection\">\n" +
+"            <div id=\"41830\" class=\"connectable important\"><div class=\"label\">Saint Tome <br/>(Saint Tome)</div></div>\n" +
+"        </div>\n" +
+"        <div class=\"segment segment2\">\n" +
+"            <div id=\"41747\" class=\"connectable\"><div class=\"label\">Gabon <br />(Ubreville)</div></div>\n" +
+"            <div id=\"41786\" class=\"connectable\"><div class=\"label\">Eq. Guinea <br />(Bata)</div></div>\n" +
+"            <div id=\"41871\" class=\"connectable\"><div class=\"label\">Nigeria <br />(Lagos)</div></div>\n" +
+"            <div id=\"41883\" class=\"connectable\"><div class=\"label\">Benin <br />(Porto Novo)</div></div>\n" +
+"            <div id=\"41816\" class=\"connectable\"><div class=\"label\">Ghana <br />(Accra)</div></div>\n" +
+"            <div class=\"segment-text\">Segment 3</div> \n" +
+"        </div>\n" +
+"        <div class=\"crossconnection\">\n" +
+"            <div id=\"41927\" class=\"connectable important\"><div class=\"label\">Ivory Coast <br/>(Abidjan)</div></div>\n" +
+"        </div>\n" +
+"        <div class=\"segment segment3\">\n" +
+"            <div id=\"41846\" class=\"connectable\"><div class=\"label\">Liberia <br />(Monrovia)</div></div>\n" +
+"            <div id=\"41943\" class=\"connectable\"><div class=\"label\">Sierra Leone <br />(Freetown)</div></div>\n" +
+"            <div id=\"41897\" class=\"connectable\"><div class=\"label\">Guinea <br />(Conakry)</div></div>\n" +
+"            <div id=\"41956\" class=\"connectable\"><div class=\"label\">Guinea Bissau <br />(Bissau)</div></div>\n" +
+"            <div id=\"41964\" class=\"connectable\"><div class=\"label\">Gambia <br />(Banjul)</div></div>\n" +
+"            <div class=\"segment-text\">Segment 2</div> \n" +
+"        </div>\n" +
+"        <div class=\"crossconnection\">\n" +
+"            <div id=\"41991\" class=\"connectable important\"><div class=\"label\">Senegal <br/>(Dakar)</div></div>\n" +
+"        </div>\n" +
+"        <div class=\"segment segment4\">\n" +
+"            <div id=\"42048\" class=\"connectable\"><div class=\"label\">Mauritania <br />(Nouakchott)</div></div>\n" +
+"            <div id=\"42025\" class=\"connectable\"><div class=\"label\">Spain <br />(Tenerife)</div></div>\n" +
+"            <div id=\"42066\" class=\"connectable\"><div class=\"label\">Portugal <br />(Carcavellos)</div></div>\n" +
+"            <div id=\"42014\" class=\"connectable\"><div class=\"label\">Portugal <br />(Televent/ITConic)</div></div>\n" +
+"            <div id=\"42040\" class=\"connectable important\"><div class=\"label\">France <br />(Penmarch)</div></div>\n" +
+"            <div id=\"42079\" class=\"connectable important\"><div class=\"label\">France <br />(Paris TH2)</div></div>\n" +
+"            <div class=\"segment-text\" style=\"left:0\">Segment 1</div> \n" +
+"        </div>\n" +
+"    </div><br/> <br/> <br/> <br/>\n";
+            
+            //Used resources
+            List<BusinessObjectLight> container = bem.getSpecialAttribute(tributaryLinkClass, tributaryLinkId, SDHModule.RELATIONSHIP_SDHDELIVERS);
+            
+            String usedResources;
+            if (container.isEmpty())
+                usedResources = "<div class=\"error\">This tributary link seems malformed and does not have a path</div>";
+            else {
+                List<AnnotatedBusinessObjectLight> transportLinks = bem.getAnnotatedSpecialAttribute(container.get(0).getClassName(), 
+                        container.get(0).getId(), SDHModule.RELATIONSHIP_SDHTRANSPORTS);
+                usedResources = "<table><tr><th>Transport Link Name</th><th>Transport Link Position</th></tr>";
+               
+                int i = 0;
+                String transportLinksToBeHighlighted = "";
+                for (AnnotatedBusinessObjectLight transportLink : transportLinks) {
+                    usedResources += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + transportLink.getObject() + "</td>"
+                                    + "<td>" + transportLink.getProperties().get(SDHModule.PROPERTY_SDHPOSITION) +"</td></tr>";
+                    transportLinksToBeHighlighted += (transportLink.getObject().getId() + ",");
+                    i ++;
+                }
+                usedResources += "</table>";
+                usedResources += "<script>\n"
+                +    "jsPlumb.ready(function() {\n" +
+        "    var connections = {};\n" +                    
+"            var topRightLeft = {\n" +
+"                connector: [\"Flowchart\"],\n" +
+"                anchor:[[ 0.75, 0, 0, -1 ], [ 0.25, 0, 0, -1 ]],\n" +
+"                endpoint:[ \"Rectangle\", { width:1, height:1 } ]\n" +
+"            };\n" +
+"\n" +
+"            var bottomRightLeftBlue = {\n" +
+"                connector: [\"Flowchart\"],\n" +
+"                anchor:[[ 0.5, 1, 0, 1, 0, -5 ], [ 0.5, 1, 0, 1, 0, -5 ]],\n" +
+"                endpoint:[ \"Rectangle\", { width:1, height:1 } ]\n" +
+"            };\n" +
+"\n" +
+"            var bottomCenter = {\n" +
+"                connector: [\"Flowchart\"],\n" +
+"                anchor:[[ 0.75, 1, 0, 1 ], [ 0.25, 1, 0, 1 ]],\n" +
+"                endpoint:[ \"Rectangle\", { width:1, height:1 } ]\n" +
+"            };\n" +
+"\n" +
+"            //The non express connections\n" +
+"            var nonExpressTriplets = [\n" +
+"                42198, 41927, 41846,\n" +
+"                42201, 42048, 42025,\n" +
+"                42203, 42066, 42040,\n" +
+"                42205, 42040, 42079,\n" +
+"                42212, 41883, 41816,\n" +
+"                42216, 41943, 41897,\n" +
+"                42156, 41760, 41674,\n" +
+"                42158, 41674, 41763,\n" +
+"                42095, 41718, 41830,\n" +
+"                42160, 41718, 41770,\n" +
+"                42167, 41786, 41871,\n" +
+"                42169, 41871, 41883,\n" +
+"                42236, 42025, 42066,\n" +
+"                42173, 41846, 41943,\n" +
+"                42177, 41991, 42048,\n" +
+"                42114, 41763, 41770,\n" +
+"                42182, 41830, 41747,\n" +
+"                42251, 41964, 41991,\n" +
+"                42316, 41897, 41964,\n" +
+"                42193, 41747, 41786,\n" +
+"                42196, 41816, 41927\n" +
+"            ];\n" +
+"            for (var i = 0; i < nonExpressTriplets.length; i = i + 3) {\n" +
+"                var aConnection = jsPlumb.connect({\n" +
+"                    source: nonExpressTriplets[i + 1].toString(),\n" +
+"                    target: nonExpressTriplets[i + 2].toString(),\n" +
+"                    paintStyle:{ stroke:\"blue\", strokeWidth: 3  },\n" +
+"                    endpointStyle:{ fill:\"blue\", outlineStroke:\"blue\", outlineWidth: 1 }\n" +
+"                }, topRightLeft);\n" +
+"\n" +
+"                connections[nonExpressTriplets[i].toString()] = aConnection;\n" +
+"            }\n" +
+"\n" +
+"            //The express connections\n" +
+"            var expressTriplets = [42117, 41674, 41830,\n" +
+"                                 42232, 41830, 41927, \n" +
+"                                 42100, 41927, 41991, \n" +
+"                                 42207, 41991, 42040];\n" +
+"            for (var i = 0; i < expressTriplets.length; i = i + 3) {\n" +
+"                var aConnection = jsPlumb.connect({\n" +
+"                    source: expressTriplets[i + 1].toString(),\n" +
+"                    target: expressTriplets[i + 2].toString(),\n" +
+"                    paintStyle:{ stroke:\"black\", strokeWidth: 5  },\n" +
+"                    endpointStyle:{ fill:\"black\", outlineStroke:\"black\", outlineWidth: 1 }\n" +
+"                }, bottomCenter);\n" +
+"                connections[expressTriplets[i].toString()] = aConnection;\n" +
+"            }\n" +
+"            \n" +
+"            //The non-express connections that connect the endpoints using the bottom anchors\n" +
+"            var nonExpressNonDirectTriplets = [42228, 41991, 41956,\n" +
+"                                             42219, 42066, 42014];\n" +
+"            for (var i = 0; i < nonExpressNonDirectTriplets.length; i = i + 3) {\n" +
+"                var aConnection = jsPlumb.connect({\n" +
+"                    source: nonExpressNonDirectTriplets[i + 1].toString(),\n" +
+"                    target: nonExpressNonDirectTriplets[i + 2].toString(),\n" +
+"                    paintStyle:{ stroke:\"blue\", strokeWidth: 3  },\n" +
+"                    endpointStyle:{ fill:\"blue\", outlineStroke:\"blue\", outlineWidth: 1 }\n" +
+"                }, bottomRightLeftBlue);\n" +
+"                connections[nonExpressNonDirectTriplets[i].toString()] = aConnection;\n" +
+"            }\n" 
+                        + "var transportLinksToBeHighlighted = [" + transportLinksToBeHighlighted + "];\n"
+                    + "for (var i = 0; i < transportLinksToBeHighlighted.length; i++) {\n"
+                    + "if (connections[transportLinksToBeHighlighted[i].toString()] != undefined) //Transport links outside the ACE network will be ignored\n"
+                    + "connections[transportLinksToBeHighlighted[i].toString()].setPaintStyle({ stroke:\"green\", strokeWidth: 5  });\n"
+                    + "}\n" +
+"        });\n" +
+                    
+                    "</script>\n";
+            }
+            tributaryLinkUsageReportText += usedResources;
+            
+        }
+        tributaryLinkUsageReportText += getFooter();
+        
+        return new RawReport("Tributary Link Details", "Neotropic SAS","1.1", tributaryLinkUsageReportText);
+    }
+    
     public RawReport buildNetworkEquipmentInLocationReport(String locationClass, long locationId) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {
         String query = String.format("MATCH (location)<-[:%s*]-(networkEquipment)-[:%s]->(class)-[:%s*]->(superclass) "
                 + "WHERE id(location) = %s AND superclass.name = \"%s\" "

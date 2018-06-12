@@ -1425,53 +1425,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
         
         List<BusinessObjectLight> res = new ArrayList<>();
-        
-        getChildrenOfClassRecursive(parentOid, parentClass, classToFilter, maxResults, res);
-        Collections.sort(res);
-        return res;
-    }
-    
-    private void getSpecialChildrenOfClassRecursive(long parentOid, String parentClass, String classToFilter, int maxResults, List<BusinessObjectLight> res) 
-        throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
-        
-        if (maxResults > 0 && res.size() == maxResults)
-            return;
-        
         try (Transaction tx = graphDb.beginTx()) {
-            Node parentNode = getInstanceOfClass(parentClass, parentOid);
-            Iterable<Relationship> relationshipsChildOfSpecial = parentNode.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING);
-            
-            for (Relationship relatioshipChildOfSpecial : relationshipsChildOfSpecial) {
-                Node specialChild = relatioshipChildOfSpecial.getStartNode();
-                String specialChildClassName = Util.getClassName(specialChild);
-                
-                if (specialChildClassName == null)
-                    throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found", specialChild.getId()));
-                
-                if (mem.isSubClass(classToFilter, specialChildClassName)) {
-                    res.add(new BusinessObjectLight(specialChild.getId(), (String) specialChild.getProperty(Constants.PROPERTY_NAME), specialChildClassName));
-                    
-                    if (maxResults > 0 && res.size() == maxResults)
-                        break;
-                }
-                getSpecialChildrenOfClassRecursive(specialChild.getId(), specialChildClassName, classToFilter, maxResults, res);
-            }
-            Iterable<Relationship> relationshipsChildOf = parentNode.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING);
-            for (Relationship relationshipChildOf : relationshipsChildOf) {
-                
-                if (maxResults > 0 && res.size() == maxResults)
-                    break;
-                                
-                Node child = relationshipChildOf.getStartNode();
-                String childClassName = Util.getClassName(child);
-                
-                if (childClassName == null)
-                    throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found", child.getId()));
-                
-                getSpecialChildrenOfClassRecursive(child.getId(), childClassName, classToFilter, maxResults, res);
-            }
-            
-            tx.success();
+            getChildrenOfClassRecursive(parentOid, parentClass, classToFilter, maxResults, res);
+            Collections.sort(res);
+            return res;
         }
     }
     
@@ -1479,10 +1436,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public List<BusinessObjectLight> getSpecialChildrenOfClassLightRecursive(long parentOid, String parentClass, String classToFilter, int maxResults) 
         throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
         List<BusinessObjectLight> res = new ArrayList<>();
-        
-        getSpecialChildrenOfClassRecursive(parentOid, parentClass, classToFilter, maxResults, res);
-        
-        return res;
+        try (Transaction tx = graphDb.beginTx()) {
+            getSpecialChildrenOfClassRecursive(getInstanceOfClass(parentClass, parentOid), classToFilter, maxResults, res);
+            Collections.sort(res);
+            return res;
+        }
     }
     
     @Override
@@ -1986,7 +1944,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public List<BusinessObjectLightList> findRoutesThroughSpecialRelationships(String objectAClassName, 
             long objectAId, String objectBClassName, long objectBId, String relationshipName) {
         List<BusinessObjectLightList> paths = new ArrayList<>();
-        String cypherQuery = String.format("MATCH path = (a)-[:%s*1..10{name:\"%s\"}]-(b) " +
+        String cypherQuery = String.format("MATCH path = (a)-[:%s*1..60{name:\"%s\"}]-(b) " +
                             "WHERE id(a) = %s AND id(b) = %s " +
                             "RETURN nodes(path) as path ORDER BY size(path) ASC LIMIT %s", RelTypes.RELATED_TO_SPECIAL, relationshipName, objectAId, objectBId, 
                                                                     aem.getConfiguration().get("maxRoutes")); //NOI18N
@@ -2719,25 +2677,52 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         if (maxResults > 0 && res.size() == maxResults)
             return;
         
-        try (Transaction tx = graphDb.beginTx()) {
-            Node parentNode = getInstanceOfClass(parentClass, parentOid);
-            Iterable<Relationship> relationshipsChildOf = parentNode.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING);
+        Node parentNode = getInstanceOfClass(parentClass, parentOid);
+        Iterable<Relationship> relationshipsChildOf = parentNode.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING);
+
+        for (Relationship relatioshipChildOf : relationshipsChildOf) {
+            Node child = relatioshipChildOf.getStartNode();
+            String childClassName = Util.getClassName(child);
+
+            if (childClassName == null)
+                throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found", child.getId()));
+
+            if (mem.isSubClass(classToFilter, childClassName)) {
+                res.add(new BusinessObjectLight(child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME), childClassName));
+
+                if (maxResults > 0 && res.size() == maxResults)
+                    break;
+            }
+            getChildrenOfClassRecursive(child.getId(), childClassName, classToFilter, maxResults, res);
+        }
+    }
+    
+    private void getSpecialChildrenOfClassRecursive(Node parentNode, String classToFilter, 
+            int maxResults, List<BusinessObjectLight> res) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
+        
+        if (maxResults > 0 && res.size() == maxResults)
+            return;
+        
+        Iterable<Relationship> relationshipsChildOfSpecial = parentNode.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING);
+
+        for (Relationship relatioshipChildOfSpecial : relationshipsChildOfSpecial) {
+            Node specialChild = relatioshipChildOfSpecial.getStartNode();
             
-            for (Relationship relatioshipChildOf : relationshipsChildOf) {
-                Node child = relatioshipChildOf.getStartNode();
-                String childClassName = Util.getClassName(child);
-                
-                if (childClassName == null)
-                    throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found", child.getId()));
-                
-                if (mem.isSubClass(classToFilter, childClassName)) {
-                    res.add(new BusinessObjectLight(child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME), childClassName));
-                    
+            if (!specialChild.hasLabel(this.poolLabel)) { //If the node is a pool, let's skip it and dig deeper, otherwise, let's see if it matches the filter
+            
+                String specialChildClassName = Util.getClassName(specialChild);
+
+                if (specialChildClassName == null)
+                    throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found", specialChild.getId()));
+
+                if (mem.isSubClass(classToFilter, specialChildClassName)) {
+                    res.add(new BusinessObjectLight(specialChild.getId(), (String) specialChild.getProperty(Constants.PROPERTY_NAME), specialChildClassName));
+
                     if (maxResults > 0 && res.size() == maxResults)
                         break;
                 }
-                getChildrenOfClassRecursive(child.getId(), childClassName, classToFilter, maxResults, res);
             }
+            getSpecialChildrenOfClassRecursive(specialChild, classToFilter, maxResults, res);
         }
     }
 }

@@ -79,8 +79,8 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelatio
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHContainerLinkDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHPosition;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.AttributeInfo;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 
 /**
  * Main web service
@@ -1111,7 +1111,7 @@ public class KuwaibaService {
      * @throws ServerSideException If the GenericObjectList class does not exist
      */
     @WebMethod(operationName = "getInstanceableListTypes")
-    public ClassInfoLight[] getInstanceableListTypes(
+    public RemoteClassMetadataLight[] getInstanceableListTypes(
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try
         {
@@ -3995,7 +3995,7 @@ public class KuwaibaService {
                     throw new ServerSideException(String.format("The uploaded file exceeds the max file size (%s)", Constants.MAX_BACKGROUND_SIZE));
                 }
             }
-            ClassInfo ci = new ClassInfo();
+            RemoteClassMetadata ci = new RemoteClassMetadata();
             ci.setClassName(className);
             ci.setDisplayName(displayName);
             ci.setDescription(description);
@@ -4062,7 +4062,7 @@ public class KuwaibaService {
                 if (smallIcon.length > Constants.MAX_ICON_SIZE)
                     throw new ServerSideException(String.format("The file exceeds the file size limits (%s)", Constants.MAX_BACKGROUND_SIZE));
             }
-            ClassInfo ci = new ClassInfo();
+            RemoteClassMetadata ci = new RemoteClassMetadata();
             ci.setId(classId);
             ci.setClassName(className);
             ci.setDisplayName(displayName);
@@ -4418,7 +4418,7 @@ public class KuwaibaService {
      * @throws ServerSideException If there is no class with such className
      */
     @WebMethod(operationName = "getClass")
-    public ClassInfo getClass(@WebParam(name = "className")
+    public RemoteClassMetadata getClass(@WebParam(name = "className")
     String className, @WebParam(name = "sessionId")
     String sessionId) throws ServerSideException {
 
@@ -4442,7 +4442,7 @@ public class KuwaibaService {
      * @throws ServerSideException If there is no class with such classId
      */
     @WebMethod(operationName = "getClassWithId")
-    public ClassInfo getClassWithId(@WebParam(name = "classId")
+    public RemoteClassMetadata getClassWithId(@WebParam(name = "classId")
     long classId, @WebParam(name = "sessionId")
     String sessionId) throws ServerSideException {
         try {
@@ -4467,7 +4467,7 @@ public class KuwaibaService {
      * @throws ServerSideException If the provided class is not a subclass of InventoryObject
      */
     @WebMethod(operationName = "getSubClassesLight")
-    public List<ClassInfoLight> getSubClassesLight(
+    public List<RemoteClassMetadataLight> getSubClassesLight(
             @WebParam(name = "className")String className,
             @WebParam(name = "includeAbstractClasses")boolean includeAbstractClasses,
             @WebParam(name = "includeSelf")boolean includeSelf,
@@ -4496,7 +4496,7 @@ public class KuwaibaService {
      * @throws ServerSideException Exception If the class could not be found.
      */
     @WebMethod(operationName = "getSubClassesLightNoRecursive")
-    public List<ClassInfoLight> getSubClassesLightNoRecursive(
+    public List<RemoteClassMetadataLight> getSubClassesLightNoRecursive(
             @WebParam(name = "className")String className,
             @WebParam(name = "includeAbstractClasses")boolean includeAbstractClasses,
             @WebParam(name = "includeSelf")boolean includeSelf,
@@ -4523,7 +4523,7 @@ public class KuwaibaService {
      * @throws ServerSideException Generic exception encapsulating any possible error raised at runtime
      */
     @WebMethod(operationName = "getAllClasses")
-    public List<ClassInfo> getAllClasses(
+    public List<RemoteClassMetadata> getAllClasses(
             @WebParam(name = "includeListTypes")boolean includeListTypes,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try
@@ -4548,7 +4548,7 @@ public class KuwaibaService {
      * @throws ServerSideException If GenericListType class does not exist.
      */
     @WebMethod(operationName = "getAllClassesLight")
-    public List<ClassInfoLight> getAllClassesLight(
+    public List<RemoteClassMetadataLight> getAllClassesLight(
             @WebParam(name = "includeListTypes")boolean includeListTypes,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try
@@ -4624,7 +4624,7 @@ public class KuwaibaService {
      * @throws ServerSideException If the class can not be found
      */
     @WebMethod(operationName = "getPossibleChildren")
-    public List<ClassInfoLight> getPossibleChildren(@WebParam(name = "parentClassName")
+    public List<RemoteClassMetadataLight> getPossibleChildren(@WebParam(name = "parentClassName")
                     String parentClassName, @WebParam(name = "sessionId")
                     String sessionId) throws ServerSideException {
 
@@ -4650,7 +4650,7 @@ public class KuwaibaService {
      * @throws ServerSideException If the class can not be found
      */
     @WebMethod(operationName = "getPossibleSpecialChildren")
-    public List<ClassInfoLight> getPossibleSpecialChildren(
+    public List<RemoteClassMetadataLight> getPossibleSpecialChildren(
         @WebParam(name = "parentClassName") String parentClassName, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
@@ -4676,7 +4676,7 @@ public class KuwaibaService {
      * @throws ServerSideException If the class could not be found
      */
     @WebMethod(operationName = "getPossibleChildrenNoRecursive")
-    public List<ClassInfoLight> getPossibleChildrenNoRecursive(@WebParam(name = "parentClassName")
+    public List<RemoteClassMetadataLight> getPossibleChildrenNoRecursive(@WebParam(name = "parentClassName")
     String parentClassName, @WebParam(name = "sessionId")
     String sessionId) throws ServerSideException {
 
@@ -4702,7 +4702,7 @@ public class KuwaibaService {
      * @throws ServerSideException If the class could not be found
      */
     @WebMethod(operationName = "getPossibleSpecialChildrenNoRecursive")
-    public List<ClassInfoLight> getPossibleSpecialChildrenNoRecursive(
+    public List<RemoteClassMetadataLight> getPossibleSpecialChildrenNoRecursive(
         @WebParam(name = "parentClassName") String parentClassName, 
         @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         
@@ -4884,7 +4884,7 @@ public class KuwaibaService {
      * @throws ServerSideException If className does not correspond to any existing class
      */
     @WebMethod(operationName = "getUpstreamContainmentHierarchy")
-    public List<ClassInfoLight> getUpstreamContainmentHierarchy(@WebParam(name = "className")
+    public List<RemoteClassMetadataLight> getUpstreamContainmentHierarchy(@WebParam(name = "className")
             String className, @WebParam(name = "recursive")
             boolean recursive, @WebParam(name = "sessionId")
             String sessionId) throws ServerSideException {
@@ -4911,7 +4911,7 @@ public class KuwaibaService {
      * 
      */
     @WebMethod(operationName = "getUpstreamSpecialContainmentHierarchy")
-    public List<ClassInfoLight> getUpstreamSpecialContainmentHierarchy(
+    public List<RemoteClassMetadataLight> getUpstreamSpecialContainmentHierarchy(
         @WebParam(name="className") String className, 
         @WebParam(name="recursive") boolean recursive, 
         @WebParam(name="sessionId") String sessionId) throws ServerSideException {

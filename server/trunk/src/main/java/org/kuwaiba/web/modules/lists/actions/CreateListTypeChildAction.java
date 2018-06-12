@@ -23,7 +23,7 @@ import org.kuwaiba.apis.web.gui.nodes.listmanagernodes.ListTypeChildNode;
 import org.kuwaiba.apis.web.gui.nodes.listmanagernodes.ListTypeNode;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
 
 /**
@@ -40,7 +40,7 @@ public class CreateListTypeChildAction extends AbstractAction {
     public void actionPerformed(Object sourceComponent, Object targetObject) {
         try {
             ListTypeNode parentNode = (ListTypeNode) targetObject;
-            ClassInfoLight parentObject = (ClassInfoLight) parentNode.getObject();
+            RemoteClassMetadataLight parentObject = (RemoteClassMetadataLight) parentNode.getObject();
             
             TopComponent parentComponent = ((DynamicTree) sourceComponent)
                     .getTopComponent();

@@ -30,7 +30,7 @@ import org.kuwaiba.apis.web.gui.nodes.listmanagernodes.ListTypeRootNode;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
 
 /**
@@ -45,11 +45,11 @@ public class ListManagerComponent extends AbstractTopComponent {
         super(wsBean, eventBus, session);
         
         try {
-            ClassInfoLight [] listTypes = wsBean.getInstanceableListTypes(
+            RemoteClassMetadataLight [] listTypes = wsBean.getInstanceableListTypes(
                     Page.getCurrent().getWebBrowser().getAddress(), 
                     session.getSessionId());
             
-            ArrayList<ClassInfoLight> rootChildren = new ArrayList();
+            ArrayList<RemoteClassMetadataLight> rootChildren = new ArrayList();
             rootChildren.addAll(Arrays.asList(listTypes));
             
             ListTypeRootNode rootNode = new ListTypeRootNode("Available List Types", rootChildren);

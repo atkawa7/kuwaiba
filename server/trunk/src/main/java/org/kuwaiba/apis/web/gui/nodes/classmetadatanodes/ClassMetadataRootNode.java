@@ -18,7 +18,7 @@ package org.kuwaiba.apis.web.gui.nodes.classmetadatanodes;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.nodes.AbstractRootNode;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
 
 /**
@@ -26,9 +26,9 @@ import org.kuwaiba.web.custom.tree.DynamicTree;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ClassMetadataRootNode extends AbstractRootNode {
-    private final List<ClassInfoLight> children;
+    private final List<RemoteClassMetadataLight> children;
 
-    public ClassMetadataRootNode(String caption, List<ClassInfoLight> children) {
+    public ClassMetadataRootNode(String caption, List<RemoteClassMetadataLight> children) {
         super(caption);
         this.children = children;
     }
@@ -43,7 +43,7 @@ public class ClassMetadataRootNode extends AbstractRootNode {
         if (getTree() == null)
             return;
         
-        for (ClassInfoLight child: children) {
+        for (RemoteClassMetadataLight child: children) {
             ClassMetadataNode classNode = new ClassMetadataNode(child);
             classNode.setTree(getTree());
             //getTree().addItem(classNode);

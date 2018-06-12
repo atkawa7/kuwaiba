@@ -76,7 +76,7 @@ public class EndpointNode extends InventoryObjectNode {
             RemoteObjectLight currentObject = (RemoteObjectLight) getObject();
             
             List<RemoteObjectLight> children = topComponent.getWsBean().getObjectChildren(
-                    currentObject.getClassName(), currentObject.getOid(), -1,
+                    currentObject.getClassName(), currentObject.getId(), -1,
                     Page.getCurrent().getWebBrowser().getAddress(),
                     topComponent.getApplicationSession().getSessionId());
             
@@ -112,7 +112,7 @@ public class EndpointNode extends InventoryObjectNode {
 //                for (String attributeName : attributesNames) {
 //                    List<RemoteObjectLight> endPointLst = topComponent.getWsBean().getSpecialAttribute(
 //                            theObject.getClassName(),
-//                            theObject.getOid(),
+//                            theObject.getId(),
 //                            attributeName,
 //                            Page.getCurrent().getWebBrowser().getAddress(),
 //                            topComponent.getApplicationSession().getSessionId());

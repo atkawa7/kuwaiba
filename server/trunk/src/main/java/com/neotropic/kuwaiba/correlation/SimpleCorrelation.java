@@ -85,7 +85,7 @@ public class SimpleCorrelation {
 
         //Now we organize the rawServices by customers
         for (RemoteObjectLight rawService : rawServices) {
-            BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getOid(), Constants.CLASS_GENERICCUSTOMER);
+            BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getId(), Constants.CLASS_GENERICCUSTOMER);
             if (customer != null) {//Services without customers will be ignored. This shouldn't happen, though
                 if (!rawCorrelatedInformation.containsKey(customer))
                     rawCorrelatedInformation.put(customer, new ArrayList());
@@ -156,7 +156,7 @@ public class SimpleCorrelation {
 
         //Now we organize the rawServices by customers
         for (RemoteObjectLight rawService : rawServices) {
-            BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getOid(), Constants.CLASS_GENERICCUSTOMER);
+            BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getId(), Constants.CLASS_GENERICCUSTOMER);
             if (customer != null) {//Services without customers will be ignored. This shouldn't happen, though
                 if (!rawCorrelatedInformation.containsKey(customer))
                     rawCorrelatedInformation.put(customer, new ArrayList<RemoteObjectLight>());

@@ -50,7 +50,7 @@ public class DeleteListTypeAction extends AbstractAction {
 
                     parentComponent.getWsBean().deleteListTypeItem(
                             object.getClassName(), 
-                            object.getOid(), false, 
+                            object.getId(), false, 
                             Page.getCurrent().getWebBrowser().getAddress(),
                             parentComponent.getApplicationSession().getSessionId());
 

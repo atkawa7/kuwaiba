@@ -46,7 +46,7 @@ public class MessageBoxShowObjectId {
         try {
             List<RemoteObjectLight> parents = parentComponent.getWsBean().getParents(
                 object.getClassName(),
-                object.getOid(),
+                object.getId(),
                 Page.getCurrent().getWebBrowser().getAddress(),
                 parentComponent.getApplicationSession().getSessionId());
             
@@ -57,7 +57,7 @@ public class MessageBoxShowObjectId {
             VerticalLayout content = new VerticalLayout();
             content.setMargin(true);
             
-            Label lblId = new Label(String.format("<b>id: </b>%s", object.getOid()), ContentMode.HTML);
+            Label lblId = new Label(String.format("<b>id: </b>%s", object.getId()), ContentMode.HTML);
             Label lblClass = new Label(String.format("<b>Class: </b>%s", object.getClassName()), ContentMode.HTML);
             Label lblContainment = new Label(String.format("<b>Containment Path </b>%s", containmentPath), ContentMode.HTML);
                 

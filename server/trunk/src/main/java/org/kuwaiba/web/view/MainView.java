@@ -29,6 +29,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.web.LoginView;
+import org.kuwaiba.web.modules.services.ServiceManagerView;
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
@@ -54,7 +55,7 @@ public class MainView extends VerticalSplitPanel implements View {
         menuBar.setStyleName("mybarmenu");
         menuBar.setWidth("100%");
         
-        MenuBar.MenuItem menuItem = menuBar.addItem("Process", null, null);
+        MenuBar.MenuItem menuItem = menuBar.addItem("Processes", null, null);
         
         try {
             List<RemoteProcessDefinition> processDefinitions = wsBean.getProcessDefinitions(
@@ -85,8 +86,15 @@ public class MainView extends VerticalSplitPanel implements View {
         } catch (ServerSideException ex) {
             NotificationsUtil.showError(ex.getMessage());
         }
-        menuBar.addItem("Service Manager", null, null);
-        menuBar.addItem("Log out", null, new MenuBar.Command() {
+        
+        menuBar.addItem("Service Manager", new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                getUI().getNavigator().navigateTo(ServiceManagerView.VIEW_NAME);
+            }
+        });
+        
+        menuBar.addItem("Log out", new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 RemoteSession session = (RemoteSession) getSession().getAttribute("session");

@@ -29,15 +29,7 @@ import org.kuwaiba.apis.persistence.util.StringPair;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteObject implements Serializable {
-    /**
-     * Object's id
-     */
-    private long id;
-    /**
-     * Object's class
-     */
-    private String className;
+public class RemoteObject extends RemoteObjectLight implements Serializable {
     /**
      * A key-value dictionary with the attributes and values of the current object. 
      * Take into account that if an attribute does not appear in this list, it's because
@@ -55,9 +47,8 @@ public class RemoteObject implements Serializable {
      *
      * @param object The object to be serialized
      */
-    public RemoteObject(BusinessObject object){
-        this.id = object.getId();
-        this.className = object.getClassName();
+    public RemoteObject(BusinessObject object) {
+        super(object.getId(), object.getName(), object.getClassName());
         this.attributes = new ArrayList<>();
         
         for (String attribute : object.getAttributes().keySet())
@@ -70,22 +61,6 @@ public class RemoteObject implements Serializable {
 
     public void setAttributes(List<StringPair> attributes) {
         this.attributes = attributes;
-    }
-
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setid(long id) {
-        this.id = id;
     }
 
     public static List<RemoteObject> toRemoteObjectArray(List<BusinessObject> toBeWrapped){

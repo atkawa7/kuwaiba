@@ -26,7 +26,7 @@ import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.vaadin.teemu.wizards.WizardStep;
 
@@ -38,7 +38,7 @@ public class ContainerInformationStep implements WizardStep {
     private final NewContainerWizard newContainerWizard;
     private FormLayout content;
     private String containerName;
-    private ClassInfoLight containerClass;
+    private RemoteClassMetadataLight containerClass;
     private RemoteObjectLight containerTemplate;
     
     public ContainerInformationStep(NewContainerWizard newContainerWizard) {
@@ -49,7 +49,7 @@ public class ContainerInformationStep implements WizardStep {
         return containerName;
     }
     
-    public ClassInfoLight getContainerClass() {
+    public RemoteClassMetadataLight getContainerClass() {
         return containerClass;        
     }
     
@@ -77,7 +77,7 @@ public class ContainerInformationStep implements WizardStep {
             String ipAddress = Page.getCurrent().getWebBrowser().getAddress();
             String sessionId = newContainerWizard.getParentComponent().getApplicationSession().getSessionId();
             
-            List<ClassInfoLight> containerClasses;
+            List<RemoteClassMetadataLight> containerClasses;
             try {
                 containerClasses = wsBean.getSubClassesLight(Constants.CLASS_GENERICPHYSICALCONTAINER, false, false, ipAddress, sessionId);
             } catch (ServerSideException ex) {
@@ -88,7 +88,7 @@ public class ContainerInformationStep implements WizardStep {
             txtContainerClass.setEmptySelectionCaption("None");            
 
             
-            for (ClassInfoLight containerClass : containerClasses) {
+            for (RemoteClassMetadataLight containerClass : containerClasses) {
                 //txtContainerClass.addItem(containerClass);
                 //txtContainerClass.setItemCaption(containerClass, containerClass.toString());
             }
@@ -121,7 +121,7 @@ public class ContainerInformationStep implements WizardStep {
     @Override
     public boolean onAdvance() {
         containerName = ((TextField) content.getComponent(0)).getValue();
-        containerClass = (ClassInfoLight) ((NativeSelect) content.getComponent(1)).getValue();
+        containerClass = (RemoteClassMetadataLight) ((NativeSelect) content.getComponent(1)).getValue();
         containerTemplate = (RemoteObjectLight) ((NativeSelect) content.getComponent(2)).getValue();
         return true;
     }

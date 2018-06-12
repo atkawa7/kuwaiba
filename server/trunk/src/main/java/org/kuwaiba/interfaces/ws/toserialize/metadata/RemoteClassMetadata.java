@@ -28,7 +28,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.Validator;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ClassInfo extends ClassInfoLight{
+public class RemoteClassMetadata extends RemoteClassMetadataLight{
     /**
      * Attribute ids
      */
@@ -81,8 +81,8 @@ public class ClassInfo extends ClassInfoLight{
      */
     private Boolean countable;
 
-    public ClassInfo(){}
-    public ClassInfo(ClassMetadata myClass, Validator[] validators){
+    public RemoteClassMetadata(){}
+    public RemoteClassMetadata(ClassMetadata myClass, Validator[] validators){
         super (myClass, validators);
         this._abstract = myClass.isAbstract();
         this.icon = myClass.getIcon();

@@ -33,7 +33,7 @@ import org.kuwaiba.apis.web.gui.wrappers.LocalObjectListItem;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.web.custom.tree.DynamicTree;
 
 /**
@@ -189,7 +189,7 @@ public abstract class AbstractNode<T> {
         try {
             RemoteObject remoteObject = getTree().getTopComponent().getWsBean().getObject(
                     ((RemoteObjectLight)getObject()).getClassName(),
-                    ((RemoteObjectLight)getObject()).getOid(),
+                    ((RemoteObjectLight)getObject()).getId(),
                     Page.getCurrent().getWebBrowser().getAddress(), 
                      getTree().getTopComponent().getApplicationSession().getSessionId());
             
@@ -198,7 +198,7 @@ public abstract class AbstractNode<T> {
             
             //Sheet sheet = new Sheet(beanItem, valueListener);
             
-            ClassInfo meta = getTree().getTopComponent().getWsBean().getClass(remoteObject.getClassName(), 
+            RemoteClassMetadata meta = getTree().getTopComponent().getWsBean().getClass(remoteObject.getClassName(), 
                     Page.getCurrent().getWebBrowser().getAddress(), 
                     getTree().getTopComponent().getApplicationSession().getSessionId());
             
@@ -237,7 +237,7 @@ public abstract class AbstractNode<T> {
                             List<LocalObjectListItem> localListTypeItems = new ArrayList<>();
                             for (RemoteObjectLight listTypeItem : listTypeItems) {
                                 localListTypeItems.add(new LocalObjectListItem(
-                                        listTypeItem.getOid(),
+                                        listTypeItem.getId(),
                                         listTypeItem.getClassName(), 
                                         listTypeItem.getName()));
                             }
@@ -246,7 +246,7 @@ public abstract class AbstractNode<T> {
                             
                             for (LocalObjectListItem listTypeItem : localListTypeItems) {
                                 if(!attributeValue.isEmpty()){
-                                    if(listTypeItem.getOid() == Long.valueOf(attributeValue))
+                                    if(listTypeItem.getId() == Long.valueOf(attributeValue))
                                         actualItem = listTypeItem;
                                 }
                             }

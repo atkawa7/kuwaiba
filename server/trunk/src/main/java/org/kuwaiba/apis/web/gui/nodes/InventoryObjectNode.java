@@ -65,7 +65,7 @@ public class InventoryObjectNode extends AbstractNode<RemoteObjectLight>{
             RemoteObjectLight currentObject = (RemoteObjectLight)getObject();
             
             List<RemoteObjectLight> children = topComponent.getWsBean().getObjectChildren(
-                    currentObject.getClassName(), currentObject.getOid(), -1,
+                    currentObject.getClassName(), currentObject.getId(), -1,
                     Page.getCurrent().getWebBrowser().getAddress(),
                     topComponent.getApplicationSession().getSessionId());
             

@@ -21,7 +21,7 @@ import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 
 /**
  * 
@@ -39,7 +39,7 @@ public class FormInstanceLoader extends AbstractFormInstanceLoader {
     @Override
     public RemoteObjectLight getRemoteObjectLight(long classId, long objectId) {
         try {
-            ClassInfo cli = getClassInfoLight(classId);
+            RemoteClassMetadata cli = getClassInfoLight(classId);
             return wsBean.getObjectLight(cli.getClassName(), objectId, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
         } catch (ServerSideException ex) {
             NotificationsUtil.showError(ex.getMessage());
@@ -48,7 +48,7 @@ public class FormInstanceLoader extends AbstractFormInstanceLoader {
     }
 
     @Override
-    public ClassInfo getClassInfoLight(long classId) {
+    public RemoteClassMetadata getClassInfoLight(long classId) {
         try {
             return wsBean.getClass(classId, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
         } catch (ServerSideException ex) {

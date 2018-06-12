@@ -22,7 +22,7 @@ import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 
 /**
  * Action that requests an Inventory Object creation
@@ -51,18 +51,16 @@ public class CreateInventoryObjectChildAction extends AbstractComposedAction {
             TopComponent parentComponent = ((EmbeddableComponent) sourceComponent).getTopComponent();
             RemoteObjectLight object = (RemoteObjectLight) targetObject;
             
-            long oid = parentComponent.getWsBean().createObject(
-                    ((ClassInfoLight) selectedOption).getClassName(), 
-                    "DummyRoot".equals(((ClassInfoLight) selectedOption).getClassName()) ? null : object.getClassName(), //NOI18N
-                    object.getOid(),
+            long oid = parentComponent.getWsBean().createObject(((RemoteClassMetadataLight) selectedOption).getClassName(), 
+                    "DummyRoot".equals(((RemoteClassMetadataLight) selectedOption).getClassName()) ? null : object.getClassName(), //NOI18N
+                    object.getId(),
                     new String[0],
                     new String[0],
                     -1,
                     Page.getCurrent().getWebBrowser().getAddress(), 
                     parentComponent.getApplicationSession().getSessionId());
             
-            newObject = parentComponent.getWsBean().getObjectLight(
-                    ((ClassInfoLight) selectedOption).getClassName(), 
+            newObject = parentComponent.getWsBean().getObjectLight(((RemoteClassMetadataLight) selectedOption).getClassName(), 
                     oid, 
                     Page.getCurrent().getWebBrowser().getAddress(), 
                     parentComponent.getApplicationSession().getSessionId());
@@ -82,7 +80,7 @@ public class CreateInventoryObjectChildAction extends AbstractComposedAction {
             TopComponent parentComponent = ((EmbeddableComponent) sourceComponent).getTopComponent();
             RemoteObjectLight object = (RemoteObjectLight) targetObject;
             
-            List<ClassInfoLight> possiblyChildren = parentComponent.getWsBean().getPossibleChildren(
+            List<RemoteClassMetadataLight> possiblyChildren = parentComponent.getWsBean().getPossibleChildren(
                     object.getClassName(),
                     Page.getCurrent().getWebBrowser().getAddress(),
                     parentComponent.getApplicationSession().getSessionId());

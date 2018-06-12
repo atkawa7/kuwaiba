@@ -28,8 +28,8 @@ import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 
 /**
  *
@@ -52,9 +52,9 @@ public class FormInstanceCreator extends AbstractFormInstanceCreator {
             RemoteObjectLight remoteObjectLight = (RemoteObjectLight) element.getValue();
                         
             try {
-                ClassInfo classInfo = wsBean.getClass(remoteObjectLight.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                RemoteClassMetadata classInfo = wsBean.getClass(remoteObjectLight.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
                 
-                XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.OBJECT_ID, String.valueOf(remoteObjectLight.getOid()));
+                XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.OBJECT_ID, String.valueOf(remoteObjectLight.getId()));
                 XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.OBJECT_NAME, remoteObjectLight.getName());
                 XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.CLASS_ID, String.valueOf(classInfo.getId()));
                 
@@ -66,9 +66,9 @@ public class FormInstanceCreator extends AbstractFormInstanceCreator {
 
     @Override
     protected void addClassInfoLight(XMLEventWriter xmlew, XMLEventFactory xmlef, AbstractElementField element) throws XMLStreamException {
-        if (element.getValue() instanceof ClassInfoLight) {
+        if (element.getValue() instanceof RemoteClassMetadataLight) {
             
-            ClassInfoLight classInfoLight = (ClassInfoLight) element.getValue();
+            RemoteClassMetadataLight classInfoLight = (RemoteClassMetadataLight) element.getValue();
             
             XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.CLASS_ID, String.valueOf(classInfoLight.getId()));
             XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.CLASS_NAME, classInfoLight.getClassName());

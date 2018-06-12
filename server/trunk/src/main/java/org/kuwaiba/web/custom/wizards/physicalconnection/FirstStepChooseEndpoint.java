@@ -28,7 +28,7 @@ import java.util.List;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
 import org.vaadin.teemu.wizards.WizardStep;
 
@@ -86,8 +86,8 @@ public class FirstStepChooseEndpoint implements WizardStep {
                         
             selectConnection.setEmptySelectionAllowed(false);
                        
-            List<ClassInfoLight> links = physicalConnectionWizard.getLinkClasses();
-            List<ClassInfoLight> containers = physicalConnectionWizard.getContainerClasses();
+            List<RemoteClassMetadataLight> links = physicalConnectionWizard.getLinkClasses();
+            List<RemoteClassMetadataLight> containers = physicalConnectionWizard.getContainerClasses();
 ////            String [] connectionClasses = new String[] {
 ////                "Wire Container", 
 ////                "Wireless Container", 

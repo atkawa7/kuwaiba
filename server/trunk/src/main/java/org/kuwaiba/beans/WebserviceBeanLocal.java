@@ -71,8 +71,8 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelatio
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHContainerLinkDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHPosition;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.AttributeInfo;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 
 @Local
 public interface WebserviceBeanLocal {
@@ -100,29 +100,29 @@ public interface WebserviceBeanLocal {
 
     // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
 
-    public long createClass(ClassInfo classDefinition, String ipAddress, String sessionId) throws ServerSideException;
+    public long createClass(RemoteClassMetadata classDefinition, String ipAddress, String sessionId) throws ServerSideException;
 
-    public void setClassProperties (ClassInfo newClassDefinition, String ipAddress, String sessionId) throws ServerSideException;
+    public void setClassProperties (RemoteClassMetadata newClassDefinition, String ipAddress, String sessionId) throws ServerSideException;
 
     public void deleteClass(String className, String ipAddress, String sessionId) throws ServerSideException;
 
     public void deleteClass(long classId, String ipAddress, String sessionId) throws ServerSideException;
 
-    public List<ClassInfoLight> getAllClassesLight(boolean includeListTypes, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteClassMetadataLight> getAllClassesLight(boolean includeListTypes, String ipAddress, String sessionId) throws ServerSideException;
 
-    public List<ClassInfoLight> getSubClassesLight(String className, boolean includeAbstractClasses,
+    public List<RemoteClassMetadataLight> getSubClassesLight(String className, boolean includeAbstractClasses,
             boolean includeSelf, String ipAddress, String sessionId) throws ServerSideException;
 
-    public List<ClassInfoLight> getSubClassesLightNoRecursive(String className, 
+    public List<RemoteClassMetadataLight> getSubClassesLightNoRecursive(String className, 
             boolean includeAbstractClasses, boolean includeSelf, String ipAddress, String sessionId) throws ServerSideException;
     
     public boolean isSubclassOf(String className, String subclassOf, String remoteAddress, String sessionId) throws ServerSideException;
     
-    public List<ClassInfo> getAllClasses(boolean includeListTypes, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteClassMetadata> getAllClasses(boolean includeListTypes, String ipAddress, String sessionId) throws ServerSideException;
 
-    public ClassInfo getClass(String className, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteClassMetadata getClass(String className, String ipAddress, String sessionId) throws ServerSideException;
 
-    public ClassInfo getClass(long classId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteClassMetadata getClass(long classId, String ipAddress, String sessionId) throws ServerSideException;
     
     public void createAttribute(String className, AttributeInfo attributeDefinition, String ipAddress, String sessionId) throws ServerSideException;
 
@@ -142,17 +142,17 @@ public interface WebserviceBeanLocal {
 
     public void deleteAttribute(long classId, String attributeName, String ipAddress, String sessionId) throws ServerSideException;
         
-    public List<ClassInfoLight> getPossibleChildren(String parentClassName, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteClassMetadataLight> getPossibleChildren(String parentClassName, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<ClassInfoLight> getPossibleSpecialChildren(String parentClassName, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteClassMetadataLight> getPossibleSpecialChildren(String parentClassName, String ipAddress, String sessionId) throws ServerSideException;
 
-    public List<ClassInfoLight> getPossibleChildrenNoRecursive(String parentClassName, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteClassMetadataLight> getPossibleChildrenNoRecursive(String parentClassName, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<ClassInfoLight> getPossibleSpecialChildrenNoRecursive(String parentClassName, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteClassMetadataLight> getPossibleSpecialChildrenNoRecursive(String parentClassName, String ipAddress, String sessionId) throws ServerSideException;
 
-    public List<ClassInfoLight> getUpstreamContainmentHierarchy(String className, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteClassMetadataLight> getUpstreamContainmentHierarchy(String className, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<ClassInfoLight> getUpstreamSpecialContainmentHierarchy(String className, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteClassMetadataLight> getUpstreamSpecialContainmentHierarchy(String className, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
     
     public void addPossibleChildren(long parentClassId, long[] possibleChildren, String ipAddress, String sessionId) throws ServerSideException;
     
@@ -204,7 +204,7 @@ public interface WebserviceBeanLocal {
 
     public List<RemoteObjectLight> getListTypeItems(String className, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLight> getObjectsOfClassLight(String className, int maxResults, String ipAddress, String sessionId) throws ServerSideException;
-    public ClassInfoLight[] getInstanceableListTypes(String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteClassMetadataLight[] getInstanceableListTypes(String ipAddress, String sessionId) throws ServerSideException;
 
     public void deleteObject(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
     public void deleteObjects(String classNames[], long[] oids, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException;
@@ -242,6 +242,7 @@ public interface WebserviceBeanLocal {
     public void associateObjectsToService(String[] objectClass, long[] objectId, String serviceClass, long serviceId, String ipAddress, String sessionId) throws ServerSideException;
     public void releaseObjectFromService(String serviceClass, long serviceId, long otherObjectId, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLight> getServiceResources(String serviceClass, long serviceId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteObjectLight> getServicesForCustomer(String customerClass, long customerId, int limit, String ipAddress, String sessionId) throws ServerSideException;
 // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">

@@ -18,16 +18,16 @@ package org.kuwaiba.apis.web.gui.nodes.listmanagernodes;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.nodes.AbstractRootNode;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 
 /**
  * This node should be used as root in all trees composed by list type nodes (e.g. List Manager)
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ListTypeRootNode extends AbstractRootNode {
-    private final List<ClassInfoLight> initialChildren;
+    private final List<RemoteClassMetadataLight> initialChildren;
     
-    public ListTypeRootNode(String caption, List<ClassInfoLight> initialChildren) {
+    public ListTypeRootNode(String caption, List<RemoteClassMetadataLight> initialChildren) {
         super(caption);
         this.initialChildren = initialChildren;
     }
@@ -38,7 +38,7 @@ public class ListTypeRootNode extends AbstractRootNode {
         if (getTree() == null) //If the tree has not been set previously, do nothing
             return;
         
-        for (ClassInfoLight child : initialChildren) {
+        for (RemoteClassMetadataLight child : initialChildren) {
             ListTypeNode objectNode = new ListTypeNode(child);
             objectNode.setTree(getTree());
 //            getTree().addItem(objectNode);

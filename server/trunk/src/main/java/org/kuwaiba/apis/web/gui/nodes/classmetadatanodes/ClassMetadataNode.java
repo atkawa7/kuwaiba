@@ -25,16 +25,16 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
 
 /**
  * A node wrapping a ClassInfoLight
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ClassMetadataNode extends AbstractNode<ClassInfoLight> {
+public class ClassMetadataNode extends AbstractNode<RemoteClassMetadataLight> {
     
-    public ClassMetadataNode(ClassInfoLight object) {
+    public ClassMetadataNode(RemoteClassMetadataLight object) {
         super(object);
     }
     
@@ -50,16 +50,16 @@ public class ClassMetadataNode extends AbstractNode<ClassInfoLight> {
             return;
         collapse();
         try {
-            ClassInfoLight currentObject = (ClassInfoLight) getObject();
+            RemoteClassMetadataLight currentObject = (RemoteClassMetadataLight) getObject();
             
             TopComponent topComponent = getTree().getTopComponent();
             
-            List<ClassInfoLight> children = topComponent.getWsBean()
+            List<RemoteClassMetadataLight> children = topComponent.getWsBean()
                     .getPossibleChildrenNoRecursive(currentObject.getClassName(), 
                             Page.getCurrent().getWebBrowser().getAddress(), 
                             topComponent.getApplicationSession().getSessionId());
             
-            for (ClassInfoLight child : children) {
+            for (RemoteClassMetadataLight child : children) {
                 ClassMetadataNode childNode = new ClassMetadataNode(child);
                 childNode.setTree(getTree());
                 //getTree().setParent(childNode, this);

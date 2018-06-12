@@ -50,7 +50,7 @@ public class DeleteInventoryObjectAction extends AbstractAction {
 
                     parentComponent.getWsBean().deleteObjects(
                             new String[] {object.getClassName()}, 
-                            new long [] {object.getOid()},
+                            new long [] {object.getId()},
                             false,
                             Page.getCurrent().getWebBrowser().getAddress(),
                             parentComponent.getApplicationSession().getSessionId());

@@ -61,7 +61,7 @@ import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
 import org.kuwaiba.web.custom.wizards.physicalconnection.NewContainerWizard;
 import org.kuwaiba.web.custom.wizards.physicalconnection.NewLinkWizard;

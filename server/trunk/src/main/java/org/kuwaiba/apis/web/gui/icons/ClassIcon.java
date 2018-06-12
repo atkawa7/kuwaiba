@@ -33,7 +33,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 
 /**
  * Class to get icons
@@ -109,7 +109,7 @@ public class ClassIcon {
     
     private Resource addIcon(String className, boolean small) {
         try {
-            ClassInfo classInfo = topComponent.getWsBean().getClass(
+            RemoteClassMetadata classInfo = topComponent.getWsBean().getClass(
                     className,
                     Page.getCurrent().getWebBrowser().getAddress(),
                     topComponent.getApplicationSession().getSessionId());

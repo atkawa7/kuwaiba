@@ -41,7 +41,7 @@ import org.kuwaiba.apis.web.gui.nodes.containment.ContainmentNode;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
 
 /**
@@ -68,14 +68,14 @@ public class ContainmentManagerComponent extends AbstractTopComponent {
         HorizontalSplitPanel content = new HorizontalSplitPanel();
         
         try {
-            List<ClassInfoLight> allMeta = wsBean.getAllClassesLight(false, 
+            List<RemoteClassMetadataLight> allMeta = wsBean.getAllClassesLight(false, 
                     Page.getCurrent().getWebBrowser().getAddress(), 
                     session.getSessionId());
             
-            List<ClassInfoLight> treeModel = new ArrayList();
-            List<ClassInfoLight> listModel = new ArrayList();
+            List<RemoteClassMetadataLight> treeModel = new ArrayList();
+            List<RemoteClassMetadataLight> listModel = new ArrayList();
             
-            for (ClassInfoLight item : allMeta) {
+            for (RemoteClassMetadataLight item : allMeta) {
                 listModel.add(item);
                 if (!item.isAbstract())
                     treeModel.add(item);

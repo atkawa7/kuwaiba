@@ -29,11 +29,11 @@ import org.kuwaiba.interfaces.ws.toserialize.application.Validator;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteObjectLight implements Serializable {
+public class RemoteObjectLight implements Serializable, Comparable<RemoteObjectLight> {
     /**
      * Object's oid
      */
-    private long oid;
+    private long id;
     /**
      * Object's name
      */
@@ -55,7 +55,7 @@ public class RemoteObjectLight implements Serializable {
     protected RemoteObjectLight(){}
 
     public RemoteObjectLight(long oid, String name, String className) {
-        this.oid = oid;
+        this.id = oid;
         this.name = name;
         this.className = className;
     }
@@ -64,15 +64,15 @@ public class RemoteObjectLight implements Serializable {
     public RemoteObjectLight(BusinessObjectLight obj){
         this.className = obj.getClassName();
         this.name = obj.getName();
-        this.oid = obj.getId();
+        this.id = obj.getId();
     }
 
     public String getClassName() {
         return className;
     }
 
-    public long getOid() {
-        return oid;
+    public long getId() {
+        return id;
     }
 
     public String getName() {
@@ -123,18 +123,23 @@ public class RemoteObjectLight implements Serializable {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 83 * hash + (int) (this.oid ^ (this.oid >>> 32));
+        hash = 83 * hash + (int) (this.id ^ (this.id >>> 32));
         hash = 83 * hash + Objects.hashCode(this.name);
         return hash;
     }
     
     @Override
     public boolean equals (Object obj) {
-        return obj instanceof RemoteObjectLight && ((RemoteObjectLight)obj).getOid() == oid;
+        return obj instanceof RemoteObjectLight && ((RemoteObjectLight)obj).getId() == id;
     }
     
     @Override
     public String toString() {
         return String.format("%s [%s]", name, className);
+    }
+
+    @Override
+    public int compareTo(RemoteObjectLight o) {
+        return this.name.compareTo(o.getName());
     }
 }

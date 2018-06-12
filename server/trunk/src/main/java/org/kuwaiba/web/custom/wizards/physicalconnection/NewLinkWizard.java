@@ -25,7 +25,7 @@ import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.web.modules.osp.providers.google.overlays.ConnectionPolyline;
 import org.vaadin.teemu.wizards.Wizard;
 import org.vaadin.teemu.wizards.event.WizardCancelledEvent;

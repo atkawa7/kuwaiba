@@ -70,7 +70,7 @@ public class ObjectHierarchyProvider implements HierarchyProvider<RemoteObjectLi
         try {
             return webserviceBeanLocal.getObjectChildren(
                 parent.getClassName(), 
-                parent.getOid(), 
+                parent.getId(), 
                 -1, 
                 Page.getCurrent().getWebBrowser().getAddress(), 
                 remoteSession.getSessionId());

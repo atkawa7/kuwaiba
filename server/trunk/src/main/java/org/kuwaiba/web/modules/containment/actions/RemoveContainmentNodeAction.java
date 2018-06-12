@@ -22,7 +22,7 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
 
 /**

@@ -26,7 +26,7 @@ import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.vaadin.teemu.wizards.WizardStep;
 
@@ -38,7 +38,7 @@ public class LinkInformationStep implements WizardStep {
     private final NewLinkWizard newLinkWizard;
     private FormLayout content;
     private String linkName;
-    private ClassInfoLight linkClass;
+    private RemoteClassMetadataLight linkClass;
     private RemoteObjectLight linkTemplate;
     
     public LinkInformationStep(NewLinkWizard newLinkWizard) {
@@ -49,7 +49,7 @@ public class LinkInformationStep implements WizardStep {
         return linkName;
     }
     
-    public ClassInfoLight getLinkClass() {
+    public RemoteClassMetadataLight getLinkClass() {
         return linkClass;        
     }
     
@@ -77,7 +77,7 @@ public class LinkInformationStep implements WizardStep {
             String ipAddress = Page.getCurrent().getWebBrowser().getAddress();
             String sessionId = newLinkWizard.getParentComponent().getApplicationSession().getSessionId();
             
-            List<ClassInfoLight> containerClasses;
+            List<RemoteClassMetadataLight> containerClasses;
             try {
                 containerClasses = wsBean.getSubClassesLight(Constants.CLASS_GENERICPHYSICALLINK, false, false, ipAddress, sessionId);
             } catch (ServerSideException ex) {
@@ -104,7 +104,7 @@ public class LinkInformationStep implements WizardStep {
     @Override
     public boolean onAdvance() {
         linkName = ((TextField) content.getComponent(0)).getValue();
-        linkClass = (ClassInfoLight) ((NativeSelect) content.getComponent(1)).getValue();
+        linkClass = (RemoteClassMetadataLight) ((NativeSelect) content.getComponent(1)).getValue();
         linkTemplate = (RemoteObjectLight) ((NativeSelect) content.getComponent(2)).getValue();
         return true;
     }

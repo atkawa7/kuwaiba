@@ -24,7 +24,7 @@ import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.vaadin.teemu.wizards.WizardStep;
 
 /**
@@ -79,7 +79,7 @@ public class SecondStepConnectionSettings implements WizardStep {
                 int wizardType = connConfig.getWizardType();
 
                 if (wizardType == PhysicalConnectionConfiguration.WIZARD_TYPE_CONTAINER) {
-                    List<ClassInfoLight> portClasses = wsBean.getSubClassesLight("GenericPhysicalLink", false, false, ipAddress, sessionId);
+                    List<RemoteClassMetadataLight> portClasses = wsBean.getSubClassesLight("GenericPhysicalLink", false, false, ipAddress, sessionId);
 
                     if (portClasses.size() > 0) {
                         NativeSelect selectChildrenType = new NativeSelect("Children type");
@@ -88,7 +88,7 @@ public class SecondStepConnectionSettings implements WizardStep {
                         
                         
                         boolean flag = true;
-                        for (ClassInfoLight portClass : portClasses) {
+                        for (RemoteClassMetadataLight portClass : portClasses) {
                             //selectChildrenType.addItem(portClass);
                             //selectChildrenType.setItemCaption(portClass, portClass.getClassName());                            
                             if (flag) {
@@ -123,12 +123,12 @@ public class SecondStepConnectionSettings implements WizardStep {
                     ((NativeSelect) content.getComponent(1)).getValue();
             
             if (object != null)
-                connConfig.setTypeOid(object.getOid());
+                connConfig.setTypeOid(object.getId());
             else
                 connConfig.setTypeOid(0);
             
             if (componentCount == 4) {
-                ClassInfoLight portClass = (ClassInfoLight) ((NativeSelect) content.getComponent(2)).getValue();
+                RemoteClassMetadataLight portClass = (RemoteClassMetadataLight) ((NativeSelect) content.getComponent(2)).getValue();
                 connConfig.setPortType(portClass.getClassName());
                 
                 //int numChildren = ((IntStepper) content.getComponent(3)).getValue();

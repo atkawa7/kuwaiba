@@ -138,8 +138,8 @@ import org.kuwaiba.interfaces.ws.toserialize.business.ServiceLevelCorrelatedInfo
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHContainerLinkDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHPosition;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.AttributeInfo;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.web.view.ProcessTest;
 
 /**
@@ -180,7 +180,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
 
     // <editor-fold defaultstate="collapsed" desc="Metadata methods. Click on the + sign on the left to edit the code.">
     @Override
-    public long createClass(ClassInfo classDefinition, String ipAddress, String sessionId) throws ServerSideException{
+    public long createClass(RemoteClassMetadata classDefinition, String ipAddress, String sessionId) throws ServerSideException{
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -249,7 +249,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
 
     @Override
-    public ClassInfo getClass(String className, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteClassMetadata getClass(String className, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -260,14 +260,14 @@ public class WebserviceBean implements WebserviceBeanLocal {
                 if (mem.isSubClass(mapping, className))
                     validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
             }
-            return new ClassInfo(myClass, validators.toArray(new Validator[0]));
+            return new RemoteClassMetadata(myClass, validators.toArray(new Validator[0]));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
 
     @Override
-    public ClassInfo getClass(long classId, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteClassMetadata getClass(long classId, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -279,7 +279,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
                     validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
                 }
             }
-            return new ClassInfo(myClass, validators.toArray(new Validator[0]));
+            return new RemoteClassMetadata(myClass, validators.toArray(new Validator[0]));
 
          } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -287,12 +287,12 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
 
     @Override
-    public List<ClassInfoLight> getAllClassesLight(boolean includeListTypes, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteClassMetadataLight> getAllClassesLight(boolean includeListTypes, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getAllClassesLight", ipAddress, sessionId);
-            List<ClassInfoLight> cml = new ArrayList<>();
+            List<RemoteClassMetadataLight> cml = new ArrayList<>();
             List<ClassMetadataLight> classLightMetadata = mem.getAllClassesLight(includeListTypes, false);
 
             for (ClassMetadataLight classMetadataLight : classLightMetadata){
@@ -301,7 +301,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
                     if (mem.isSubClass(mapping, classMetadataLight.getName()))
                         validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
                 }
-                cml.add(new ClassInfoLight(classMetadataLight, validators.toArray(new Validator[0])));
+                cml.add(new RemoteClassMetadataLight(classMetadataLight, validators.toArray(new Validator[0])));
             }
             return cml;
         } catch (InventoryException ex) {
@@ -310,12 +310,12 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
 
     @Override
-    public List<ClassInfoLight> getSubClassesLight(String className, boolean includeAbstractClasses, boolean includeSelf, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteClassMetadataLight> getSubClassesLight(String className, boolean includeAbstractClasses, boolean includeSelf, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getSubclassesLight", ipAddress, sessionId);
-            List<ClassInfoLight> cml = new ArrayList<>();
+            List<RemoteClassMetadataLight> cml = new ArrayList<>();
             List<ClassMetadataLight> classLightMetadata = mem.getSubClassesLight(className, includeAbstractClasses, includeSelf);
 
             for (ClassMetadataLight classMetadataLight : classLightMetadata){
@@ -325,7 +325,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
                         validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
                     }
                 }
-                cml.add(new ClassInfoLight(classMetadataLight, validators.toArray(new Validator[0])));
+                cml.add(new RemoteClassMetadataLight(classMetadataLight, validators.toArray(new Validator[0])));
             }
             return cml;
         } catch (InventoryException ex) {
@@ -334,12 +334,12 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public List<ClassInfoLight> getSubClassesLightNoRecursive(String className, boolean includeAbstractClasses, boolean includeSelf, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemoteClassMetadataLight> getSubClassesLightNoRecursive(String className, boolean includeAbstractClasses, boolean includeSelf, String ipAddress, String sessionId) throws ServerSideException{
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getSubClassesLightNoRecursive", ipAddress, sessionId);
-            List<ClassInfoLight> cml = new ArrayList<>();
+            List<RemoteClassMetadataLight> cml = new ArrayList<>();
             List<ClassMetadataLight> classLightMetadata = mem.getSubClassesLightNoRecursive(className, includeAbstractClasses, includeSelf);
 
             for (ClassMetadataLight classMetadataLight : classLightMetadata){
@@ -349,7 +349,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
                         validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
                     }
                 }
-                cml.add(new ClassInfoLight(classMetadataLight, validators.toArray(new Validator[0])));
+                cml.add(new RemoteClassMetadataLight(classMetadataLight, validators.toArray(new Validator[0])));
             }
             return cml;
         } catch (InventoryException ex) {
@@ -370,12 +370,12 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
 
     @Override
-    public List<ClassInfo> getAllClasses(boolean includeListTypes, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteClassMetadata> getAllClasses(boolean includeListTypes, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getAllClasses", ipAddress, sessionId);
-            List<ClassInfo> cml = new ArrayList<>();
+            List<RemoteClassMetadata> cml = new ArrayList<>();
             List<ClassMetadata> classMetadataList = mem.getAllClasses(includeListTypes, false);
 
             for (ClassMetadata classMetadata : classMetadataList){
@@ -385,7 +385,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
                         validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
                     }
                 }
-                cml.add(new ClassInfo(classMetadata, validators.toArray(new Validator[0])));
+                cml.add(new RemoteClassMetadata(classMetadata, validators.toArray(new Validator[0])));
             }
             return cml;
         } catch (InventoryException ex) {
@@ -452,7 +452,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
 
     @Override
-    public void setClassProperties(ClassInfo newClassDefinition, String ipAddress, String sessionId) throws ServerSideException {
+    public void setClassProperties(RemoteClassMetadata newClassDefinition, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -639,16 +639,16 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
 
     @Override
-    public List<ClassInfoLight> getPossibleChildren(String parentClassName, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteClassMetadataLight> getPossibleChildren(String parentClassName, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getPossibleChildren", ipAddress, sessionId);
-            List<ClassInfoLight> cml = new ArrayList<>();
+            List<RemoteClassMetadataLight> cml = new ArrayList<>();
             List<ClassMetadataLight> classMetadataList = mem.getPossibleChildren(parentClassName);
 
             for (ClassMetadataLight clMtLg : classMetadataList) {
-                ClassInfoLight ci =  new ClassInfoLight(clMtLg, new Validator[0]);
+                RemoteClassMetadataLight ci =  new RemoteClassMetadataLight(clMtLg, new Validator[0]);
                 cml.add(ci);
             }
             return cml;
@@ -660,16 +660,16 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public List<ClassInfoLight> getPossibleSpecialChildren(String parentClassName, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteClassMetadataLight> getPossibleSpecialChildren(String parentClassName, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getPossibleSpecialChildren", ipAddress, sessionId);
-            List<ClassInfoLight> cml = new ArrayList<>();
+            List<RemoteClassMetadataLight> cml = new ArrayList<>();
             List<ClassMetadataLight> classMetadataList = mem.getPossibleSpecialChildren(parentClassName);
 
             for (ClassMetadataLight clMtLg : classMetadataList) {
-                ClassInfoLight ci =  new ClassInfoLight(clMtLg, new Validator[0]);
+                RemoteClassMetadataLight ci =  new RemoteClassMetadataLight(clMtLg, new Validator[0]);
                 cml.add(ci);
             }
             return cml;
@@ -680,16 +680,16 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
 
     @Override
-    public List<ClassInfoLight> getPossibleChildrenNoRecursive(String parentClassName, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteClassMetadataLight> getPossibleChildrenNoRecursive(String parentClassName, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getPossibleChildrenNoRecursive", ipAddress, sessionId);
-            List<ClassInfoLight> cml = new ArrayList<>();
+            List<RemoteClassMetadataLight> cml = new ArrayList<>();
             List<ClassMetadataLight> classMetadataList = mem.getPossibleChildrenNoRecursive(parentClassName);
 
             for (ClassMetadataLight clMtLg : classMetadataList) {
-                ClassInfoLight ci =  new ClassInfoLight(clMtLg, new Validator[0]);
+                RemoteClassMetadataLight ci =  new RemoteClassMetadataLight(clMtLg, new Validator[0]);
                 cml.add(ci);
             }
             return cml;
@@ -700,16 +700,16 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public List<ClassInfoLight> getPossibleSpecialChildrenNoRecursive(String parentClassName, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteClassMetadataLight> getPossibleSpecialChildrenNoRecursive(String parentClassName, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getPossibleSpecialChildrenNoRecursive", ipAddress, sessionId);
-            List<ClassInfoLight> cml = new ArrayList<>();
+            List<RemoteClassMetadataLight> cml = new ArrayList<>();
             List<ClassMetadataLight> classMetadataList = mem.getPossibleSpecialChildrenNoRecursive(parentClassName);
 
             for (ClassMetadataLight clMtLg : classMetadataList) {
-                ClassInfoLight ci =  new ClassInfoLight(clMtLg, new Validator[0]);
+                RemoteClassMetadataLight ci =  new RemoteClassMetadataLight(clMtLg, new Validator[0]);
                 cml.add(ci);
             }
             return cml;
@@ -720,14 +720,14 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
         
     @Override
-    public List<ClassInfoLight> getUpstreamContainmentHierarchy(String className, boolean recursive, String ipAddress, String sessionId) throws ServerSideException{
+    public List<RemoteClassMetadataLight> getUpstreamContainmentHierarchy(String className, boolean recursive, String ipAddress, String sessionId) throws ServerSideException{
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getUpstreamContainmentHierarchy", ipAddress, sessionId);
-            List<ClassInfoLight> res = new ArrayList<>();
+            List<RemoteClassMetadataLight> res = new ArrayList<>();
             for (ClassMetadataLight cil : mem.getUpstreamContainmentHierarchy(className, recursive)){
-                res.add(new ClassInfoLight(cil, new Validator[]{}));
+                res.add(new RemoteClassMetadataLight(cil, new Validator[]{}));
             }
             return res;
 
@@ -737,14 +737,14 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public List<ClassInfoLight> getUpstreamSpecialContainmentHierarchy(String className, boolean recursive, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteClassMetadataLight> getUpstreamSpecialContainmentHierarchy(String className, boolean recursive, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getUpstreamSpecialContainmentHierarchy", ipAddress, sessionId);
-            List<ClassInfoLight> res = new ArrayList<>();
+            List<RemoteClassMetadataLight> res = new ArrayList<>();
             for (ClassMetadataLight cil : mem.getUpstreamSpecialContainmentHierarchy(className, recursive)){
-                res.add(new ClassInfoLight(cil, new Validator[]{}));
+                res.add(new RemoteClassMetadataLight(cil, new Validator[]{}));
             }
             return res;
 
@@ -1295,16 +1295,16 @@ public class WebserviceBean implements WebserviceBeanLocal {
     }
     
     @Override
-    public ClassInfoLight[] getInstanceableListTypes(String ipAddress, String sessionId) throws ServerSideException{
+    public RemoteClassMetadataLight[] getInstanceableListTypes(String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
 
         try {
             aem.validateWebServiceCall("getInstanceableListTypes", ipAddress, sessionId);
             List<ClassMetadataLight> instanceableListTypes = aem.getInstanceableListTypes();
-            ClassInfoLight[] res = new ClassInfoLight[instanceableListTypes.size()];
+            RemoteClassMetadataLight[] res = new RemoteClassMetadataLight[instanceableListTypes.size()];
             for (int i = 0; i < instanceableListTypes.size(); i++)
-                res[i] = new ClassInfoLight(instanceableListTypes.get(i), new Validator[0]);
+                res[i] = new RemoteClassMetadataLight(instanceableListTypes.get(i), new Validator[0]);
             return res;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -2227,13 +2227,29 @@ public class WebserviceBean implements WebserviceBeanLocal {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getServiceResources", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericService", serviceClass)) //NOI18N
+            if (!mem.isSubClass(Constants.CLASS_GENERICSERVICE, serviceClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a service", serviceClass));
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getSpecialAttribute(serviceClass, serviceId, "uses")); //NOI18N
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
+
+    @Override
+    public List<RemoteObjectLight> getServicesForCustomer(String customerClass, long customerId, int limit, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getServicesForCustomer", ipAddress, sessionId);
+            if (!mem.isSubClass(Constants.CLASS_GENERICCUSTOMER, customerClass)) //NOI18N
+                throw new ServerSideException(String.format("Class %s is not a customer", customerClass));
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getSpecialChildrenOfClassLightRecursive(customerId, customerClass, Constants.CLASS_GENERICSERVICE, limit)); //NOI18N
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    
     // </editor-fold>
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
@@ -3691,7 +3707,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
                     
                 } else if (collection.get(0) instanceof ClassMetadataLight) {
                     
-                    List<ClassInfoLight> result = new ArrayList();
+                    List<RemoteClassMetadataLight> result = new ArrayList();
                     
                     for (Object item : collection) {
                         ClassMetadataLight classMetadataLight = (ClassMetadataLight) item;
@@ -3703,7 +3719,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
                             if (mem.isSubClass(mapping, classMetadataLight.getName()))
                                 validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
                         }
-                        result.add(new ClassInfoLight(classMetadataLight, validators.toArray(new Validator[0])));
+                        result.add(new RemoteClassMetadataLight(classMetadataLight, validators.toArray(new Validator[0])));
                     }
                     return new RemoteScriptQueryResultCollection(result);
                 }
@@ -5491,7 +5507,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
 
                 //Now we organize the rawServices by customers
                 for (RemoteObjectLight rawService : rawServices) {
-                    BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getOid(), Constants.CLASS_GENERICCUSTOMER);
+                    BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getId(), Constants.CLASS_GENERICCUSTOMER);
                     if (customer != null) {//Services without customers will be ignored. This shouldn't happen, though
                         if (!rawCorrelatedInformation.containsKey(customer))
                             rawCorrelatedInformation.put(customer, new ArrayList<>());
@@ -5524,7 +5540,7 @@ public class WebserviceBean implements WebserviceBeanLocal {
 
                 //Now we organize the rawServices by customers
                 for (RemoteObjectLight rawService : rawServices) {
-                    BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getOid(), Constants.CLASS_GENERICCUSTOMER);
+                    BusinessObjectLight customer = bem.getFirstParentOfClass(rawService.getClassName(), rawService.getId(), Constants.CLASS_GENERICCUSTOMER);
                     if (customer != null) {//Services without customers will be ignored. This shouldn't happen, though
                         if (!rawCorrelatedInformation.containsKey(customer))
                             rawCorrelatedInformation.put(customer, new ArrayList<RemoteObjectLight>());

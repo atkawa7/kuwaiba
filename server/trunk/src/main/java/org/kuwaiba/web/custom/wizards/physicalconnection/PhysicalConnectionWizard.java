@@ -25,9 +25,8 @@ import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfo;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
-import org.kuwaiba.web.modules.osp.providers.google.overlays.ConnectionPolyline;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.vaadin.teemu.wizards.Wizard;
 import org.vaadin.teemu.wizards.event.WizardCancelledEvent;
 import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
@@ -51,10 +50,10 @@ public class PhysicalConnectionWizard extends Window implements
     //private ConnectionPolyline connection;
     private PhysicalConnectionConfiguration connConfig;
     
-    private final List<ClassInfoLight> linkClasses;
-    private final List<ClassInfoLight> containerClasses;
+    private final List<RemoteClassMetadataLight> linkClasses;
+    private final List<RemoteClassMetadataLight> containerClasses;
     
-    public PhysicalConnectionWizard(TopComponent parentComponent, /*ConnectionPolyline connection,*/ List<ClassInfoLight> linkClasses, List<ClassInfoLight> containerClasses) {
+    public PhysicalConnectionWizard(TopComponent parentComponent, /*ConnectionPolyline connection,*/ List<RemoteClassMetadataLight> linkClasses, List<RemoteClassMetadataLight> containerClasses) {
         super("Physical Connection Wizard");
         center();
         
@@ -73,11 +72,11 @@ public class PhysicalConnectionWizard extends Window implements
         setContent(wizard);
     }
     
-    public List<ClassInfoLight> getLinkClasses() {
+    public List<RemoteClassMetadataLight> getLinkClasses() {
         return linkClasses;
     }
     
-    public List<ClassInfoLight> getContainerClasses() {
+    public List<RemoteClassMetadataLight> getContainerClasses() {
         return containerClasses;
     }
     
@@ -124,7 +123,7 @@ public class PhysicalConnectionWizard extends Window implements
         
         RemoteObjectLight parent;
         try {
-            parent = wsBean.getCommonParent(endpointA.getClassName(), endpointA.getOid(), endpointB.getClassName(), endpointB.getOid(), ipAddress, sessionId);
+            parent = wsBean.getCommonParent(endpointA.getClassName(), endpointA.getId(), endpointB.getClassName(), endpointB.getId(), ipAddress, sessionId);
         } catch (ServerSideException ex) {
             NotificationsUtil.showError(ex.getMessage());
             return;
@@ -132,7 +131,7 @@ public class PhysicalConnectionWizard extends Window implements
         
         long connectionId = -1;
         try {
-            connectionId = wsBean.createPhysicalConnection(endpointA.getClassName(), endpointA.getOid(), endpointB.getClassName(), endpointB.getOid(), parent.getClassName(), parent.getOid(), connectionName, connectionClassName, template.getOid(), ipAddress, sessionId);
+            connectionId = wsBean.createPhysicalConnection(endpointA.getClassName(), endpointA.getId(), endpointB.getClassName(), endpointB.getId(), parent.getClassName(), parent.getId(), connectionName, connectionClassName, template.getId(), ipAddress, sessionId);
         } catch (ServerSideException ex) {
             NotificationsUtil.showError(ex.getMessage());
             return;
@@ -166,12 +165,12 @@ public class PhysicalConnectionWizard extends Window implements
 //        String sessioId = getTopComponent().getApplicationSession().getSessionId();
 //        
 //        try {        
-//            commonParent = wsBean.getCommonParent(aRbo.getClassName(), aRbo.getOid(), 
-//                    bRbo.getClassName(), bRbo.getOid(), ipAddress, sessioId);
+//            commonParent = wsBean.getCommonParent(aRbo.getClassName(), aRbo.getId(), 
+//                    bRbo.getClassName(), bRbo.getId(), ipAddress, sessioId);
 //            if (commonParent != null)
 //                connectionId = wsBean.createPhysicalConnection(aRbo.getClassName(), 
-//                        aRbo.getOid(), bRbo.getClassName(), bRbo.getOid(), commonParent.getClassName(), 
-//                        commonParent.getOid(), names, values, connectionClass, ipAddress, sessioId);
+//                        aRbo.getId(), bRbo.getClassName(), bRbo.getId(), commonParent.getClassName(), 
+//                        commonParent.getId(), names, values, connectionClass, ipAddress, sessioId);
 //            else {
 //                Notification.show(
 //                        "Failed create Physical Connection" 
@@ -208,7 +207,7 @@ public class PhysicalConnectionWizard extends Window implements
 //        else
 //            NotificationsUtil.showError(errorMessage);
         if (connectionId != -1l) {
-            ClassInfo connectionClass = null;
+            RemoteClassMetadata connectionClass = null;
             try {
                 connectionClass = wsBean.getClass(connectionClassName, ipAddress, sessionId);
             } catch (ServerSideException ex) {

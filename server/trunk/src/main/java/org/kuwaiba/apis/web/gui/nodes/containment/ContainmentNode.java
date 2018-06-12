@@ -25,7 +25,7 @@ import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.nodes.properties.Sheet;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
 import org.kuwaiba.web.modules.containment.actions.ActionsFactory;
 
@@ -40,7 +40,7 @@ public class ContainmentNode extends AbstractNode {
      */
     private Object id;
     
-    public ContainmentNode(ClassInfoLight object) {
+    public ContainmentNode(RemoteClassMetadataLight object) {
         super(object);
     }
     

@@ -27,7 +27,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.Validator;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ClassInfoLight implements Serializable {
+public class RemoteClassMetadataLight implements Serializable {
     protected long id;
     protected Boolean _abstract;
     protected Boolean viewable;
@@ -44,9 +44,9 @@ public class ClassInfoLight implements Serializable {
      */
     protected byte[] smallIcon;
 
-    public ClassInfoLight(){}
+    public RemoteClassMetadataLight(){}
 
-    public ClassInfoLight(ClassMetadataLight myClassLight, Validator[] validators) {
+    public RemoteClassMetadataLight(ClassMetadataLight myClassLight, Validator[] validators) {
         this.id = myClassLight.getId();
         this.className = myClassLight.getName();
         this.parentClassName = myClassLight.getParentClassName();
@@ -61,7 +61,7 @@ public class ClassInfoLight implements Serializable {
         this.color = myClassLight.getColor();
     }
 
-    public ClassInfoLight (long id, String className, String displayName, 
+    public RemoteClassMetadataLight (long id, String className, String displayName, 
             Validator[] validators, boolean viewable, boolean _abstract, boolean custom, 
             boolean inDesign, String parentClassName, boolean listType, byte[] smallIcon, int color){
         this.id = id;
@@ -178,9 +178,9 @@ public class ClassInfoLight implements Serializable {
     public boolean equals(Object obj){
         if (obj == null)
             return false;
-        if (!(obj instanceof ClassInfoLight))
+        if (!(obj instanceof RemoteClassMetadataLight))
             return false;
-        if (((ClassInfoLight)obj).getId() == getId())
+        if (((RemoteClassMetadataLight)obj).getId() == getId())
             return true;
         return false;
     }

@@ -24,7 +24,7 @@ import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.ClassInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
 import org.kuwaiba.web.modules.lists.actions.ActionsFactory;
 
@@ -32,9 +32,9 @@ import org.kuwaiba.web.modules.lists.actions.ActionsFactory;
  * Represents a list type node of a tree
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ListTypeNode extends AbstractNode<ClassInfoLight> {
+public class ListTypeNode extends AbstractNode<RemoteClassMetadataLight> {
     
-    public ListTypeNode(ClassInfoLight object) {
+    public ListTypeNode(RemoteClassMetadataLight object) {
         super(object);
     }
     
@@ -52,7 +52,7 @@ public class ListTypeNode extends AbstractNode<ClassInfoLight> {
         try {
             collapse();
             TopComponent topComponent = getTree().getTopComponent();
-            ClassInfoLight currentObject = (ClassInfoLight)getObject();
+            RemoteClassMetadataLight currentObject = (RemoteClassMetadataLight)getObject();
             
             List<RemoteObjectLight> children = topComponent.getWsBean()
                     .getListTypeItems(currentObject.getClassName(), 
