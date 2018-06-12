@@ -10,14 +10,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for classInfo complex type.
+ * <p>Java class for remoteClassMetadata complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="classInfo">
+ * &lt;complexType name="remoteClassMetadata">
  *   &lt;complexContent>
- *     &lt;extension base="{http://ws.interfaces.kuwaiba.org/}classInfoLight">
+ *     &lt;extension base="{http://ws.interfaces.kuwaiba.org/}remoteClassMetadataLight">
  *       &lt;sequence>
  *         &lt;element name="attributesIds" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributesNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
@@ -40,7 +40,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "classInfo", propOrder = {
+@XmlType(name = "remoteClassMetadata", propOrder = {
     "attributesIds",
     "attributesNames",
     "attributesTypes",
@@ -54,8 +54,8 @@ import javax.xml.bind.annotation.XmlType;
     "creationDate",
     "countable"
 })
-public class ClassInfo
-    extends ClassInfoLight
+public class RemoteClassMetadata
+    extends RemoteClassMetadataLight
 {
 
     @XmlElement(nillable = true)

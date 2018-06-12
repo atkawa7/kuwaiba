@@ -42,7 +42,7 @@ public class ConnectMultipleMirrorPortAction extends GenericObjectNodeAction {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        List<LocalObjectLight> children = CommunicationsStub.getInstance().getObjectChildren(selectedObjects.get(0).getOid(), selectedObjects.get(0).getClassName());
+        List<LocalObjectLight> children = CommunicationsStub.getInstance().getObjectChildren(selectedObjects.get(0).getId(), selectedObjects.get(0).getClassName());
         List<LocalObjectLight> endPoints =  new ArrayList<>();
         
         List<LocalObjectLight> endPointsA = new ArrayList<>();
@@ -64,7 +64,7 @@ public class ConnectMultipleMirrorPortAction extends GenericObjectNodeAction {
                 if(endPointA != null){
                     for (int j=i+1; j < endPoints.size(); j++) {
                         LocalObjectLight endPointB = endPoints.get(j);
-                        if(endPointB != null && endPointB.getOid() != endPointA.getOid()){
+                        if(endPointB != null && endPointB.getId() != endPointA.getId()){
                             if(endPointA.getClassName().equals(endPointB.getClassName()) && matchMirrorPortsNames(endPointA.getName(), endPointB.getName())){
                                 endPointsA.add(endPointA);
                                 endPointsB.add(endPoints.get(j));
@@ -81,10 +81,10 @@ public class ConnectMultipleMirrorPortAction extends GenericObjectNodeAction {
             else{
                 for (int i = 0; i < endPointsA.size(); i++) {
                     aObjectsClasses.add(endPointsA.get(i).getClassName());
-                    aObjectsIds.add(endPointsA.get(i).getOid());
+                    aObjectsIds.add(endPointsA.get(i).getId());
 
                     bObjectsClasses.add(endPointsB.get(i).getClassName());
-                    bObjectsIds.add(endPointsB.get(i).getOid());
+                    bObjectsIds.add(endPointsB.get(i).getId());
                 }
 
                 if (CommunicationsStub.getInstance().connectMirrorPort(aObjectsClasses, aObjectsIds, bObjectsClasses, bObjectsIds))

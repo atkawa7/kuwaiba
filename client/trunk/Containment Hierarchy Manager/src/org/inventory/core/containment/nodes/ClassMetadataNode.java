@@ -95,7 +95,7 @@ public class ClassMetadataNode extends AbstractNode {
                     LocalClassMetadataLight data = (LocalClassMetadataLight)obj.getTransferData(
                             LocalClassMetadataLight.DATA_FLAVOR);
 
-                    long[] tokens = new long[]{data.getOid()};
+                    long[] tokens = new long[]{data.getId()};
 
                     //This is supposed to support multiple object drags,
                     //but since I can't make it work, It'll be commented out
@@ -103,7 +103,7 @@ public class ClassMetadataNode extends AbstractNode {
 //                                data)){
 //                            for (Object obj : data)
 //                                getChildren().add(new Node[]{new ClassMetadataNode((LocalClassMetadataLight)data)});
-                    if (CommunicationsStub.getInstance().addPossibleChildren(object.getOid(), tokens)) {
+                    if (CommunicationsStub.getInstance().addPossibleChildren(object.getId(), tokens)) {
                         ((ClassMetadataChildren) getChildren()).add(new ClassMetadataNode[]{new ClassMetadataNode(data)});
                         CommunicationsStub.getInstance().refreshCache(false, false, false, true, false);
 

@@ -82,7 +82,7 @@ public class SpecialObjectNode extends ObjectNode {
         actions.add(ActionGroupActionsFactory.getInstanceOfReleaseFromGroupActions());
         
         actions.add(null); //Separator
-        actions.add(ShowMoreInformationAction.getInstance(getObject().getOid(), getObject().getClassName()));
+        actions.add(ShowMoreInformationAction.getInstance(getObject().getId(), getObject().getClassName()));
         
         return actions.toArray(new Action[]{});
     }

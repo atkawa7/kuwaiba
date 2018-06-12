@@ -44,7 +44,7 @@ public class ShowPhysicalPathAction extends GenericObjectNodeAction implements P
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalObjectLight[] trace = CommunicationsStub.getInstance().getPhysicalPath(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
+        LocalObjectLight[] trace = CommunicationsStub.getInstance().getPhysicalPath(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getId());
         if (trace == null)
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{

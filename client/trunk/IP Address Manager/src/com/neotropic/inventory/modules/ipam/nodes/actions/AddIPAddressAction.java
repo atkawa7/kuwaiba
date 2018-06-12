@@ -73,7 +73,7 @@ public class AddIPAddressAction extends GenericInventoryAction {
         while (selectedNodes.hasNext()) {
             subnetNode = (SubnetNode)selectedNodes.next();
             className = subnetNode.getObject().getClassName();
-            id = subnetNode.getObject().getOid();
+            id = subnetNode.getObject().getId();
         }
         LocalObject subnet = com.getSubnet(id, className);
         String networkIp = (String)subnet.getAttribute(Constants.PROPERTY_NETWORKIP);

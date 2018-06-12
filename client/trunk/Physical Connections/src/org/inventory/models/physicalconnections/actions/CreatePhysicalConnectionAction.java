@@ -69,8 +69,8 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
         LocalObjectLight endpointA = endpointNodes.get(0).getObject();
         LocalObjectLight endpointB = endpointNodes.get(1).getObject();
         LocalObjectLight commonParent = CommunicationsStub.getInstance()
-            .getCommonParent(endpointA.getClassName(), endpointA.getOid(), 
-                             endpointB.getClassName(), endpointB.getOid());
+            .getCommonParent(endpointA.getClassName(), endpointA.getId(), 
+                             endpointB.getClassName(), endpointB.getId());
         
         if (commonParent == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
@@ -78,14 +78,14 @@ public class CreatePhysicalConnectionAction extends GenericObjectNodeAction {
             return;
         }
             
-        if (commonParent.getOid() == -1L) {
+        if (commonParent.getId() == -1L) {
             JOptionPane.showMessageDialog(null, I18N.gm("can_not_create_connection_whose_common_parent_is_root_of_hierarchy"), 
                 I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         //if there are wirecontainers in both of the two selected nodes 
-        existingWireContainersList = CommunicationsStub.getInstance().getContainersBetweenObjects(endpointA.getClassName(), endpointA.getOid(), 
-                endpointB.getClassName(), endpointB.getOid(), Constants.CLASS_WIRECONTAINER);
+        existingWireContainersList = CommunicationsStub.getInstance().getContainersBetweenObjects(endpointA.getClassName(), endpointA.getId(), 
+                endpointB.getClassName(), endpointB.getId(), Constants.CLASS_WIRECONTAINER);
                             
         JComboBox<String> cmbConnectionType = new JComboBox(new String[] {"Container", "Link"});
             

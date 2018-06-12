@@ -111,7 +111,7 @@ public class SetPaletteIconAction extends GenericInventoryAction {
                         attributesToUpdate.put(Constants.PROPERTY_ICON, iconAttributeValue);
 
                         if(!CommunicationsStub.getInstance().updateObject(customShape.getClassName(), 
-                                customShape.getOid(), attributesToUpdate)) {
+                                customShape.getId(), attributesToUpdate)) {
                             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                         } else {

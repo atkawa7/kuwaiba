@@ -118,10 +118,10 @@ public class InterfaceFrame extends JFrame{
             if (lstAvailableDevices.getSelectedValue() == null)
                 JOptionPane.showMessageDialog(null, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_INSTRUCTIONS_SELECT"));
             else {                
-                if (CommunicationsStub.getInstance().relatePortToInterface(selectedObjects.get(0).getOid(), 
+                if (CommunicationsStub.getInstance().relatePortToInterface(selectedObjects.get(0).getId(), 
                         selectedObjects.get(0).getClassName(), 
                         lstAvailableDevices.getSelectedValue().getClassName(),
-                        lstAvailableDevices.getSelectedValue().getOid())){
+                        lstAvailableDevices.getSelectedValue().getId())){
                     JOptionPane.showMessageDialog(null, String.format(I18N.gm("was_S_releated_to_S"), 
                             selectedObjects.get(0).toString(), lstAvailableDevices.getSelectedValue().getName()));
                         dispose();

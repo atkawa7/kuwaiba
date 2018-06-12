@@ -96,7 +96,7 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
     
     @Override
     protected Sheet createSheet(){
-        LocalPool sp = com.getSubnetPool(getSubnetPool().getOid());
+        LocalPool sp = com.getSubnetPool(getSubnetPool().getId());
         sheet = Sheet.createDefault();
         Sheet.Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
         
@@ -145,7 +145,7 @@ public class SubnetPoolNode extends AbstractNode implements PropertyChangeListen
                     if (action == DnDConstants.ACTION_MOVE) {
                         String className = getSubnetPool().getClassName();
                         int type = getSubnetPool().getType();
-                        long oid = getSubnetPool().getOid();
+                        long oid = getSubnetPool().getId();
                         
                         if(className.equals(obj.getClassName())){
                             if(com.moveObjectsToPool(className, oid, new LocalObjectLight[]{obj})){

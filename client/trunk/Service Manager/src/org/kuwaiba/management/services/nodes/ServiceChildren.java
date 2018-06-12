@@ -37,7 +37,7 @@ public class ServiceChildren extends AbstractChildren {
         LocalObjectLight service = ((ServiceNode)getNode()).getObject();
         
         List<LocalObjectLight> resources = CommunicationsStub.getInstance().
-                getServiceResources(service.getClassName(), service.getOid());
+                getServiceResources(service.getClassName(), service.getId());
         if (resources == null)
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {

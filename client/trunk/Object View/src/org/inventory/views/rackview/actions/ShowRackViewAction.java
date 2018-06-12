@@ -41,7 +41,7 @@ public class ShowRackViewAction extends GenericObjectNodeAction {
     public void actionPerformed(ActionEvent e) {        
         for (LocalObjectLight rack : selectedObjects) {
             RackViewTopComponent rackView = ((RackViewTopComponent) WindowManager.
-                getDefault().findTopComponent("RackViewTopComponent_" + rack.getOid()));
+                getDefault().findTopComponent("RackViewTopComponent_" + rack.getId()));
             
             if (rackView == null) {
                 rackView = new RackViewTopComponent(rack);

@@ -51,7 +51,7 @@ public class DateTypeProperty extends PropertySupport.ReadWrite<Date> {
         attributesToUpdate.put(getName(), value);
 
         if(CommunicationsStub.getInstance().updateObject(node.getObject().getClassName(), 
-                node.getObject().getOid(), attributesToUpdate))
+                node.getObject().getId(), attributesToUpdate))
             this.value = value;
         else
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

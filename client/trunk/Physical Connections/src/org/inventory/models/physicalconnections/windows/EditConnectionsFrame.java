@@ -202,7 +202,7 @@ public class EditConnectionsFrame extends JFrame {
             return;
         }
         
-        LocalObjectLight[] connectionEndpoints = com.getConnectionEndpoints(centerSelectedObject.getClassName(), centerSelectedObject.getOid());
+        LocalObjectLight[] connectionEndpoints = com.getConnectionEndpoints(centerSelectedObject.getClassName(), centerSelectedObject.getId());
         if (connectionEndpoints == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
@@ -210,7 +210,7 @@ public class EditConnectionsFrame extends JFrame {
                 lblASide.setText("<html><b>Disconnected</b></html>");
                 btnASideDisconnect.setEnabled(false);
             } else {
-                List<LocalObjectLight> aSideParents = com.getParents(connectionEndpoints[0].getClassName(), connectionEndpoints[0].getOid());
+                List<LocalObjectLight> aSideParents = com.getParents(connectionEndpoints[0].getClassName(), connectionEndpoints[0].getId());
                 if (aSideParents == null)
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                 else {
@@ -223,7 +223,7 @@ public class EditConnectionsFrame extends JFrame {
                 lblBSide.setText("<html><b>Disconnected</b></html>");
                 btnBSideDisconnect.setEnabled(false);
             } else {
-                List<LocalObjectLight> bSideParents = com.getParents(connectionEndpoints[1].getClassName(), connectionEndpoints[1].getOid());
+                List<LocalObjectLight> bSideParents = com.getParents(connectionEndpoints[1].getClassName(), connectionEndpoints[1].getId());
                 if (bSideParents == null)
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                 else {
@@ -247,11 +247,11 @@ public class EditConnectionsFrame extends JFrame {
             else {
                 if (com.isSubclassOf(centerSelectedObject.getClassName(), "GenericPhysicalLink")) {
                     if (com.connectPhysicalLinks(Arrays.asList(aSelectedObject == null ? null :aSelectedObject.getClassName()),
-                                Arrays.asList(aSelectedObject == null ? null : aSelectedObject.getOid()),
+                                Arrays.asList(aSelectedObject == null ? null : aSelectedObject.getId()),
                                 Arrays.asList(centerSelectedObject.getClassName()),
-                                Arrays.asList(centerSelectedObject.getOid()),
+                                Arrays.asList(centerSelectedObject.getId()),
                                 Arrays.asList(bSelectedObject == null ? null :bSelectedObject.getClassName()), 
-                                Arrays.asList(bSelectedObject == null ? null : bSelectedObject.getOid()))) {
+                                Arrays.asList(bSelectedObject == null ? null : bSelectedObject.getId()))) {
                         JOptionPane.showMessageDialog(null, aSelectedObject != null && bSelectedObject != null ? 
                                 "Endpoints connected sucessfully" : "Endpoint connected sucessfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                         updateConnectionDetails();
@@ -260,11 +260,11 @@ public class EditConnectionsFrame extends JFrame {
                 } else {
                     if (com.isSubclassOf(centerSelectedObject.getClassName(), "GenericPhysicalContainer")) {
                         if (com.connectPhysicalContainers(Arrays.asList(aSelectedObject == null ? null : aSelectedObject.getClassName()),
-                                    Arrays.asList(aSelectedObject == null ? null : aSelectedObject.getOid()),
+                                    Arrays.asList(aSelectedObject == null ? null : aSelectedObject.getId()),
                                     Arrays.asList(centerSelectedObject.getClassName()),
-                                    Arrays.asList(centerSelectedObject.getOid()),
+                                    Arrays.asList(centerSelectedObject.getId()),
                                     Arrays.asList(bSelectedObject == null ? null :bSelectedObject.getClassName()), 
-                                    Arrays.asList(bSelectedObject == null ? null : bSelectedObject.getOid()))) {
+                                    Arrays.asList(bSelectedObject == null ? null : bSelectedObject.getId()))) {
                             JOptionPane.showMessageDialog(null, aSelectedObject != null && bSelectedObject != null ? 
                                 "Endpoints connected sucessfully" : "Endpoint connected sucessfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                             updateConnectionDetails();
@@ -287,7 +287,7 @@ public class EditConnectionsFrame extends JFrame {
             if (selectedConnections.length != 1)
                 JOptionPane.showMessageDialog(null, "Choose a single connection (link or container) from the central panel", "Error", JOptionPane.ERROR_MESSAGE);
             else {
-                if (com.disconnectPhysicalConnection(centerSelectedObject.getClassName(), centerSelectedObject.getOid(), 3)) {
+                if (com.disconnectPhysicalConnection(centerSelectedObject.getClassName(), centerSelectedObject.getId(), 3)) {
                     JOptionPane.showMessageDialog(null, "Endpoint disconnected successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                     updateConnectionDetails();
                 }
@@ -301,7 +301,7 @@ public class EditConnectionsFrame extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(com.disconnectPhysicalConnection(centerSelectedObject.getClassName(), centerSelectedObject.getOid(), 1)) { // "1" means release only aSide
+            if(com.disconnectPhysicalConnection(centerSelectedObject.getClassName(), centerSelectedObject.getId(), 1)) { // "1" means release only aSide
                 JOptionPane.showMessageDialog(null, "Endpoint released sucessfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                 updateConnectionDetails();
             } else
@@ -313,7 +313,7 @@ public class EditConnectionsFrame extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(com.disconnectPhysicalConnection(centerSelectedObject.getClassName(), centerSelectedObject.getOid(), 2)) { // "1" means release only aSide
+            if(com.disconnectPhysicalConnection(centerSelectedObject.getClassName(), centerSelectedObject.getId(), 2)) { // "1" means release only aSide
                 JOptionPane.showMessageDialog(null, "Endpoint released sucessfully", "Success", JOptionPane.INFORMATION_MESSAGE);
                 updateConnectionDetails();
             } else

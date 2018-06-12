@@ -49,7 +49,7 @@ public class GeneralPurposeDeleteSDHTransportLink extends GenericObjectNodeActio
                     "This will delete all the containers and tributary links \n Are you sure you want to do this?", 
                     "Delete Transport Link", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
 
-                if (CommunicationsStub.getInstance().deleteSDHTransportLink(selectedNode.getObject().getClassName(), selectedNode.getObject().getOid()))
+                if (CommunicationsStub.getInstance().deleteSDHTransportLink(selectedNode.getObject().getClassName(), selectedNode.getObject().getId()))
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "Transport link deleted successfully");
                 else 
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.INFO_MESSAGE, CommunicationsStub.getInstance().getError());

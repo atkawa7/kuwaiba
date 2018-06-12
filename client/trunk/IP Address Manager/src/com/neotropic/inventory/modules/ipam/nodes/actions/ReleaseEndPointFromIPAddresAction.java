@@ -48,7 +48,7 @@ public class ReleaseEndPointFromIPAddresAction extends GenericObjectNodeAction i
     public void actionPerformed(ActionEvent e) {
         LocalObjectLight selectedObject = selectedObjects.get(0);
         List<LocalObjectLight> ipAddresses = CommunicationsStub.getInstance().getSpecialAttribute(
-            selectedObject.getClassName(), selectedObject.getOid(), Constants.RELATIONSHIP_IPAMHASADDRESS);
+            selectedObject.getClassName(), selectedObject.getId(), Constants.RELATIONSHIP_IPAMHASADDRESS);
         
         if (ipAddresses != null) {
             if (ipAddresses.isEmpty()) {
@@ -59,8 +59,8 @@ public class ReleaseEndPointFromIPAddresAction extends GenericObjectNodeAction i
                 for (LocalObjectLight ipAddress : ipAddresses) {
                     SubMenuItem subMenuItem = new SubMenuItem(ipAddress.toString());
                     subMenuItem.addProperty("portClassName", selectedObject.getClassName()); //NOI18N
-                    subMenuItem.addProperty("portId", selectedObject.getOid()); //NOI18N
-                    subMenuItem.addProperty("ipAddressId", ipAddress.getOid()); //NOI18N
+                    subMenuItem.addProperty("portId", selectedObject.getId()); //NOI18N
+                    subMenuItem.addProperty("ipAddressId", ipAddress.getId()); //NOI18N
                     subMenuItems.add(subMenuItem);
                 }
                 SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);

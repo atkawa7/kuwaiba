@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}classInfoLight" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}remoteClassMetadataLight" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
 public class GetPossibleChildrenResponse {
 
     @XmlElement(name = "return")
-    protected List<ClassInfoLight> _return;
+    protected List<RemoteClassMetadataLight> _return;
 
     /**
      * Gets the value of the return property.
@@ -55,13 +55,13 @@ public class GetPossibleChildrenResponse {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link ClassInfoLight }
+     * {@link RemoteClassMetadataLight }
      * 
      * 
      */
-    public List<ClassInfoLight> getReturn() {
+    public List<RemoteClassMetadataLight> getReturn() {
         if (_return == null) {
-            _return = new ArrayList<ClassInfoLight>();
+            _return = new ArrayList<RemoteClassMetadataLight>();
         }
         return this._return;
     }

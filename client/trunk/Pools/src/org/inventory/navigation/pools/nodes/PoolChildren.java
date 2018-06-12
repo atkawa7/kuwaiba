@@ -39,7 +39,7 @@ public class PoolChildren extends AbstractChildren {
     
     @Override
     public void addNotify(){
-        List<LocalObjectLight> items = CommunicationsStub.getInstance().getPoolItems(pool.getOid());
+        List<LocalObjectLight> items = CommunicationsStub.getInstance().getPoolItems(pool.getId());
         if (items == null) {
             setKeys(Collections.EMPTY_SET);
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

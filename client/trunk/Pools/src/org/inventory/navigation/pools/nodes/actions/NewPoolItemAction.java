@@ -46,7 +46,7 @@ public class NewPoolItemAction extends GenericInventoryAction implements Present
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalObjectLight newObject = com.createPoolItem(poolNode.getPool().getOid(), ((JMenuItem)e.getSource()).getName());
+        LocalObjectLight newObject = com.createPoolItem(poolNode.getPool().getId(), ((JMenuItem)e.getSource()).getName());
         if (newObject == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {

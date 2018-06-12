@@ -43,7 +43,7 @@ public class CustomerNode extends ObjectNode {
             Lookup.getDefault().lookup(AddContactAction.class),
             Lookup.getDefault().lookup(ShowContactsAction.class),
             null,
-            ShowMoreInformationAction.getInstance(getObject().getOid(), getObject().getClassName())
+            ShowMoreInformationAction.getInstance(getObject().getId(), getObject().getClassName())
         };        
     }
 }

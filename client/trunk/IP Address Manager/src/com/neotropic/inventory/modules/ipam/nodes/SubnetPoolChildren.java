@@ -42,8 +42,8 @@ public class SubnetPoolChildren extends AbstractChildren {
     public void addNotify(){
         LocalPool selectedPool = ((SubnetPoolNode)getNode()).getSubnetPool();
         
-        List<LocalPool> pools = CommunicationsStub.getInstance().getSubnetPools(selectedPool.getOid(), selectedPool.getClassName());
-        List<LocalObjectLight> subnets = CommunicationsStub.getInstance().getSubnets(selectedPool.getOid());
+        List<LocalPool> pools = CommunicationsStub.getInstance().getSubnetPools(selectedPool.getId(), selectedPool.getClassName());
+        List<LocalObjectLight> subnets = CommunicationsStub.getInstance().getSubnets(selectedPool.getId());
         List<LocalObjectLight> all = new ArrayList<>();
         if (subnets != null){
             for (LocalObjectLight subnet : subnets) 

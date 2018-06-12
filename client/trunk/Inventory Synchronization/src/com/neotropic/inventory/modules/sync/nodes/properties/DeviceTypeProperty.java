@@ -50,14 +50,14 @@ public class DeviceTypeProperty extends PropertySupport.ReadWrite<LocalObjectLig
     @Override
     public void setValue(LocalObjectLight val) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         this.value = val;
-        propertyDeviceId.setValue(String.valueOf(val.getOid()));
+        propertyDeviceId.setValue(String.valueOf(val.getId()));
         
-        if (((LocalObjectLight) val).getOid() != -1) {
+        if (((LocalObjectLight) val).getId() != -1) {
             HashMap<String, String> parameters = new HashMap();
 
             LocalSyncDataSourceConfiguration localSyncDataSrcConfig = syncConfigNode.getLookup().lookup(LocalSyncDataSourceConfiguration.class);
 
-            parameters.put("deviceId", Long.toString(((LocalObjectLight) val).getOid()));
+            parameters.put("deviceId", Long.toString(((LocalObjectLight) val).getId()));
             parameters.put("deviceClass", ((LocalObjectLight) val).getClassName());
 
             if (!CommunicationsStub.getInstance().updateSyncDataSourceConfiguration(localSyncDataSrcConfig.getId(), parameters))

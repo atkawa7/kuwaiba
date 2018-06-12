@@ -44,7 +44,7 @@ public class ReleaseMirrorPortAction extends GenericObjectNodeAction {
                 "Are you sure you want to disconnect this mirror port?", I18N.gm("warning"), 
                 JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
         
-            if (CommunicationsStub.getInstance().releaseMirrorPort(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid()))
+            if (CommunicationsStub.getInstance().releaseMirrorPort(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getId()))
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, "Miror port disconnected successfully");
             else
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());        

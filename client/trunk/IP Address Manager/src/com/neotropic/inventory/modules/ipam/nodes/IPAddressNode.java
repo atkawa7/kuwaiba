@@ -42,7 +42,7 @@ public class IPAddressNode extends ObjectNode {
     
     @Override
     protected Sheet createSheet() {
-        LocalObject sp = com.getObjectInfo(getObject().getClassName(), getObject().getOid());
+        LocalObject sp = com.getObjectInfo(getObject().getClassName(), getObject().getId());
         
         Sheet sheet = Sheet.createDefault();
         Sheet.Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
@@ -68,7 +68,7 @@ public class IPAddressNode extends ObjectNode {
             val = list.get(0); //None
         } else {
             for (LocalObjectListItem loli : list) {
-                if (sp.getAttribute(Constants.PROPERTY_STATE).equals(loli.getOid())) {
+                if (sp.getAttribute(Constants.PROPERTY_STATE).equals(loli.getId())) {
                     val = loli;
                     break;
                 }

@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}classInfo" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}remoteClassMetadata" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,17 +33,17 @@ import javax.xml.bind.annotation.XmlType;
 public class GetClassWithIdResponse {
 
     @XmlElement(name = "return")
-    protected ClassInfo _return;
+    protected RemoteClassMetadata _return;
 
     /**
      * Gets the value of the return property.
      * 
      * @return
      *     possible object is
-     *     {@link ClassInfo }
+     *     {@link RemoteClassMetadata }
      *     
      */
-    public ClassInfo getReturn() {
+    public RemoteClassMetadata getReturn() {
         return _return;
     }
 
@@ -52,10 +52,10 @@ public class GetClassWithIdResponse {
      * 
      * @param value
      *     allowed object is
-     *     {@link ClassInfo }
+     *     {@link RemoteClassMetadata }
      *     
      */
-    public void setReturn(ClassInfo value) {
+    public void setReturn(RemoteClassMetadata value) {
         this._return = value;
     }
 

@@ -42,7 +42,7 @@ public class GeneralPurposeDeleteCustomerAction extends GenericObjectNodeAction 
         if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this customer? All services associated will be deleted too",
                 "Delete Customer",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
                         
-            if (CommunicationsStub.getInstance().deleteObject(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid())) 
+            if (CommunicationsStub.getInstance().deleteObject(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getId())) 
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), 
                         NotificationUtil.INFO_MESSAGE, "The customer was deleted successfully");
             else

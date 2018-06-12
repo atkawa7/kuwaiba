@@ -124,13 +124,13 @@ public class ServicesFrame extends JFrame {
                 List<Long> objectIds = new ArrayList<>();
                 for(LocalObjectLight selectedObject : selectedObjects){
                     classNames.add(selectedObject.getClassName());
-                    objectIds.add(selectedObject.getOid());
+                    objectIds.add(selectedObject.getId());
                 }
                 
                 if (CommunicationsStub.getInstance().associateObjectsToService(
                     classNames, objectIds, 
                     (lstAvailableServices.getSelectedValue()).getClassName(),
-                    (lstAvailableServices.getSelectedValue()).getOid())){
+                    (lstAvailableServices.getSelectedValue()).getId())){
                         JOptionPane.showMessageDialog(null, String.format(selectedObjects.size() > 1 ? 
                                 "%s obejcts were related to service %s" : "%s object was related to service %s", selectedObjects.size(), lstAvailableServices.getSelectedValue()));
                         dispose();

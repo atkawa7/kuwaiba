@@ -51,9 +51,9 @@ public class PoolNativeTypeProperty extends ReadWrite {
     public void setValue(Object value)  {
         boolean flag = false;
         if (this.getName().equals(Constants.PROPERTY_NAME))
-            flag = CommunicationsStub.getInstance().setPoolProperties(pool.getPool().getOid(), (String)value, null);
+            flag = CommunicationsStub.getInstance().setPoolProperties(pool.getPool().getId(), (String)value, null);
         if (this.getName().equals(Constants.PROPERTY_DESCRIPTION))
-            flag = CommunicationsStub.getInstance().setPoolProperties(pool.getPool().getOid(), null, (String)value);
+            flag = CommunicationsStub.getInstance().setPoolProperties(pool.getPool().getId(), null, (String)value);
 
         if (flag) {
             this.value = value;

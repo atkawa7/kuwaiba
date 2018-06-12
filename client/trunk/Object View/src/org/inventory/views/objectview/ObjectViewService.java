@@ -41,7 +41,7 @@ public class ObjectViewService {
         ObjectViewConfigurationObject configObject = scene.getConfigObject();
         LocalObjectLight object = (LocalObjectLight) configObject.getProperty("currentObject"); //NOI18N
         
-        List<LocalObjectViewLight> views = CommunicationsStub.getInstance().getObjectRelatedViews(object.getOid(), object.getClassName());
+        List<LocalObjectViewLight> views = CommunicationsStub.getInstance().getObjectRelatedViews(object.getId(), object.getClassName());
         
         if (views != null) {
             if (views.isEmpty()) {
@@ -49,7 +49,7 @@ public class ObjectViewService {
                 configObject.setProperty("currentView", currentView); //NOI18N
                 scene.render((byte[]) null);
             } else {
-                currentView = CommunicationsStub.getInstance().getObjectRelatedView(object.getOid(), object.getClassName(), views.get(0).getId());
+                currentView = CommunicationsStub.getInstance().getObjectRelatedView(object.getId(), object.getClassName(), views.get(0).getId());
                 configObject.setProperty("currentView", currentView); //NOI18N
                 scene.render(currentView.getStructure());
             }
@@ -65,7 +65,7 @@ public class ObjectViewService {
             
             byte[] viewStructure = scene.getAsXML();
             if (currentView == null) {
-                long viewId = CommunicationsStub.getInstance().createObjectRelatedView(currentObject.getOid(), currentObject.getClassName(), null, null, "PlainChildrenView", viewStructure, scene.getBackgroundImage()); //NOI18N
+                long viewId = CommunicationsStub.getInstance().createObjectRelatedView(currentObject.getId(), currentObject.getClassName(), null, null, "PlainChildrenView", viewStructure, scene.getBackgroundImage()); //NOI18N
                 
                 if (viewId != -1) { //Success
                     currentView = new LocalObjectView(viewId, "ObjectViewModule", null, null, viewStructure, scene.getBackgroundImage()); //NOI18N
@@ -75,7 +75,7 @@ public class ObjectViewService {
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 }
             } else {
-                if (!CommunicationsStub.getInstance().updateObjectRelatedView(currentObject.getOid(),
+                if (!CommunicationsStub.getInstance().updateObjectRelatedView(currentObject.getId(),
                          currentObject.getClassName(), currentView.getId(),
                         null, null,viewStructure, scene.getBackgroundImage()))
                     

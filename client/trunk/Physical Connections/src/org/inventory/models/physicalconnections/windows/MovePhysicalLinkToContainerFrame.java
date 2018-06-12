@@ -115,14 +115,14 @@ public class MovePhysicalLinkToContainerFrame  extends JFrame {
             List<Refreshable> topComponents = new ArrayList<>();
             
             
-            LocalObjectLight parent = com.getParent(linksToMove.get(0).getClassName(), linksToMove.get(0).getOid());
-            TopComponent topComponent = WindowManager.getDefault().findTopComponent("ObjectViewTopComponent_" + parent.getOid());
+            LocalObjectLight parent = com.getParent(linksToMove.get(0).getClassName(), linksToMove.get(0).getId());
+            TopComponent topComponent = WindowManager.getDefault().findTopComponent("ObjectViewTopComponent_" + parent.getId());
 
             if (topComponent instanceof Refreshable)
                 topComponents.add((Refreshable) topComponent);
             
             if(com.moveSpecialObjects(selectedContainer.getClassName(),
-                    selectedContainer.getOid(), 
+                    selectedContainer.getId(), 
                     linksToMove)) {
                 
                 topComponents.get(0).refresh();

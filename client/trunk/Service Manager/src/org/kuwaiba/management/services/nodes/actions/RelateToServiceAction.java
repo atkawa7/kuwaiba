@@ -87,13 +87,13 @@ public class RelateToServiceAction extends GenericObjectNodeAction implements Co
                 List<Long> objectIds = new ArrayList<>();
                 for(LocalObjectLight selectedObject : selectedObjects){
                     classNames.add(selectedObject.getClassName());
-                    objectIds.add(selectedObject.getOid());
+                    objectIds.add(selectedObject.getId());
                 }
                 
                 if (CommunicationsStub.getInstance().associateObjectsToService(
                     classNames, objectIds, 
                     ((LocalObjectLight) selectedValue).getClassName(),
-                    ((LocalObjectLight) selectedValue).getOid())){
+                    ((LocalObjectLight) selectedValue).getId())){
                         JOptionPane.showMessageDialog(null, String.format(selectedObjects.size() > 1 ? 
                                 "%s obejcts were related to service %s" : "%s object was related to service %s", selectedObjects.size(), selectedValue));
                         frame.dispose();

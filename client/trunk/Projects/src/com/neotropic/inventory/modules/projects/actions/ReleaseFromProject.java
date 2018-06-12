@@ -53,7 +53,7 @@ public class ReleaseFromProject extends GenericObjectNodeAction implements Compo
         LocalObjectLight selectedObject = selectedObjects.get(0);
         
         List<LocalObjectLight> projects = CommunicationsStub.getInstance()
-            .getProjectsAssociateToObject(selectedObject.getClassName(), selectedObject.getOid());
+            .getProjectsAssociateToObject(selectedObject.getClassName(), selectedObject.getId());
         
         if (projects != null) {
             if (!projects.isEmpty()) {
@@ -61,7 +61,7 @@ public class ReleaseFromProject extends GenericObjectNodeAction implements Compo
                 for (LocalObjectLight project : projects) {
                     SubMenuItem subMenuItem = new SubMenuItem(project.toString());
                     subMenuItem.addProperty(Constants.PROPERTY_CLASSNAME, project.getClassName());
-                    subMenuItem.addProperty(Constants.PROPERTY_ID, project.getOid());
+                    subMenuItem.addProperty(Constants.PROPERTY_ID, project.getId());
                     subMenuItems.add(subMenuItem);
                 }
                 SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);
@@ -90,7 +90,7 @@ public class ReleaseFromProject extends GenericObjectNodeAction implements Compo
         if (e != null && e.getSource() instanceof SubMenuDialog) {
             SubMenuDialog eventSource = (SubMenuDialog) e.getSource();
             String objectClass = selectedObjects.get(0).getClassName();
-            long objectId = selectedObjects.get(0).getOid();
+            long objectId = selectedObjects.get(0).getId();
             String projectClass = (String) eventSource.getSelectedSubMenuItem().getProperty(Constants.PROPERTY_CLASSNAME);
             long projectId = (long) eventSource.getSelectedSubMenuItem().getProperty(Constants.PROPERTY_ID);
 

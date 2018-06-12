@@ -49,8 +49,8 @@ public class ObjectChildren extends AbstractChildren {
         else {
             LocalObjectLight node = ((ObjectNode)this.getNode()).getObject();
         
-            children = com.getObjectChildren(node.getOid(),
-                    com.getMetaForClass(node.getClassName(), false).getOid());
+            children = com.getObjectChildren(node.getId(),
+                    com.getMetaForClass(node.getClassName(), false).getId());
         }
         if (children == null) {
             setKeys(Collections.EMPTY_LIST);

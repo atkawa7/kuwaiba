@@ -70,7 +70,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
         
     public RackViewTopComponent(LocalObjectLight rackLight) {
         this();
-        rack = CommunicationsStub.getInstance().getObjectInfo(rackLight.getClassName(), rackLight.getOid());
+        rack = CommunicationsStub.getInstance().getObjectInfo(rackLight.getClassName(), rackLight.getId());
         if (rack == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
@@ -91,7 +91,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
     
     @Override
     protected String preferredID() {
-        return "RackViewTopComponent_" + (rack != null ? rack.getOid() : 0); //NOI18N
+        return "RackViewTopComponent_" + (rack != null ? rack.getId() : 0); //NOI18N
     }
 
     @Override
@@ -466,7 +466,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
         if (!btnRackTableView.isEnabled())
             return;
         
-        RackTableViewTopComponent rackTable = ((RackTableViewTopComponent) WindowManager.getDefault().findTopComponent("RackTableViewTopComponent_" + rack.getOid())); //NOI18N
+        RackTableViewTopComponent rackTable = ((RackTableViewTopComponent) WindowManager.getDefault().findTopComponent("RackTableViewTopComponent_" + rack.getId())); //NOI18N
 
         if (rackTable == null) {
             rackTable = new RackTableViewTopComponent(rack, service);
@@ -594,7 +594,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                 I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
             return null;            
         }
-////        LocalObject rack = CommunicationsStub.getInstance().getObjectInfo(rackLight.getClassName(), rackLight.getOid());
+////        LocalObject rack = CommunicationsStub.getInstance().getObjectInfo(rackLight.getClassName(), rackLight.getId());
         
         if (rack == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
@@ -605,7 +605,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
             if (rackUnits == null || rackUnits == 0) {
                 message += String.format("Attribute %s in rack %s does not exist or is not set correctly\n", Constants.PROPERTY_RACK_UNITS, rack);                                                             
             } else {
-                List<LocalObjectLight> devicesLight = CommunicationsStub.getInstance().getObjectChildren(rack.getOid(), rack.getClassName());
+                List<LocalObjectLight> devicesLight = CommunicationsStub.getInstance().getObjectChildren(rack.getId(), rack.getClassName());
                 if (devicesLight != null) {
 ////                    List<LocalClassMetadata> objChildrenClasses = new ArrayList<>();
                     
@@ -635,7 +635,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                     List<LocalObject> devices = new ArrayList<>();
                     
                     for (LocalObjectLight deviceLight : devicesLight) {
-                        LocalObject device = CommunicationsStub.getInstance().getObjectInfo(deviceLight.getClassName(), deviceLight.getOid());
+                        LocalObject device = CommunicationsStub.getInstance().getObjectInfo(deviceLight.getClassName(), deviceLight.getId());
                         if (device != null) {
                             LocalClassMetadata lcm = device.getObjectMetadata();
 

@@ -134,8 +134,8 @@ public class ConfigureConnectorMatchingAction implements ActionListener {
                             if (cmbPortSubclasses.getSelectedItem() == null || cmbLinkSubclasses.getSelectedItem() == null)
                                 JOptionPane.showMessageDialog(null, "Invalid selection", "Error", JOptionPane.ERROR_MESSAGE);
                             else {
-                                String linkConnector = cmbLinkConnectorTypes.getSelectedItem() == null || ((LocalObjectListItem)cmbLinkConnectorTypes.getSelectedItem()).getOid() == LocalObjectListItem.NULL_ID ? "" : ((LocalObjectListItem)cmbLinkConnectorTypes.getSelectedItem()).getName();
-                                String portConnector = cmbPortConnectorTypes.getSelectedItem() == null || ((LocalObjectListItem)cmbPortConnectorTypes.getSelectedItem()).getOid() == LocalObjectListItem.NULL_ID ? "" : ((LocalObjectListItem)cmbPortConnectorTypes.getSelectedItem()).getName();
+                                String linkConnector = cmbLinkConnectorTypes.getSelectedItem() == null || ((LocalObjectListItem)cmbLinkConnectorTypes.getSelectedItem()).getId() == LocalObjectListItem.NULL_ID ? "" : ((LocalObjectListItem)cmbLinkConnectorTypes.getSelectedItem()).getName();
+                                String portConnector = cmbPortConnectorTypes.getSelectedItem() == null || ((LocalObjectListItem)cmbPortConnectorTypes.getSelectedItem()).getId() == LocalObjectListItem.NULL_ID ? "" : ((LocalObjectListItem)cmbPortConnectorTypes.getSelectedItem()).getName();
                                 
                                 LocalBusinessRule newBusinessRule = com.createBusinessRule(cmbLinkSubclasses.getSelectedItem() + ":" + linkConnector + " - " + cmbPortSubclasses.getSelectedItem() + ":" + portConnector, 
                                     String.format("%s and %s", cmbLinkSubclasses.getSelectedItem(), cmbPortSubclasses.getSelectedItem()),

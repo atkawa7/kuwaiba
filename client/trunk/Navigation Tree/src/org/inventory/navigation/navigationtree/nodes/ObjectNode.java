@@ -127,7 +127,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             return sheet;
         }
         
-        LocalObject lo = com.getObjectInfo(object.getClassName(), object.getOid());
+        LocalObject lo = com.getObjectInfo(object.getClassName(), object.getId());
         
         if (lo == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
@@ -222,7 +222,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             //*****************
             //TODO: When fixing the listeners, change this as well, or you will lose the references to those listeners
             //*********
-            object = com.getObjectInfoLight(object.getClassName(), object.getOid());
+            object = com.getObjectInfoLight(object.getClassName(), object.getId());
         
         if (object == null)
             return false;
@@ -312,7 +312,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         
         actions.add(null); //Separator
         actions.add(explorerAction);
-        actions.add(ShowMoreInformationAction.getInstance(getObject().getOid(), getObject().getClassName()));
+        actions.add(ShowMoreInformationAction.getInstance(getObject().getId(), getObject().getClassName()));
         return actions.toArray(new Action[]{});
     }
 
@@ -372,7 +372,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                     }
                     if (canMove) {
                         if (action == DnDConstants.ACTION_COPY) {
-                            LocalObjectLight[] copiedNodes = com.copyObjects(getObject().getClassName(), getObject().getOid(),
+                            LocalObjectLight[] copiedNodes = com.copyObjects(getObject().getClassName(), getObject().getId(),
                                     new LocalObjectLight[]{obj});
                             if (copiedNodes != null) {
                                 if (getChildren() instanceof AbstractChildren)
@@ -381,7 +381,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
                         } else {
                             if (action == DnDConstants.ACTION_MOVE) {
-                                if (com.moveObjects(getObject().getClassName(), getObject().getOid(), Arrays.asList(obj))) {
+                                if (com.moveObjects(getObject().getClassName(), getObject().getId(), Arrays.asList(obj))) {
                                     //Refreshes the old parent node
                                     if (dropNode.getParentNode().getChildren() instanceof AbstractChildren)
                                         ((AbstractChildren)dropNode.getParentNode().getChildren()).addNotify();
@@ -441,7 +441,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         attributesToUpdate.put(Constants.PROPERTY_NAME, newName);
         
         if (CommunicationsStub.getInstance().updateObject(getObject().getClassName(), 
-                getObject().getOid(), attributesToUpdate)) {
+                getObject().getId(), attributesToUpdate)) {
             getObject().setName(newName);
             if (getSheet() != null)
                 setSheet(createSheet());

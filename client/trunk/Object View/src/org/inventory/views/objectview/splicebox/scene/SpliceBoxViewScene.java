@@ -116,7 +116,7 @@ public class SpliceBoxViewScene extends AbstractScene<LocalObjectLight, String> 
 
     @Override
     public void render(LocalObjectLight spliceBox) {
-        List<LocalObjectLight> portsInSpliceBox = com.getChildrenOfClassLightRecursive(spliceBox.getOid(), spliceBox.getClassName(), Constants.CLASS_GENERICPORT);
+        List<LocalObjectLight> portsInSpliceBox = com.getChildrenOfClassLightRecursive(spliceBox.getId(), spliceBox.getClassName(), Constants.CLASS_GENERICPORT);
         if (portsInSpliceBox != null) {
             try {
                 //First we retrieve all the necessary information: The ports in the splice box, the links connected to them and the mirror relationships 
@@ -127,10 +127,10 @@ public class SpliceBoxViewScene extends AbstractScene<LocalObjectLight, String> 
 
                     LocalObject linkConnectedToPort;
 
-                    linkConnectedToPort = com.getLinkConnectedToPort(port.getClassName(), port.getOid());
+                    linkConnectedToPort = com.getLinkConnectedToPort(port.getClassName(), port.getId());
 
                     if (port.getName().toLowerCase().startsWith("in")) { //NOI18N
-                        List<LocalObjectLight> mirrorPort = com.getSpecialAttribute(port.getClassName(), port.getOid(), "mirror"); //NOI18N
+                        List<LocalObjectLight> mirrorPort = com.getSpecialAttribute(port.getClassName(), port.getId(), "mirror"); //NOI18N
                         this.mirrors.put(port, mirrorPort.isEmpty() ? null : mirrorPort.get(0));
                         this.inputPorts.put(port, linkConnectedToPort);
                     }
@@ -155,7 +155,7 @@ public class SpliceBoxViewScene extends AbstractScene<LocalObjectLight, String> 
                 //Now we connect the mirrors
                 for (LocalObjectLight inputPort : mirrors.keySet()) {
                     if (mirrors.get(inputPort) != null) {
-                        String connectionId = inputPort.getOid() + " - " + mirrors.get(inputPort).getOid();
+                        String connectionId = inputPort.getId() + " - " + mirrors.get(inputPort).getId();
                         addEdge(connectionId);
                         setEdgeSource(connectionId, inputPort);
                         setEdgeTarget(connectionId, mirrors.get(inputPort));

@@ -84,13 +84,13 @@ public class RelateToContractAction extends GenericObjectNodeAction implements C
                 
                 for (int i = 0; i < selectedObjects.size(); i += 1) {
                     objectsClassName[i] = selectedObjects.get(i).getClassName();
-                    objectsId[i] = selectedObjects.get(i).getOid();
+                    objectsId[i] = selectedObjects.get(i).getId();
                 }
                 
                 if (CommunicationsStub.getInstance().associateObjectsToContract(
                     objectsClassName, objectsId, 
                     ((LocalObjectLight) selectedValue).getClassName(), 
-                    ((LocalObjectLight) selectedValue).getOid())) {
+                    ((LocalObjectLight) selectedValue).getId())) {
                     
                     JOptionPane.showMessageDialog(null, String.format(I18N.gm("selected_devices_were_related_to"), selectedValue));
                     frame.dispose();

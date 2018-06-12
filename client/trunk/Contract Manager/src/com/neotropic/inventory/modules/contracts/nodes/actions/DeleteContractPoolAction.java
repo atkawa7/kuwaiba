@@ -64,7 +64,7 @@ public class DeleteContractPoolAction extends GenericInventoryAction implements 
 
             ContractPoolNode selectedNode = selectedNodes.next();
 
-            if (CommunicationsStub.getInstance().deletePool(selectedNode.getPool().getOid())) {
+            if (CommunicationsStub.getInstance().deletePool(selectedNode.getPool().getId())) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, I18N.gm("pool_was_deleted"));
                 ((ContractManagerRootNode.ContractManagerRootChildren)selectedNode.getParentNode().getChildren()).addNotify();
             }

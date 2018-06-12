@@ -40,7 +40,7 @@ public class EndToEndViewService {
         ObjectViewConfigurationObject configObject = scene.getConfigObject();
         LocalObjectLight object = (LocalObjectLight) configObject.getProperty("currentObject");
 
-        List<LocalObjectViewLight> views = CommunicationsStub.getInstance().getObjectRelatedViews(object.getOid(), object.getClassName());
+        List<LocalObjectViewLight> views = CommunicationsStub.getInstance().getObjectRelatedViews(object.getId(), object.getClassName());
 
         if (views != null) {
             if (views.isEmpty()) {
@@ -48,7 +48,7 @@ public class EndToEndViewService {
                 configObject.setProperty("currentView", currentView);
                 scene.render((byte[]) null);
             } else {
-                currentView = CommunicationsStub.getInstance().getObjectRelatedView(object.getOid(), object.getClassName(), views.get(0).getId());
+                currentView = CommunicationsStub.getInstance().getObjectRelatedView(object.getId(), object.getClassName(), views.get(0).getId());
                 configObject.setProperty("currentView", currentView);
                 scene.render(currentView.getStructure());
             }
@@ -63,7 +63,7 @@ public class EndToEndViewService {
         if (currentService != null) {
             byte[] viewStructure = scene.getAsXML();
             if (currentView == null) {
-                long viewId = CommunicationsStub.getInstance().createObjectRelatedView(currentService.getOid(), currentService.getClassName(), null, null, "PlainChildrenView", viewStructure, scene.getBackgroundImage()); //NOI18N
+                long viewId = CommunicationsStub.getInstance().createObjectRelatedView(currentService.getId(), currentService.getClassName(), null, null, "PlainChildrenView", viewStructure, scene.getBackgroundImage()); //NOI18N
 
                 if (viewId != -1) { //Success
                     currentView = new LocalObjectView(viewId, "ServiceSimpleView", null, null, viewStructure, scene.getBackgroundImage());
@@ -73,7 +73,7 @@ public class EndToEndViewService {
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 }
             } else {
-                if (!CommunicationsStub.getInstance().updateObjectRelatedView(currentService.getOid(),
+                if (!CommunicationsStub.getInstance().updateObjectRelatedView(currentService.getId(),
                          currentService.getClassName(), currentView.getId(),
                         null, null,viewStructure, scene.getBackgroundImage()))
 

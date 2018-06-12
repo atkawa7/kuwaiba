@@ -88,7 +88,7 @@ public class AddContactAction extends GenericObjectNodeAction {
                 return;
             }
             
-            if(!CommunicationsStub.getInstance().createContact(contactType.getClassName(), contactName, selectedNode.getObject().getClassName(), selectedNode.getObject().getOid()))
+            if(!CommunicationsStub.getInstance().createContact(contactType.getClassName(), contactName, selectedNode.getObject().getClassName(), selectedNode.getObject().getId()))
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else 
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "The contact was created successfully");

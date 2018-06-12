@@ -91,7 +91,7 @@ public class DeviceLayoutPalette {
                 
         for (LocalObjectListItem item : customShapes) {
             
-            LocalObject object = CommunicationsStub.getInstance().getObjectInfo(item.getClassName(), item.getOid());
+            LocalObject object = CommunicationsStub.getInstance().getObjectInfo(item.getClassName(), item.getId());
                         
             if (object == null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 

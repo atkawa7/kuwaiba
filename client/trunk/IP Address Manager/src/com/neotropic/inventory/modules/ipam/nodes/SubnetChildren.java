@@ -38,9 +38,9 @@ public class SubnetChildren extends AbstractChildren {
     public void addNotify(){
         LocalObjectLight subnet = ((SubnetNode)getNode()).getObject();
         List<LocalObjectLight> ips = CommunicationsStub.getInstance().
-                getSubnetUsedIps(subnet.getOid(), subnet.getClassName());
+                getSubnetUsedIps(subnet.getId(), subnet.getClassName());
         List<LocalObjectLight> subnets = CommunicationsStub.getInstance().
-                getSubnetsInSubnet(subnet.getOid(), subnet.getClassName());
+                getSubnetsInSubnet(subnet.getId(), subnet.getClassName());
         
         if (ips == null)
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

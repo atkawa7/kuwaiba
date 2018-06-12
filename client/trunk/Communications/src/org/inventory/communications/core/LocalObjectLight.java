@@ -37,7 +37,7 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
     public static DataFlavor DATA_FLAVOR =
             new DataFlavor(LocalObjectLight.class,"Object/LocalObjectLight");
     
-    protected long oid;
+    protected long id;
     protected String name;
     protected String className;
     /**
@@ -53,13 +53,13 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
      * This constructor is called to create dummy objects where the id is not important
      */
     public LocalObjectLight(){
-        this.oid = -1;
+        this.id = -1;
         this.propertyChangeListeners = new ArrayList<>();
     }
 
     public LocalObjectLight(long oid, String name, String className) {
         this();
-        this.oid = oid;
+        this.id = oid;
         this.name = name;
         this.className = className;
         this.validators = new HashMap<>();
@@ -74,12 +74,12 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
         return className;
     }
 
-    public long getOid() {
-        return oid;
+    public long getId() {
+        return id;
     }
 
     public void setOid(long id){
-        this.oid = id;
+        this.id = id;
     }
 
     public int getValidator(String label){
@@ -130,13 +130,13 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
            return false;
        if (!(obj instanceof LocalObjectLight))
            return false;
-       return (this.getOid() == ((LocalObjectLight)obj).getOid());
+       return (this.getId() == ((LocalObjectLight)obj).getId());
    }
 
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 47 * hash + (int) (this.oid ^ (this.oid >>> 32));
+        hash = 47 * hash + (int) (this.id ^ (this.id >>> 32));
         return hash;
     }
 

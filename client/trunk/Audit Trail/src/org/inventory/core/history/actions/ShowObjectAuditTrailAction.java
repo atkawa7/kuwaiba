@@ -43,12 +43,12 @@ public final class ShowObjectAuditTrailAction extends GenericObjectNodeAction {
     @Override
     public void actionPerformed(ActionEvent ev) {
         LocalObjectLight selectedObject = selectedObjects.get(0);
-        LocalApplicationLogEntry[] entries = com.getBusinessObjectAuditTrail(selectedObject.getClassName(), selectedObject.getOid());
+        LocalApplicationLogEntry[] entries = com.getBusinessObjectAuditTrail(selectedObject.getClassName(), selectedObject.getId());
         if (entries == null)
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
         else{
             ObjectAuditTrailTopComponent tc = (ObjectAuditTrailTopComponent) WindowManager.getDefault()
-                .findTopComponent("ObjectAuditTrailTopComponent_" + selectedObject.getOid());
+                .findTopComponent("ObjectAuditTrailTopComponent_" + selectedObject.getId());
             
             if (tc == null) {
                 tc = new ObjectAuditTrailTopComponent(selectedObject);

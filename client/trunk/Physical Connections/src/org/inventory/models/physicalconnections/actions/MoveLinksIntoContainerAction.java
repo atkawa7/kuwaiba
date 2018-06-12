@@ -58,7 +58,7 @@ public class MoveLinksIntoContainerAction  extends GenericObjectNodeAction{
         List<LocalObjectLight> endpointsB = new ArrayList<>();
 
         for (LocalObjectLight selectedObject : selectedObjects) {
-            specialAttributes = com.getSpecialAttributes(selectedObject.getClassName(), selectedObject.getOid());
+            specialAttributes = com.getSpecialAttributes(selectedObject.getClassName(), selectedObject.getId());
             
             if (specialAttributes == null ) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
@@ -77,7 +77,7 @@ public class MoveLinksIntoContainerAction  extends GenericObjectNodeAction{
         
         if(!endpointsA.isEmpty() && !endpointsB.isEmpty()){
             for(int i=0; i<endpointsA.size(); i++)
-                parents.add(com.getCommonParent(endpointsA.get(i).getClassName(), endpointsA.get(i).getOid(), endpointsB.get(i).getClassName(), endpointsB.get(i).getOid()));
+                parents.add(com.getCommonParent(endpointsA.get(i).getClassName(), endpointsA.get(i).getId(), endpointsB.get(i).getClassName(), endpointsB.get(i).getId()));
             
             parent = parents.get(0);
             for (int i=1; i<parents.size(); i++) {
@@ -91,8 +91,8 @@ public class MoveLinksIntoContainerAction  extends GenericObjectNodeAction{
             List<List<LocalObjectLight>> allParentsB = new ArrayList<>();
             List<Boolean> sameParents = new ArrayList<>();
             for(int i=0; i<endpointsA.size(); i++){
-                List<LocalObjectLight> parentsA = com.getParentsUntilFirstOfClass(endpointsA.get(i).getClassName(), endpointsA.get(i).getOid(), parent.getClassName());
-                List<LocalObjectLight> parentsB = com.getParentsUntilFirstOfClass(endpointsB.get(i).getClassName(), endpointsB.get(i).getOid(), parent.getClassName());
+                List<LocalObjectLight> parentsA = com.getParentsUntilFirstOfClass(endpointsA.get(i).getClassName(), endpointsA.get(i).getId(), parent.getClassName());
+                List<LocalObjectLight> parentsB = com.getParentsUntilFirstOfClass(endpointsB.get(i).getClassName(), endpointsB.get(i).getId(), parent.getClassName());
                 allParentsA.add(parentsA);
                 allParentsB.add(parentsB);
                 sameParents.add(false);
@@ -132,8 +132,8 @@ public class MoveLinksIntoContainerAction  extends GenericObjectNodeAction{
             }
             
             for(int i=0; i<endpointsA.size(); i++){
-                List<LocalObjectLight> parentsA = com.getParents(endpointsA.get(i).getClassName(), endpointsA.get(i).getOid());
-                List<LocalObjectLight> parentsB = com.getParents(endpointsB.get(i).getClassName(), endpointsB.get(i).getOid());    
+                List<LocalObjectLight> parentsA = com.getParents(endpointsA.get(i).getClassName(), endpointsA.get(i).getId());
+                List<LocalObjectLight> parentsB = com.getParents(endpointsB.get(i).getClassName(), endpointsB.get(i).getId());    
                 List<LocalObjectLight> existingContainers = new ArrayList<>();
                 boolean childrenToEvaluatedA = true;
                 int indexA = parentsA.indexOf(parent);
@@ -155,7 +155,7 @@ public class MoveLinksIntoContainerAction  extends GenericObjectNodeAction{
                         LocalObjectLight parentB = parentsB.get(indexB);
 
                         existingContainers.addAll(com.getContainersBetweenObjects(
-                                parentA.getClassName(), parentA.getOid(), parentB.getClassName(), parentB.getOid(), Constants.CLASS_WIRECONTAINER));
+                                parentA.getClassName(), parentA.getId(), parentB.getClassName(), parentB.getId(), Constants.CLASS_WIRECONTAINER));
                     }
                 }
 

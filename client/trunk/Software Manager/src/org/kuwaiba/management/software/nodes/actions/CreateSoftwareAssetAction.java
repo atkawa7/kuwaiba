@@ -42,7 +42,7 @@ public class CreateSoftwareAssetAction extends GenericObjectNodeAction {
     public void actionPerformed(ActionEvent e) {
         HashMap<String, Object> attributes = new HashMap<>();
         LocalObjectLight newLicense = CommunicationsStub.getInstance().createSpecialObject("SoftwareLicense", selectedObjects.get(0).getClassName(), 
-                selectedObjects.get(0).getOid(), attributes, -1);
+                selectedObjects.get(0).getId(), attributes, -1);
         if (newLicense == null)
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else{

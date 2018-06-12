@@ -58,7 +58,7 @@ public class DetachFileAction extends GenericInventoryAction {
         for (FileObjectNode fileObjectNode : selectedFileObjectNodes) {
             LocalFileObjectLight selectedFileObject = fileObjectNode.getLookup().lookup(LocalFileObjectLight.class);
             LocalObjectLight inventoryObject = fileObjectNode.getParentNode().getLookup().lookup(LocalObjectLight.class);
-            if (com.detachFileFromObject(selectedFileObject.getFileOjectId(),  inventoryObject.getClassName(), inventoryObject.getOid())) {
+            if (com.detachFileFromObject(selectedFileObject.getFileOjectId(),  inventoryObject.getClassName(), inventoryObject.getId())) {
                 ((AttachmentsRootNode.AttachmentsRootNodeChildren)fileObjectNode.getParentNode().getChildren()).addNotify();
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "Files detached and deleted successfully");
             }

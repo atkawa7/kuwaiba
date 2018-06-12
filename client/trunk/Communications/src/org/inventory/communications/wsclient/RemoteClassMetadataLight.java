@@ -11,12 +11,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for classInfoLight complex type.
+ * <p>Java class for remoteClassMetadataLight complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="classInfoLight">
+ * &lt;complexType name="remoteClassMetadataLight">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "classInfoLight", propOrder = {
+@XmlType(name = "remoteClassMetadataLight", propOrder = {
     "id",
     "_abstract",
     "viewable",
@@ -56,9 +56,9 @@ import javax.xml.bind.annotation.XmlType;
     "smallIcon"
 })
 @XmlSeeAlso({
-    ClassInfo.class
+    RemoteClassMetadata.class
 })
-public class ClassInfoLight {
+public class RemoteClassMetadataLight {
 
     protected long id;
     protected Boolean _abstract;
@@ -364,7 +364,7 @@ public int hashCode() {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ClassInfoLight other = (ClassInfoLight) obj;
+        final RemoteClassMetadataLight other = (RemoteClassMetadataLight) obj;
         if (this.id != other.id) {
             return false;
         }

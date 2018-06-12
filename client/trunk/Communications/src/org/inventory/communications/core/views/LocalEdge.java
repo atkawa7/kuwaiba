@@ -65,7 +65,7 @@ public class LocalEdge {
             return false;
         if (!(obj instanceof LocalEdge))
             return false;
-        return ((LocalEdge)obj).getObject().getOid() == this.object.getOid();
+        return ((LocalEdge)obj).getObject().getId() == this.object.getId();
     }
 
     @Override

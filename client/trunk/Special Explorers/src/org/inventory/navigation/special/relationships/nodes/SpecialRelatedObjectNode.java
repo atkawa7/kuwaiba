@@ -53,7 +53,7 @@ public class SpecialRelatedObjectNode extends ObjectNode {
         @Override
         public void addNotify() {
             LocalObjectLight object = ((SpecialRelatedObjectNode) getNode()).getLookup().lookup(LocalObjectLight.class);
-            specialRelationships = CommunicationsStub.getInstance().getSpecialAttributes(object.getClassName(), object.getOid());
+            specialRelationships = CommunicationsStub.getInstance().getSpecialAttributes(object.getClassName(), object.getId());
             
             if (specialRelationships == null) {
                  NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
@@ -61,7 +61,7 @@ public class SpecialRelatedObjectNode extends ObjectNode {
             }
             else {
                 List<LocalObjectLight> listOfParents = CommunicationsStub.getInstance()
-                                                           .getParents(object.getClassName(), object.getOid());
+                                                           .getParents(object.getClassName(), object.getId());
                 
                 if (listOfParents == null) {
                      NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
@@ -75,7 +75,7 @@ public class SpecialRelatedObjectNode extends ObjectNode {
                     
                     Collections.sort(relationshipNames);
                     
-                    if (!listOfParents.isEmpty() && listOfParents.get(0).getOid() != -1 && !listOfParents.get(0).getClassName().startsWith("Pool of")) { //Ignore the dummy root and the pools
+                    if (!listOfParents.isEmpty() && listOfParents.get(0).getId() != -1 && !listOfParents.get(0).getClassName().startsWith("Pool of")) { //Ignore the dummy root and the pools
                         relationshipNames.add(0, Constants.PROPERTY_PARENT);
                         specialRelationships.put(Constants.PROPERTY_PARENT, new LocalObjectLight[] { listOfParents.get(0) });
                     }

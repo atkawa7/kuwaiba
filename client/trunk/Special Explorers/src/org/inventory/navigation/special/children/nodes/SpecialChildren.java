@@ -36,7 +36,7 @@ public class SpecialChildren extends AbstractChildren {
         LocalObjectLight parentObject = ((ObjectNode)getNode()).getObject();
 
         List<LocalObjectLight> specialChildren = CommunicationsStub.getInstance().
-                getObjectSpecialChildren(parentObject.getClassName(), parentObject.getOid());
+                getObjectSpecialChildren(parentObject.getClassName(), parentObject.getId());
        
         if (specialChildren == null){
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 

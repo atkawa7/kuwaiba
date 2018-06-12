@@ -257,7 +257,7 @@ public final class ContactManagerTopComponent extends TopComponent implements Ex
                 return;
             }
             
-            if(!CommunicationsStub.getInstance().createContact(contactType.getClassName(), contactName, customer.getClassName(), customer.getOid()))
+            if(!CommunicationsStub.getInstance().createContact(contactType.getClassName(), contactName, customer.getClassName(), customer.getId()))
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else 
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "The contact was created successfully");
@@ -284,7 +284,7 @@ public final class ContactManagerTopComponent extends TopComponent implements Ex
             
             if (selectedCustomer != null) {
             
-                List<LocalContact> allContacts = CommunicationsStub.getInstance().getContactsForCustomer(selectedCustomer.getClassName(), selectedCustomer.getOid());
+                List<LocalContact> allContacts = CommunicationsStub.getInstance().getContactsForCustomer(selectedCustomer.getClassName(), selectedCustomer.getId());
 
                 if (allContacts == null) {
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 

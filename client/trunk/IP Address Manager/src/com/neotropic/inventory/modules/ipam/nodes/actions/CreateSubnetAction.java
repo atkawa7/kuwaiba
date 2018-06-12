@@ -72,13 +72,13 @@ public class CreateSubnetAction extends GenericInventoryAction {
         if(selectedNode instanceof SubnetPoolNode) {
             SubnetPoolNode node = (SubnetPoolNode)selectedNode;
             className = node.getSubnetPool().getClassName();
-            id = node.getSubnetPool().getOid();
+            id = node.getSubnetPool().getId();
             subnetParent = null;
         }
         else { //It's a subnet node
             SubnetNode node = (SubnetNode)selectedNode;
             className = node.getObject().getClassName();
-            id = node.getObject().getOid();
+            id = node.getObject().getId();
             subnetParent =  node.getObject().getName();
         }
         CreateSubnetFrame subnetFrame = new CreateSubnetFrame(id, className, subnetParent, selectedNode);
@@ -313,7 +313,7 @@ public class CreateSubnetAction extends GenericInventoryAction {
                     attributes.put(Constants.PROPERTY_NAME, ip);
                     attributes.put(Constants.PROPERTY_DESCRIPTION, "");
                     
-                    CommunicationsStub.getInstance().addIPAddress(newSubnet.getOid(), className, ip, attributes);
+                    CommunicationsStub.getInstance().addIPAddress(newSubnet.getId(), className, ip, attributes);
                 }   break;
             case Constants.CLASS_SUBNET_IPV6:
                 ip = SubnetEngine.nextIpv6(attributeValues[3], attributeValues[2], attributeValues[3], Integer.parseInt(split[1]));
@@ -324,7 +324,7 @@ public class CreateSubnetAction extends GenericInventoryAction {
                     ip =  SubnetEngine.nextIpv6(attributeValues[3], attributeValues[2], ip, Integer.parseInt(split[1]));
                     if(ip.trim().equals(attributeValues[2].trim()))
                         break;
-                    CommunicationsStub.getInstance().addIPAddress(newSubnet.getOid(), className, ip, attributes);
+                    CommunicationsStub.getInstance().addIPAddress(newSubnet.getId(), className, ip, attributes);
             }   break;
         }
     }

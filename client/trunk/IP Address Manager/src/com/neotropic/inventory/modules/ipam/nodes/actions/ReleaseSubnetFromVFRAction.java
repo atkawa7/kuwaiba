@@ -59,7 +59,7 @@ public class ReleaseSubnetFromVFRAction extends GenericInventoryAction implement
         ObjectNode selectedNode = (ObjectNode) selectedNodes.next();
         
         List<LocalObjectLight> vfrs = CommunicationsStub.getInstance().getSpecialAttribute(selectedNode.getObject().getClassName(), 
-            selectedNode.getObject().getOid(), Constants.RELATIONSHIP_IPAMBELONGSTOVRFINSTANCE);
+            selectedNode.getObject().getId(), Constants.RELATIONSHIP_IPAMBELONGSTOVRFINSTANCE);
         
         if (vfrs != null) {
             if (vfrs.isEmpty()) {
@@ -69,8 +69,8 @@ public class ReleaseSubnetFromVFRAction extends GenericInventoryAction implement
                 List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight vfr : vfrs) {
                     SubMenuItem subMenuItem = new SubMenuItem(vfr.toString());
-                    subMenuItem.addProperty("subnetId", selectedNode.getObject().getOid()); //NOI18N
-                    subMenuItem.addProperty("vfrId", vfr.getOid()); //NOI18N
+                    subMenuItem.addProperty("subnetId", selectedNode.getObject().getId()); //NOI18N
+                    subMenuItem.addProperty("vfrId", vfr.getId()); //NOI18N
                     subMenuItems.add(subMenuItem);
                 }
                 SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);

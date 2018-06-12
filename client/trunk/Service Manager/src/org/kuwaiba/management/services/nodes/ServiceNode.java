@@ -67,7 +67,7 @@ public class ServiceNode extends ObjectNode {
             //Lookup.getDefault().lookup(ShowEndToEndDetailedViewAction.class),
             Lookup.getDefault().lookup(AddObjectToFavoritesFolderAction.class),
             null,
-            ShowMoreInformationAction.getInstance(getObject().getOid(), getObject().getClassName())
+            ShowMoreInformationAction.getInstance(getObject().getId(), getObject().getClassName())
         };        
     }
     
@@ -100,10 +100,10 @@ public class ServiceNode extends ObjectNode {
                             List<Long> objectIds = new ArrayList<>();
                             
                             classNames.add(objNode.getObject().getClassName());
-                            objectIds.add(objNode.getObject().getOid());
+                            objectIds.add(objNode.getObject().getId());
                             
                             if (CommunicationsStub.getInstance().associateObjectsToService(classNames, objectIds, 
-                                getObject().getClassName(), getObject().getOid())) {
+                                getObject().getClassName(), getObject().getId())) {
                                 
                                 ((ServiceChildren) getChildren()).addNotify();
                             } else
@@ -119,18 +119,18 @@ public class ServiceNode extends ObjectNode {
                         List<Long> objectIds = new ArrayList<>();
                         
                         classNames.add(objectNode.getObject().getClassName());
-                        objectIds.add(objectNode.getObject().getOid());
+                        objectIds.add(objectNode.getObject().getId());
                         
                         if (objectNode.getParentNode() instanceof ServiceNode) {
                             ServiceNode serviceNode = (ServiceNode) objectNode.getParentNode();
                             
                             if (CommunicationsStub.getInstance().associateObjectsToService(classNames, objectIds, 
-                                getObject().getClassName(), getObject().getOid())) {
+                                getObject().getClassName(), getObject().getId())) {
                                 
                                 ((ServiceChildren) getChildren()).addNotify();
                                 
                                 if (CommunicationsStub.getInstance().releaseObjectFromService(
-                                    serviceNode.getObject().getClassName(), serviceNode.getObject().getOid(), objectNode.getObject().getOid())) {
+                                    serviceNode.getObject().getClassName(), serviceNode.getObject().getId(), objectNode.getObject().getId())) {
 
                                     ((ServiceChildren) serviceNode.getChildren()).addNotify();
                                 } else

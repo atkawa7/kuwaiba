@@ -46,7 +46,7 @@ public class ConnectMirrorPortAction extends GenericObjectNodeAction {
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        LocalObjectLight[] siblings = CommunicationsStub.getInstance().getSiblings(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
+        LocalObjectLight[] siblings = CommunicationsStub.getInstance().getSiblings(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getId());
         if (siblings == null){
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
@@ -64,10 +64,10 @@ public class ConnectMirrorPortAction extends GenericObjectNodeAction {
                 List<Long> bObjectsIds = new ArrayList<>();
                 
                 aObjectsClasses.add(selectedObjects.get(0).getClassName());
-                aObjectsIds.add(selectedObjects.get(0).getOid());
+                aObjectsIds.add(selectedObjects.get(0).getId());
 
                 bObjectsClasses.add(selectedObject.getClassName());
-                bObjectsIds.add(selectedObject.getOid());
+                bObjectsIds.add(selectedObject.getId());
                 
                 if (CommunicationsStub.getInstance().connectMirrorPort(aObjectsClasses, aObjectsIds, bObjectsClasses, bObjectsIds))
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, "Port mirrored successfully");

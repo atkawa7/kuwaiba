@@ -76,7 +76,7 @@ public class DeleteProjectAction extends GenericInventoryAction implements Prese
             while (selectedNodes.hasNext()) {
                 ProjectNode selectedNode = selectedNodes.next();
                 
-                if (CommunicationsStub.getInstance().deleteProject(selectedNode.getObject().getClassName(), selectedNode.getObject().getOid())) {
+                if (CommunicationsStub.getInstance().deleteProject(selectedNode.getObject().getClassName(), selectedNode.getObject().getId())) {
                     
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), 
                         NotificationUtil.INFO_MESSAGE, bundle.getString("LBL_PROJECT_DELETE_SUCCESSFULLY"));

@@ -88,13 +88,13 @@ public class ExecuteClassLevelReportAction extends GenericObjectNodeAction imple
     public void actionPerformed(LocalObjectLight theObject, long reportId) {
         
         byte[] theReport = CommunicationsStub.getInstance().executeClassLevelReport(theObject.getClassName(),
-                theObject.getOid(), reportId);
+                theObject.getId(), reportId);
         
         if (theReport == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {           
             try {
-                File tempFile = File.createTempFile("class_report_" + theObject.getClassName() + "_" + theObject.getOid(), ".html"); //NOI18N
+                File tempFile = File.createTempFile("class_report_" + theObject.getClassName() + "_" + theObject.getId(), ".html"); //NOI18N
                 
                 try (FileOutputStream faos = new FileOutputStream(tempFile)) {
                     faos.write(theReport);

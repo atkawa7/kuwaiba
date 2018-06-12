@@ -174,16 +174,16 @@ public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLi
                 LocalObjectLight targetPort = targetWidget.getLookup().lookup(LocalObjectLight.class);
                 
                 LocalObjectLight commonParent = CommunicationsStub.getInstance()
-                    .getCommonParent(sourcePort.getClassName(), sourcePort.getOid(), 
-                        targetPort.getClassName(), targetPort.getOid());
+                    .getCommonParent(sourcePort.getClassName(), sourcePort.getId(), 
+                        targetPort.getClassName(), targetPort.getId());
                 if (commonParent == null) {
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                     return;
                 } 
                 List<LocalObjectLight> existintWireContainersList = CommunicationsStub.getInstance()
-                    .getContainersBetweenObjects(sourcePort.getClassName(), sourcePort.getOid(), 
-                        targetPort.getClassName(), targetPort.getOid(), Constants.CLASS_WIRECONTAINER);
+                    .getContainersBetweenObjects(sourcePort.getClassName(), sourcePort.getId(), 
+                        targetPort.getClassName(), targetPort.getId(), Constants.CLASS_WIRECONTAINER);
                 if (existintWireContainersList == null) {
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

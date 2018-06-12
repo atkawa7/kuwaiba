@@ -52,7 +52,7 @@ public class GeneralProperty extends PropertySupport.ReadWrite {
         attributesToUpdate.put(getName(), t);
 
         if(!CommunicationsStub.getInstance().updateObject(node.getObject().getClassName(), 
-                node.getObject().getOid(), attributesToUpdate))
+                node.getObject().getId(), attributesToUpdate))
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {

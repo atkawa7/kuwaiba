@@ -96,7 +96,7 @@ public final class CreateMultipleBusinessObjectAction extends GenericObjectNodeA
             List<LocalObjectLight> newObjects = com.createBulkObjects(
                 ((JMenuItem) e.getSource()).getName(), 
                 node instanceof RootObjectNode ? null : ((ObjectNode) node).getObject().getClassName(), 
-                node instanceof RootObjectNode ? -1 : ((ObjectNode) node).getObject().getOid(), 
+                node instanceof RootObjectNode ? -1 : ((ObjectNode) node).getObject().getId(), 
                 numberOfObjects, 
                 namePattern);
             

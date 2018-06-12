@@ -104,7 +104,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
 
     @Override
     public void setName(String newName) {
-        if(com.setClassMetadataProperties(classMetadata.getOid(), newName,  null, 
+        if(com.setClassMetadataProperties(classMetadata.getId(), newName,  null, 
                 null, null, null, -1, null, null, null, null )){
             classMetadata.setClassName(newName);
             refresh();
@@ -115,7 +115,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
     public void refresh(){
         LocalClassMetadataLight classMetadataRefresh;
         
-        classMetadataRefresh = com.getMetaForClass(classMetadata.getOid());
+        classMetadataRefresh = com.getMetaForClass(classMetadata.getId());
         
         if(classMetadataRefresh == null)
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
@@ -201,7 +201,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
         if (getClass() != obj.getClass()) {
             return false;
         }
-        return getClassMetadata().getOid() == ((ClassMetadataNode) obj).getClassMetadata().getOid();
+        return getClassMetadata().getId() == ((ClassMetadataNode) obj).getClassMetadata().getId();
     }
     
     @Override

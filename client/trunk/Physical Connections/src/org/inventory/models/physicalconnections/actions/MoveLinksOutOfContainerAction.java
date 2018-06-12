@@ -51,7 +51,7 @@ public class MoveLinksOutOfContainerAction extends GenericObjectNodeAction{
             }
         }
             
-        List<LocalObjectLight> objectSpecialChildren = com.getObjectSpecialChildren(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
+        List<LocalObjectLight> objectSpecialChildren = com.getObjectSpecialChildren(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getId());
         
         List<LocalObjectLight> physicalLinks = new ArrayList<>();
         for (LocalObjectLight specialChild : objectSpecialChildren) {
@@ -59,7 +59,7 @@ public class MoveLinksOutOfContainerAction extends GenericObjectNodeAction{
                 physicalLinks.add(specialChild);
         }
          
-        HashMap<String, LocalObjectLight[]> specialAttributes = CommunicationsStub.getInstance().getSpecialAttributes(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
+        HashMap<String, LocalObjectLight[]> specialAttributes = CommunicationsStub.getInstance().getSpecialAttributes(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getId());
         
         if (specialAttributes == null ) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
@@ -76,7 +76,7 @@ public class MoveLinksOutOfContainerAction extends GenericObjectNodeAction{
             endpointB = specialAttributes.get("endpointB")[0]; //NOI18N
         
         if(endpointA != null && endpointB != null){
-            LocalObjectLight parent = CommunicationsStub.getInstance().getCommonParent(endpointA.getClassName(), endpointA.getOid(), endpointB.getClassName(), endpointB.getOid());
+            LocalObjectLight parent = CommunicationsStub.getInstance().getCommonParent(endpointA.getClassName(), endpointA.getId(), endpointB.getClassName(), endpointB.getId());
         
             if (parent == null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

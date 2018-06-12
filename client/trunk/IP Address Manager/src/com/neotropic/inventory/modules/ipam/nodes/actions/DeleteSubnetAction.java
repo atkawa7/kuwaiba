@@ -71,7 +71,7 @@ public class DeleteSubnetAction extends GenericInventoryAction implements Presen
         while (selectedNodes.hasNext()) {
             SubnetNode selectedNode = (SubnetNode)selectedNodes.next();
             
-            if (com.deleteSubnet(selectedNode.getObject().getClassName(), selectedNode.getObject().getOid())){
+            if (com.deleteSubnet(selectedNode.getObject().getClassName(), selectedNode.getObject().getId())){
                 ((AbstractChildren)selectedNode.getParentNode().getChildren()).addNotify();
                 
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, 

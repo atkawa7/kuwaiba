@@ -138,7 +138,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                 xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(nodeWidget.getPreferredLocation().y)));
                 LocalObjectLight lolNode = (LocalObjectLight) findObject(nodeWidget);
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolNode.getClassName()));
-                xmlew.add(xmlef.createCharacters(Long.toString(lolNode.getOid())));
+                xmlew.add(xmlef.createCharacters(Long.toString(lolNode.getId())));
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
             }
             xmlew.add(xmlef.createEndElement(qnameNodes, null));
@@ -158,11 +158,11 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
                 
                 
-                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getId())));
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName()));
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(lolEdge).getOid())));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(lolEdge).getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(lolEdge).getId())));
+                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(lolEdge).getId())));
                 
                 //Note that the edges will all be saved, whether they're STMX, physical connnections or ContainerLinks, 
                 //The expanded STMX will be marked as such, but when the view is rendered, they will be invisible by default, 
@@ -192,10 +192,10 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                     for (LocalObjectLight extandedTransportLink : expandedTransportLinks.get(lolEdge)) {
                         xmlew.add(xmlef.createStartElement(qnameExpandedTL, null, null));
                         
-                        xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(extandedTransportLink.getOid())));
+                        xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(extandedTransportLink.getId())));
                         xmlew.add(xmlef.createAttribute(new QName("class"), extandedTransportLink.getClassName()));
-                        xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(extandedTransportLink).getOid())));
-                        xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(extandedTransportLink).getOid())));
+                        xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(extandedTransportLink).getId())));
+                        xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(extandedTransportLink).getId())));
                         
                         xmlew.add(xmlef.createEndElement(qnameExpandedTL, null));
                     }
@@ -327,7 +327,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
 
     @Override
     public void render(LocalObjectLight service) {
-        List<LocalObjectLight> serviceResources = com.getServiceResources(service.getClassName(), service.getOid());
+        List<LocalObjectLight> serviceResources = com.getServiceResources(service.getClassName(), service.getId());
         if (serviceResources == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
@@ -338,20 +338,20 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                     if (findWidget(serviceResource) == null)
                         addNode(serviceResource);
                     
-                    List<LocalObjectLight> physicalPorts = com.getChildrenOfClassLightRecursive(serviceResource.getOid(), serviceResource.getClassName(), "GenericPhysicalPort");
+                    List<LocalObjectLight> physicalPorts = com.getChildrenOfClassLightRecursive(serviceResource.getId(), serviceResource.getClassName(), "GenericPhysicalPort");
                     if (physicalPorts == null) 
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
 
                     for (LocalObjectLight physicalPort : physicalPorts)
-                        portsInDevice.put(physicalPort.getOid(), serviceResource);
+                        portsInDevice.put(physicalPort.getId(), serviceResource);
                 }
             }
             
             
             //Once the nodes have been added, we retrieve the physical and logical (STMX) connections between them and ignore those that end in other elements
             for (LocalObjectLight aNode : getNodes()) {
-                List<LocalObjectLightList> physicalConnections = com.getPhysicalConnectionsInObject(aNode.getClassName(), aNode.getOid());
-                List<LocalObjectLight> logicalConnections = com.getSpecialAttribute(aNode.getClassName(), aNode.getOid(), "sdhTransportLink"); //NOI18N
+                List<LocalObjectLightList> physicalConnections = com.getPhysicalConnectionsInObject(aNode.getClassName(), aNode.getId());
+                List<LocalObjectLight> logicalConnections = com.getSpecialAttribute(aNode.getClassName(), aNode.getId(), "sdhTransportLink"); //NOI18N
                 
                 if (physicalConnections == null || logicalConnections == null) 
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
@@ -362,7 +362,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
                         LocalObjectLight targetPort = aConnection.get(aConnection.size() - 1);
                         
                         LocalObjectLight sourceEquipment = aNode;
-                        LocalObjectLight targetEquipment = portsInDevice.get(targetPort.getOid());
+                        LocalObjectLight targetEquipment = portsInDevice.get(targetPort.getId());
 
                         if (findWidget(targetEquipment) != null) {
                             
@@ -475,7 +475,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, LocalObje
             
             
             List<LocalObjectLight> containerLinks = CommunicationsStub.getInstance().
-                    getSpecialAttribute(castedTransportLink.getClassName(), castedTransportLink.getOid(), "sdhTransports"); //NOI18N
+                    getSpecialAttribute(castedTransportLink.getClassName(), castedTransportLink.getId(), "sdhTransports"); //NOI18N
             
             if (containerLinks != null) {
                 if (!containerLinks.isEmpty()) {

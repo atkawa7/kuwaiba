@@ -79,7 +79,7 @@ public final class ObjectViewTopComponent extends TopComponent
 
     @Override
     protected String preferredID() {
-        return "ObjectViewTopComponent_" + currentObject.getOid(); //NOI18N
+        return "ObjectViewTopComponent_" + currentObject.getId(); //NOI18N
     }
 
     @Override

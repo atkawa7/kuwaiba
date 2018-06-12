@@ -72,7 +72,7 @@ public class CreateCustomShapeAction extends GenericInventoryAction {
                 HashMap<String, Object> attributesToUpdate = new HashMap<>();
                 attributesToUpdate.put(Constants.PROPERTY_ICON, iconAttributeValue);
 
-                if(!CommunicationsStub.getInstance().updateObject(loli.getClassName(), loli.getOid(), attributesToUpdate)) {
+                if(!CommunicationsStub.getInstance().updateObject(loli.getClassName(), loli.getId(), attributesToUpdate)) {
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                         NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                     return;

@@ -119,7 +119,7 @@ public class VlansFrame extends JFrame{
                 JOptionPane.showMessageDialog(null, java.util.ResourceBundle.getBundle("com/neotropic/inventory/modules/ipam/Bundle").getString("LBL_INSTRUCTIONS_SELECT_VLAN"));
             else {
                 if (CommunicationsStub.getInstance().relateSubnetToVLAN(
-                        selectedObjects.get(0).getOid(), selectedObjects.get(0).getClassName(), lstAvailableVlans.getSelectedValue().getOid())){
+                        selectedObjects.get(0).getId(), selectedObjects.get(0).getClassName(), lstAvailableVlans.getSelectedValue().getId())){
                     JOptionPane.showMessageDialog(null, String.format("The %s subnet was related to VLAN %s", selectedObjects.get(0).getName(), 
                             lstAvailableVlans.getSelectedValue().getName()));
                         dispose();

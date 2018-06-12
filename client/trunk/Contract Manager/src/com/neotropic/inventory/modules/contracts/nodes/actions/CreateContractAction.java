@@ -51,7 +51,7 @@ public class CreateContractAction extends GenericInventoryAction implements Pres
         
         ContractPoolNode selectedNode = selectedNodes.next();
         
-        LocalObjectLight newPoolItem = com.createPoolItem(selectedNode.getPool().getOid(), 
+        LocalObjectLight newPoolItem = com.createPoolItem(selectedNode.getPool().getId(), 
                 ((JMenuItem)e.getSource()).getText());
 
         if (newPoolItem == null)

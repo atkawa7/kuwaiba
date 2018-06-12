@@ -75,7 +75,7 @@ public class CreateServicePoolAction extends GenericInventoryAction {
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
             
             LocalObjectLight newPool = com.createPoolInObject(customerNode.getObject().getClassName(), 
-                                            customerNode.getObject().getOid(), 
+                                            customerNode.getObject().getId(), 
                                             ((JTextField)pnlMyDialog.getComponent("txtName")).getText(), 
                                             ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), 
                                             Constants.CLASS_GENERICSERVICE, LocalPool.POOL_TYPE_MODULE_COMPONENT);

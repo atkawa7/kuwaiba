@@ -50,7 +50,7 @@ public class ReleaseIPFromBDIInterfaceAction extends GenericObjectNodeAction imp
     public void actionPerformed(ActionEvent e) {
         LocalObjectLight selectedObject = selectedObjects.get(0);
         List<LocalObjectLight> bdis = CommunicationsStub.getInstance().getSpecialAttribute(selectedObject.getClassName(), 
-            selectedObject.getOid(), Constants.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE);
+            selectedObject.getId(), Constants.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE);
         
         if (bdis != null) {
             if (bdis.isEmpty()) {
@@ -60,9 +60,9 @@ public class ReleaseIPFromBDIInterfaceAction extends GenericObjectNodeAction imp
                 List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight bdi : bdis) {
                     SubMenuItem subMenuItem = new SubMenuItem(bdi.toString());
-                    subMenuItem.addProperty("bdiId", bdi.getOid()); //NOI18N
+                    subMenuItem.addProperty("bdiId", bdi.getId()); //NOI18N
                     subMenuItem.addProperty("portClassName", selectedObject.getClassName()); //NOI18N
-                    subMenuItem.addProperty("portId", selectedObject.getOid()); //NOI18N
+                    subMenuItem.addProperty("portId", selectedObject.getId()); //NOI18N
                     subMenuItems.add(subMenuItem);
                 }
                 SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);

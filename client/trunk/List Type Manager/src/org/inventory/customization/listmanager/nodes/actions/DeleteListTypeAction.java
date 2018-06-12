@@ -44,7 +44,7 @@ public final class DeleteListTypeAction extends GenericInventoryAction {
         if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this list type item?",
                 "Delete Item", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION){
 
-            if (CommunicationsStub.getInstance().deleteListTypeItem(node.getObject().getClassName(), node.getObject().getOid(),false)){
+            if (CommunicationsStub.getInstance().deleteListTypeItem(node.getObject().getClassName(), node.getObject().getId(),false)){
                 NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "List type item deleted successfully");
                 ((AbstractChildren)node.getParentNode().getChildren()).addNotify();
                 //Refresh cache

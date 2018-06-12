@@ -138,7 +138,7 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                 xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(nodeWidget.getPreferredLocation().y)));
                 LocalObjectLight lolNode = (LocalObjectLight) findObject(nodeWidget);
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolNode.getClassName()));
-                xmlew.add(xmlef.createCharacters(Long.toString(lolNode.getOid())));
+                xmlew.add(xmlef.createCharacters(Long.toString(lolNode.getId())));
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
             }
             xmlew.add(xmlef.createEndElement(qnameNodes, null));
@@ -155,11 +155,11 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                 QName qnameEdge = new QName("edge");
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
                 
-                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getId())));
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName()));
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(lolEdge).getOid())));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(lolEdge).getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(lolEdge).getId())));
+                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(lolEdge).getId())));
                 
                 for (Point point : acwEdge.getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");
@@ -363,7 +363,7 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
 
     @Override
     public void render(LocalObjectLight selectedService) {
-        List<LocalObjectLight> serviceResources = com.getServiceResources(selectedService.getClassName(), selectedService.getOid());
+        List<LocalObjectLight> serviceResources = com.getServiceResources(selectedService.getClassName(), selectedService.getId());
         if (serviceResources == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
@@ -371,19 +371,19 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
             try {
                 for (LocalObjectLight serviceResource : serviceResources) {
                     if (com.isSubclassOf(serviceResource.getClassName(), "GenericLogicalConnection")) {
-                        LocalLogicalConnectionDetails logicalCircuitDetails = com.getLogicalLinkDetails(serviceResource.getClassName(), serviceResource.getOid());
+                        LocalLogicalConnectionDetails logicalCircuitDetails = com.getLogicalLinkDetails(serviceResource.getClassName(), serviceResource.getId());
                         //Let's create the boxes corresponding to the endpoint A of the logical circuit
                         List<LocalObjectLight> parentsUntilFirstComEquipmentA; 
                         if(com.isSubclassOf(logicalCircuitDetails.getEndpointA().getClassName(), Constants.CLASS_GENERICLOGICALPORT)){
                             List<LocalObjectLight> parentsUntilFirstPhysicalPortA = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
-                                getClassName(), logicalCircuitDetails.getEndpointA().getOid(), "GenericPhysicalPort");
+                                getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericPhysicalPort");
                             
                             parentsUntilFirstComEquipmentA = com.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortA.get(0).
-                                getClassName(), parentsUntilFirstPhysicalPortA.get(0).getOid(), "GenericCommunicationsElement");
+                                getClassName(), parentsUntilFirstPhysicalPortA.get(0).getId(), "GenericCommunicationsElement");
                         }
                         else
                             parentsUntilFirstComEquipmentA = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
-                                getClassName(), logicalCircuitDetails.getEndpointA().getOid(), "GenericCommunicationsElement");
+                                getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericCommunicationsElement");
                         
                         
                         LocalObjectLight aSideEquipmentLogical = parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1);
@@ -397,14 +397,14 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                         List<LocalObjectLight> parentsUntilFirstComEquipmentB;
                         if(com.isSubclassOf(logicalCircuitDetails.getEndpointB().getClassName(), Constants.CLASS_GENERICLOGICALPORT)){
                              List<LocalObjectLight> parentsUntilFirstPhysicalPortB = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
-                                getClassName(), logicalCircuitDetails.getEndpointA().getOid(), "GenericPhysicalPort");
+                                getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericPhysicalPort");
                             
                             parentsUntilFirstComEquipmentB = com.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortB.get(0).
-                                getClassName(), parentsUntilFirstPhysicalPortB.get(0).getOid(), "GenericCommunicationsElement");
+                                getClassName(), parentsUntilFirstPhysicalPortB.get(0).getId(), "GenericCommunicationsElement");
                         }
                         else
                             parentsUntilFirstComEquipmentB = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
-                                getClassName(), logicalCircuitDetails.getEndpointB().getOid(), "GenericCommunicationsElement");
+                                getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericCommunicationsElement");
 
                         LocalObjectLight bSideEquipmentLogical = parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1);
                         
@@ -433,9 +433,9 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                             for(int index = i; index < logicalCircuitDetails.getPhysicalPathForEndpointA().size(); index += 3){
                                 LocalObjectLight nextPhysicalHop = logicalCircuitDetails.getPhysicalPathForEndpointA().get(index);
                                 //If the equipemt physical is not a subclass of GenericCommunicationsElement, nothing will be shown.
-                                LocalObjectLight aSideEquipmentPhysical = com.getFirstParentOfClass(nextPhysicalHop.getClassName(), nextPhysicalHop.getOid(), "ConfigurationItem");
+                                LocalObjectLight aSideEquipmentPhysical = com.getFirstParentOfClass(nextPhysicalHop.getClassName(), nextPhysicalHop.getId(), "ConfigurationItem");
                                 if(aSideEquipmentPhysical != null && !aSideEquipmentPhysical.getClassName().equals("ODF"))
-                                    aSideEquipmentPhysical = com.getFirstParentOfClass(nextPhysicalHop.getClassName(), nextPhysicalHop.getOid(), "GenericCommunicationsElement");
+                                    aSideEquipmentPhysical = com.getFirstParentOfClass(nextPhysicalHop.getClassName(), nextPhysicalHop.getId(), "GenericCommunicationsElement");
                                 
                                 if(aSideEquipmentPhysical == null)
                                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.WARNING_MESSAGE, I18N.gm("no_physical_part_has_been_set_sides"));
@@ -472,9 +472,9 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                                 i = 3;
                             for(int index = i; index < logicalCircuitDetails.getPhysicalPathForEndpointB().size(); index += 3){
                                 LocalObjectLight nextPhysicalHop = logicalCircuitDetails.getPhysicalPathForEndpointB().get(index);
-                                LocalObjectLight bSideEquipmentPhysical = com.getFirstParentOfClass(nextPhysicalHop.getClassName(), nextPhysicalHop.getOid(), "ConfigurationItem");
+                                LocalObjectLight bSideEquipmentPhysical = com.getFirstParentOfClass(nextPhysicalHop.getClassName(), nextPhysicalHop.getId(), "ConfigurationItem");
                                 if(bSideEquipmentPhysical != null && !bSideEquipmentPhysical.getClassName().equals("ODF"))
-                                    bSideEquipmentPhysical = com.getFirstParentOfClass(nextPhysicalHop.getClassName(), nextPhysicalHop.getOid(), "GenericCommunicationsElement");
+                                    bSideEquipmentPhysical = com.getFirstParentOfClass(nextPhysicalHop.getClassName(), nextPhysicalHop.getId(), "GenericCommunicationsElement");
                                 //If the equipemt physical is not a subclass of GenericCommunicationsElement, nothing will be shown.
                                 if(bSideEquipmentPhysical == null)
                                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.WARNING_MESSAGE, I18N.gm("no_physical_part_has_been_set_sides"));
@@ -562,7 +562,7 @@ public class EndToEndViewSimpleScene extends AbstractScene<LocalObjectLight, Loc
                 public void setText(Widget widget, String label) {
                     if(widget instanceof IconNodeWidget) {
                         LocalObjectLight lol = (LocalObjectLight)findObject(widget);
-                        lol.setName(lol.getOid() + FREE_FRAME + label);
+                        lol.setName(lol.getId() + FREE_FRAME + label);
                         ((IconNodeWidget) widget).setLabel(label);
                     }
 

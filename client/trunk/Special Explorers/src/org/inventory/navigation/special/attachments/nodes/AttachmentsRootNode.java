@@ -44,7 +44,7 @@ public class AttachmentsRootNode extends AbstractNode {
         @Override
         public void addNotify() {
             LocalObjectLight inventoryObject = getNode().getLookup().lookup(LocalObjectLight.class);
-            List<LocalFileObjectLight> attachedFiles = CommunicationsStub.getInstance().getFilesForObject(inventoryObject.getClassName(), inventoryObject.getOid());
+            List<LocalFileObjectLight> attachedFiles = CommunicationsStub.getInstance().getFilesForObject(inventoryObject.getClassName(), inventoryObject.getId());
             
             if (attachedFiles == null) {
                 setKeys(Collections.EMPTY_LIST);

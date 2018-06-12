@@ -64,7 +64,7 @@ public class ReadOnlyObjectNode extends AbstractNode {
             return sheet;
         }
 
-        final LocalObject lo = com.getObjectInfo(lol.getClassName(), lol.getOid());
+        final LocalObject lo = com.getObjectInfo(lol.getClassName(), lol.getId());
 
         if (lo == null) {
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

@@ -122,7 +122,7 @@ public class LocalClassMetadataLight implements Transferable, Comparable<LocalCl
         this.className = className;
     }
     
-    public long getOid() {
+    public long getId() {
         return id;
     }
 
@@ -155,7 +155,7 @@ public class LocalClassMetadataLight implements Transferable, Comparable<LocalCl
        if (!(obj instanceof LocalClassMetadataLight)) {
            return false;
        }
-       return (this.getOid() == ((LocalClassMetadataLight)obj).getOid());
+       return (this.getId() == ((LocalClassMetadataLight)obj).getId());
    }
 
     @Override

@@ -72,7 +72,7 @@ public class DeleteTemplateElementAction extends GenericInventoryAction implemen
                 
                 if (CommunicationsStub.getInstance().deleteTemplateElement(
                         selectedNode.getLookup().lookup(LocalObjectLight.class).getClassName(), 
-                        selectedNode.getLookup().lookup(LocalObjectLight.class).getOid())) {
+                        selectedNode.getLookup().lookup(LocalObjectLight.class).getId())) {
                     ((AbstractChildren)selectedNode.getParentNode().getChildren()).addNotify();                    
                 } else {
                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 

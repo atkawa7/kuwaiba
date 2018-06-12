@@ -47,7 +47,7 @@ public class ShowEndToEndSimpleViewAction extends GenericObjectNodeAction {
             JOptionPane.showMessageDialog(null, "Select only one node service.", I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
         else{
             //TopComponent endToEndTC = ((EndToEndViewTopComponent)WindowManager.getDefault().
-            //  findTopComponent("ObjectViewTopComponent_" + selectedObjects.get(0).getOid()));
+            //  findTopComponent("ObjectViewTopComponent_" + selectedObjects.get(0).getId()));
             
             TopComponent endToEndTC = new EndToEndViewTopComponent(selectedObjects.get(0), new EndToEndViewSimpleScene());
             endToEndTC.open();

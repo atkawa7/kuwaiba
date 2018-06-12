@@ -68,7 +68,7 @@ public class DownloadAttachmentAction extends GenericInventoryAction {
             int option = globalFileChooser.showSaveDialog(null);
             
             if (option == JFileChooser.APPROVE_OPTION) {
-                LocalFileObject theFile = com.getFile(selectedFileObject.getFileOjectId(), inventoryObject.getClassName(), inventoryObject.getOid());
+                LocalFileObject theFile = com.getFile(selectedFileObject.getFileOjectId(), inventoryObject.getClassName(), inventoryObject.getId());
                 if (theFile != null) {
                     try (FileOutputStream fos = new FileOutputStream(globalFileChooser.getSelectedFile().getAbsolutePath())) {
                         fos.write(theFile.getFile());

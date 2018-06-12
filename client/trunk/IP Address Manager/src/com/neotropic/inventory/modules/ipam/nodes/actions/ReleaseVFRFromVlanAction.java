@@ -51,7 +51,7 @@ public class ReleaseVFRFromVlanAction  extends GenericObjectNodeAction implement
     public void actionPerformed(ActionEvent e) {
         LocalObjectLight selectedObject = selectedObjects.get(0);
         List<LocalObjectLight> vlans = CommunicationsStub.getInstance().getSpecialAttribute(selectedObject.getClassName(), 
-            selectedObject.getOid(), Constants.RELATIONSHIP_IPAMBELONGSTOVLAN);
+            selectedObject.getId(), Constants.RELATIONSHIP_IPAMBELONGSTOVLAN);
         
         if (vlans != null) {
             if (vlans.isEmpty()) {
@@ -61,8 +61,8 @@ public class ReleaseVFRFromVlanAction  extends GenericObjectNodeAction implement
                 List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight vlan : vlans) {
                     SubMenuItem subMenuItem = new SubMenuItem(vlan.toString());
-                    subMenuItem.addProperty("subnetId", vlan.getOid()); //NOI18N
-                    subMenuItem.addProperty("vlanId", selectedObject.getOid()); //NOI18N
+                    subMenuItem.addProperty("subnetId", vlan.getId()); //NOI18N
+                    subMenuItem.addProperty("vlanId", selectedObject.getId()); //NOI18N
                     subMenuItems.add(subMenuItem);
                 }
                 SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);

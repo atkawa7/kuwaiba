@@ -167,7 +167,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                 xmlew.add(xmlef.createAttribute(new QName("x"), Double.toString(nodeWidget.getPreferredLocation().getX())));
                 xmlew.add(xmlef.createAttribute(new QName("y"), Double.toString(nodeWidget.getPreferredLocation().getY())));
                 xmlew.add(xmlef.createAttribute(new QName("class"), ((LocalObjectLight)findObject(nodeWidget)).getClassName()));
-                xmlew.add(xmlef.createCharacters(Long.toString(((LocalObjectLight)findObject(nodeWidget)).getOid())));
+                xmlew.add(xmlef.createCharacters(Long.toString(((LocalObjectLight)findObject(nodeWidget)).getId())));
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
             }
             xmlew.add(xmlef.createEndElement(qnameNodes, null));
@@ -178,7 +178,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                 QName qnameIcon = new QName("icon");
                 xmlew.add(xmlef.createStartElement(qnameIcon, null, null));
                 xmlew.add(xmlef.createAttribute(new QName("type"), "1"));
-                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(((LocalObjectLight)findObject(iconWidget)).getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(((LocalObjectLight)findObject(iconWidget)).getId())));
                 xmlew.add(xmlef.createAttribute(new QName("x"), Double.toString(iconWidget.getPreferredLocation().getX())));
                 xmlew.add(xmlef.createAttribute(new QName("y"), Double.toString(iconWidget.getPreferredLocation().getY())));
                 xmlew.add(xmlef.createCharacters(((LocalObjectLight)findObject(iconWidget)).getName()));
@@ -197,8 +197,8 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                 
                 String edgeObject = (String)findObject(edgeWidget);
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(edgeObject).getOid())));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(edgeObject).getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(edgeObject).getId())));
+                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(edgeObject).getId())));
                 
                 for (Point point : ((ConnectionWidget)edgeWidget).getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");
@@ -328,7 +328,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                                 if (aSideWidget == null || bSideWidget == null)
                                     NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, "One or both of the endpoints of a connection could not be found. The connection was removed from the topology view");
                                 else {
-                                    String edgeName = "topologyEdge" + aSideObject.getOid() + bSideObject.getOid() + randomGenerator.nextInt(1000);
+                                    String edgeName = "topologyEdge" + aSideObject.getId() + bSideObject.getId() + randomGenerator.nextInt(1000);
                                     ConnectionWidget newEdge = (ConnectionWidget)this.addEdge(edgeName);
                                     this.setEdgeSource(edgeName, aSideObject);
                                     this.setEdgeTarget(edgeName, bSideObject);
@@ -416,7 +416,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                 LocalObjectLight lolSource = (LocalObjectLight)findObject(sourceWidget);
                 LocalObjectLight lolTarget = (LocalObjectLight)findObject(targetWidget);
                 if(!lolSource.getName().contains(FREE_FRAME) && !lolTarget.getName().contains(FREE_FRAME)) {
-                    String edge = "topologyEdge" + lolSource.getOid() + lolTarget.getOid() + randomGenerator.nextInt(1000);
+                    String edge = "topologyEdge" + lolSource.getId() + lolTarget.getId() + randomGenerator.nextInt(1000);
                     addEdge(edge);
                     setEdgeSource(edge, lolSource);
                     setEdgeTarget(edge, lolTarget);
@@ -518,7 +518,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                 public void setText(Widget widget, String label) {
                     if(widget instanceof IconNodeWidget) {
                         LocalObjectLight lol = (LocalObjectLight)findObject(widget);
-                        lol.setName(lol.getOid() + CLOUD_ICON + label);
+                        lol.setName(lol.getId() + CLOUD_ICON + label);
                         ((IconNodeWidget) widget).setLabel(label);
                     }
                 }
@@ -567,7 +567,7 @@ public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
                 public void setText(Widget widget, String label) {
                     if(widget instanceof IconNodeWidget) {
                         LocalObjectLight lol = (LocalObjectLight)findObject(widget);
-                        lol.setName(lol.getOid() + FREE_FRAME + label);
+                        lol.setName(lol.getId() + FREE_FRAME + label);
                         ((IconNodeWidget) widget).setLabel(label);
                     }
 

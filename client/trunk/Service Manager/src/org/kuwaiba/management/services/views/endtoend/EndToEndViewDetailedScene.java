@@ -63,24 +63,24 @@ public class EndToEndViewDetailedScene extends AbstractScene<LocalObjectLight, L
 
     @Override
     public void render(LocalObjectLight selectedService) {
-        List<LocalObjectLight> serviceResources = com.getServiceResources(selectedService.getClassName(), selectedService.getOid());
+        List<LocalObjectLight> serviceResources = com.getServiceResources(selectedService.getClassName(), selectedService.getId());
         if (serviceResources == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
             try {
                 for (LocalObjectLight serviceResource : serviceResources) {
                     if (com.isSubclassOf(serviceResource.getClassName(), "GenericLogicalConnection")) {
-                        LocalLogicalConnectionDetails logicalCircuitDetails = com.getLogicalLinkDetails(serviceResource.getClassName(), serviceResource.getOid());
+                        LocalLogicalConnectionDetails logicalCircuitDetails = com.getLogicalLinkDetails(serviceResource.getClassName(), serviceResource.getId());
                         
                         //Let's create the boxes corresponding to the endpoint A of the logical circuit
                         List<LocalObjectLight> parentsUntilFirstComEquipmentA = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
-                                getClassName(), logicalCircuitDetails.getEndpointA().getOid(), "GenericCommunicationsElement");
+                                getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericCommunicationsElement");
                         
                         renderObjectStack(parentsUntilFirstComEquipmentA, logicalCircuitDetails.getEndpointA());
                         
                         //Now the other side
                         List<LocalObjectLight> parentsUntilFirstComEquipmentB = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
-                                getClassName(), logicalCircuitDetails.getEndpointB().getOid(), "GenericCommunicationsElement");
+                                getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericCommunicationsElement");
                         
                         renderObjectStack(parentsUntilFirstComEquipmentB, logicalCircuitDetails.getEndpointB());
                         
@@ -94,7 +94,7 @@ public class EndToEndViewDetailedScene extends AbstractScene<LocalObjectLight, L
                         if (!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()) {
                             LocalObjectLight nextPhysicalHop = logicalCircuitDetails.getPhysicalPathForEndpointA().get(logicalCircuitDetails.getPhysicalPathForEndpointA().size() - 1);
                             List<LocalObjectLight> parentsUntilFirstNextComEquipmentA = com.getParentsUntilFirstOfClass(nextPhysicalHop.
-                                getClassName(), nextPhysicalHop.getOid(), "GenericCommunicationsElement");
+                                getClassName(), nextPhysicalHop.getId(), "GenericCommunicationsElement");
                         
                             renderObjectStack(parentsUntilFirstNextComEquipmentA, nextPhysicalHop);
                         }
@@ -103,7 +103,7 @@ public class EndToEndViewDetailedScene extends AbstractScene<LocalObjectLight, L
                         if (!logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty()) {
                             LocalObjectLight nextPhysicalHop = logicalCircuitDetails.getPhysicalPathForEndpointB().get(logicalCircuitDetails.getPhysicalPathForEndpointB().size() - 1);
                             List<LocalObjectLight> parentsUntilFirstNextComEquipmentB = com.getParentsUntilFirstOfClass(nextPhysicalHop.
-                                getClassName(), nextPhysicalHop.getOid(), "GenericCommunicationsElement");
+                                getClassName(), nextPhysicalHop.getId(), "GenericCommunicationsElement");
                         
                             renderObjectStack(parentsUntilFirstNextComEquipmentB, nextPhysicalHop);
                         }

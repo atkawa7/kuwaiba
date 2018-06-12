@@ -54,7 +54,7 @@ public class ServicePoolNode extends PoolNode {
         return new Action[] {
             ServiceManagerActionFactory.getCreateServiceAction(), 
             ServiceManagerActionFactory.getDeleteServicePoolAction(),
-            ShowMoreInformationAction.getInstance(getPool().getOid(), getPool().getClassName())
+            ShowMoreInformationAction.getInstance(getPool().getId(), getPool().getClassName())
         };
     }
     
@@ -73,7 +73,7 @@ public class ServicePoolNode extends PoolNode {
         @Override
         public void addNotify() {
             LocalPool servicePool = ((ServicePoolNode)getNode()).getPool();
-            List<LocalObjectLight> services = CommunicationsStub.getInstance().getPoolItems(servicePool.getOid());
+            List<LocalObjectLight> services = CommunicationsStub.getInstance().getPoolItems(servicePool.getId());
             if (services == null) {
                 setKeys(Collections.EMPTY_SET);
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

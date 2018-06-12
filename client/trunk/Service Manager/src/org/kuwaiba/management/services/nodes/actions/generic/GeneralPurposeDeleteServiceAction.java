@@ -47,7 +47,7 @@ public class GeneralPurposeDeleteServiceAction extends GenericInventoryAction {
         if(JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this service? All resources associated will be freed",
                 "Delete Service",JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
                         
-            if (CommunicationsStub.getInstance().deleteObject(selectedObject.getClassName(), selectedObject.getOid()))              
+            if (CommunicationsStub.getInstance().deleteObject(selectedObject.getClassName(), selectedObject.getId()))              
                 NotificationUtil.getInstance().showSimplePopup("Success", 
                         NotificationUtil.INFO_MESSAGE, "The service was deleted successfully");
             else

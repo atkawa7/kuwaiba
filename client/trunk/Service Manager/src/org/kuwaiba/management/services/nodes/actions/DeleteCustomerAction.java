@@ -58,7 +58,7 @@ class DeleteCustomerAction extends GenericInventoryAction {
             while (selectedNodes.hasNext()) {
                 CustomerNode selectedNode = selectedNodes.next();
                 classNames.add(selectedNode.getObject().getClassName());
-                oids.add(selectedNode.getObject().getOid());
+                oids.add(selectedNode.getObject().getId());
                 parents.add(selectedNode.getParentNode());
             }
                         

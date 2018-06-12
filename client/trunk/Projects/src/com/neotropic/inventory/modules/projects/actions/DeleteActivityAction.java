@@ -77,7 +77,7 @@ public class DeleteActivityAction extends GenericInventoryAction implements Pres
                 ActivityNode selectedNode = selectedNodes.next();
                 
                 if (CommunicationsStub.getInstance().deleteActivity(
-                    selectedNode.getObject().getClassName(), selectedNode.getObject().getOid())) {
+                    selectedNode.getObject().getClassName(), selectedNode.getObject().getId())) {
                     
                     ((ProjectChildren) selectedNode.getParentNode().getChildren()).addNotify();
                     

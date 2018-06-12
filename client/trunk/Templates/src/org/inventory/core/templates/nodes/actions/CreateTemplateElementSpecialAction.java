@@ -63,7 +63,7 @@ public class CreateTemplateElementSpecialAction extends GenericInventoryAction i
             LocalObjectLight selectedObject = selectedNode.getLookup().lookup(LocalObjectLight.class);
             
             LocalObjectLight newTemplateElement = com.createTemplateSpecialElement(((JMenuItem)e.getSource()).getName(), selectedObject.getClassName(), 
-                    selectedObject.getOid(), ((JTextField)pnlGeneralInfo.getComponent("txtTemplateSpecialElementName")).getText());
+                    selectedObject.getId(), ((JTextField)pnlGeneralInfo.getComponent("txtTemplateSpecialElementName")).getText());
             
             if (newTemplateElement == null)
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());

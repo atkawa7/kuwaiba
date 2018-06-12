@@ -50,7 +50,7 @@ public class ReleaseGenericPortFromInterfaceAction extends GenericObjectNodeActi
     public void actionPerformed(ActionEvent e) {
         LocalObjectLight selectedObject = selectedObjects.get(0);
         List<LocalObjectLight> interfaces = CommunicationsStub.getInstance().getSpecialAttribute(selectedObject.getClassName(), 
-            selectedObject.getOid(), Constants.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE);
+            selectedObject.getId(), Constants.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE);
         if (interfaces != null) {
             if (interfaces.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "There are no interfaces related to the selected port", 
@@ -59,9 +59,9 @@ public class ReleaseGenericPortFromInterfaceAction extends GenericObjectNodeActi
                 List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight _interface : interfaces) {
                     SubMenuItem subMenuItem = new SubMenuItem(_interface.toString());
-                    subMenuItem.addProperty("serviceInstanceId", _interface.getOid()); //NOI18N
+                    subMenuItem.addProperty("serviceInstanceId", _interface.getId()); //NOI18N
                     subMenuItem.addProperty("portClassName", selectedObject.getClassName()); //NOI18N
-                    subMenuItem.addProperty("portId", selectedObject.getOid()); //NOI18N
+                    subMenuItem.addProperty("portId", selectedObject.getId()); //NOI18N
                     subMenuItems.add(subMenuItem);
                 }
                 SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);

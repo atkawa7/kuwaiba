@@ -53,7 +53,7 @@ public class ListTypeProperty extends PropertySupport.ReadWrite<LocalObjectListI
         HashMap<String, Object> attributesToUpdate = new HashMap<>();
         attributesToUpdate.put(getName(), t);
 
-        if(!CommunicationsStub.getInstance().updateObject(node.getObject().getClassName(), node.getObject().getOid(), attributesToUpdate))
+        if(!CommunicationsStub.getInstance().updateObject(node.getObject().getClassName(), node.getObject().getId(), attributesToUpdate))
             NotificationUtil.getInstance().showSimplePopup("Error", 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else

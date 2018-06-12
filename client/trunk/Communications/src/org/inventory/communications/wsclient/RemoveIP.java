@@ -55,7 +55,7 @@ public class RemoveIP {
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getOid().add(newItem);
+     *    getId().add(newItem);
      * </pre>
      * 
      * 
@@ -65,7 +65,7 @@ public class RemoveIP {
      * 
      * 
      */
-    public List<Long> getOid() {
+    public List<Long> getId() {
         if (oid == null) {
             oid = new ArrayList<Long>();
         }

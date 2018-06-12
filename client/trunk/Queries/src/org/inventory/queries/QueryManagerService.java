@@ -245,7 +245,7 @@ public class QueryManagerService implements ActionListener {
                     
                     LocalClassMetadataLight myMetadataLight;
                     if(!isParentMenu){
-                        myMetadataLight = new LocalClassMetadataLight(myMetadata.getOid(), 
+                        myMetadataLight = new LocalClassMetadataLight(myMetadata.getId(), 
                         myMetadata.getClassName(), myMetadata.getDisplayName(),
                         myMetadata.getParentName(), myMetadata.isAbstract(), 
                         myMetadata.isViewable(), myMetadata.isListType(), myMetadata.isCustom(), 

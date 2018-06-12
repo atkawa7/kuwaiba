@@ -83,7 +83,7 @@ public class CreateAttributeAction extends GenericInventoryAction {
                 I18N.gm("new_attribute"),
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
-                    if (CommunicationsStub.getInstance().createAttribute(classNode.getClassMetadata().getOid(), 
+                    if (CommunicationsStub.getInstance().createAttribute(classNode.getClassMetadata().getId(), 
                             ((JTextField)pnlMyDialog.getComponent("txtName")).getText(), 
                             ((JTextField)pnlMyDialog.getComponent("txtDisplayName")).getText(), 
                             ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), 

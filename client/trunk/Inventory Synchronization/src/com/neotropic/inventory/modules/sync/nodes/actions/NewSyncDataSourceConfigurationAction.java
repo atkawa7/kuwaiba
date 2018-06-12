@@ -401,7 +401,7 @@ class NewSyncDataSourceConfigurationAction extends GenericInventoryAction {
                 HashMap<String, String> parameters = new HashMap<>();
                 parameters.put("ipAddress", txtIPAddress.getText()); //NOI18N
                 parameters.put("port", txtPort.getText()); //NOI18N                
-                parameters.put("deviceId", Long.toString(((LocalObjectLight)cmbDevices.getSelectedItem()).getOid())); //NOI18N
+                parameters.put("deviceId", Long.toString(((LocalObjectLight)cmbDevices.getSelectedItem()).getId())); //NOI18N
                 parameters.put("deviceClass", ((LocalObjectLight)cmbDevices.getSelectedItem()).getClassName()); //NOI18N
                 
                 String version = (String) cboVersion.getSelectedItem();                

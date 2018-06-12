@@ -57,7 +57,7 @@ public class AttributeMetadataProperty extends PropertySupport.ReadWrite {
     public void setValue(Object t) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         CommunicationsStub com = CommunicationsStub.getInstance();
 
-        if(com.setAttributeProperties(_class.getOid(), _class.getClassName(),
+        if(com.setAttributeProperties(_class.getId(), _class.getClassName(),
                 node.getAttributeMetadata().getId(), 
                 getName().equals(Constants.PROPERTY_NAME) ? (String)t : null, 
                 getName().equals(Constants.PROPERTY_DISPLAYNAME) ? (String)t : null, 

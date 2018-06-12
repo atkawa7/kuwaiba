@@ -51,7 +51,7 @@ public class ActionlessSpecialFilteredChildren extends SpecialChildren {
         LocalObjectLight parentObject = ((ActionlessSpecialFilteredObjectNode)getNode()).getObject();
 
         List<LocalObjectLight> specialChildren = CommunicationsStub.getInstance().
-                getObjectSpecialChildren(parentObject.getClassName(), parentObject.getOid());
+                getObjectSpecialChildren(parentObject.getClassName(), parentObject.getId());
        
         if (specialChildren == null){
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

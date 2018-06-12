@@ -107,7 +107,7 @@ public class AttachFileAction extends GenericObjectNodeAction implements Present
                     JOptionPane.showMessageDialog(null, I18N.gm("you_have_to_select_a_file"), I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
                 else {
                     if (CommunicationsStub.getInstance().attachFileToObject(selectedFile.getName(), txtTags.getText(), 
-                            Utils.getByteArrayFromFile(selectedFile), selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid()) != null)
+                            Utils.getByteArrayFromFile(selectedFile), selectedObjects.get(0).getClassName(), selectedObjects.get(0).getId()) != null)
                         NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, I18N.gm("file_attached_successfully"));
                     else
                         NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

@@ -214,7 +214,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                 
                 xmlew.add(xmlef.createAttribute(new QName("class"), nodeObject.getClassName()));
                 
-                xmlew.add(xmlef.createCharacters(Long.toString(nodeObject.getOid())));
+                xmlew.add(xmlef.createCharacters(Long.toString(nodeObject.getId())));
                 
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
             }
@@ -227,11 +227,11 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
                 
                 QName qnameEdge = new QName("edge");
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
-                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(edgeObject.getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(edgeObject.getId())));
                 xmlew.add(xmlef.createAttribute(new QName("class"), edgeObject.getClassName()));
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(edgeObject).getOid())));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(edgeObject).getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(edgeObject).getId())));
+                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(edgeObject).getId())));
                 
                 for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");
@@ -336,9 +336,9 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
             repaint();
 //            for (LocalObjectLight edge : getEdges()) {
 //                ObjectConnectionWidget conn = (ObjectConnectionWidget)findWidget(edge);
-//                System.out.println(String.format("%s, %s, %s", edge.getOid(), 
-//                        conn.getSourceAnchor().getRelatedWidget().getLookup().lookup(LocalObjectLight.class).getOid(), 
-//                        conn.getTargetAnchor().getRelatedWidget().getLookup().lookup(LocalObjectLight.class).getOid()));
+//                System.out.println(String.format("%s, %s, %s", edge.getId(), 
+//                        conn.getSourceAnchor().getRelatedWidget().getLookup().lookup(LocalObjectLight.class).getId(), 
+//                        conn.getTargetAnchor().getRelatedWidget().getLookup().lookup(LocalObjectLight.class).getId()));
 //            }
             
         } catch (NumberFormatException | XMLStreamException ex) {

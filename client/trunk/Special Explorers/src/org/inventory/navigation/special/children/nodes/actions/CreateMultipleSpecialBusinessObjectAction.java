@@ -88,7 +88,7 @@ public class CreateMultipleSpecialBusinessObjectAction extends GenericObjectNode
                 }
             }
             
-            List<LocalObjectLight> newSpecialObjects = com.createBulkSpecialObjects(((JMenuItem)e.getSource()).getName(), node.getObject().getClassName(), node.getObject().getOid(), numberOfSpecialObjects, namePattern);
+            List<LocalObjectLight> newSpecialObjects = com.createBulkSpecialObjects(((JMenuItem)e.getSource()).getName(), node.getObject().getClassName(), node.getObject().getId(), numberOfSpecialObjects, namePattern);
                 
             if (newSpecialObjects == null)
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());

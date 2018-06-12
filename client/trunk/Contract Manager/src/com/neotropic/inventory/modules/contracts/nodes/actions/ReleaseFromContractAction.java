@@ -52,7 +52,7 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
     public void actionPerformed(ActionEvent e) {
         LocalObjectLight selectedObj = selectedObjects.get(0); //Uses the last selected only
         List<LocalObjectLight> contracts = CommunicationsStub.getInstance()
-            .getSpecialAttribute(selectedObj.getClassName(), selectedObj.getOid(), "contractHas"); //NOI18N
+            .getSpecialAttribute(selectedObj.getClassName(), selectedObj.getId(), "contractHas"); //NOI18N
         
         if (contracts == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.INFO_MESSAGE, 
@@ -65,7 +65,7 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
                 List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight contract : contracts) {
                     SubMenuItem subMenuItem = new SubMenuItem(contract.toString());
-                    subMenuItem.addProperty(Constants.PROPERTY_ID, contract.getOid());
+                    subMenuItem.addProperty(Constants.PROPERTY_ID, contract.getId());
                     subMenuItems.add(subMenuItem);
                 }
                 SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);
@@ -96,7 +96,7 @@ public class ReleaseFromContractAction extends GenericObjectNodeAction implement
                 while (selectedNodes.hasNext()) {
                     ObjectNode selectedNode = selectedNodes.next();
                     if (CommunicationsStub.getInstance().releaseObjectFromContract(selectedNode.getObject().getClassName(), 
-                        selectedNode.getObject().getOid(), (Long) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty(Constants.PROPERTY_ID))) {
+                        selectedNode.getObject().getId(), (Long) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty(Constants.PROPERTY_ID))) {
                         if (selectedNode.getParentNode() instanceof ContractNode)
                             ((ContractNode.ContractChildren)selectedNode.getParentNode().getChildren()).addNotify();
                     } else {

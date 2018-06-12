@@ -70,7 +70,7 @@ public class GetSiblings {
      * Gets the value of the oid property.
      * 
      */
-    public long getOid() {
+    public long getId() {
         return oid;
     }
 

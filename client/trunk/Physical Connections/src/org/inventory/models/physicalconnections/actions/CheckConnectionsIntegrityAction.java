@@ -70,7 +70,7 @@ public class CheckConnectionsIntegrityAction extends GenericObjectNodeAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         List<LocalObjectLight> specialChildren = CommunicationsStub.getInstance().
-                getSpecialChildrenOfClassLight(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid(), Constants.CLASS_GENERICPHYSICALCONNECTION);
+                getSpecialChildrenOfClassLight(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getId(), Constants.CLASS_GENERICPHYSICALCONNECTION);
         
         if (specialChildren == null) 
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError()); //NOI18N
@@ -84,17 +84,17 @@ public class CheckConnectionsIntegrityAction extends GenericObjectNodeAction {
                 
                 //If any of the endpoints is loose, it might just not be connected, so we ignore it and go on
                 List<LocalObjectLight> endpointA = CommunicationsStub.getInstance().
-                        getSpecialAttribute(specialChild.getClassName(), specialChild.getOid(), "endpointA"); //NOI18N
+                        getSpecialAttribute(specialChild.getClassName(), specialChild.getId(), "endpointA"); //NOI18N
                 if (endpointA == null || endpointA.isEmpty())
                     continue;
                 
                 List<LocalObjectLight> endpointB = CommunicationsStub.getInstance().
-                        getSpecialAttribute(specialChild.getClassName(), specialChild.getOid(), "endpointB"); //NOI18N
+                        getSpecialAttribute(specialChild.getClassName(), specialChild.getId(), "endpointB"); //NOI18N
                 if (endpointB == null || endpointB.isEmpty())
                     continue;
                 
-                LocalObjectLight commonParent = CommunicationsStub.getInstance().getCommonParent(endpointA.get(0).getClassName(), endpointA.get(0).getOid(), 
-                        endpointB.get(0).getClassName(), endpointB.get(0).getOid());
+                LocalObjectLight commonParent = CommunicationsStub.getInstance().getCommonParent(endpointA.get(0).getClassName(), endpointA.get(0).getId(), 
+                        endpointB.get(0).getClassName(), endpointB.get(0).getId());
                 
                 if (commonParent == null)
                     continue;
@@ -121,7 +121,7 @@ public class CheckConnectionsIntegrityAction extends GenericObjectNodeAction {
                     
                     for (LocalObjectLight commonParent : toBeProcessed.keySet()) {
                         if (CommunicationsStub.getInstance().moveSpecialObjects(
-                                commonParent.getClassName(), commonParent.getOid(), toBeProcessed.get(commonParent)))
+                                commonParent.getClassName(), commonParent.getId(), toBeProcessed.get(commonParent)))
                             NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"),  //NOI18N
                                     NotificationUtil.INFO_MESSAGE, String.format(I18N.gm("connections_successfully_moved_to"), commonParent));
                         else

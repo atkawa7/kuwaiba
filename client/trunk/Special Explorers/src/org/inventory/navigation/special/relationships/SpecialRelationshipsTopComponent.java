@@ -127,7 +127,7 @@ public final class SpecialRelationshipsTopComponent extends TopComponent impleme
             LocalObjectLight rootObject = ((SpecialRelatedObjectNode) em.getRootContext()).getObject();
             
             SpecialRelationshipsGraphExplorerTopComponent tc = (SpecialRelationshipsGraphExplorerTopComponent) WindowManager
-                .getDefault().findTopComponent("SpecialRelationshipsGraphExplorerTopComponent_" + rootObject.getOid());
+                .getDefault().findTopComponent("SpecialRelationshipsGraphExplorerTopComponent_" + rootObject.getId());
             
             if (tc == null) {
                 tc = new SpecialRelationshipsGraphExplorerTopComponent(rootObject);

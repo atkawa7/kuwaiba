@@ -43,8 +43,8 @@ public class EditConnectionsAction extends GenericObjectNodeAction {
     public void actionPerformed(ActionEvent e) {
         LocalObjectLight selectedObject = selectedObjects.get(0);
         
-        HashMap<String, LocalObjectLight[]> specialAttributes = CommunicationsStub.getInstance().getSpecialAttributes(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getOid());
-        List<LocalObjectLight> parents = CommunicationsStub.getInstance().getParentsUntilFirstOfClass(selectedObject.getClassName(), selectedObject.getOid(), "GenericLocation"); //NOI18N
+        HashMap<String, LocalObjectLight[]> specialAttributes = CommunicationsStub.getInstance().getSpecialAttributes(selectedObjects.get(0).getClassName(), selectedObjects.get(0).getId());
+        List<LocalObjectLight> parents = CommunicationsStub.getInstance().getParentsUntilFirstOfClass(selectedObject.getClassName(), selectedObject.getId(), "GenericLocation"); //NOI18N
         LocalObjectLight parent = parents.get(parents.size() - 1);
         
         if (specialAttributes == null || parent == null) {

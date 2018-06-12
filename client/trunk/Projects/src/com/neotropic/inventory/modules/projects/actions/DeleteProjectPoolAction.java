@@ -72,7 +72,7 @@ public class DeleteProjectPoolAction extends GenericInventoryAction implements P
             ProjectPoolNode selectedNode = Utilities.actionsGlobalContext().lookup(ProjectPoolNode.class);
             if (selectedNode == null)
                 return;
-            if (CommunicationsStub.getInstance().deletePool(selectedNode.getPool().getOid())) {
+            if (CommunicationsStub.getInstance().deletePool(selectedNode.getPool().getId())) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), 
                     NotificationUtil.INFO_MESSAGE, bundle.getString("LBL_CONFIRMATION_DELETE_PROJECT_POOL"));
                 

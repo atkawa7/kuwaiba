@@ -31,7 +31,7 @@ public class LocalQueryLight {
     public LocalQueryLight() {    }
 
     public LocalQueryLight(RemoteQueryLight remoteQuery) {
-        this.id = remoteQuery.getOid();
+        this.id = remoteQuery.getId();
         this.name = remoteQuery.getName();
         this.description = remoteQuery.getDescription();
         this.isPublic = remoteQuery.isIsPublic();

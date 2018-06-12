@@ -60,7 +60,7 @@ public class ReleaseSubnetFromVlanAction  extends GenericInventoryAction impleme
         ObjectNode selectedNode = (ObjectNode)selectedNodes.next();
         
         List<LocalObjectLight> vlans = CommunicationsStub.getInstance().getSpecialAttribute(selectedNode.getObject().getClassName(), 
-                selectedNode.getObject().getOid(), Constants.RELATIONSHIP_IPAMBELONGSTOVLAN);
+                selectedNode.getObject().getId(), Constants.RELATIONSHIP_IPAMBELONGSTOVLAN);
         
         if (vlans != null) {
             if (vlans.isEmpty())
@@ -70,8 +70,8 @@ public class ReleaseSubnetFromVlanAction  extends GenericInventoryAction impleme
                 List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight vlan : vlans){
                     SubMenuItem subMenuItem = new SubMenuItem(vlan.toString());
-                    subMenuItem.addProperty("subnetId", selectedNode.getObject().getOid()); //NOI18N
-                    subMenuItem.addProperty("vlanId", vlan.getOid()); //NOI18N
+                    subMenuItem.addProperty("subnetId", selectedNode.getObject().getId()); //NOI18N
+                    subMenuItem.addProperty("vlanId", vlan.getId()); //NOI18N
                     subMenuItems.add(subMenuItem);
                 }
                 SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);

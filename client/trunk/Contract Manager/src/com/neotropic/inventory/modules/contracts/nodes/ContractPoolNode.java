@@ -71,7 +71,7 @@ public class ContractPoolNode extends PoolNode {
         @Override
         public void addNotify() {
             ContractPoolNode selectedNode = (ContractPoolNode)getNode();
-            List<LocalObjectLight> contracts = CommunicationsStub.getInstance().getPoolItems(selectedNode.getPool().getOid());
+            List<LocalObjectLight> contracts = CommunicationsStub.getInstance().getPoolItems(selectedNode.getPool().getId());
             
             if (contracts == null) {
                 setKeys(Collections.EMPTY_LIST);

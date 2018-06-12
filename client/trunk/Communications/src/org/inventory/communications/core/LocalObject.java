@@ -38,7 +38,7 @@ public class LocalObject extends LocalObjectLight {
 
     public LocalObject(String className, long id, HashMap<String, Object> attributes){
         this.className = className;
-        this.oid = id;
+        this.id = id;
         this.attributes = attributes;
     }
 
@@ -52,7 +52,7 @@ public class LocalObject extends LocalObjectLight {
      */
     public LocalObject(String className, long id, List<StringPair> remoteAttributes, LocalClassMetadata classMetadata) throws IllegalArgumentException{
         this.className = className;
-        this.oid = id;
+        this.id = id;
         this.myMetadata = classMetadata;
         
         this.attributes = new HashMap<>();

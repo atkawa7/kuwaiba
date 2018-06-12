@@ -45,7 +45,7 @@ public class LocalPool extends LocalObjectLight {
     private int type;
 
     public LocalPool(long oid, String name, String className, String description, int type) {
-        this.oid = oid;
+        this.id = oid;
         this.name = name;
         this.className = className;
         this.description = description;

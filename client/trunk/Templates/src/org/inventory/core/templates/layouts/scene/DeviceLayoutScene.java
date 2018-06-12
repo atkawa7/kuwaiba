@@ -432,7 +432,7 @@ public class DeviceLayoutScene extends AbstractScene<Shape, String> implements S
                                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                             else {
-                                LocalObjectListItem listItem = new LocalObjectListItem(lol.getOid(), lol.getClassName(), lol.getName());
+                                LocalObjectListItem listItem = new LocalObjectListItem(lol.getId(), lol.getClassName(), lol.getName());
                                 shape = ShapeFactory.getInstance().getCustomShape(listItem);
                             }
                             

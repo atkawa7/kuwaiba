@@ -115,14 +115,14 @@ public class DeviceLayoutImporter {
             btnImport.setPreferredSize(new Dimension(120, 25));
             btnImport.setMinimumSize(new Dimension(120, 25));
             btnImport.setMinimumSize(new Dimension(120, 25));
-            btnImport.setName("action" + String.valueOf(customShape.getOid()));
+            btnImport.setName("action" + String.valueOf(customShape.getId()));
             
             final JRadioButton btnIsSelected = new JRadioButton();
             btnIsSelected.setPreferredSize(new Dimension(25, 25));
             btnIsSelected.setMinimumSize(new Dimension(25, 25));
             btnIsSelected.setMinimumSize(new Dimension(25, 25));
             btnIsSelected.setEnabled(false);
-            btnIsSelected.setName("execute" + String.valueOf(customShape.getOid()));
+            btnIsSelected.setName("execute" + String.valueOf(customShape.getId()));
             
             btnImport.setAction(new AbstractAction() {
                 
@@ -143,7 +143,7 @@ public class DeviceLayoutImporter {
             }
             pnlCustomShape.add(btnImport);
             pnlCustomShape.add(btnIsSelected);
-            pnlCustomShape.setName("pnlCustomShape" + String.valueOf(customShape.getOid()));
+            pnlCustomShape.setName("pnlCustomShape" + String.valueOf(customShape.getId()));
                         
             labels.add(customShape.getName());
             components.add(pnlCustomShape);
@@ -154,8 +154,8 @@ public class DeviceLayoutImporter {
             List<LocalObjectLight> customShapesToImport = new ArrayList();
             
             for (LocalObjectLight customShape : customShapes) {
-                String action = ((JButton) ((JPanel) pnlImportDeviceLayout.getComponent("pnlCustomShape" + String.valueOf(customShape.getOid()))).getComponent(0)).getText();
-                boolean execute = ((JRadioButton) ((JPanel) pnlImportDeviceLayout.getComponent("pnlCustomShape" + String.valueOf(customShape.getOid()))).getComponent(1)).isSelected();
+                String action = ((JButton) ((JPanel) pnlImportDeviceLayout.getComponent("pnlCustomShape" + String.valueOf(customShape.getId()))).getComponent(0)).getText();
+                boolean execute = ((JRadioButton) ((JPanel) pnlImportDeviceLayout.getComponent("pnlCustomShape" + String.valueOf(customShape.getId()))).getComponent(1)).isSelected();
                 
                 if ("Import".equals(action) && execute)
                     customShapesToImport.add(customShape);
@@ -186,8 +186,8 @@ public class DeviceLayoutImporter {
                 if (Constants.CLASS_CUSTOMSHAPE.equals(object.getClassName())) {
                     LocalObjectListItem localCustomShape = getLocalCustomShape(object);
                     if (localCustomShape != null) {                                                
-                        String id = "id=\"" + object.getOid() + "\"";
-                        String localId = "id=\"" + localCustomShape.getOid() + "x\"";
+                        String id = "id=\"" + object.getId() + "\"";
+                        String localId = "id=\"" + localCustomShape.getId() + "x\"";
 
                         layoutStr = layoutStr.replaceAll(id, localId);
                     }
@@ -199,8 +199,8 @@ public class DeviceLayoutImporter {
                 if (Constants.CLASS_CUSTOMSHAPE.equals(object.getClassName())) {
                     LocalObjectListItem localCustomShape = getLocalCustomShape(object);
                     if (localCustomShape != null) {                                                
-                        String id = "id=\"" + localCustomShape.getOid() + "x\"";
-                        String localId = "id=\"" + localCustomShape.getOid() + "\"";
+                        String id = "id=\"" + localCustomShape.getId() + "x\"";
+                        String localId = "id=\"" + localCustomShape.getId() + "\"";
 
                         layoutStr = layoutStr.replaceAll(id, localId);
                     }
@@ -270,7 +270,7 @@ public class DeviceLayoutImporter {
             attributesToUpdate.put(Constants.PROPERTY_ICON, customShapeIconEncode);
 
             if(!CommunicationsStub.getInstance().updateObject(localCustomShape.getClassName(), 
-                    localCustomShape.getOid(), attributesToUpdate)) {
+                    localCustomShape.getId(), attributesToUpdate)) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             }

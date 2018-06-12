@@ -55,14 +55,14 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
         LocalObjectLight selectedObject = selectedObjects.get(0); //Uses the last selected only
         
         List<LocalObjectLight> services = CommunicationsStub.getInstance().
-            getSpecialAttribute(selectedObject.getClassName(), selectedObject.getOid(), "uses"); //NOI18N
+            getSpecialAttribute(selectedObject.getClassName(), selectedObject.getId(), "uses"); //NOI18N
         
         if (services != null) {
             if (!services.isEmpty()) {
                 List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight service : services) {
                     SubMenuItem subMenuItem = new SubMenuItem(service.toString());                    
-                    subMenuItem.addProperty(Constants.PROPERTY_ID, service.getOid());
+                    subMenuItem.addProperty(Constants.PROPERTY_ID, service.getId());
                     subMenuItem.addProperty(Constants.PROPERTY_CLASSNAME, service.getClassName());
                     subMenuItems.add(subMenuItem);
                 }
@@ -92,7 +92,7 @@ public class ReleaseFromServiceAction extends GenericObjectNodeAction implements
                     if (CommunicationsStub.getInstance().releaseObjectFromService(
                         (String) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty(Constants.PROPERTY_CLASSNAME), 
                         (long) ((SubMenuDialog) e.getSource()).getSelectedSubMenuItem().getProperty(Constants.PROPERTY_ID), 
-                        selectedNode.getObject().getOid())) {
+                        selectedNode.getObject().getId())) {
                         
                         if (selectedNode.getParentNode() instanceof ServiceNode)
                             ((ServiceChildren)selectedNode.getParentNode().getChildren()).addNotify();

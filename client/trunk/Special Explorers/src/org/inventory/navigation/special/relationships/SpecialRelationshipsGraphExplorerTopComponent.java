@@ -57,7 +57,7 @@ public final class SpecialRelationshipsGraphExplorerTopComponent extends TopComp
     @Override
     protected String preferredID() {
         return "SpecialRelationshipsGraphExplorerTopComponent_" + service.getRoot().
-            getLocalObjectLightWrapped().getOid(); //NOI18N
+            getLocalObjectLightWrapped().getId(); //NOI18N
     }
 
     @Override

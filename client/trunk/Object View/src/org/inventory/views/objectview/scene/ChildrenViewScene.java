@@ -209,7 +209,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                 xmlew.add(xmlef.createAttribute(new QName("y"), Integer.toString(nodeWidget.getPreferredLocation().y))); //NOI18N
                 LocalObjectLight lolNode = (LocalObjectLight) findObject(nodeWidget);
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolNode.getClassName())); //NOI18N
-                xmlew.add(xmlef.createCharacters(Long.toString(lolNode.getOid())));
+                xmlew.add(xmlef.createCharacters(Long.toString(lolNode.getId())));
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
             }
             xmlew.add(xmlef.createEndElement(qnameNodes, null));
@@ -227,11 +227,11 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
                 
                 LocalObjectLight lolEdge = (LocalObjectLight) findObject(acwEdge);
-                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getOid()))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(lolEdge.getId()))); //NOI18N
                 xmlew.add(xmlef.createAttribute(new QName("class"), lolEdge.getClassName())); //NOI18N
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getSourceAnchor().getRelatedWidget())).getOid()))); //NOI18N
-                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getTargetAnchor().getRelatedWidget())).getOid()))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getSourceAnchor().getRelatedWidget())).getId()))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(((LocalObjectLight) findObject(acwEdge.getTargetAnchor().getRelatedWidget())).getId()))); //NOI18N
                 
                 for (Point point : acwEdge.getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint"); //NOI18N
@@ -268,11 +268,11 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
 //        } catch(Exception e) {}
         //</editor-fold>
         
-        List<LocalObjectLight> myChildren = com.getObjectChildren(object.getOid(), com.getMetaForClass(object.getClassName(),false).getOid());
+        List<LocalObjectLight> myChildren = com.getObjectChildren(object.getId(), com.getMetaForClass(object.getClassName(),false).getId());
         if (myChildren == null)
             throw new IllegalArgumentException();
         
-        List<LocalObject> myConnections = com.getChildrenOfClass(object.getOid(),object.getClassName(), Constants.CLASS_GENERICCONNECTION);
+        List<LocalObject> myConnections = com.getChildrenOfClass(object.getId(),object.getClassName(), Constants.CLASS_GENERICCONNECTION);
         if (myConnections == null)
             throw new IllegalArgumentException();
         
@@ -334,7 +334,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
                                 LocalObjectLight endpointB = null;
                                 
                                 LocalObjectLight parent = com.getParent(className, objectId);
-                                if (parent != null && object.getOid() == parent.getOid()) {
+                                if (parent != null && object.getId() == parent.getId()) {
                                     
                                     if (container != null) { // if the connection exist
                                         HashMap<String, LocalObjectLight[]> specialAttributes = com.getSpecialAttributes(className, objectId);
@@ -442,7 +442,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         //TODO: This algorithm to find the endpoints for a connection could be improved in many ways
         for (LocalObject container : connections) {            
             List<LocalObjectLight> aSide = CommunicationsStub.getInstance()
-                .getSpecialAttribute(container.getClassName(), container.getOid(), "endpointA"); //NOI18N
+                .getSpecialAttribute(container.getClassName(), container.getId(), "endpointA"); //NOI18N
             if (aSide == null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 continue;
@@ -454,7 +454,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
             }
             
             List<LocalObjectLight> bSide = CommunicationsStub.getInstance()
-                .getSpecialAttribute(container.getClassName(), container.getOid(), "endpointB"); //NOI18N
+                .getSpecialAttribute(container.getClassName(), container.getId(), "endpointB"); //NOI18N
             
             if (bSide == null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
@@ -469,12 +469,12 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
             //The nodes in the view correspond to equipment or infrastructure, not the actual ports
             //so we have to find the equipment being dislayed so we can find them in the scene            
             List<LocalObjectLight> parentsASide = CommunicationsStub.getInstance()
-                .getParents(aSide.get(0).getClassName(), aSide.get(0).getOid());
+                .getParents(aSide.get(0).getClassName(), aSide.get(0).getId());
             if (parentsASide == null)
                 continue;
                 
             List<LocalObjectLight> parentsBSide = CommunicationsStub.getInstance()
-                .getParents(bSide.get(0).getClassName(), bSide.get(0).getOid());
+                .getParents(bSide.get(0).getClassName(), bSide.get(0).getId());
             
             if (parentsBSide == null)
                 continue;

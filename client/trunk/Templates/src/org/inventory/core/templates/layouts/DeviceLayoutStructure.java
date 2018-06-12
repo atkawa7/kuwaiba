@@ -49,7 +49,7 @@ public class DeviceLayoutStructure {
     }
     
     public void initDeviceLayoutStructure(LocalObjectLight device) {
-        byte[] structure = CommunicationsStub.getInstance().getDeviceLayoutStructure(device.getOid(), device.getClassName());
+        byte[] structure = CommunicationsStub.getInstance().getDeviceLayoutStructure(device.getId(), device.getClassName());
         
         if (structure == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
@@ -74,7 +74,7 @@ public class DeviceLayoutStructure {
                     if (xmlsr.getName().equals(tagDevice)) {
                         long id = Long.valueOf(xmlsr.getAttributeValue(null, Constants.PROPERTY_ID));
                         
-                        if (id != device.getOid()) {
+                        if (id != device.getId()) {
                             String className = xmlsr.getAttributeValue(null, Constants.PROPERTY_CLASSNAME);
                             String name = xmlsr.getAttributeValue(null, Constants.PROPERTY_NAME);
                             long parentId = Long.valueOf(xmlsr.getAttributeValue(null, "parentId")); //NOI18N

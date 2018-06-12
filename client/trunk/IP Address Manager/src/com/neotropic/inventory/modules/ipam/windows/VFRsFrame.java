@@ -118,7 +118,7 @@ public class VFRsFrame  extends JFrame{
                 JOptionPane.showMessageDialog(null, "Select a VFR from the list");
             else {
                 if (CommunicationsStub.getInstance().relateSubnetToVFR(
-                        selectedSubnet.get(0).getOid(), selectedSubnet.get(0).getClassName(), lstAvailableVFRs.getSelectedValue().getOid())){
+                        selectedSubnet.get(0).getId(), selectedSubnet.get(0).getClassName(), lstAvailableVFRs.getSelectedValue().getId())){
                     JOptionPane.showMessageDialog(null, String.format("The %s subnet was related to VFR %s", selectedSubnet.get(0).getName(), 
                             lstAvailableVFRs.getSelectedValue().getName()));
                         dispose();

@@ -146,7 +146,7 @@ public class SDHConnectionWizard {
                     else {
                         LocalObjectLight service = (LocalObjectLight)wizardDescriptor.getProperty("service");
                         if (service != null) {
-                            if (!com.associateObjectsToService(Arrays.asList(newTributaryLink.getClassName()), Arrays.asList(newTributaryLink.getOid()), service.getClassName(), service.getOid()))
+                            if (!com.associateObjectsToService(Arrays.asList(newTributaryLink.getClassName()), Arrays.asList(newTributaryLink.getId()), service.getClassName(), service.getId()))
                                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.INFO_MESSAGE, com.getError());
                         }
                         NotificationUtil.getInstance().showSimplePopup("Success", NotificationUtil.INFO_MESSAGE, "Tributary link successfully created");
@@ -458,7 +458,7 @@ public class SDHConnectionWizard {
             List<LocalSDHPosition> positions = new ArrayList<>();
             for (int i = 0; i < lstContainerDefinition.getModel().getSize(); i++) {
                 HopDefinition aHop = lstContainerDefinition.getModel().getElementAt(i);
-                positions.add(new LocalSDHPosition(aHop.getLink().getClassName(), aHop.getLink().getOid(), aHop.position));
+                positions.add(new LocalSDHPosition(aHop.getLink().getClassName(), aHop.getLink().getId(), aHop.position));
             }
             settings.putProperty("positions", positions);
         }
@@ -478,7 +478,7 @@ public class SDHConnectionWizard {
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2) { //Only act upon a double-click event
                 HopDefinition hop = lstContainerDefinition.getSelectedValue();
-                List<LocalSDHContainerLinkDefinition> transportLinkStructure = com.getSDHTransportLinkStructure(hop.getLink().getClassName(), hop.getLink().getOid());
+                List<LocalSDHContainerLinkDefinition> transportLinkStructure = com.getSDHTransportLinkStructure(hop.getLink().getClassName(), hop.getLink().getId());
                 
                 if (transportLinkStructure == null) 
                     JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);
@@ -620,7 +620,7 @@ public class SDHConnectionWizard {
             List<LocalSDHPosition> positions = new ArrayList<>();
             for (int i = 0; i < lstContainerDefinition.getModel().getSize(); i++) {
                 HopDefinition aHop = lstContainerDefinition.getModel().getElementAt(i);
-                positions.add(new LocalSDHPosition(aHop.getLink().getClassName(), aHop.getLink().getOid(), aHop.position));
+                positions.add(new LocalSDHPosition(aHop.getLink().getClassName(), aHop.getLink().getId(), aHop.position));
             }
             settings.putProperty("positions", positions);
         }
@@ -644,9 +644,9 @@ public class SDHConnectionWizard {
                 List<LocalSDHContainerLinkDefinition> structure;
                 
                 if (com.isSubclassOf(connectionType.getClassName(), SDHModuleService.CLASS_GENERICSDHHIGHORDERTRIBUTARYLINK))
-                    structure = com.getSDHTransportLinkStructure(hop.getLink().getClassName(), hop.getLink().getOid());
+                    structure = com.getSDHTransportLinkStructure(hop.getLink().getClassName(), hop.getLink().getId());
                 else
-                    structure = com.getSDHContainerLinkStructure(hop.getLink().getClassName(), hop.getLink().getOid());
+                    structure = com.getSDHContainerLinkStructure(hop.getLink().getClassName(), hop.getLink().getId());
                 
                 if (structure == null) 
                     JOptionPane.showMessageDialog(null, com.getError(), "Error", JOptionPane.ERROR_MESSAGE);

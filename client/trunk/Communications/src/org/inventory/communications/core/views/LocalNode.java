@@ -63,7 +63,7 @@ public class LocalNode {
             return false;
         if (!(obj instanceof LocalNode))
             return false;
-        return ((LocalNode)obj).getObject().getOid() == this.object.getOid();
+        return ((LocalNode)obj).getObject().getId() == this.object.getId();
     }
 
     @Override

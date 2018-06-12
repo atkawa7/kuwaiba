@@ -188,7 +188,7 @@ public class DeviceLayoutRenderer {
             errorMessage = ex.getMessage();
         }
         if (hasDeviceLayout) {
-            LocalObject localObj = CommunicationsStub.getInstance().getObjectInfo(deviceToRender.getClassName(), deviceToRender.getOid());
+            LocalObject localObj = CommunicationsStub.getInstance().getObjectInfo(deviceToRender.getClassName(), deviceToRender.getId());
             if (localObj == null) {
                 errorMessage = CommunicationsStub.getInstance().getError();
                 return null;
@@ -445,7 +445,7 @@ public class DeviceLayoutRenderer {
                                     NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                                         NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                                 else {
-                                    LocalObjectListItem listItem = new LocalObjectListItem(lol.getOid(), lol.getClassName(), lol.getName());
+                                    LocalObjectListItem listItem = new LocalObjectListItem(lol.getId(), lol.getClassName(), lol.getName());
                                     shape = ShapeFactory.getInstance().getCustomShape(listItem);
                                 }
                             }

@@ -62,7 +62,7 @@ public class TopologyViewTopComponent extends TopComponent implements
     public TopologyViewTopComponent(final LocalObjectLight currentService, final TopologyViewScene scene) {
         
         this.currentService = currentService;
-        List<LocalObjectViewLight> serviceViews = com.getObjectRelatedViews(this.currentService.getOid(), this.currentService.getClassName());
+        List<LocalObjectViewLight> serviceViews = com.getObjectRelatedViews(this.currentService.getId(), this.currentService.getClassName());
         
         if (serviceViews == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
@@ -71,7 +71,7 @@ public class TopologyViewTopComponent extends TopComponent implements
             
             for (LocalObjectViewLight serviceView : serviceViews) {
                 if (TopologyViewScene.VIEW_CLASS.equals(serviceView.getClassName())) {
-                    currentView = com.getObjectRelatedView(currentService.getOid(), currentService.getClassName(), serviceView.getId());
+                    currentView = com.getObjectRelatedView(currentService.getId(), currentService.getClassName(), serviceView.getId());
                     if (currentView == null) {
                         NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
                         setEnabled(false);
@@ -201,7 +201,7 @@ public class TopologyViewTopComponent extends TopComponent implements
     
     private void saveView() {
         if (currentView == null) { //The service does not have a saved view associated yet, so create a new one
-            long newViewId = com.createObjectRelatedView(currentService.getOid(), currentService.getClassName(), TopologyViewScene.VIEW_CLASS, 
+            long newViewId = com.createObjectRelatedView(currentService.getId(), currentService.getClassName(), TopologyViewScene.VIEW_CLASS, 
                     null, TopologyViewScene.VIEW_CLASS, scene.getAsXML(), null);
             
             if (newViewId != -1) {
@@ -212,7 +212,7 @@ public class TopologyViewTopComponent extends TopComponent implements
             } else
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
         } else { //Update the existing view
-            if (com.updateObjectRelatedView(currentService.getOid(), currentService.getClassName(), 
+            if (com.updateObjectRelatedView(currentService.getId(), currentService.getClassName(), 
                     currentView.getId(), null, null, scene.getAsXML(), scene.getBackgroundImage())) {
                 saved = true;
                 setHtmlDisplayName(getHtmlDisplayName());

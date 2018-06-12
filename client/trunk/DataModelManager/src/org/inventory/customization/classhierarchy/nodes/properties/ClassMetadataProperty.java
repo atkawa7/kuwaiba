@@ -55,7 +55,7 @@ public class ClassMetadataProperty extends ReadWrite {
         if (t == value)
             return;
         try{
-            if(!CommunicationsStub.getInstance().setClassMetadataProperties(node.getClassMetadata().getOid(), 
+            if(!CommunicationsStub.getInstance().setClassMetadataProperties(node.getClassMetadata().getId(), 
                     (getName().equals(Constants.PROPERTY_NAME)) ? (String)t :  null, 
                     (getName().equals(Constants.PROPERTY_DISPLAYNAME)) ? (String)t :  null,
                     (getName().equals(Constants.PROPERTY_DESCRIPTION)) ? (String)t :  null, 
@@ -85,9 +85,9 @@ public class ClassMetadataProperty extends ReadWrite {
     @Override
     public PropertyEditor getPropertyEditor(){
         if(getName().equals(Constants.PROPERTY_ICON))
-            return new IconPropertyEditor(node.getClassMetadata().getOid(), Constants.PROPERTY_ICON);
+            return new IconPropertyEditor(node.getClassMetadata().getId(), Constants.PROPERTY_ICON);
         if(getName().equals(Constants.PROPERTY_SMALLICON))
-            return new IconPropertyEditor(node.getClassMetadata().getOid(), Constants.PROPERTY_SMALLICON);
+            return new IconPropertyEditor(node.getClassMetadata().getId(), Constants.PROPERTY_SMALLICON);
         else
             return super.getPropertyEditor();
     }

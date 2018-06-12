@@ -71,9 +71,9 @@ public class ClassMetadataSpecialNode extends ClassMetadataNode {
                     LocalClassMetadataLight data = (LocalClassMetadataLight) 
                         obj.getTransferData(LocalClassMetadataLight.DATA_FLAVOR);
                     
-                    long [] tokens = new long[] {data.getOid()};
+                    long [] tokens = new long[] {data.getId()};
                     
-                    if (CommunicationsStub.getInstance().addPossibleSpecialChildren(getObject().getOid(), tokens)) {
+                    if (CommunicationsStub.getInstance().addPossibleSpecialChildren(getObject().getId(), tokens)) {
                         
                         ((ClassMetadataSpecialChildren) getChildren()).add(new ClassMetadataSpecialNode[]{new ClassMetadataSpecialNode(data)});
                         CommunicationsStub.getInstance().refreshCache(false, false, false, false, true);

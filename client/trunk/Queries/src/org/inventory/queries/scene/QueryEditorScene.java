@@ -332,7 +332,7 @@ public class QueryEditorScene extends GraphPinScene<Object, String, Object>
                                 }else{
                                     LocalTransientQuery simplifiedQuery = new LocalTransientQuery(((ListTypeFilter)nextHop).getNodeName(),logicalConnector,false,0,0);
                                     simplifiedQuery.getAttributeNames().add("id"); //NOI18N
-                                    simplifiedQuery.getAttributeValues().add(String.valueOf(((LocalObjectListItem)((ListTypeFilter)nextHop).getValue()).getOid()));
+                                    simplifiedQuery.getAttributeValues().add(String.valueOf(((LocalObjectListItem)((ListTypeFilter)nextHop).getValue()).getId()));
                                     simplifiedQuery.getJoins().add(null); //padding
                                     simplifiedQuery.getConditions().add(((ListTypeFilter)nextHop).getCondition().id());
                                     myQuery.getJoins().add(simplifiedQuery);

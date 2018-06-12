@@ -51,14 +51,14 @@ public class LocalLogicalConnectionDetails {
         LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(remoteCircuitDetails.getConnectionObject().getClassName(), false);
         this.connectionObject =  new LocalObject(remoteCircuitDetails.getConnectionObject().getClassName(), remoteCircuitDetails.getConnectionObject().getId(),
                                     remoteCircuitDetails.getConnectionObject().getAttributes(), classMetadata);
-        this.endpointA =  new LocalObjectLight(remoteCircuitDetails.getEndpointA().getOid(), remoteCircuitDetails.getEndpointA().getName(), remoteCircuitDetails.getEndpointA().getClassName());
-        this.endpointB = new LocalObjectLight(remoteCircuitDetails.getEndpointB().getOid(), remoteCircuitDetails.getEndpointB().getName(), remoteCircuitDetails.getEndpointB().getClassName());
+        this.endpointA =  new LocalObjectLight(remoteCircuitDetails.getEndpointA().getId(), remoteCircuitDetails.getEndpointA().getName(), remoteCircuitDetails.getEndpointA().getClassName());
+        this.endpointB = new LocalObjectLight(remoteCircuitDetails.getEndpointB().getId(), remoteCircuitDetails.getEndpointB().getName(), remoteCircuitDetails.getEndpointB().getClassName());
         this.physicalPathForEndpointA = new ArrayList<>();
         for (RemoteObjectLight physicalPathForEndpointAElement : remoteCircuitDetails.getPhysicalPathForEndpointA())
-            this.physicalPathForEndpointA.add(new LocalObjectLight(physicalPathForEndpointAElement.getOid(), physicalPathForEndpointAElement.getName(), physicalPathForEndpointAElement.getClassName()));
+            this.physicalPathForEndpointA.add(new LocalObjectLight(physicalPathForEndpointAElement.getId(), physicalPathForEndpointAElement.getName(), physicalPathForEndpointAElement.getClassName()));
         this.physicalPathForEndpointB = new ArrayList<>();
         for (RemoteObjectLight physicalPathForEndpointBElement : remoteCircuitDetails.getPhysicalPathForEndpointB())
-            this.physicalPathForEndpointB.add(new LocalObjectLight(physicalPathForEndpointBElement.getOid(), physicalPathForEndpointBElement.getName(), physicalPathForEndpointBElement.getClassName()));
+            this.physicalPathForEndpointB.add(new LocalObjectLight(physicalPathForEndpointBElement.getId(), physicalPathForEndpointBElement.getName(), physicalPathForEndpointBElement.getClassName()));
     }
     
     

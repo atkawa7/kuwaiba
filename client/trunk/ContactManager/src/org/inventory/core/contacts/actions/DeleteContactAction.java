@@ -65,7 +65,7 @@ public class DeleteContactAction extends GenericObjectNodeAction {
         if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this contact?", 
                     "Delete Contact", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
 
-            if (CommunicationsStub.getInstance().deleteContact(selectedNode.getObject().getClassName(), selectedNode.getObject().getOid())) {
+            if (CommunicationsStub.getInstance().deleteContact(selectedNode.getObject().getClassName(), selectedNode.getObject().getId())) {
                 //If the node is on a tree, update the list
                 if (selectedNode.getParentNode() != null && AbstractChildren.class.isInstance(selectedNode.getParentNode().getChildren()))
                     ((AbstractChildren)selectedNode.getParentNode().getChildren()).addNotify();

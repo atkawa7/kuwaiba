@@ -87,7 +87,7 @@ public class DeletePhysicalLink extends GenericInventoryAction implements Presen
                     "Delete Link", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
                 if (CommunicationsStub.getInstance().deletePhysicalConnection(selectedNode.getObject().getClassName(), 
-                        selectedNode.getObject().getOid())) {
+                        selectedNode.getObject().getId())) {
                     
                     //If the node is on a tree, update the list
                     if (selectedNode.getParentNode() != null && AbstractChildren.class.isInstance(selectedNode.getParentNode().getChildren()))
@@ -100,7 +100,7 @@ public class DeletePhysicalLink extends GenericInventoryAction implements Presen
                         
                         RackViewTopComponent rackView = ((RackViewTopComponent) WindowManager.
                             getDefault().findTopComponent("RackViewTopComponent_" + 
-                            ((RackViewScene) selectedWidget.getScene()).getRack().getOid()));
+                            ((RackViewScene) selectedWidget.getScene()).getRack().getId()));
 
                         if (rackView != null)
                             rackView.refreshScene();

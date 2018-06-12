@@ -75,7 +75,7 @@ public class DeleteSubnetPoolAction extends GenericInventoryAction implements Pr
         if(selectedNode != null){
             SubnetPoolNode parentNode = (SubnetPoolNode)selectedNode.getParentNode();
 
-            if (com.deleteSubnetPool(selectedNode.getSubnetPool().getOid())){
+            if (com.deleteSubnetPool(selectedNode.getSubnetPool().getId())){
 
                 ((SubnetPoolChildren)parentNode.getChildren()).addNotify();
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, 

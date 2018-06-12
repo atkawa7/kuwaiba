@@ -59,7 +59,7 @@ public class RemoveObjectFromFavoritesFolder extends GenericObjectNodeAction imp
     public void actionPerformed(ActionEvent e) {
         LocalObjectLight selectedObject = selectedObjects.get(0); //Uses the last selected only
         List<LocalFavoritesFolder> favoritesFolder = CommunicationsStub.getInstance()
-            .objectIsBookmarkItemIn(selectedObject.getClassName(), selectedObject.getOid());
+            .objectIsBookmarkItemIn(selectedObject.getClassName(), selectedObject.getId());
         
         if (favoritesFolder!= null) {
             if (!favoritesFolder.isEmpty()) {
@@ -100,7 +100,7 @@ public class RemoveObjectFromFavoritesFolder extends GenericObjectNodeAction imp
                     ObjectNode selectedNode = selectedNodes.next();
 
                     objClass.add(selectedNode.getObject().getClassName());
-                    objId.add(selectedNode.getObject().getOid());
+                    objId.add(selectedNode.getObject().getId());
 
                     if (CommunicationsStub.getInstance().removeObjectsFromFavoritesFolder(
                         objClass, 

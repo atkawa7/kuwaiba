@@ -34,7 +34,7 @@ public class ProjectChildren extends AbstractChildren {
     public void addNotify() {
         ProjectNode selectedNode = (ProjectNode) getNode();
         String projectClass = selectedNode.getObject().getClassName();
-        long projectId = selectedNode.getObject().getOid();
+        long projectId = selectedNode.getObject().getId();
         
         List<LocalObjectLight> activities = CommunicationsStub.getInstance()
             .getProjectActivities(projectClass, projectId);

@@ -52,7 +52,7 @@ class CreateServiceAction extends GenericInventoryAction implements Presenter.Po
         ServicePoolNode selectedNode = selectedNodes.next();
         
         LocalObjectLight newService = CommunicationsStub.getInstance().
-                createPoolItem(selectedNode.getPool().getOid(), ((JMenuItem)e.getSource()).getName());     
+                createPoolItem(selectedNode.getPool().getId(), ((JMenuItem)e.getSource()).getName());     
                 
         if (newService == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

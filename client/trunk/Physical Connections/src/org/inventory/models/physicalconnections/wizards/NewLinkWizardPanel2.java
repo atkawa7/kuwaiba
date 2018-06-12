@@ -88,15 +88,15 @@ public class NewLinkWizardPanel2 implements WizardDescriptor.Panel<WizardDescrip
         
         String endpointConnected = "";
         if (
-        !CommunicationsStub.getInstance().getSpecialAttribute(component.getSelectedAEndpoint().getClassName(), component.getSelectedAEndpoint().getOid(), "endpointA").isEmpty() ||
-        !CommunicationsStub.getInstance().getSpecialAttribute(component.getSelectedAEndpoint().getClassName(), component.getSelectedAEndpoint().getOid(), "endpointB").isEmpty()
+        !CommunicationsStub.getInstance().getSpecialAttribute(component.getSelectedAEndpoint().getClassName(), component.getSelectedAEndpoint().getId(), "endpointA").isEmpty() ||
+        !CommunicationsStub.getInstance().getSpecialAttribute(component.getSelectedAEndpoint().getClassName(), component.getSelectedAEndpoint().getId(), "endpointB").isEmpty()
         ) {
             endpointConnected = String.format("The selected endpoint %s is already connected", component.getSelectedAEndpoint());
         }
         
         if (
-        !CommunicationsStub.getInstance().getSpecialAttribute(component.getSelectedBEndpoint().getClassName(), component.getSelectedBEndpoint().getOid(), "endpointA").isEmpty() ||
-        !CommunicationsStub.getInstance().getSpecialAttribute(component.getSelectedBEndpoint().getClassName(), component.getSelectedBEndpoint().getOid(), "endpointB").isEmpty()
+        !CommunicationsStub.getInstance().getSpecialAttribute(component.getSelectedBEndpoint().getClassName(), component.getSelectedBEndpoint().getId(), "endpointA").isEmpty() ||
+        !CommunicationsStub.getInstance().getSpecialAttribute(component.getSelectedBEndpoint().getClassName(), component.getSelectedBEndpoint().getId(), "endpointB").isEmpty()
         ) {
             if (!"".equals(endpointConnected))
                 endpointConnected += ", ";

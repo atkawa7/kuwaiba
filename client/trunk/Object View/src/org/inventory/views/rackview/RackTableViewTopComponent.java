@@ -60,7 +60,7 @@ public final class RackTableViewTopComponent extends TopComponent implements Exp
     
     @Override
     protected String preferredID() {
-        return "RackTableViewTopComponent_" + rack.getOid(); //NOI18N
+        return "RackTableViewTopComponent_" + rack.getId(); //NOI18N
     }
     
     @Override

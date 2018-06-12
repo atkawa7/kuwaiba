@@ -49,7 +49,7 @@ class DeleteServicePoolAction extends GenericInventoryAction {
             while (selectedNodes.hasNext()) {
                 ServicePoolNode selectedNode = selectedNodes.next();
                 
-                if (!CommunicationsStub.getInstance().deletePool(selectedNode.getPool().getOid()))
+                if (!CommunicationsStub.getInstance().deletePool(selectedNode.getPool().getId()))
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                 else
                     ((CustomerChildren)((CustomerNode)selectedNode.getParentNode()).getChildren()).addNotify();

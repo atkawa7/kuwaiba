@@ -38,7 +38,7 @@ public class PhysicalConnectionsService {
         SimpleConnectionWidget lastConnectionWidget = null;
         for (LocalObjectLight element : trace){
             if (!com.isSubclassOf(element.getClassName(), Constants.CLASS_GENERICPHYSICALLINK)) { //It's a port
-                List<LocalObjectLight> ancestors = com.getParents(element.getClassName(), element.getOid());
+                List<LocalObjectLight> ancestors = com.getParents(element.getClassName(), element.getId());
                 if(scene.findWidget(element) == null){//we should search if the physical parent port its already in the scene
                     lastPortWidget = (ObjectBoxWidget)scene.addNode(element);
                     if (lastConnectionWidget != null)

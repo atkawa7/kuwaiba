@@ -139,7 +139,7 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                 
                 xmlew.add(xmlef.createAttribute(new QName("class"), nodeObject.getClassName()));
                 
-                xmlew.add(xmlef.createCharacters(Long.toString(nodeObject.getOid())));
+                xmlew.add(xmlef.createCharacters(Long.toString(nodeObject.getId())));
                 
                 xmlew.add(xmlef.createEndElement(qnameNode, null));
             }
@@ -152,11 +152,11 @@ public class MPLSModuleScene extends AbstractScene<LocalObjectLight, LocalObject
                 
                 QName qnameEdge = new QName("edge");
                 xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
-                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(edgeObject.getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(edgeObject.getId())));
                 xmlew.add(xmlef.createAttribute(new QName("class"), edgeObject.getClassName()));
                 
-                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(edgeObject).getOid())));
-                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(edgeObject).getOid())));
+                xmlew.add(xmlef.createAttribute(new QName("aside"), Long.toString(getEdgeSource(edgeObject).getId())));
+                xmlew.add(xmlef.createAttribute(new QName("bside"), Long.toString(getEdgeTarget(edgeObject).getId())));
                 
                 for (Point point : ((ObjectConnectionWidget)edgeWidget).getControlPoints()) {
                     QName qnameControlpoint = new QName("controlpoint");

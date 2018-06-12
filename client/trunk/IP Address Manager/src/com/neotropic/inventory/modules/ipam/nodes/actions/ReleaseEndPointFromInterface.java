@@ -49,7 +49,7 @@ public class ReleaseEndPointFromInterface extends GenericObjectNodeAction implem
     public void actionPerformed(ActionEvent e) {
         LocalObjectLight selectedObject = selectedObjects.get(0);
         List<LocalObjectLight> serviceInstances = CommunicationsStub.getInstance().getSpecialAttribute(
-            selectedObject.getClassName(), selectedObject.getOid(), Constants.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE);
+            selectedObject.getClassName(), selectedObject.getId(), Constants.RELATIONSHIP_IPAMPORTRELATEDTOINTERFACE);
         
         if (serviceInstances != null) {
             if (serviceInstances.isEmpty()) {
@@ -59,9 +59,9 @@ public class ReleaseEndPointFromInterface extends GenericObjectNodeAction implem
                 List<SubMenuItem> subMenuItems = new ArrayList<>();
                 for (LocalObjectLight serviceInstance : serviceInstances) {
                     SubMenuItem subMenuItem = new SubMenuItem(serviceInstance.toString());
-                    subMenuItem.addProperty("serviceInstanceId", serviceInstance.getOid()); //NOI18N
+                    subMenuItem.addProperty("serviceInstanceId", serviceInstance.getId()); //NOI18N
                     subMenuItem.addProperty("portClassName", selectedObject.getClassName()); //NOI18N
-                    subMenuItem.addProperty("portId", selectedObject.getOid()); //NOI18N
+                    subMenuItem.addProperty("portId", selectedObject.getId()); //NOI18N
                     subMenuItems.add(subMenuItem);
                 }
                 SubMenuDialog.getInstance((String) getValue(NAME), this).showSubmenu(subMenuItems);

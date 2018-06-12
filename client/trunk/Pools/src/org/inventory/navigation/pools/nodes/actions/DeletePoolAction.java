@@ -66,7 +66,7 @@ public class DeletePoolAction extends GenericInventoryAction implements Presente
         if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this pool? All contained elements will be deleted as well", 
                 I18N.gm("warning"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
         
-            if (com.deletePool(node.getPool().getOid())){
+            if (com.deletePool(node.getPool().getId())){
                 node.getParentNode().getChildren().remove(new Node[]{node});
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, 
                         "Pool deleted successfully");

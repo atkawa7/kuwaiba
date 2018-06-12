@@ -44,7 +44,7 @@ public class ShowObjectViewAction extends GenericObjectNodeAction {
             JOptionPane.showMessageDialog(null, "Select only one object.", I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
         else {
             ObjectViewTopComponent objectViewTC = ((ObjectViewTopComponent)WindowManager.getDefault().
-                findTopComponent("ObjectViewTopComponent_" + selectedObjects.get(0).getOid()));
+                findTopComponent("ObjectViewTopComponent_" + selectedObjects.get(0).getId()));
             
             if (objectViewTC == null) {
                 objectViewTC = new ObjectViewTopComponent(selectedObjects.get(0));

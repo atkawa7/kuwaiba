@@ -1,5 +1,5 @@
 # Neotropic SAS 2018
-# Kuwaiba Open Network Inventory - Web Service Stub Generator v0.5
+# Kuwaiba Open Network Inventory - Web Service Stub Generator v0.6
 # This script generates the Java client side stubs necessary to consume the platform's web service. Use -h flag to see the full list of options
 
 # Defaults
@@ -78,7 +78,7 @@ then
     echo "Patching StringPair class done"
     
     #Here we patch the ClassInfoLight class with the missing hashCode, equals and toString that wsimport does not generate
-    echo "Patching ClassInfoLight class..."
+    echo "Patching RemoteClassMetadataLight class..."
     setters="public int hashCode() {
         int hash = 7;
         hash = 97 * hash + (int) (this.id ^ (this.id >>> 32));
@@ -95,7 +95,7 @@ then
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ClassInfoLight other = (ClassInfoLight) obj;
+        final RemoteClassMetadataLight other = (RemoteClassMetadataLight) obj;
         if (this.id != other.id) {
             return false;
         }
@@ -106,11 +106,11 @@ then
         return displayName != null && !displayName.isEmpty() ? displayName : className;
     }"
 
-    head -n -2  "${destination}/org/inventory/communications/wsclient/ClassInfoLight.java" > temp.txt
+    head -n -2  "${destination}/org/inventory/communications/wsclient/RemoteClassMetadataLight.java" > temp.txt
 
     echo "${setters}" >> temp.txt
     echo $'\n}' >> temp.txt
-    mv temp.txt "${destination}/org/inventory/communications/wsclient/ClassInfoLight.java"
+    mv temp.txt "${destination}/org/inventory/communications/wsclient/RemoteClassMetadataLight.java"
     echo "Patching ClassInfoLight class done"
     
     #Here we patch the RemoteObjectLight class with the missing hashCode, equals and toString that wsimport does not generate

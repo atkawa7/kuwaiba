@@ -64,7 +64,7 @@ public class DeleteClassAction extends GenericInventoryAction implements Present
                 I18N.gm("data_integrity"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION)
             return;
         
-        if (com.deleteClassMetadata(classMetaData.getOid())){
+        if (com.deleteClassMetadata(classMetaData.getId())){
             if (node.getParentNode() != null) // null for the class hierarchy view widgets
                 ((ClassMetadataChildren)node.getParentNode().getChildren()).refreshList();
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("success"), NotificationUtil.INFO_MESSAGE, I18N.gm("class_deleted"));

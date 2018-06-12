@@ -53,7 +53,7 @@ public class CustomerPoolNode extends PoolNode {
     public Action[] getActions(boolean context){
         return new Action[]{ ServiceManagerActionFactory.getCreateCustomerAction(), 
             ServiceManagerActionFactory.getDeleteCustomerPoolAction(), 
-            ShowMoreInformationAction.getInstance(getPool().getOid(), getPool().getClassName())};
+            ShowMoreInformationAction.getInstance(getPool().getId(), getPool().getClassName())};
     }
    
     @Override
@@ -71,7 +71,7 @@ public class CustomerPoolNode extends PoolNode {
         @Override
         public void addNotify() {
             LocalPool customerPool = ((CustomerPoolNode)getNode()).getPool();
-            List<LocalObjectLight> customers = CommunicationsStub.getInstance().getPoolItems(customerPool.getOid());
+            List<LocalObjectLight> customers = CommunicationsStub.getInstance().getPoolItems(customerPool.getId());
             if (customers == null) {
                 setKeys(Collections.EMPTY_SET);
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

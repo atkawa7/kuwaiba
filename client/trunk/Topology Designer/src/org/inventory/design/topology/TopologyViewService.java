@@ -74,7 +74,7 @@ public class TopologyViewService {
                 HashMap<String, Object> attributesToUpdate = new HashMap<>();
                 attributesToUpdate.put(Constants.PROPERTY_NAME, lol.getName());
 
-                if(!CommunicationsStub.getInstance().updateObject(lol.getClassName(), lol.getOid(), attributesToUpdate)) {
+                if(!CommunicationsStub.getInstance().updateObject(lol.getClassName(), lol.getId(), attributesToUpdate)) {
                     NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                     return false;
                 }

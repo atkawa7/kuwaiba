@@ -53,7 +53,7 @@ public class CreateCustomerAction extends GenericInventoryAction implements Pres
         Node selectedNode = selectedNodes.next();
         
         LocalObjectLight newCustomer = CommunicationsStub.getInstance().
-                createPoolItem(((CustomerPoolNode)selectedNode).getPool().getOid(), 
+                createPoolItem(((CustomerPoolNode)selectedNode).getPool().getId(), 
                 ((JMenuItem)e.getSource()).getName());
         if (newCustomer == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

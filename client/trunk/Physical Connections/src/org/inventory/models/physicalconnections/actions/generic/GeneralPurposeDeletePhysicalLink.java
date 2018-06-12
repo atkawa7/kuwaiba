@@ -75,7 +75,7 @@ public class GeneralPurposeDeletePhysicalLink extends GenericObjectNodeAction im
                 ObjectNode selectedNode = selectedNodes.next();
                 
                 if (CommunicationsStub.getInstance().deletePhysicalConnection(selectedNode.getObject().getClassName(), 
-                        selectedNode.getObject().getOid())) {
+                        selectedNode.getObject().getId())) {
                     
                     //If the node is on a tree, update the list
                     if (selectedNode.getParentNode() != null && AbstractChildren.class.isInstance(selectedNode.getParentNode().getChildren()))

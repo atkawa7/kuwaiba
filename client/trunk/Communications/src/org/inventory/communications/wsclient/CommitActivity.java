@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="processInstanceId" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="activityDefinitionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="activityDefinitionId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="artifact" type="{http://ws.interfaces.kuwaiba.org/}remoteArtifact" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
 public class CommitActivity {
 
     protected long processInstanceId;
-    protected String activityDefinitionId;
+    protected long activityDefinitionId;
     protected RemoteArtifact artifact;
     protected String sessionId;
 
@@ -61,24 +61,16 @@ public class CommitActivity {
     /**
      * Gets the value of the activityDefinitionId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
-    public String getActivityDefinitionId() {
+    public long getActivityDefinitionId() {
         return activityDefinitionId;
     }
 
     /**
      * Sets the value of the activityDefinitionId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
      */
-    public void setActivityDefinitionId(String value) {
+    public void setActivityDefinitionId(long value) {
         this.activityDefinitionId = value;
     }
 

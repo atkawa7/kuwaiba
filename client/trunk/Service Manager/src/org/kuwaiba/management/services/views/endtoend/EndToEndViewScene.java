@@ -62,18 +62,18 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
 
     @Override
     public void render(LocalObjectLight selectedService) {
-        List<LocalObjectLight> serviceResources = com.getServiceResources(selectedService.getClassName(), selectedService.getOid());
+        List<LocalObjectLight> serviceResources = com.getServiceResources(selectedService.getClassName(), selectedService.getId());
         if (serviceResources == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
             try {
                 for (LocalObjectLight serviceResource : serviceResources) {
                     if (com.isSubclassOf(serviceResource.getClassName(), "GenericLogicalConnection")) {
-                        LocalLogicalConnectionDetails logicalCircuitDetails = com.getLogicalLinkDetails(serviceResource.getClassName(), serviceResource.getOid());
+                        LocalLogicalConnectionDetails logicalCircuitDetails = com.getLogicalLinkDetails(serviceResource.getClassName(), serviceResource.getId());
                         
                         //Let's create the boxes corresponding to the endpoint A of the logical circuit
                         List<LocalObjectLight> parentsUntilFirstComEquipmentA = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
-                                getClassName(), logicalCircuitDetails.getEndpointA().getOid(), "GenericCommunicationsElement");
+                                getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericCommunicationsElement");
                         
                         LocalObjectLight aSideEquipmentLogical = parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1);
                         
@@ -81,7 +81,7 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                         
                         //Now the other side
                         List<LocalObjectLight> parentsUntilFirstComEquipmentB = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
-                                getClassName(), logicalCircuitDetails.getEndpointB().getOid(), "GenericCommunicationsElement");
+                                getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericCommunicationsElement");
                         
                         LocalObjectLight bSideEquipmentLogical = parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1);
                         
@@ -98,7 +98,7 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                         if (!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()) {
                             LocalObjectLight nextPhysicalHop = logicalCircuitDetails.getPhysicalPathForEndpointA().get(logicalCircuitDetails.getPhysicalPathForEndpointA().size() - 1);
                             List<LocalObjectLight> parentsUntilFirstNextComEquipmentA = com.getParentsUntilFirstOfClass(nextPhysicalHop.
-                                getClassName(), nextPhysicalHop.getOid(), "GenericCommunicationsElement");
+                                getClassName(), nextPhysicalHop.getId(), "GenericCommunicationsElement");
                             
                             LocalObjectLight aSideEquipmentPhysical = parentsUntilFirstNextComEquipmentA.get(parentsUntilFirstNextComEquipmentA.size() - 1);
                             addEquipmentPortPair(aSideEquipmentPhysical, nextPhysicalHop);
@@ -114,7 +114,7 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                         if (!logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty()) {
                             LocalObjectLight nextPhysicalHop = logicalCircuitDetails.getPhysicalPathForEndpointB().get(logicalCircuitDetails.getPhysicalPathForEndpointB().size() - 1);
                             List<LocalObjectLight> parentsUntilFirstNextComEquipmentB = com.getParentsUntilFirstOfClass(nextPhysicalHop.
-                                getClassName(), nextPhysicalHop.getOid(), "GenericCommunicationsElement");
+                                getClassName(), nextPhysicalHop.getId(), "GenericCommunicationsElement");
                         
                             LocalObjectLight bSideEquipmentPhysical = parentsUntilFirstNextComEquipmentB.get(parentsUntilFirstNextComEquipmentB.size() - 1);
                             addEquipmentPortPair(bSideEquipmentPhysical, nextPhysicalHop);

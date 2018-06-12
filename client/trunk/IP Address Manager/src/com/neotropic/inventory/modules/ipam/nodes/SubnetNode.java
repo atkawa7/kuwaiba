@@ -95,7 +95,7 @@ public class SubnetNode extends ObjectNode {
     
     @Override
     protected Sheet createSheet(){
-        LocalObject sp = com.getObjectInfo(getObject().getClassName(), getObject().getOid());
+        LocalObject sp = com.getObjectInfo(getObject().getClassName(), getObject().getId());
         Sheet sheet = Sheet.createDefault();
         Sheet.Set generalPropertySet = Sheet.createPropertiesSet(); //General attributes category
         
@@ -147,7 +147,7 @@ public class SubnetNode extends ObjectNode {
                     Node parentNode = null;
                     if (action == DnDConstants.ACTION_MOVE) {
                         String className = getObject().getClassName();
-                        long oid = getObject().getOid();
+                        long oid = getObject().getId();
                         boolean networkIpBelongsTo = false;
                         boolean broadcastIpBelongsTo = false;
                             
@@ -183,7 +183,7 @@ public class SubnetNode extends ObjectNode {
                         }
                         
                         else{ 
-                            childNode = com.getObjectInfo(className, obj.getOid());
+                            childNode = com.getObjectInfo(className, obj.getId());
                             String childNetworkIp = (String)childNode.getAttribute("networkIp"); //NOI18N
                             String childBroadcastIp = (String)childNode.getAttribute("broadcastIp"); //NOI18N
                         

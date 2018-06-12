@@ -36,7 +36,7 @@ public class CustomerChildren extends Children.Keys<LocalPool> {
         LocalObjectLight customer = ((CustomerNode)this.getNode()).getObject();
         
         List<LocalPool> servicePools = CommunicationsStub.getInstance().
-                getPoolsInObject(customer.getClassName(), customer.getOid(), Constants.CLASS_GENERICSERVICE);
+                getPoolsInObject(customer.getClassName(), customer.getId(), Constants.CLASS_GENERICSERVICE);
 
         if (servicePools == null) {
             setKeys(Collections.EMPTY_LIST);
@@ -56,7 +56,7 @@ public class CustomerChildren extends Children.Keys<LocalPool> {
     
     @Override
     protected Node[] createNodes(LocalPool key) {
-        return new Node[] { new ServicePoolNode(new LocalPool(key.getOid(), key.getName(), key.getClassName(), null, -1))};
+        return new Node[] { new ServicePoolNode(new LocalPool(key.getId(), key.getName(), key.getClassName(), null, -1))};
   
     }
 }

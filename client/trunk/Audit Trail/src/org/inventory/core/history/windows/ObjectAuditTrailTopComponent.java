@@ -57,7 +57,7 @@ public class ObjectAuditTrailTopComponent extends TopComponent implements Export
     private LocalObjectLight object;
 
     public ObjectAuditTrailTopComponent(LocalObjectLight object) {
-        LocalApplicationLogEntry[] entries = CommunicationsStub.getInstance().getBusinessObjectAuditTrail(object.getClassName(), object.getOid());
+        LocalApplicationLogEntry[] entries = CommunicationsStub.getInstance().getBusinessObjectAuditTrail(object.getClassName(), object.getId());
         if (entries == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
@@ -95,7 +95,7 @@ public class ObjectAuditTrailTopComponent extends TopComponent implements Export
     
     @Override
     protected String preferredID() {
-        return "ObjectAuditTrailTopComponent_" + object.getOid(); //NOI18N
+        return "ObjectAuditTrailTopComponent_" + object.getId(); //NOI18N
     }
     
     private TableModel buildTableModel(final LocalApplicationLogEntry[] logEntries) {
@@ -188,7 +188,7 @@ public class ObjectAuditTrailTopComponent extends TopComponent implements Export
     @Override
     public void refresh() {
         setName(String.format(I18N.gm("audit_trail_for"), object));
-        LocalApplicationLogEntry[] entries = CommunicationsStub.getInstance().getBusinessObjectAuditTrail(object.getClassName(), object.getOid());
+        LocalApplicationLogEntry[] entries = CommunicationsStub.getInstance().getBusinessObjectAuditTrail(object.getClassName(), object.getId());
         if (entries == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;

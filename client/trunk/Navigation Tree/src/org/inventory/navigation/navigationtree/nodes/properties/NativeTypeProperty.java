@@ -53,7 +53,7 @@ public class NativeTypeProperty extends PropertySupport.ReadWrite {
         attributesToUpdate.put(getName(), t);
 
         if(!CommunicationsStub.getInstance().updateObject(node.getObject().getClassName(), 
-                node.getObject().getOid(), attributesToUpdate))
+                node.getObject().getId(), attributesToUpdate))
             NotificationUtil.getInstance().showSimplePopup("Error", 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {

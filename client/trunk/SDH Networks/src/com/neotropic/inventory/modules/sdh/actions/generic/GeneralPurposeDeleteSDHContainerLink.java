@@ -47,7 +47,7 @@ public class GeneralPurposeDeleteSDHContainerLink extends GenericObjectNodeActio
                 "This will delete all the containers and tributary links \n Are you sure you want to do this?", 
                 "Delete Container Link", JOptionPane.OK_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE) == JOptionPane.OK_OPTION) {
 
-            if (CommunicationsStub.getInstance().deleteSDHContainerLink(selectedNode.getObject().getClassName(), selectedNode.getObject().getOid())) {
+            if (CommunicationsStub.getInstance().deleteSDHContainerLink(selectedNode.getObject().getClassName(), selectedNode.getObject().getId())) {
                 //If the node is on a tree, update the list
                 if (selectedNode.getParentNode() != null && AbstractChildren.class.isInstance(selectedNode.getParentNode().getChildren()))
                     ((AbstractChildren)selectedNode.getParentNode().getChildren()).addNotify();

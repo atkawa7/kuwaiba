@@ -156,7 +156,7 @@ public class FileObjectNode extends AbstractNode implements VetoableChangeListen
         LocalObjectLight currentObject = getParentNode().getLookup().lookup(LocalObjectLight.class);
         LocalFileObjectLight currentFileObject = (LocalFileObjectLight)evt.getSource();
         if (!CommunicationsStub.getInstance().updateFileProperties(currentFileObject.getFileOjectId(), 
-                evt.getPropertyName(), (String)evt.getNewValue(), currentObject.getClassName(), currentObject.getOid()))
+                evt.getPropertyName(), (String)evt.getNewValue(), currentObject.getClassName(), currentObject.getId()))
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {
             if (evt.getPropertyName().equals(Constants.PROPERTY_NAME))

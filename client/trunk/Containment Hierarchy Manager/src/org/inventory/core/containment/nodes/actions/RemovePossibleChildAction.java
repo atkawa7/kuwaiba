@@ -45,8 +45,8 @@ public class RemovePossibleChildAction extends GenericInventoryAction {
     public void actionPerformed(ActionEvent e) {
         ClassMetadataNode selectedNode = Utilities.actionsGlobalContext().lookup(ClassMetadataNode.class);
         if (selectedNode != null) {
-            long childId = selectedNode.getObject().getOid();
-            long parentId = ((ClassMetadataNode) selectedNode.getParentNode()).getObject().getOid();
+            long childId = selectedNode.getObject().getId();
+            long parentId = ((ClassMetadataNode) selectedNode.getParentNode()).getObject().getId();
             
             if (CommunicationsStub.getInstance().removePossibleChildren(parentId, new long [] {childId})) {
                 ((ClassMetadataChildren) selectedNode.getParentNode().getChildren()).remove(new Node[] {selectedNode});

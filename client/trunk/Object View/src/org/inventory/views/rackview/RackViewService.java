@@ -112,7 +112,7 @@ public class RackViewService {
                         if(equipmentWidget instanceof EquipmentWidget && ((EquipmentWidget) equipmentWidget).hasLayout())
                             setEquipmentParent(equipmentWidget, equipmentWidget);
                     }
-                    List<LocalObjectLight> specialChildren = CommunicationsStub.getInstance().getObjectSpecialChildren(rack.getClassName(), rack.getOid());
+                    List<LocalObjectLight> specialChildren = CommunicationsStub.getInstance().getObjectSpecialChildren(rack.getClassName(), rack.getId());
                     
                     if (specialChildren == null) {
                         NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), //NOI18N
@@ -155,7 +155,7 @@ public class RackViewService {
 
         HashMap<LocalObjectLight, Future<HashMap<String, LocalObjectLight[]>>> futures = new HashMap();
         for (LocalObjectLight connection : connections)
-            futures.put(connection, fixedThreadPool.submit(CommunicationsStubTask.getInstance().getSpecialAttributesCallable(connection.getClassName(), connection.getOid())));
+            futures.put(connection, fixedThreadPool.submit(CommunicationsStubTask.getInstance().getSpecialAttributesCallable(connection.getClassName(), connection.getId())));
 
         HashMap<LocalObjectLight, HashMap<String, LocalObjectLight[]>> connectionsMap = new HashMap();
         for (LocalObjectLight connection : connections) {

@@ -105,7 +105,7 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
         if (classmetadata == null) 
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
         else {
-            LocalObject templateElement = com.getTemplateElement(currentObject.getClassName(), currentObject.getOid());            
+            LocalObject templateElement = com.getTemplateElement(currentObject.getClassName(), currentObject.getId());            
             if (templateElement == null) 
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
             else {
@@ -251,10 +251,10 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
                             List<Long> ids = new ArrayList<>();
 
                             classNames.add(incomingObject.getClassName());
-                            ids.add(incomingObject.getOid());
+                            ids.add(incomingObject.getId());
 
                             List<LocalObjectLight> copiedNodes = CommunicationsStub.getInstance().
-                                    copyTemplateSpecialElements(classNames, ids, currentObject.getClassName(), currentObject.getOid());
+                                    copyTemplateSpecialElements(classNames, ids, currentObject.getClassName(), currentObject.getId());
 
                             if (copiedNodes != null) {
                                 if (getChildren() instanceof AbstractChildren)
@@ -284,10 +284,10 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
                             List<Long> ids = new ArrayList<>();
 
                             classNames.add(incomingObject.getClassName());
-                            ids.add(incomingObject.getOid());
+                            ids.add(incomingObject.getId());
 
                             List<LocalObjectLight> copiedNodes = CommunicationsStub.getInstance().
-                                    copyTemplateElements(classNames, ids, currentObject.getClassName(), currentObject.getOid());
+                                    copyTemplateElements(classNames, ids, currentObject.getClassName(), currentObject.getId());
 
                             if (copiedNodes != null) {
                                 if (getChildren() instanceof AbstractChildren)
@@ -311,7 +311,7 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         LocalObjectLight affectedObject = (LocalObjectLight)evt.getSource();
-        if (!com.updateTemplateElement(affectedObject.getClassName(), affectedObject.getOid(),
+        if (!com.updateTemplateElement(affectedObject.getClassName(), affectedObject.getId(),
             new String[] {evt.getPropertyName()}, 
             new String[] {evt.getNewValue() == null ? null : (evt.getNewValue() instanceof LocalObjectListItem ? String.valueOf(((LocalObjectListItem)evt.getNewValue()).getId()) : String.valueOf(evt.getNewValue())) }))
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
@@ -328,10 +328,10 @@ public class TemplateElementNode extends AbstractNode implements PropertyChangeL
         public void addNotify() {
             LocalObjectLight templateElement = getNode().getLookup().lookup(LocalObjectLight.class);
             List<LocalObjectLight> templateElementChildren = CommunicationsStub.getInstance().
-                    getTemplateElementChildren(templateElement.getClassName(), templateElement.getOid());
+                    getTemplateElementChildren(templateElement.getClassName(), templateElement.getId());
             
             templateElementSpecialChildren = CommunicationsStub.getInstance().
-                    getTemplateSpecialElementChildren(templateElement.getClassName(), templateElement.getOid());
+                    getTemplateSpecialElementChildren(templateElement.getClassName(), templateElement.getId());
             
             if (templateElementChildren == null && templateElementSpecialChildren == null) {
                 NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());

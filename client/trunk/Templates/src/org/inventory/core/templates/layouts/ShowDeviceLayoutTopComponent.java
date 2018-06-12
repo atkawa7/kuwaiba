@@ -105,7 +105,7 @@ public final class ShowDeviceLayoutTopComponent extends TopComponent {
     
     @Override
     protected String preferredID() {
-        return "ShowDeviceLayoutTopComponent_" + deviceToReder.getOid(); //NOI18N
+        return "ShowDeviceLayoutTopComponent_" + deviceToReder.getId(); //NOI18N
     }
     
     @Override

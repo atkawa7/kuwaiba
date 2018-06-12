@@ -86,7 +86,7 @@ public class AddObjectToFavoritesFolderAction extends GenericObjectNodeAction im
                 
                 for (LocalObjectLight selectedObject : selectedObjects) {
                     objectsClassName.add(selectedObject.getClassName());
-                    objectsId.add(selectedObject.getOid());
+                    objectsId.add(selectedObject.getId());
                     
                     if (CommunicationsStub.getInstance()
                         .addObjectsToFavoritesFolder(objectsClassName, objectsId, ((LocalFavoritesFolder) selectedValue).getId())) {

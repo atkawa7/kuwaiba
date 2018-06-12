@@ -73,7 +73,7 @@ public class CreateSubnetPoolAction extends GenericInventoryAction {
                 I18N.gm("create_folder"),
                 JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
             
-            LocalObjectLight newPool = com.createSubnetPool(selectedNode.getSubnetPool().getOid(), 
+            LocalObjectLight newPool = com.createSubnetPool(selectedNode.getSubnetPool().getId(), 
                     selectedNode.getSubnetPool().getClassName(),
                     ((JTextField)pnlMyDialog.getComponent("txtName")).getText(), 
                     ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), 3); //Type of pool module component. These pools are used in models and are in the lower levels of the pool containment hierarchy

@@ -61,7 +61,7 @@ public class AddActivityAction extends GenericInventoryAction implements Present
         
         if (selectedNode != null) {
             LocalObjectLight activity = CommunicationsStub.getInstance().addActivity(
-                selectedNode.getObject().getOid(), 
+                selectedNode.getObject().getId(), 
                 selectedNode.getObject().getClassName(), 
                 ((JMenuItem)e.getSource()).getText());
             

@@ -64,7 +64,7 @@ public class ShowDeviceLayoutView extends GenericObjectNodeAction {
         
         for (LocalObjectLight lol : selectedObjects) {
             ShowDeviceLayoutTopComponent devicelayoutView = ((ShowDeviceLayoutTopComponent) WindowManager.
-                getDefault().findTopComponent("ShowDeviceLayoutTopComponent_" + lol.getOid())); //NOI18N
+                getDefault().findTopComponent("ShowDeviceLayoutTopComponent_" + lol.getId())); //NOI18N
 
             if (devicelayoutView == null) {
                 devicelayoutView = new ShowDeviceLayoutTopComponent(lol);

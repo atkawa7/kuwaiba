@@ -145,7 +145,7 @@ public class SDHModuleActionsFactory {
                 Set<?> selectedObjects = scene.getSelectedObjects();
                 for (Object selectedObject : selectedObjects) {
                     LocalObjectLight castedObject = (LocalObjectLight)selectedObject;
-                    if (CommunicationsStub.getInstance().deleteSDHTransportLink(castedObject.getClassName(), castedObject.getOid())) {
+                    if (CommunicationsStub.getInstance().deleteSDHTransportLink(castedObject.getClassName(), castedObject.getId())) {
                         NotificationUtil.getInstance().showSimplePopup("Delete Operation", NotificationUtil.INFO_MESSAGE, "Transport link deleted successfully");
                         scene.removeEdge(castedObject);
                         scene.fireChangeEvent(new ActionEvent(selectedObject, AbstractScene.SCENE_CHANGE, "manualDelete"));
@@ -174,7 +174,7 @@ public class SDHModuleActionsFactory {
                 JOptionPane.showMessageDialog(null, "Select only one node", "Error", JOptionPane.WARNING_MESSAGE);
             else {
                 LocalObjectLight castedObject = (LocalObjectLight)selectedObjects.iterator().next();
-                List<LocalSDHContainerLinkDefinition> structure = CommunicationsStub.getInstance().getSDHTransportLinkStructure(castedObject.getClassName(), castedObject.getOid());
+                List<LocalSDHContainerLinkDefinition> structure = CommunicationsStub.getInstance().getSDHTransportLinkStructure(castedObject.getClassName(), castedObject.getId());
                 TopComponent sdhLinkStructure = new SDHLinkStructureTopComponent(castedObject, structure, 
                         SDHModuleService.calculateCapacity(castedObject.getClassName(), SDHModuleService.LinkType.TYPE_TRANSPORTLINK), 1);
                 sdhLinkStructure.open();

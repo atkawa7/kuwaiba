@@ -72,7 +72,7 @@ public final class DeleteBusinessObjectAction extends CallbackSystemAction {
             while (selectedNodes.hasNext()) {
                 ObjectNode selectedNode = (ObjectNode)selectedNodes.next();
                 classNames.add(selectedNode.getObject().getClassName());
-                oids.add(selectedNode.getObject().getOid());
+                oids.add(selectedNode.getObject().getId());
                 if (selectedNode.getParentNode() != null)
                     parents.add(selectedNode.getParentNode());
             }

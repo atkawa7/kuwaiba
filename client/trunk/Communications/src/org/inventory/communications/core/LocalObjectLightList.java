@@ -27,6 +27,6 @@ public class LocalObjectLightList extends ArrayList<LocalObjectLight> {
     
     public LocalObjectLightList(RemoteObjectLightList objectChain) {
         for (RemoteObjectLight anElement : objectChain.getList()) 
-            add(new LocalObjectLight(anElement.getOid(), anElement.getName(), anElement.getClassName()));
+            add(new LocalObjectLight(anElement.getId(), anElement.getName(), anElement.getClassName()));
     }
 }

@@ -63,7 +63,7 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
     
     @Override
     public void setName(String newName) {
-        if (CommunicationsStub.getInstance().setPoolProperties(pool.getOid(), newName, null)) {
+        if (CommunicationsStub.getInstance().setPoolProperties(pool.getId(), newName, null)) {
             pool.setName(newName);
             if (getSheet() != null)
                 setSheet(createSheet());
@@ -101,7 +101,7 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
             null, 
             newPoolItemAction, 
             deletePoolAction, 
-            ShowMoreInformationAction.getInstance(pool.getOid(), pool.getClassName())};
+            ShowMoreInformationAction.getInstance(pool.getId(), pool.getClassName())};
     }
  
     @Override
@@ -118,7 +118,7 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
     protected Sheet createSheet () {
         sheet = Sheet.createDefault();
         Set generalPropertySet = Sheet.createPropertiesSet(); // General attributes category
-        LocalPool lp = CommunicationsStub.getInstance().getPoolInfo(pool.getOid());
+        LocalPool lp = CommunicationsStub.getInstance().getPoolInfo(pool.getId());
         if (lp == null) {
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return sheet;
@@ -192,7 +192,7 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
                                 ObjectNode objNode = (ObjectNode) dropNode;                        
 
                                 if (objNode.getParentNode() instanceof PoolNode) {
-                                    if (CommunicationsStub.getInstance().copyPoolItem(getPool().getOid(), objNode.getObject().getClassName(), objNode.getObject().getOid(), true))
+                                    if (CommunicationsStub.getInstance().copyPoolItem(getPool().getId(), objNode.getObject().getClassName(), objNode.getObject().getId(), true))
                                         ((AbstractChildren) getChildren()).addNotify();
                                     else
                                         NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
@@ -204,7 +204,7 @@ public class PoolNode extends AbstractNode implements PropertyChangeListener {
                             if (dropNode instanceof ObjectNode) {
                                 ObjectNode objectNode = (ObjectNode) dropNode;
                                 if (objectNode.getParentNode() instanceof PoolNode) {
-                                    if (CommunicationsStub.getInstance().movePoolItem(getPool().getOid(), objectNode.getObject().getClassName(), objectNode.getObject().getOid())) {
+                                    if (CommunicationsStub.getInstance().movePoolItem(getPool().getId(), objectNode.getObject().getClassName(), objectNode.getObject().getId())) {
                                         
                                         ((AbstractChildren) objectNode.getParentNode().getChildren()).addNotify();
                                         ((AbstractChildren) getChildren()).addNotify();

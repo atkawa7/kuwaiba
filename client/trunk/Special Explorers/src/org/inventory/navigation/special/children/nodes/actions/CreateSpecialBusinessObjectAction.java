@@ -102,7 +102,7 @@ public final class CreateSpecialBusinessObjectAction extends GenericObjectNodeAc
     private void createSpecialObject(String objectClass, ObjectNode node, HashMap<String, Object> attributes) {
         LocalObjectLight myLol = com.createSpecialObject(
                 objectClass, node.getObject().getClassName(), 
-                node.getObject().getOid(), attributes, -1);
+                node.getObject().getId(), attributes, -1);
         if (myLol == null)
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
         else {

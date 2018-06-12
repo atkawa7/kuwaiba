@@ -29,7 +29,7 @@ public class LocalObjectListItem extends LocalObjectLight {
     private String displayName;
 
     public LocalObjectListItem(){
-        this.oid = NULL_ID;
+        this.id = NULL_ID;
         this.name = "None";
     }
 
@@ -41,14 +41,6 @@ public class LocalObjectListItem extends LocalObjectLight {
      */
     public LocalObjectListItem(long id, String className, String name){
         super(id, name, className);
-    }
-
-    public long getId() {
-        return oid;
-    }
-
-    public void setId(long id) {
-        this.oid = id;
     }
 
     public String getDisplayName() {

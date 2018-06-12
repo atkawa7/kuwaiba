@@ -78,7 +78,7 @@ public final class CreateMultipleTemplateElementAction extends CreateTemplateEle
             TemplateElementNode selectedNode = Utilities.actionsGlobalContext().lookup(TemplateElementNode.class);
             LocalObjectLight selectedObject = selectedNode.getLookup().lookup(LocalObjectLight.class);
             
-            List<LocalObjectLight> templateElements = CommunicationsStub.getInstance().createBulkTemplateElement(((JMenuItem)e.getSource()).getName(), selectedObject.getClassName(), selectedObject.getOid(), numberOfObjects, namePattern);
+            List<LocalObjectLight> templateElements = CommunicationsStub.getInstance().createBulkTemplateElement(((JMenuItem)e.getSource()).getName(), selectedObject.getClassName(), selectedObject.getId(), numberOfObjects, namePattern);
                         
             if (templateElements == null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
