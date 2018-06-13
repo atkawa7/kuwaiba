@@ -1,0 +1,49 @@
+/*
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.kuwaiba.apis.web.gui.dashboards;
+
+import com.vaadin.ui.GridLayout;
+
+/**
+ * Most Kuwaiba modules use master-detail views present information to the user. The master part is usually implemented 
+ * using trees or lists, and when one of their items is selected, the detail shows more information about such item. The aim 
+ * of AbstractDashboard is to provide a standard mechanism to implement a detail view in a dashboard fashion, that is, a grid 
+ * with widgets displaying detailed information (charts, lists, etc)
+ * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ */
+public class AbstractDashboard extends GridLayout {  
+    /**
+     * Default constructor
+     * @param title The title of the dashboard
+     * @param columns The number of columns of the grid
+     * @param rows The number of rows of the grid
+     */
+    public AbstractDashboard(String title, int columns, int rows) {
+        super(columns, rows);
+        setSizeFull();
+    }
+    
+    /**
+     * Adds a dashboard widget to the dashboard in a specific location
+     * @param dashboardWidget The dashboard widget to add
+     * @param column The column to place the dashboard widget
+     * @param row  The column to place the dashboard widget
+     */
+    public void addDashBoardWidget(AbstractDashboardWidget dashboardWidget, int column, int row) {
+        this.addComponent(dashboardWidget, column, row);
+    }
+
+}

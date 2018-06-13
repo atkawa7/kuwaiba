@@ -29,6 +29,7 @@ import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import java.util.List;
+import java.util.Optional;
 import javax.inject.Inject;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
@@ -36,12 +37,12 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.services.persistence.util.Constants;
+import org.kuwaiba.web.modules.services.dashboard.ServiceManagerDashboard;
 
 /**
  * Main view for the Service Manager module
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
-
 @CDIView("smanager")
 public class ServiceManagerView extends HorizontalSplitPanel implements View {
     /**
@@ -109,20 +110,14 @@ public class ServiceManagerView extends HorizontalSplitPanel implements View {
             tblServices.addColumn(RemoteObjectLight::getName).setCaption("Name");
             tblServices.addColumn(RemoteObjectLight::getClassName).setCaption("Type");
             tblServices.setSizeFull();
+            tblServices.setSelectionMode(Grid.SelectionMode.SINGLE);
+            tblServices.addSelectionListener((selectionEvent) -> {
+                if (!selectionEvent.getAllSelectedItems().isEmpty()) {
+                    Optional<RemoteObjectLight> selectedService = selectionEvent.getFirstSelectedItem();
+                    setSecondComponent(new ServiceManagerDashboard(cmbCustomers.getSelectedItem().get(), selectedService.get(), wsBean));
+                }
+            });
             
-//            lstServices.setItems(currentServices);
-//            lstServices.setSelectionMode(Grid.SelectionMode.SINGLE);
-//            lstServices.addColumn(RemoteObjectLight::getName).setCaption("Available Services");
-//            lstServices.setSizeUndefined();
-//            
-//            lstServices.addSelectionListener(new SelectionListener<RemoteObjectLight>() {
-//                @Override
-//                public void selectionChange(SelectionEvent<RemoteObjectLight> event) {
-//                    if (!lstServices.getSelectedItems().isEmpty())
-//                        setSecondComponent(new EndToEndView(lstServices.getSelectedItems().iterator().next(), wsBean, 
-//                                                Page.getCurrent().getWebBrowser().getAddress(), ((RemoteSession) getSession().getAttribute("session")).getSessionId()));
-//                }
-//            });
 
             FormLayout lytFilter = new FormLayout(cmbCustomers, txtServiceFilter);
             lytFilter.setMargin(true);
