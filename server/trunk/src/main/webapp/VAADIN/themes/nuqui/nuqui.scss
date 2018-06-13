@@ -280,6 +280,14 @@ $v-field-background-color: #ccffe6;
             line-height: 24pt;
             padding: 5px;
         }
+        
+        .v-nativebutton {
+            background:none!important;
+            color:inherit;
+            border:none; 
+            padding:0!important;
+            font: inherit;            
+        }
     }
     
     .activitylist {

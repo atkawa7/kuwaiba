@@ -35,7 +35,7 @@ public class Actor {
     /**
      * The id of the actor. If it is an external agent, this value will be -1
      */
-    private int id;
+    private long id;
     /**
      * Alias used to identify the actor. Most of the times, it will be the name of the user/group
      */
@@ -45,17 +45,17 @@ public class Actor {
      */
     private int type;
 
-    public Actor(int id, String name, int type) {
+    public Actor(long id, String name, int type) {
         this.id = id;
         this.name = name;
         this.type = type;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

@@ -34,6 +34,7 @@ import org.kuwaiba.apis.forms.components.impl.ObjectHierarchyProvider;
 import org.kuwaiba.apis.forms.elements.FormStructure;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
@@ -43,13 +44,15 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 public class FormRenderer extends CustomComponent {
     private final VerticalLayout content;
     private final FormDefinitionLoader formLoader;
-    private HashMap<Component, GraphicalComponent> components = new HashMap();
-    private final List<RemoteArtifact> remoteArtifacts;
+    private final HashMap<Component, GraphicalComponent> components = new HashMap();
+////    private final List<RemoteArtifact> remoteArtifacts;
+    private final RemoteProcessInstance processInstance;
     
-    public FormRenderer(FormDefinitionLoader formLoader, List<RemoteArtifact> remoteArtifacts) {
+    public FormRenderer(FormDefinitionLoader formLoader, RemoteProcessInstance processInstance/*, List<RemoteArtifact> remoteArtifacts*/) {
                         
         this.formLoader = formLoader;
-        this.remoteArtifacts = remoteArtifacts;
+////        this.remoteArtifacts = remoteArtifacts;
+        this.processInstance = processInstance;
         
         if (formLoader.getRoot() != null && 
             formLoader.getRoot().getFormStructure() != null &&
@@ -77,7 +80,7 @@ public class FormRenderer extends CustomComponent {
         
         renderRecursive(formLoader.getRoot(), content);
         
-        formLoader.fireOnload(new ScriptQueryExecutorImpl(wsBean, session, remoteArtifacts));
+        formLoader.fireOnload(new ScriptQueryExecutorImpl(wsBean, session, processInstance));
     }
         
     private void renderRecursive(AbstractElement parentElement, Component parentComponent) {

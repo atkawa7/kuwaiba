@@ -20,13 +20,17 @@ import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.apis.forms.elements.ScriptQueryExecutor;
 import org.kuwaiba.apis.persistence.util.StringPair;
+import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.openide.util.Exceptions;
 
 /**
  * An Implementation of Script Query Executor to the Web Client of Kuwaiba
@@ -38,13 +42,14 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
     
     private List<RemoteScriptQuery> scriptQueries;
     
-    private final List<RemoteArtifact> remoteArtifacts;
+    private RemoteProcessInstance processInstance;
+////    private final List<RemoteArtifact> remoteArtifacts;
     
-    public ScriptQueryExecutorImpl(WebserviceBeanLocal wsBean, RemoteSession session, List<RemoteArtifact> remoteArtifacts) {
+    public ScriptQueryExecutorImpl(WebserviceBeanLocal wsBean, RemoteSession session, RemoteProcessInstance processInstance/*, List<RemoteArtifact> remoteArtifacts*/) {
         this.wsBean = wsBean;
         this.session = session;
-        this.remoteArtifacts = remoteArtifacts;
-        
+////        this.remoteArtifacts = remoteArtifacts;
+        this.processInstance = processInstance;
         try {
             scriptQueries = wsBean.getScriptQueries(Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
             
@@ -57,14 +62,45 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
     @Override
     public Object execute(String scriptQueryName, List<String> parameterNames, List<String> parameterValues) {
         if ("shared".equals(scriptQueryName)) {
-            if (remoteArtifacts != null && !remoteArtifacts.isEmpty()) {
-                List<StringPair> sharedInformation = remoteArtifacts.get(0).getSharedInformation();
-                if (sharedInformation != null) {
-                    for (StringPair pair : sharedInformation) {
-                        if ("txtX".equals(pair.getKey()))
-                            return pair.getValue();
+            try {
+                List<RemoteActivityDefinition> path = wsBean.getProcessInstanceActivitiesPath(
+                    processInstance.getId(), 
+                    Page.getCurrent().getWebBrowser().getAddress(), 
+                    session.getSessionId());
+              
+                List<RemoteArtifact> remoteArtifacts = new ArrayList();
+                
+                for (RemoteActivityDefinition activity : path) {
+                    try {
+                        RemoteArtifact remoteArtifact = wsBean.getArtifactForActivity(
+                            processInstance.getId(), 
+                            activity.getId(), 
+                            Page.getCurrent().getWebBrowser().getAddress(), 
+                            session.getSessionId());
+                        
+                        remoteArtifacts.add(remoteArtifact);
+                        
+                    } catch (ServerSideException ex) {
                     }
                 }
+                
+                if (!remoteArtifacts.isEmpty()) {
+                    
+                    List<StringPair> sharedInformation = remoteArtifacts.get(Integer.valueOf(parameterValues.get(0))).getSharedInformation();
+                    
+                    if (sharedInformation != null) {
+                        for (StringPair pair : sharedInformation) {
+                            if (parameterValues.get(1).equals(pair.getKey())) {
+                                return pair.getValue();
+                            }
+                        }
+                    }
+                }
+                return null;
+                
+            } catch (ServerSideException ex) {
+                NotificationsUtil.showError(ex.getMessage());
+                return null;
             }
         }
         

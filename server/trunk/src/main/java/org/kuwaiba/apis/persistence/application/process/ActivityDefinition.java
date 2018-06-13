@@ -30,7 +30,7 @@ public class ActivityDefinition extends ActivityDefinitionLight {
      * The next activity according to the flow defined in the process definition
      */
     private ActivityDefinition nextActivity;
-
+    
     public ActivityDefinition(long id, String name, String description, 
             int type, ArtifactDefinition arfifact, Actor actor) {
         super(id, name, description, type, arfifact);
@@ -51,4 +51,5 @@ public class ActivityDefinition extends ActivityDefinitionLight {
     public void setNextActivity(ActivityDefinition nextActivity) {
         this.nextActivity = nextActivity;
     }
+    
 }

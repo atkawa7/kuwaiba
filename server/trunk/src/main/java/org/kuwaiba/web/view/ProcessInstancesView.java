@@ -14,14 +14,15 @@
  */
 package org.kuwaiba.web.view;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
@@ -66,7 +67,8 @@ public class ProcessInstancesView extends VerticalLayout {
         HorizontalLayout tools = new HorizontalLayout();
         tools.setWidth("100%");
                 
-        btnCreateProcessInstance = new Button("Crear Alta de un servicio");
+        btnCreateProcessInstance = new Button("Nueva Alta de Servicio", VaadinIcons.PLUS);
+                        
         btnCreateProcessInstance.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
@@ -109,9 +111,10 @@ public class ProcessInstancesView extends VerticalLayout {
             beans.add(new ProcessInstanceBean(process, wsBean, session));
         
         grid.setItems(beans);
+        grid.addColumn(ProcessInstanceBean::getOrderNumber).setCaption("Order Number");
+        grid.addColumn(ProcessInstanceBean::getServiceCode).setCaption("Service Code");
         grid.addColumn(ProcessInstanceBean::getCurrentActivity).setCaption("Current Activity");
         grid.addColumn(ProcessInstanceBean::getCurrentActivityActor).setCaption("Actor");
-        grid.addColumn(ProcessInstanceBean::getOrderNumber).setCaption("Order Number");
         /*
         grid.addColumn(ProcessInstanceBean::getViewButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
             @Override
@@ -120,7 +123,7 @@ public class ProcessInstancesView extends VerticalLayout {
             }
         })).setCaption("View");
         */
-        grid.addColumn(ProcessInstanceBean::getEditButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
+        ButtonRenderer buttonContinuar = new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
             @Override
             public void click(ClickableRenderer.RendererClickEvent event) {
                 ProcessInstanceBean processInstanceBean = (ProcessInstanceBean) event.getItem();
@@ -128,7 +131,29 @@ public class ProcessInstancesView extends VerticalLayout {
                 new ProcessInstanceView(processInstanceBean.getProcessInstance(), processInstanceBean.getProcessDefinition(), wsBean, session)
                 );
             }
-        })).setCaption("Edit");
+        });
+        
+        ButtonRenderer buttonView = new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
+            @Override
+            public void click(ClickableRenderer.RendererClickEvent event) {
+                ProcessInstanceBean processInstanceBean = (ProcessInstanceBean) event.getItem();
+                
+                ProcessGraph processGraph = new ProcessGraph(
+                    processInstanceBean.getProcessInstance(), 
+                    processInstanceBean.getProcessDefinition(), 
+                    wsBean, 
+                    session);
+                Window newWindow = new Window();
+                newWindow.setWidth(80, Unit.PERCENTAGE);
+                newWindow.setHeight(80, Unit.PERCENTAGE);
+                newWindow.setModal(true);
+                newWindow.setContent(processGraph);
+                getUI().addWindow(newWindow);
+            }
+        });
+                
+        grid.addColumn(ProcessInstanceBean::getEditButtonCaption, buttonContinuar).setCaption("Continuar");
+        grid.addColumn(ProcessInstanceBean::getViewButtonCaption, buttonView).setCaption("View");
         /*
         grid.addColumn(ProcessInstanceBean::getDeleteButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
             @Override
@@ -137,7 +162,13 @@ public class ProcessInstancesView extends VerticalLayout {
             }
         })).setCaption("Delete");
         */
+        Label lbl = new Label("Altas de Servicio");
+                
+        wrapper.addComponent(lbl);
+        wrapper.setComponentAlignment(lbl, Alignment.TOP_CENTER);
+                                
         tools.addComponent(btnCreateProcessInstance);
+        
         tools.setComponentAlignment(btnCreateProcessInstance, Alignment.MIDDLE_RIGHT);
         wrapper.addComponent(tools);
         wrapper.addComponent(grid);

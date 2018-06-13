@@ -111,36 +111,52 @@ public abstract class AbstractElementField extends AbstractElement {
         super.onComponentEvent(event);
     }
     
+    private void loadValue(List<String> list) {
+        if (list != null && !list.isEmpty()) {
+
+            String functionName = list.get(0);
+
+            Runner runner = getFormStructure().getElementScript().getFunctionByName(functionName);
+
+            List parameters = new ArrayList();
+
+            for (int i = 1; i < list.size(); i += 1) {
+                AbstractElement anElement = getFormStructure().getElementById(list.get(i));
+                parameters.add(anElement != null ? anElement : list.get(i));
+            }
+
+            Object newValue = runner.run(parameters);
+
+            setValue(newValue);
+
+            fireElementEvent(new EventDescriptor(
+                Constants.EventAttribute.ONPROPERTYCHANGE, 
+                Constants.Property.VALUE, newValue, null));
+        }
+    }
+    
     @Override
-    public void fireOnload() {
-        super.fireOnload(); 
+    public void fireOnLoad() {
+        super.fireOnLoad(); 
         
         if (hasProperty(Constants.EventAttribute.ONLOAD, Constants.Property.VALUE)) {
             
             List<String> list = getEvents().get(Constants.EventAttribute.ONLOAD).get(Constants.Property.VALUE);
-
-            if (list != null && !list.isEmpty()) {
-
-                String functionName = list.get(0);
-
-                Runner runner = getFormStructure().getElementScript().getFunctionByName(functionName);
-
-                List parameters = new ArrayList();
-
-                for (int i = 1; i < list.size(); i += 1) {
-                    AbstractElement anElement = getFormStructure().getElementById(list.get(i));
-                    parameters.add(anElement != null ? anElement : list.get(i));
-                }
-
-                Object newValue = runner.run(parameters);
-                
-                setValue(newValue);
-                
-                fireElementEvent(new EventDescriptor(
-                    Constants.EventAttribute.ONPROPERTYCHANGE, 
-                    Constants.Property.VALUE, newValue, null));
-            }
+            
+            loadValue(list);
         }                        
+    }
+    
+    @Override
+    public void fireOnLazyLoad() {
+        super.fireOnLazyLoad();
+        
+        if (hasProperty(Constants.EventAttribute.ONLAZYLOAD, Constants.Property.VALUE)) {
+            
+            List<String> list = getEvents().get(Constants.EventAttribute.ONLAZYLOAD).get(Constants.Property.VALUE);
+            
+            loadValue(list);
+        }
     }
             
     @Override

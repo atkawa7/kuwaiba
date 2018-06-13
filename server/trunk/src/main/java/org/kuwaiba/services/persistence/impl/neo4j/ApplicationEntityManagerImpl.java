@@ -76,11 +76,13 @@ import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.application.process.Artifact;
 import org.kuwaiba.apis.persistence.application.process.ArtifactDefinition;
 import org.kuwaiba.apis.persistence.application.process.ProcessDefinition;
+import org.kuwaiba.apis.persistence.application.process.ProcessInstance;
 import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessObjectList;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.BusinessRuleException;
+import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
@@ -96,6 +98,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.UserInfoLight;
+import org.kuwaiba.web.view.ProcessCache;
 import org.mindrot.jbcrypt.BCrypt;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -107,6 +110,7 @@ import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.helpers.collection.Iterators;
+import org.openide.util.Exceptions;
 
 /**
  * Application Entity Manager reference implementation
@@ -4434,28 +4438,77 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     //<editor-fold desc="Process API" defaultstate="collapsed">
 
     @Override
-    public Artifact getArtifactForActivity(long processInstanceId, long activityId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Artifact getArtifactForActivity(long processInstanceId, long activityId) throws ApplicationObjectNotFoundException {
+        try {
+            return ProcessCache.getInstance().getArtifactForActivity(processInstanceId, activityId);
+        } catch (InventoryException ex) {
+            throw new ApplicationObjectNotFoundException(ex.getMessage());
+        }
     }
 
     @Override
     public ArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, long activityDefinitionId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return ProcessCache.getInstance().getArtifactDefinitionForActivity(processDefinitionId, activityDefinitionId);
+        } catch (InventoryException ex) {
+            Exceptions.printStackTrace(ex);
+            return null;
+        }
     }
 
     @Override
-    public void commitActivity(long processInstanceId, long activityDefinitionId, RemoteArtifact artifact) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void commitActivity(long processInstanceId, long activityDefinitionId, Artifact artifact) {
+        try {           
+            ProcessCache.getInstance().commitActivity(processInstanceId, activityDefinitionId, artifact);
+            
+        } catch (InventoryException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+    
+    @Override
+    public void updateActivity(long processInstanceId, long activityDefinitionId, Artifact artifact) {
+        try {
+            Artifact a = ProcessCache.getInstance().getArtifact(artifact.getId());
+            a.setId(artifact.getId());
+            a.setName(artifact.getName());
+            a.setContentType(artifact.getContentType());
+            a.setContent(artifact.getContent());
+            a.setSharedInformation(artifact.getSharedInformation());
+            ProcessCache.getInstance().updateActivity(processInstanceId, activityDefinitionId, a);
+        } catch (InventoryException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+    
+    @Override
+    public List<ActivityDefinition> getProcessInstanceActivitiesPath(long processInstanceId) {
+        try {
+            return ProcessCache.getInstance().getProcessInstanceActivitiesPath(processInstanceId);
+        } catch (InventoryException ex) {
+            Exceptions.printStackTrace(ex);
+            return null;
+        }
     }
 
     @Override
     public ActivityDefinition getNextActivityForProcessInstance(long processInstanceId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return ProcessCache.getInstance().getNextActivityForProcessInstance(processInstanceId);
+        } catch (InventoryException ex) {
+            Exceptions.printStackTrace(ex);
+            return null;
+        }
     }
 
     @Override
     public ProcessDefinition getProcessDefinition(long processDefinitionId) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return ProcessCache.getInstance().getProcessDefinition(processDefinitionId);
+        } catch (InventoryException ex) {
+            Exceptions.printStackTrace(ex);
+            return null;
+        }
     }
 
     @Override
@@ -4472,10 +4525,45 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public long createProcessDefinition(String name, String description, String version, boolean enabled, byte[] structure) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
+    @Override
+    public List<ProcessInstance> getProcessInstances(long processDefinitionId) throws ApplicationObjectNotFoundException {
+        try {
+            return ProcessCache.getInstance().getProcessInstances(processDefinitionId);
+        } catch (InventoryException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new ApplicationObjectNotFoundException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public List<ProcessDefinition> getProcessDefinitions() {
+        try {
+            return ProcessCache.getInstance().getProcessDefinitions();
+        } catch (InventoryException ex) {
+            Exceptions.printStackTrace(ex);
+            return null;
+        }
+    }
+    
+    @Override
+    public ProcessInstance getProcessInstance(long processInstanceId) {
+        try {
+            return ProcessCache.getInstance().getProcessInstance(processInstanceId);
+        } catch (InventoryException ex) {
+            Exceptions.printStackTrace(ex);
+            return null;
+        }
+    }
 
     @Override
     public long createProcessInstance(long processDefinitionId, String processInstanceName, String processInstanceDescription) throws ApplicationObjectNotFoundException, InvalidArgumentException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            return ProcessCache.getInstance().createProcessInstance(processDefinitionId, processInstanceName, processInstanceDescription);
+        } catch (InventoryException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new ApplicationObjectNotFoundException(ex.getMessage());
+        }
     }
     
     //</editor-fold>

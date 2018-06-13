@@ -48,7 +48,7 @@ public class ProcessDefinition {
      * Reference to the start activity (typically a TYPE_START type of activity). The rest will be linked from this one
      */
     private ActivityDefinition startActivity;
-
+        
     public ProcessDefinition(long id, String name, String description, long creationDate, 
             String version, boolean enabled, ActivityDefinition startActivity) {
         this.id = id;
@@ -108,11 +108,37 @@ public class ProcessDefinition {
         this.enabled = enabled;
     }
 
-    public ActivityDefinition getStartAction() {
+    public ActivityDefinition getStartActivity() {
         return startActivity;
     }
 
-    public void setStartAction(ActivityDefinition startAction) {
-        this.startActivity = startAction;
+    public void setStartActivity(ActivityDefinition startActivity) {
+        this.startActivity = startActivity;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + (int) (this.id ^ (this.id >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ProcessDefinition other = (ProcessDefinition) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
+    }
+        
 }

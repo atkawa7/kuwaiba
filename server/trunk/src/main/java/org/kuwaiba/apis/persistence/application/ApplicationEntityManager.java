@@ -29,6 +29,7 @@ import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.application.process.Artifact;
 import org.kuwaiba.apis.persistence.application.process.ArtifactDefinition;
 import org.kuwaiba.apis.persistence.application.process.ProcessDefinition;
+import org.kuwaiba.apis.persistence.application.process.ProcessInstance;
 import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessObjectList;
@@ -1489,8 +1490,22 @@ public interface ApplicationEntityManager {
     * @throws ApplicationObjectNotFoundException If the process could not be found or if the activity definition could not be found
     * @throws InvalidArgumentException If the activity had been already executed,  of there's a mismatch in the artifact versions or if the user is not an authorized actor to carry on with the activity
     */
-    public void commitActivity(long processInstanceId, long activityDefinitionId, RemoteArtifact artifact) 
+    public void commitActivity(long processInstanceId, long activityDefinitionId, Artifact artifact) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Updates the artifact generated once an activity has been completed (for example, the user filled in a form). 
+     * @param processInstanceId The process instance the activity belongs to 
+     * @param activityDefinitionId The activity id
+     * @param artifact The artifact to be saved
+    */    
+    public void updateActivity(long processInstanceId, long activityDefinitionId, Artifact artifact);
+    /**
+     * Gets Process Instance Activities Path
+     * @param processInstanceId Process Instance Id to get path
+     * @return The activity definition
+     * 
+     */    
+    public List<ActivityDefinition> getProcessInstanceActivitiesPath(long processInstanceId);
     /**
     * Requests for the next activity to be executed in a process instance.
     * @param processInstanceId The running process to get the next activity from
@@ -1536,7 +1551,24 @@ public interface ApplicationEntityManager {
      */    
     public long createProcessDefinition(String name, String description, String version, boolean enabled, byte[] structure) 
             throws InvalidArgumentException;
-
+    /**
+     * Gets a process instances of a process definition
+     * @param processDefinitionId The process definition id
+     * @return The process instances
+     * @throws ApplicationObjectNotFoundException If the process definition could not be found
+     */
+    public List<ProcessInstance> getProcessInstances(long processDefinitionId) throws ApplicationObjectNotFoundException;
+    /**
+     * Gets a process definition instances
+     * @return The process instances
+     */
+    public List<ProcessDefinition> getProcessDefinitions();
+    /**
+     * Gets a process instance
+     * @param processInstanceId Process Instance Id
+     * @return a Process Instance for the given id
+     */
+    public ProcessInstance getProcessInstance(long processInstanceId);
     /**
     * Creates an instance of a process, that is, starts one
     * @param processDefinitionId The id of the process to be started

@@ -19,6 +19,7 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
+import org.kuwaiba.apis.persistence.application.process.ConditionalActivityDefinition;
 
 /**
  * wrapper of ActivityDefinition. An activity is an step in a process. Conditionals are a particular type of activities from the point of view of this API. This class
@@ -124,15 +125,55 @@ public class RemoteActivityDefinition implements Serializable {
     }
     
     public static RemoteActivityDefinition asRemoteActivityDefinition(ActivityDefinition activityDefinition) {
-        RemoteActivityDefinition res = new RemoteActivityDefinition(activityDefinition.getId(), activityDefinition.getName(), 
+        RemoteActivityDefinition res = null;
+        
+        if (activityDefinition instanceof ConditionalActivityDefinition) {
+            res = new RemoteConditionalActivityDefinition(activityDefinition.getId(), activityDefinition.getName(), 
                 activityDefinition.getDescription(), activityDefinition.getType(), 
                 new RemoteArtifactDefinition(activityDefinition.getArfifact().getId(), activityDefinition.getArfifact().getName(), activityDefinition.getArfifact().getDescription(), activityDefinition.getArfifact().getVersion(), activityDefinition.getArfifact().getType(), activityDefinition.getArfifact().getDefinition()), 
                 new RemoteActor(activityDefinition.getActor().getId(), activityDefinition.getActor().getName(), activityDefinition.getActor().getType()));
-        
-        //Recursively build the linked list of activities
-        while (activityDefinition.getNextActivity() != null) 
-            res.setNextActivity(RemoteActivityDefinition.asRemoteActivityDefinition(activityDefinition.getNextActivity()));
-        
+            
+            if (((ConditionalActivityDefinition) activityDefinition).getNextActivityIfTrue() != null) 
+                ((RemoteConditionalActivityDefinition) res).setNextActivityIfTrue(RemoteActivityDefinition.asRemoteActivityDefinition(((ConditionalActivityDefinition) activityDefinition).getNextActivityIfTrue()));
+            
+            if (((ConditionalActivityDefinition) activityDefinition).getNextActivityIfFalse() != null) 
+                ((RemoteConditionalActivityDefinition) res).setNextActivityIfFalse(RemoteActivityDefinition.asRemoteActivityDefinition(((ConditionalActivityDefinition) activityDefinition).getNextActivityIfFalse()));
+            
+        } else {
+            res = new RemoteActivityDefinition(activityDefinition.getId(), activityDefinition.getName(), 
+                activityDefinition.getDescription(), activityDefinition.getType(), 
+                new RemoteArtifactDefinition(activityDefinition.getArfifact().getId(), activityDefinition.getArfifact().getName(), activityDefinition.getArfifact().getDescription(), activityDefinition.getArfifact().getVersion(), activityDefinition.getArfifact().getType(), activityDefinition.getArfifact().getDefinition()), 
+                new RemoteActor(activityDefinition.getActor().getId(), activityDefinition.getActor().getName(), activityDefinition.getActor().getType()));
+            
+            if (activityDefinition.getNextActivity() != null) 
+                res.setNextActivity(RemoteActivityDefinition.asRemoteActivityDefinition(activityDefinition.getNextActivity()));
+        }
         return res;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (int) (this.id ^ (this.id >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final RemoteActivityDefinition other = (RemoteActivityDefinition) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
+    }
+        
 }

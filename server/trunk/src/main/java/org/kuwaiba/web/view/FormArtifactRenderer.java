@@ -17,7 +17,6 @@ package org.kuwaiba.web.view;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.forms.FormInstanceCreator;
 import org.kuwaiba.apis.forms.FormInstanceLoader;
@@ -28,6 +27,7 @@ import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
@@ -42,7 +42,7 @@ public class FormArtifactRenderer implements ArtifactRenderer {
     
     private FormRenderer formRenderer;
     private FormInstanceCreator formInstanceCreator;
-    private final List<RemoteArtifact> remoteArtifacts;
+////    private final List<RemoteArtifact> remoteArtifacts;
     //TODO: only to test the concept the communicator share the information of one form
     //in the future it can be suport many forms
 //    public class FormInformationCommunicator {
@@ -60,13 +60,15 @@ public class FormArtifactRenderer implements ArtifactRenderer {
 //            this.publicInformation = publicInformation;
 //        }
 //    }
+    private RemoteProcessInstance processInstance;
     
-    public FormArtifactRenderer(RemoteArtifactDefinition artifactDefinition, RemoteArtifact artifact, WebserviceBeanLocal wsBean, RemoteSession session, List<RemoteArtifact> remoteArtifacts) {
+    public FormArtifactRenderer(RemoteArtifactDefinition artifactDefinition, RemoteArtifact artifact, WebserviceBeanLocal wsBean, RemoteSession session, RemoteProcessInstance processInstance/*, List<RemoteArtifact> remoteArtifacts*/) {
         this.artifactDefinition = artifactDefinition;
         this.artifact = artifact;
         this.wsBean = wsBean;
         this.session = session;
-        this.remoteArtifacts = remoteArtifacts;
+        this.processInstance = processInstance;
+////        this.remoteArtifacts = remoteArtifacts;
     }
         
     @Override
@@ -85,7 +87,7 @@ public class FormArtifactRenderer implements ArtifactRenderer {
                     
                     FormDefinitionLoader formLoader = fil.load(artifactDefinition.getDefinition(), artifact.getContent());
                                         
-                    formRenderer = new FormRenderer(formLoader, remoteArtifacts);
+                    formRenderer = new FormRenderer(formLoader, processInstance);
                     formRenderer.render(wsBean, session);
 
                     return formRenderer;
@@ -98,7 +100,7 @@ public class FormArtifactRenderer implements ArtifactRenderer {
                     FormDefinitionLoader formLoader = new FormDefinitionLoader(artifactDefinition.getDefinition());
                     formLoader.build();
                     
-                    formRenderer = new FormRenderer(formLoader, remoteArtifacts);
+                    formRenderer = new FormRenderer(formLoader, processInstance);
                     formRenderer.render(wsBean, session);
 
                     return formRenderer;

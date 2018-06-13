@@ -20,8 +20,10 @@ import org.kuwaiba.apis.forms.elements.Constants;
 import org.kuwaiba.apis.forms.elements.ElementComboBox;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.HasValue.ValueChangeListener;
+import com.vaadin.event.FieldEvents;
 import com.vaadin.ui.ComboBox;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -63,6 +65,14 @@ public class ComponentComboBox extends GraphicalComponent {
                             event.getValue(), event.getOldValue()));
                     }
                 } 
+            });
+            
+            getComponent().addFocusListener(new FieldEvents.FocusListener() {
+                @Override
+                public void focus(FieldEvents.FocusEvent event) {
+                    getComponent().setItems(Collections.EMPTY_LIST);
+                    comboBox.fireOnLazyLoad();
+                }
             });
         }
     }

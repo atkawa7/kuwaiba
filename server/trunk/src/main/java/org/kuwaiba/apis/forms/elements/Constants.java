@@ -94,6 +94,7 @@ public class Constants {
         public static final String ONNOTIFY = "onnotify"; //NOI18N
         public static final String ONPROPERTYCHANGE = "onpropertychange"; //NOI18N
         public static final String ONLOAD = "onload"; //NOI18N
+        public static final String ONLAZYLOAD = "onlazyload"; //NOI18N
     }
     
     public class Function {

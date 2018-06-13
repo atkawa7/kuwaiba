@@ -213,7 +213,7 @@ public class FormDefinitionLoader {
             runner.setScriptQueryExecutor(scriptQueryExecutor);
         
         for (AbstractElement element : elements)
-            element.fireOnload();
+            element.fireOnLoad();
     }
     
 }

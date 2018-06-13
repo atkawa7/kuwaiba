@@ -15,6 +15,7 @@
 package org.kuwaiba.web.view;
 
 import com.vaadin.server.Page;
+import java.util.List;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
@@ -59,13 +60,18 @@ public class ProcessInstanceBean {
         RemoteProcessDefinition processDefinition = getProcessDefinition();
         
         if (processDefinition != null) {
-            
-            RemoteActivityDefinition activityDefinition = processDefinition.getStartActivity();
-
-            while (activityDefinition != null) {
-                if (activityDefinition.getId() == processInstance.getCurrentActivity())
-                    return activityDefinition;
-                activityDefinition = activityDefinition.getNextActivity();
+            try {
+                
+                List<RemoteActivityDefinition> path = wsBean.getProcessInstanceActivitiesPath(
+                    processInstance.getId(), 
+                    Page.getCurrent().getWebBrowser().getAddress(), 
+                    session.getSessionId());
+                
+                if (path != null && !path.isEmpty())
+                    return path.get(path.size() - 1);
+                
+            } catch (ServerSideException ex) {
+                NotificationsUtil.showError(ex.getMessage());
             }
         }
         return null;
@@ -91,18 +97,20 @@ public class ProcessInstanceBean {
         return null;
     }
     
-    public String getOrderNumber() {
+    public String getServiceCode() {
         try {
-            RemoteProcessDefinition processDefinition = getProcessDefinition();
+            List<RemoteActivityDefinition> path = wsBean.getProcessInstanceActivitiesPath(
+                    processInstance.getId(),
+                    Page.getCurrent().getWebBrowser().getAddress(),
+                    session.getSessionId());
             
-            if (processDefinition != null) {
-                RemoteActivityDefinition activityDefinition = processDefinition.getStartActivity();
+            if (path != null && path.size() >= 2) {
+                RemoteActivityDefinition orderServiceActivity = path.get(1);
                 
-                if (activityDefinition != null) {
-                    
-                    RemoteArtifact artifact = wsBean.getArtifactForActivity(
-                            processInstance.getId(),
-                            activityDefinition.getId(),
+                if (orderServiceActivity != null) {
+
+                    RemoteArtifact artifact = wsBean.getArtifactForActivity(processInstance.getId(),
+                            orderServiceActivity.getId(),
                             Page.getCurrent().getWebBrowser().getAddress(),
                             session.getSessionId());
 
@@ -110,15 +118,45 @@ public class ProcessInstanceBean {
 
                         for (StringPair pair : artifact.getSharedInformation()) {
 
-                            if (pair.getKey().equals("txtX"))
+                            if (pair.getKey().equals("txtServiceCode"))
                                 return pair.getValue();
                         }
                     }
                 }
             }
         } catch (ServerSideException ex) {
+        }
+        return null;
+    }
+    
+    public String getOrderNumber() {
+        try {
+            List<RemoteActivityDefinition> path = wsBean.getProcessInstanceActivitiesPath(
+                    processInstance.getId(),
+                    Page.getCurrent().getWebBrowser().getAddress(),
+                    session.getSessionId());
             
-            NotificationsUtil.showError(ex.getMessage());
+            if (path != null && path.size() >= 2) {
+                RemoteActivityDefinition orderServiceActivity = path.get(1);
+                
+                if (orderServiceActivity != null) {
+
+                    RemoteArtifact artifact = wsBean.getArtifactForActivity(processInstance.getId(),
+                            orderServiceActivity.getId(),
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            session.getSessionId());
+
+                    if (artifact.getSharedInformation() != null) {
+
+                        for (StringPair pair : artifact.getSharedInformation()) {
+
+                            if (pair.getKey().equals("txtOrderNumber"))
+                                return pair.getValue();
+                        }
+                    }
+                }
+            }
+        } catch (ServerSideException ex) {
         }
         return null;
     }
@@ -128,7 +166,12 @@ public class ProcessInstanceBean {
     }
     
     public String getEditButtonCaption() {
-        return "Edit";
+        if (getCurrentActivityDefinition() == null)
+            return "Proceso sin Iniciar";
+            
+        if (getCurrentActivityDefinition().getNextActivity() == null)
+            return "Proceso Finalizado";
+        return "Continuar";
     }
     
     public String getViewButtonCaption() {

@@ -41,9 +41,10 @@ public class ComponentImage extends GraphicalComponent {
         if (element instanceof ElementImage) {
             ElementImage image = (ElementImage) element;
             //TODO:
-////            FileResource resource = new FileResource(new File(Variable.FORM_RESOURCE_IMAGES + "/" + image.getValue()));
+//            FileResource resource = new FileResource(new File(Variable.FORM_RESOURCE_IMAGES + "/" + image.getValue()));
+            FileResource resource = new FileResource(new File("/data/form_resources" + "/images" + "/" + image.getValue()));
                         
-////            getComponent().setSource(resource);
+            getComponent().setSource(resource);
             
             if (image.getHeight() != null)
                 getComponent().setWidth(image.getHeight());

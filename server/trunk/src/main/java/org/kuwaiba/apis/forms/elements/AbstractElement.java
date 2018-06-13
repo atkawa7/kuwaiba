@@ -292,6 +292,7 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
             Constants.EventAttribute.ONNOTIFY, 
             Constants.EventAttribute.ONPROPERTYCHANGE, 
             Constants.EventAttribute.ONLOAD,
+            Constants.EventAttribute.ONLAZYLOAD, 
             Constants.Function.VALIDATE};
         
         for (String eventAttr : eventAttrs) {
@@ -349,7 +350,10 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
         hidden = Boolean.valueOf(reader.getAttributeValue(null, Constants.Property.HIDDEN));
     }
     
-    public void fireOnload() {
+    public void fireOnLoad() {
+    }
+    
+    public void fireOnLazyLoad() {
     }
     
     public boolean hasEventAttribute(String eventAttribute) {

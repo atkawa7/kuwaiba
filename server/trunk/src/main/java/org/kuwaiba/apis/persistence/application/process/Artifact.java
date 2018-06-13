@@ -15,6 +15,9 @@
  */
 package org.kuwaiba.apis.persistence.application.process;
 
+import java.util.List;
+import org.kuwaiba.apis.persistence.util.StringPair;
+
 /**
  * Every process activity has at least one artifact. An artifact is the result of 
  * executing an activity. Most of the times, an artifact is simply a form filled in by a user
@@ -38,12 +41,18 @@ public class Artifact {
      * containing a binary file
      */
     private byte[] content;
+    /**
+     * In the current process. Information which can be shared between an activity 
+     * instance and to other activity instances or the process instance.
+     */
+    private List<StringPair> sharedInformation;
 
-    public Artifact(long id, String name, String contentType, byte[] content) {
+    public Artifact(long id, String name, String contentType, byte[] content, List<StringPair> sharedInformation) {
         this.name = name;
         this.contentType = contentType;
         this.content = content;
         this.id = id;
+        this.sharedInformation = sharedInformation;
     }
 
     public String getName() {
@@ -78,4 +87,37 @@ public class Artifact {
         this.id = id;
     }
     
+    public List<StringPair> getSharedInformation() {
+        return sharedInformation;
+    }
+    
+    public void setSharedInformation(List<StringPair> sharedInformation) {
+        this.sharedInformation = sharedInformation;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (int) (this.id ^ (this.id >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Artifact other = (Artifact) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
+    }
+            
 }
