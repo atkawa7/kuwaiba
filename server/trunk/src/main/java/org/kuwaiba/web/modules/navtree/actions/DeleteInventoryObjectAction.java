@@ -37,33 +37,33 @@ public class DeleteInventoryObjectAction extends AbstractAction {
 
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
-        InventoryObjectNode node = (InventoryObjectNode) targetObject;
-        
-        MessageBox messageBox = MessageBox.createQuestion()
-            .withCaption("Delete Object")
-            .withMessage("Are you sure you want to delete this object? (all children will be removed as well)")
-            .withOkButton(() -> {
-                try {
-                    TopComponent parentComponent = node.getTree().getTopComponent();
-                    
-                    RemoteObjectLight object = (RemoteObjectLight) node.getObject();
-
-                    parentComponent.getWsBean().deleteObjects(
-                            new String[] {object.getClassName()}, 
-                            new long [] {object.getId()},
-                            false,
-                            Page.getCurrent().getWebBrowser().getAddress(),
-                            parentComponent.getApplicationSession().getSessionId());
-
-                    node.delete();
-
-                    Notification.show("The object was removed successfully", Notification.Type.TRAY_NOTIFICATION);
-
-                } catch (ServerSideException ex) {
-                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-                }
-            })
-            .withCancelButton();
-        messageBox.open();
+//        InventoryObjectNode node = (InventoryObjectNode) targetObject;
+//        
+//        MessageBox messageBox = MessageBox.createQuestion()
+//            .withCaption("Delete Object")
+//            .withMessage("Are you sure you want to delete this object? (all children will be removed as well)")
+//            .withOkButton(() -> {
+//                try {
+//                    TopComponent parentComponent = node.getTree().getTopComponent();
+//                    
+//                    RemoteObjectLight object = (RemoteObjectLight) node.getObject();
+//
+//                    parentComponent.getWsBean().deleteObjects(
+//                            new String[] {object.getClassName()}, 
+//                            new long [] {object.getId()},
+//                            false,
+//                            Page.getCurrent().getWebBrowser().getAddress(),
+//                            parentComponent.getApplicationSession().getSessionId());
+//
+//                    node.delete();
+//
+//                    Notification.show("The object was removed successfully", Notification.Type.TRAY_NOTIFICATION);
+//
+//                } catch (ServerSideException ex) {
+//                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                }
+//            })
+//            .withCancelButton();
+//        messageBox.open();
     }
 }

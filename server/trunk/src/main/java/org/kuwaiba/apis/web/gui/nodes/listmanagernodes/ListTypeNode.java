@@ -16,7 +16,6 @@
 package org.kuwaiba.apis.web.gui.nodes.listmanagernodes;
 
 import com.vaadin.server.Page;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Notification;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
@@ -34,47 +33,47 @@ import org.kuwaiba.web.modules.lists.actions.ActionsFactory;
  */
 public class ListTypeNode extends AbstractNode<RemoteClassMetadataLight> {
     
-    public ListTypeNode(RemoteClassMetadataLight object) {
-        super(object);
-    }
-    
-    @Override
-    public void setTree(DynamicTree tree) {
-        super.setTree(tree);
-        //tree.setItemIcon(this, new ThemeResource("img/mod_list_icon_list_type.png"));
-    }
-    
-    @Override
-    public void expand() {
-        if (getTree() == null) //If the tree has not been set previously, do nothing
-            return;
-        
-        try {
-            collapse();
-            TopComponent topComponent = getTree().getTopComponent();
-            RemoteClassMetadataLight currentObject = (RemoteClassMetadataLight)getObject();
-            
-            List<RemoteObjectLight> children = topComponent.getWsBean()
-                    .getListTypeItems(currentObject.getClassName(), 
-                            Page.getCurrent().getWebBrowser().getAddress(), 
-                            topComponent.getApplicationSession().getSessionId());
-                        
-            for (RemoteObjectLight child : children) {
-                ListTypeChildNode childNode = new ListTypeChildNode(child);
-                childNode.setTree(getTree());
-                //getTree().setParent(childNode, this);
-            }
-        } catch (ServerSideException ex) {
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-        }
-    }
-        
-    @Override
-    public AbstractAction[] getActions() {
-        return new AbstractAction[] { ActionsFactory.createCreateListTypeChildAction() };
-    }
-
-    @Override
-    public void refresh(boolean recursive) {}
+//    public ListTypeNode(RemoteClassMetadataLight object) {
+//        super(object);
+//    }
+//    
+//    @Override
+//    public void setTree(DynamicTree tree) {
+//        super.setTree(tree);
+//        //tree.setItemIcon(this, new ThemeResource("img/mod_list_icon_list_type.png"));
+//    }
+//    
+//    @Override
+//    public void expand() {
+//        if (getTree() == null) //If the tree has not been set previously, do nothing
+//            return;
+//        
+//        try {
+//            collapse();
+//            TopComponent topComponent = getTree().getTopComponent();
+//            RemoteClassMetadataLight currentObject = (RemoteClassMetadataLight)getObject();
+//            
+//            List<RemoteObjectLight> children = topComponent.getWsBean()
+//                    .getListTypeItems(currentObject.getClassName(), 
+//                            Page.getCurrent().getWebBrowser().getAddress(), 
+//                            topComponent.getApplicationSession().getSessionId());
+//                        
+//            for (RemoteObjectLight child : children) {
+//                ListTypeChildNode childNode = new ListTypeChildNode(child);
+//                childNode.setTree(getTree());
+//                //getTree().setParent(childNode, this);
+//            }
+//        } catch (ServerSideException ex) {
+//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//        }
+//    }
+//        
+//    @Override
+//    public AbstractAction[] getActions() {
+//        return new AbstractAction[] { ActionsFactory.createCreateListTypeChildAction() };
+//    }
+//
+//    @Override
+//    public void refresh(boolean recursive) {}
 
 }

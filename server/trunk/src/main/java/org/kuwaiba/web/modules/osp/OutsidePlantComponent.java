@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -19,21 +19,21 @@ import com.google.common.eventbus.EventBus;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.kuwaiba.web.modules.osp.providers.google.GoogleMapWrapper;
-import org.kuwaiba.web.modules.osp.providers.google.OutsidePlantTooledComponent;
+import org.kuwaiba.web.modules.osp.google.MapComponentWrapper;
+import org.kuwaiba.web.modules.osp.google.OutsidePlantTooledComponent;
 
 /**
  * The main component of the OSP module.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class OutsidePlantComponent extends AbstractTopComponent {
-    private final GoogleMapWrapper googleMapWrapper;
+    private final MapComponentWrapper googleMapWrapper;
     private final OutsidePlantTooledComponent tooledComponent;
             
     public OutsidePlantComponent(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
         super(wsBean, eventBus, session);
         
-        googleMapWrapper = new GoogleMapWrapper(this);
+        googleMapWrapper = new MapComponentWrapper(this);
         googleMapWrapper.setSizeFull();
         
         tooledComponent = new OutsidePlantTooledComponent(this);
@@ -43,7 +43,7 @@ public class OutsidePlantComponent extends AbstractTopComponent {
         this.setSizeFull();
     }
     
-    public GoogleMapWrapper getGoogleMapWrapper() {
+    public MapComponentWrapper getGoogleMapWrapper() {
         return googleMapWrapper;
     }
     

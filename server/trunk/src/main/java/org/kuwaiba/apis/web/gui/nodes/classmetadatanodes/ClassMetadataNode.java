@@ -34,49 +34,49 @@ import org.kuwaiba.web.custom.tree.DynamicTree;
  */
 public class ClassMetadataNode extends AbstractNode<RemoteClassMetadataLight> {
     
-    public ClassMetadataNode(RemoteClassMetadataLight object) {
-        super(object);
-    }
-    
-    @Override
-    public void setTree(DynamicTree tree) {
-        super.setTree(tree);
-        //tree.setItemIcon(this, FontAwesome.SQUARE);
-    }
-
-    @Override
-    public void expand() {
-        if (getTree() == null)
-            return;
-        collapse();
-        try {
-            RemoteClassMetadataLight currentObject = (RemoteClassMetadataLight) getObject();
-            
-            TopComponent topComponent = getTree().getTopComponent();
-            
-            List<RemoteClassMetadataLight> children = topComponent.getWsBean()
-                    .getPossibleChildrenNoRecursive(currentObject.getClassName(), 
-                            Page.getCurrent().getWebBrowser().getAddress(), 
-                            topComponent.getApplicationSession().getSessionId());
-            
-            for (RemoteClassMetadataLight child : children) {
-                ClassMetadataNode childNode = new ClassMetadataNode(child);
-                childNode.setTree(getTree());
-                //getTree().setParent(childNode, this);
-            }
-        }
-        catch(ServerSideException ex) {
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-        }
-    }
-    
-    @Override
-    public AbstractAction[] getActions() {
-        return new AbstractAction[0];
-    }
-
-    @Override
-    public void refresh(boolean recursive) {}
-    
+//    public ClassMetadataNode(RemoteClassMetadataLight object) {
+//        super(object);
+//    }
+//    
+//    @Override
+//    public void setTree(DynamicTree tree) {
+//        super.setTree(tree);
+//        //tree.setItemIcon(this, FontAwesome.SQUARE);
+//    }
+//
+//    @Override
+//    public void expand() {
+//        if (getTree() == null)
+//            return;
+//        collapse();
+//        try {
+//            RemoteClassMetadataLight currentObject = (RemoteClassMetadataLight) getObject();
+//            
+//            TopComponent topComponent = getTree().getTopComponent();
+//            
+//            List<RemoteClassMetadataLight> children = topComponent.getWsBean()
+//                    .getPossibleChildrenNoRecursive(currentObject.getClassName(), 
+//                            Page.getCurrent().getWebBrowser().getAddress(), 
+//                            topComponent.getApplicationSession().getSessionId());
+//            
+//            for (RemoteClassMetadataLight child : children) {
+//                ClassMetadataNode childNode = new ClassMetadataNode(child);
+//                childNode.setTree(getTree());
+//                //getTree().setParent(childNode, this);
+//            }
+//        }
+//        catch(ServerSideException ex) {
+//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//        }
+//    }
+//    
+//    @Override
+//    public AbstractAction[] getActions() {
+//        return new AbstractAction[0];
+//    }
+//
+//    @Override
+//    public void refresh(boolean recursive) {}
+//    
     
 }

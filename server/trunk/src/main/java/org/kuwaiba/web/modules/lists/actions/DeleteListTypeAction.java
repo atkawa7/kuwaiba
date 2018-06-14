@@ -37,32 +37,32 @@ public class DeleteListTypeAction extends AbstractAction {
     
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
-        ListTypeChildNode node = (ListTypeChildNode) targetObject;
-        MessageBox messageBox = MessageBox
-            .createQuestion()
-            .withCaption("Delete List Type")
-            .withMessage("Are you sure you want to delete this item? "
-                    + "(if its already related to another object, it won't be deleted)")
-            .withOkButton(() -> {
-                try {
-                    RemoteObjectLight object = (RemoteObjectLight) node.getObject();
-                    TopComponent parentComponent = node.getTree().getTopComponent();
-
-                    parentComponent.getWsBean().deleteListTypeItem(
-                            object.getClassName(), 
-                            object.getId(), false, 
-                            Page.getCurrent().getWebBrowser().getAddress(),
-                            parentComponent.getApplicationSession().getSessionId());
-
-                    node.delete();
-
-                    Notification.show("The object was removed successfully", Notification.Type.TRAY_NOTIFICATION);
-
-                } catch (ServerSideException ex) {
-                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-                }
-            })
-            .withCancelButton();
-        messageBox.open();
+//        ListTypeChildNode node = (ListTypeChildNode) targetObject;
+//        MessageBox messageBox = MessageBox
+//            .createQuestion()
+//            .withCaption("Delete List Type")
+//            .withMessage("Are you sure you want to delete this item? "
+//                    + "(if its already related to another object, it won't be deleted)")
+//            .withOkButton(() -> {
+//                try {
+//                    RemoteObjectLight object = (RemoteObjectLight) node.getObject();
+//                    TopComponent parentComponent = node.getTree().getTopComponent();
+//
+//                    parentComponent.getWsBean().deleteListTypeItem(
+//                            object.getClassName(), 
+//                            object.getId(), false, 
+//                            Page.getCurrent().getWebBrowser().getAddress(),
+//                            parentComponent.getApplicationSession().getSessionId());
+//
+//                    node.delete();
+//
+//                    Notification.show("The object was removed successfully", Notification.Type.TRAY_NOTIFICATION);
+//
+//                } catch (ServerSideException ex) {
+//                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                }
+//            })
+//            .withCancelButton();
+//        messageBox.open();
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,77 +36,107 @@ import org.kuwaiba.web.modules.navtree.actions.ActionsFactory;
  */
 public class InventoryObjectNode extends AbstractNode<RemoteObjectLight>{
     
-    public InventoryObjectNode(RemoteObjectLight object) {
-        super(object);
-    }
-    
-    @Override
-    public String getDisplayName() {
-        return displayName == null ? getObject().toString() : displayName;
-    }
-    
-    @Override
-    public void setTree(DynamicTree tree) {
-        super.setTree(tree);
-                
-        Resource icon = ClassIcon.newInstance(tree.getTopComponent()).getSmallIcon(
-            ((RemoteObjectLight) getObject()).getClassName());
-        
-        //tree.setItemIcon(this, icon);
-    }
-    
-    @Override
-    public void expand() {
-        if (getTree() == null) //If the tree has not been set previously, do nothing
-            return;
-        collapse();
-        try {
-            TopComponent topComponent = getTree().getTopComponent();
-            RemoteObjectLight currentObject = (RemoteObjectLight)getObject();
-            
-            List<RemoteObjectLight> children = topComponent.getWsBean().getObjectChildren(
-                    currentObject.getClassName(), currentObject.getId(), -1,
-                    Page.getCurrent().getWebBrowser().getAddress(),
-                    topComponent.getApplicationSession().getSessionId());
-            
-            for (RemoteObjectLight child : children) {
-                InventoryObjectNode childNode = new InventoryObjectNode(child);
-                childNode.setTree(getTree());
-                //getTree().setParent(childNode, this);
-            }
-        }catch (ServerSideException ex) {
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-        }
-    }
-        
-    @Override
-    public String toString() {
-        return getDisplayName();
-    }
-    
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof InventoryObjectNode) {
-            return ((InventoryObjectNode)obj).getObject().equals(getObject());
-        }
-        return false;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 97 * hash + Objects.hashCode((RemoteObjectLight)getObject());
-        return hash;
-    }
-
-    @Override
-    public AbstractAction[] getActions() {
-        return new AbstractAction[]{ 
-            ActionsFactory.createCreateInventoryObjectAction(), 
-            ActionsFactory.createDeleteInventoryObjectAction(), 
-            ActionsFactory.createShowObjectIdAction() };
-    }
-
-    @Override
-    public void refresh(boolean recursive) {}  
+//    public InventoryObjectNode(RemoteObjectLight object) {
+//        super(object);
+//    }
+//    
+//    @Override
+//    public String getDisplayName() {
+//        return displayName == null ? getObject().toString() : displayName;
+//    }
+//    
+//    @Override
+//    public void setTree(DynamicTree tree) {
+//        super.setTree(tree);
+//                
+//        Resource icon = ClassIcon.newInstance(tree.getTopComponent()).getSmallIcon(
+//            ((RemoteObjectLight) getObject()).getClassName());
+//        
+//        tree.setItemIcon(this, icon);
+//    }
+//    
+//    @Override
+//    public void expand() {
+//        if (getTree() == null) //If the tree has not been set previously, do nothing
+//            return;
+//        collapse();
+//        try {
+//            TopComponent topComponent = getTree().getTopComponent();
+//            RemoteObjectLight currentObject = (RemoteObjectLight)getObject();
+//            
+//            List<RemoteObjectLight> children = topComponent.getWsBean().getObjectChildren(
+//                    currentObject.getClassName(), currentObject.getOid(), -1,
+//                    Page.getCurrent().getWebBrowser().getAddress(),
+//                    topComponent.getApplicationSession().getSessionId());
+//            
+//            for (RemoteObjectLight child : children) {
+//                InventoryObjectNode childNode = new InventoryObjectNode(child);
+//                childNode.setTree(getTree());
+//                getTree().setParent(childNode, this);
+//            }
+//        }catch (ServerSideException ex) {
+//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//        }
+//    }
+//        
+//    @Override
+//    public String toString() {
+//        return getDisplayName();
+//    }
+//    
+//    @Override
+//    public boolean equals(Object obj) {
+//        if (obj instanceof InventoryObjectNode) {
+//            return ((InventoryObjectNode)obj).getObject().equals(getObject());
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public int hashCode() {
+//        int hash = 7;
+//        hash = 97 * hash + Objects.hashCode((RemoteObjectLight)getObject());
+//        return hash;
+//    }
+//
+//    @Override
+//    public AbstractAction[] getActions() {
+//        
+//        if (getTree().getTopComponent().getWsBean().isSubclassOf(
+//            ((RemoteObjectLight) getObject()).getClassName(), 
+//            "GenericPhysicalPort", 
+//            Page.getCurrent().getWebBrowser().getAddress(),
+//            getTree().getTopComponent().getApplicationSession().getSessionId())) {
+//            
+//            return new AbstractAction[]{ 
+//                ActionsFactory.createCreateInventoryObjectAction(), 
+//                ActionsFactory.createDeleteInventoryObjectAction(), 
+//                ActionsFactory.createShowObjectIdAction(),
+//                ActionsFactory.createConnectMirrorPortAction(),
+//                ActionsFactory.createReleaseMirrorPortAction()
+//            };
+//            
+//        } else if (getTree().getTopComponent().getWsBean().isSubclassOf(
+//            ((RemoteObjectLight) getObject()).getClassName(), 
+//            "SpliceBox", 
+//            Page.getCurrent().getWebBrowser().getAddress(),
+//            getTree().getTopComponent().getApplicationSession().getSessionId())) {
+//            
+//            return new AbstractAction[]{ 
+//                ActionsFactory.createCreateInventoryObjectAction(), 
+//                ActionsFactory.createDeleteInventoryObjectAction(), 
+//                ActionsFactory.createShowObjectIdAction(),
+//                ActionsFactory.getViewNavTreeAction()
+//            };
+//        }
+//            
+//        return new AbstractAction[]{ 
+//            ActionsFactory.createCreateInventoryObjectAction(), 
+//            ActionsFactory.createDeleteInventoryObjectAction(), 
+//            ActionsFactory.createShowObjectIdAction(),
+//        };
+//    }
+//
+//    @Override
+//    public void refresh(boolean recursive) {}  
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.apis.web.gui.nodes.properties;
 
-//import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.ui.ComboBox;
 import java.util.List;
 
@@ -26,28 +25,28 @@ import java.util.List;
  */
 public class PropertyListType <T> extends ComboBox {
 
-    private final String propertyName;
-    private T oldValue;
-    
-    public PropertyListType(String propertyName, List<T> list, T actualValue) {
-        this.propertyName = propertyName;
-        this.setTextInputAllowed(false);
-        this.setEmptySelectionAllowed(false);
+//    private final String propertyName;
+//    private T oldValue;
+//    
+//    public PropertyListType(String propertyName, List<T> list, T actualValue) {
+//        this.propertyName = propertyName;
+//        this.setTextInputAllowed(false);
+//        this.setNullSelectionAllowed(false);
 //        for (T item : list) 
 //            addItem(item);
-        
+//        
 //        this.select(actualValue);
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    public T getOldValue() {
-        return oldValue;
-    }
-
-    public void setOldValue(T oldValue) {
-        this.oldValue = oldValue;
-    }
+//    }
+//
+//    public String getPropertyName() {
+//        return propertyName;
+//    }
+//
+//    public T getOldValue() {
+//        return oldValue;
+//    }
+//
+//    public void setOldValue(T oldValue) {
+//        this.oldValue = oldValue;
+//    }
 }

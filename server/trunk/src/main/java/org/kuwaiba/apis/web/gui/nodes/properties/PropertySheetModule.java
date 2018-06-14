@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,71 +28,116 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
  */
 public class PropertySheetModule extends AbstractModule {
 
-    private PropertySheetComponent propertySheet;
-    private final WebserviceBeanLocal wsBean;
-    private final RemoteSession session;
-    
-     public PropertySheetModule(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
-        super(eventBus);
-        this.wsBean = wsBean;
-        this.session = session;
-        icon = new ThemeResource("img/mod_icon_navtree.png");
-    }
-    
     @Override
     public String getName() {
-        return "Property Sheet";
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public String getDescription() {
-        return "Get the attributes of a selected object";
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public String getVersion() {
-        return "1.0";
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public String getVendor() {
-        return "Neotropic SAS";
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public int getType() {
-        return MODULE_TYPE_FREE_CORE;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public String getLocation() {
-        return "Tools/Navigation";
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public int getMode() {
-        return AbstractModule.COMPONENT_MODE_EXPLORER;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public Component open() {
-        if (instanceCount == 0) {
-            propertySheet = new PropertySheetComponent(eventBus, wsBean, session);
-            instanceCount ++;
-        }
-        //Register components in the event bus
-        propertySheet.registerComponents();
-        return propertySheet;
-    }
-    
-    public void show(){
-        propertySheet.showSheet("new");
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void close() {
-        //Unregister components from the event bus
-        propertySheet.unregisterComponents();
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+//    private PropertySheetComponent propertySheet;
+//    private final WebserviceBeanLocal wsBean;
+//    private final RemoteSession session;
+//    
+//     public PropertySheetModule(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
+//        super(eventBus);
+//        this.wsBean = wsBean;
+//        this.session = session;
+//        icon = new ThemeResource("img/mod_icon_navtree.png");
+//    }
+//    
+//    @Override
+//    public String getName() {
+//        return "Property Sheet";
+//    }
+//
+//    @Override
+//    public String getDescription() {
+//        return "Get the attributes of a selected object";
+//    }
+//
+//    @Override
+//    public String getVersion() {
+//        return "1.0";
+//    }
+//
+//    @Override
+//    public String getVendor() {
+//        return "Neotropic SAS";
+//    }
+//
+//    @Override
+//    public int getType() {
+//        return MODULE_TYPE_FREE_CORE;
+//    }
+//
+//    @Override
+//    public String getLocation() {
+//        return "Tools/Navigation";
+//    }
+//
+//    @Override
+//    public int getMode() {
+//        return AbstractModule.COMPONENT_MODE_EXPLORER;
+//    }
+//
+//    @Override
+//    public Component open() {
+//        if (instanceCount == 0) {
+//            propertySheet = new PropertySheetComponent(eventBus, wsBean, session);
+//            instanceCount ++;
+//        }
+//        //Register components in the event bus
+//        propertySheet.registerComponents();
+//        return propertySheet;
+//    }
+//    
+//    public void show(){
+//        propertySheet.showSheet("new");
+//    }
+//
+//    @Override
+//    public void close() {
+//        //Unregister components from the event bus
+//        propertySheet.unregisterComponents();
+//    }
     
 }

@@ -1,5 +1,5 @@
  /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,8 +15,9 @@
  */
 package org.kuwaiba.apis.web.gui.nodes.properties;
 
+import com.vaadin.shared.ui.datefield.DateResolution;
 import com.vaadin.ui.DateField;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * A field to represent date values in a property sheet
@@ -24,10 +25,10 @@ import java.util.Date;
  */
 public class PorpertyDate extends DateField {
 
-    public PorpertyDate (Date date) {
+    public PorpertyDate (LocalDate date) {
         super();
-//        this.setResolution(Resolution.MINUTE);
-//        this.setValue(date);
+        this.setResolution(DateResolution.DAY);
+        this.setValue(date);
     }
     
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,18 +27,18 @@ import org.kuwaiba.apis.web.gui.modules.TopComponent;
 public abstract class AbstractNodeProperty extends CustomComponent implements 
         EmbeddableComponent
 {
-    protected Sheet sheet;
-    private final TopComponent parentComponent;
-
-    public AbstractNodeProperty(TopComponent parentComponent) {
-        this.parentComponent = parentComponent;
-    }
-    
-    @Override
-    public TopComponent getTopComponent() {
-        return parentComponent;
-    }
-        
+//    protected Sheet sheet;
+//    private final TopComponent parentComponent;
+//
+//    public AbstractNodeProperty(TopComponent parentComponent) {
+//        this.parentComponent = parentComponent;
+//    }
+//    
+//    @Override
+//    public TopComponent getTopComponent() {
+//        return parentComponent;
+//    }
+//        
 //    @Subscribe
 //    abstract void nodeSelected(ItemClickEvent event);
 }

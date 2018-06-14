@@ -73,8 +73,7 @@ public class ServiceManagerView extends HorizontalSplitPanel implements View {
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        setStyleName("processmanager");
-        addStyleName("darklayout");
+        setStyleName("dashboards");
 
         setSplitPosition(33, Unit.PERCENTAGE);
         setSizeFull();

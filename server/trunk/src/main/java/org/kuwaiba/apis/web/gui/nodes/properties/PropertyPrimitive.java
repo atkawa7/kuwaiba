@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,31 +24,31 @@ import com.vaadin.ui.TextField;
  */
 public class PropertyPrimitive extends TextField{
     
-    private String propertyName;
-    private String propertyType;
-    
-    public PropertyPrimitive(String propertyName, String propertyType, String value) {
-        super();
-        this.propertyName = propertyName;
-        this.propertyType = propertyType;
-        setValue(value == null ? "" : (String)value);
-    }
-    
-    public PropertyPrimitive(int value) {
-        super();
+//    private String propertyName;
+//    private String propertyType;
+//    
+//    public PropertyPrimitive(String propertyName, String propertyType, String value) {
+//        super();
+//        this.propertyName = propertyName;
+//        this.propertyType = propertyType;
+//        setValue(value == null ? "" : (String)value);
+//    }
+//    
+//    public PropertyPrimitive(int value) {
+//        super();
 //        setConverter(Integer.class);
 //        setValue(Integer.toString(value));
 //        this.addValidator(new numericValidator());
-    }
-
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    public String getPropertyType() {
-        return propertyType;
-    }
-    
+//    }
+//
+//    public String getPropertyName() {
+//        return propertyName;
+//    }
+//
+//    public String getPropertyType() {
+//        return propertyType;
+//    }
+//    
 //    private class numericValidator implements Validator {
 //        @Override
 //        public void validate(Object value)

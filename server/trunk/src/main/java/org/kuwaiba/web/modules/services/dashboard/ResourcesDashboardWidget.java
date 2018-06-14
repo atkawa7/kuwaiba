@@ -45,16 +45,17 @@ public class ResourcesDashboardWidget extends AbstractDashboardWidget {
     private WebserviceBeanLocal wsBean;
     
     public ResourcesDashboardWidget(RemoteObjectLight service, WebserviceBeanLocal wsBean) {
-        super();
+        super("Service Resources");
         this.service = service;
         this.wsBean = wsBean;
         this.createCover();
         this.createContent();
+        this.coverComponent.setStyleName("k-dashboard_widget-red"); //NOI18N
     }
     
     @Override
     public void createCover() {
-        Panel pnlResourcesWidgetCover = new Panel("Resources Associated to this Service");
+        Panel pnlResourcesWidgetCover = new Panel("Resources");
         pnlResourcesWidgetCover.setContent(new VerticalLayout(new Label("X resources found"), new Button("See More...", (event) -> {
             flip();
         })));
@@ -68,7 +69,7 @@ public class ResourcesDashboardWidget extends AbstractDashboardWidget {
     public void createContent() {
         Grid<RemoteObjectLight> lstResources = new Grid<>();
         lstResources.setHeaderVisible(false);
-        lstResources.setSizeUndefined();
+        lstResources.setSizeFull();
         this.contentComponent = lstResources;
         
         try {

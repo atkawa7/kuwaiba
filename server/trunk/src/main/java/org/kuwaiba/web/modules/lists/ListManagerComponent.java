@@ -44,57 +44,57 @@ public class ListManagerComponent extends AbstractTopComponent {
     public ListManagerComponent(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
         super(wsBean, eventBus, session);
         
-        try {
-            RemoteClassMetadataLight [] listTypes = wsBean.getInstanceableListTypes(
-                    Page.getCurrent().getWebBrowser().getAddress(), 
-                    session.getSessionId());
-            
-            ArrayList<RemoteClassMetadataLight> rootChildren = new ArrayList();
-            rootChildren.addAll(Arrays.asList(listTypes));
-            
-            ListTypeRootNode rootNode = new ListTypeRootNode("Available List Types", rootChildren);
-            
-            VerticalSplitPanel pnlSplitExplorer = new VerticalSplitPanel();
-            pnlSplitExplorer.setSplitPosition(100);
-            
-            listTypesTree = new DynamicTree(rootNode, this);
-            //listTypesTree.setDragMode(Tree.TreeDragMode.NONE);
-            rootNode.setTree(listTypesTree);
-            
-//            listTypesTree.addActionHandler(new Action.Handler() {
-//
-//                @Override
-//                public Action[] getActions(Object target, Object sender) {
-//                    if (target instanceof AbstractNode)
-//                        return ((AbstractNode)target).getActions();
-//                    return null;
-//                }
-//
-//                @Override
-//                public void handleAction(Action action, Object sender, Object target) {
-//                    ((AbstractAction) action).actionPerformed(sender, target);
-//                }
-//            });
-                        
-            pnlSplitExplorer.addComponent(listTypesTree);
-            setCompositionRoot(pnlSplitExplorer);
-            
-            rootNode.expand();
-        } catch (ServerSideException ex) {
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-        }
+//        try {
+//            RemoteClassMetadataLight [] listTypes = wsBean.getInstanceableListTypes(
+//                    Page.getCurrent().getWebBrowser().getAddress(), 
+//                    session.getSessionId());
+//            
+//            ArrayList<RemoteClassMetadataLight> rootChildren = new ArrayList();
+//            rootChildren.addAll(Arrays.asList(listTypes));
+//            
+//            ListTypeRootNode rootNode = new ListTypeRootNode("Available List Types", rootChildren);
+//            
+//            VerticalSplitPanel pnlSplitExplorer = new VerticalSplitPanel();
+//            pnlSplitExplorer.setSplitPosition(100);
+//            
+//            listTypesTree = new DynamicTree(rootNode, this);
+//            //listTypesTree.setDragMode(Tree.TreeDragMode.NONE);
+//            rootNode.setTree(listTypesTree);
+//            
+////            listTypesTree.addActionHandler(new Action.Handler() {
+////
+////                @Override
+////                public Action[] getActions(Object target, Object sender) {
+////                    if (target instanceof AbstractNode)
+////                        return ((AbstractNode)target).getActions();
+////                    return null;
+////                }
+////
+////                @Override
+////                public void handleAction(Action action, Object sender, Object target) {
+////                    ((AbstractAction) action).actionPerformed(sender, target);
+////                }
+////            });
+//                        
+//            pnlSplitExplorer.addComponent(listTypesTree);
+//            setCompositionRoot(pnlSplitExplorer);
+//            
+//            rootNode.expand();
+//        } catch (ServerSideException ex) {
+//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//        }
         
         this.setSizeFull();
     }
 
     @Override
     public void registerComponents() {
-        listTypesTree.register();
+        //listTypesTree.register();
     }
 
     @Override
     public void unregisterComponents() {
-        listTypesTree.unregister();
+        //listTypesTree.unregister();
     }
     
 }

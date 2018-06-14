@@ -38,28 +38,28 @@ public class CreateListTypeChildAction extends AbstractAction {
 
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
-        try {
-            ListTypeNode parentNode = (ListTypeNode) targetObject;
-            RemoteClassMetadataLight parentObject = (RemoteClassMetadataLight) parentNode.getObject();
-            
-            TopComponent parentComponent = ((DynamicTree) sourceComponent)
-                    .getTopComponent();
-            
-            String className = parentObject.getClassName();
-            
-            long oid = parentComponent.getWsBean().createListTypeItem(
-                    className, "", "", 
-                    Page.getCurrent().getWebBrowser().getAddress(),
-                    parentComponent.getApplicationSession().getSessionId());
-            
-            RemoteObjectLight listTypeObject = new RemoteObjectLight(oid, "", className);
-            ListTypeChildNode childNode = new ListTypeChildNode(listTypeObject);
-            childNode.setTree(parentNode.getTree());
-            
-            //((DynamicTree) sourceComponent).setParent(childNode, parentNode);            
-        } catch (ServerSideException ex) {
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-        }
+//        try {
+//            ListTypeNode parentNode = (ListTypeNode) targetObject;
+//            RemoteClassMetadataLight parentObject = (RemoteClassMetadataLight) parentNode.getObject();
+//            
+//            TopComponent parentComponent = ((DynamicTree) sourceComponent)
+//                    .getTopComponent();
+//            
+//            String className = parentObject.getClassName();
+//            
+//            long oid = parentComponent.getWsBean().createListTypeItem(
+//                    className, "", "", 
+//                    Page.getCurrent().getWebBrowser().getAddress(),
+//                    parentComponent.getApplicationSession().getSessionId());
+//            
+//            RemoteObjectLight listTypeObject = new RemoteObjectLight(oid, "", className);
+//            ListTypeChildNode childNode = new ListTypeChildNode(listTypeObject);
+//            childNode.setTree(parentNode.getTree());
+//            
+//            //((DynamicTree) sourceComponent).setParent(childNode, parentNode);            
+//        } catch (ServerSideException ex) {
+//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//        }
     }
     
 }

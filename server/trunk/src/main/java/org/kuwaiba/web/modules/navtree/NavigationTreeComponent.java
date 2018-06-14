@@ -46,27 +46,27 @@ class NavigationTreeComponent extends AbstractTopComponent {
             
             try {
                 List<RemoteObjectLight> rootChildren = wsBean.getObjectChildren("DummyRoot", -1, 0, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-                InventoryObjectRootNode rootNode = new InventoryObjectRootNode("Navigation Tree Root", rootChildren);
-                
-                tree = new DynamicTree(rootNode, this);
-                rootNode.setTree(tree);
-                
-//                tree.addActionHandler(new Action.Handler() {
-//
-//                    @Override
-//                    public Action[] getActions(Object target, Object sender) {
-//                        if (target instanceof AbstractNode)
-//                            return ((AbstractNode)target).getActions();
-//                        return null;
-//                    }
-//
-//                    @Override
-//                    public void handleAction(Action action, Object sender, Object target) {
-//                        ((AbstractAction) action).actionPerformed(sender, target);
-//                    }
-//                });
-                
-                
+//                InventoryObjectRootNode rootNode = new InventoryObjectRootNode("Navigation Tree Root", rootChildren);
+//                
+//                tree = new DynamicTree(rootNode, this);
+//                rootNode.setTree(tree);
+//                
+////                tree.addActionHandler(new Action.Handler() {
+////
+////                    @Override
+////                    public Action[] getActions(Object target, Object sender) {
+////                        if (target instanceof AbstractNode)
+////                            return ((AbstractNode)target).getActions();
+////                        return null;
+////                    }
+////
+////                    @Override
+////                    public void handleAction(Action action, Object sender, Object target) {
+////                        ((AbstractAction) action).actionPerformed(sender, target);
+////                    }
+////                });
+//                
+//                
 
                 setCompositionRoot(tree);
         } catch (ServerSideException ex) {
@@ -77,11 +77,11 @@ class NavigationTreeComponent extends AbstractTopComponent {
         
     @Override
     public void registerComponents() {
-        tree.register();
+        //tree.register();
     }
 
     @Override
     public void unregisterComponents() {
-        tree.unregister();
+        //tree.unregister();
     }
 }

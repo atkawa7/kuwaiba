@@ -80,7 +80,7 @@ public class ContainmentManagerComponent extends AbstractTopComponent {
                 if (!item.isAbstract())
                     treeModel.add(item);
             }
-            DynamicTree tree = new DynamicTree(null, this);
+            //DynamicTree tree = new DynamicTree(null, this);
             
 //            tree.setDragMode(TreeDragMode.NONE);
 //            
@@ -180,7 +180,7 @@ public class ContainmentManagerComponent extends AbstractTopComponent {
 //                }
 //            });
                         
-            content.setFirstComponent(tree);
+//            content.setFirstComponent(tree);
             //content.setSecondComponent(table);
         } catch (ServerSideException ex) {
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);

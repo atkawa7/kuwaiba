@@ -376,4 +376,29 @@ $v-field-background-color: #ccffe6;
             padding: 100px 50px;            
         }
     }
+    
+    /* Dashboards */
+    .dashboards {
+        .v-panel-k-dashboard_widget-red {
+            background: yellow;
+        }
+        
+        
+        .v-panel-k-dashboard_widget-purple {
+            background: purple;
+        }
+        
+        .k-dashboard_widget-green {
+            background: green;
+        }
+    }
+    
+    
+    
+    /*Service Manager*/
+    .smanager {
+        
+    }
+    
+    
 }

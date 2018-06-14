@@ -103,7 +103,6 @@ class ApplicationView extends CustomComponent implements View {
             final NavigationTreeModule mdlNavTree = new NavigationTreeModule(eventBus, wsBean, session);
             final OutsidePlantModule mdlOutsidePlant = new OutsidePlantModule(eventBus, wsBean, session);
             //final ContainmentManagerModule mdlContainment = new ContainmentManagerModule(eventBus, wsBean, session);
-            final PropertySheetModule mdlPropertySheet = new PropertySheetModule(eventBus, wsBean, session);
             final ListManagerModule mdlListManager = new ListManagerModule(eventBus, wsBean, session);
 
 //            mnuTools.addItem(mdlNavTree.getName(), mdlNavTree.getIcon(), new MenuBar.Command() {
@@ -153,7 +152,7 @@ class ApplicationView extends CustomComponent implements View {
             lytLeft.addComponent(panel);
             Component map = mdlOutsidePlant.open();
             
-            lytRight.addComponent(mdlPropertySheet.open());
+            //lytRight.addComponent(mdlPropertySheet.open());
             
             HorizontalLayout headerButtons = new HorizontalLayout();
             headerButtons.addComponent(btnShowLeft);

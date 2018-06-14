@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,15 +24,15 @@ import org.kuwaiba.web.custom.tree.DynamicTree;
  */
 public abstract class AbstractRootNode extends AbstractNode {
 
-    public AbstractRootNode(String caption) {
-        setDisplayName(caption);
-        this.object = caption;
-    }
-    
-    @Override
-    public void setTree(DynamicTree tree) {
-        super.setTree(tree);
-        //tree.addItem(this);
-        //tree.setItemIcon(this, FontAwesome.STAR);
-    }
+//    public AbstractRootNode(String caption) {
+//        setDisplayName(caption);
+//        this.object = caption;
+//    }
+//    
+//    @Override
+//    public void setTree(DynamicTree tree) {
+//        super.setTree(tree);
+//        tree.addItem(this);
+//        tree.setItemIcon(this, FontAwesome.STAR);
+//    }
 }

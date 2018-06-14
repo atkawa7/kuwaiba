@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.apis.web.gui.nodes.listmanagernodes;
 
-import com.vaadin.server.ThemeResource;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
@@ -28,36 +27,36 @@ import org.kuwaiba.web.modules.lists.actions.ActionsFactory;
  */
 public class ListTypeChildNode extends AbstractNode {
     
-    public ListTypeChildNode(RemoteObjectLight object) {
-        super(object);
-    }
-    
-    @Override
-    public void setTree(DynamicTree tree) {
-        super.setTree(tree);
-//        tree.setItemIcon(this, 
-//                new ThemeResource("img/mod_list_icon_list_type_item.png"));
-//        tree.setChildrenAllowed(this, false);
-    }
-
-    @Override
-    public void expand() {}
-
-    @Override
-    public void collapse() {}
-
-    @Override
-    public AbstractAction[] getActions() {
-        return new AbstractAction[] { ActionsFactory.createDeleteListTypeAction() };
-    }
-
-    @Override
-    public void refresh(boolean recursive) {}
-    
-    @Override
-    public String toString() {
-        String name = ((RemoteObjectLight) object).getName();
-        return name.equals("") ? "<No Name>" : name;
-    }
+//    public ListTypeChildNode(RemoteObjectLight object) {
+//        super(object);
+//    }
+//    
+//    @Override
+//    public void setTree(DynamicTree tree) {
+//        super.setTree(tree);
+////        tree.setItemIcon(this, 
+////                new ThemeResource("img/mod_list_icon_list_type_item.png"));
+////        tree.setChildrenAllowed(this, false);
+//    }
+//
+//    @Override
+//    public void expand() {}
+//
+//    @Override
+//    public void collapse() {}
+//
+//    @Override
+//    public AbstractAction[] getActions() {
+//        return new AbstractAction[] { ActionsFactory.createDeleteListTypeAction() };
+//    }
+//
+//    @Override
+//    public void refresh(boolean recursive) {}
+//    
+//    @Override
+//    public String toString() {
+//        String name = ((RemoteObjectLight) object).getName();
+//        return name.equals("") ? "<No Name>" : name;
+//    }
     
 }

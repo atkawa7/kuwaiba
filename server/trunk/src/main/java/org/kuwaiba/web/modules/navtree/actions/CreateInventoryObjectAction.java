@@ -38,38 +38,38 @@ public class CreateInventoryObjectAction extends CreateInventoryObjectChildActio
     public void finalActionPerformed(Object sourceComponent, Object targetObject, Object selectedOption) {
         super.finalActionPerformed(sourceComponent, targetObject, selectedOption);
             
-        RemoteObjectLight object = getNewObject();
-            
-        AbstractNode childNode = null;
-        // special case of inventory object that represent a port
-        if (parentNode instanceof EndpointNode) 
-            childNode = new EndpointNode(object);
-        else
-            childNode = new InventoryObjectNode(object);
-        
-        childNode.setTree(parentNode.getTree());
-        //parentNode.getTree().setParent(childNode, parentNode);            
-            
-        Notification.show("Object created successfully",  Notification.Type.TRAY_NOTIFICATION);
+//        RemoteObjectLight object = getNewObject();
+//            
+//        AbstractNode childNode = null;
+//        // special case of inventory object that represent a port
+//        if (parentNode instanceof EndpointNode) 
+//            childNode = new EndpointNode(object);
+//        else
+//            childNode = new InventoryObjectNode(object);
+//        
+//        childNode.setTree(parentNode.getTree());
+//        //parentNode.getTree().setParent(childNode, parentNode);            
+//            
+//        Notification.show("Object created successfully",  Notification.Type.TRAY_NOTIFICATION);
     }
 
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
-        if (targetObject instanceof AbstractNode) {
-            parentNode = (AbstractNode) targetObject;           
-            
-            if (targetObject instanceof InventoryObjectRootNode) {
-                super.actionPerformed(
-                        parentNode.getTree(),
-                        new RemoteObjectLight(-1, null, "DummyRoot"));
-            }
-            
-            if (targetObject instanceof InventoryObjectNode) {
-                super.actionPerformed(
-                    parentNode.getTree(), 
-                    ((RemoteObjectLight) parentNode.getObject())
-                );
-            }
-        }
+//        if (targetObject instanceof AbstractNode) {
+//            parentNode = (AbstractNode) targetObject;           
+//            
+//            if (targetObject instanceof InventoryObjectRootNode) {
+//                super.actionPerformed(
+//                        parentNode.getTree(),
+//                        new RemoteObjectLight(-1, null, "DummyRoot"));
+//            }
+//            
+//            if (targetObject instanceof InventoryObjectNode) {
+//                super.actionPerformed(
+//                    parentNode.getTree(), 
+//                    ((RemoteObjectLight) parentNode.getObject())
+//                );
+//            }
+//        }
     }
 }

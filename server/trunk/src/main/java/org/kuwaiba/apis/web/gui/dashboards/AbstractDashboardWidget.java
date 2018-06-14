@@ -17,6 +17,7 @@ package org.kuwaiba.apis.web.gui.dashboards;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 
 /**
  * A small embeddable component that can be inserted into an AbstractDashboard. A DashboardWidget has two "faces": 
@@ -45,9 +46,14 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
      * The component with the detailed information (actual content)
      */
     protected Component contentComponent;
-    public AbstractDashboardWidget() {
+    /**
+     * Dashboard widget title
+     */
+    protected String title;
+    public AbstractDashboardWidget(String title) {
         this.colSpan = 1;
         this.rowSpan = 1;
+        this.title = title;
         this.activeContent = ActiveContent.CONTENT_COVER;
     }
 
@@ -76,6 +82,9 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
         this.activeContent = activeContent;
     }
 
+    /**
+     * Flips the current displayed component
+     */
     public void flip() {
         if (this.activeContent == ActiveContent.CONTENT_COVER) {
             replaceComponent(coverComponent, contentComponent);
@@ -85,6 +94,11 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
             activeContent = ActiveContent.CONTENT_COVER;
         }
     }
+    
+    public void lauch() {
+        Window wnwContent = new Window(title);
+    }
+    
     /**
      * Creates the cover component. Note that implementors must set the coverComponent attribute and manage the respective events
      */

@@ -32,11 +32,11 @@ public class MoreInformationAction extends AbstractAction {
 
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
-        InventoryObjectNode node = (InventoryObjectNode) targetObject;
-        
-        MessageBoxShowObjectId messageBox = new MessageBoxShowObjectId(
-            node.getTree().getTopComponent(), 
-            (RemoteObjectLight) node.getObject());
-        messageBox.open();
+//        InventoryObjectNode node = (InventoryObjectNode) targetObject;
+//        
+//        MessageBoxShowObjectId messageBox = new MessageBoxShowObjectId(
+//            node.getTree().getTopComponent(), 
+//            (RemoteObjectLight) node.getObject());
+//        messageBox.open();
     }
 }

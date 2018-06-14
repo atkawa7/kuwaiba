@@ -34,86 +34,86 @@ import org.kuwaiba.web.modules.containment.actions.ActionsFactory;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ContainmentNode extends AbstractNode {
-    /**
-     * The id.
-     * For this node is assigned automatically by the tree when add this node
-     */
-    private Object id;
-    
-    public ContainmentNode(RemoteClassMetadataLight object) {
-        super(object);
-    }
-    
-    @Override
-    public void setTree(DynamicTree tree) {
-        this.tree = tree;
-//        id = this.tree.addItem(this);
-//        this.tree.setItemIcon(this, FontAwesome.SQUARE);
-    }
-    
-    private Object getId() {
-        return id;
-    }
-    
-    @Override
-    public void expand() {
-//        if (getTree() == null)
-//            return;
-//        
-//        try {
-//            collapse();
-//            if (getTree().areChildrenAllowed(this)) {
-//                ClassInfoLight currentObject = (ClassInfoLight) getObject();
+//    /**
+//     * The id.
+//     * For this node is assigned automatically by the tree when add this node
+//     */
+//    private Object id;
+//    
+//    public ContainmentNode(RemoteClassMetadataLight object) {
+//        super(object);
+//    }
+//    
+//    @Override
+//    public void setTree(DynamicTree tree) {
+//        this.tree = tree;
+////        id = this.tree.addItem(this);
+////        this.tree.setItemIcon(this, FontAwesome.SQUARE);
+//    }
+//    
+//    private Object getId() {
+//        return id;
+//    }
+//    
+//    @Override
+//    public void expand() {
+////        if (getTree() == null)
+////            return;
+////        
+////        try {
+////            collapse();
+////            if (getTree().areChildrenAllowed(this)) {
+////                ClassInfoLight currentObject = (ClassInfoLight) getObject();
+////
+////                TopComponent topComponent = getTree().getTopComponent();
+////
+////                List<ClassInfoLight> children = topComponent.getWsBean()
+////                        .getPossibleChildrenNoRecursive(currentObject.getClassName(), 
+////                                Page.getCurrent().getWebBrowser().getAddress(), 
+////                                topComponent.getApplicationSession().getSessionId());
+////
+////                for (ClassInfoLight child : children) {
+////                    ContainmentNode childNode = new ContainmentNode(child);
+////                    childNode.setTree(getTree());
+////                    
+////                    childNode.getTree().setChildrenAllowed(childNode, false);
+////                    childNode.getTree().setParent(childNode, this);
+////                    childNode.getTree().setItemIcon(childNode, 
+////                            new ThemeResource("img/mod_containtment_icon_flag_black.png"));
+////                }
+////            }
+////        }
+////        catch(ServerSideException ex) {
+////            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+////        }
+//    }
+//    
+//    @Override
+//    public AbstractAction[] getActions() {
+////        if (!getTree().areChildrenAllowed(this))
+////            return new AbstractAction[] {
+////                ActionsFactory.createRemoveContainmentNodeAction() };
+////        else
+////            return new AbstractAction[0];
+//return null;
+//    }
 //
-//                TopComponent topComponent = getTree().getTopComponent();
-//
-//                List<ClassInfoLight> children = topComponent.getWsBean()
-//                        .getPossibleChildrenNoRecursive(currentObject.getClassName(), 
-//                                Page.getCurrent().getWebBrowser().getAddress(), 
-//                                topComponent.getApplicationSession().getSessionId());
-//
-//                for (ClassInfoLight child : children) {
-//                    ContainmentNode childNode = new ContainmentNode(child);
-//                    childNode.setTree(getTree());
-//                    
-//                    childNode.getTree().setChildrenAllowed(childNode, false);
-//                    childNode.getTree().setParent(childNode, this);
-//                    childNode.getTree().setItemIcon(childNode, 
-//                            new ThemeResource("img/mod_containtment_icon_flag_black.png"));
-//                }
-//            }
-//        }
-//        catch(ServerSideException ex) {
-//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-//        }
-    }
-    
-    @Override
-    public AbstractAction[] getActions() {
-//        if (!getTree().areChildrenAllowed(this))
-//            return new AbstractAction[] {
-//                ActionsFactory.createRemoveContainmentNodeAction() };
-//        else
-//            return new AbstractAction[0];
-return null;
-    }
-
-    @Override
-    public void refresh(boolean recursive) {}
-    
-    @Override
-    public boolean equals(Object obj){
-        if (obj == null)
-            return false;
-        if (!(obj instanceof ContainmentNode))
-            return false;
-        if (((ContainmentNode)obj).getId() == getId())
-            return true;
-        return false;
-    }
-    
-    //@Override
-    public Sheet createPropertySheet(){
-        return null;
-    }
+//    @Override
+//    public void refresh(boolean recursive) {}
+//    
+//    @Override
+//    public boolean equals(Object obj){
+//        if (obj == null)
+//            return false;
+//        if (!(obj instanceof ContainmentNode))
+//            return false;
+//        if (((ContainmentNode)obj).getId() == getId())
+//            return true;
+//        return false;
+//    }
+//    
+//    //@Override
+//    public Sheet createPropertySheet(){
+//        return null;
+//    }
 }

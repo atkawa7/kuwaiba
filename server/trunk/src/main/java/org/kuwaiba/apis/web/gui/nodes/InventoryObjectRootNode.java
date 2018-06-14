@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,37 +26,37 @@ import org.kuwaiba.web.modules.navtree.actions.ActionsFactory;
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
 public class InventoryObjectRootNode extends AbstractRootNode {
-    private final List<RemoteObjectLight> initialChildren;
-    public InventoryObjectRootNode(String caption, List<RemoteObjectLight> initialChildren) {
-        super(caption);
-        this.initialChildren = initialChildren;
-    }
-
-    @Override
-    public void setTree(DynamicTree tree) {
-        super.setTree(tree);
-    }
-    
-    @Override
-    public void expand() {
-        
-        if (getTree() == null) //If the tree has not been set previously, do nothing
-            return;
-        collapse();
-        for (RemoteObjectLight child : initialChildren) {
-            InventoryObjectNode objectNode = new InventoryObjectNode(child);
-            objectNode.setTree(getTree());
+//    private final List<RemoteObjectLight> initialChildren;
+//    public InventoryObjectRootNode(String caption, List<RemoteObjectLight> initialChildren) {
+//        super(caption);
+//        this.initialChildren = initialChildren;
+//    }
+//
+//    @Override
+//    public void setTree(DynamicTree tree) {
+//        super.setTree(tree);
+//    }
+//    
+//    @Override
+//    public void expand() {
+//        
+//        if (getTree() == null) //If the tree has not been set previously, do nothing
+//            return;
+//        collapse();
+//        for (RemoteObjectLight child : initialChildren) {
+//            InventoryObjectNode objectNode = new InventoryObjectNode(child);
+//            objectNode.setTree(getTree());
 //            getTree().addItem(objectNode);
 //            getTree().setParent(objectNode, this);
-        }
-    }
-    
-    @Override
-    public AbstractAction[] getActions() {
-        return new AbstractAction[]{ ActionsFactory.createCreateInventoryObjectAction() };
-    }
-
-    @Override
-    public void refresh(boolean recursive) {}
+//        }
+//    }
+//    
+//    @Override
+//    public AbstractAction[] getActions() {
+//        return new AbstractAction[]{ ActionsFactory.createCreateInventoryObjectAction() };
+//    }
+//
+//    @Override
+//    public void refresh(boolean recursive) {}
     
 }

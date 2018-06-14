@@ -15,8 +15,13 @@
  */
 package org.kuwaiba.web.modules.physicalconnections.windows;
 
+import com.vaadin.data.HasValue;
 import com.vaadin.event.Action;
 import com.vaadin.server.Page;
+import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Grid;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
@@ -40,32 +45,35 @@ import org.kuwaiba.web.custom.tree.DynamicTree;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ConnectLinksWindow extends Window {
-    private TopComponent parentComponent;
-    
-    public static String ENDPOINT_A_COLUMN_HEADER = "endpointA";
-    private final String LINK_COLUMN_HEADER = "link";
-    private final String ENDPOINT_B_COLUMN_HEADER = "endpointB";
-    public static String IN_USE = "in-use";
-    public static String FREE_ENDPOINT = "free";
-    
-    private final String btnConnectCaption = "Connect";
-    
-    private DynamicTree treeEndpointA;
-    //private Table tblAvailableConnections;
-    private DynamicTree treeEndpointB;
-    
-    private Panel pnlResult;
-    /**
-     * A property value change listener used for the trees and the table.
-     */
-    //private Property.ValueChangeListener generalValueChangeListener;
-        
-    public ConnectLinksWindow(TopComponent parentComponent, RemoteObjectLight connection) {
+//    private TopComponent parentComponent;
+//    
+//    public static String ENDPOINT_A_COLUMN_HEADER = "endpointA";
+//    private final String LINK_COLUMN_HEADER = "link";
+//    private final String ENDPOINT_B_COLUMN_HEADER = "endpointB";
+//    public static String IN_USE = "in-use";
+//    public static String FREE_ENDPOINT = "free";
+//    
+//    private final String btnConnectCaption = "Connect";
+//    
+//    private DynamicTree treeEndpointA;
+//    private Grid<RemoteObjectLight> tblAvailableConnections;
+//    private DynamicTree treeEndpointB;
+//    
+//    private Panel pnlResult;
+//    /**
+//     * A property value change listener used for the trees and the table.
+//     */
+//    private HasValue.ValueChangeListener generalValueChangeListener;
+//        
+//    public ConnectLinksWindow(TopComponent parentComponent, RemoteObjectLight connection) {
 //        super("Connecting Links");
 //        this.parentComponent = parentComponent;
 //        
-//        generalValueChangeListener = (Property.ValueChangeEvent event) -> {
-//            updateLstResult();
+//        generalValueChangeListener = new HasValue.ValueChangeListener<Object>() {
+//            @Override
+//            public void valueChange(HasValue.ValueChangeEvent<Object> event) {
+//                updateLstResult();
+//            }
 //        };
 //        
 //        center();
@@ -76,15 +84,25 @@ public class ConnectLinksWindow extends Window {
 //        List<RemoteObjectLight> links;
 //        RemoteObjectLight [] containerEndpoints;        
 //        try {
+//            /*
+//            Important!20180521mon To Current Versions Links are special children
+//            */
 //            links = this.parentComponent.getWsBean().getObjectSpecialChildren(
 //                    connection.getClassName(), 
-//                    connection.getOid(), 
+//                    connection.getId(), 
 //                    Page.getCurrent().getWebBrowser().getAddress(), 
 //                    this.parentComponent.getApplicationSession().getSessionId());
-//                        
-//            containerEndpoints = this.parentComponent.getWsBean().getConnectionEndpoints(
+//            
+//            links.addAll(this.parentComponent.getWsBean().getObjectChildren(
 //                    connection.getClassName(), 
-//                    connection.getOid(), 
+//                    connection.getId(), 
+//                    -1,
+//                    Page.getCurrent().getWebBrowser().getAddress(), 
+//                    this.parentComponent.getApplicationSession().getSessionId()));
+//                        
+//            containerEndpoints = this.parentComponent.getWsBean().getPhysicalConnectionEndpoints(
+//                    connection.getClassName(), 
+//                    connection.getId(), 
 //                    Page.getCurrent().getWebBrowser().getAddress(), 
 //                    this.parentComponent.getApplicationSession().getSessionId());
 //            
@@ -166,13 +184,12 @@ public class ConnectLinksWindow extends Window {
 //        content.setExpandRatio(pnlResult, 0.1f);
 //                
 //        setContent(content);
-    }
-    
-    private void initTreeEndPointA(RemoteObjectLight object) {
-        EndpointNode rootNodeA = new EndpointNode(object);
-        treeEndpointA = new DynamicTree(rootNodeA, parentComponent);
-        //treeEndpointA.setDragMode(Tree.TreeDragMode.NONE);
-        rootNodeA.setTree(treeEndpointA);
+//    }
+//    
+//    private void initTreeEndPointA(RemoteObjectLight object) {
+//        EndpointNode rootNodeA = new EndpointNode(object);
+//        treeEndpointA = new DynamicTree(rootNodeA, parentComponent);
+//        rootNodeA.setTree(treeEndpointA);
 //        treeEndpointA.setSelectable(true);
 //        treeEndpointA.setImmediate(true);
 //        treeEndpointA.setMultiSelect(true);
@@ -203,7 +220,7 @@ public class ConnectLinksWindow extends Window {
 //                    ((AbstractAction) action).actionPerformed(sender, target);
 //            }
 //        });
-        
+//        
 //        treeEndpointA.setItemStyleGenerator((Tree source, Object itemId) -> {
 //            if (itemId instanceof EndpointNode) {
 //                if (!((EndpointNode) itemId).isFree())
@@ -211,12 +228,12 @@ public class ConnectLinksWindow extends Window {
 //            }
 //            return null;
 //        });
-        
-        //treeEndpointA.addValueChangeListener(generalValueChangeListener);
-    }
-    
+//        
+//        treeEndpointA.addValueChangeListener(generalValueChangeListener);
+//    }
+//    
 //    private void initTblAvailableConnections(List<RemoteObjectLight> links) {
-//        tblAvailableConnections = new Table();
+//        tblAvailableConnections = new Grid<>();
 //        tblAvailableConnections.setSizeFull();
 //        tblAvailableConnections.addContainerProperty(ENDPOINT_A_COLUMN_HEADER, String.class, null);
 //        tblAvailableConnections.addContainerProperty(LINK_COLUMN_HEADER, RemoteObjectLight.class, null);
@@ -243,14 +260,14 @@ public class ConnectLinksWindow extends Window {
 //            try {
 //                List<RemoteObjectLight> aEndpointList = parentComponent.getWsBean().getSpecialAttribute(                        
 //                        link.getClassName(),
-//                        link.getOid(),
+//                        link.getId(),
 //                        "endpointA", //NOI18N
 //                        Page.getCurrent().getWebBrowser().getAddress(),
 //                        this.parentComponent.getApplicationSession().getSessionId());
 //                
 //                List<RemoteObjectLight> bEndpointList = parentComponent.getWsBean().getSpecialAttribute(
 //                        link.getClassName(), 
-//                        link.getOid(), 
+//                        link.getId(), 
 //                        "endpointB", //NOI18N
 //                        Page.getCurrent().getWebBrowser().getAddress(), 
 //                        this.parentComponent.getApplicationSession().getSessionId());
@@ -310,8 +327,8 @@ public class ConnectLinksWindow extends Window {
 //        });
 //        tblAvailableConnections.addValueChangeListener(generalValueChangeListener);        
 //    }
-    
-    private void freeEndpoint(RemoteObjectLight objectLink, boolean freeEndpointA) {        
+//    
+//    private void freeEndpoint(RemoteObjectLight objectLink, boolean freeEndpointA) {        
 //        if (objectLink == null)
 //            return;
 //        
@@ -337,7 +354,7 @@ public class ConnectLinksWindow extends Window {
 //            
 //            List<RemoteObjectLight> portObjectList = parentComponent.getWsBean().getSpecialAttribute(
 //                    objectLink.getClassName(),
-//                    objectLink.getOid(),
+//                    objectLink.getId(),
 //                    endpoint,
 //                    Page.getCurrent().getWebBrowser().getAddress(),
 //                    parentComponent.getApplicationSession().getSessionId());
@@ -356,10 +373,10 @@ public class ConnectLinksWindow extends Window {
 //                                                
 //                        parentComponent.getWsBean().releasePhysicalLink(
 //                                objectLink.getClassName(), 
-//                                objectLink.getOid(), 
+//                                objectLink.getId(), 
 //                                endpoint,
 //                                objectPort.getClassName(),
-//                                objectPort.getOid(),
+//                                objectPort.getId(),
 //                                Page.getCurrent().getWebBrowser().getAddress(),
 //                                parentComponent.getApplicationSession().getSessionId());
 //                    }
@@ -368,12 +385,12 @@ public class ConnectLinksWindow extends Window {
 //        } catch (ServerSideException ex) {
 //            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
 //        }
-    }
-    
-    private void initTreeEndPointB(RemoteObjectLight object) {
-        EndpointNode rootNodeB = new EndpointNode(object);
-        treeEndpointB = new DynamicTree(rootNodeB, parentComponent);
-//        treeEndpointB.setDragMode(Tree.TreeDragMode.NONE);
+//    }
+//    
+//    private void initTreeEndPointB(RemoteObjectLight object) {
+//        EndpointNode rootNodeB = new EndpointNode(object);
+//        treeEndpointB = new DynamicTree(rootNodeB, parentComponent);
+//////        treeEndpointB.setDragMode(Tree.TreeDragMode.NONE);
 //        rootNodeB.setTree(treeEndpointB);
 //        treeEndpointB.setSelectable(true);
 //        treeEndpointB.setImmediate(true);
@@ -416,8 +433,8 @@ public class ConnectLinksWindow extends Window {
 //        });
 //        
 //        treeEndpointB.addValueChangeListener(generalValueChangeListener);
-    }
-    
+//    }
+//    
 //    private EndpointNode [] getASelectedNodes() {
 //        return ((Collection<EndpointNode>) treeEndpointA.getValue())
 //                .toArray(new EndpointNode[0]);
@@ -432,8 +449,8 @@ public class ConnectLinksWindow extends Window {
 //        return ((Collection<EndpointNode>) treeEndpointB.getValue())
 //                .toArray(new EndpointNode[0]);
 //    }
-    
-    private int currentNumberOfLinks() {
+//    
+//    private int currentNumberOfLinks() {
 //        EndpointNode [] aSelectedNodes = getASelectedNodes();
 //        RemoteObjectLight [] connections = getLinksSelected();
 //        EndpointNode [] bSelectedNodes = getBSelectedNodes();
@@ -454,10 +471,9 @@ public class ConnectLinksWindow extends Window {
 //            else
 //                return numberNodesB;
 //        }
-        return 0;
-    }
-    
-    private void updateLstResult() {
+//    }
+//    
+//    private void updateLstResult() {
 //        VerticalLayout lytResult = (VerticalLayout) pnlResult.getContent();
 //        lytResult.removeAllComponents();
 //        
@@ -468,10 +484,10 @@ public class ConnectLinksWindow extends Window {
 //            RemoteObjectLight [] connections = getLinksSelected();
 //            EndpointNode [] bSelectedNodes = getBSelectedNodes();
 //            // 4 new labels for make a blank space
-////            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
-////            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
-////            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
-////            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
+//            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
+//            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
+//            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
+//            lytResult.addComponent(new Label(" ", ContentMode.HTML), 0);
 //            
 //            for (int i = 0; i < rows; i += 1) {
 //                String aSelectedObject;
@@ -502,9 +518,9 @@ public class ConnectLinksWindow extends Window {
 //                    lytResult.addComponent(new Label(result, ContentMode.HTML));
 //            }            
 //        }
-    }
-    
-    private void connectLinks() {
+//    }
+//    
+//    private void connectLinks() {
 //        List<String> results = new ArrayList();
 //        
 //        int rows = currentNumberOfLinks();
@@ -524,12 +540,12 @@ public class ConnectLinksWindow extends Window {
 //
 //                if (aSelectedNodes != null && aSelectedNodes.length > i) {
 //                    sideAClassName = ((RemoteObjectLight) aSelectedNodes[i].getObject()).getClassName();
-//                    sideAId = ((RemoteObjectLight) aSelectedNodes[i].getObject()).getOid();
+//                    sideAId = ((RemoteObjectLight) aSelectedNodes[i].getObject()).getId();
 //                }
 //
 //                if (connections != null && connections.length > i) {
 //                    linkClassName = connections[i].getClassName();
-//                    linkId = connections[i].getOid();
+//                    linkId = connections[i].getId();
 //                }           
 //                else {
 //                    results.add(String.format(
@@ -541,7 +557,7 @@ public class ConnectLinksWindow extends Window {
 //
 //                if (bSelectedNodes != null && bSelectedNodes.length > i) {
 //                    sideBClassName = ((RemoteObjectLight) bSelectedNodes[i].getObject()).getClassName();
-//                    sideBId = ((RemoteObjectLight) bSelectedNodes[i].getObject()).getOid();
+//                    sideBId = ((RemoteObjectLight) bSelectedNodes[i].getObject()).getId();
 //                }
 //
 //                try {
@@ -611,19 +627,18 @@ public class ConnectLinksWindow extends Window {
 //            tblAvailableConnections.addValueChangeListener(generalValueChangeListener);
 //            treeEndpointB.addValueChangeListener(generalValueChangeListener);
 //        }
-    }
-    
-    /*
-    @Override
-    public String getValidator() {
-        return Constants.VALIDATOR_PHYSICAL_CONTAINER;
-    }
-    */
-    @Override    
-    public void close() {
+//    }
+//    /*
+//    @Override
+//    public String getValidator() {
+//        return Constants.VALIDATOR_PHYSICAL_CONTAINER;
+//    }
+//    */
+//    @Override    
+//    public void close() {
 //        treeEndpointA.removeValueChangeListener(generalValueChangeListener);
-//        //tblAvailableConnections.removeValueChangeListener(generalValueChangeListener);
+//        tblAvailableConnections.removeValueChangeListener(generalValueChangeListener);
 //        treeEndpointB.removeValueChangeListener(generalValueChangeListener);
 //        super.close();
-    }
+//    }
 }

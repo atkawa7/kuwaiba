@@ -395,6 +395,14 @@ public class Constants {
      */
     public static final String CLASS_GENERICPHYSICALNODE = "GenericPhysicalNode"; //NOI18N
     /**
+     * Class WireContainer
+     */
+    public static final String CLASS_WIRECONTAINER = "WireContainer"; //NOI18N
+    /**
+     * Class WirelessContainer
+     */
+    public static final String CLASS_WIRELESSCONTAINER = "WirelessContainer"; //NOI18N
+    /**
      * Dummy root node name
      */
     public static final String NODE_DUMMYROOT = "DummyRoot"; //NOI18N

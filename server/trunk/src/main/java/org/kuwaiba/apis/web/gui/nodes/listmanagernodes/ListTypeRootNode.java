@@ -25,35 +25,35 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ListTypeRootNode extends AbstractRootNode {
-    private final List<RemoteClassMetadataLight> initialChildren;
+//    private final List<RemoteClassMetadataLight> initialChildren;
     
-    public ListTypeRootNode(String caption, List<RemoteClassMetadataLight> initialChildren) {
-        super(caption);
-        this.initialChildren = initialChildren;
-    }
-    
-    @Override
-    public void expand() {
-        
-        if (getTree() == null) //If the tree has not been set previously, do nothing
-            return;
-        
-        for (RemoteClassMetadataLight child : initialChildren) {
-            ListTypeNode objectNode = new ListTypeNode(child);
-            objectNode.setTree(getTree());
-//            getTree().addItem(objectNode);
-//            getTree().setParent(objectNode, this);
-        }
-    }
-
-    @Override
-    public void collapse() {}
-
-    @Override
-    public AbstractAction[] getActions() {
-        return new AbstractAction[0];
-    }
-
-    @Override
-    public void refresh(boolean recursive) {}
+//    public ListTypeRootNode(String caption, List<RemoteClassMetadataLight> initialChildren) {
+//        super(caption);
+//        this.initialChildren = initialChildren;
+//    }
+//    
+//    @Override
+//    public void expand() {
+//        
+//        if (getTree() == null) //If the tree has not been set previously, do nothing
+//            return;
+//        
+//        for (RemoteClassMetadataLight child : initialChildren) {
+//            ListTypeNode objectNode = new ListTypeNode(child);
+//            objectNode.setTree(getTree());
+////            getTree().addItem(objectNode);
+////            getTree().setParent(objectNode, this);
+//        }
+//    }
+//
+//    @Override
+//    public void collapse() {}
+//
+//    @Override
+//    public AbstractAction[] getActions() {
+//        return new AbstractAction[0];
+//    }
+//
+//    @Override
+//    public void refresh(boolean recursive) {}
 }

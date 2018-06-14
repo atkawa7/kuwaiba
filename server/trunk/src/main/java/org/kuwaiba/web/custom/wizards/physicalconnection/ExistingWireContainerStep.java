@@ -15,14 +15,20 @@
  */
 package org.kuwaiba.web.custom.wizards.physicalconnection;
 
+import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.HorizontalSplitPanel;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Tree;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
-import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
+import java.util.List;
+import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
+import org.kuwaiba.beans.WebserviceBeanLocal;
+import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.web.custom.tree.DynamicTree;
 import org.vaadin.teemu.wizards.WizardStep;
 
@@ -31,62 +37,140 @@ import org.vaadin.teemu.wizards.WizardStep;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ExistingWireContainerStep implements WizardStep {
-    private final NewLinkWizard newLinkWizard;
-    private DynamicTree treeEndPointA;      
-    
-    private VerticalLayout content;
-    
-    public ExistingWireContainerStep(NewLinkWizard newLinkWizard) {
-        this.newLinkWizard = newLinkWizard;
-    }
 
     @Override
     public String getCaption() {
-        return "Existing Wire Container";
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public Component getContent() {
-        if (content == null) {
-            content = new VerticalLayout();
-            content.setMargin(true);
-            content.setSizeFull();  
-            
-            Component trees = initTrees();
-            
-            if (trees != null) {
-                Label lblMessage = new Label("<p><b>Select the objects you'd like to connect.</b></p>", 
-                        ContentMode.HTML);
-                content.addComponent(lblMessage);
-                content.setExpandRatio(lblMessage, 0.1f);
-                
-                content.addComponent(trees);
-                content.setExpandRatio(trees, 0.8f);
-            }
-        }
-        return content;
-    }
-    private Component initTrees() {
-        RemoteObjectLight rootSource = newLinkWizard.getConnectionPolyline().getSource().getRemoteObjectLight();
-        InventoryObjectNode rootNodeA = new InventoryObjectNode(rootSource);
-        treeEndPointA = new DynamicTree(rootNodeA, newLinkWizard.getParentComponent());
-        //treeEndPointA.setDragMode(Tree.TreeDragMode.NONE);
-        rootNodeA.setTree(treeEndPointA);
-                
-        HorizontalSplitPanel pnlChooseEndpoints = new HorizontalSplitPanel();
-        pnlChooseEndpoints.setFirstComponent(treeEndPointA);
-            
-        return pnlChooseEndpoints;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public boolean onAdvance() {
-        return true;//treeEndPointA.getValue() != null;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public boolean onBack() {
-        return true;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
+    
+    
+//    private final NewLinkWizard newLinkWizard;
+//    private DynamicTree treeWireContainer;     
+//    private CheckBox chkNoUseTemplate;
+//    
+//    private VerticalLayout content;
+//    
+//    public ExistingWireContainerStep(NewLinkWizard newLinkWizard) {
+//        this.newLinkWizard = newLinkWizard;
+//    }
+//
+//    @Override
+//    public String getCaption() {
+//        return "Existing Wire Container";
+//    }
+//    
+//    public RemoteObjectLight getWireContainer() {
+//        //return treeWireContainer != null && treeWireContainer.getSelectedItems().iterator().next() instanceof InventoryObjectNode && ((InventoryObjectNode) treeWireContainer.getValue()).getObject() instanceof RemoteObjectLight ? 
+//        return treeWireContainer != null && !treeWireContainer.getSelectedItems().isEmpty() ?  
+//                treeWireContainer.getSelectedItems().iterator().next() : null;
+//    }
+//    
+//    public boolean isUseWireContainer() {
+//        return chkNoUseTemplate != null ? !chkNoUseTemplate.getValue() : false;
+//    }
+//
+//    @Override
+//    public Component getContent() {
+//        if (content == null) {
+//            content = new VerticalLayout();
+//            content.setMargin(true);
+//            content.setSizeFull();  
+//            
+//            Component trees = initTrees();
+//            
+//            if (trees != null) {
+//                Label lblMessage = new Label("<p><b>Select the objects you'd like to connect.</b></p>", 
+//                        ContentMode.HTML);
+//                content.addComponent(lblMessage);
+//                content.setExpandRatio(lblMessage, 0.1f);
+//                
+//                content.addComponent(trees);
+//                content.setExpandRatio(trees, 0.8f);
+//            }
+//        }
+//        return content;
+//    }
+//    private Component initTrees() {
+//        WebserviceBeanLocal wsBean = newLinkWizard.getParentComponent().getWsBean();
+//        String ipAddress = Page.getCurrent().getWebBrowser().getAddress();
+//        String sessionId = newLinkWizard.getParentComponent().getApplicationSession().getSessionId();
+//        
+//        RemoteObjectLight source = newLinkWizard.getConnectionPolyline().getSource().getRemoteObjectLight();
+//        RemoteObjectLight target = newLinkWizard.getConnectionPolyline().getSource().getRemoteObjectLight();
+//        
+//        try {
+//            RemoteObjectLight commonParent = wsBean.getCommonParent(source.getClassName(), source.getId(), target.getClassName(), target.getId(), ipAddress, sessionId);
+//            
+//            if (commonParent.getId() == -1L) {
+//                NotificationsUtil.showError("Can not create connection whose common parent is the root of hierarchy");
+//                return new VerticalLayout();
+//            }
+//            List<RemoteObjectLight> existingWireContainersList = wsBean.getContainersBetweenObjects(source.getClassName(), source.getId(), 
+//                target.getClassName(), target.getId(), Constants.CLASS_WIRECONTAINER, ipAddress, sessionId);
+//            
+//            WireContainerRootNode wireContainerRootNode = new WireContainerRootNode(Constants.CLASS_WIRECONTAINER, existingWireContainersList);
+//            treeWireContainer = new DynamicTree(wireContainerRootNode, newLinkWizard.getParentComponent());
+//            treeWireContainer.setSelectionMode(Grid.SelectionMode.SINGLE);
+//            wireContainerRootNode.setTree(treeWireContainer);
+//            
+//            
+//            VerticalLayout verticalLayout = new VerticalLayout();
+//            
+//            Panel pnlTree = new Panel();                        
+//            pnlTree.setContent(treeWireContainer);
+//            pnlTree.setSizeFull();
+//            pnlTree.setHeight("250");
+//            
+//            verticalLayout.addComponent(pnlTree);
+//            
+//            chkNoUseTemplate = new CheckBox("Do not use any container");
+//            
+//            chkNoUseTemplate.addValueChangeListener((event) -> {
+//                treeWireContainer.setEnabled(!chkNoUseTemplate.getValue());
+//            });
+//            
+//            verticalLayout.addComponent(chkNoUseTemplate);
+//            
+//            return verticalLayout;
+//                       
+//        } catch (ServerSideException ex) {
+//            
+//            NotificationsUtil.showError(ex.getMessage());
+//            return new VerticalLayout();
+//        }        
+//    }
+//
+//    @Override
+//    public boolean onAdvance() {
+//        if(!chkNoUseTemplate.getValue()) {
+//            if (treeWireContainer.getSelectedItems().isEmpty()) {
+//                NotificationsUtil.showError("You must select a container");
+//                return false;
+//            }
+//            return true;
+//        }
+//        return chkNoUseTemplate.getValue();
+//    }
+//
+//    @Override
+//    public boolean onBack() {
+//        return true;
+//    }
+//    
 }

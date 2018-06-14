@@ -36,7 +36,7 @@ public class TrafficDashboardWidget extends AbstractDashboardWidget {
     private WebserviceBeanLocal wsBean;
     
     public TrafficDashboardWidget(RemoteObjectLight service, WebserviceBeanLocal wsBean) {
-        super();
+        super("Traffic");
         this.service = service;
         this.wsBean = wsBean;
         this.createContent();

@@ -47,7 +47,7 @@ public class ContactsDashboardWidget extends AbstractDashboardWidget {
     private WebserviceBeanLocal wsBean;
     
     public ContactsDashboardWidget(RemoteObjectLight customer, WebserviceBeanLocal wsBean) {
-        super();
+        super("Contacts");
         this.customer = customer;
         this.wsBean = wsBean;
         this.createCover();
@@ -56,12 +56,13 @@ public class ContactsDashboardWidget extends AbstractDashboardWidget {
     
     @Override
     public void createCover() {
-        Panel pnlContactsWidgetCover = new Panel(String.format("Contacts Associated to %s", customer.getName()) );
+        Panel pnlContactsWidgetCover = new Panel("Contacts");
         pnlContactsWidgetCover.setContent(new VerticalLayout(new Label("Y contacts found"), new Button("See More...", (event) -> {
             flip();
         })));
         pnlContactsWidgetCover.setSizeFull();        
         this.coverComponent = pnlContactsWidgetCover;
+        this.coverComponent.setStyleName("k-dashboard_widget-purple");
         addComponent(coverComponent);
     }
 

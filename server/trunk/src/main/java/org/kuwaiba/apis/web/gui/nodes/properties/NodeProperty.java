@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,14 +16,13 @@
 package org.kuwaiba.apis.web.gui.nodes.properties;
 
 import com.google.common.eventbus.Subscribe;
-//import com.vaadin.event.ItemClickEvent;
 import com.vaadin.ui.CustomComponent;
 import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.nodes.listmanagernodes.ListTypeChildNode;
-import org.kuwaiba.web.modules.osp.providers.google.overlays.MarkerNode;
+import org.kuwaiba.web.modules.osp.google.overlays.MarkerNode;
 
 /**
  * This class contains the method that listens when a node is selected in the 
@@ -33,14 +32,19 @@ import org.kuwaiba.web.modules.osp.providers.google.overlays.MarkerNode;
  */
 public class NodeProperty extends CustomComponent implements 
         EmbeddableComponent{
-    
-    protected Sheet sheet;
-    private final TopComponent parentComponent;
-    
-    public NodeProperty(TopComponent parentComponent) {
-        this.parentComponent = parentComponent;
+
+    @Override
+    public TopComponent getTopComponent() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-      
+    
+//    protected Sheet sheet;
+//    private final TopComponent parentComponent;
+//    
+//    public NodeProperty(TopComponent parentComponent) {
+//        this.parentComponent = parentComponent;
+//    }
+//      
 //    @Subscribe
 //    public void nodeSelected(ItemClickEvent event) {
 //        if(event.getItemId() instanceof InventoryObjectNode)
@@ -52,36 +56,36 @@ public class NodeProperty extends CustomComponent implements
 //            setCompositionRoot(null);
 //        }
 //    }
-    
-    /** 
-     * A marker is selected in GIS View
-     * @param marker The selected marker
-     */
-    @Subscribe
-    public void markerSelected(MarkerNode marker) {
-//        createPropertySheet(marker.getRemoteBusinessObject());
-    }
-    
-    /**
-     * Registers this component in the event bus.
-     */
-    public void register() {
-        if (parentComponent != null)
-            parentComponent.getEventBus().register(this);
-    }
-    
-    /**
-     * Unregisters this component from the event bus.
-     */
-    public void unregister() {
-        if (parentComponent!= null)
-            parentComponent.getEventBus().unregister(this);
-    }
-    
-    @Override
-    public TopComponent getTopComponent() {
-        return parentComponent;
-    }
+//    
+//    /** 
+//     * A marker is selected in GIS View
+//     * @param marker The selected marker
+//     */
+//    @Subscribe
+//    public void markerSelected(MarkerNode marker) {
+////        createPropertySheet(marker.getRemoteBusinessObject());
+//    }
+//    
+//    /**
+//     * Registers this component in the event bus.
+//     */
+//    public void register() {
+//        if (parentComponent != null)
+//            parentComponent.getEventBus().register(this);
+//    }
+//    
+//    /**
+//     * Unregisters this component from the event bus.
+//     */
+//    public void unregister() {
+//        if (parentComponent!= null)
+//            parentComponent.getEventBus().unregister(this);
+//    }
+//    
+//    @Override
+//    public TopComponent getTopComponent() {
+//        return parentComponent;
+//    }
     
     
 }

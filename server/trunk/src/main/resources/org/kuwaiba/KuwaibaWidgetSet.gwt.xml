@@ -16,4 +16,6 @@
     
 
     <inherits name="com.neotropic.vaadin.lienzo.WidgetSet" />
+
+    <inherits name="com.vaadin.tapio.googlemaps.Widgetset" />
 </module>

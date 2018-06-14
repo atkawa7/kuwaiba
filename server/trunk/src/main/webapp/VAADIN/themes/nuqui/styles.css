@@ -15260,3 +15260,15 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .darklayout .addpadding {
 	padding: 100px 50px;
 }
+
+.nuqui .dashboards .v-panel-k-dashboard_widget-red {
+	background: yellow;
+}
+
+.nuqui .dashboards .v-panel-k-dashboard_widget-purple {
+	background: purple;
+}
+
+.nuqui .dashboards .k-dashboard_widget-green {
+	background: green;
+}
