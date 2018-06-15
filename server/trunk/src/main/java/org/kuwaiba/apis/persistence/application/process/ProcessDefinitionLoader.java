@@ -73,6 +73,10 @@ public class ProcessDefinitionLoader {
     }
     
     public ProcessDefinition loadProcessDefinition(byte[] processDefinitionStructure) throws XMLStreamException, NumberFormatException, XMLProcessDefinitionException {
+        
+        if (processDefinitionStructure == null)
+            return null;
+        
         ProcessDefinition processDefinition = null;
         long startActivityId = -1;
         
@@ -284,13 +288,19 @@ public class ProcessDefinitionLoader {
                                                 artifactParameters.put(attributeName, attributeValue);
                                             }
                                         }
+                                        byte[] definition = null;
+                                        if (type == ArtifactDefinition.TYPE_ATTACHMENT || type == ArtifactDefinition.TYPE_CONDITIONAL) {
+                                            definition = artifactParameters.get("definition").getBytes();
+                                        } else if (type == ArtifactDefinition.TYPE_FORM) {
+                                            definition = getFormArtifactDefinition(artifactParameters.get("definition"));                                            
+                                        }
                                         ArtifactDefinition artifactDefinition = new ArtifactDefinition(
                                             artifactDefinitionId,
                                             artifactParameters.get("name"), 
                                             artifactParameters.get("description"), 
                                             artifactParameters.get("version"), 
                                             type, 
-                                            getFormArtifactDefinition(artifactParameters.get("definition")));
+                                            definition);
 
                                         artifactDefinitions.put(artifactDefinition.getId(), artifactDefinition);
                                         activityartifact.put(activityDefinitionId, artifactDefinition.getId());

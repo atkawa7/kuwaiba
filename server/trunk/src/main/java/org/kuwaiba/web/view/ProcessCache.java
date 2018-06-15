@@ -37,7 +37,7 @@ import org.kuwaiba.apis.persistence.exceptions.InventoryException;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ProcessCache {
+public final class ProcessCache {
     public static long processInstancesCounter = 10;
     public static long artifactCounter = 100000;
     
@@ -52,7 +52,9 @@ public class ProcessCache {
         
     private ProcessCache() {
         ProcessDefinition altaServicioProcess = getProcessDefinition2(1L);
-        cacheProcessDefinition(altaServicioProcess);
+        
+        if (altaServicioProcess != null)
+            cacheProcessDefinition(altaServicioProcess);
     }
         
     public static ProcessCache getInstance() {
@@ -153,7 +155,7 @@ public class ProcessCache {
         ActivityDefinition activity = processDef.getStartActivity();
         
         while ((activity != null) && (activity.getId() != activityId))
-            activity = activity.getNextActivity();
+            activity = getNextActivityForProcessInstance(processInstanceId, activity.getId());
         
         if (activity != null) {
             
@@ -303,7 +305,7 @@ public class ProcessCache {
         ActivityDefinition activity = processDefinition.getStartActivity();
         
         while (activity != null && activity.getId() != activityDefinitionId)
-            activity = activity.getNextActivity();
+            activity = getNextActivityForProcessInstance(processInstanceId, activity.getId());
         
         if (activity != null) {
             

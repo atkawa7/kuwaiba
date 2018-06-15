@@ -30,9 +30,10 @@ public interface ArtifactRenderer {
     public Component renderArtifact();
     /**
      * Gets the content
-     * @return
+     * @return The content of the artifact
+     * @throws Exception Throws if the content is no the expected
      */
-    public byte[] getContent();
+    public byte[] getContent() throws Exception;
     /**
      * Gets the shared information
      * @return

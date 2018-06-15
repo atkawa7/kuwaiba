@@ -112,7 +112,7 @@ public class FormArtifactRenderer implements ArtifactRenderer {
     }
 
     @Override
-    public byte[] getContent() {
+    public byte[] getContent() throws Exception {
         formInstanceCreator = new FormInstanceCreator(formRenderer.getFormStructure(), wsBean, session);
         return formInstanceCreator.getStructure();
     }

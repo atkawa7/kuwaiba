@@ -34,16 +34,16 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
- *
+ * Shows graphically the process definition and the current state of a process instance
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ProcessGraph extends Panel {
     private final RemoteProcessDefinition processDefinition;
-    private RemoteProcessInstance processInstance;
+    private final RemoteProcessInstance processInstance;
     private final WebserviceBeanLocal wsBean;
     private final RemoteSession remoteSession;
-    private HashMap<Long, RemoteActivityDefinition> ids = new HashMap();
-    private List<RemoteActivityDefinition> allActivities = new ArrayList();
+    private final HashMap<Long, RemoteActivityDefinition> ids = new HashMap();
+    private final List<RemoteActivityDefinition> allActivities = new ArrayList();
     
     public ProcessGraph(RemoteProcessInstance processInstance, RemoteProcessDefinition processDefinition, WebserviceBeanLocal wsBean, RemoteSession remoteSession) {
         this.processDefinition = processDefinition;
@@ -80,10 +80,11 @@ public class ProcessGraph extends Panel {
                 
                 graph.addEdge(activities.get(activity), activities.get(ifTrue));
                 Graph.Edge edge = graph.getEdge(activities.get(activity), activities.get(ifTrue));
-                edge.setParam("color", "blue");
+                edge.setParam("color", "black");
+                edge.setParam("label", "True");
                 
                 addEges(activities, ifTrue, graph);
-                                
+                                                
                 RemoteActivityDefinition ifFalse = ((RemoteConditionalActivityDefinition) activity).getNextActivityIfFalse();
                 if (ifFalse == null)
                     return;
@@ -93,7 +94,8 @@ public class ProcessGraph extends Panel {
                 
                 graph.addEdge(activities.get(activity), activities.get(ifFalse));
                 edge = graph.getEdge(activities.get(activity), activities.get(ifFalse));
-                edge.setParam("color", "blue");
+                edge.setParam("color", "black");
+                edge.setParam("label", "False");
                 
                 addEges(activities, ifFalse, graph);
                                 
@@ -108,7 +110,7 @@ public class ProcessGraph extends Panel {
                 
                 graph.addEdge(activities.get(activity), activities.get(nextActivity));
                 Graph.Edge edge = graph.getEdge(activities.get(activity), activities.get(nextActivity));
-                edge.setParam("color", "blue");
+                edge.setParam("color", "black");
                 
                 addEges(activities, nextActivity, graph);
             }
@@ -122,11 +124,7 @@ public class ProcessGraph extends Panel {
         HashMap<RemoteActivityDefinition, Graph.Node> activities = new HashMap();
                 
         VizComponent vizComponent = new VizComponent();
-
-        // The User Select A Process
-        // The App Load the Process
-        // The User start the process
-                
+        
         Graph graph = new Graph("G" + String.valueOf(processDefinition.getId()), Graph.DIGRAPH);
         
         for (RemoteActivityDefinition currentActivity : allActivities) {
@@ -137,84 +135,45 @@ public class ProcessGraph extends Panel {
             if (currentActivity.getType() == ActivityDefinition.TYPE_NORMAL)
                 currentActivityNode.setParam("shape", "box");
             
-            if (currentActivity.getType() == ActivityDefinition.TYPE_CONDITIONAL) {
-                currentActivityNode.setParam("shape", "box");
-                vizComponent.addCss(currentActivityNode, "fill", "#c6cad1");
-            }
+            if (currentActivity.getType() == ActivityDefinition.TYPE_CONDITIONAL)
+                currentActivityNode.setParam("shape", "diamond");
             
             nodes.put(currentActivityNode, currentActivity);
             activities.put(currentActivity, currentActivityNode);
         }
         addEges(activities, processDefinition.getStartActivity(), graph);
         
-
-        
-
-        /*
-        RemoteActivityDefinition currentActivity = processDefinition.getStartActivity();
-        while (true) {
-            if (currentActivity instanceof RemoteConditionalActivityDefinition) {
-                RemoteActivityDefinition nextActivityIfTrue = ((RemoteConditionalActivityDefinition) currentActivity).getNextActivityIfTrue();
-                RemoteActivityDefinition nextActivityIfFalse = ((RemoteConditionalActivityDefinition) currentActivity).getNextActivityIfFalse();
-                
-                if (activities.containsKey(nextActivityIfTrue)) {
-                    
-                }
-            } else {
-                RemoteActivityDefinition nextActivity = currentActivity.getNextActivity();
-
-                if (nextActivity == null)
-                    break;
-
-                Graph.Node currentActivityNode = new Graph.Node(new Date().getTime() + String.valueOf(currentActivity.getId()));
-                currentActivityNode.setParam("label", "\"" + currentActivity.getName() + "\"");
-
-                Graph.Node nextActivityNode = new Graph.Node(new Date().getTime() + String.valueOf(nextActivity.getId()));
-                nextActivityNode.setParam("label", "\"" + nextActivity.getName() + "\"");
-
-                nodes.put(currentActivityNode, currentActivity);
-                nodes.put(nextActivityNode, nextActivity);
-
-                activities.put(currentActivity, currentActivityNode);
-                activities.put(nextActivity, nextActivityNode);
-
-                graph.addEdge(currentActivityNode, nextActivityNode);
-                Graph.Edge edge = graph.getEdge(currentActivityNode, nextActivityNode);
-
-                if (currentActivity.getType() == ActivityDefinition.TYPE_NORMAL)
-                    currentActivityNode.setParam("shape", "box");
-
-                if (nextActivity.getType() == ActivityDefinition.TYPE_NORMAL)
-                    nextActivityNode.setParam("shape", "box");                
-
-                edge.setParam("color", "blue");
-
-                currentActivity = nextActivity;
-            }
-        }
-        */
         vizComponent.setWidth("400px");
         vizComponent.setHeight("700px");
         vizComponent.drawGraph(graph);
         
         for (Graph.Node node : nodes.keySet())
-            vizComponent.addCss(node, "stroke", "#62c192");
+            vizComponent.addCss(node, "stroke", "#000000");
         
-        try {
-            List<RemoteActivityDefinition> path = wsBean.getProcessInstanceActivitiesPath(
-                    processInstance.getId(),
-                    Page.getCurrent().getWebBrowser().getAddress(),
-                    remoteSession.getSessionId());
-            if (path != null) {
-                for (RemoteActivityDefinition currentActivity : path) {
-                    vizComponent.addCss(activities.get(currentActivity), "stroke", "#f4a742");
-                    vizComponent.addCss(activities.get(currentActivity), "fill", "#c0d5f7");
+        if (processInstance != null) {
+            try {
+                List<RemoteActivityDefinition> path = wsBean.getProcessInstanceActivitiesPath(
+                        processInstance.getId(),
+                        Page.getCurrent().getWebBrowser().getAddress(),
+                        remoteSession.getSessionId());
+                if (path != null) {
+                    int pathSize = path.size();
+                    for (int i = 0; i < pathSize; i += 1) {
+
+                        Graph.Node b = activities.get(path.get(i));
+                        
+                        vizComponent.addCss(b, "fill", "#c0d5f7");
+                        
+                        if (i - 1 >= 0) {
+                            Graph.Node a = activities.get(path.get(i - 1));
+                            Graph.Edge edge = graph.getEdge(a, b);
+                            edge.setParam("color", "red");
+                        }
+                    }
                 }
+            } catch (ServerSideException ex) {
             }
-        } catch (ServerSideException ex) {
         }
-        //vizComponent.addCss(activities.get(processDefinition.getStartActivity()), "stroke", "#f4a742");
-                                
         Label lblProcessName = new Label(processDefinition.getName());
         
         setSizeFull();
@@ -225,8 +184,7 @@ public class ProcessGraph extends Panel {
         verticalLayout.setComponentAlignment(vizComponent, Alignment.MIDDLE_CENTER);
         verticalLayout.setComponentAlignment(lblProcessName, Alignment.MIDDLE_CENTER);
                 
-        setContent(verticalLayout);        
-
+        setContent(verticalLayout);
     }
     
 }

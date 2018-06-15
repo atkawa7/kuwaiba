@@ -90,7 +90,7 @@ public class ComponentUpload extends GraphicalComponent {
                     Constants.Property.VALUE, file.getPath(), null));
                 
                 getComponent().setCaption(file.getName());
-                getComponent().setButtonCaption("Change file");                
+                getComponent().setButtonCaption("Change file");
             }
         }
     }

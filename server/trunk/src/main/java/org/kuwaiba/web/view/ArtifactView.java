@@ -15,7 +15,6 @@
 package org.kuwaiba.web.view;
 
 import com.vaadin.ui.Panel;
-import java.util.List;
 import org.kuwaiba.apis.persistence.application.process.ArtifactDefinition;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
@@ -53,9 +52,11 @@ public class ArtifactView extends Panel {
     public void initView() {
         switch (artifactDefinition.getType()) {
             case ArtifactDefinition.TYPE_ATTACHMENT: 
+                artifactRenderer = new AttachmentArtifactRender(artifactDefinition, artifact);
+                setContent(artifactRenderer.renderArtifact());
             break;
             case ArtifactDefinition.TYPE_CONDITIONAL: 
-                artifactRenderer = new ConditionalArtifactRender();
+                artifactRenderer = new ConditionalArtifactRender(artifactDefinition, artifact);
                 setContent(artifactRenderer.renderArtifact());
             break;
             case ArtifactDefinition.TYPE_FORM: 

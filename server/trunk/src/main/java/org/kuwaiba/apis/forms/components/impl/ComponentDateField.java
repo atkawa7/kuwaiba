@@ -21,6 +21,7 @@ import org.kuwaiba.apis.forms.elements.ElementDateField;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.HasValue.ValueChangeListener;
 import com.vaadin.ui.DateField;
+import com.vaadin.ui.themes.ValoTheme;
 import java.time.LocalDate;
 
 /**
@@ -41,6 +42,7 @@ public class ComponentDateField extends GraphicalComponent {
     @Override
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementDateField) {
+            getComponent().addStyleName(ValoTheme.DATEFIELD_ALIGN_RIGHT);
             getComponent().setValue(LocalDate.now());
             
             getComponent().addValueChangeListener(new ValueChangeListener<LocalDate>() {

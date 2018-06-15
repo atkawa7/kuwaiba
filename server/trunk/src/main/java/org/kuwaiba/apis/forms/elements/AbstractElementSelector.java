@@ -75,7 +75,6 @@ public abstract class AbstractElementSelector extends AbstractElementField {
         if (hasProperty(Constants.EventAttribute.ONLAZYLOAD, Constants.Property.ITEMS)) {
             
             List<String> list = getEvents().get(Constants.EventAttribute.ONLAZYLOAD).get(Constants.Property.ITEMS);
-            
             loadItems(list);
         }
     }
