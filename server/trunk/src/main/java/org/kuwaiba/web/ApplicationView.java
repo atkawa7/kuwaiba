@@ -30,7 +30,6 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import javax.inject.Inject;
-import org.kuwaiba.apis.web.gui.nodes.properties.PropertySheetModule;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.web.custom.CustomButton;

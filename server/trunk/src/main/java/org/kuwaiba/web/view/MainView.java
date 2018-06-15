@@ -57,35 +57,35 @@ public class MainView extends VerticalSplitPanel implements View {
         
         MenuBar.MenuItem menuItem = menuBar.addItem("Processes", null, null);
         
-        try {
-            List<RemoteProcessDefinition> processDefinitions = wsBean.getProcessDefinitions(
-                Page.getCurrent().getWebBrowser().getAddress(), 
-                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
-            
-            for (RemoteProcessDefinition processDefinition : processDefinitions) {
-                
-                menuItem.addItem(processDefinition.getName(), null, new MenuBar.Command() {
-                    @Override
-                    public void menuSelected(MenuBar.MenuItem selectedItem) {
-                        
-                        try {
-                            List<RemoteProcessInstance> processInstances = wsBean.getProcessInstances(
-                                processDefinition.getId(), 
-                                Page.getCurrent().getWebBrowser().getAddress(), 
-                                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
-                            
-                            setSecondComponent(new ProcessInstancesView(processDefinition, processInstances, wsBean, ((RemoteSession) getSession().getAttribute("session"))));
-                                                        
-                        } catch (ServerSideException ex) {
-                            NotificationsUtil.showError(ex.getMessage());
-                        }
-                    }
-                });
-            }
-            
-        } catch (ServerSideException ex) {
-            NotificationsUtil.showError(ex.getMessage());
-        }
+//        try {
+//            List<RemoteProcessDefinition> processDefinitions = wsBean.getProcessDefinitions(
+//                Page.getCurrent().getWebBrowser().getAddress(), 
+//                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+//            
+//            for (RemoteProcessDefinition processDefinition : processDefinitions) {
+//                
+//                menuItem.addItem(processDefinition.getName(), null, new MenuBar.Command() {
+//                    @Override
+//                    public void menuSelected(MenuBar.MenuItem selectedItem) {
+//                        
+//                        try {
+//                            List<RemoteProcessInstance> processInstances = wsBean.getProcessInstances(
+//                                processDefinition.getId(), 
+//                                Page.getCurrent().getWebBrowser().getAddress(), 
+//                                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+//                            
+//                            setSecondComponent(new ProcessInstancesView(processDefinition, processInstances, wsBean, ((RemoteSession) getSession().getAttribute("session"))));
+//                                                        
+//                        } catch (ServerSideException ex) {
+//                            NotificationsUtil.showError(ex.getMessage());
+//                        }
+//                    }
+//                });
+//            }
+//            
+//        } catch (ServerSideException ex) {
+//            NotificationsUtil.showError(ex.getMessage());
+//        }
         
         menuBar.addItem("Service Manager", new MenuBar.Command() {
             @Override

@@ -15,6 +15,7 @@
 package org.kuwaiba.web.modules.services.dashboard;
 
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
+import org.kuwaiba.apis.web.gui.dashboards.layouts.TheaterDashboardLayout;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
@@ -25,9 +26,13 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 public class ServiceManagerDashboard extends AbstractDashboard {
     
     public ServiceManagerDashboard(RemoteObjectLight customer, RemoteObjectLight service, WebserviceBeanLocal wsBean) {
-        super(service.toString(), 1, 3);
-        this.addDashBoardWidget(new TrafficDashboardWidget(service, wsBean), 0, 0);
-        this.addDashBoardWidget(new ResourcesDashboardWidget(service, wsBean), 0, 1);
-        this.addDashBoardWidget(new ContactsDashboardWidget(customer, wsBean), 0, 2);
+        super(service.toString(), new TheaterDashboardLayout(3, 2));
+        ((TheaterDashboardLayout)getDashboardLayout()).setScreenWidget(new TrafficDashboardWidget(service, wsBean));
+        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(0, 0, new ResourcesDashboardWidget(service, wsBean));
+        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 0, new ContactsDashboardWidget(customer, wsBean));
+        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 0, new ServiceViewsDashboardWidget(service, wsBean));
+        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(0, 1, new DummyDashboardWidget("Tickets", "dashboard_cover_widget-darkorange"));
+        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 1, new DummyDashboardWidget("SLAs", "dashboard_cover_widget-darkpurple"));
+        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 1, new DummyDashboardWidget("Reports", "dashboard_cover_widget-darkgrey"));
     }
 }

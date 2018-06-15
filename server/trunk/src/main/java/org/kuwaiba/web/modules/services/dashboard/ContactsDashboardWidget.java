@@ -16,7 +16,7 @@
 package org.kuwaiba.web.modules.services.dashboard;
 
 import com.vaadin.server.Page;
-import com.vaadin.ui.Button;
+import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
@@ -25,7 +25,6 @@ import com.vaadin.ui.VerticalLayout;
 import java.util.List;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
-import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -56,40 +55,59 @@ public class ContactsDashboardWidget extends AbstractDashboardWidget {
     
     @Override
     public void createCover() {
-        Panel pnlContactsWidgetCover = new Panel("Contacts");
-        pnlContactsWidgetCover.setContent(new VerticalLayout(new Label("Y contacts found"), new Button("See More...", (event) -> {
-            flip();
-        })));
-        pnlContactsWidgetCover.setSizeFull();        
-        this.coverComponent = pnlContactsWidgetCover;
-        this.coverComponent.setStyleName("k-dashboard_widget-purple");
+        VerticalLayout lytContactsWidgetCover = new VerticalLayout();
+        Label lblText = new Label(title);
+        lblText.setStyleName("text-bottomright");
+        lytContactsWidgetCover.addLayoutClickListener((event) -> {
+            if (event.getButton() == MouseEventDetails.MouseButton.LEFT)
+                launch();
+        });
+        
+        lytContactsWidgetCover.addComponent(lblText);
+        lytContactsWidgetCover.setSizeFull();
+        lytContactsWidgetCover.setStyleName("dashboard_cover_widget-darkblue");
+        this.coverComponent = lytContactsWidgetCover;
         addComponent(coverComponent);
     }
 
     @Override
-    public void createContent() {
-        Grid<RemoteContact> lstContacts = new Grid<>();
-        lstContacts.setHeaderVisible(false);
-        lstContacts.setSizeFull();
-        this.contentComponent = lstContacts;
-        
+    public void createContent() {        
         try {
-            
             List<RemoteContact> customerContacts = wsBean.getContactsForCustomer(customer.getClassName(), customer.getId(), Page.getCurrent().getWebBrowser().getAddress(), 
                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
             
-            lstContacts.addColumn(RemoteContact::getName);
-            lstContacts.addColumn((source) -> {
-                for (StringPair attribute : source.getAttributes()) {
-                    if (attribute.getKey().equals("email")) //NOI18N
-                        return attribute.getValue();
-                }
-                return "NA"; //NOI18N
-            });
-            lstContacts.setItems(customerContacts);
-            
+            if (customerContacts.isEmpty()) {
+                this.contentComponent = new Label("The customer associated to this service does not have registered contacts");
+            }
+            else {
+                Grid<RemoteContact> lstContacts = new Grid<>();
+                lstContacts.setSizeFull();
+                lstContacts.addColumn(RemoteContact::getName).setCaption("Name");
+                
+                lstContacts.addColumn((source) -> {
+                    for (StringPair attribute : source.getAttributes()) {
+                        if (attribute.getKey().equals("email")) //NOI18N
+                            return attribute.getValue();
+                    }
+                    return "NA"; //NOI18N
+                }).setCaption("e-mail");
+                
+                lstContacts.addColumn((source) -> {
+                    for (StringPair attribute : source.getAttributes()) {
+                        if (attribute.getKey().equals("telephone1")) //NOI18N
+                            return attribute.getValue();
+                    }
+                    return "NA"; //NOI18N
+                }).setCaption("Telephone 1");
+                
+                lstContacts.setItems(customerContacts);
+                
+                Panel pnlContacts = new Panel(lstContacts);
+                pnlContacts.setSizeFull();
+                this.contentComponent = pnlContacts;
+            }
         } catch (ServerSideException ex) {
-            NotificationsUtil.showError(ex.getMessage());
+            this.contentComponent = new Label(ex.getMessage());
         }        
     }
 }

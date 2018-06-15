@@ -15,7 +15,8 @@
  */
 package org.kuwaiba.apis.web.gui.dashboards;
 
-import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.AbstractOrderedLayout;
+import com.vaadin.ui.Panel;
 
 /**
  * Most Kuwaiba modules use master-detail views present information to the user. The master part is usually implemented 
@@ -24,26 +25,31 @@ import com.vaadin.ui.GridLayout;
  * with widgets displaying detailed information (charts, lists, etc)
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
-public class AbstractDashboard extends GridLayout {  
+public class AbstractDashboard extends Panel {
+    /**
+     * The layout used by the panel. See some sample layouts in 
+     * the package org.kuwaiba.apis.web.gui.dashboards.layouts
+     */
+    private AbstractOrderedLayout dashboardLayout;
+    
     /**
      * Default constructor
      * @param title The title of the dashboard
-     * @param columns The number of columns of the grid
-     * @param rows The number of rows of the grid
+     * @param dashboardLayout The layout to be used. See some sample layouts in 
+     * the package org.kuwaiba.apis.web.gui.dashboards.layouts
      */
-    public AbstractDashboard(String title, int columns, int rows) {
-        super(columns, rows);
-        setSizeFull();
-    }
-    
-    /**
-     * Adds a dashboard widget to the dashboard in a specific location
-     * @param dashboardWidget The dashboard widget to add
-     * @param column The column to place the dashboard widget
-     * @param row  The column to place the dashboard widget
-     */
-    public void addDashBoardWidget(AbstractDashboardWidget dashboardWidget, int column, int row) {
-        this.addComponent(dashboardWidget, column, row);
+    public AbstractDashboard(String title, AbstractOrderedLayout dashboardLayout) {
+        this.dashboardLayout = dashboardLayout;
+        this.setContent(dashboardLayout);
+        this.setSizeFull();
     }
 
+    public AbstractOrderedLayout getDashboardLayout() {
+        return dashboardLayout;
+    }
+
+    public void setDashboardLayout(AbstractOrderedLayout dashboardLayout) {
+        this.dashboardLayout = dashboardLayout;
+        setContent(dashboardLayout);
+    }
 }

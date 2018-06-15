@@ -1607,8 +1607,44 @@ div.v-layout.v-horizontal.v-widget {
 	vertical-align: top;
 }
 
+@font-face {
+	font-family: ubuntu-r;
+	font-weight: normal;
+	font-style: normal;
+	src: url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-r.eot);
+	src: url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-r.eot?#iefix) format("embedded-opentype"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-r.woff) format("woff"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-r.ttf) format("truetype"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-r.svg#ubuntu-r) format("svg");
+}
+
+.ubuntu-r {
+	font-family: ubuntu-r;
+	font-style: normal;
+	font-weight: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	display: inline-block;
+	text-align: center;
+}
+
+@font-face {
+	font-family: ubuntu-l;
+	font-weight: normal;
+	font-style: normal;
+	src: url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-l.eot);
+	src: url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-l.eot?#iefix) format("embedded-opentype"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-l.woff) format("woff"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-l.ttf) format("truetype"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-l.svg#ubuntu-l) format("svg");
+}
+
+.ubuntu-l {
+	font-family: ubuntu-l;
+	font-style: normal;
+	font-weight: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	display: inline-block;
+	text-align: center;
+}
+
 .nuqui.v-app, .nuqui.v-app-loading {
-	font: 400 13px/1.55 lato-normal, sans-serif;
+	font: 400 13px/1.55 ubuntu-r;
 	color: #464646;
 	background-color: #fafafa;
 	cursor: default;
@@ -14952,6 +14988,11 @@ div.v-layout.v-horizontal.v-widget {
 	overflow: hidden;
 }
 
+.nuqui .v-window {
+	min-height: 50% !important;
+	min-width: 50% !important;
+}
+
 .nuqui .blueicon .v-icon {
 	color: #57afff;
 	font-size: 20px;
@@ -15000,28 +15041,6 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .h1 {
 	color: gold;
 	font-size: 1em;
-}
-
-.nuqui .login-form {
-	padding: 21px 21px 21px 21px;
-	-webkit-animation: valo-animate-in-fade 1s backwards;
-	-moz-animation: valo-animate-in-fade 1s backwards;
-	animation: valo-animate-in-fade 1s backwards;
-}
-
-.nuqui .login-form .h1 {
-	font-size: 2.4em;
-	color: #eb2977;
-	font-weight: 300;
-}
-
-.nuqui .foot {
-	font-size: 0.9em;
-}
-
-.nuqui .foot .foot-label {
-	padding-left: 10px;
-	padding-right: 10px;
 }
 
 .nuqui .v-tree-node-bold {
@@ -15187,6 +15206,14 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 5px;
 }
 
+.nuqui .processmanager .v-nativebutton {
+	background: none !important;
+	color: inherit;
+	border: none;
+	padding: 0 !important;
+	font: inherit;
+}
+
 .nuqui .formmanager .v-vertical {
 	font-size: 14px;
 }
@@ -15261,14 +15288,85 @@ div.v-layout.v-horizontal.v-widget {
 	padding: 100px 50px;
 }
 
-.nuqui .dashboards .v-panel-k-dashboard_widget-red {
-	background: yellow;
+.nuqui .login .v-verticallayout-main {
+	background-image: url("/img/background_login.png");
+	background-size: cover;
 }
 
-.nuqui .dashboards .v-panel-k-dashboard_widget-purple {
-	background: purple;
+.nuqui .login .v-verticallayout-dark {
+	color: white;
 }
 
-.nuqui .dashboards .k-dashboard_widget-green {
-	background: green;
+.nuqui .login-form {
+	padding: 21px 21px 21px 21px;
+	-webkit-animation: valo-animate-in-fade 1s backwards;
+	-moz-animation: valo-animate-in-fade 1s backwards;
+	animation: valo-animate-in-fade 1s backwards;
+}
+
+.nuqui .login-form .h1 {
+	font-size: 2.4em;
+	color: white;
+	font-weight: 300;
+}
+
+.nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkblue {
+	background: #375187;
+	color: white;
+	font-size: x-large;
+	font-family: ubuntu-l;
+	position: relative;
+	min-height: 150px;
+}
+
+.nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkgreen {
+	background: #4D8459;
+	color: white;
+	font-size: x-large;
+	position: relative;
+	font-family: ubuntu-l;
+	min-height: 150px;
+}
+
+.nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkred {
+	background: #944C4B;
+	color: white;
+	font-size: x-large;
+	position: relative;
+	font-family: ubuntu-l;
+	min-height: 150px;
+}
+
+.nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkorange {
+	background: #DA9631;
+	color: white;
+	font-size: x-large;
+	position: relative;
+	font-family: ubuntu-l;
+	min-height: 150px;
+}
+
+.nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkpurple {
+	background: #AD2D90;
+	color: white;
+	font-size: x-large;
+	position: relative;
+	font-family: ubuntu-l;
+	min-height: 150px;
+}
+
+.nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkgrey {
+	background: #808080;
+	color: white;
+	font-size: x-large;
+	position: relative;
+	font-family: ubuntu-l;
+	min-height: 150px;
+}
+
+.nuqui .dashboards .v-label-text-bottomright {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	padding-right: 10px;
 }

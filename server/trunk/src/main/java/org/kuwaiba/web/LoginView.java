@@ -22,15 +22,13 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
@@ -40,12 +38,10 @@ import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.vaadin.viritin.layouts.MVerticalLayout;
 
 /**
  * Login form
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
- * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
 @CDIView("")
 public class LoginView extends CustomComponent implements View {
@@ -60,31 +56,30 @@ public class LoginView extends CustomComponent implements View {
     
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
+        setStyleName("login");
+        VerticalLayout lyt = new VerticalLayout();
+        lyt.setStyleName("main");
+        lyt.setSizeFull();
+        
+        lyt.addComponent(new Panel()); //Padding
+        lyt.addComponent(buildLoginForm());
+        lyt.addComponent(buildLoginFooter());
         setSizeFull();
-        HorizontalLayout row = new HorizontalLayout();
-        row.addStyleName(ValoTheme.LAYOUT_HORIZONTAL_WRAPPING);
-        Component form = buildLoginForm();
-        Component foot = buildLoginFoot();
+        
+        setCompositionRoot(lyt);
 
-        setCompositionRoot(new MVerticalLayout(row, form, foot)
-                .withAlign(form, Alignment.MIDDLE_CENTER)
-                .withAlign(foot, Alignment.BOTTOM_RIGHT)
-                .withFullHeight());
     }
     
-    private Component buildLoginForm(){
-        Label lblTitle = new Label("<h1>Log into Kuwaiba</h1>",ContentMode.HTML);
-        //Label lblText = new Label("Open Network Inventory");
-        
+    private Component buildLoginForm(){        
         txtUsername = new TextField();
         txtUsername.setWidth(18, Unit.EM);
+        txtUsername.setPlaceholder("Username");
         
         txtPassword = new PasswordField();
-        txtPassword.addStyleName(ValoTheme.TEXTFIELD_INLINE_ICON);
         txtPassword.setWidth(18, Unit.EM);
-        txtPassword.setIcon(FontAwesome.LOCK);
+        txtPassword.setPlaceholder("Password");
         
-        btnLogin = new Button();
+        btnLogin = new Button("Login");
         btnLogin.setIcon(FontAwesome.SIGN_IN);
         btnLogin.addStyleName(ValoTheme.BUTTON_LARGE);
         
@@ -109,59 +104,25 @@ public class LoginView extends CustomComponent implements View {
         
         VerticalLayout lytloginPanel = new VerticalLayout();
         lytloginPanel.addStyleName("login-form");
-        lytloginPanel.addComponents(lblTitle, lytForm);
+        lytloginPanel.addComponents(lytForm);
         lytloginPanel.setSizeUndefined();
         
         return lytloginPanel;
      }
     
-    private Component buildLoginFoot(){
-                       
-        Image logo = new Image(null, 
-                        new ThemeResource("img/neotropic_logo.png"));
-        logo.addStyleName("foot-label");
-        logo.addStyleName("v-align-right");
-     
-        Label lblMessage = new Label("");
-        lblMessage.addStyleName("v-align-right");
-
-        HorizontalLayout lytTopFoot =  new HorizontalLayout(lblMessage,logo);
-        lytTopFoot.setComponentAlignment(lblMessage, Alignment.BOTTOM_RIGHT);
+    private Component buildLoginFooter() {
+        Image imgLogo = new Image(null, 
+                            new ThemeResource("img/neotropic_logo.png"));
         
-        GridLayout grid =  new GridLayout(4,1);
-        grid.setSizeFull();
-        grid.addComponent(lytTopFoot, 3, 0);
-        grid.setColumnExpandRatio(0, 0.2f);
-        grid.setColumnExpandRatio(1, 0.2f);
-        grid.setColumnExpandRatio(2, 0.2f);
-        grid.setColumnExpandRatio(3, 0.4f);
+        Label lblCopyright = new Label("Copyright 2010-2018 Neotropic SAS");
         
-        grid.setComponentAlignment(lytTopFoot, Alignment.BOTTOM_RIGHT);
+        VerticalLayout lytFooter = new VerticalLayout(imgLogo, lblCopyright); 
+        lytFooter.setWidth(100, Unit.PERCENTAGE);
+        lytFooter.setStyleName("dark");
+        lytFooter.addStyleName("v-align-right");
         
-        Label lblNeotropic = new Label("Backed by Neotropic SAS");
-        lblNeotropic.addStyleName("foot-label");
-        lblNeotropic.addStyleName("v-align-right");
-        
-        //Label lblTerms = new Label("Terms");
-        //lblTerms.addStyleName("foot-label");
-                
-        HorizontalLayout lytLfoot = new HorizontalLayout();
-        HorizontalLayout lytRfoot=  new HorizontalLayout(lblNeotropic);
-        lytRfoot.setWidth("100%");
-        
-        HorizontalLayout lytBottomFoot = new HorizontalLayout(lytLfoot, lytRfoot);
-        
-        lytBottomFoot.setWidth("100%");
-        lytBottomFoot.setExpandRatio(lytRfoot, 1.0f);
-
-        lytBottomFoot.setExpandRatio(lytLfoot, 0.4f);
-        lytBottomFoot.setExpandRatio(lytRfoot, 0.6f);
-        
-        VerticalLayout lytFoot = new VerticalLayout(grid, lytBottomFoot);
-        lytFoot.setStyleName("foot");
-        
-        lytLfoot.setSizeUndefined();
-        
-        return lytFoot;
+        lytFooter.setComponentAlignment(imgLogo, Alignment.BOTTOM_CENTER);
+        lytFooter.setComponentAlignment(lblCopyright, Alignment.TOP_CENTER);
+        return lytFooter;
     }
 }

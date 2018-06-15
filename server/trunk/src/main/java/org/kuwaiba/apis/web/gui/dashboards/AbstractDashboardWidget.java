@@ -55,6 +55,7 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
         this.rowSpan = 1;
         this.title = title;
         this.activeContent = ActiveContent.CONTENT_COVER;
+        this.setMargin(true);
     }
 
 
@@ -95,8 +96,11 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
         }
     }
     
-    public void lauch() {
+    public void launch() {
         Window wnwContent = new Window(title);
+        wnwContent.setModal(true);
+        wnwContent.setContent(contentComponent);
+        getUI().addWindow(wnwContent);
     }
     
     /**

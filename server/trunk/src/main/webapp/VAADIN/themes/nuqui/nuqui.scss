@@ -5,8 +5,8 @@
 // Defines the plaintext font size, weight and family. Font size affects general component sizing.
 $v-font-size: 13px !default;
 //$v-font-weight: 300;
-$v-font-family: lato-normal, sans-serif;
-
+//$v-font-family: lato-normal, sans-serif;
+$v-font-family: ubuntu-r;
 // Defines the border used by all components.
 //$v-border: 1px solid (v-shade 0.7);
 //$v-border-radius: 4px;
@@ -72,6 +72,10 @@ $v-field-background-color: #ccffe6;
 @mixin nuqui {
     @include valo;
     
+    .v-window {
+        min-height: 50% !important;
+        min-width: 50% !important;
+    }
     
     .blueicon .v-icon {
         color: #57afff;
@@ -123,28 +127,7 @@ $v-field-background-color: #ccffe6;
         font-size: 1em;
     }
     
-    .login-form {
-        padding: $v-layout-margin;  
-        @include valo-animate-in-fade($duration: 1s);
-        
-        & .h1{
-            font-size: 2.4em;
-            color: #eb2977;
-            font-weight: 300;
-        }
-       
-    }//end login-form
-
-    //login-foot
-    .foot{
-        $v-font-size: 0.9em;
-        font-size: $v-font-size;
-
-        .foot-label{
-            padding-left: $foot-login-padding;
-            padding-right: $foot-login-padding;
-        }
-    }//end login-foot
+    
     
     .v-tree-node-bold {
         font-weight: bold;
@@ -377,22 +360,94 @@ $v-field-background-color: #ccffe6;
         }
     }
     
-    /* Dashboards */
-    .dashboards {
-        .v-panel-k-dashboard_widget-red {
-            background: yellow;
+    /*Login window*/
+    .login {
+        .v-verticallayout-main {
+            background-image: url("/img/background_login.png");
+            background-size: cover;
         }
         
-        
-        .v-panel-k-dashboard_widget-purple {
-            background: purple;
-        }
-        
-        .k-dashboard_widget-green {
-            background: green;
+        .v-verticallayout-dark {
+            color: white;
         }
     }
+        
+    .login-form {
+        padding: $v-layout-margin;  
+        @include valo-animate-in-fade($duration: 1s);
+        
+        & .h1{
+            font-size: 2.4em;
+            color: white;
+            font-weight: 300;
+        }
+       
+    }//end login-form   
     
+    /* Dashboards */
+    .dashboards {
+        /*The following style are mostly used for cover components for dashboard windows using a dark theme*/
+        .v-verticallayout-dashboard_cover_widget-darkblue {
+            background: #375187;
+            color: white;
+            font-size: x-large;
+            font-family: ubuntu-l;
+            position: relative;
+            min-height: 150px;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkgreen {
+            background: #4D8459;
+            color: white;
+            font-size: x-large;
+            position: relative;
+            font-family: ubuntu-l;
+            min-height: 150px;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkred {
+            background: #944C4B;
+            color: white;
+            font-size: x-large;
+            position: relative;
+            font-family: ubuntu-l;
+            min-height: 150px;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkorange {
+            background: #DA9631;
+            color: white;
+            font-size: x-large;
+            position: relative;
+            font-family: ubuntu-l;
+            min-height: 150px;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkpurple {
+            background: #AD2D90;
+            color: white;
+            font-size: x-large;
+            position: relative;
+            font-family: ubuntu-l;
+            min-height: 150px;
+        }
+        
+        .v-verticallayout-dashboard_cover_widget-darkgrey {
+            background: #808080;
+            color: white;
+            font-size: x-large;
+            position: relative;
+            font-family: ubuntu-l;
+            min-height: 150px;
+        }
+
+        .v-label-text-bottomright {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            padding-right: 10px;
+        }
+    }
     
     
     /*Service Manager*/

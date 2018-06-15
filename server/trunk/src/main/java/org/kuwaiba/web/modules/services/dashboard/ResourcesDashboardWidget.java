@@ -16,7 +16,7 @@
 package org.kuwaiba.web.modules.services.dashboard;
 
 import com.vaadin.server.Page;
-import com.vaadin.ui.Button;
+import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
@@ -24,7 +24,6 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
-import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -50,36 +49,48 @@ public class ResourcesDashboardWidget extends AbstractDashboardWidget {
         this.wsBean = wsBean;
         this.createCover();
         this.createContent();
-        this.coverComponent.setStyleName("k-dashboard_widget-red"); //NOI18N
     }
     
     @Override
     public void createCover() {
-        Panel pnlResourcesWidgetCover = new Panel("Resources");
-        pnlResourcesWidgetCover.setContent(new VerticalLayout(new Label("X resources found"), new Button("See More...", (event) -> {
-            flip();
-        })));
-        pnlResourcesWidgetCover.setSizeFull();
-        this.coverComponent = pnlResourcesWidgetCover;
+        VerticalLayout lytResourcesWidgetCover = new VerticalLayout();
+        Label lblText = new Label(title);
+        lblText.setStyleName("text-bottomright");
+        lytResourcesWidgetCover.addLayoutClickListener((event) -> {
+            if (event.getButton() == MouseEventDetails.MouseButton.LEFT)
+                launch();
+        });
         
-        addComponent(coverComponent);
-    }
+        lytResourcesWidgetCover.addComponent(lblText);
+        lytResourcesWidgetCover.setSizeFull();
+        lytResourcesWidgetCover.setStyleName("dashboard_cover_widget-darkgreen");
+        this.coverComponent = lytResourcesWidgetCover;
+        addComponent(coverComponent);       
+     }
 
     @Override
     public void createContent() {
-        Grid<RemoteObjectLight> lstResources = new Grid<>();
-        lstResources.setHeaderVisible(false);
-        lstResources.setSizeFull();
-        this.contentComponent = lstResources;
-        
         try {
             List<RemoteObjectLight> serviceResources = wsBean.getServiceResources(service.getClassName(), service.getId(), Page.getCurrent().getWebBrowser().getAddress(), 
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-            lstResources.addColumn(RemoteObjectLight::getClassName);
-            lstResources.addColumn(RemoteObjectLight::getName);
-            lstResources.setItems(serviceResources);
+            
+            if (serviceResources.isEmpty())
+                this.contentComponent = new Label("This service does not have resources associated to it");
+            else {
+                Grid<RemoteObjectLight> lstResources = new Grid<>();
+                lstResources.setSizeFull();
+                lstResources.addColumn(RemoteObjectLight::getClassName).setCaption("Resource Type");
+                lstResources.addColumn(RemoteObjectLight::getName).setCaption("Service Name");
+                lstResources.setItems(serviceResources);
+                
+                Panel pnlContacts = new Panel(lstResources);
+                pnlContacts.setSizeFull();
+                
+                this.contentComponent = pnlContacts;
+            }
+            
         } catch (ServerSideException ex) {
-            NotificationsUtil.showError(ex.getMessage());
+            this.contentComponent = new Label(ex.getMessage());
         }
     }
 }
