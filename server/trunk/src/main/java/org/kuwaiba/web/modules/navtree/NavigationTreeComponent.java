@@ -68,11 +68,9 @@ class NavigationTreeComponent extends AbstractTopComponent {
 //                
 //                
 
-                setCompositionRoot(tree);
         } catch (ServerSideException ex) {
             NotificationsUtil.showError(ex.getMessage());
         }
-        this.setSizeFull();
     }
         
     @Override

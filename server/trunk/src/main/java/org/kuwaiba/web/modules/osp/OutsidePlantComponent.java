@@ -38,9 +38,7 @@ public class OutsidePlantComponent extends AbstractTopComponent {
         
         tooledComponent = new OutsidePlantTooledComponent(this);
         
-        setCompositionRoot(tooledComponent);
         enableTools(false);
-        this.setSizeFull();
     }
     
     public MapComponentWrapper getGoogleMapWrapper() {

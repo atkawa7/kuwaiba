@@ -1,5 +1,5 @@
-/*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
+/**
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,43 +13,42 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.web.modules.navtree;
+package org.kuwaiba.web.modules.ltmanager;
 
 import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.Component;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
- * The definition of the Navigation Tree module.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * The definition of the List Types Manager module
+ * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class NavigationTreeModule extends AbstractModule {
+public class ListManagerModule  extends AbstractModule {
     /**
      * The actual component
      */
-    private NavigationTreeComponent treeNavTree;
-    private final WebserviceBeanLocal wsBean;
-    private final RemoteSession session;
+    private ListManagerComponent listManager;
+    private WebserviceBeanLocal wsBean;
+    private RemoteSession session;
     
-    public NavigationTreeModule(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
+    public ListManagerModule(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
         super(eventBus);
         this.wsBean = wsBean;
         this.session = session;
-        icon = new ThemeResource("img/mod_icon_navtree.png");
+        icon = new ThemeResource("img/mod_icon_list.png");
     }
-    
+
     @Override
     public String getName() {
-        return "Navigation Tree";
+        return "List Manager";
     }
 
     @Override
     public String getDescription() {
-        return "Navigate through your physical assets in a hierarchical fashion.";
+        return "This module allows to manage the list type items for the available list types previously created using the Data Model Manager";
     }
 
     @Override
@@ -74,15 +73,15 @@ public class NavigationTreeModule extends AbstractModule {
 
     @Override
     public View open() {
-        treeNavTree = new NavigationTreeComponent(eventBus, wsBean, session);
+        listManager = new ListManagerComponent(eventBus, wsBean, session);
         //Register components in the event bus
-        treeNavTree.registerComponents();
-        return treeNavTree;
+        listManager.registerComponents();
+        return listManager;
     }
 
     @Override
     public void close() {
         //Unregister components from the event bus
-        treeNavTree.unregisterComponents();
+        listManager.unregisterComponents();
     }
 }

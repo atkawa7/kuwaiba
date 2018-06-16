@@ -45,7 +45,7 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
 
 /**
- * The main component of the Containtment Manager module.
+ * The main component of the Containment Manager module.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ContainmentManagerComponent extends AbstractTopComponent {
@@ -189,9 +189,9 @@ public class ContainmentManagerComponent extends AbstractTopComponent {
         compositionRoot.setExpandRatio(content, 0.95f);
         content.setSizeFull();
         
-        setCompositionRoot(compositionRoot);
+        //setCompositionRoot(compositionRoot);
         
-        this.setSizeFull();
+        //this.setSizeFull();
     }
 
     @Override

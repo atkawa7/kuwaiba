@@ -25,7 +25,7 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
-import org.kuwaiba.web.modules.lists.actions.ActionsFactory;
+import org.kuwaiba.web.modules.ltmanager.actions.ActionsFactory;
 
 /**
  * Represents a list type node of a tree

@@ -98,7 +98,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.UserInfoLight;
-import org.kuwaiba.web.view.ProcessCache;
+import org.kuwaiba.web.procmanager.ProcessCache;
 import org.mindrot.jbcrypt.BCrypt;
 import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;

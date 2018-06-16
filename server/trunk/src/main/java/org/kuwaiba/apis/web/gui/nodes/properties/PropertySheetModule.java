@@ -16,8 +16,8 @@
 package org.kuwaiba.apis.web.gui.nodes.properties;
 
 import com.google.common.eventbus.EventBus;
+import com.vaadin.navigator.View;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.Component;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -27,6 +27,10 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
 public class PropertySheetModule extends AbstractModule {
+
+    public PropertySheetModule(EventBus eventBus) {
+        super(eventBus);
+    }
 
     @Override
     public String getName() {
@@ -54,17 +58,12 @@ public class PropertySheetModule extends AbstractModule {
     }
 
     @Override
-    public String getLocation() {
+    public String getMenuEntry() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public int getMode() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Component open() {
+    public View open() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

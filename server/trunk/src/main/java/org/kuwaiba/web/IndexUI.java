@@ -21,14 +21,25 @@ import com.vaadin.cdi.CDIUI;
 import com.vaadin.cdi.CDIViewProvider;
 import com.vaadin.cdi.server.VaadinCDIServlet;
 import com.vaadin.navigator.Navigator;
+import com.vaadin.server.Page;
+import com.vaadin.server.SessionDestroyEvent;
+import com.vaadin.server.SessionDestroyListener;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.server.VaadinSession;
+import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
 import java.io.IOException;
 import java.net.URL;
 import javax.inject.Inject;
+import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
+import org.kuwaiba.beans.WebserviceBeanLocal;
+import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.web.modules.servmanager.ServiceManagerView;
 
 /**
  * Main application entry point. It also serves as the fallback controller
@@ -39,22 +50,103 @@ import javax.servlet.http.HttpServletResponse;
 @SuppressWarnings("serial")
 public class IndexUI extends UI {
     @Inject
-    CDIViewProvider viewProvider;
+    private CDIViewProvider viewProvider;
+    /**
+     * The reference to the back end bean
+     */
+    @Inject
+    WebserviceBeanLocal wsBean;
+    
+    private Navigator navigator;
+    /**
+     * Main menu
+     */
+    private MenuBar mnuMain;
         
     @Override
     protected void init(VaadinRequest request) {
-        Navigator navigator = new Navigator(this, this);
-        navigator.addProvider(viewProvider);
+        this.navigator = new Navigator(this, this);
+        this.navigator.addProvider(viewProvider);
+        
+        this.mnuMain = new MenuBar();
+        this.mnuMain.setStyleName("misc-main");
+        this.mnuMain.setWidth("100%");
+        
+        this.mnuMain.addItem("Processes", null);
+        //        try {
+//            List<RemoteProcessDefinition> processDefinitions = wsBean.getProcessDefinitions(
+//                Page.getCurrent().getWebBrowser().getAddress(), 
+//                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+//            
+//            for (RemoteProcessDefinition processDefinition : processDefinitions) {
+//                
+//                menuItem.addItem(processDefinition.getName(), null, new MenuBar.Command() {
+//                    @Override
+//                    public void menuSelected(MenuBar.MenuItem selectedItem) {
+//                        
+//                        try {
+//                            List<RemoteProcessInstance> processInstances = wsBean.getProcessInstances(
+//                                processDefinition.getId(), 
+//                                Page.getCurrent().getWebBrowser().getAddress(), 
+//                                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+//                            
+//                            setSecondComponent(new ProcessInstancesView(processDefinition, processInstances, wsBean, ((RemoteSession) getSession().getAttribute("session"))));
+//                                                        
+//                        } catch (ServerSideException ex) {
+//                            NotificationsUtil.showError(ex.getMessage());
+//                        }
+//                    }
+//                });
+//            }
+//            
+//        } catch (ServerSideException ex) {
+//            NotificationsUtil.showError(ex.getMessage());
+//        }
+        
+        
+        
+        this.mnuMain.addItem("Service Manager", new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                getUI().getNavigator().navigateTo(ServiceManagerView.VIEW_NAME);
+            }
+        });
+        
+        this.mnuMain.addItem("Log Out", new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                RemoteSession session = (RemoteSession) getSession().getAttribute("session");
+                try {
+                    wsBean.closeSession(session.getSessionId(), Page.getCurrent().getWebBrowser().getAddress());
+                    //getSession().setAttribute("session", null);
+                    getSession().close();
+                    getNavigator().navigateTo(LoginView.VIEW_NAME);
+                    
+                } catch (ServerSideException ex) {
+                    NotificationsUtil.showError(ex.getMessage());
+                }
+            }
+        });
         
         if (getSession().getAttribute("session") == null)
-            navigator.navigateTo(LoginView.VIEW_NAME);
+            this.navigator.navigateTo(LoginView.VIEW_NAME);
         else
-            navigator.navigateTo(ApplicationView.VIEW_NAME);
+            this.navigator.navigateTo(WelcomeView.VIEW_NAME);
+    }
+
+    public MenuBar getMainMenu() {
+        return mnuMain;
     }
     
     @WebServlet(value = "/*", asyncSupported = true)
     @VaadinServletConfiguration(productionMode = false, ui = IndexUI.class, widgetset = "org.kuwaiba.KuwaibaWidgetSet")
-    public static class Servlet extends VaadinCDIServlet {
+    public static class Servlet extends VaadinCDIServlet implements SessionDestroyListener {
+        
+        @Override
+        protected void servletInitialized() throws ServletException {
+            super.servletInitialized();
+            getService().addSessionDestroyListener(this);
+        }
         
         @Override
         protected void writeStaticResourceResponse(HttpServletRequest request,
@@ -70,6 +162,23 @@ public class IndexUI extends UI {
                 return;
             }
             super.writeStaticResourceResponse(request, response, resourceUrl);
+        }
+
+        @Override
+        public void sessionDestroy(SessionDestroyEvent event) {
+            System.out.println("Session is being destroyed");
+//            RemoteSession session = (RemoteSession) getSession().getAttribute("session");
+//            if (session != null) { //The Vaadin session is destroyed, but the Kuwaiba session is still open
+//                System.out.println("Session is being purged");
+//                try {
+//                    wsBean.closeSession(session.getSessionId(), Page.getCurrent().getWebBrowser().getAddress());
+//                } catch (ServerSideException ex) {
+//                    //No matter what happens here
+//                }
+//                
+//                VaadinSession.getCurrent().setAttribute("session", null);
+//            }
+//            getNavigator().navigateTo(LoginView.VIEW_NAME);
         }
     }
 }

@@ -16,8 +16,8 @@
 package org.kuwaiba.web.modules.osp;
 
 import com.google.common.eventbus.EventBus;
+import com.vaadin.navigator.View;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.Component;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -54,7 +54,7 @@ public class OutsidePlantModule extends AbstractModule {
 
     @Override
     public String getDescription() {
-        return "Manage your outside plant and locate your assets on a map.";
+        return "Manage your outside plant and locate your assets on a map";
     }
 
     @Override
@@ -73,21 +73,13 @@ public class OutsidePlantModule extends AbstractModule {
     }
 
     @Override
-    public String getLocation() {
+    public String getMenuEntry() {
         return "Tools/Advanced";
     }
 
     @Override
-    public int getMode() {
-        return AbstractModule.COMPONENT_MODE_EDITOR;
-    }
-    
-    @Override
-    public Component open() {
-        if (instanceCount == 0) {
-            gisView = new OutsidePlantComponent(eventBus, wsBean, session);
-            instanceCount ++;
-        }
+    public View open() {
+        gisView = new OutsidePlantComponent(eventBus, wsBean, session);
         //Register components in the event bus
         gisView.registerComponents();
         return gisView;

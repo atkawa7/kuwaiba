@@ -16,8 +16,8 @@
 package org.kuwaiba.web.modules.containment;
 
 import com.google.common.eventbus.EventBus;
+import com.vaadin.navigator.View;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.Component;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -48,7 +48,7 @@ public class ContainmentManagerModule extends AbstractModule {
 
     @Override
     public String getDescription() {
-        return "Custom Containment Hierachy.";
+        return "This module allows to tailor the Containment Hierachy to your needs";
     }
 
     @Override
@@ -67,21 +67,13 @@ public class ContainmentManagerModule extends AbstractModule {
     }
 
     @Override
-    public String getLocation() {
+    public String getMenuEntry() {
         return "Tools/Advanced";
     }
 
     @Override
-    public int getMode() {
-        return AbstractModule.COMPONENT_MODE_EDITOR;
-    }
-
-    @Override
-    public Component open() {
-        if (instanceCount == 0) {
-            containment = new ContainmentManagerComponent(eventBus, wsBean, session);
-            instanceCount ++;
-        }
+    public View open() {
+        containment = new ContainmentManagerComponent(eventBus, wsBean, session);
         //Register components in the event bus
         containment.registerComponents();
         return containment;

@@ -15,8 +15,8 @@
  */
 package org.kuwaiba.apis.web.gui.modules;
 
+import com.vaadin.navigator.View;
 import com.google.common.eventbus.EventBus;
-import com.vaadin.ui.CustomComponent;
 import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
@@ -25,7 +25,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
  * Note that you don't need to inherit from this class if you don't plan to use persistence
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public abstract class AbstractTopComponent extends CustomComponent implements TopComponent {
+public abstract class AbstractTopComponent implements TopComponent, View {
     /**
      * Reference to the global WebService bean instance, which doesn't seem to be injected using CDI.
      */

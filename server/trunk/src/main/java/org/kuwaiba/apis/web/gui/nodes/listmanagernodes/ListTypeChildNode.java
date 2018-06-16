@@ -19,7 +19,7 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
-import org.kuwaiba.web.modules.lists.actions.ActionsFactory;
+import org.kuwaiba.web.modules.ltmanager.actions.ActionsFactory;
 
 /**
  * Represents a list type child node of a tree

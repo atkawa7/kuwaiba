@@ -15370,3 +15370,8 @@ div.v-layout.v-horizontal.v-widget {
 	right: 0;
 	padding-right: 10px;
 }
+
+.nuqui .misc .v-menubar-misc-main {
+	background: #008080;
+	color: white;
+}

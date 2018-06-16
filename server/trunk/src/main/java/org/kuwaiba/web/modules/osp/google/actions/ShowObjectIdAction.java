@@ -18,7 +18,7 @@ package org.kuwaiba.web.modules.osp.google.actions;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.apis.web.gui.messagebox.MessageBoxShowObjectId;
+import org.kuwaiba.apis.web.gui.notifications.MessageBoxShowObjectId;
 import org.kuwaiba.web.modules.osp.google.OSPTopComponent;
 import org.kuwaiba.web.modules.osp.google.overlays.ConnectionPolyline;
 import org.kuwaiba.web.modules.osp.google.overlays.MarkerNode;
