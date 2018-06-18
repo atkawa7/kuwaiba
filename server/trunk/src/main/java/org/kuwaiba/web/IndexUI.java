@@ -26,9 +26,11 @@ import com.vaadin.server.SessionDestroyEvent;
 import com.vaadin.server.SessionDestroyListener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.UI;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -39,6 +41,8 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.web.modules.servmanager.ServiceManagerView;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
+import org.kuwaiba.web.procmanager.ProcessManagerView;
 
 /**
  * Main application entry point. It also serves as the fallback controller
@@ -74,37 +78,27 @@ public class IndexUI extends UI {
             this.mnuMain.setStyleName("misc-main");
             this.mnuMain.setWidth("100%");
 
-            this.mnuMain.addItem("Processes", null);
+            MenuItem menuItem = this.mnuMain.addItem("Processes", null);
 
-    //        try {
-    //            List<RemoteProcessDefinition> processDefinitions = wsBean.getProcessDefinitions(
-    //                Page.getCurrent().getWebBrowser().getAddress(), 
-    //                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
-    //            
-    //            for (RemoteProcessDefinition processDefinition : processDefinitions) {
-    //                
-    //                menuItem.addItem(processDefinition.getName(), null, new MenuBar.Command() {
-    //                    @Override
-    //                    public void menuSelected(MenuBar.MenuItem selectedItem) {
-    //                        
-    //                        try {
-    //                            List<RemoteProcessInstance> processInstances = wsBean.getProcessInstances(
-    //                                processDefinition.getId(), 
-    //                                Page.getCurrent().getWebBrowser().getAddress(), 
-    //                                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
-    //                            
-    //                            setSecondComponent(new ProcessInstancesView(processDefinition, processInstances, wsBean, ((RemoteSession) getSession().getAttribute("session"))));
-    //                                                        
-    //                        } catch (ServerSideException ex) {
-    //                            NotificationsUtil.showError(ex.getMessage());
-    //                        }
-    //                    }
-    //                });
-    //            }
-    //            
-//            } catch (ServerSideException ex) {
-//                NotificationsUtil.showError(ex.getMessage());
-//            }
+            try {
+                List<RemoteProcessDefinition> processDefinitions = wsBean.getProcessDefinitions(
+                    Page.getCurrent().getWebBrowser().getAddress(), 
+                    ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+                
+                for (RemoteProcessDefinition processDefinition : processDefinitions) {
+                    
+                    menuItem.addItem(processDefinition.getName(), null, new MenuBar.Command() {
+                        @Override
+                        public void menuSelected(MenuBar.MenuItem selectedItem) {
+                            getSession().setAttribute("selectedProcessDefinition", processDefinition);
+                            IndexUI.this.navigator.navigateTo(ProcessManagerView.VIEW_NAME);                            
+                        }
+                    });
+                }
+                
+            } catch (ServerSideException ex) {
+                NotificationsUtil.showError(ex.getMessage());
+            }
 
 
 

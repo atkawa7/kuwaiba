@@ -98,7 +98,8 @@ public class LoginView extends CustomComponent implements View {
                         txtPassword.getValue(),  //NOI18N
                         Page.getCurrent().getWebBrowser().getAddress());
                 getSession().setAttribute("session", aSession); //NOI18N
-                getUI().getNavigator().navigateTo(WelcomeView.VIEW_NAME);
+                //Update the login view to go to welcome view if the login was successful
+                Page.getCurrent().reload();
                 
             } catch (ServerSideException ex) {
                 NotificationsUtil.showError(ex.getMessage());
