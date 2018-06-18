@@ -22,7 +22,6 @@ import java.awt.Color;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
@@ -33,6 +32,7 @@ import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
 import org.vaadin.teemu.wizards.event.WizardProgressListener;
 import org.vaadin.teemu.wizards.event.WizardStepActivationEvent;
 import org.vaadin.teemu.wizards.event.WizardStepSetChangedEvent;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Wizard to guide the creation of physical connections using links

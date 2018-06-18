@@ -15291,6 +15291,7 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .login .v-verticallayout-main {
 	background-image: url("/img/background_login.png");
 	background-size: cover;
+	background: #008080;
 }
 
 .nuqui .login .v-verticallayout-dark {

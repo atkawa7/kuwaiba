@@ -33,13 +33,13 @@ import java.util.List;
 import java.util.Optional;
 import javax.inject.Inject;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.web.IndexUI;
 import org.kuwaiba.web.modules.servmanager.dashboard.ServiceManagerDashboard;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Main view for the Service Manager module
@@ -71,7 +71,7 @@ public class ServiceManagerView extends VerticalLayout implements View {
      * The backend bean
      */
     @Inject
-    private WebserviceBeanLocal wsBean;
+    private WebserviceBean wsBean;
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -104,6 +104,9 @@ public class ServiceManagerView extends VerticalLayout implements View {
                                 ((RemoteSession) getSession().getAttribute("session")).getSessionId());
                         
                         tblServices.setItems(servicesForCustomer);
+                        
+                        if (pnlMain.getSecondComponent() != null)
+                            pnlMain.removeComponent(pnlMain.getSecondComponent());
                         
                     } catch (ServerSideException ex) {
                         NotificationsUtil.showError(ex.getMessage());

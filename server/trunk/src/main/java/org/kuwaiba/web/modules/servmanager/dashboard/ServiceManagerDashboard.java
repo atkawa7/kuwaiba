@@ -16,8 +16,8 @@ package org.kuwaiba.web.modules.servmanager.dashboard;
 
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 import org.kuwaiba.apis.web.gui.dashboards.layouts.TheaterDashboardLayout;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * The dashboard used to show the information related to a given service
@@ -25,7 +25,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  */
 public class ServiceManagerDashboard extends AbstractDashboard {
     
-    public ServiceManagerDashboard(RemoteObjectLight customer, RemoteObjectLight service, WebserviceBeanLocal wsBean) {
+    public ServiceManagerDashboard(RemoteObjectLight customer, RemoteObjectLight service, WebserviceBean wsBean) {
         super(service.toString(), new TheaterDashboardLayout(3, 2));
         ((TheaterDashboardLayout)getDashboardLayout()).setScreenWidget(new TrafficDashboardWidget(service, wsBean));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(0, 0, new ResourcesDashboardWidget(service, wsBean));

@@ -27,11 +27,11 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.nodes.listmanagernodes.ListTypeRootNode;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * The main component of the List Manager module.
@@ -41,7 +41,7 @@ public class ListManagerComponent extends AbstractTopComponent {
     
     private DynamicTree listTypesTree;
     
-    public ListManagerComponent(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
+    public ListManagerComponent(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
         super(wsBean, eventBus, session);
         
 //        try {

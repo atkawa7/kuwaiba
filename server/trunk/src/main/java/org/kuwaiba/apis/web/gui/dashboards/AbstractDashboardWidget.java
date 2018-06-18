@@ -84,7 +84,7 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
     }
 
     /**
-     * Flips the current displayed component
+     * Flips the current displayed component. That is, instead of the cover component, the component widget will be displayed
      */
     public void flip() {
         if (this.activeContent == ActiveContent.CONTENT_COVER) {
@@ -96,10 +96,16 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
         }
     }
     
+    /**
+     * Displays the contents of the content widget in a separate modal window
+     */
     public void launch() {
         Window wnwContent = new Window(title);
         wnwContent.setModal(true);
-        wnwContent.setContent(contentComponent);
+        
+        if (contentComponent != null)
+            wnwContent.setContent(contentComponent);
+        
         getUI().addWindow(wnwContent);
     }
     

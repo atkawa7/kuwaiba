@@ -19,15 +19,14 @@ import com.vaadin.server.Page;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * A simple dashboard widget that shows the resources associated to a service
@@ -41,14 +40,13 @@ public class ResourcesDashboardWidget extends AbstractDashboardWidget {
     /**
      * Web service bean reference
      */
-    private WebserviceBeanLocal wsBean;
+    private WebserviceBean wsBean;
     
-    public ResourcesDashboardWidget(RemoteObjectLight service, WebserviceBeanLocal wsBean) {
+    public ResourcesDashboardWidget(RemoteObjectLight service, WebserviceBean wsBean) {
         super("Service Resources");
         this.service = service;
         this.wsBean = wsBean;
         this.createCover();
-        this.createContent();
     }
     
     @Override
@@ -57,8 +55,10 @@ public class ResourcesDashboardWidget extends AbstractDashboardWidget {
         Label lblText = new Label(title);
         lblText.setStyleName("text-bottomright");
         lytResourcesWidgetCover.addLayoutClickListener((event) -> {
-            if (event.getButton() == MouseEventDetails.MouseButton.LEFT)
+            if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
+                createContent();
                 launch();
+            }
         });
         
         lytResourcesWidgetCover.addComponent(lblText);
@@ -80,13 +80,13 @@ public class ResourcesDashboardWidget extends AbstractDashboardWidget {
                 Grid<RemoteObjectLight> lstResources = new Grid<>();
                 lstResources.setSizeFull();
                 lstResources.addColumn(RemoteObjectLight::getClassName).setCaption("Resource Type");
-                lstResources.addColumn(RemoteObjectLight::getName).setCaption("Service Name");
+                lstResources.addColumn(RemoteObjectLight::getName).setCaption("Resource Name");
                 lstResources.setItems(serviceResources);
                 
-                Panel pnlContacts = new Panel(lstResources);
-                pnlContacts.setSizeFull();
+                VerticalLayout lytContacts = new VerticalLayout(lstResources);
+                lytContacts.setWidth(100, Unit.PERCENTAGE);
                 
-                this.contentComponent = pnlContacts;
+                this.contentComponent = lytContacts;
             }
             
         } catch (ServerSideException ex) {

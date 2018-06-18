@@ -23,13 +23,13 @@ import com.vaadin.ui.VerticalSplitPanel;
 import java.util.List;
 import javax.inject.Inject;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.web.LoginView;
 import org.kuwaiba.web.modules.servmanager.ServiceManagerView;
+import org.kuwaiba.beans.WebserviceBean;
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
@@ -39,7 +39,7 @@ public class ProcessManagerView extends VerticalSplitPanel implements View {
     public static String VIEW_NAME = "application";
     
     @Inject
-    private WebserviceBeanLocal wsBean;
+    private WebserviceBean wsBean;
         
     public ProcessManagerView() {
         setStyleName("processmanager");

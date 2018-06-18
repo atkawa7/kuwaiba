@@ -28,7 +28,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.Validator;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RemoteClassMetadata extends RemoteClassMetadataLight{
+public class RemoteClassMetadata extends RemoteClassMetadataLight {
     /**
      * Attribute ids
      */
@@ -137,15 +137,7 @@ public class RemoteClassMetadata extends RemoteClassMetadataLight{
         this.attributesTypes = attributesTypes;
     }
 
-    public String[] getAttributesDescription() {
-        return attributesDescriptions;
-    }
-
-    public void setAttributesDescription(String[] attributesDescription) {
-        this.attributesDescriptions = attributesDescription;
-    }
-
-     public boolean[] getAttributesMandatories() {
+    public boolean[] getAttributesMandatories() {
         return attributesMandatories;
     }
 

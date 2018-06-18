@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
 import org.kuwaiba.apis.persistence.util.StringPair;
@@ -81,6 +80,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHPosit
 import org.kuwaiba.interfaces.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Main web service
@@ -93,7 +93,7 @@ public class KuwaibaService {
      * The main session bean in charge of providing the business logic
      */
     @EJB
-    private WebserviceBeanLocal wsBean;
+    private WebserviceBean wsBean;
    /**
      * The context to get information about each request
      */

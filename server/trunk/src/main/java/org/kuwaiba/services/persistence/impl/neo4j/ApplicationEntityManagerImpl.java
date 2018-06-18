@@ -94,7 +94,6 @@ import org.kuwaiba.services.persistence.util.Util;
 import org.kuwaiba.util.ChangeDescriptor;
 import org.kuwaiba.util.dynamicname.DynamicName;
 import org.kuwaiba.apis.persistence.util.StringPair;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.UserInfoLight;
@@ -2194,7 +2193,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new NotAuthorizedException("Invalid session");
         
         if (!aSession.getIpAddress().equals(ipAddress))
-            throw new NotAuthorizedException(String.format("The IP %s does not match with the one registered for this session", ipAddress));
+            throw new NotAuthorizedException(String.format("The IP %s does not match the one registered for this session", ipAddress));
 
 //        We won't be using this for now, since the desktop client still uses the web service. This will work as of version 2.0        
 //        if (aSession.getUser().getType() != UserProfile.USER_TYPE_WEB_SERVICE)
@@ -2212,16 +2211,16 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public Session createSession(String userName, String password, String IPAddress) throws ApplicationObjectNotFoundException, NotAuthorizedException {
         if (userName == null || password == null)
-            throw  new ApplicationObjectNotFoundException("User or Password can not be null");
+            throw  new ApplicationObjectNotFoundException("User or Password must not be null or empty");
         
         try(Transaction tx = graphDb.beginTx()) {
             Node userNode = graphDb.findNode(userLabel, Constants.PROPERTY_NAME, userName);
 
             if (userNode == null)
-                throw new ApplicationObjectNotFoundException("User does not exist");
+                throw new ApplicationObjectNotFoundException(String.format("The user %s does not exist", userName));
 
             if (!(Boolean)userNode.getProperty(Constants.PROPERTY_ENABLED))
-                throw new NotAuthorizedException("This user is not enabled");
+                throw new NotAuthorizedException(String.format("The user %s is not enabled", userName));
 
             if (BCrypt.checkpw(password, (String)userNode.getProperty(Constants.PROPERTY_PASSWORD))){
                 UserProfile user = Util.createUserProfileWithGroupPrivilegesFromNode(userNode);

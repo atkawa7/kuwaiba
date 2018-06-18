@@ -18,8 +18,8 @@ package org.kuwaiba.web.modules.servmanager.dashboard;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.ui.Embedded;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * A simple dashboard widget that shows the resources associated to a service
@@ -33,9 +33,9 @@ public class TrafficDashboardWidget extends AbstractDashboardWidget {
     /**
      * Web service bean reference
      */
-    private WebserviceBeanLocal wsBean;
+    private WebserviceBean wsBean;
     
-    public TrafficDashboardWidget(RemoteObjectLight service, WebserviceBeanLocal wsBean) {
+    public TrafficDashboardWidget(RemoteObjectLight service, WebserviceBean wsBean) {
         super("Traffic");
         this.service = service;
         this.wsBean = wsBean;

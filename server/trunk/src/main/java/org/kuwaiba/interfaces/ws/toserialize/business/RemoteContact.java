@@ -18,6 +18,7 @@ package org.kuwaiba.interfaces.ws.toserialize.business;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.business.Contact;
+import org.kuwaiba.apis.persistence.util.StringPair;
 
 /**
  * Wrapper of Contact
@@ -50,5 +51,14 @@ public class RemoteContact extends RemoteObject {
 
     public void setCustomer(RemoteObjectLight customer) {
         this.customer = customer;
+    }
+    
+    public String getAttributeValue(String attributeName) {
+        for (StringPair attributePair : getAttributes()) {
+            if (attributePair.getKey().equals(attributeName))
+                return attributePair.getValue();
+        }
+        
+        return null;
     }
 }

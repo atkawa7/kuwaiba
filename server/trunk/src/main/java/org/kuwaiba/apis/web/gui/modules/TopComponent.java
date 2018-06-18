@@ -16,8 +16,8 @@
 package org.kuwaiba.apis.web.gui.modules;
 
 import com.google.common.eventbus.EventBus;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Interface with the same purpose of AbstractEmbeddedComponent, can be used to by pass the multiple inheritance restriction in Java.
@@ -28,7 +28,7 @@ public interface TopComponent {
      * Gets the reference to the global WebserviceBean instance.
      * @return The global WebserviceBean instance.
      */
-    public WebserviceBeanLocal getWsBean();
+    public WebserviceBean getWsBean();
     /**
      * Gets the reference to the global EventBus instance.
      * @return The global EventBus instance.

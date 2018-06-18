@@ -23,9 +23,9 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Notification;
 import java.util.Date;
 import org.kuwaiba.apis.forms.FormInstanceCreator;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  *
@@ -73,7 +73,7 @@ public class ComponentButton extends GraphicalComponent {
             if (Constants.Function.SAVE.equals(event.getPropertyName())) {
                 
                 try {
-                    WebserviceBeanLocal wsBean = (WebserviceBeanLocal) getComponent().getUI().getSession().getAttribute("wsBean");
+                    WebserviceBean wsBean = (WebserviceBean) getComponent().getUI().getSession().getAttribute("wsBean");
                     RemoteSession session = (RemoteSession) getComponent().getUI().getSession().getAttribute("session");
                                         
                     byte [] structure = new FormInstanceCreator(((ElementButton) getComponentEventListener()).getFormStructure(), wsBean, session).getStructure();

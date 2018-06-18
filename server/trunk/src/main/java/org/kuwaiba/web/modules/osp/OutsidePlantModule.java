@@ -19,8 +19,8 @@ import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.server.ThemeResource;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * The definition of the OSP module.
@@ -34,13 +34,13 @@ public class OutsidePlantModule extends AbstractModule {
     /**
      * Reference to the WebserviceBean
      */
-    private WebserviceBeanLocal wsBean;
+    private WebserviceBean wsBean;
     /**
      * Reference to the current session
      */
     private RemoteSession session;
     
-    public OutsidePlantModule(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
+    public OutsidePlantModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
         super(eventBus);
         this.wsBean = wsBean;
         this.session = session;

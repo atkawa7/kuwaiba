@@ -24,11 +24,11 @@ import org.kuwaiba.apis.forms.FormRenderer;
 import org.kuwaiba.apis.forms.elements.FormDefinitionLoader;
 import org.kuwaiba.apis.forms.elements.AbstractFormInstanceLoader;
 import org.kuwaiba.apis.persistence.util.StringPair;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  *
@@ -37,7 +37,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 public class FormArtifactRenderer implements ArtifactRenderer {
     private final RemoteArtifactDefinition artifactDefinition;
     private final RemoteArtifact artifact;
-    private final WebserviceBeanLocal wsBean;
+    private final WebserviceBean wsBean;
     private final RemoteSession session;
     
     private FormRenderer formRenderer;
@@ -62,7 +62,7 @@ public class FormArtifactRenderer implements ArtifactRenderer {
 //    }
     private RemoteProcessInstance processInstance;
     
-    public FormArtifactRenderer(RemoteArtifactDefinition artifactDefinition, RemoteArtifact artifact, WebserviceBeanLocal wsBean, RemoteSession session, RemoteProcessInstance processInstance/*, List<RemoteArtifact> remoteArtifacts*/) {
+    public FormArtifactRenderer(RemoteArtifactDefinition artifactDefinition, RemoteArtifact artifact, WebserviceBean wsBean, RemoteSession session, RemoteProcessInstance processInstance/*, List<RemoteArtifact> remoteArtifacts*/) {
         this.artifactDefinition = artifactDefinition;
         this.artifact = artifact;
         this.wsBean = wsBean;

@@ -20,8 +20,8 @@ import com.vaadin.navigator.View;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Component;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * The definition of the Navigation Tree module.
@@ -32,10 +32,10 @@ public class NavigationTreeModule extends AbstractModule {
      * The actual component
      */
     private NavigationTreeComponent treeNavTree;
-    private final WebserviceBeanLocal wsBean;
+    private final WebserviceBean wsBean;
     private final RemoteSession session;
     
-    public NavigationTreeModule(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
+    public NavigationTreeModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
         super(eventBus);
         this.wsBean = wsBean;
         this.session = session;

@@ -56,7 +56,6 @@ import org.kuwaiba.apis.web.gui.icons.ClassIcon;
 import org.kuwaiba.apis.web.gui.menus.RawContextMenu;
 import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
@@ -66,6 +65,7 @@ import org.kuwaiba.web.modules.osp.google.overlays.ConnectionPolyline;
 import org.kuwaiba.web.custom.wizards.physicalconnection.WizardInterface;
 import org.kuwaiba.web.modules.osp.AbstractGISView;
 import org.kuwaiba.web.modules.osp.google.overlays.Polygon;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Custom GoogleMapsComponent for Kuwaiba
@@ -595,7 +595,7 @@ public class OSPTopComponent extends GoogleMapsComponent implements AbstractGISV
             ByteArrayInputStream bais = new ByteArrayInputStream(structure);
             XMLStreamReader reader = xmlif.createXMLStreamReader(bais);
             
-            WebserviceBeanLocal wsBean = getTopComponent().getWsBean();
+            WebserviceBean wsBean = getTopComponent().getWsBean();
             String ipAddress = getUI().getPage().getWebBrowser().getAddress();
             String sessionId = getTopComponent().getApplicationSession().getSessionId();
             
@@ -808,7 +808,7 @@ public class OSPTopComponent extends GoogleMapsComponent implements AbstractGISV
             return;
         }
         
-        WebserviceBeanLocal wsBean = getTopComponent().getWsBean();
+        WebserviceBean wsBean = getTopComponent().getWsBean();
         String ipAddress = getUI().getPage().getWebBrowser().getAddress();
         String sessionId = getTopComponent().getApplicationSession().getSessionId();
         

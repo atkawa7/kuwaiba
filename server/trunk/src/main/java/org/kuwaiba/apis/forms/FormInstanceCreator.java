@@ -24,22 +24,22 @@ import org.kuwaiba.apis.forms.elements.Constants;
 import org.kuwaiba.apis.forms.elements.FormStructure;
 import org.kuwaiba.apis.forms.elements.XMLUtil;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class FormInstanceCreator extends AbstractFormInstanceCreator {
-    private final WebserviceBeanLocal wsBean;
+    private final WebserviceBean wsBean;
     private final RemoteSession session;
 
-    public FormInstanceCreator(FormStructure formStructure, WebserviceBeanLocal wsBean, RemoteSession session) {
+    public FormInstanceCreator(FormStructure formStructure, WebserviceBean wsBean, RemoteSession session) {
         super(formStructure);
         this.wsBean = wsBean;
         this.session = session;

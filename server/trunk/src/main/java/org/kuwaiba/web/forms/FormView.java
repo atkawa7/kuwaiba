@@ -23,9 +23,9 @@ import com.vaadin.ui.VerticalLayout;
 import javax.inject.Inject;
 import org.kuwaiba.apis.forms.FormRenderer;
 import org.kuwaiba.apis.forms.elements.FormDefinitionLoader;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteForm;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  *
@@ -36,7 +36,7 @@ public class FormView extends CustomComponent implements View {
     public static String VIEW_NAME = "form";
     
     @Inject
-    private WebserviceBeanLocal wsBean;
+    private WebserviceBean wsBean;
         
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {

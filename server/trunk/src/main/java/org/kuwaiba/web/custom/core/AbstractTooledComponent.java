@@ -26,7 +26,7 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 
 /**
  * The root of all components with a toolbar.
- * @author duckman
+ * @author Charles Edward Bedon Cortazar<charles.bedon@kuwaiba.org>
  */
 public abstract class AbstractTooledComponent extends CustomComponent {
     /**

@@ -19,7 +19,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.CustomComponent;
 import javax.inject.Inject;
-import org.kuwaiba.beans.WebserviceBeanLocal;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  *
@@ -30,7 +30,7 @@ public class FormInstanceView extends CustomComponent implements View {
     public static String VIEW_NAME = "forminstance";  
     
     @Inject
-    private WebserviceBeanLocal wsBean;
+    private WebserviceBean wsBean;
         
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {

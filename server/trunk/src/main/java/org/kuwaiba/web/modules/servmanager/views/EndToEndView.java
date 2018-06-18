@@ -21,11 +21,11 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import java.io.File;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfo;
 import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfoLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.netbeans.api.visual.export.SceneExporter;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * This component implements the End to End view for SDH/MPLS services
@@ -33,7 +33,7 @@ import org.netbeans.api.visual.export.SceneExporter;
  */
 public final class EndToEndView extends Panel {
      
-    public EndToEndView(RemoteObjectLight service, WebserviceBeanLocal wsBean, String ipAddress, String sessionId) {
+    public EndToEndView(RemoteObjectLight service, WebserviceBean wsBean, String ipAddress, String sessionId) {
         try {
             ViewInfo currentView = null;
 

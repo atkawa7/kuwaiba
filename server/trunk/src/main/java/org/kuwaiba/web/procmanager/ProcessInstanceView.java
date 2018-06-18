@@ -27,7 +27,6 @@ import com.vaadin.ui.Window;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
@@ -38,6 +37,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.openide.util.Exceptions;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  *
@@ -48,7 +48,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
     private RemoteProcessInstance processInstance;
     private final HashMap<RemoteActivityDefinition, Button> activities;
     
-    private final WebserviceBeanLocal wsBean;
+    private final WebserviceBean wsBean;
     private final RemoteSession remoteSession;
     
     private RemoteArtifactDefinition artifactDefinition;
@@ -58,7 +58,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
     
     private VerticalLayout activitiesLayout = new VerticalLayout();
     
-    public ProcessInstanceView(RemoteProcessInstance processInstance, RemoteProcessDefinition processDefinition, WebserviceBeanLocal wsBean, RemoteSession remoteSession) {
+    public ProcessInstanceView(RemoteProcessInstance processInstance, RemoteProcessDefinition processDefinition, WebserviceBean wsBean, RemoteSession remoteSession) {
         setStyleName("processmanager");
         addStyleName("activitylist");
         setSizeFull();

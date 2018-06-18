@@ -31,11 +31,11 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import java.util.List;
 import javax.inject.Inject;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteForm;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFormInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * A simple form manager
@@ -47,7 +47,7 @@ public class FormManagerView extends CustomComponent implements View {
     public static String VIEW_NAME = "formmanager";
     
     @Inject
-    private WebserviceBeanLocal wsBean;
+    private WebserviceBean wsBean;
         
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {

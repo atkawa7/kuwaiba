@@ -19,17 +19,19 @@ import com.vaadin.server.Page;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContact;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
+import org.openide.util.Exceptions;
 
 /**
  * A simple dashboard widget that shows the contacts associated to a service
@@ -43,9 +45,9 @@ public class ContactsDashboardWidget extends AbstractDashboardWidget {
     /**
      * Web service bean reference
      */
-    private WebserviceBeanLocal wsBean;
+    private WebserviceBean wsBean;
     
-    public ContactsDashboardWidget(RemoteObjectLight customer, WebserviceBeanLocal wsBean) {
+    public ContactsDashboardWidget(RemoteObjectLight customer, WebserviceBean wsBean) {
         super("Contacts");
         this.customer = customer;
         this.wsBean = wsBean;
@@ -76,35 +78,49 @@ public class ContactsDashboardWidget extends AbstractDashboardWidget {
             List<RemoteContact> customerContacts = wsBean.getContactsForCustomer(customer.getClassName(), customer.getId(), Page.getCurrent().getWebBrowser().getAddress(), 
                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
             
-            if (customerContacts.isEmpty()) {
+            if (customerContacts.isEmpty()) 
                 this.contentComponent = new Label("The customer associated to this service does not have registered contacts");
-            }
+            
             else {
-                Grid<RemoteContact> lstContacts = new Grid<>();
-                lstContacts.setSizeFull();
-                lstContacts.addColumn(RemoteContact::getName).setCaption("Name");
                 
-                lstContacts.addColumn((source) -> {
-                    for (StringPair attribute : source.getAttributes()) {
-                        if (attribute.getKey().equals("email")) //NOI18N
-                            return attribute.getValue();
+                HashMap<String, List<RemoteContact>> contactsPerClass = new HashMap<>();
+                VerticalLayout lytContacts = new VerticalLayout();
+                
+                for(RemoteContact contact : customerContacts) {
+                    if (!contactsPerClass.containsKey(contact.getClassName()))
+                        contactsPerClass.put(contact.getClassName(), new ArrayList<>());
+
+                    contactsPerClass.get(contact.getClassName()).add(contact);
+                }
+                
+                for (String contactType : contactsPerClass.keySet()) {
+                    Grid<RemoteContact> tblContactsPerType = new Grid<>(contactType);
+                    tblContactsPerType.setItems(contactsPerClass.get(contactType));
+                    
+                    tblContactsPerType.addColumn(RemoteContact::getName).setCaption("Name");
+                    
+                    RemoteClassMetadata contactTypeClass = wsBean.getClass(contactType, Page.getCurrent().getWebBrowser().getAddress(), 
+                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                    
+                    for (String attributeName : contactTypeClass.getAttributesNames()) {
+                        if (!attributeName.equals("name") && !attributeName.equals("creationDate")) { //We ignore the name (already added) and the creation date (unnecessary)
+                            tblContactsPerType.addColumn((source) -> {
+                                try {
+                                    return wsBean.getAttributeValueAsString(source.getClassName(), source.getId(),
+                                            attributeName, Page.getCurrent().getWebBrowser().getAddress(), ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                                } catch (ServerSideException ex) {
+                                    return ex.getMessage();
+                                }
+                            }).setCaption(attributeName);
+                        }
                     }
-                    return "NA"; //NOI18N
-                }).setCaption("e-mail");
+                    tblContactsPerType.setSizeFull();
+                    lytContacts.addComponent(tblContactsPerType);
+                }
                 
-                lstContacts.addColumn((source) -> {
-                    for (StringPair attribute : source.getAttributes()) {
-                        if (attribute.getKey().equals("telephone1")) //NOI18N
-                            return attribute.getValue();
-                    }
-                    return "NA"; //NOI18N
-                }).setCaption("Telephone 1");
+                lytContacts.setWidth(100, Unit.PERCENTAGE);
                 
-                lstContacts.setItems(customerContacts);
-                
-                Panel pnlContacts = new Panel(lstContacts);
-                pnlContacts.setSizeFull();
-                this.contentComponent = pnlContacts;
+                this.contentComponent = lytContacts;
             }
         } catch (ServerSideException ex) {
             this.contentComponent = new Label(ex.getMessage());

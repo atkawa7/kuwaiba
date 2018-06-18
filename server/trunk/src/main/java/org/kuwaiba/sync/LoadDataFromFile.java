@@ -48,7 +48,7 @@ import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
-import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.beans.WebserviceBeanImpl;
 
 /**
  * Manages the bulk load for list types an object from CSV files
@@ -328,7 +328,7 @@ public final class LoadDataFromFile{
             aem = persistenceService.getApplicationEntityManager();
             mem = persistenceService.getMetadataEntityManager();
         }catch(Exception ex){
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE,
+            Logger.getLogger(WebserviceBeanImpl.class.getName()).log(Level.SEVERE,
                     ex.getClass().getSimpleName() + ": {0}",ex.getMessage()); //NOI18N
             bem = null;
             aem = null;

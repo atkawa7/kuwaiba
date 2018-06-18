@@ -29,12 +29,12 @@ import com.vaadin.ui.renderers.ClickableRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
 import java.util.ArrayList;
 import java.util.List;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.openide.util.Exceptions;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Shows a set of process instances
@@ -47,10 +47,10 @@ public class ProcessInstancesView extends VerticalLayout {
     
     private Button btnCreateProcessInstance;
     
-    private final WebserviceBeanLocal wsBean;
+    private final WebserviceBean wsBean;
     private final RemoteSession session;
             
-    public ProcessInstancesView(RemoteProcessDefinition processDefinition, List<RemoteProcessInstance> processes, WebserviceBeanLocal wsBean, RemoteSession session) {
+    public ProcessInstancesView(RemoteProcessDefinition processDefinition, List<RemoteProcessInstance> processes, WebserviceBean wsBean, RemoteSession session) {
         setStyleName("darklayout");
         setSizeFull();
         this.processDefinition = processDefinition;

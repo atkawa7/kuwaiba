@@ -19,24 +19,12 @@ import com.google.common.eventbus.EventBus;
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import javax.inject.Inject;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.kuwaiba.web.custom.CustomButton;
-import org.kuwaiba.web.modules.ltmanager.ListManagerModule;
-import org.kuwaiba.web.modules.navtree.NavigationTreeModule;
-import org.kuwaiba.web.modules.osp.OutsidePlantModule;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * The welcome screen
@@ -53,7 +41,7 @@ class WelcomeView extends VerticalLayout implements View {
     EventBus eventBus = new EventBus();
     
     @Inject
-    private WebserviceBeanLocal wsBean;
+    private WebserviceBean wsBean;
         
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {

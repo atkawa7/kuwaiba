@@ -38,7 +38,11 @@ public class DummyDashboardWidget extends AbstractDashboardWidget {
         VerticalLayout lytViewsWidgetCover = new VerticalLayout();
         Label lblText = new Label(title);
         lblText.setStyleName("text-bottomright");
-        ;
+        
+        lytViewsWidgetCover.addLayoutClickListener((event) -> {
+            createContent();
+            launch();
+        });
         
         lytViewsWidgetCover.addComponent(lblText);
         lytViewsWidgetCover.setSizeFull();
@@ -49,6 +53,6 @@ public class DummyDashboardWidget extends AbstractDashboardWidget {
 
     @Override
     public void createContent() {
-        //
+        this.contentComponent = new Label("This is a dummy dashboard widget");
     }
 }

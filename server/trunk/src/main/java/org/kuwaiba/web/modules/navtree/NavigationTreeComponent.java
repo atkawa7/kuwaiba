@@ -25,11 +25,11 @@ import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectRootNode;
 import org.kuwaiba.apis.web.gui.nodes.properties.PropertySheetComponent;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * The main component of the Navigation Tree module.
@@ -41,7 +41,7 @@ class NavigationTreeComponent extends AbstractTopComponent {
          */
         private DynamicTree tree;
        
-        public NavigationTreeComponent(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session){
+        public NavigationTreeComponent(EventBus eventBus, WebserviceBean wsBean, RemoteSession session){
             super(wsBean, eventBus, session);
             
             try {

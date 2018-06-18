@@ -17,10 +17,10 @@ package org.kuwaiba.apis.forms.components.impl;
 import com.vaadin.server.Page;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Provides a set of methods to access to a hierarchy of inventory objects
@@ -28,7 +28,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  */
 public class ObjectHierarchyProvider implements HierarchyProvider<RemoteObjectLight> {
     private static ObjectHierarchyProvider instance;
-    private WebserviceBeanLocal webserviceBeanLocal;
+    private WebserviceBean webserviceBeanLocal;
     private RemoteSession remoteSession;
     private RemoteObjectLight root;
             
@@ -39,11 +39,11 @@ public class ObjectHierarchyProvider implements HierarchyProvider<RemoteObjectLi
         return instance == null ? instance = new ObjectHierarchyProvider() : instance;
     }
     
-    public WebserviceBeanLocal getWebserviceBeanLocal() {
+    public WebserviceBean getWebserviceBeanLocal() {
         return webserviceBeanLocal;
     }
     
-    public void setWebserviceBeanLocal(WebserviceBeanLocal webserviceBeanLocal) {
+    public void setWebserviceBeanLocal(WebserviceBean webserviceBeanLocal) {
         this.webserviceBeanLocal = webserviceBeanLocal;
     }
     

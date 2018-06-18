@@ -41,7 +41,7 @@ import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
-import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.beans.WebserviceBeanImpl;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.util.i18n.I18N;
@@ -141,7 +141,7 @@ public class SNMPDataProcessor {
             aem = persistenceService.getApplicationEntityManager();
             mem = persistenceService.getMetadataEntityManager();
         } catch (Exception ex) {
-            Logger.getLogger(WebserviceBean.class.getName()).log(Level.SEVERE,
+            Logger.getLogger(WebserviceBeanImpl.class.getName()).log(Level.SEVERE,
                     ex.getClass().getSimpleName() + ": {0}", ex.getMessage()); //NOI18N
             bem = null;
             aem = null;

@@ -21,10 +21,10 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.modules.servmanager.views.EndToEndView;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * A simple dashboard widget that shows the available views for a particular service
@@ -38,14 +38,13 @@ public class ServiceViewsDashboardWidget extends AbstractDashboardWidget {
     /**
      * Web service bean reference
      */
-    private WebserviceBeanLocal wsBean;
+    private WebserviceBean wsBean;
     
-    public ServiceViewsDashboardWidget(RemoteObjectLight service, WebserviceBeanLocal wsBean) {
+    public ServiceViewsDashboardWidget(RemoteObjectLight service, WebserviceBean wsBean) {
         super("Views");
         this.service = service;
         this.wsBean = wsBean;
         this.createCover();
-        this.createContent();
     }
     
     @Override
@@ -54,8 +53,10 @@ public class ServiceViewsDashboardWidget extends AbstractDashboardWidget {
         Label lblText = new Label(title);
         lblText.setStyleName("text-bottomright");
         lytViewsWidgetCover.addLayoutClickListener((event) -> {
-            if (event.getButton() == MouseEventDetails.MouseButton.LEFT)
+            if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
+                createContent();
                 launch();
+            }
         });
         
         lytViewsWidgetCover.addComponent(lblText);

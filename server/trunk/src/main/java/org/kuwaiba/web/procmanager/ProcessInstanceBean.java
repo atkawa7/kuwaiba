@@ -18,7 +18,6 @@ import com.vaadin.server.Page;
 import java.util.List;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActor;
@@ -26,6 +25,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  *
@@ -33,10 +33,10 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
  */
 public class ProcessInstanceBean {
     private RemoteProcessInstance processInstance;
-    private final WebserviceBeanLocal wsBean;
+    private final WebserviceBean wsBean;
     private RemoteSession session;
                     
-    public ProcessInstanceBean(RemoteProcessInstance processInstance, WebserviceBeanLocal wsBean, RemoteSession session) {
+    public ProcessInstanceBean(RemoteProcessInstance processInstance, WebserviceBean wsBean, RemoteSession session) {
         this.processInstance = processInstance;
         this.wsBean = wsBean;
         this.session = session;

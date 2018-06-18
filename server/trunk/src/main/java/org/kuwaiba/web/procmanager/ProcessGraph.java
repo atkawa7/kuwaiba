@@ -25,13 +25,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConditionalActivityDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Shows graphically the process definition and the current state of a process instance
@@ -40,12 +40,12 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 public class ProcessGraph extends Panel {
     private final RemoteProcessDefinition processDefinition;
     private final RemoteProcessInstance processInstance;
-    private final WebserviceBeanLocal wsBean;
+    private final WebserviceBean wsBean;
     private final RemoteSession remoteSession;
     private final HashMap<Long, RemoteActivityDefinition> ids = new HashMap();
     private final List<RemoteActivityDefinition> allActivities = new ArrayList();
     
-    public ProcessGraph(RemoteProcessInstance processInstance, RemoteProcessDefinition processDefinition, WebserviceBeanLocal wsBean, RemoteSession remoteSession) {
+    public ProcessGraph(RemoteProcessInstance processInstance, RemoteProcessDefinition processDefinition, WebserviceBean wsBean, RemoteSession remoteSession) {
         this.processDefinition = processDefinition;
         this.processInstance = processInstance;
         this.wsBean = wsBean;

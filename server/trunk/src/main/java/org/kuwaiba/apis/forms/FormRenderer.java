@@ -32,10 +32,10 @@ import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.forms.components.impl.ObjectHierarchyProvider;
 import org.kuwaiba.apis.forms.elements.FormStructure;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  *
@@ -72,7 +72,7 @@ public class FormRenderer extends CustomComponent {
         return null;
     }
     
-    public void render(WebserviceBeanLocal wsBean, RemoteSession session) {
+    public void render(WebserviceBean wsBean, RemoteSession session) {
         ObjectHierarchyProvider.getInstance().setWebserviceBeanLocal(wsBean);
         ObjectHierarchyProvider.getInstance().setRemoteSession(session);
         

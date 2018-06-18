@@ -17,8 +17,8 @@ package org.kuwaiba.apis.web.gui.nodes.properties;
 
 import com.google.common.eventbus.EventBus;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  *
@@ -26,7 +26,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
  */
 public class PropertySheetComponent extends AbstractTopComponent{
 
-    public PropertySheetComponent(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
+    public PropertySheetComponent(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
         super(wsBean, eventBus, session);
     }
 

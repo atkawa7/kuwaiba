@@ -12,11 +12,11 @@ import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.modules.osp.google.OSPTopComponent;
 import org.kuwaiba.web.modules.osp.google.overlays.MarkerNode;
 import org.openide.util.Exceptions;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Load the view of an element in the view

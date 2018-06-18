@@ -21,7 +21,6 @@ import java.util.List;
 import org.kuwaiba.apis.forms.elements.ScriptQueryExecutor;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
@@ -31,13 +30,14 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.openide.util.Exceptions;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * An Implementation of Script Query Executor to the Web Client of Kuwaiba
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
-    private final WebserviceBeanLocal wsBean;
+    private final WebserviceBean wsBean;
     private final RemoteSession session;
     
     private List<RemoteScriptQuery> scriptQueries;
@@ -45,7 +45,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
     private RemoteProcessInstance processInstance;
 ////    private final List<RemoteArtifact> remoteArtifacts;
     
-    public ScriptQueryExecutorImpl(WebserviceBeanLocal wsBean, RemoteSession session, RemoteProcessInstance processInstance/*, List<RemoteArtifact> remoteArtifacts*/) {
+    public ScriptQueryExecutorImpl(WebserviceBean wsBean, RemoteSession session, RemoteProcessInstance processInstance/*, List<RemoteArtifact> remoteArtifacts*/) {
         this.wsBean = wsBean;
         this.session = session;
 ////        this.remoteArtifacts = remoteArtifacts;

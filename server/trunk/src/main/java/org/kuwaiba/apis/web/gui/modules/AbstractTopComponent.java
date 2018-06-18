@@ -17,8 +17,8 @@ package org.kuwaiba.apis.web.gui.modules;
 
 import com.vaadin.navigator.View;
 import com.google.common.eventbus.EventBus;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * The superclass of all components to be embedded in a Kuwaiba module. 
@@ -29,7 +29,7 @@ public abstract class AbstractTopComponent implements TopComponent, View {
     /**
      * Reference to the global WebService bean instance, which doesn't seem to be injected using CDI.
      */
-    protected WebserviceBeanLocal wsBean;
+    protected WebserviceBean wsBean;
     /**
      * Reference to the global EventBus bean instance, which doesn't seem to be injected using CDI.
      */
@@ -39,14 +39,14 @@ public abstract class AbstractTopComponent implements TopComponent, View {
      */
     protected RemoteSession session;
 
-    public AbstractTopComponent(WebserviceBeanLocal wsBean, EventBus eventBus, RemoteSession session) {
+    public AbstractTopComponent(WebserviceBean wsBean, EventBus eventBus, RemoteSession session) {
         this.wsBean = wsBean;
         this.eventBus = eventBus;
         this.session = session;
     }
 
     @Override
-    public final WebserviceBeanLocal getWsBean() {
+    public final WebserviceBean getWsBean() {
         return wsBean;
     }
 

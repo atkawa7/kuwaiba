@@ -38,11 +38,11 @@ import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.apis.web.gui.nodes.containment.ContainmentNode;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * The main component of the Containment Manager module.
@@ -50,7 +50,7 @@ import org.kuwaiba.web.custom.tree.DynamicTree;
  */
 public class ContainmentManagerComponent extends AbstractTopComponent {
         
-    public ContainmentManagerComponent(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
+    public ContainmentManagerComponent(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
         super(wsBean, eventBus, session);
         
         VerticalLayout compositionRoot = new VerticalLayout();

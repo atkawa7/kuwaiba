@@ -19,8 +19,8 @@ import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.server.ThemeResource;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * The definition of the List Types Manager module
@@ -31,10 +31,10 @@ public class ListManagerModule  extends AbstractModule {
      * The actual component
      */
     private ListManagerComponent listManager;
-    private WebserviceBeanLocal wsBean;
+    private WebserviceBean wsBean;
     private RemoteSession session;
     
-    public ListManagerModule(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
+    public ListManagerModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
         super(eventBus);
         this.wsBean = wsBean;
         this.session = session;

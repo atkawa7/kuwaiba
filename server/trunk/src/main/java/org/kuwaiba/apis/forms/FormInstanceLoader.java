@@ -17,21 +17,21 @@ package org.kuwaiba.apis.forms;
 import com.vaadin.server.Page;
 import org.kuwaiba.apis.forms.elements.AbstractFormInstanceLoader;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * 
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class FormInstanceLoader extends AbstractFormInstanceLoader {
-    private final WebserviceBeanLocal wsBean;
+    private final WebserviceBean wsBean;
     private final RemoteSession session;
     
-    public FormInstanceLoader(WebserviceBeanLocal wsBean, RemoteSession session) {
+    public FormInstanceLoader(WebserviceBean wsBean, RemoteSession session) {
         this.wsBean = wsBean;
         this.session = session;
     }

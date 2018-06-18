@@ -17,10 +17,10 @@ package org.kuwaiba.web.modules.osp;
 
 import com.google.common.eventbus.EventBus;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.web.modules.osp.google.MapComponentWrapper;
 import org.kuwaiba.web.modules.osp.google.OutsidePlantTooledComponent;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * The main component of the OSP module.
@@ -30,7 +30,7 @@ public class OutsidePlantComponent extends AbstractTopComponent {
     private final MapComponentWrapper googleMapWrapper;
     private final OutsidePlantTooledComponent tooledComponent;
             
-    public OutsidePlantComponent(EventBus eventBus, WebserviceBeanLocal wsBean, RemoteSession session) {
+    public OutsidePlantComponent(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
         super(wsBean, eventBus, session);
         
         googleMapWrapper = new MapComponentWrapper(this);

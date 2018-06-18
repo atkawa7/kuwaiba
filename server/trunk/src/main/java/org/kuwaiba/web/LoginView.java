@@ -17,27 +17,28 @@ package org.kuwaiba.web;
 
 import com.vaadin.cdi.CDIView;
 import com.vaadin.event.ShortcutAction.KeyCode;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
-import com.vaadin.server.FontAwesome;
 import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.Embedded;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.themes.ValoTheme;
 import javax.inject.Inject;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Login form
@@ -48,7 +49,7 @@ public class LoginView extends CustomComponent implements View {
     
     public static String VIEW_NAME = "";
     @Inject
-    private WebserviceBeanLocal bean;
+    private WebserviceBean bean;
    
     private TextField txtUsername;
     private PasswordField txtPassword;
@@ -57,11 +58,18 @@ public class LoginView extends CustomComponent implements View {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         setStyleName("login");
+        Page.getCurrent().setTitle("Kuwaiba Open Network Inventory");
         VerticalLayout lyt = new VerticalLayout();
         lyt.setStyleName("main");
         lyt.setSizeFull();
-        
-        lyt.addComponent(new Panel()); //Padding
+
+        HorizontalLayout lytLogo = new HorizontalLayout();
+        Embedded imgCompanyLogo = new Embedded(null, new ThemeResource("img/company_logo.png"));
+        lytLogo.addComponents(new HorizontalLayout(), new HorizontalLayout(), imgCompanyLogo);
+        lytLogo.setComponentAlignment(imgCompanyLogo, Alignment.MIDDLE_RIGHT);
+        lytLogo.setSizeFull();
+
+        lyt.addComponent(lytLogo); //Padding
         lyt.addComponent(buildLoginForm());
         lyt.addComponent(buildLoginFooter());
         setSizeFull();
@@ -70,18 +78,17 @@ public class LoginView extends CustomComponent implements View {
 
     }
     
-    private Component buildLoginForm(){        
+    private Component buildLoginForm() {        
         txtUsername = new TextField();
         txtUsername.setWidth(18, Unit.EM);
-        txtUsername.setPlaceholder("Username");
+        txtUsername.setPlaceholder("User");
         
         txtPassword = new PasswordField();
         txtPassword.setWidth(18, Unit.EM);
         txtPassword.setPlaceholder("Password");
         
         btnLogin = new Button("Login");
-        btnLogin.setIcon(FontAwesome.SIGN_IN);
-        btnLogin.addStyleName(ValoTheme.BUTTON_LARGE);
+        btnLogin.setIcon(VaadinIcons.SIGN_IN);
         
         
         btnLogin.setClickShortcut(KeyCode.ENTER);
@@ -114,12 +121,15 @@ public class LoginView extends CustomComponent implements View {
         Image imgLogo = new Image(null, 
                             new ThemeResource("img/neotropic_logo.png"));
         
-        Label lblCopyright = new Label("Copyright 2010-2018 Neotropic SAS");
+        Label lblCopyright = new Label("Copyright 2010-2018 <a style=\"color:white\" href=\"http://www.neotropic.co\">Neotropic SAS</a>", ContentMode.HTML);
         
-        VerticalLayout lytFooter = new VerticalLayout(imgLogo, lblCopyright); 
+        VerticalLayout lytFooter = new VerticalLayout(new HorizontalLayout(), imgLogo, lblCopyright); 
         lytFooter.setWidth(100, Unit.PERCENTAGE);
         lytFooter.setStyleName("dark");
         lytFooter.addStyleName("v-align-right");
+        lytFooter.setExpandRatio(imgLogo, 3);
+        lytFooter.setExpandRatio(lblCopyright, 2);
+        lytFooter.setSizeFull();
         
         lytFooter.setComponentAlignment(imgLogo, Alignment.BOTTOM_CENTER);
         lytFooter.setComponentAlignment(lblCopyright, Alignment.TOP_CENTER);

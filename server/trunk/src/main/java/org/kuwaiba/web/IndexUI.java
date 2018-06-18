@@ -25,7 +25,6 @@ import com.vaadin.server.Page;
 import com.vaadin.server.SessionDestroyEvent;
 import com.vaadin.server.SessionDestroyListener;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
 import java.io.IOException;
@@ -36,10 +35,10 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.web.modules.servmanager.ServiceManagerView;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Main application entry point. It also serves as the fallback controller
@@ -55,7 +54,7 @@ public class IndexUI extends UI {
      * The reference to the back end bean
      */
     @Inject
-    WebserviceBeanLocal wsBean;
+    WebserviceBean wsBean;
     
     private Navigator navigator;
     /**
@@ -118,13 +117,13 @@ public class IndexUI extends UI {
                 RemoteSession session = (RemoteSession) getSession().getAttribute("session");
                 try {
                     wsBean.closeSession(session.getSessionId(), Page.getCurrent().getWebBrowser().getAddress());
-                    //getSession().setAttribute("session", null);
-                    getSession().close();
-                    getNavigator().navigateTo(LoginView.VIEW_NAME);
-                    
+                    getSession().setAttribute("session", null);
                 } catch (ServerSideException ex) {
                     NotificationsUtil.showError(ex.getMessage());
+                } finally {
+                    getNavigator().navigateTo(LoginView.VIEW_NAME);
                 }
+                
             }
         });
         
@@ -166,7 +165,6 @@ public class IndexUI extends UI {
 
         @Override
         public void sessionDestroy(SessionDestroyEvent event) {
-            System.out.println("Session is being destroyed");
 //            RemoteSession session = (RemoteSession) getSession().getAttribute("session");
 //            if (session != null) { //The Vaadin session is destroyed, but the Kuwaiba session is still open
 //                System.out.println("Session is being purged");

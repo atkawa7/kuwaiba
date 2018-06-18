@@ -31,7 +31,6 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
-import org.kuwaiba.beans.WebserviceBeanLocal;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteLogicalConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
@@ -44,6 +43,7 @@ import org.netbeans.api.visual.router.RouterFactory;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
 import org.netbeans.api.visual.widget.general.IconNodeWidget;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Shows an end-to-end view of a service by trying to match the endpoints of the logical circuits
@@ -58,11 +58,11 @@ public class EndToEndViewSimpleScene extends GraphScene<RemoteObjectLight, Remot
     private final LayerWidget nodeLayer;
     private final LayerWidget edgeLayer;
     
-    private WebserviceBeanLocal wsBean;
+    private WebserviceBean wsBean;
     private String ipAddress;
     private String sessionId;
     
-    public EndToEndViewSimpleScene(WebserviceBeanLocal wsBean, String sessionId, String ipAddress) {
+    public EndToEndViewSimpleScene(WebserviceBean wsBean, String sessionId, String ipAddress) {
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
         
