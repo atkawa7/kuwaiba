@@ -31,7 +31,6 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContact;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
-import org.openide.util.Exceptions;
 
 /**
  * A simple dashboard widget that shows the contacts associated to a service

@@ -67,70 +67,71 @@ public class IndexUI extends UI {
         this.navigator = new Navigator(this, this);
         this.navigator.addProvider(viewProvider);
         
-        this.mnuMain = new MenuBar();
-        this.mnuMain.setStyleName("misc-main");
-        this.mnuMain.setWidth("100%");
-        
-        this.mnuMain.addItem("Processes", null);
-        //        try {
-//            List<RemoteProcessDefinition> processDefinitions = wsBean.getProcessDefinitions(
-//                Page.getCurrent().getWebBrowser().getAddress(), 
-//                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
-//            
-//            for (RemoteProcessDefinition processDefinition : processDefinitions) {
-//                
-//                menuItem.addItem(processDefinition.getName(), null, new MenuBar.Command() {
-//                    @Override
-//                    public void menuSelected(MenuBar.MenuItem selectedItem) {
-//                        
-//                        try {
-//                            List<RemoteProcessInstance> processInstances = wsBean.getProcessInstances(
-//                                processDefinition.getId(), 
-//                                Page.getCurrent().getWebBrowser().getAddress(), 
-//                                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
-//                            
-//                            setSecondComponent(new ProcessInstancesView(processDefinition, processInstances, wsBean, ((RemoteSession) getSession().getAttribute("session"))));
-//                                                        
-//                        } catch (ServerSideException ex) {
-//                            NotificationsUtil.showError(ex.getMessage());
-//                        }
-//                    }
-//                });
-//            }
-//            
-//        } catch (ServerSideException ex) {
-//            NotificationsUtil.showError(ex.getMessage());
-//        }
-        
-        
-        
-        this.mnuMain.addItem("Service Manager", new MenuBar.Command() {
-            @Override
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                getUI().getNavigator().navigateTo(ServiceManagerView.VIEW_NAME);
-            }
-        });
-        
-        this.mnuMain.addItem("Log Out", new MenuBar.Command() {
-            @Override
-            public void menuSelected(MenuBar.MenuItem selectedItem) {
-                RemoteSession session = (RemoteSession) getSession().getAttribute("session");
-                try {
-                    wsBean.closeSession(session.getSessionId(), Page.getCurrent().getWebBrowser().getAddress());
-                    getSession().setAttribute("session", null);
-                } catch (ServerSideException ex) {
-                    NotificationsUtil.showError(ex.getMessage());
-                } finally {
-                    getNavigator().navigateTo(LoginView.VIEW_NAME);
-                }
-                
-            }
-        });
-        
         if (getSession().getAttribute("session") == null)
             this.navigator.navigateTo(LoginView.VIEW_NAME);
-        else
+        else {
+            this.mnuMain = new MenuBar();
+            this.mnuMain.setStyleName("misc-main");
+            this.mnuMain.setWidth("100%");
+
+            this.mnuMain.addItem("Processes", null);
+
+    //        try {
+    //            List<RemoteProcessDefinition> processDefinitions = wsBean.getProcessDefinitions(
+    //                Page.getCurrent().getWebBrowser().getAddress(), 
+    //                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+    //            
+    //            for (RemoteProcessDefinition processDefinition : processDefinitions) {
+    //                
+    //                menuItem.addItem(processDefinition.getName(), null, new MenuBar.Command() {
+    //                    @Override
+    //                    public void menuSelected(MenuBar.MenuItem selectedItem) {
+    //                        
+    //                        try {
+    //                            List<RemoteProcessInstance> processInstances = wsBean.getProcessInstances(
+    //                                processDefinition.getId(), 
+    //                                Page.getCurrent().getWebBrowser().getAddress(), 
+    //                                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+    //                            
+    //                            setSecondComponent(new ProcessInstancesView(processDefinition, processInstances, wsBean, ((RemoteSession) getSession().getAttribute("session"))));
+    //                                                        
+    //                        } catch (ServerSideException ex) {
+    //                            NotificationsUtil.showError(ex.getMessage());
+    //                        }
+    //                    }
+    //                });
+    //            }
+    //            
+//            } catch (ServerSideException ex) {
+//                NotificationsUtil.showError(ex.getMessage());
+//            }
+
+
+
+            this.mnuMain.addItem("Service Manager", new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    getUI().getNavigator().navigateTo(ServiceManagerView.VIEW_NAME);
+                }
+            });
+
+            this.mnuMain.addItem("Log Out", new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    RemoteSession session = (RemoteSession) getSession().getAttribute("session");
+                    try {
+                        wsBean.closeSession(session.getSessionId(), Page.getCurrent().getWebBrowser().getAddress());
+                        getSession().setAttribute("session", null);
+                    } catch (ServerSideException ex) {
+                        NotificationsUtil.showError(ex.getMessage());
+                    } finally {
+                        getNavigator().navigateTo(LoginView.VIEW_NAME);
+                    }
+
+                }
+            });
             this.navigator.navigateTo(WelcomeView.VIEW_NAME);
+        }
     }
 
     public MenuBar getMainMenu() {
