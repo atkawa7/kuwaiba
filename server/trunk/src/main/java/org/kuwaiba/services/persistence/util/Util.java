@@ -49,6 +49,7 @@ import org.kuwaiba.apis.persistence.application.ScriptQuery;
 import org.kuwaiba.apis.persistence.application.Task;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.UserProfileLight;
+import org.kuwaiba.apis.persistence.application.process.ProcessInstance;
 import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
@@ -511,6 +512,19 @@ public class Util {
             (String) formInstanceNode.getProperty(Constants.PROPERTY_NAME), 
             (String) formInstanceNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
             (byte[]) formInstanceNode.getProperty(Constants.PROPERTY_STRUCTURE));
+    }
+    
+    public static ProcessInstance createProcessInstanceFromNode(Node processInstanceNode) {
+        ProcessInstance processInstance = new ProcessInstance(processInstanceNode.getId(), 
+            (String) processInstanceNode.getProperty(Constants.PROPERTY_NAME), 
+            (String) processInstanceNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+            (Long) processInstanceNode.getProperty(Constants.PROPERTY_CURRENT_ACTIVITY_ID), 
+            (Long) processInstanceNode.getProperty(Constants.PROPERTY_PROCESS_DEFINITION_ID));
+
+        if (processInstanceNode.hasProperty(Constants.PROPERTY_ARTIFACTS_CONTENT))
+            processInstance.setArtifactsContent((byte[]) processInstanceNode.getProperty(Constants.PROPERTY_ARTIFACTS_CONTENT));
+        
+        return processInstance;
     }
     
     /**

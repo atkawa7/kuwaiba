@@ -174,6 +174,10 @@ public class Constants {
      */
     public static final String LABEL_FORM_INSTANCE = "formInstance";
     /**
+     * Label used for Process Instance nodes
+     */
+    public static final String LABEL_PROCESS_INSTANCE = "processInstance";
+    /**
      * label used for contacts
      */
     public static final String LABEL_CONTACTS = "contacts";
@@ -285,7 +289,18 @@ public class Constants {
      * SNMP version 3 property privacy protocol pass phrase
      */
     public static final String PROPERTY_PRIVACY_PASS = "privacyPass";
-    
+    /**
+     * Process Definition Id
+     */
+    public static final String PROPERTY_PROCESS_DEFINITION_ID = "processDefinitionId";
+    /**
+     * Current Activity Id
+     */
+    public static final String PROPERTY_CURRENT_ACTIVITY_ID = "currentActivityId";
+    /**
+     * Current Artifacts Content
+     */
+    public static final String PROPERTY_ARTIFACTS_CONTENT = "artifactsContent";
     /**
      * Root for all business classes
      */

@@ -54,7 +54,7 @@ public class Artifact {
         this.id = id;
         this.sharedInformation = sharedInformation;
     }
-
+    
     public String getName() {
         return name;
     }

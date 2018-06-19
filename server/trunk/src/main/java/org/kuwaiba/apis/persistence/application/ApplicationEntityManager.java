@@ -1497,8 +1497,11 @@ public interface ApplicationEntityManager {
      * @param processInstanceId The process instance the activity belongs to 
      * @param activityDefinitionId The activity id
      * @param artifact The artifact to be saved
+     * @throws ApplicationObjectNotFoundException If the process could not be found or if the activity definition could not be found
+     * @throws InvalidArgumentException If the activity had been already executed,  of there's a mismatch in the artifact versions or if the user is not an authorized actor to carry on with the activity
     */    
-    public void updateActivity(long processInstanceId, long activityDefinitionId, Artifact artifact);
+    public void updateActivity(long processInstanceId, long activityDefinitionId, Artifact artifact) 
+        throws ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
      * Gets Process Instance Activities Path
      * @param processInstanceId Process Instance Id to get path
@@ -1567,8 +1570,9 @@ public interface ApplicationEntityManager {
      * Gets a process instance
      * @param processInstanceId Process Instance Id
      * @return a Process Instance for the given id
+     * @throws ApplicationObjectNotFoundException If the process instance could not be found
      */
-    public ProcessInstance getProcessInstance(long processInstanceId);
+    public ProcessInstance getProcessInstance(long processInstanceId) throws ApplicationObjectNotFoundException ;
     /**
     * Creates an instance of a process, that is, starts one
     * @param processDefinitionId The id of the process to be started

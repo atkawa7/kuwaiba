@@ -41,6 +41,10 @@ public class ProcessInstance {
      * A reference to the process definition the current process instance was spawned from
      */
     private long processDefinition;
+    /**
+     * A XML Structure that storage the content of the artifacts to this process instance
+     */
+    private byte[] artifactsContent;
 
     public ProcessInstance(long id, String name, String description, long currentActivity, long processDefinition) {
         this.id = id;
@@ -88,6 +92,14 @@ public class ProcessInstance {
 
     public void setProcessDefinition(long processDefinition) {
         this.processDefinition = processDefinition;
+    }
+    
+    public void setArtifactsContent(byte[] artifactsContent) {
+        this.artifactsContent = artifactsContent;
+    }
+    
+    public byte[] getArtifactsContent() {
+        return artifactsContent;
     }
 
     @Override

@@ -190,6 +190,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      */
     private Label formInstanceLabel;
     /**
+     * Process Instances Label
+     */
+    private Label processInstanceLabel;
+    /**
      * Reference to the singleton instance of CacheManager
      */
     private CacheManager cm;
@@ -232,6 +236,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         scriptQueryLabel = Label.label(Constants.LABEL_SCRIPT_QUERY);
         formLabel = Label.label(Constants.LABEL_FORM);
         formInstanceLabel = Label.label(Constants.LABEL_FORM_INSTANCE);
+        processInstanceLabel = Label.label(Constants.LABEL_PROCESS_INSTANCE);
             
         try (Transaction tx = graphDb.beginTx()) {
             
@@ -4456,27 +4461,59 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public void commitActivity(long processInstanceId, long activityDefinitionId, Artifact artifact) {
-        try {           
-            ProcessCache.getInstance().commitActivity(processInstanceId, activityDefinitionId, artifact);
+    public void commitActivity(long processInstanceId, long activityDefinitionId, Artifact artifact) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node processInstanceNode = Util.findNodeByLabelAndId(processInstanceLabel, processInstanceId);
+            if (processInstanceNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
             
-        } catch (InventoryException ex) {
-            Exceptions.printStackTrace(ex);
+            try {
+                ProcessCache.getInstance().commitActivity(processInstanceId, activityDefinitionId, artifact);
+                
+                ProcessInstance processInstace = ProcessCache.getInstance().getProcessInstance(processInstanceId);
+                                
+                processInstanceNode.setProperty(Constants.PROPERTY_CURRENT_ACTIVITY_ID, processInstace.getCurrentActivity());
+                                
+                if (processInstace.getArtifactsContent() != null)
+                    processInstanceNode.setProperty(Constants.PROPERTY_ARTIFACTS_CONTENT, processInstace.getArtifactsContent());
+                
+            } catch (InventoryException ex) {
+                throw new InvalidArgumentException(String.format("The Process Instance could not be commited", processInstanceId));
+            }
+            
+            tx.success();
         }
+////        try {           
+////            ProcessCache.getInstance().commitActivity(processInstanceId, activityDefinitionId, artifact);
+////        } catch (InventoryException ex) {
+////            Exceptions.printStackTrace(ex);
+////        }
     }
     
     @Override
-    public void updateActivity(long processInstanceId, long activityDefinitionId, Artifact artifact) {
-        try {
-            Artifact a = ProcessCache.getInstance().getArtifact(artifact.getId());
-            a.setId(artifact.getId());
-            a.setName(artifact.getName());
-            a.setContentType(artifact.getContentType());
-            a.setContent(artifact.getContent());
-            a.setSharedInformation(artifact.getSharedInformation());
-            ProcessCache.getInstance().updateActivity(processInstanceId, activityDefinitionId, a);
-        } catch (InventoryException ex) {
-            Exceptions.printStackTrace(ex);
+    public void updateActivity(long processInstanceId, long activityDefinitionId, Artifact artifact) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node processInstanceNode = Util.findNodeByLabelAndId(processInstanceLabel, processInstanceId);
+            if (processInstanceNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
+            
+            try {
+                Artifact a = ProcessCache.getInstance().getArtifact(processInstanceId, activityDefinitionId);
+                a.setId(artifact.getId());
+                a.setName(artifact.getName());
+                a.setContentType(artifact.getContentType());
+                a.setContent(artifact.getContent());
+                a.setSharedInformation(artifact.getSharedInformation());
+                ProcessCache.getInstance().updateActivity(processInstanceId, activityDefinitionId, a);
+                
+                ProcessInstance processInstace = ProcessCache.getInstance().getProcessInstance(processInstanceId);
+                if (processInstace.getArtifactsContent() != null)
+                    processInstanceNode.setProperty(Constants.PROPERTY_ARTIFACTS_CONTENT, processInstace.getArtifactsContent());
+                
+            } catch (InventoryException ex) {
+                throw new InvalidArgumentException(String.format("The Process Instance could not be updated", processInstanceId));
+            }
+            tx.success();
         }
     }
     
@@ -4527,12 +4564,58 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public List<ProcessInstance> getProcessInstances(long processDefinitionId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            ResourceIterator<Node> processInstanceNodes = graphDb.findNodes(processInstanceLabel);
+            if (processInstanceNodes != null) {
+                List<ProcessInstance> processInstances = new ArrayList();
+                while (processInstanceNodes.hasNext()) {
+                    Node processInstanceNode = processInstanceNodes.next();
+                    ProcessInstance processInstance = Util.createProcessInstanceFromNode(processInstanceNode);
+                    processInstances.add(processInstance);
+                    try {
+                        ProcessCache.getInstance().setProcessInstance(processInstance);
+                    } catch (InventoryException ex) {
+                        throw new ApplicationObjectNotFoundException(ex.getMessage());
+                    }
+                }
+                try {
+                    ProcessCache.getInstance().setProcessInstances(processDefinitionId, processInstances);
+                } catch (InventoryException ex) {
+                    throw new ApplicationObjectNotFoundException(ex.getMessage());
+                }
+            }
+        }
         try {
             return ProcessCache.getInstance().getProcessInstances(processDefinitionId);
         } catch (InventoryException ex) {
-            Exceptions.printStackTrace(ex);
             throw new ApplicationObjectNotFoundException(ex.getMessage());
         }
+        
+//        try {
+//            return ProcessCache.getInstance().getProcessInstances(processDefinitionId);
+//        } catch (InventoryException ex) {
+//            Exceptions.printStackTrace(ex);
+//            throw new ApplicationObjectNotFoundException(ex.getMessage());
+//        }
+        
+        /*
+            ProcessInstance processInstance = Util.createProcessInstanceFromNode(processInstanceNode);
+            
+            ProcessCache.getInstance().setProcessInstance(processInstance);
+        */
+        /*
+        try (Transaction tx = graphDb.beginTx()) {
+            ResourceIterator<Node> formInstanceNodes = graphDb.findNodes(formInstanceLabel);
+            
+            List<FormInstance> allForms = new ArrayList();
+            
+            while (formInstanceNodes.hasNext()) {
+                Node formNode = formInstanceNodes.next();
+                allForms.add(Util.createFormInstanceFromNode(formNode));
+            }
+            return allForms;
+        }
+        */
     }
     
     @Override
@@ -4546,22 +4629,77 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public ProcessInstance getProcessInstance(long processInstanceId) {
+    public ProcessInstance getProcessInstance(long processInstanceId) throws ApplicationObjectNotFoundException {
+        /*
+        try (Transaction tx = graphDb.beginTx()) {
+            Node formInstanceNode = Util.findNodeByLabelAndId(formInstanceLabel, formInstanceId);
+            
+            if (formInstanceNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("A Form Instance with id %s could not be found", formInstanceId));
+            
+            return Util.createFormInstanceFromNode(formInstanceNode);
+        }
+        
+        return new FormInstance(
+            formInstanceNode.getId(), 
+            (String) formInstanceNode.getProperty(Constants.PROPERTY_NAME), 
+            (String) formInstanceNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+            (byte[]) formInstanceNode.getProperty(Constants.PROPERTY_STRUCTURE));
+        */
+//        Util.createFormInstanceFromNode(formInstanceNode);
+        try (Transaction tx = graphDb.beginTx()) {
+            Node processInstanceNode = Util.findNodeByLabelAndId(processInstanceLabel, processInstanceId);
+            if (processInstanceNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
+                        
+////            ProcessInstance processInstance = new ProcessInstance(processInstanceNode.getId(), 
+////                (String) processInstanceNode.getProperty(Constants.PROPERTY_NAME), 
+////                (String) processInstanceNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+////                (Long) processInstanceNode.getProperty(Constants.PROPERTY_CURRENT_ACTIVITY_ID), 
+////                (Long) processInstanceNode.getProperty(Constants.PROPERTY_PROCESS_DEFINITION_ID));
+////            
+////            if (processInstanceNode.hasProperty(Constants.PROPERTY_ARTIFACTS_CONTENT))
+////                processInstance.setArtifactsContent((byte[]) processInstanceNode.getProperty(Constants.PROPERTY_ARTIFACTS_CONTENT));
+            ProcessInstance processInstance = Util.createProcessInstanceFromNode(processInstanceNode);
+            
+            try {
+                ProcessCache.getInstance().setProcessInstance(processInstance);
+                return ProcessCache.getInstance().getProcessInstance(processInstance.getId());
+            } catch (InventoryException ex) {
+                throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
+            }
+        }
+        /*
         try {
             return ProcessCache.getInstance().getProcessInstance(processInstanceId);
         } catch (InventoryException ex) {
             Exceptions.printStackTrace(ex);
             return null;
         }
+        */
     }
 
     @Override
     public long createProcessInstance(long processDefinitionId, String processInstanceName, String processInstanceDescription) throws ApplicationObjectNotFoundException, InvalidArgumentException {
-        try {
-            return ProcessCache.getInstance().createProcessInstance(processDefinitionId, processInstanceName, processInstanceDescription);
-        } catch (InventoryException ex) {
-            Exceptions.printStackTrace(ex);
-            throw new ApplicationObjectNotFoundException(ex.getMessage());
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node processInstanceNode = graphDb.createNode(processInstanceLabel);
+            processInstanceNode.setProperty(Constants.PROPERTY_PROCESS_DEFINITION_ID, processDefinitionId);
+            processInstanceNode.setProperty(Constants.PROPERTY_NAME, processInstanceName != null ? processInstanceName : "");
+            processInstanceNode.setProperty(Constants.PROPERTY_DESCRIPTION, processInstanceDescription != null ? processInstanceDescription : "");
+            
+            try {
+                long processInstaceId = ProcessCache.getInstance().createProcessInstance(processInstanceNode.getId(), processDefinitionId, processInstanceName, processInstanceDescription);
+                
+                ProcessInstance processInstance = ProcessCache.getInstance().getProcessInstance(processInstaceId);
+                
+                processInstanceNode.setProperty(Constants.PROPERTY_CURRENT_ACTIVITY_ID, processInstance.getCurrentActivity());
+                tx.success();
+                return processInstaceId;
+                
+            } catch (InventoryException ex) {
+                throw new ApplicationObjectNotFoundException(ex.getMessage());
+            }
         }
     }
     
