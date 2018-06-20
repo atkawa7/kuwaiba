@@ -70,7 +70,6 @@ public class CypherQueryBuilder {
      * @param listTypeName
      * @param listTypeName2
      * @param query
-     * @throws InvalidArgumentException
      */
     public void readParent(String listTypeName, String listTypeName2, ExtendedQuery query) {
         Node classNode = classNodes.get(query.getClassName());
@@ -100,7 +99,6 @@ public class CypherQueryBuilder {
      * @param listTypeName
      * @param listTypeName2
      * @param query
-     * @throws InvalidArgumentException an attribute can not be find in the class, which the query is being is made.
      */
     public void readJoins(String listTypeName, String listTypeName2, ExtendedQuery query) {
         
@@ -244,7 +242,6 @@ public class CypherQueryBuilder {
     /**
      * Creates the query
      * @param query 
-     * @throws InvalidArgumentException 
      */
     public void createQuery(ExtendedQuery query) {
         cp = new CypherParser();
@@ -252,15 +249,15 @@ public class CypherQueryBuilder {
         try(Transaction tx = classNode.getGraphDatabase().beginTx()) {
             boolean isAbstract = (Boolean) classNode.getProperty(Constants.PROPERTY_ABSTRACT);
 
-//            String cypherQuery = cp.createStart(query.getClassName(), isAbstract);
-//            cypherQuery = cypherQuery.concat(cp.createInstanceMatch(isAbstract));
-            String cypherQuery = cp.createInstanceMatch(query.getClassName(),isAbstract);
+            String cypherQuery = cp.createInstanceMatch(isAbstract);
             readQuery(query);
             if(!match.isEmpty())
                 cypherQuery = cypherQuery.concat(match);
+            
+            cypherQuery = cypherQuery.concat(cp.createInstanceWhere(query.getClassName(),isAbstract));
             if(!where.isEmpty())
-                cypherQuery = cypherQuery.concat(" WHERE ".concat(where.substring(0, where.length() - 4)));
-
+                cypherQuery = cypherQuery.concat(" AND ".concat(where.substring(0, where.length() - 4)));
+            
             cypherQuery = cypherQuery.concat(" RETURN ".concat(_return));
 
             cypherQuery = cypherQuery.concat(" ORDER BY instance.name ASC");

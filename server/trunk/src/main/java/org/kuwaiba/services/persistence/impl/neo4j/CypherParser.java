@@ -25,39 +25,24 @@ import org.kuwaiba.services.persistence.util.Constants;
  * Cypher parser
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class CypherParser {
-    /**
-     * creates the start for the cypher query
-     * @param className
-     * @param isAbstract if the class is an abstract classMetadata
-     * @return a query part
-     */
-    @Deprecated
-    public String createStart(String className, boolean isAbstract){
-         if(isAbstract)
-            return "START abstractClassmetadata = node:classes(name = \""+ className +"\") ";//NOI18N
-        else
-            return "START classmetadata = node:classes(name = \""+ className + "\") ";//NOI18N
-    }
-
+public class CypherParser {   
     /**
      * creates the match when is only joins
      * @param isAbstract
      * @return
      */
-    @Deprecated
     public String createInstanceMatch(boolean isAbstract) {
         if(isAbstract)
-            return "MATCH abstractClassmetadata<-[:" + RelTypes.EXTENDS + "*]-classmetadata<-[:" + RelTypes.INSTANCE_OF + "]-instance";
+            return "MATCH (abstractClassmetadata:classes)<-[:" + RelTypes.EXTENDS + "*]-(classmetadata:classes)<-[:" + RelTypes.INSTANCE_OF + "]-(instance)"; /*WHERE abstractClassmetadata.name = \"" + className + "\"";*/
         else
-            return "MATCH classmetadata<-[:" + RelTypes.INSTANCE_OF + "]-instance";
+            return "MATCH (classmetadata:classes)<-[:" + RelTypes.INSTANCE_OF + "]-(instance)"; /*WHERE classmetadata.name = \"" + className + "\"";*/
     }
     
-    public String createInstanceMatch(String className, boolean isAbstract) {
+    public String createInstanceWhere(String className, boolean isAbstract) {
         if(isAbstract)
-            return "MATCH (abstractClassmetadata:classes)<-[:" + RelTypes.EXTENDS + "*]-(classmetadata:classes)<-[:" + RelTypes.INSTANCE_OF + "]-(instance) WHERE abstractClassmetadata.name = \"" + className + "\"";
+            return " WHERE abstractClassmetadata.name = \"" + className + "\"";
         else
-            return "MATCH (classmetadata:classes)<-[:" + RelTypes.INSTANCE_OF + "]-(instance) WHERE classmetadata.name = \"" + className + "\"";
+            return " WHERE classmetadata.name = \"" + className + "\"";
     }
 
      /**
@@ -65,7 +50,7 @@ public class CypherParser {
      * @return
      */
     public String createParentMatch(){
-        return ", instance-[:" + RelTypes.CHILD_OF + "*]->parent-[:" + RelTypes.INSTANCE_OF + "]-parentclassmetadata";//NOI18N
+        return ", (instance)-[:" + RelTypes.CHILD_OF + "*]->(parent)-[:" + RelTypes.INSTANCE_OF + "]-(parentclassmetadata)";//NOI18N
     }
     /**
      * add every listType into de the match a listType for every join
@@ -75,11 +60,11 @@ public class CypherParser {
      */
     public String createListypeMatch(String listTypeName, String listTypeName2){
         if(listTypeName2.isEmpty())
-            return ", instance-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
+            return ", (instance)-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->(listType_"+listTypeName+")";
         if(listTypeName2.equalsIgnoreCase("parent"))
-            return ", "+listTypeName2+"-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
+            return ", ("+listTypeName2+")-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->(listType_"+listTypeName+")";
         else
-            return ", listType_"+listTypeName2+"-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->listType_"+listTypeName;
+            return ", (listType_"+listTypeName2+")-[r_"+listTypeName+":"+RelTypes.RELATED_TO+"]->(listType_"+listTypeName+")";
     }
     
     /**
