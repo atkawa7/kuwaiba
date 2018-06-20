@@ -13,9 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-
-
 package org.kuwaiba.tools.importer;
 
 import java.io.BufferedReader;
@@ -28,137 +25,103 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
- /**
+/**
  * Transform a .kml file into a file in .csv format
+ *
  * @author Daniel Felipe Cepeda <daniel.cepeda@kuwaiba.org>
  */
 public class ImportExample {
 
-
     public static void main(String[] args) throws IOException {
-        
+
         File file;
-        FileReader fileReader = null;
-        BufferedReader bufferedReader;
+        //FileReader fileReader = null;
         FileWriter fileWriter = null;
         PrintWriter printWriter = null;
-        
-       
-        List<Item> listItemsManhole = new ArrayList();
-        
 
-      try {
-         /*
-          Opening of the file and creation of "BufferedReader"
-          to be able to make a comfortable reading (have readLine method)
-          */
+        List<Item> listItemsManhole = new ArrayList();
+
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader("doc.kml"))) {
+
             file = new File("doc.kml");
-            fileReader = new FileReader(file);
-            bufferedReader = new BufferedReader(fileReader);
+            //fileReader = new FileReader(file);
             boolean addItem = false;
             Item itemManhole = new Item();
             // Read file
             String lineBufferedReader;
-         while(( lineBufferedReader = bufferedReader.readLine() )!=null)
-         {
-             //////////////------MANHOLS--------//////////////////
+            while ((lineBufferedReader = bufferedReader.readLine()) != null) {
+
+                //////////////------MANHOLS--------//////////////////
                 boolean lineNameManhol = lineBufferedReader.contains("<name>");
-                boolean lineContextNameManhole1 = lineBufferedReader.contains("Manhole1</name>");
-                boolean lineContextNameManhole2 = lineBufferedReader.contains("Manhole2</name>");
+                boolean lineContextNameManhole1 = lineBufferedReader.contains("Manholes1");
+                boolean lineContextNameManhole2 = lineBufferedReader.contains("Manholes2");
                 boolean lineLongitudeManhole = lineBufferedReader.contains("longitude");
                 boolean lineLatitudeManhole = lineBufferedReader.contains("latitude");
                 boolean lineEndPlacemarkManhole = lineBufferedReader.contains("</Placemark>");
-                
+
                 boolean folderManhole = lineBufferedReader.contains("<Folder>");
-                
-                if(folderManhole) addItem=false;
-                
+
+                if (folderManhole) {
+                    addItem = false;
+                }
+
                 if (lineNameManhol && lineContextNameManhole1) {
                     addItem = true;
                 }
-                
+
                 if (lineNameManhol && lineContextNameManhole2) {
                     addItem = true;
                 }
-                
-                if(lineNameManhol && addItem)
-                {
+
+                if (lineNameManhol && addItem) {
                     itemManhole = new Item();
                     itemManhole.setName(getContextTag(lineBufferedReader));
                 }
-                
-                if(lineLongitudeManhole && addItem)
-                {
+
+                if (lineLongitudeManhole && addItem) {
                     itemManhole.setLon(getContextTag(lineBufferedReader));
                 }
-                
-                if(lineLatitudeManhole && addItem)
-                {
+
+                if (lineLatitudeManhole && addItem) {
                     itemManhole.setLat(getContextTag(lineBufferedReader));
                 }
-                if(lineEndPlacemarkManhole && addItem)
-                {
+                if (lineEndPlacemarkManhole && addItem) {
                     listItemsManhole.add(itemManhole);
                 }
                 //////////////------MANHOLS--------//////////////////      
             }
-         
-            
+
             Collections.sort(listItemsManhole, new LongComparator()); //Sort the "list of manholes" with respect to "longitude"
-            
+
             fileWriter = new FileWriter("prueba.csv");
             printWriter = new PrintWriter(fileWriter);
-            int cont=0;
-            int cont2=1;
-            
+            int cont = 0;
+            int cont2 = 1;
+
             //Write in the .csv file the data obtained in the list of manholes
             printWriter.println("Country~t~root~t~name~c~root~t~name~c~Angola~t~acronym~c~AO");
-            for(int i =0; i< listItemsManhole.size();i++ )
-            {
-                if (i==0)
-                {
-                    printWriter.println("Zone~t~Country~t~name~c~Angola~t~name~c~Zone"+0);
+            for (int i = 0; i < listItemsManhole.size(); i++) {
+                if (i == 0) {
+                    printWriter.println("Zone~t~Country~t~name~c~Angola~t~name~c~Zone" + 0);
                 }
-                
-                
-                if(cont==100){
-                    printWriter.println("Zone~t~Country~t~name~c~Angola~t~name~c~Zone"+cont2);
-                    cont=0;
+
+                if (cont == 100) {
+                    printWriter.println("Zone~t~Country~t~name~c~Angola~t~name~c~Zone" + cont2);
+                    cont = 0;
                     cont2++;
-                }else{
-                    printWriter.println("Manhole~t~Zone~t~name~c~Zone"+(cont2-1)+"~t~name~c~"+listItemsManhole.get(i).getName()+"~t~longitude~c~"+listItemsManhole.get(i).getLon()+"~t~latitude~c~"+listItemsManhole.get(i).getLat()+"");
+                } else {
+                    printWriter.println("Manhole~t~Zone~t~name~c~Zone" + (cont2 -1) + "~t~name~c~" + listItemsManhole.get(i).getName() + "~t~longitude~c~" + listItemsManhole.get(i).getLon() + "~t~latitude~c~" + listItemsManhole.get(i).getLat() + "");
                 }
                 cont++;
             }
-           
+
             System.out.println(listItemsManhole.size());
-      }
-      catch(Exception e){
-         e.printStackTrace();
-      }finally{
-         /*
-            In the finally we close the file, to make sure
-            that closes if everything goes well or skips an exception.
-          */
-         try{                    
-            if( null != fileReader ){   
-               fileReader.close();     
-            }                  
-         }catch (Exception e2){ 
-            e2.printStackTrace();
-         }
-      }     
-}
-     
-    public static String getContextTag(String s)
-    {
-        return s.substring(s.indexOf(">")+1, s.lastIndexOf("<"));
+        } catch (IOException e) {
+        }
+
+    }
+
+    public static String getContextTag(String s) {
+        return s.substring(s.indexOf(">") + 1, s.lastIndexOf("<"));
     }
 }
-     
-    
-    
-
-    
-
