@@ -499,47 +499,47 @@ public class DefaultReports {
         
             tributaryLinkUsageReportText += "<div class=\"container\">\n" +
 "        <div class=\"crossconnection\">\n" +
-"            <div id=\"41760\" class=\"connectable\"><div class=\"label\">Cape Town <br />(Teraco)</div></div>\n" +
-"            <div id=\"41674\" class=\"connectable important\"><div class=\"label\">Cape Town <br />(Duynefontein)</div></div>\n" +
+"            <div id=\"43703\" class=\"connectable\"><div class=\"label\">Cape Town <br />(Teraco)</div></div>\n" +
+"            <div id=\"43690\" class=\"connectable important\"><div class=\"label\">Cape Town <br />(Duynefontein)</div></div>\n" +
 "        </div>\n" +
 "        <div class=\"segment segment1\">\n" +
-"            <div id=\"41763\" class=\"connectable\"><div class=\"label\">Namibia <br />(Swakopmund)</div></div>\n" +
-"            <div id=\"41770\" class=\"connectable\"><div class=\"label\">Angola <br />(Luanda)</div></div>\n" +
-"            <div id=\"41718\" class=\"connectable\"><div class=\"label\">D.R. Congo <br />(Muanda)</div></div>\n" +
+"            <div id=\"43994\" class=\"connectable\"><div class=\"label\">Namibia <br />(Swakopmund)</div></div>\n" +
+"            <div id=\"43655\" class=\"connectable\"><div class=\"label\">Angola <br />(Luanda)</div></div>\n" +
+"            <div id=\"43721\" class=\"connectable\"><div class=\"label\">D.R. Congo <br />(Muanda)</div></div>\n" +
 "            <div class=\"segment-text\">Segment 4</div> \n" +
 "        </div>\n" +
 "        <div class=\"crossconnection\">\n" +
-"            <div id=\"41830\" class=\"connectable important\"><div class=\"label\">Saint Tome <br/>(Saint Tome)</div></div>\n" +
+"            <div id=\"44085\" class=\"connectable important\"><div class=\"label\">Saint Tome <br/>(Saint Tome)</div></div>\n" +
 "        </div>\n" +
 "        <div class=\"segment segment2\">\n" +
-"            <div id=\"41747\" class=\"connectable\"><div class=\"label\">Gabon <br />(Ubreville)</div></div>\n" +
-"            <div id=\"41786\" class=\"connectable\"><div class=\"label\">Eq. Guinea <br />(Bata)</div></div>\n" +
-"            <div id=\"41871\" class=\"connectable\"><div class=\"label\">Nigeria <br />(Lagos)</div></div>\n" +
-"            <div id=\"41883\" class=\"connectable\"><div class=\"label\">Benin <br />(Porto Novo)</div></div>\n" +
-"            <div id=\"41816\" class=\"connectable\"><div class=\"label\">Ghana <br />(Accra)</div></div>\n" +
+"            <div id=\"43796\" class=\"connectable\"><div class=\"label\">Gabon <br />(Ubreville)</div></div>\n" +
+"            <div id=\"43923\" class=\"connectable\"><div class=\"label\">Eq. Guinea <br />(Bata)</div></div>\n" +
+"            <div id=\"44008\" class=\"connectable\"><div class=\"label\">Nigeria <br />(Lagos)</div></div>\n" +
+"            <div id=\"43671\" class=\"connectable\"><div class=\"label\">Benin <br />(Porto Novo)</div></div>\n" +
+"            <div id=\"43873\" class=\"connectable\"><div class=\"label\">Ghana <br />(Accra)</div></div>\n" +
 "            <div class=\"segment-text\">Segment 3</div> \n" +
 "        </div>\n" +
 "        <div class=\"crossconnection\">\n" +
-"            <div id=\"41927\" class=\"connectable important\"><div class=\"label\">Ivory Coast <br/>(Abidjan)</div></div>\n" +
+"            <div id=\"43938\" class=\"connectable important\"><div class=\"label\">Ivory Coast <br/>(Abidjan)</div></div>\n" +
 "        </div>\n" +
 "        <div class=\"segment segment3\">\n" +
-"            <div id=\"41846\" class=\"connectable\"><div class=\"label\">Liberia <br />(Monrovia)</div></div>\n" +
-"            <div id=\"41943\" class=\"connectable\"><div class=\"label\">Sierra Leone <br />(Freetown)</div></div>\n" +
-"            <div id=\"41897\" class=\"connectable\"><div class=\"label\">Guinea <br />(Conakry)</div></div>\n" +
-"            <div id=\"41956\" class=\"connectable\"><div class=\"label\">Guinea Bissau <br />(Bissau)</div></div>\n" +
-"            <div id=\"41964\" class=\"connectable\"><div class=\"label\">Gambia <br />(Banjul)</div></div>\n" +
+"            <div id=\"43951\" class=\"connectable\"><div class=\"label\">Liberia <br />(Monrovia)</div></div>\n" +
+"            <div id=\"44052\" class=\"connectable\"><div class=\"label\">Sierra Leone <br />(Freetown)</div></div>\n" +
+"            <div id=\"43888\" class=\"connectable\"><div class=\"label\">Guinea <br />(Conakry)</div></div>\n" +
+"            <div id=\"43909\" class=\"connectable\"><div class=\"label\">Guinea Bissau <br />(Bissau)</div></div>\n" +
+"            <div id=\"43811\" class=\"connectable\"><div class=\"label\">Gambia <br />(Banjul)</div></div>\n" +
 "            <div class=\"segment-text\">Segment 2</div> \n" +
 "        </div>\n" +
 "        <div class=\"crossconnection\">\n" +
-"            <div id=\"41991\" class=\"connectable important\"><div class=\"label\">Senegal <br/>(Dakar)</div></div>\n" +
+"            <div id=\"43735\" class=\"connectable important\"><div class=\"label\">Senegal <br/>(Dakar)</div></div>\n" +
 "        </div>\n" +
 "        <div class=\"segment segment4\">\n" +
-"            <div id=\"42048\" class=\"connectable\"><div class=\"label\">Mauritania <br />(Nouakchott)</div></div>\n" +
-"            <div id=\"42025\" class=\"connectable\"><div class=\"label\">Spain <br />(Tenerife)</div></div>\n" +
-"            <div id=\"42066\" class=\"connectable\"><div class=\"label\">Portugal <br />(Carcavellos)</div></div>\n" +
-"            <div id=\"42014\" class=\"connectable\"><div class=\"label\">Portugal <br />(Televent/ITConic)</div></div>\n" +
-"            <div id=\"42040\" class=\"connectable important\"><div class=\"label\">France <br />(Penmarch)</div></div>\n" +
-"            <div id=\"42079\" class=\"connectable important\"><div class=\"label\">France <br />(Paris TH2)</div></div>\n" +
+"            <div id=\"43970\" class=\"connectable\"><div class=\"label\">Mauritania <br />(Nouakchott)</div></div>\n" +
+"            <div id=\"44071\" class=\"connectable\"><div class=\"label\">Spain <br />(Tenerife)</div></div>\n" +
+"            <div id=\"44025\" class=\"connectable\"><div class=\"label\">Portugal <br />(Carcavellos)</div></div>\n" +
+"            <div id=\"44038\" class=\"connectable\"><div class=\"label\">Portugal <br />(Televent/ITConic)</div></div>\n" +
+"            <div id=\"43770\" class=\"connectable important\"><div class=\"label\">France <br />(Penmarch)</div></div>\n" +
+"            <div id=\"43749\" class=\"connectable important\"><div class=\"label\">France <br />(Paris TH2)</div></div>\n" +
 "            <div class=\"segment-text\" style=\"left:0\">Segment 1</div> \n" +
 "        </div>\n" +
 "    </div><br/> <br/> <br/> <br/>\n";
@@ -587,27 +587,29 @@ public class DefaultReports {
 "\n" +
 "            //The non express connections\n" +
 "            var nonExpressTriplets = [\n" +
-"                42198, 41927, 41846,\n" +
-"                42201, 42048, 42025,\n" +
-"                42203, 42066, 42040,\n" +
-"                42205, 42040, 42079,\n" +
-"                42212, 41883, 41816,\n" +
-"                42216, 41943, 41897,\n" +
-"                42156, 41760, 41674,\n" +
-"                42158, 41674, 41763,\n" +
-"                42095, 41718, 41830,\n" +
-"                42160, 41718, 41770,\n" +
-"                42167, 41786, 41871,\n" +
-"                42169, 41871, 41883,\n" +
-"                42236, 42025, 42066,\n" +
-"                42173, 41846, 41943,\n" +
-"                42177, 41991, 42048,\n" +
-"                42114, 41763, 41770,\n" +
-"                42182, 41830, 41747,\n" +
-"                42251, 41964, 41991,\n" +
-"                42316, 41897, 41964,\n" +
-"                42193, 41747, 41786,\n" +
-"                42196, 41816, 41927\n" +
+"                   44121,43938,43951,\n" +
+"                   44124,43938,43873,\n" +
+"                   44130,43951,44052,\n" +
+"                   44132,44052,43888,\n" +
+"                   44126,43796,43923,\n" +
+"                   44128,43873,43671,\n" +
+"                   44137,43811,43735,\n" +
+"                   44140,43671,44008,\n" +
+"                   44135,43888,43811,\n" +
+"                   44146,43735,43909,\n" +
+"                   44148,43735,43970,\n" +
+"                   44142,44008,43923,\n" +
+"                   44155,44025,44038,\n" +
+"                   44153,44071,44025,\n" +
+"                   44150,43970,44071,\n" +
+"                   44159,44025,43770,\n" +
+"                   44099,43703,43690,\n" +
+"                   44157,43770,43749,\n" +
+"                   44102,43690,43994,\n" +
+"                   44107,43994,43655,\n" +
+"                   44111,43721,44085,\n" +
+"                   44109,43655,43721,\n" +
+"                   44113,44085,43796\n" +
 "            ];\n" +
 "            for (var i = 0; i < nonExpressTriplets.length; i = i + 3) {\n" +
 "                var aConnection = jsPlumb.connect({\n" +
@@ -621,10 +623,10 @@ public class DefaultReports {
 "            }\n" +
 "\n" +
 "            //The express connections\n" +
-"            var expressTriplets = [42117, 41674, 41830,\n" +
-"                                 42232, 41830, 41927, \n" +
-"                                 42100, 41927, 41991, \n" +
-"                                 42207, 41991, 42040];\n" +
+"            var expressTriplets = [44104, 43690, 44085,\n" +
+"                                 44116, 44085, 43938, \n" +
+"                                 44119, 43938, 43735, \n" +
+"                                 44162, 43735, 43770];\n" +
 "            for (var i = 0; i < expressTriplets.length; i = i + 3) {\n" +
 "                var aConnection = jsPlumb.connect({\n" +
 "                    source: expressTriplets[i + 1].toString(),\n" +
