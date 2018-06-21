@@ -70,7 +70,7 @@ public class DeleteProject {
      * Gets the value of the oid property.
      * 
      */
-    public long getId() {
+    public long getOid() {
         return oid;
     }
 

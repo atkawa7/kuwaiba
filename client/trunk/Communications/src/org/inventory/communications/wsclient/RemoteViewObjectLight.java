@@ -8,12 +8,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for viewInfoLight complex type.
+ * <p>Java class for remoteViewObjectLight complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="viewInfoLight">
+ * &lt;complexType name="remoteViewObjectLight">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -30,16 +30,16 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "viewInfoLight", propOrder = {
+@XmlType(name = "remoteViewObjectLight", propOrder = {
     "id",
     "className",
     "name",
     "description"
 })
 @XmlSeeAlso({
-    ViewInfo.class
+    RemoteViewObject.class
 })
-public class ViewInfoLight {
+public class RemoteViewObjectLight {
 
     protected long id;
     protected String className;

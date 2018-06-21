@@ -81,7 +81,7 @@ public class CopySpecialObjects {
      * Gets the value of the targetOid property.
      * 
      */
-    public long getTargetId() {
+    public long getTargetOid() {
         return targetOid;
     }
 

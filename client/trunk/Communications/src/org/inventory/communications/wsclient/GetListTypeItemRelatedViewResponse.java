@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}viewInfo" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}remoteViewObject" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,17 +33,17 @@ import javax.xml.bind.annotation.XmlType;
 public class GetListTypeItemRelatedViewResponse {
 
     @XmlElement(name = "return")
-    protected ViewInfo _return;
+    protected RemoteViewObject _return;
 
     /**
      * Gets the value of the return property.
      * 
      * @return
      *     possible object is
-     *     {@link ViewInfo }
+     *     {@link RemoteViewObject }
      *     
      */
-    public ViewInfo getReturn() {
+    public RemoteViewObject getReturn() {
         return _return;
     }
 
@@ -52,10 +52,10 @@ public class GetListTypeItemRelatedViewResponse {
      * 
      * @param value
      *     allowed object is
-     *     {@link ViewInfo }
+     *     {@link RemoteViewObject }
      *     
      */
-    public void setReturn(ViewInfo value) {
+    public void setReturn(RemoteViewObject value) {
         this._return = value;
     }
 

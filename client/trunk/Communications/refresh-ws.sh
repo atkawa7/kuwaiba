@@ -111,13 +111,13 @@ then
     echo "${setters}" >> temp.txt
     echo $'\n}' >> temp.txt
     mv temp.txt "${destination}/org/inventory/communications/wsclient/RemoteClassMetadataLight.java"
-    echo "Patching ClassInfoLight class done"
+    echo "Patching RemoteClassMetadataLight class done"
     
     #Here we patch the RemoteObjectLight class with the missing hashCode, equals and toString that wsimport does not generate
     echo "Patching RemoteObjectLight class..."
     setters="public int hashCode() {
         int hash = 3;
-        hash = 59 * hash + (int) (this.oid ^ (this.oid >>> 32));
+        hash = 59 * hash + (int) (this.id ^ (this.id >>> 32));
         return hash;
     }
     
@@ -132,7 +132,7 @@ then
             return false;
         }
         final RemoteObjectLight other = (RemoteObjectLight) obj;
-        if (this.oid != other.oid) {
+        if (this.id != other.id) {
             return false;
         }
         return true;

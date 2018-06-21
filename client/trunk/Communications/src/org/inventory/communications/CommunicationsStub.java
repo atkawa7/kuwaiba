@@ -124,8 +124,8 @@ import org.inventory.communications.wsclient.TransientQuery;
 import org.inventory.communications.wsclient.UserInfo;
 import org.inventory.communications.wsclient.UserInfoLight;
 import org.inventory.communications.wsclient.Validator;
-import org.inventory.communications.wsclient.ViewInfo;
-import org.inventory.communications.wsclient.ViewInfoLight;
+import org.inventory.communications.wsclient.RemoteViewObject;
+import org.inventory.communications.wsclient.RemoteViewObjectLight;
 
 /**
  * Singleton class that provides communication and caching services to the rest of the modules
@@ -3369,7 +3369,7 @@ public class CommunicationsStub {
      */
     public LocalObjectView getListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId) {
         try{
-            ViewInfo view = service.getListTypeItemRelatedView(listTypeItemId, listTypeItemClass, viewId, session.getSessionId());
+            RemoteViewObject view = service.getListTypeItemRelatedView(listTypeItemId, listTypeItemClass, viewId, session.getSessionId());
             return new LocalObjectView(view.getId(), view.getClassName(), view.getName(), view.getDescription(), view.getStructure(), view.getBackground());
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -3385,10 +3385,10 @@ public class CommunicationsStub {
      */
     public List<LocalObjectViewLight> getListTypeItemRelatedViews(long listTypeItemId, String listTypeItemClass) {
         try{
-            List<ViewInfoLight> views = service.getListTypeItemRelatedViews(listTypeItemId, listTypeItemClass, -1, session.getSessionId());
+            List<RemoteViewObjectLight> views = service.getListTypeItemRelatedViews(listTypeItemId, listTypeItemClass, -1, session.getSessionId());
             List<LocalObjectViewLight> res = new ArrayList<>();
             
-            for (ViewInfoLight view : views)
+            for (RemoteViewObjectLight view : views)
                 res.add(new LocalObjectViewLight(view.getId(), view.getName(), view.getDescription(), view.getClassName()));
             return res;
         }catch(Exception ex){
@@ -3458,7 +3458,7 @@ public class CommunicationsStub {
      */
     public LocalObjectView getObjectRelatedView(long oid, String objectClass, long viewId){
         try{
-            ViewInfo view = service.getObjectRelatedView(oid, objectClass, viewId, session.getSessionId());
+            RemoteViewObject view = service.getObjectRelatedView(oid, objectClass, viewId, session.getSessionId());
             return new LocalObjectView(view.getId(), view.getName(), view.getDescription(), view.getClassName(), view.getStructure(), view.getBackground());
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -3474,10 +3474,10 @@ public class CommunicationsStub {
      */
     public List<LocalObjectViewLight> getObjectRelatedViews(long oid, String objectClass){
         try{
-            List<ViewInfoLight> views = service.getObjectRelatedViews(oid, objectClass, -1, 10, session.getSessionId());
+            List<RemoteViewObjectLight> views = service.getObjectRelatedViews(oid, objectClass, -1, 10, session.getSessionId());
             List<LocalObjectViewLight> res = new ArrayList<>();
             
-            for (ViewInfoLight view : views)
+            for (RemoteViewObjectLight view : views)
                 res.add(new LocalObjectViewLight(view.getId(), view.getName(), view.getDescription(), view.getClassName()));
             return res;
         }catch(Exception ex){
@@ -3493,9 +3493,9 @@ public class CommunicationsStub {
      */
     public List<LocalObjectViewLight> getGeneralViews(String viewClass) {
         try{
-            List<ViewInfoLight> views = service.getGeneralViews(viewClass, -1, session.getSessionId());
+            List<RemoteViewObjectLight> views = service.getGeneralViews(viewClass, -1, session.getSessionId());
             List<LocalObjectViewLight> res = new ArrayList<>();
-            for (ViewInfoLight view : views)
+            for (RemoteViewObjectLight view : views)
                 res.add(new LocalObjectViewLight(view.getId(), view.getName(), view.getDescription(), view.getClassName()));
             return res;
         }catch(Exception ex){
@@ -3511,7 +3511,7 @@ public class CommunicationsStub {
      */
     public LocalObjectView getGeneralView(long viewId) {
         try{
-            ViewInfo view = service.getGeneralView(viewId, session.getSessionId());
+            RemoteViewObject view = service.getGeneralView(viewId, session.getSessionId());
             return new LocalObjectView(view.getId(), view.getClassName(), view.getName(), view.getDescription(), view.getStructure(), view.getBackground());
         }catch(Exception ex){
             this.error =  ex.getMessage();

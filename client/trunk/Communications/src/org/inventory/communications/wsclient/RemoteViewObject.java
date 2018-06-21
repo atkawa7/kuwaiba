@@ -7,14 +7,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for viewInfo complex type.
+ * <p>Java class for remoteViewObject complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="viewInfo">
+ * &lt;complexType name="remoteViewObject">
  *   &lt;complexContent>
- *     &lt;extension base="{http://ws.interfaces.kuwaiba.org/}viewInfoLight">
+ *     &lt;extension base="{http://ws.interfaces.kuwaiba.org/}remoteViewObjectLight">
  *       &lt;sequence>
  *         &lt;element name="background" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
  *         &lt;element name="structure" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
@@ -27,12 +27,12 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "viewInfo", propOrder = {
+@XmlType(name = "remoteViewObject", propOrder = {
     "background",
     "structure"
 })
-public class ViewInfo
-    extends ViewInfoLight
+public class RemoteViewObject
+    extends RemoteViewObjectLight
 {
 
     protected byte[] background;
