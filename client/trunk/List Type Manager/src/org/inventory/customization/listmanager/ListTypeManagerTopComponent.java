@@ -95,7 +95,7 @@ public final class ListTypeManagerTopComponent extends TopComponent implements E
 
     @Override
     public void componentOpened() {
-        AbstractNode root = new AbstractNode(new ListTypeChildren(lms.getInstanceableListTypes()));
+        AbstractNode root = new AbstractNode(new ListTypeChildren());        
         root.setIconBaseWithExtension(ROOT_ICON_PATH);
         em.setRootContext(root);
         em.getRootContext().setDisplayName("List Types");

@@ -30,8 +30,8 @@ import org.openide.nodes.Node;
  */
 public class ListTypeChildren extends Children.Keys<LocalClassMetadataLight> {
 
-    public ListTypeChildren(List<LocalClassMetadataLight> lcml) {
-        setKeys(lcml);
+    public ListTypeChildren() {
+        setKeys(Collections.EMPTY_SET);
     }
     
     @Override

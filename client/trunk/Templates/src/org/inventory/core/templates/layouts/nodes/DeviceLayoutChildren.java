@@ -32,9 +32,8 @@ import org.openide.nodes.Node;
  */
 public class DeviceLayoutChildren extends AbstractChildren {
     
-    public DeviceLayoutChildren(List<LocalObjectLight> devices) {
-        Collections.sort(devices);
-        setKeys(devices);
+    public DeviceLayoutChildren() {
+        setKeys(Collections.EMPTY_SET);
     }
 
     @Override

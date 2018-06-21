@@ -16,8 +16,6 @@
  */
 package org.inventory.core.templates.layouts.nodes;
 
-import java.util.List;
-import org.inventory.communications.core.LocalObjectLight;
 import org.openide.nodes.AbstractNode;
 
 /**
@@ -26,7 +24,7 @@ import org.openide.nodes.AbstractNode;
  */
 public class DeviceLayoutsRootNode extends AbstractNode {
 
-    public DeviceLayoutsRootNode(List<LocalObjectLight> devices) {
-        super(new DeviceLayoutChildren(devices));
+    public DeviceLayoutsRootNode() {
+        super(new DeviceLayoutChildren());
     }    
 }
