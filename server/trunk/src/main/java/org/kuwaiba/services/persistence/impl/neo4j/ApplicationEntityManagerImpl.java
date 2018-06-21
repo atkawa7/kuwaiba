@@ -889,7 +889,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                                  "ORDER BY listType.name ASC");    
                         
             List<ClassMetadataLight> res = new ArrayList<>();
-            Result result = graphDb.execute(cypherQuery/*, params*/);
+            Result result = graphDb.execute(cypherQuery);
         
             Iterator<Node> n_column = result.columnAs("listType");
             
@@ -2312,47 +2312,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throw new NotAuthorizedException(String.format("The IP %s does not match with the one registered for this session", remoteAddress));
         sessions.remove(sessionId);
     }
-    
-    @Override
-    public String[] executePatch() {
-        int executedFiles = 0;
-        BufferedReader br = null;
-        File patchDirectory = new File(Constants.PACTHES_PATH);
-        int totalPatchFiles = patchDirectory.listFiles().length;
-
-        for (File patchFile : patchDirectory.listFiles()) {
-            if (!patchFile.getName().contains("~") && !patchFile.getName().endsWith(".ole")) {
-                try {
-                    br = new BufferedReader(new FileReader(patchFile));
-                    String line = br.readLine();
-                    while (line != null) {
-                        if (line.startsWith("#"))
-                            System.out.println(line);
-                        if (line.startsWith(Constants.DATABASE_SENTENCE)) {
-                            String cypherQuery = br.readLine();
-                            graphDb.execute(cypherQuery);
-                        }
-                        line = br.readLine();
-                    }
-                    File readFile = new File(patchFile.getPath()+".ole");
-                    patchFile.renameTo(readFile);
-                    executedFiles++;
-                }  catch (IOException | QueryExecutionException ex) {
-                    throw new RuntimeException(ex.getMessage());
-                } finally {
-                    try {
-                        if (br != null) {
-                            br.close();
-                        }
-                    } catch (IOException ex) {
-                        Logger.getLogger(getClass().getName()).log(Level.INFO, "executePatch: {0}", ex.getMessage()); //NOI18N
-                    }
-                }
-            }
-        }
-        return new String[0];
-    }
-    
+            
     @Override
     public void setConfiguration (Properties properties) {
         this.configuration = properties;

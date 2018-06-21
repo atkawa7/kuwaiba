@@ -480,7 +480,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                 + "RETURN classmetadata, inventory "
                 + "ORDER BY classmetadata.name ASC;";
             
-            Result result = graphDb.execute(cypherQuery/*, params*/);
+            Result result = graphDb.execute(cypherQuery);
             Iterator<Node> n_column = result.columnAs("classmetadata"); 
             
             for (Node node : Iterators.asIterable(n_column))
@@ -520,7 +520,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         subclasses = new ArrayList();
             
         try (Transaction tx = graphDb.beginTx()) {
-            Result result = graphDb.execute(cypherQuery/*, params*/);
+            Result result = graphDb.execute(cypherQuery);
             Iterator<Node> n_column = result.columnAs("classmetadata"); //NOI18N
             if (includeSelf && (includeAbstractClasses ? true : !aClass.isAbstract()))
                 classManagerResultList.add(aClass);
@@ -576,7 +576,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
         try (Transaction tx = graphDb.beginTx()) {
             
-            Result result = graphDb.execute(cypherQuery/*, params*/);
+            Result result = graphDb.execute(cypherQuery);
             Iterator<Node> n_column = result.columnAs("classmetadata"); //NOI18N
             if (includeSelf && (includeAbstractClasses ? true : !aClass.isAbstract()))
                 classManagerResultList.add(aClass);
@@ -1546,11 +1546,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                throw new MetadataObjectNotFoundException(String.format(
                             "Can not find class %s", className));
             }
-
-            String cypherQuery = "START classNode=node:classes(name=\""+className+"\") "+
-                                 "MATCH possibleParentClassNode-[:POSSIBLE_CHILD"+(recursive ? "*" : "")+ "]->classNode "+
-                                 "WHERE possibleParentClassNode.name <> \""+ Constants.NODE_DUMMYROOT +
-                                 "\" RETURN distinct possibleParentClassNode "+
+            String cypherQuery = "MATCH (possibleParentClassNode:classes)-[:POSSIBLE_CHILD"+(recursive ? "*" : "")+ "]->(classNode:classes) "+
+                                 "WHERE classNode.name = \""+ className + "\" "+
+                                 "AND possibleParentClassNode.name <> \""+ Constants.NODE_DUMMYROOT + "\" "+
+                                 "RETURN distinct possibleParentClassNode "+
                                  "ORDER BY possibleParentClassNode.name ASC";
 
             Result result = graphDb.execute(cypherQuery);
@@ -1573,11 +1572,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                throw new MetadataObjectNotFoundException(String.format(
                             "Can not find class %s", className));
             }
-
-            String cypherQuery = "START classNode=node:classes(name=\""+className+"\") "+
-                                 "MATCH possibleParentClassNode-[:POSSIBLE_SPECIAL_CHILD"+ (recursive ? "*" : "") + "]->classNode "+
-                                 "WHERE possibleParentClassNode.name <> \""+ Constants.NODE_DUMMYROOT +
-                                 "\" RETURN distinct possibleParentClassNode "+
+            String cypherQuery = "MATCH (possibleParentClassNode:classes)-[:POSSIBLE_SPECIAL_CHILD"+ (recursive ? "*" : "") + "]->(classNode:classes) "+
+                                 "WHERE classNode.name = \""+ className + "\" " +
+                                 "AND possibleParentClassNode.name <> \""+ Constants.NODE_DUMMYROOT +"\" " +
+                                 "RETURN distinct possibleParentClassNode "+
                                  "ORDER BY possibleParentClassNode.name ASC";
 
             Result result = graphDb.execute(cypherQuery);
@@ -1747,15 +1745,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         if (!objectsHasAttribute(classNode, attributeName, attributeType))// check every object for the given class
             return false;
         //then check every object of the subclasses of the given class
-        String cypherQuery = "START inventory = node:classes({className}) ".concat(
-                             "MATCH inventory <-[:").concat(RelTypes.EXTENDS.toString()).concat("*]-classmetadata ").concat(
+        String cypherQuery = "MATCH (inventory:classes) <-[:".concat(RelTypes.EXTENDS.toString()).concat("*]-(classmetadata) ").concat(
+                             "WHERE inventory.name = \""+ className + "\" ").concat(
                              "RETURN classmetadata ").concat(
                              "ORDER BY classmetadata.name ASC");
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("className", "name:"+ className);//NOI18N
-        
-        Result result = graphDb.execute(cypherQuery, params);
+        Result result = graphDb.execute(cypherQuery);
         Iterator<Node> n_column = result.columnAs("classmetadata");
         for (Node nodeClass : Iterators.asIterable(n_column))
             return objectsHasAttribute(nodeClass, attributeName, attributeType);

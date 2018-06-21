@@ -749,11 +749,6 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the user could not be found 
      */
     public List<GroupProfileLight> getGroupsForUser(long userId) throws ApplicationObjectNotFoundException;
-    /**
-     * Executes a set of patches
-     * @return The error messages (if any) for every executed patch. If null, the execution was successful
-     */
-    public String[] executePatch() ;
     
     /**
      * Closes a session

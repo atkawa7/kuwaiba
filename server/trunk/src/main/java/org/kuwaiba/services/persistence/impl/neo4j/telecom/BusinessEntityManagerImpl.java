@@ -717,7 +717,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         Map<String, Object> params = new HashMap<>();
         params.put("oid", oid);
         try (Transaction tx = graphDb.beginTx()) {
-            Result result = graphDb.execute(cypherQuery/*, params*/);
+            Result result = graphDb.execute(cypherQuery);
             Iterator<Node> column = result.columnAs("parents");
             for (Node node : Iterators.asIterable(column)){  
                 if (node.hasProperty(Constants.PROPERTY_NAME)) {
