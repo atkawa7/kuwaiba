@@ -1638,10 +1638,16 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             boolean hasName = false;
             
+            ClassMetadata classMetadata = mem.getClass(contactClass);
+            
+            HashMap<String, String> convertedProperties = new HashMap<>();
             for (StringPair property : properties) {
-                newContactNode.setProperty(property.getKey(), property.getValue());
-                hasName = property.getKey().equals(Constants.PROPERTY_NAME);
+                convertedProperties.put(property.getKey(), property.getValue());
+                if (property.getKey().equals(Constants.PROPERTY_NAME))
+                    hasName = true;
             }
+            
+            updateObject(newContactNode, classMetadata, convertedProperties);
             
             if (!hasName)
                 throw new InvalidArgumentException("A contact must have a name");

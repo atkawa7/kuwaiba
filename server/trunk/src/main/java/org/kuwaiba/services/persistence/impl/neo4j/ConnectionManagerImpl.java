@@ -23,9 +23,10 @@ import org.kuwaiba.apis.persistence.ConnectionManager;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Transaction;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 
 /**
- * ConnectionManager reference implementation
+ * ConnectionManager reference implementation using Neo4J as DBMS
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseService>{
@@ -34,6 +35,14 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
      * Default db path
      */
     private static final String DEFAULT_DB_PATH = "/data/db/kuwaiba.db";
+    /**
+     * Default db host (used by the Bolt protocol)
+     */
+    private static final String DEFAULT_DB_HOST = "localhost";
+    /**
+     * Default port host (used by the Bolt protocol)
+     */
+    private static final String DEFAULT_DB_PORT = "7070";
     /**
      * Database path
      */
@@ -77,11 +86,19 @@ public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseSe
     public void openConnection() throws ConnectionException {
         try {
             String dbPathString = configuration.getProperty("dbPath", DEFAULT_DB_PATH);
+            String dbHost = configuration.getProperty("dbHost", DEFAULT_DB_HOST);
+            int dbPort = Integer.valueOf(configuration.getProperty("dbPort", DEFAULT_DB_PORT));
             
             File dbFile = new File(dbPathString);
             if (!dbFile.exists() || !dbFile.canWrite())
                 throw new Exception(String.format("Path %s does not exist or is not writeable", dbFile.getAbsolutePath()));
-            graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(dbFile);
+            GraphDatabaseSettings.BoltConnector bolt = GraphDatabaseSettings.boltConnector( "0" ); //Enables Bolt protocol support
+            graphDb = new GraphDatabaseFactory()
+                        .newEmbeddedDatabaseBuilder(dbFile)
+                        .setConfig( bolt.type, "BOLT" )
+                        .setConfig( bolt.enabled, "true" )
+                        .setConfig( bolt.address,  dbHost + ":" + dbPort )
+                        .newGraphDatabase();
         }catch(Exception e) {e.printStackTrace();
             throw new ConnectionException(e.getMessage());
         }

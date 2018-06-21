@@ -26,15 +26,15 @@ import org.kuwaiba.apis.persistence.application.ViewObject;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ViewInfo extends ViewInfoLight {
+public class RemoteViewObject extends RemoteViewObjectLight {
     
     private byte[] background;
     private byte[] structure;
 
     //No-arg constructor required
-    public ViewInfo() {    }
+    public RemoteViewObject() {    }
 
-    public ViewInfo(ViewObject myView) {
+    public RemoteViewObject(ViewObject myView) {
         super(myView);
         this.structure = myView.getStructure();
     }

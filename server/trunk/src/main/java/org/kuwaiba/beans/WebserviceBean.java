@@ -60,8 +60,8 @@ import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescrip
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.UserInfo;
 import org.kuwaiba.interfaces.ws.toserialize.application.UserInfoLight;
-import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfo;
-import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.AssetLevelCorrelatedInformation;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteLogicalConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
@@ -286,20 +286,20 @@ public interface WebserviceBean {
         String name, String description, byte[] structure, byte[] background, String ipAddress, String sessionId) 
         throws ServerSideException;
     
-    public ViewInfo getListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, String ipAddress, String sessionId) 
+    public RemoteViewObject getListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, String ipAddress, String sessionId) 
         throws ServerSideException;
     
-    public ViewInfoLight[] getListTypeItemRelatedViews(long listTypeItemId, String listTypeItemClass, int limit, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteViewObjectLight[] getListTypeItemRelatedViews(long listTypeItemId, String listTypeItemClass, int limit, String ipAddress, String sessionId) throws ServerSideException;
     
     public void deleteListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, String ipAddress, String sessionId) throws ServerSideException;
 
-    public ViewInfo getObjectRelatedView(long oid, String objectClass, long viewId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteViewObject getObjectRelatedView(long oid, String objectClass, long viewId, String ipAddress, String sessionId) throws ServerSideException;
 
-    public ViewInfoLight[] getObjectRelatedViews(long oid, String objectClass, int viewType, int limit, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteViewObjectLight> getObjectRelatedViews(long oid, String objectClass, int viewType, int limit, String ipAddress, String sessionId) throws ServerSideException;
 
-    public ViewInfo getGeneralView(long viewId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteViewObject getGeneralView(long viewId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public ViewInfoLight[] getGeneralViews(String viewClassName, int limit, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteViewObjectLight[] getGeneralViews(String viewClassName, int limit, String ipAddress, String sessionId) throws ServerSideException;
 
     public long createObjectRelatedView(long objectId, String objectClass, String name, String description, String viewClassName, byte[] structure, byte[] background, String ipAddress, String sessionId) throws ServerSideException;
 

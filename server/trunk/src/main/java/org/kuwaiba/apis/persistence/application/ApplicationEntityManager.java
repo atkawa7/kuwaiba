@@ -44,7 +44,6 @@ import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.util.ChangeDescriptor;
 import org.kuwaiba.apis.persistence.util.StringPair;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.UserInfoLight;
@@ -257,16 +256,28 @@ public interface ApplicationEntityManager {
             throws MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
-     * Retrieves the item related to a given list type
+     * Retrieves list type item given its id
      * @param listTypeClassName The class name of list type item
      * @param listTypeItemId The id of list type item
      * @return A RemoteBusinessObjectLight instance representing the item
      * @throws MetadataObjectNotFoundException If the list type class Name is not an existing class
      * @throws InvalidArgumentException if the list type class name provided is not a list type
-     * @throws BusinessObjectNotFoundException If the the item id can not be found
+     * @throws ApplicationObjectNotFoundException If the the item id can not be found
      */
     public BusinessObjectLight getListTypeItem(String listTypeClassName, long listTypeItemId) throws 
-        MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException;
+        MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException;
+    
+    /**
+     * Retrieves a list type item given its name
+     * @param listTypeClassName The class name of list type item
+     * @param listTypeItemName The name of list type item
+     * @return A RemoteBusinessObjectLight instance representing the item
+     * @throws MetadataObjectNotFoundException If the list type class Name is not an existing class
+     * @throws InvalidArgumentException if the list type class name provided is not a list type
+     * @throws ApplicationObjectNotFoundException If the the item id can not be found
+     */
+    public BusinessObjectLight getListTypeItem(String listTypeClassName, String listTypeItemName) throws 
+        MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException;
     
     /**
      * Deletes a list type item

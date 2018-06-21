@@ -829,7 +829,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public BusinessObjectLight getListTypeItem(String listTypeClassName, long listTypeItemId) throws 
-        MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException {
+        MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, listTypeClassName);
@@ -842,12 +842,34 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             for (Relationship childRel : classNode.getRelationships(RelTypes.INSTANCE_OF)) {
                 Node child = childRel.getStartNode();
-                if (child.getId() == listTypeItemId) {
-                    tx.success();
+                if (child.getId() == listTypeItemId) 
                     return new BusinessObjectLight(child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME), listTypeClassName);
-                }
+                
             }
-            throw new InvalidArgumentException(String.format("Can not find the list type item with id %s", listTypeItemId));
+            throw new ApplicationObjectNotFoundException(String.format("A list type of class %s and id %s could not be found", listTypeClassName, listTypeItemId));
+        }
+    }
+    
+    @Override
+    public BusinessObjectLight getListTypeItem(String listTypeClassName, String listTypeItemName) throws 
+        MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, listTypeClassName);
+            
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(String.format("Class %s could not be found. Contact your administrator.", listTypeClassName));
+            
+            if (!Util.isSubClass(Constants.CLASS_GENERICOBJECTLIST, classNode))
+                throw new InvalidArgumentException(String.format("Class %s is not a list type", listTypeClassName));
+            
+            for (Relationship childRel : classNode.getRelationships(RelTypes.INSTANCE_OF)) {
+                Node child = childRel.getStartNode();
+                if (child.hasProperty(Constants.PROPERTY_NAME) && child.getProperty(Constants.PROPERTY_NAME).equals(listTypeItemName))
+                    return new BusinessObjectLight(child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME), listTypeClassName);
+                
+            }
+            throw new ApplicationObjectNotFoundException(String.format("A list type of class %s and name %s could not be found", listTypeClassName, listTypeItemName));
         }
     }
     
@@ -2745,8 +2767,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             //Commit only if it's configured to do so 
             if (taskNode.hasProperty(Constants.PROPERTY_COMMIT_ON_EXECUTE) && (boolean)taskNode.getProperty(Constants.PROPERTY_COMMIT_ON_EXECUTE))
                 tx.success();
-            else 
-                tx.failure();
 
             return (TaskResult)theResult;
 

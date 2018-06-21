@@ -46,6 +46,20 @@ public class StartupBean {
             }
             
             try {
+                persistenceServiceProperties.put("dbHost", (String)context.lookup("java:comp/env/dbHost")); //NOI18N
+            }catch (NamingException ne) {
+                persistenceServiceProperties.put("dbHost","localhost"); //NOI18N
+                System.out.println("[KUWAIBA] Error reading the dbHost configuration variable. Using the default value instead: " + ne.getMessage());
+            }
+            
+            try {
+                persistenceServiceProperties.put("dbPort", (Integer)context.lookup("java:comp/env/dbPort")); //NOI18N
+            }catch (NamingException ne) {
+                persistenceServiceProperties.put("dbPort", 7070); //NOI18N
+                System.out.println("[KUWAIBA] Error reading the dbPath configuration variable. Using the default value instead: " + ne.getMessage());
+            }
+            
+            try {
                 persistenceServiceProperties.put("backgroundsPath", (String)context.lookup("java:comp/env/backgroundsPath")); //NOI18N
             }catch (NamingException ne) {
                 persistenceServiceProperties.put("backgroundsPath", "/data/img/backgrounds"); //NOI18N

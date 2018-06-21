@@ -73,7 +73,10 @@ public class PersistenceService {
             PersistenceLayerFactory plf = new PersistenceLayerFactory();
             connectionManager = plf.createConnectionManager();
             Properties connectionConfiguration = new Properties();
-            connectionConfiguration.put("dbPath", configuration.getProperty("dbPath"));
+         
+            connectionConfiguration.put("dbPath", configuration.get("dbPath"));
+            connectionConfiguration.put("dbHost", configuration.get("dbHost"));
+            connectionConfiguration.put("dbPort", configuration.get("dbPort"));
             connectionManager.setConfiguration(connectionConfiguration); //NOI18N
             System.out.println(String.format("[KUWAIBA] [%s] Establishing connection to the database...", Calendar.getInstance().getTime()));
             connectionManager.openConnection();

@@ -27,7 +27,7 @@ import org.kuwaiba.apis.persistence.application.ViewObjectLight;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ViewInfoLight implements Serializable {
+public class RemoteViewObjectLight implements Serializable {
     /**
      * View id
      */
@@ -46,9 +46,9 @@ public class ViewInfoLight implements Serializable {
     private String description;
 
     //No-arg constructor required
-    public ViewInfoLight(){}
+    public RemoteViewObjectLight(){}
 
-    public ViewInfoLight(ViewObjectLight myView) {
+    public RemoteViewObjectLight(ViewObjectLight myView) {
         this.id = myView.getId();
         this.className = myView.getViewClassName();
         this.name = myView.getName();

@@ -128,8 +128,8 @@ import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.UserInfo;
 import org.kuwaiba.interfaces.ws.toserialize.application.UserInfoLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.Validator;
-import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfo;
-import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.AssetLevelCorrelatedInformation;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteLogicalConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
@@ -2609,7 +2609,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public ViewInfo getListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, String ipAddress, String sessionId) 
+    public RemoteViewObject getListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, String ipAddress, String sessionId) 
         throws ServerSideException {
         
         if (aem == null)
@@ -2619,7 +2619,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             ViewObject myView = aem.getListTypeItemRelatedView(listTypeItemId, listTypeItemClass, viewId);
             if (myView == null)
                 return null;
-            ViewInfo res = new ViewInfo(myView);
+            RemoteViewObject res = new RemoteViewObject(myView);
             res.setBackground(myView.getBackground());
             return res;
         } catch (InventoryException ex) {
@@ -2628,7 +2628,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public ViewInfoLight[] getListTypeItemRelatedViews(long listTypeItemId, String listTypeItemClass, int limit, 
+    public RemoteViewObjectLight[] getListTypeItemRelatedViews(long listTypeItemId, String listTypeItemClass, int limit, 
         String ipAddress, String sessionId) 
         throws ServerSideException {
         
@@ -2637,10 +2637,10 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("getListTypeItemRelatedViews", ipAddress, sessionId);
             List<ViewObjectLight> views = aem.getListTypeItemRelatedViews(listTypeItemId, listTypeItemClass, limit);
-            ViewInfoLight[] res = new ViewInfoLight[views.size()];
+            RemoteViewObjectLight[] res = new RemoteViewObjectLight[views.size()];
             int i = 0;
             for (ViewObjectLight view : views){
-                res[i] = new ViewInfoLight(view);
+                res[i] = new RemoteViewObjectLight(view);
                 i++;
             }
             return res;
@@ -2702,7 +2702,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public ViewInfo getObjectRelatedView(long oid, String objectClass, long viewId, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteViewObject getObjectRelatedView(long oid, String objectClass, long viewId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -2710,7 +2710,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             ViewObject myView =  aem.getObjectRelatedView(oid, objectClass, viewId);
             if (myView == null)
                 return null;
-            ViewInfo res = new ViewInfo(myView);
+            RemoteViewObject res = new RemoteViewObject(myView);
             res.setBackground(myView.getBackground());
             return res;
         } catch (InventoryException ex) {
@@ -2719,18 +2719,17 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public ViewInfoLight[] getObjectRelatedViews(long oid, String objectClass, int viewType, int limit, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteViewObjectLight> getObjectRelatedViews(long oid, String objectClass, int viewType, int limit, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getObjectRelatedViews", ipAddress, sessionId);
             List<ViewObjectLight> views = aem.getObjectRelatedViews(oid, objectClass, limit);
-            ViewInfoLight[] res = new ViewInfoLight[views.size()];
-            int i = 0;
-            for (ViewObjectLight view : views){
-                res[i] = new ViewInfoLight(view);
-                i++;
-            }
+            List<RemoteViewObjectLight> res = new ArrayList<>();
+            
+            for (ViewObjectLight view : views)
+                res.add(new RemoteViewObjectLight(view));
+
             return res;
         } catch(InventoryException e) {
             throw new ServerSideException(e.getMessage());
@@ -2738,7 +2737,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public ViewInfo getGeneralView(long viewId, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteViewObject getGeneralView(long viewId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -2747,7 +2746,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             if(viewObject == null) {
                 return null;
             }
-            ViewInfo viewInfo = new ViewInfo(viewObject);
+            RemoteViewObject viewInfo = new RemoteViewObject(viewObject);
             viewInfo.setBackground(viewObject.getBackground());
             return viewInfo;
         } catch(InventoryException e) {
@@ -2756,15 +2755,15 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
    
     @Override
-    public ViewInfoLight[] getGeneralViews(String viewClassName, int limit, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteViewObjectLight[] getGeneralViews(String viewClassName, int limit, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getGeneralViews", ipAddress, sessionId);
             List<ViewObjectLight> views = aem.getGeneralViews(viewClassName, limit);
-            ViewInfoLight[] res = new ViewInfoLight[views.size()];
+            RemoteViewObjectLight[] res = new RemoteViewObjectLight[views.size()];
             for (int i = 0; i < views.size(); i++)
-                res[i] = new ViewInfoLight(views.get(i));
+                res[i] = new RemoteViewObjectLight(views.get(i));
            return res;
         } catch(InventoryException e) {
             throw new ServerSideException(e.getMessage());

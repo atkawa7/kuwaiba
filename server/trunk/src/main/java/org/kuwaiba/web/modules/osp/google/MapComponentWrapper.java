@@ -29,7 +29,7 @@ import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
-import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfo;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
@@ -62,7 +62,7 @@ public class MapComponentWrapper extends DragAndDropWrapper implements Embeddabl
     private TopComponent parentComponent;
     private OSPTopComponent map;
     
-    private ViewInfo currentView;
+    private RemoteViewObject currentView;
     private boolean viewClosedByNewView = false;
     private boolean viewClosedByOpenView = false;
     
@@ -95,11 +95,11 @@ public class MapComponentWrapper extends DragAndDropWrapper implements Embeddabl
         return map;
     }
     
-    public ViewInfo getCurrentView() {
+    public RemoteViewObject getCurrentView() {
         return currentView;
     }
     
-    public void setCurrentView(ViewInfo currentView) {
+    public void setCurrentView(RemoteViewObject currentView) {
         this.currentView = currentView;
     }
         

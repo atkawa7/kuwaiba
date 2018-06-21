@@ -28,7 +28,7 @@ public class RemoteQueryLight implements Serializable {
     /**
      * Object id
      */
-    protected long oid;
+    protected long id;
     private String name;
     private String description;
     private boolean isPublic;
@@ -38,24 +38,24 @@ public class RemoteQueryLight implements Serializable {
 
 
     public RemoteQueryLight(long id, String name, String description, boolean isPublic) {
-        this.oid = id;
+        this.id = id;
         this.name = name;
         this.description = description;
         this.isPublic = isPublic;
     }
 
     public RemoteQueryLight(Query query) {
-        this.oid = query.getId();
+        this.id = query.getId();
         this.description = query.getDescription();
         this.isPublic = (query.getOwner() == null);
     }
 
-    public long getOid() {
-        return oid;
+    public long getId() {
+        return id;
     }
 
-    public void setOid(long oid) {
-        this.oid = oid;
+    public void setOid(long id) {
+        this.id = id;
     }
 
     public String getDescription() {

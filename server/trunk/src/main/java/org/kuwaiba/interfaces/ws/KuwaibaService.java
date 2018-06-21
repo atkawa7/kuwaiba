@@ -67,8 +67,8 @@ import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescrip
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.UserInfo;
 import org.kuwaiba.interfaces.ws.toserialize.application.UserInfoLight;
-import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfo;
-import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.AssetLevelCorrelatedInformation;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteLogicalConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
@@ -566,7 +566,7 @@ public class KuwaibaService {
      *                             If the provided view type is not supported
      */
     @WebMethod(operationName = "getObjectRelatedView")
-    public ViewInfo getObjectRelatedView(@WebParam(name = "oid")long oid,
+    public RemoteViewObject getObjectRelatedView(@WebParam(name = "oid")long oid,
             @WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "viewId")long viewId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
@@ -596,7 +596,7 @@ public class KuwaibaService {
      *                             If the provided view type is not supported
      */
     @WebMethod(operationName = "getObjectRelatedViews")
-    public ViewInfoLight[] getObjectRelatedViews(@WebParam(name = "oid")long oid,
+    public List<RemoteViewObjectLight> getObjectRelatedViews(@WebParam(name = "oid")long oid,
             @WebParam(name = "objectClass")String objectClass,
             @WebParam(name = "viewType")int viewType,
             @WebParam(name = "limit")int limit,
@@ -624,7 +624,7 @@ public class KuwaibaService {
      *                             If the user is not allowed to query for general views
      */
     @WebMethod(operationName = "getGeneralViews")
-    public ViewInfoLight[] getGeneralViews(@WebParam(name = "viewClass")String viewClass,
+    public RemoteViewObjectLight[] getGeneralViews(@WebParam(name = "viewClass")String viewClass,
             @WebParam(name = "limit")int limit,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
@@ -648,7 +648,7 @@ public class KuwaibaService {
      *                             If the requested view
      */
     @WebMethod(operationName = "getGeneralView")
-    public ViewInfo getGeneralView(@WebParam(name = "viewId")long viewId,
+    public RemoteViewObject getGeneralView(@WebParam(name = "viewId")long viewId,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try {
             return wsBean.getGeneralView(viewId, getIPAddress(), sessionId);
@@ -751,7 +751,7 @@ public class KuwaibaService {
      *                             If the provided view type is not supported.
      */
     @WebMethod(operationName = "getListTypeItemRelatedView")
-    public ViewInfo getListTypeItemRelatedView(
+    public RemoteViewObject getListTypeItemRelatedView(
         @WebParam(name = "listTypeItemId") long listTypeItemId, 
         @WebParam(name = "listTypeItemClass") String listTypeItemClass, 
         @WebParam(name = "viewId") long viewId, 
@@ -780,7 +780,7 @@ public class KuwaibaService {
      *                             If the provided view type is not supported
      */
     @WebMethod(operationName = "getListTypeItemRelatedViews")
-    public ViewInfoLight[] getListTypeItemRelatedViews(
+    public RemoteViewObjectLight[] getListTypeItemRelatedViews(
         @WebParam(name = "listTypeItemId")  long listTypeItemId, 
         @WebParam(name = "listTypeItemClass")  String listTypeItemClass, 
         @WebParam(name = "limit")  int limit, 

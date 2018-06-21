@@ -21,11 +21,14 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import java.io.File;
-import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfo;
-import org.kuwaiba.interfaces.ws.toserialize.application.ViewInfoLight;
+import java.util.List;
+import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.netbeans.api.visual.export.SceneExporter;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.exceptions.ServerSideException;
 
 /**
  * This component implements the End to End view for SDH/MPLS services
@@ -35,44 +38,43 @@ public final class EndToEndView extends Panel {
      
     public EndToEndView(RemoteObjectLight service, WebserviceBean wsBean, String ipAddress, String sessionId) {
         try {
-            ViewInfo currentView = null;
 
-            ViewInfoLight[] objectViews = wsBean.getObjectRelatedViews(service.getId(), service.getClassName(), 10, -1, ipAddress, sessionId);
-
-            for (ViewInfoLight serviceView : objectViews) {
-                if (EndToEndViewSimpleScene.VIEW_CLASS.equals(serviceView.getViewClassName())) {
-                    currentView = wsBean.getObjectRelatedView(service.getId(), service.getClassName(), serviceView.getId(), ipAddress, sessionId); 
+            List<RemoteViewObjectLight> objectViews = wsBean.getObjectRelatedViews(service.getId(), service.getClassName(), 10, -1, ipAddress, sessionId);
+            RemoteViewObject theView = null;
+            for (RemoteViewObjectLight serviceView : objectViews) {
+                if (EndToEndViewScene.VIEW_CLASS.equals(serviceView.getViewClassName())) {
+                    theView = wsBean.getObjectRelatedView(service.getId(), service.getClassName(), serviceView.getId(), ipAddress, sessionId); 
                     break;
                 }
             }
 
-            EndToEndViewSimpleScene scene = new EndToEndViewSimpleScene(wsBean, sessionId, ipAddress);
+            EndToEndViewScene scene = new EndToEndViewScene(wsBean, sessionId, ipAddress);
 
-            if (currentView != null)
-                scene.render(currentView.getStructure());
+            scene.render(service); //First we render the default view with all the resources associated to the service
             
-            //scene.render(service);
-            if (scene.getNodes().isEmpty()) {
-                VerticalLayout content = new VerticalLayout(new Label(service.toString() + ": This service does not have any resources associated to"));
-                setContent(content);
-            } else {
-                SceneExporter.createImage(scene,
-                        new File("/programs/glassfish4/glassfish/domains/domain1/docroot/scene/" + service.getId() + ".png"),
-                        SceneExporter.ImageType.PNG,
-                        SceneExporter.ZoomType.ACTUAL_SIZE,
-                        false,
-                        false,
-                        100,
-                        0,  //Not used
-                        0);
+            if (theView != null) //Then, if there's a view prevously saved, we modify the position  of the nodes and connections in the default view. This way we manage the new nodes and those that disappeared from the last time the view was saved
+                scene.render(theView.getStructure());
+            
+            scene.render(service);
+//            if (scene.getNodes().isEmpty()) {
+//                VerticalLayout content = new VerticalLayout(new Label(service.toString() + ": This service does not have any resources associated to"));
+//                setContent(content);
+//            } else {
+//                SceneExporter.createImage(scene,
+//                        new File("/programs/glassfish4/glassfish/domains/domain1/docroot/scene/" + service.getId() + ".png"),
+//                        SceneExporter.ImageType.PNG,
+//                        SceneExporter.ZoomType.ACTUAL_SIZE,
+//                        false,
+//                        false,
+//                        100,
+//                        0,  //Not used
+//                        0);
 
-                VerticalLayout content = new VerticalLayout(new Embedded(service.toString(), new ExternalResource("http://localhost:8080/scene/" + + service.getId() + ".png")));
-                setContent(content);
-            }
+            //}
             setSizeUndefined();
-        } catch (Exception ex) {
-            //NotificationsUtil.showError(ex.getMessage());
-            ex.printStackTrace();
+        } catch (ServerSideException ex) {
+            NotificationsUtil.showError(ex.getMessage());
+            //ex.printStackTrace();
         }
         
         
