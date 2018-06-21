@@ -77,8 +77,8 @@ public class AttachFileAction extends GenericObjectNodeAction implements Present
     public void actionPerformed(ActionEvent e) {
         
         JTextField txtTags = new JTextField();
-        JButton btnAttachment = new JButton(I18N.gm("click_to_select_a_file"));
-        JFileChooser globalFileChooser = Utils.getGlobalFileChooser();
+        final JButton btnAttachment = new JButton(I18N.gm("click_to_select_a_file"));
+        final JFileChooser globalFileChooser = Utils.getGlobalFileChooser();
         globalFileChooser.setSelectedFile(null);
         
         
