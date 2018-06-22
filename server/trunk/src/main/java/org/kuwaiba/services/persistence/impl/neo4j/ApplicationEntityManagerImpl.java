@@ -4463,11 +4463,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             tx.success();
         }
-////        try {           
-////            ProcessCache.getInstance().commitActivity(processInstanceId, activityDefinitionId, artifact);
-////        } catch (InventoryException ex) {
-////            Exceptions.printStackTrace(ex);
-////        }
     }
     
     @Override
@@ -4551,11 +4546,16 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 while (processInstanceNodes.hasNext()) {
                     Node processInstanceNode = processInstanceNodes.next();
                     ProcessInstance processInstance = Util.createProcessInstanceFromNode(processInstanceNode);
-                    processInstances.add(processInstance);
-                    try {
-                        ProcessCache.getInstance().setProcessInstance(processInstance);
-                    } catch (InventoryException ex) {
-                        throw new ApplicationObjectNotFoundException(ex.getMessage());
+                    
+                    if (processInstance.getProcessDefinition() == processDefinitionId) {
+                        
+                        processInstances.add(processInstance);
+                        
+                        try {
+                            ProcessCache.getInstance().setProcessInstance(processInstance);
+                        } catch (InventoryException ex) {
+                            throw new ApplicationObjectNotFoundException(ex.getMessage());
+                        }
                     }
                 }
                 try {
@@ -4570,32 +4570,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         } catch (InventoryException ex) {
             throw new ApplicationObjectNotFoundException(ex.getMessage());
         }
-        
-//        try {
-//            return ProcessCache.getInstance().getProcessInstances(processDefinitionId);
-//        } catch (InventoryException ex) {
-//            Exceptions.printStackTrace(ex);
-//            throw new ApplicationObjectNotFoundException(ex.getMessage());
-//        }
-        
-        /*
-            ProcessInstance processInstance = Util.createProcessInstanceFromNode(processInstanceNode);
-            
-            ProcessCache.getInstance().setProcessInstance(processInstance);
-        */
-        /*
-        try (Transaction tx = graphDb.beginTx()) {
-            ResourceIterator<Node> formInstanceNodes = graphDb.findNodes(formInstanceLabel);
-            
-            List<FormInstance> allForms = new ArrayList();
-            
-            while (formInstanceNodes.hasNext()) {
-                Node formNode = formInstanceNodes.next();
-                allForms.add(Util.createFormInstanceFromNode(formNode));
-            }
-            return allForms;
-        }
-        */
     }
     
     @Override
@@ -4610,36 +4584,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public ProcessInstance getProcessInstance(long processInstanceId) throws ApplicationObjectNotFoundException {
-        /*
-        try (Transaction tx = graphDb.beginTx()) {
-            Node formInstanceNode = Util.findNodeByLabelAndId(formInstanceLabel, formInstanceId);
-            
-            if (formInstanceNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("A Form Instance with id %s could not be found", formInstanceId));
-            
-            return Util.createFormInstanceFromNode(formInstanceNode);
-        }
-        
-        return new FormInstance(
-            formInstanceNode.getId(), 
-            (String) formInstanceNode.getProperty(Constants.PROPERTY_NAME), 
-            (String) formInstanceNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
-            (byte[]) formInstanceNode.getProperty(Constants.PROPERTY_STRUCTURE));
-        */
-//        Util.createFormInstanceFromNode(formInstanceNode);
         try (Transaction tx = graphDb.beginTx()) {
             Node processInstanceNode = Util.findNodeByLabelAndId(processInstanceLabel, processInstanceId);
             if (processInstanceNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
-                        
-////            ProcessInstance processInstance = new ProcessInstance(processInstanceNode.getId(), 
-////                (String) processInstanceNode.getProperty(Constants.PROPERTY_NAME), 
-////                (String) processInstanceNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
-////                (Long) processInstanceNode.getProperty(Constants.PROPERTY_CURRENT_ACTIVITY_ID), 
-////                (Long) processInstanceNode.getProperty(Constants.PROPERTY_PROCESS_DEFINITION_ID));
-////            
-////            if (processInstanceNode.hasProperty(Constants.PROPERTY_ARTIFACTS_CONTENT))
-////                processInstance.setArtifactsContent((byte[]) processInstanceNode.getProperty(Constants.PROPERTY_ARTIFACTS_CONTENT));
+            
             ProcessInstance processInstance = Util.createProcessInstanceFromNode(processInstanceNode);
             
             try {
@@ -4649,14 +4598,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
             }
         }
-        /*
-        try {
-            return ProcessCache.getInstance().getProcessInstance(processInstanceId);
-        } catch (InventoryException ex) {
-            Exceptions.printStackTrace(ex);
-            return null;
-        }
-        */
+    }
+    
+    @Override
+    public void reloadProcessDefinitions() {
+        ProcessCache.getInstance().reloadProcessDefinitions();
     }
 
     @Override

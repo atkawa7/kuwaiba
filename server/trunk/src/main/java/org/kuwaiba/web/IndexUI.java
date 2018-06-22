@@ -77,8 +77,9 @@ public class IndexUI extends UI {
             this.mnuMain = new MenuBar();
             this.mnuMain.setStyleName("misc-main");
             this.mnuMain.setWidth("100%");
-
-            MenuItem menuItem = this.mnuMain.addItem("Processes", null);
+            
+            MenuItem menuProcessManager = this.mnuMain.addItem("Process Manager", null);
+            MenuItem menuItem = menuProcessManager.addItem("Processes", null);
 
             try {
                 List<RemoteProcessDefinition> processDefinitions = wsBean.getProcessDefinitions(
@@ -99,9 +100,20 @@ public class IndexUI extends UI {
             } catch (ServerSideException ex) {
                 NotificationsUtil.showError(ex.getMessage());
             }
-
-
-
+            MenuItem menuItemOptions = menuProcessManager.addItem("Options", null);
+            menuItemOptions.addItem("Reload", null, new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    try {
+                        wsBean.reloadProcessDefinitions(
+                                Page.getCurrent().getWebBrowser().getAddress(),
+                                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+                    } catch (ServerSideException ex) {
+                        NotificationsUtil.showError(ex.getMessage());
+                    }
+                }
+            });
+            
             this.mnuMain.addItem("Service Manager", new MenuBar.Command() {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {

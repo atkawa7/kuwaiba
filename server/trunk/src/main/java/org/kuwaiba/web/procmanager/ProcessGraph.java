@@ -81,7 +81,7 @@ public class ProcessGraph extends Panel {
                 graph.addEdge(activities.get(activity), activities.get(ifTrue));
                 Graph.Edge edge = graph.getEdge(activities.get(activity), activities.get(ifTrue));
                 edge.setParam("color", "black");
-                edge.setParam("label", "True");
+                edge.setParam("label", "YES");
                 
                 addEges(activities, ifTrue, graph);
                                                 
@@ -95,7 +95,7 @@ public class ProcessGraph extends Panel {
                 graph.addEdge(activities.get(activity), activities.get(ifFalse));
                 edge = graph.getEdge(activities.get(activity), activities.get(ifFalse));
                 edge.setParam("color", "black");
-                edge.setParam("label", "False");
+                edge.setParam("label", "NO");
                 
                 addEges(activities, ifFalse, graph);
                                 

@@ -5536,6 +5536,20 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    
+    @Override
+    public void reloadProcessDefinitions(String ipAddress, String sessionId) throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("reloadProcessDefinitions", ipAddress, sessionId);
+            
+            aem.reloadProcessDefinitions();
+            
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
         //</editor-fold>
         // <editor-fold defaultstate="collapsed" desc="Fault Management Integration">
 

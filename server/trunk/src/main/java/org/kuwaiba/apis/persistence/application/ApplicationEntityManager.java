@@ -1580,6 +1580,10 @@ public interface ApplicationEntityManager {
      */
     public ProcessInstance getProcessInstance(long processInstanceId) throws ApplicationObjectNotFoundException ;
     /**
+     * Updates the process definitions
+     */
+    public void reloadProcessDefinitions();
+    /**
     * Creates an instance of a process, that is, starts one
     * @param processDefinitionId The id of the process to be started
     * @param processInstanceName The name of the new process

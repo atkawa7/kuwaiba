@@ -663,5 +663,6 @@ public interface WebserviceBean {
     public List<RemoteProcessInstance> getProcessInstances(long processDefinitionId, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteProcessDefinition> getProcessDefinitions(String ipAddress, String sessionId) throws ServerSideException;
     public RemoteProcessInstance getProcessInstance(long processInstanceId, String ipAddress, String sessionId) throws ServerSideException;
+    public void reloadProcessDefinitions(String ipAddress, String sessionId) throws ServerSideException;
     //</editor-fold>
 }

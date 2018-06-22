@@ -44,37 +44,41 @@ import org.openide.util.Exceptions;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public final class ProcessCache {
-    public static long artifactCounter = 100000;
+    public static long artifactCounter = 1;
     
-    private final HashMap<Long, List<ActivityDefinition>> activityDefinitions = new HashMap();
+    private final HashMap<Long, List<ActivityDefinition>> processActivityDefinitions = new HashMap();
     private final List<ProcessDefinition> processDefinitions = new ArrayList();
     private final HashMap<Long, ProcessInstance> processInstances = new HashMap();
     private final HashMap<ProcessDefinition, List<ProcessInstance>> relatedProcessInstances = new HashMap();
-////    private final HashMap<ArtifactDefinition, Artifact> artifacts = new HashMap();
     private final HashMap<ProcessInstance, HashMap<ArtifactDefinition, Artifact>> processInstanceArtifacts = new HashMap();
         
     private static ProcessCache instance;
         
     private ProcessCache() {
-        ProcessDefinition altaServicioProcess = getProcessDefinition2(1L);
-        
-        if (altaServicioProcess != null)
-            cacheProcessDefinition(altaServicioProcess);
+        updateArtifacts();
     }
         
     public static ProcessCache getInstance() {
-        return instance == null ? instance = new ProcessCache() : instance.updateArtifacts();
+        return instance == null ? instance = new ProcessCache() : instance;
     }
     
     public void cacheProcessDefinition(ProcessDefinition processDefinition) {
         if (processDefinition != null) {
+            for (ProcessDefinition processDef : processDefinitions) {
+                if (processDef.getId() == processDefinition.getId()) {
+                    processDefinitions.remove(processDef);
+                    break;
+                }
+            }
             processDefinitions.add(processDefinition);
+                        
             relatedProcessInstances.put(processDefinition, new ArrayList());
             
             ActivityDefinition startActivity = processDefinition.getStartActivity();
             
             if (startActivity != null) {
-                activityDefinitions.put(processDefinition.getId(), new ArrayList());
+                processActivityDefinitions.put(processDefinition.getId(), new ArrayList());
+                
                 initActivitiesCache(processDefinition, startActivity);
             }
         }
@@ -82,43 +86,55 @@ public final class ProcessCache {
     
     private void initActivitiesCache(ProcessDefinition processDefinition, ActivityDefinition activity) {
         if (activity != null) {
-            if (!activityDefinitions.get(processDefinition.getId()).contains(activity)) {
-                
-////                artifacts.put(activity.getArfifact(), new ArrayList());
-                activityDefinitions.get(processDefinition.getId()).add(activity);
-                
-                if (activity instanceof ConditionalActivityDefinition) {
-                    initActivitiesCache(processDefinition, ((ConditionalActivityDefinition) activity).getNextActivityIfTrue());
-                    initActivitiesCache(processDefinition, ((ConditionalActivityDefinition) activity).getNextActivityIfFalse());
-                } else {
-                    initActivitiesCache(processDefinition, activity.getNextActivity());
-                }
+            
+            for (ActivityDefinition activityDef : processActivityDefinitions.get(processDefinition.getId())) {
+                if (activityDef.getId() == activity.getId())
+                    return;
+            }
+            processActivityDefinitions.get(processDefinition.getId()).add(activity);
+
+            if (activity instanceof ConditionalActivityDefinition) {
+                initActivitiesCache(processDefinition, ((ConditionalActivityDefinition) activity).getNextActivityIfTrue());
+                initActivitiesCache(processDefinition, ((ConditionalActivityDefinition) activity).getNextActivityIfFalse());
+            } else {
+                initActivitiesCache(processDefinition, activity.getNextActivity());
             }
         }
     }
     
-    public ProcessCache updateArtifacts() {        
-        if (!processDefinitions.isEmpty()) {
-            
+    public void reloadProcessDefinitions() {
+        updateArtifacts();        
+    }
+    
+    public ProcessCache updateArtifacts() {     
+        File processDefDir = new File("/data/processDefinition");
+        File [] files = processDefDir.listFiles();
+
+        for (int i = 0; i < files.length; i += 1) {
+            File processDefFile = files[i];
+
+            if (processDefFile.isFile()) {
+                long processDefId = Long.valueOf(processDefFile.getName().substring(0, 1));
+                
+                ProcessDefinition processDef = getProcessDefinition(processDefId, processDefFile);
+                cacheProcessDefinition(processDef);
+            }
         }
+        
         return instance;
     }
     
-    private ProcessDefinition getProcessDefinition2(long processDefinitionId) {
-        ProcessDefinitionLoader processDefinitionLoader = new ProcessDefinitionLoader(processDefinitionId);
-        File file = new File("/data/processDefinition/altaServicio.xml");
-        byte[] processDefinitionStructure = ProcessDefinitionLoader.getFileAsByteArray(file);
-        
+    public ProcessDefinition getProcessDefinition(long processDefId, File processDefFile) {
+        ProcessDefinitionLoader processDefinitionLoader = new ProcessDefinitionLoader(processDefId);
+        byte[] processDefinitionStructure = ProcessDefinitionLoader.getFileAsByteArray(processDefFile);
         try {
             ProcessDefinition processDefinition = processDefinitionLoader.loadProcessDefinition(processDefinitionStructure);
             return processDefinition;
         } catch (XMLStreamException | NumberFormatException | ProcessDefinitionLoader.XMLProcessDefinitionException ex) {
-            ex.printStackTrace();
-            System.out.println(ex.getMessage());
             return null;
         }
     }
-    
+        
     public ProcessDefinition getProcessDefinition(long id) throws InventoryException {
         for (ProcessDefinition processDefinition : processDefinitions) {
             if (processDefinition.getId() == id)            
@@ -140,7 +156,6 @@ public final class ProcessCache {
         relatedProcessInstances.get(processDef).add(processInstance);
         
         processInstances.put(processInstance.getId(), processInstance);
-////        processInstanceArtifacts.put(processInstance, new ArrayList());
         processInstanceArtifacts.put(processInstance, new HashMap());
         
         return processInstance.getId();
@@ -149,41 +164,23 @@ public final class ProcessCache {
     public void setProcessInstance(ProcessInstance processInstance) throws InventoryException {
         ProcessDefinition processDef = getProcessDefinition(processInstance.getProcessDefinition());
         if (relatedProcessInstances.containsKey(processDef)) {
-            if (relatedProcessInstances.get(processDef).contains(processInstance))
-                relatedProcessInstances.get(processDef).remove(processInstance);                
+            for (ProcessInstance processIns : relatedProcessInstances.get(processDef)) {
+                if (processIns.getId() == processInstance.getId()) {
+                    relatedProcessInstances.get(processDef).remove(processIns);
+                    break;
+                }
+            }
         } else
             relatedProcessInstances.put(processDef, new ArrayList());            
         
         relatedProcessInstances.get(processDef).add(processInstance);
         
-        if (processInstances.containsKey(processInstance.getId()))
-            processInstances.replace(processInstance.getId(), processInstance);
-        else
-            processInstances.put(processInstance.getId(), processInstance);
+        processInstances.put(processInstance.getId(), processInstance);
         
         if (!processInstanceArtifacts.containsKey(processInstance))
             processInstanceArtifacts.put(processInstance, new HashMap());
-//        if (processInstanceArtifacts.containsKey(processInstance))
-//            processInstanceArtifacts.replace(processInstance, new HashMap());
-//        else
-//            processInstanceArtifacts.put(processInstance, new HashMap());
-        
-        renderProcessInstance(processInstance);
-            
-////        if (processInstances.containsKey(processInstance.getId())) {
-////            processInstances.replace(processInstance.getId(), processInstance);
-////        } else {
-////            processInstances.put(processInstance.getId(), processInstance);
-////        }
-/*
-        if (!relatedProcessInstances.containsKey(processDef))
-            relatedProcessInstances.put(processDef, new ArrayList());
                 
-        relatedProcessInstances.get(processDef).add(processInstance);
-        
-        processInstances.put(processInstance.getId(), processInstance);
-        processInstanceArtifacts.put(processInstance, new HashMap());
-*/
+        renderProcessInstance(processInstance);
     }
     
     public ProcessInstance getProcessInstance(long processInstanceId) throws InventoryException {
@@ -205,9 +202,6 @@ public final class ProcessCache {
         
         if (activity != null) {
             
-////            ArtifactDefinition arfifact = activity.getArfifact();
-        
-////            List<Artifact> poolArtifacts = artifacts.get(arfifact);
             ArtifactDefinition artifactDef = activity.getArfifact();
             
             if (processInstanceArtifacts.containsKey(processInstance)) {
@@ -217,28 +211,17 @@ public final class ProcessCache {
                 if (artifactInstances.containsKey(artifactDef))
                     return artifactInstances.get(artifactDef);
             }
-
-//            List<Artifact> poolProcessInsArtifacts = processInstanceArtifacts.get(processInstance);
-
-////            for (Artifact artifact : poolArtifacts) {
-                
-//                for (Artifact processArtifact : poolProcessInsArtifacts) {
-//                    
-//                    if (processArtifact.getId() == artifact.getId())
-//                        return processArtifact;
-//                }
-////            }
         }
         throw new InventoryException("Process Instances Artifact can not be found") {};
     }
     
     public ArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, long activityDefinitionId) throws InventoryException {
         
-        if (activityDefinitions.containsKey(processDefinitionId)) {
+        if (processActivityDefinitions.containsKey(processDefinitionId)) {
             
-            if (activityDefinitions.get(processDefinitionId) != null) {
+            if (processActivityDefinitions.get(processDefinitionId) != null) {
                 
-                for (ActivityDefinition activityDef : activityDefinitions.get(processDefinitionId))
+                for (ActivityDefinition activityDef : processActivityDefinitions.get(processDefinitionId))
                     if (activityDef.getId() == activityDefinitionId)
                         return activityDef.getArfifact();
                         
@@ -373,23 +356,6 @@ public final class ProcessCache {
             } else
                 throw new InventoryException("Process Instances can not be found") {};
             
-            
-////            if (!processInstanceArtifacts.containsKey(processInstance))
-////                processInstanceArtifacts.put(processInstance, new ArrayList());
-            
-////            if (!artifacts.containsKey(activity.getArfifact()))
-////                artifacts.put(activity.getArfifact(), new ArrayList());
-            
-////            if (!processInstanceArtifacts.get(processInstance).contains(artifact))
-////                processInstanceArtifacts.get(processInstance).add(artifact);
-                        
-////            if (!artifacts.get(activity.getArfifact()).contains(artifact))
-////                artifacts.get(activity.getArfifact()).add(artifact);
-////            if (artifacts.containsKey(activity.getArfifact()))
-////                artifacts.replace(activity.getArfifact(), artifact);
-////            else
-////                artifacts.put(activity.getArfifact(), artifact);
-            
             processInstance.setArtifactsContent(processInstanceAsXML(processInstanceId));
         }
     }
@@ -412,26 +378,7 @@ public final class ProcessCache {
                 else
                     throw new InventoryException("Process Instances Artifact can no be committed newly") {};
             }
-            /*
-            
-            */
-            
-////            if (!processInstanceArtifacts.containsKey(processInstance))
-////                processInstanceArtifacts.put(processInstance, new ArrayList());
-
-////            if (!artifacts.containsKey(activity.getArfifact()))
-////                artifacts.put(activity.getArfifact(), new ArrayList());
-            
-////            if (!processInstanceArtifacts.get(processInstance).contains(artifact))
-////                processInstanceArtifacts.get(processInstance).add(artifact);
-            
-////            if (!artifacts.get(activity.getArfifact()).contains(artifact))
-////                artifacts.get(activity.getArfifact()).add(artifact);
-////            if (artifacts.containsKey(activity.getArfifact()))
-////                artifacts.replace(activity.getArfifact(), artifact);
-////            else
-////                artifacts.put(activity.getArfifact(), artifact);
-            
+                        
             processInstance.setArtifactsContent(processInstanceAsXML(processInstanceId));
             
             ActivityDefinition nextActivity = getNextActivityForProcessInstance(processInstanceId);
@@ -459,6 +406,7 @@ public final class ProcessCache {
     }
     
     public List<ProcessDefinition> getProcessDefinitions() throws InventoryException {
+//        updateArtifacts();
         return processDefinitions;
     }
     
@@ -468,8 +416,8 @@ public final class ProcessCache {
                         
             ProcessDefinition processDefinition = getProcessDefinition(processInstance.getProcessDefinition());
             
-            if (activityDefinitions.containsKey(processDefinition.getId())) {
-                List<ActivityDefinition> activityDefs = activityDefinitions.get(processDefinition.getId());
+            if (processActivityDefinitions.containsKey(processDefinition.getId())) {
+                List<ActivityDefinition> activityDefs = processActivityDefinitions.get(processDefinition.getId());
                 
                 for (ActivityDefinition activityDef : activityDefs) {
                     
@@ -483,14 +431,6 @@ public final class ProcessCache {
                 }
             }
         }
-        
-////        for (Artifact lstArtifact : artifacts.values()) {
-////            for (Artifact actifact : lstArtifact) {
-////                if (lstArtifact.getId() == id)
-////                    return lstArtifact;
-////            }
-////        }
-        
         return null;
     }
     
@@ -585,27 +525,17 @@ public final class ProcessCache {
     private void renderProcessInstance(ProcessInstance processInstance) throws InventoryException {
         if (processInstance.getArtifactsContent() == null)
             return;
-////        ProcessDefinition processDef = getProcessDefinition(processInstance.getProcessDefinition());
+        
         List<ActivityDefinition> activityDefs = new ArrayList();
         
-////        if (!relatedProcessInstances.containsKey(processDef))
-////            relatedProcessInstances.put(processDef, new ArrayList());
-////                
-////        relatedProcessInstances.get(processDef).add(processInstance);
-////        
-////        processInstances.put(processInstance.getId(), processInstance);
-////        processInstanceArtifacts.put(processInstance, new HashMap());
-        ////                
-        if (activityDefinitions.containsKey(processInstance.getProcessDefinition()))
-            activityDefs = activityDefinitions.get(processInstance.getProcessDefinition());
+        if (processActivityDefinitions.containsKey(processInstance.getProcessDefinition()))
+            activityDefs = processActivityDefinitions.get(processInstance.getProcessDefinition());
         
         try {
             XMLInputFactory xmlif = XMLInputFactory.newInstance();
             ByteArrayInputStream bais = new ByteArrayInputStream(processInstance.getArtifactsContent());
             XMLStreamReader reader = xmlif.createXMLStreamReader(bais);
-            
-            final String TAG_PROCESS_INSTANCE = "processInstance";
-            final String TAG_PROCESS_ARTIFACTS = "artifacts";
+                        
             final String TAG_PROCESS_ARTIFACT = "artifact";
             final String TAG_PROCESS_CONTENT = "content";
             final String TAG_PROCESS_SHARES = "shares";
@@ -613,22 +543,15 @@ public final class ProcessCache {
             
             final String ATTR_ID = "id";
             final String ATTR_NAME = "name";
-            final String ATTR_DESCRIPTION = "description";
-            final String ATTR_CURRENT_ACTIVITY_ID = "currentActivityId";
-            final String ATTR_PROCESS_DEFINITION_ID = "processDefinitionId";
             final String ATTR_CONTENT_TYPE = "contentType";
             final String ATTR_ARTIFACT_DEFINTION_ID = "artifactDefinitionId";
             final String ATTR_KEY = "key";
             final String ATTR_VALUE = "value";
             
-            QName tagProcessInstance = new QName(TAG_PROCESS_INSTANCE);
-            QName tagArtifacts = new QName(TAG_PROCESS_ARTIFACTS);
             QName tagArtifact = new QName(TAG_PROCESS_ARTIFACT);
             QName tagContent = new QName(TAG_PROCESS_CONTENT);
             QName tagShares = new QName(TAG_PROCESS_SHARES);
             QName tagShare = new QName(TAG_PROCESS_SHARE);
-            
-////            HashMap<Long, Artifact> artifactDefIds = new HashMap();
             
             while (reader.hasNext()) {
                 reader.next();
@@ -684,14 +607,11 @@ public final class ProcessCache {
                                 
                                 ArtifactDefinition artifactDef = activityDef.getArfifact();
                                 
-                                if (processInstanceArtifacts.get(processInstance).containsKey(artifactDef))
-                                    processInstanceArtifacts.get(processInstance).replace(artifactDef, artifact);
-                                else
-                                    processInstanceArtifacts.get(processInstance).put(artifactDef, artifact);
+                                processInstanceArtifacts.get(processInstance).put(artifactDef, artifact);
+                                
                                 break;
                             }
                         }
-////                        artifactDefIds.put(artifactDefId, artifact);
                     }
                 }
             }
@@ -699,98 +619,5 @@ public final class ProcessCache {
         } catch (XMLStreamException ex) {
             Exceptions.printStackTrace(ex);
         }
-        
-    } 
-    /*
-                if (event == XMLStreamConstants.START_ELEMENT) {
-                    if (reader.getName().equals(qNode)){
-                        String objectClass = reader.getAttributeValue(null, "class");
-
-                        int x = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
-                        int y = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
-                        Long objectId = Long.valueOf(reader.getElementText());
-
-                        LocalObjectLight lol = CommunicationsStub.getInstance().
-                                getObjectInfoLight(objectClass, objectId);
-                        if (lol != null)
-                            this.addNode(lol).setPreferredLocation(new Point(x, y));
-                        else
-                            NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, String.format("ViewAbleObject of class %s and id %s could not be found and was removed from the topology view", objectClass, objectId));
-                    } else {
-                        if (reader.getName().equals(qIcon)){ // FREE CLOUDS
-                                if(Integer.valueOf(reader.getAttributeValue(null,"type"))==1){
-                                    int x = Double.valueOf(reader.getAttributeValue(null,"x")).intValue();
-                                    int y = Double.valueOf(reader.getAttributeValue(null,"y")).intValue();
-                                    
-                                    long oid = Long.valueOf(reader.getAttributeValue(null,"id"));
-                                    LocalObjectLight lol = new LocalObjectLight(oid, reader.getElementText(), null);
-                                    this.addNode(lol).setPreferredLocation(new Point(x, y));
-                                }
-                            }
-                        else {
-                            if (reader.getName().equals(qEdge)) {
-                                Long aSide = Long.valueOf(reader.getAttributeValue(null,"aside"));
-                                Long bSide = Long.valueOf(reader.getAttributeValue(null,"bside"));
-
-                                LocalObjectLight aSideObject = new LocalObjectLight(aSide, null, null);
-                                Widget aSideWidget = this.findWidget(aSideObject);
-
-                                LocalObjectLight bSideObject = new LocalObjectLight(bSide, null, null);
-                                Widget bSideWidget = this.findWidget(bSideObject);
-
-                                if (aSideWidget == null || bSideWidget == null)
-                                    NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.INFO_MESSAGE, "One or both of the endpoints of a connection could not be found. The connection was removed from the topology view");
-                                else {
-                                    String edgeName = "topologyEdge" + aSideObject.getId() + bSideObject.getId() + randomGenerator.nextInt(1000);
-                                    ConnectionWidget newEdge = (ConnectionWidget)this.addEdge(edgeName);
-                                    this.setEdgeSource(edgeName, aSideObject);
-                                    this.setEdgeTarget(edgeName, bSideObject);
-                                    List<Point> localControlPoints = new ArrayList<>();
-                                    while (true) {
-                                        reader.nextTag();
-                                        if (reader.getName().equals(qControlPoint)) {
-                                            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
-                                                String cpx = reader.getAttributeValue(null, "x");
-                                                String cpy = reader.getAttributeValue(null, "y");
-                                                Point point = new Point();
-                                                point.setLocation(Double.valueOf(cpx), Double.valueOf(cpy));
-                                                localControlPoints.add(point);
-                                            }
-                                        } else {
-                                            newEdge.setControlPoints(localControlPoints, false);
-                                            break;
-                                        }
-                                    }
-                                }
-                            }// edges endign 
-                            else{ // FREE FRAMES
-                                if (reader.getName().equals(qPolygon)) { 
-                                    long oid = randomGenerator.nextInt(1000);
-                                    LocalObjectLight lol = new LocalObjectLight(oid, oid + FREE_FRAME + reader.getAttributeValue(null, "title"), null);
-                                    Widget myPolygon = addNode(lol);
-                                    Point p = new Point();
-                                    p.setLocation(Double.valueOf(reader.getAttributeValue(null, "x")), Double.valueOf(reader.getAttributeValue(null, "y")));
-                                    myPolygon.setPreferredLocation(p);
-                                    Dimension d = new Dimension();
-                                    d.setSize(Double.valueOf(reader.getAttributeValue(null, "w")), Double.valueOf(reader.getAttributeValue(null, "h")));
-                                    Rectangle r = new Rectangle(d);
-                                    myPolygon.setPreferredBounds(r);
-                                }
-                            }//end qPolygon
-                        } //end qIcons
-                    } // end qNodes
-                } // end if
-            } // end while
-            reader.close();
-            
-            this.validate();
-            this.repaint();
-        } catch (NumberFormatException | XMLStreamException ex) {
-            NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.ERROR_MESSAGE, "The view seems corrupted and could not be loaded");
-            clear();
-            if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
-                Exceptions.printStackTrace(ex);
-        }
     }
-    */
 }

@@ -33,32 +33,32 @@ import javax.xml.stream.XMLStreamReader;
  */
 public class ProcessDefinitionLoader {
     private class Tag {
-        public static final String PROCESS_DEFINITION = "processDefinition";
-        public static final String ACTIVITY_DEFINITIONS = "activityDefinitions";
-        public static final String ACTIVITY_DEFINITION = "activityDefinition";
-        public static final String ARTIFACT_DEFINITION = "artifactDefinition";
-        public static final String DEFINITION = "definition";
-        public static final String ACTORS = "actors";
-        public static final String ACTOR = "actor";
-        public static final String PATHS = "paths";
-        public static final String PATH = "path";
-        public static final String PARAMETERS = "parameters";
-        public static final String PARAMETER = "parameter";
+        public static final String PROCESS_DEFINITION = "processDefinition"; //NOI18N
+        public static final String ACTIVITY_DEFINITIONS = "activityDefinitions"; //NOI18N
+        public static final String ACTIVITY_DEFINITION = "activityDefinition"; //NOI18N
+        public static final String ARTIFACT_DEFINITION = "artifactDefinition"; //NOI18N
+        public static final String DEFINITION = "definition"; //NOI18N
+        public static final String ACTORS = "actors"; //NOI18N
+        public static final String ACTOR = "actor"; //NOI18N
+        public static final String PATHS = "paths"; //NOI18N
+        public static final String PATH = "path"; //NOI18N
+        public static final String PARAMETERS = "parameters"; //NOI18N
+        public static final String PARAMETER = "parameter"; //NOI18N
     }    
     
     private class Attribute {
-        public static final String NAME = "name";
-        public static final String DESCRIPTION = "description";
-        public static final String CREATION_DATE = "creationDate";
-        public static final String VERSION = "version";
-        public static final String ENABLED = "enabled";
-        public static final String ID = "id";
-        public static final String TYPE = "type";
-        public static final String SHARED = "shared";
-        public static final String NEXT_ACTIVITY = "nextActivity";
-        public static final String START_ACTIVITY_ID="startActivityId";
-        public static final String NEXT_ACTIVITY_DEFINITION_ID = "nextActivityDefinitionId";
-        public static final String ACTOR_ID = "actorId";
+        public static final String NAME = "name"; //NOI18N
+        public static final String DESCRIPTION = "description"; //NOI18N
+        public static final String CREATION_DATE = "creationDate"; //NOI18N
+        public static final String VERSION = "version"; //NOI18N
+        public static final String ENABLED = "enabled"; //NOI18N
+        public static final String ID = "id"; //NOI18N
+        public static final String TYPE = "type"; //NOI18N
+        public static final String SHARED = "shared"; //NOI18N
+        public static final String NEXT_ACTIVITY = "nextActivity"; //NOI18N
+        public static final String START_ACTIVITY_ID="startActivityId"; //NOI18N
+        public static final String NEXT_ACTIVITY_DEFINITION_ID = "nextActivityDefinitionId"; //NOI18N
+        public static final String ACTOR_ID = "actorId"; //NOI18N
     }
     public class XMLProcessDefinitionException extends Exception {
         
