@@ -55,7 +55,11 @@ public final class ProcessCache {
     private static ProcessCache instance;
         
     private ProcessCache() {
-        updateArtifacts();
+        try {
+            updateArtifacts();
+        } catch (InventoryException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
         
     public static ProcessCache getInstance() {
@@ -102,24 +106,27 @@ public final class ProcessCache {
         }
     }
     
-    public void reloadProcessDefinitions() {
+    public void reloadProcessDefinitions() throws InventoryException {        
         updateArtifacts();        
     }
     
-    public ProcessCache updateArtifacts() {     
+    public ProcessCache updateArtifacts() throws InventoryException {     
         File processDefDir = new File("/data/processDefinition");
         File [] files = processDefDir.listFiles();
+        if (files != null) {
+            for (int i = 0; i < files.length; i += 1) {
+                File processDefFile = files[i];
 
-        for (int i = 0; i < files.length; i += 1) {
-            File processDefFile = files[i];
+                if (processDefFile.isFile()) {
+                    long processDefId = Long.valueOf(processDefFile.getName().substring(0, 1));
 
-            if (processDefFile.isFile()) {
-                long processDefId = Long.valueOf(processDefFile.getName().substring(0, 1));
-                
-                ProcessDefinition processDef = getProcessDefinition(processDefId, processDefFile);
-                cacheProcessDefinition(processDef);
+                    ProcessDefinition processDef = getProcessDefinition(processDefId, processDefFile);
+                    cacheProcessDefinition(processDef);
+                }
             }
         }
+        else
+            throw new InventoryException("The processDefinition directory can not be found") {};
         
         return instance;
     }

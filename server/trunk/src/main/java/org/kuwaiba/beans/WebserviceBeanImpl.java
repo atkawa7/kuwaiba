@@ -142,6 +142,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHPosit
 import org.kuwaiba.interfaces.ws.toserialize.metadata.AttributeInfo;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
+import org.openide.util.Exceptions;
 
 /**
  * Session bean to give primary support to the web service calls
@@ -5547,6 +5548,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.reloadProcessDefinitions();
             
         } catch(InventoryException ex) {
+            Exceptions.printStackTrace(ex);
             throw new ServerSideException(ex.getMessage());
         }
     }

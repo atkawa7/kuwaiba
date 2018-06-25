@@ -4601,8 +4601,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public void reloadProcessDefinitions() {
-        ProcessCache.getInstance().reloadProcessDefinitions();
+    public void reloadProcessDefinitions() throws InvalidArgumentException {
+        try {
+            ProcessCache.getInstance().reloadProcessDefinitions();
+        } catch (InventoryException ex) {
+            throw new InvalidArgumentException(ex.getMessage());
+        }
     }
 
     @Override
