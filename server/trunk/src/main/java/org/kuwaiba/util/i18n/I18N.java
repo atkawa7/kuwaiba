@@ -22,7 +22,7 @@ import java.util.Locale;
  */
 public class I18N {
 
-    private static final String BUNDLE_PATH="org/kuwaiba/utils/i18n/LANG";
+    private static final String BUNDLE_PATH="LANG";
     
     public static String gm(String key){
         return java.util.ResourceBundle.getBundle(BUNDLE_PATH, Locale.getDefault()).getString(key);
