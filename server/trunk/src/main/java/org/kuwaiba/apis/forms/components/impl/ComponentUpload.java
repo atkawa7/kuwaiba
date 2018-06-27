@@ -74,6 +74,7 @@ public class ComponentUpload extends GraphicalComponent {
             try {
                 //TODO:
 //                file = new File(Variable.FORM_FILES + "/" + filename);
+                file = new File("/data/attachments" + "/" + filename);
                 fileOutputStream = new FileOutputStream(file);
 
             } catch (FileNotFoundException ex) {

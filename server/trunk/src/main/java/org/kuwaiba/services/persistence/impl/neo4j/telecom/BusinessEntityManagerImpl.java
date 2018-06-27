@@ -561,6 +561,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             ClassMetadata myClass = mem.getClass(className);
             Node instance = getInstanceOfClass(className, oid);
             BusinessObject res = Util.createRemoteObjectFromNode(instance, myClass);
+            tx.success();
             return res;
         }
     }
@@ -606,10 +607,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Iterator<Relationship> instances = iterableInstances.iterator();
             while (instances.hasNext()){
                 Node instance = instances.next().getStartNode();
-                if (instance.getId() == oid)
+                if (instance.getId() == oid) {
+                    tx.success();
                     return new BusinessObjectLight(oid,
                             (String) instance.getProperty(Constants.PROPERTY_NAME),
                             className);
+                }
             }
             throw new BusinessObjectNotFoundException(className, oid);
         }

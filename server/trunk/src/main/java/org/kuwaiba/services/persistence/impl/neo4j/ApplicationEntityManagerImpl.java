@@ -3069,7 +3069,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
             Object theResult = shell.evaluate(script);
             
-            tx.failure();
+            if (scriptQueryNode.hasProperty(Constants.PROPERTY_NAME) && ((String) scriptQueryNode.getProperty(Constants.PROPERTY_NAME)).contains("commit"))
+                tx.success();                
+            else
+                tx.failure();
             return new ScriptQueryResult(theResult);
         }
     }
