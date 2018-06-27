@@ -16,7 +16,7 @@ package org.kuwaiba.apis.forms;
 
 import com.vaadin.server.Page;
 import org.kuwaiba.apis.forms.elements.AbstractFormInstanceLoader;
-import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
@@ -42,7 +42,7 @@ public class FormInstanceLoader extends AbstractFormInstanceLoader {
             RemoteClassMetadata cli = getClassInfoLight(classId);
             return wsBean.getObjectLight(cli.getClassName(), objectId, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
         } catch (ServerSideException ex) {
-            NotificationsUtil.showError(ex.getMessage());
+            Notifications.showError(ex.getMessage());
         }
         return null;
     }
@@ -52,7 +52,7 @@ public class FormInstanceLoader extends AbstractFormInstanceLoader {
         try {
             return wsBean.getClass(classId, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
         } catch (ServerSideException ex) {
-            NotificationsUtil.showError(ex.getMessage());
+            Notifications.showError(ex.getMessage());
         }
         return null;
     }

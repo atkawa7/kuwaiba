@@ -17,7 +17,7 @@ package org.kuwaiba.web.procmanager;
 import com.vaadin.server.Page;
 import java.util.List;
 import org.kuwaiba.apis.persistence.util.StringPair;
-import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActor;
@@ -50,7 +50,7 @@ public class ProcessInstanceBean {
         try {
             return wsBean.getProcessDefinition(processInstance.getProcessDefinition(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
         } catch (ServerSideException ex) {
-            NotificationsUtil.showError(ex.getMessage());
+            Notifications.showError(ex.getMessage());
         }
         return null;
     }
@@ -71,7 +71,7 @@ public class ProcessInstanceBean {
                     return path.get(path.size() - 1);
                 
             } catch (ServerSideException ex) {
-                NotificationsUtil.showError(ex.getMessage());
+                Notifications.showError(ex.getMessage());
             }
         }
         return null;

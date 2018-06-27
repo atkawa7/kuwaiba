@@ -627,6 +627,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
             
+            tx.success();
             return getObjectsWithFilterLight(classNode, filterName, filterValue);
         }
     }
@@ -1953,7 +1954,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public List<BusinessObjectLightList> findRoutesThroughSpecialRelationships(String objectAClassName, 
             long objectAId, String objectBClassName, long objectBId, String relationshipName) {
         List<BusinessObjectLightList> paths = new ArrayList<>();
-        String cypherQuery = String.format("MATCH path = (a)-[:%s*1..60{name:\"%s\"}]-(b) " +
+        String cypherQuery = String.format("MATCH path = (a)-[:%s*1..30{name:\"%s\"}]-(b) " +
                             "WHERE id(a) = %s AND id(b) = %s " +
                             "RETURN nodes(path) as path ORDER BY size(path) ASC LIMIT %s", RelTypes.RELATED_TO_SPECIAL, relationshipName, objectAId, objectBId, 
                                                                     aem.getConfiguration().get("maxRoutes")); //NOI18N

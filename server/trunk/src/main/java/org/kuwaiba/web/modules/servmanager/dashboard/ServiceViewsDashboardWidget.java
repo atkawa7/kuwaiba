@@ -41,7 +41,7 @@ public class ServiceViewsDashboardWidget extends AbstractDashboardWidget {
     private WebserviceBean wsBean;
     
     public ServiceViewsDashboardWidget(RemoteObjectLight service, WebserviceBean wsBean) {
-        super("Views");
+        super("End to End View");
         this.service = service;
         this.wsBean = wsBean;
         this.createCover();

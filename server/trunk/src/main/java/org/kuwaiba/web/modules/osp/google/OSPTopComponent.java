@@ -52,7 +52,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.icons.ClassIcon;
+import org.kuwaiba.apis.web.gui.resources.ResourceFactory;
 import org.kuwaiba.apis.web.gui.menus.RawContextMenu;
 import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
@@ -828,12 +828,13 @@ public class OSPTopComponent extends GoogleMapsComponent implements AbstractGISV
     }
     
     private String getMarkerNodeIconUrl(RemoteObjectLight objectNode) {
-        Resource icon = ClassIcon.newInstance(parentComponent).getIcon(objectNode.getClassName());
-        
-        setResource(Long.toString(objectNode.getId()), icon);
-        ResourceReference rr = ResourceReference.create(icon, this, Long.toString(objectNode.getId()));
-        
-        return ClassIcon.newInstance(parentComponent).getIconUrl(rr);
+        throw new RuntimeException("Not Implemented Yet");
+//        Resource icon = ClassIcon.newInstance(parentComponent).getIcon(objectNode.getClassName());
+//        
+//        setResource(Long.toString(objectNode.getId()), icon);
+//        ResourceReference rr = ResourceReference.create(icon, this, Long.toString(objectNode.getId()));
+//        
+//        return ClassIcon.newInstance(parentComponent).getIconUrl(rr);
     }
     
     public void removeConnectionUnsaved() {

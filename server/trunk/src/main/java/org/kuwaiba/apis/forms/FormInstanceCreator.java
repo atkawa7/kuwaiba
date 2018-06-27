@@ -23,7 +23,7 @@ import org.kuwaiba.apis.forms.elements.AbstractFormInstanceCreator;
 import org.kuwaiba.apis.forms.elements.Constants;
 import org.kuwaiba.apis.forms.elements.FormStructure;
 import org.kuwaiba.apis.forms.elements.XMLUtil;
-import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
@@ -59,7 +59,7 @@ public class FormInstanceCreator extends AbstractFormInstanceCreator {
                 XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.CLASS_ID, String.valueOf(classInfo.getId()));
                 
             } catch (ServerSideException ex) {
-                NotificationsUtil.showError(ex.getMessage());
+                Notifications.showError(ex.getMessage());
             }
         }
     }

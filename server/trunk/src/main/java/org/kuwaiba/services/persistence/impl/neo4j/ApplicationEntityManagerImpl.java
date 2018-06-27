@@ -22,11 +22,8 @@ import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import groovy.lang.Binding;
 import groovy.lang.GroovyRuntimeException;
 import groovy.lang.GroovyShell;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -103,7 +100,6 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.QueryExecutionException;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
@@ -823,6 +819,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 Node child = relationships.next().getStartNode();
                 children.add(new BusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME), className));
             }
+            tx.success();
         }
         return children;
     }
@@ -842,8 +839,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             for (Relationship childRel : classNode.getRelationships(RelTypes.INSTANCE_OF)) {
                 Node child = childRel.getStartNode();
-                if (child.getId() == listTypeItemId) 
+                if (child.getId() == listTypeItemId) { 
+                    tx.success();
                     return new BusinessObjectLight(child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME), listTypeClassName);
+                }
                 
             }
             throw new ApplicationObjectNotFoundException(String.format("A list type of class %s and id %s could not be found", listTypeClassName, listTypeItemId));
@@ -865,8 +864,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             for (Relationship childRel : classNode.getRelationships(RelTypes.INSTANCE_OF)) {
                 Node child = childRel.getStartNode();
-                if (child.hasProperty(Constants.PROPERTY_NAME) && child.getProperty(Constants.PROPERTY_NAME).equals(listTypeItemName))
+                if (child.hasProperty(Constants.PROPERTY_NAME) && child.getProperty(Constants.PROPERTY_NAME).equals(listTypeItemName)) {
+                    tx.success();
                     return new BusinessObjectLight(child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME), listTypeClassName);
+                }
                 
             }
             throw new ApplicationObjectNotFoundException(String.format("A list type of class %s and name %s could not be found", listTypeClassName, listTypeItemName));

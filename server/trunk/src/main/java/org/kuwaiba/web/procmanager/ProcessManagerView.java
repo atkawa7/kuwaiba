@@ -22,7 +22,7 @@ import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.VerticalSplitPanel;
 import java.util.List;
 import javax.inject.Inject;
-import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
@@ -66,7 +66,7 @@ public class ProcessManagerView extends VerticalSplitPanel implements View {
             setSecondComponent(new ProcessInstancesView(processDefinition, processInstances, wsBean, ((RemoteSession) getSession().getAttribute("session"))));
 
         } catch (ServerSideException ex) {
-            NotificationsUtil.showError(ex.getMessage());
+            Notifications.showError(ex.getMessage());
         }
     }
     

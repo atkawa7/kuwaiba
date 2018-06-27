@@ -35,7 +35,7 @@ import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import javax.inject.Inject;
-import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
@@ -102,7 +102,7 @@ public class LoginView extends CustomComponent implements View {
                 Page.getCurrent().reload();
                 
             } catch (ServerSideException ex) {
-                NotificationsUtil.showError(ex.getMessage());
+                Notifications.showError(ex.getMessage());
                 txtUsername.focus();
             }
         });

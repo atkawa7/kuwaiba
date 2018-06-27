@@ -26,7 +26,7 @@ import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
 import java.util.HashMap;
 import java.util.List;
-import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
@@ -89,7 +89,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
                 }
             }
         } catch (ServerSideException ex) {
-            NotificationsUtil.showError(ex.getMessage());
+            Notifications.showError(ex.getMessage());
         }
         return false;
     }
@@ -122,7 +122,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
                 Page.getCurrent().getWebBrowser().getAddress(),
                 remoteSession.getSessionId());
         } catch (ServerSideException ex) {
-            NotificationsUtil.showError(ex.getMessage());
+            Notifications.showError(ex.getMessage());
         }
 
         if (artifactDefinition != null) {
@@ -229,7 +229,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
                             remoteSession.getSessionId());
                         
                     } catch (ServerSideException ex) {
-                        NotificationsUtil.showError(ex.getMessage());
+                        Notifications.showError(ex.getMessage());
                     }
                 }
             });
@@ -274,7 +274,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
 
             ProcessInstanceView.this.setSecondComponent(artifactWrapperLayout);
         } else {
-            NotificationsUtil.showError("His Role does not allow to start this activity");
+            Notifications.showError("His Role does not allow to start this activity");
         }
     }
     
@@ -312,7 +312,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
             
         } catch (ServerSideException ex) {
             
-            NotificationsUtil.showError(ex.getMessage());
+            Notifications.showError(ex.getMessage());
         }
     }
     

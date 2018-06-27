@@ -15,8 +15,8 @@
  */
 package org.kuwaiba.web.modules.servmanager.dashboard;
 
-import com.vaadin.server.ExternalResource;
-import com.vaadin.ui.Embedded;
+import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.ui.Label;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.beans.WebserviceBean;
@@ -36,7 +36,7 @@ public class TrafficDashboardWidget extends AbstractDashboardWidget {
     private WebserviceBean wsBean;
     
     public TrafficDashboardWidget(RemoteObjectLight service, WebserviceBean wsBean) {
-        super("Traffic");
+        super("General Overview");
         this.service = service;
         this.wsBean = wsBean;
         this.createContent();
@@ -47,7 +47,7 @@ public class TrafficDashboardWidget extends AbstractDashboardWidget {
 
     @Override
     public void createContent() {
-        this.contentComponent = new Embedded("Sample Traffic", new ExternalResource("https://support.zabbix.com/secure/attachment/16643/graph.png"));
+        this.contentComponent = new Label(String.format("<h1>%s</h1>", service), ContentMode.HTML);
         addComponent(this.contentComponent);
     }
 }

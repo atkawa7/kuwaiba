@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.web.gui.nodes.properties.NodeProperty;
 import org.kuwaiba.apis.web.gui.nodes.properties.Sheet;
-import org.kuwaiba.apis.web.gui.util.NotificationsUtil;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.apis.web.gui.wrappers.LocalObjectListItem;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
