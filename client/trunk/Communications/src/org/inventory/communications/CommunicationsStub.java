@@ -1033,6 +1033,7 @@ public class CommunicationsStub {
         } catch(Exception e){
             error = e.getMessage();
             return null;
+        }
     }
     //</editor-fold>
     
