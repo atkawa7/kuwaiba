@@ -21,7 +21,8 @@ import java.util.HashMap;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
- * Basically a hash-map that stores a set of configuration parameters that will be used by the sync provider
+ * Basically a hash-map that stores a set of configuration parameters 
+ * that will be used by the sync provider
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class SyncDataSourceConfiguration implements Serializable {

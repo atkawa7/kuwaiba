@@ -13,7 +13,6 @@
  *   limitations under the License.
  * 
  */
-
 package com.neotropic.kuwaiba.sync.model;
 
 /**

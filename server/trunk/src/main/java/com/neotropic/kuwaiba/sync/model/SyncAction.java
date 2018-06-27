@@ -114,6 +114,68 @@ public class SyncAction {
                         break;
                     case "object_port_no_match_new":
                         createNewPorts(jsonObj, finding);
+                        break;
+                    case "ifbmib":
+                        try (final JsonReader jsonReader = Json.createReader(new StringReader(finding.getExtraInformation()))) {
+                            jsonObj = jsonReader.readObject();
+                            if (jsonObj.get("ifmibsync") != null){
+                                JsonArray jsonArray = jsonObj.getJsonArray("ifmibsync");
+                                for (JsonValue jsonValue : jsonArray) {
+                                    try (final JsonReader childReader = Json.createReader(new StringReader(jsonValue.toString()))){
+                                        JsonObject child = childReader.readObject();
+                                        String ifName = child.getJsonObject("result").getString("ifName");
+                                        String ifalias = child.getJsonObject("result").getString("ifAlias");
+                                        String status = child.getJsonObject("result").getString("status");
+                                        String serviceStatus = child.getJsonObject("result").getString("related-service");
+                                        results.add(new SyncResult(SyncResult.SUCCESS, 
+                                                String.format("Interface: %s, %s", ifName, status) + (!ifalias.isEmpty() ? String.format("- Service: %s, %s", ifalias, serviceStatus) : "")
+                                                , "Info"));
+                                    }                                
+                                }
+                            }
+                        }
+                        break;
+                    case "ciscomib":
+                        try (final JsonReader jsonReader = Json.createReader(new StringReader(finding.getExtraInformation()))) {
+                            jsonObj = jsonReader.readObject();
+                            if (jsonObj.get("ciscomibsync") != null){
+                                JsonArray jsonArray = jsonObj.getJsonArray("ciscomibsync");
+                                for (JsonValue jsonValue : jsonArray) {
+                                    try (final JsonReader childReader = Json.createReader(new StringReader(jsonValue.toString()))){
+                                        JsonObject child = childReader.readObject();
+                                        String vcid = child.getJsonObject("result").getString("vcid");
+                                        String sourcePort = child.getJsonObject("result").getString("sourcePort");
+                                        String destinyPort = child.getJsonObject("result").getString("destinyPort");
+                                        String device = child.getJsonObject("result").getString("device");
+                                        String service = child.getJsonObject("result").getString("service");
+                                        results.add(new SyncResult(SyncResult.SUCCESS, 
+                                                String.format("In divice: %s was created the VcID: %s, sourcePort: %s, destinyPort: %s, service name: %s", device, vcid, sourcePort, destinyPort, service)
+                                                , "Info"));
+                                    }                                
+                                }
+                            }
+                        }
+                        break;
+                    case "ciscoTemib":
+                        try (final JsonReader jsonReader = Json.createReader(new StringReader(finding.getExtraInformation()))) {
+                            jsonObj = jsonReader.readObject();
+                            if (jsonObj.get("ciscoTemibsync") != null){
+                                JsonArray jsonArray = jsonObj.getJsonArray("ciscoTemibsync");
+                                for (JsonValue jsonValue : jsonArray) {
+                                    try (final JsonReader childReader = Json.createReader(new StringReader(jsonValue.toString()))){
+                                        JsonObject child = childReader.readObject();
+                                        String vcid = child.getJsonObject("result").getString("vcid");
+                                        String tunnel = child.getJsonObject("result").getString("tunnel");
+                                        String ipSource = child.getJsonObject("result").getString("ipSource");
+                                        String ipDestiny = child.getJsonObject("result").getString("ipDestiny");
+                                        String description = child.getJsonObject("result").getString("description");
+                                        results.add(new SyncResult(SyncResult.SUCCESS, 
+                                                String.format("The tunnel: %s was related with VcID: %s, ipSource: %s - ipDestiny: %s, service: %s", tunnel, vcid, ipSource, ipDestiny, description)
+                                                , "Info"));
+                                    }                                
+                                }
+                            }
+                        }
                         break;    
                 }
             } else {

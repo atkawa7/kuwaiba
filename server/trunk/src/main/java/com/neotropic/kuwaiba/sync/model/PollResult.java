@@ -25,7 +25,7 @@ import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class PollResult {
-    private final HashMap<BusinessObjectLight, AbstractDataEntity> result;
+    private final HashMap<BusinessObjectLight, List<AbstractDataEntity>> result;
     private final HashMap<SyncDataSourceConfiguration, List<Exception>> exceptions;
     
     public PollResult() {
@@ -33,7 +33,7 @@ public class PollResult {
         exceptions = new HashMap();
     }
     
-    public HashMap<BusinessObjectLight, AbstractDataEntity> getResult() {
+    public HashMap<BusinessObjectLight, List<AbstractDataEntity>> getResult() {
         return result;
     }
     

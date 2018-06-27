@@ -43,6 +43,11 @@ public class SyncFinding {
     public static int EVENT_UPDATE = 3;
     
     /**
+     * The attributes of a given element/set of elements were updated
+     */
+    public static int EVENT_INFO = 4;
+
+    /**
      * The type of difference found. See EVENT_XXX fields for possible values
      */
     private int type;
