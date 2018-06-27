@@ -16,12 +16,14 @@
 package com.neotropic.kuwaiba.sync.connectors.snmp.reference;
 
 import com.neotropic.kuwaiba.sync.connectors.snmp.SnmpManager;
+import com.neotropic.kuwaiba.sync.connectors.snmp.mngmt.ifx.SnmpifXTableResocurceDefinition;
 import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
 import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
 import com.neotropic.kuwaiba.sync.model.PollResult;
 import com.neotropic.kuwaiba.sync.model.SyncAction;
 import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
+import com.neotropic.kuwaiba.sync.model.SyncUtil;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import com.neotropic.kuwaiba.sync.model.TableData;
 import java.util.ArrayList;
@@ -73,7 +75,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
     @Override
     public PollResult mappedPoll(SynchronizationGroup syncGroup) {            
         PollResult pollResult = new PollResult();
-
+        
         for (SyncDataSourceConfiguration agent : syncGroup.getSyncDataSourceConfigurations()) {
             long id = -1L;
             String className = null;                
@@ -108,9 +110,6 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
             String version = SnmpManager.VERSION_2c;
             if (agent.getParameters().containsKey(Constants.PROPERTY_SNMP_VERSION))
                 version = agent.getParameters().get(Constants.PROPERTY_SNMP_VERSION);
-//            else
-//                pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
-//                    new InvalidArgumentException(String.format(I18N.gm("parameter_snmp_version_no_defined"), syncGroup.getName(), syncGroup.getId())));
 
             if (SnmpManager.VERSION_2c.equals(version)) {
                 if (!agent.getParameters().containsKey(Constants.PROPERTY_COMMUNITY))
@@ -155,32 +154,32 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                         snmpManager.setPrivacyProtocol(agent.getParameters().get(Constants.PROPERTY_PRIVACY_PROTOCOL));
                         snmpManager.setPrivacyPass(agent.getParameters().get(Constants.PROPERTY_PRIVACY_PASS));
                     }
-                    ReferenceSnmpResourceDefinition entPhysicalTable = new ReferenceSnmpResourceDefinition();
+                    //ENTITY-MIB table
+                    ReferenceSnmpEntPhysicalTableResourceDefinition entPhysicalTable = new ReferenceSnmpEntPhysicalTableResourceDefinition();
                     List<List<String>> tableAsString = snmpManager.getTableAsString(entPhysicalTable.values().toArray(new OID[0]));
-
+                        
                     if (tableAsString == null) {
                         pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
                             new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString())));
                         return pollResult;
                     }
-                    HashMap<String, List<String>> value = new HashMap();
-                    int i = 0;
-                    for (String mibTreeNodeName : entPhysicalTable.keySet()) {                        
-                        List<String> currentColumn = new ArrayList();
+                    
+                    pollResult.getResult().put(mappedObjLight, new ArrayList<>());
+                    pollResult.getResult().get(mappedObjLight).add(
+                            new TableData("entPhysicalTable", SyncUtil.parseMibTable("instance", entPhysicalTable, tableAsString))); //NOI18N
+                
+                    //IF_MIB
+                    SnmpifXTableResocurceDefinition ifMibTable = new SnmpifXTableResocurceDefinition();
+                    List<List<String>> ifMibTableAsString = snmpManager.getTableAsString(ifMibTable.values().toArray(new OID[0]));
 
-                        for (List<String> cell : tableAsString)
-                            currentColumn.add(cell.get(i));
-
-                        value.put(mibTreeNodeName, currentColumn);
-                        i++;                            
+                    if (ifMibTableAsString == null) {
+                        pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                            new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString())));
+                        return pollResult;
                     }
-                    int size = entPhysicalTable.keySet().size();
-                    List<String> instances = new ArrayList();
-                    for (List<String> cell : tableAsString)
-                        instances.add(cell.get(size));
-                    value.put("instance", instances); //NOI18N
-
-                    pollResult.getResult().put(mappedObjLight, new TableData("entPhysicalTable", value)); //NOI18N
+                    
+                    pollResult.getResult().get(mappedObjLight).add(
+                            new TableData("ifMibTable", SyncUtil.parseMibTable("instance", ifMibTable, ifMibTableAsString))); //NOI18N
                 }
             }
         }
@@ -189,7 +188,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
     
     @Override
     public List<SyncFinding> sync(PollResult pollResult) throws Exception {
-        HashMap<BusinessObjectLight, AbstractDataEntity> originalData = pollResult.getResult();
+        HashMap<BusinessObjectLight, List<AbstractDataEntity>> originalData = pollResult.getResult();
         List<SyncFinding> findings = new ArrayList<>();
         // Adding to findings list the not blocking execution exception found during the mapped poll
         for (SyncDataSourceConfiguration agent : pollResult.getExceptions().keySet()) {
@@ -198,11 +197,14 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                         exception.getMessage(), 
                         Json.createObjectBuilder().add("type","ex").build().toString()));
         }
-        for (Map.Entry<BusinessObjectLight, AbstractDataEntity> entrySet : originalData.entrySet()) {
-            TableData table = (TableData)entrySet.getValue();
-            SNMPDataProcessor x = new SNMPDataProcessor(entrySet.getKey(), (HashMap<String, List<String>>)table.getValue());
+        for (Map.Entry<BusinessObjectLight, List<AbstractDataEntity>> entrySet : originalData.entrySet()) {
+            List<TableData> mibTables = new ArrayList<>();
+            entrySet.getValue().forEach((value) -> {
+                mibTables.add((TableData)value);
+            });
+            EntPhysicalSynchronizer x = new EntPhysicalSynchronizer(entrySet.getKey(), mibTables);
             try {
-                findings.addAll(x.load());
+                findings.addAll(x.sync());
             } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
                 throw new Exception(ex.getMessage());
             }
