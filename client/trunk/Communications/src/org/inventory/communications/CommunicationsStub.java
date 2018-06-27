@@ -1033,7 +1033,6 @@ public class CommunicationsStub {
         } catch(Exception e){
             error = e.getMessage();
             return null;
-        }
     }
     //</editor-fold>
     
@@ -1641,8 +1640,8 @@ public class CommunicationsStub {
             long taskId = service.createTask(name, description, enabled, commitOnExecute, script, 
                    remoteParameters, atsd, tnd, session.getSessionId());
             
-            return new LocalTask(taskId, name, description, enabled, commitOnExecute, script, 
-                    null, schedule, notificationType, new ArrayList<>());
+            return null;// new LocalTask(taskId, name, description, enabled, commitOnExecute, script, 
+                    //null, schedule, notificationType, new ArrayList<>());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
@@ -3631,7 +3630,7 @@ public class CommunicationsStub {
      */
     public LocalPool createRootPool(String name, String description, String instancesOfClass, int type){
         try {
-            long newPoolId  = service.createRootPool(name, description, instancesOfClass, type,session.getSessionId());
+            long newPoolId  = service.createRootPool(name, description, instancesOfClass, type, session.getSessionId());
             return new LocalPool(newPoolId, name, instancesOfClass, description, type);
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -5563,6 +5562,43 @@ public class CommunicationsStub {
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
+        }
+    }
+    
+    
+    public void launchSynchronizationTask(final LocalSyncGroup syncGroup, final AbstractSyncRunnable progress) {
+        try {
+            service.launchSupervisedSynchronizationTaskAsync(syncGroup.getId(), session.getSessionId(), 
+            new AsyncHandler<LaunchSupervisedSynchronizationTaskResponse>(){
+                @Override
+                public void handleResponse(Response<LaunchSupervisedSynchronizationTaskResponse> res) {
+                    try {
+                        LaunchSupervisedSynchronizationTaskResponse get = res.get();
+                        
+                        List<LocalSyncFinding> syncFindings = new ArrayList<>();
+                        for (SyncFinding syncFinding : get.getReturn())
+                            syncFindings.add(new LocalSyncFinding(syncFinding.getType(), syncFinding.getDescription(), syncFinding.getExtraInformation()));
+                        
+                        progress.setLocalSyncGroup(syncGroup);
+                        progress.setFindings(syncFindings);
+                        progress.getProgressHandle().finish();
+                        progress.runSync();                        
+                    } catch (InterruptedException | ExecutionException ex) {
+                        String message = ex.getMessage();
+                        int idxOfSpace = message.indexOf(": ");
+                        String kindMessage = message.substring(idxOfSpace + 1);
+                        
+                        CommunicationsStub.this.error = kindMessage;
+                        progress.setFindings(null);
+                        progress.getProgressHandle().finish();                        
+                        progress.runSync();
+                    }
+                }
+            });
+            progress.getProgressHandle().start();
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            
         }
     }
     
