@@ -41,13 +41,10 @@ public class DevicePropertyEditor extends PropertyEditorSupport implements Inpla
     private final InplaceEditor inplaceEditor;
         
     public DevicePropertyEditor() {
-        
-        
         inplaceEditor = new InplaceEditor() {
             private final JComboBox<LocalObjectLight> cboDevices;
             private PropertyModel model;
             private PropertyEditor editor; 
-            
             {
                 cboDevices = new JComboBox();
                 cboDevices.addItem(NoneObject.getInstance());

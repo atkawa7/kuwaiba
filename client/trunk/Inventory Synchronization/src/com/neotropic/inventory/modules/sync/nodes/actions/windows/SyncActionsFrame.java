@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
@@ -42,9 +43,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalClassMetadata;
+import org.inventory.communications.core.LocalObjectListItem;
 import org.inventory.communications.core.LocalSyncFinding;
 import org.inventory.communications.core.LocalSyncGroup;
 import org.inventory.communications.core.LocalSyncResult;
+import org.inventory.communications.util.Constants;
+import org.inventory.core.services.i18n.I18N;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.util.RequestProcessor;
@@ -73,8 +78,8 @@ public class SyncActionsFrame extends JFrame {
     private JButton btnSkip;
     private List<LocalSyncFinding> allFindings;
     private List<LocalSyncFinding> findingsToBeProcessed;
-    private static final Border BORDER_NORMAL = new EmptyBorder(2, 2, 2, 2);
-    private static final Border BORDER_ALARM = new LineBorder(Color.RED, 1);
+    private static final Border normalBorder = new EmptyBorder(2, 2, 2, 2);
+    private static final Border alarmBorder = new LineBorder(Color.RED, 1);
     
     /**
      * Default constructor
@@ -119,7 +124,7 @@ public class SyncActionsFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 if (JOptionPane.showConfirmDialog(SyncActionsFrame.this, 
                         "Are you sure you want to stop reviewing the findings? No changes will be committed", 
-                        "Information", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.YES_OPTION)
+                        I18N.gm("information"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.YES_OPTION)
                     dispose();
             }
         });
@@ -131,6 +136,9 @@ public class SyncActionsFrame extends JFrame {
                 if (currentFinding == allFindings.size() - 1) {
                     JOptionPane.showMessageDialog(SyncActionsFrame.this, "You have reviewed all the synchronization findings. The selected actions will be performed now", "Information", JOptionPane.INFORMATION_MESSAGE);
                     dispose();
+                    if(allFindings.get(currentFinding).getType() == LocalSyncFinding.EVENT_INFO)
+                        findingsToBeProcessed.add(allFindings.get(currentFinding));
+                
                     
                     final ProgressHandle progr = ProgressHandleFactory.createHandle(String.format("Executing sync actions for %s", SyncActionsFrame.this.syncGroup.getName()));
                     Runnable executeSyncActions = new Runnable() {
@@ -147,6 +155,8 @@ public class SyncActionsFrame extends JFrame {
                     RequestProcessor.getDefault().post(executeSyncActions);
                     progr.start();
                 } else {
+                    if(allFindings.get(currentFinding).getType() == LocalSyncFinding.EVENT_INFO)
+                        findingsToBeProcessed.add(allFindings.get(currentFinding));
                     currentFinding++;
                     renderCurrentFinding();
                 }
@@ -192,16 +202,16 @@ public class SyncActionsFrame extends JFrame {
             btnSkip.setText("Skip and Finish");
         }
         
-        if (finding.getType() == LocalSyncFinding.EVENT_ERROR) {
+        if (finding.getType() == LocalSyncFinding.EVENT_ERROR || finding.getType() == LocalSyncFinding.EVENT_INFO) {
             btnExecute.setEnabled(false);
-            pnlScrollMain.setBorder(BORDER_ALARM);
+            pnlScrollMain.setBorder(alarmBorder);
             btnSkip.setText("Next");
         }
-        if (finding.getType() == LocalSyncFinding.EVENT_DELETE)
-            pnlScrollMain.setBorder(BORDER_ALARM);
+        else if (finding.getType() == LocalSyncFinding.EVENT_DELETE)
+            pnlScrollMain.setBorder(alarmBorder);
         else {
             btnExecute.setEnabled(true);
-            pnlScrollMain.setBorder(BORDER_NORMAL);
+            pnlScrollMain.setBorder(normalBorder);
             btnSkip.setText("Skip");
         }
     }
@@ -219,62 +229,157 @@ public class SyncActionsFrame extends JFrame {
         
         JsonReader jsonReader = Json.createReader(new StringReader(jsonString));
         JsonObject root = jsonReader.readObject();
+        if(root.get("type") != null){
         String type = root.getString("type");
-        switch (type) {
-            case "branch":
-                DefaultMutableTreeNode rootNode =
-                        new DefaultMutableTreeNode("Root Device");
-                
-                JTree tree = new JTree(rootNode);
-                JsonArray children = root.getJsonArray("children");
-                
-                int row = 0;
-                DefaultMutableTreeNode currentNode = rootNode;
-                
-                for (JsonValue item : children) {
-                    jsonReader = Json.createReader(new StringReader(item.toString()));
-                    JsonObject obj = jsonReader.readObject().getJsonObject("child");
-                    if(row == 0)
-                        rootNode.setUserObject(obj.getString("parentName") + "["+obj.getString("parentClassName")+"]");
-                    DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(obj.getJsonObject("attributes").getString("name") + "[" + obj.getString("className")+"]");
-                    currentNode.add(newNode);
-                    tree.expandRow(row);
-                    currentNode = newNode;
-                    row++;
-                }
-                
-                return tree;
-            case "object_port_move":
-            {
-                JLabel lblMsg = new JLabel();
-                String className = root.getString("className");
-                
-                JsonObject jsonPortAttributes = root.getJsonObject("attributes");
-                lblMsg.setText("The port: " + jsonPortAttributes.getString("name") + "[" + className + "] "
-                        + "will be updated with these attributes " + 
-                        jsonPortAttributes.toString());
-                return lblMsg;
-            }
-            case "device":
-            {
-                JLabel lblMsg = new JLabel();
-                lblMsg.setText("The device you are trying to sync will be updated with new attributes");
-                return lblMsg;
-            }
-            case "object_port_no_match":
-            {
-                JLabel lblMsg = new JLabel();
-                String className = root.getString("className");
-                JsonObject jsonPortAttributes = root.getJsonObject("attributes");
-                String id;
-                if(root.get("id") != null){
-                    id = root.getString("id");
-                    lblMsg.setText("The port with id: " + id+ " " + jsonPortAttributes.getString("name") + "["+className+"]");
-                    return lblMsg;
-                }
+            switch (type) {
+                case "branch":
+                    DefaultMutableTreeNode rootNode =
+                            new DefaultMutableTreeNode("Root Device");
+
+                    JTree tree = new JTree(rootNode);
+                    JsonArray children = root.getJsonArray("children");
+
+                    int row = 0;
+                    DefaultMutableTreeNode currentNode = rootNode;
+
+                    for (JsonValue item : children) {
+                        jsonReader = Json.createReader(new StringReader(item.toString()));
+                        JsonObject obj = jsonReader.readObject().getJsonObject("child");
+                        if(row == 0)
+                            rootNode.setUserObject(obj.getString("parentName") + "["+obj.getString("parentClassName")+"]");
+                        DefaultMutableTreeNode newNode = new DefaultMutableTreeNode(obj.getJsonObject("attributes").getString("name") + "[" + obj.getString("className")+"]");
+                        currentNode.add(newNode);
+                        tree.expandRow(row);
+                        currentNode = newNode;
+                        row++;
+                    }
+
+                    return tree;
+                case "object_port_move":
+                    String className = root.getString("className");
+                    JsonObject jsonPortAttributes = root.getJsonObject("attributes");
+
+                    return new JLabel("The port: " + jsonPortAttributes.getString("name") + "[" + className + "] "
+                                + "will be updated with these attributes " + getAttributesWithNames(root,Json.createObjectBuilder().build() , jsonPortAttributes));
+                case "device":
+                    return new JLabel("The atributes will be updated" + 
+                            getAttributesWithNames(root, root.getJsonObject("oldAttributes"), root.getJsonObject("attributes")));
+
+                case "error":
+                    className="";
+                    if(root.get("className") != null)
+                        className = root.getString("className");
+                    String attributeName = "";
+                    type = "";
+                    String instanceId = "";
+                    if(root.get("attributeName") != null)
+                        attributeName = root.getString("attributeName");
+                    if(root.get("InstanceId") != null)
+                        instanceId = root.getString("InstanceId");
+                    if(root.get("attributeType") != null)
+                        type = root.getString("attributeType");
+                    if(!instanceId.isEmpty())
+                        return new JLabel((String.format(I18N.gm("class_name_undertemined"), 
+                            instanceId, className)));
+                    else
+                        return new JLabel((String.format(I18N.gm("create_an_attribute_in_class"), 
+                            attributeName, type, className)));
+
+                case "object_port_no_match":
+                    className = root.getString("className");
+                    jsonPortAttributes = root.getJsonObject("attributes");
+                    String id;
+                    if(root.get("id") != null){
+                        id = root.getString("id");
+                        return new JLabel("The port with id: " + id+ " " + jsonPortAttributes.getString("name") + "["+className+"]");
+                    }
+                case "hierarchy":
+                    String msg = "";
+                    JsonObject jsonObject = root.getJsonObject("hierarchy");
+                    for (Map.Entry<String, JsonValue> entry : jsonObject.entrySet()) {
+                        String theClass = "";
+                        String theChildren = "";
+                        JsonReader childReader = Json.createReader(new StringReader(entry.getValue().toString()));
+                        children = childReader.readArray();
+                        theClass = entry.getKey();
+                        for (JsonValue child : children) {
+                            JsonReader classReader = Json.createReader(new StringReader(child.toString()));
+                            JsonObject childObj = classReader.readObject();
+                            theChildren += childObj.getString("child") + ", ";
+                        }
+                        msg += theClass + " => " + theChildren + " - ";
+                    }
+                    return new JLabel(msg);
+                case "ifmib":    
+                    return new JLabel("The synchronization process for the if mib data was done");
+                case "ciscomib":    
+                    return new JLabel("The synchronization process for the cisco mib data was done");
+                case "ciscoTemibsync":    
+                    return new JLabel("The synchronization process for the cisco Te mib data was done");    
             }
         }
         
         return new JLabel("There is no extra information");
+    }
+    
+    /**
+     * To translate the list type attributes form their id their names 
+     * @param comparedAttributes the attributes with ids
+     * @return a hash map of translated attributes
+     * @throws MetadataObjectNotFoundException if some class name given to search a list type doesn't exists
+     * @throws InvalidArgumentException if some class name given to search a list type is not a list type
+     * @throws ObjectNotFoundException the given list type id doesn't exists
+     */
+    private String getAttributesWithNames(JsonObject obj, JsonObject oldAttributes, JsonObject attributes){
+        String newAttrs = "[";
+        String oldAttrs = "[";
+        for (String key : attributes.keySet()) {
+            if(LocalClassMetadata.getMappingFromType(key) == Constants.MAPPING_MANYTOONE &&
+               isNumeric(attributes.getString(key)))
+            {
+                LocalClassMetadata objectMetadata = CommunicationsStub.getInstance().getObjectInfo(obj.getString("deviceClassName"), Long.valueOf(obj.getString("deviceId"))).getObjectMetadata();
+                String[] attributesNames = objectMetadata.getAttributesNames();
+                String listType = "";
+                for (int i=0; i<attributesNames.length; i++) {
+                    if(attributesNames[i].equals(key)){
+                        listType = objectMetadata.getAttributesTypes()[i];
+                        break;
+                    }
+                }
+                if(listType != null){
+                    LocalObjectListItem listTypeItem = CommunicationsStub.getInstance().getListTypeItem(listType, Long.valueOf(attributes.getString(key)));
+                    if(listTypeItem != null)
+                        newAttrs += key + ": " + listTypeItem.getName()+"; ";
+                    if(oldAttributes != null && !oldAttributes.isEmpty()){
+                        if(oldAttributes.get(key) != null){
+                            long listtypeId = Long.valueOf(oldAttributes.getString(key));
+                            listTypeItem = CommunicationsStub.getInstance().getListTypeItem(listType, listtypeId);
+                            if(listTypeItem != null)
+                                oldAttrs += key + ": " + listTypeItem.getName()+"; ";
+                        }
+                    }
+                    else
+                        oldAttrs += key + ":; ";
+                }
+            }
+            else{
+                newAttrs += (key + ": ") + (attributes.get(key)  != null ? attributes.getString(key) : "") + "; ";
+                if(oldAttributes != null)
+                    oldAttrs += key + ": " + (oldAttributes.get(key) != null ? oldAttributes.getString(key) : "") + "; ";
+            }
+        }
+        newAttrs = newAttrs.substring(0, newAttrs.length()-2) + "]";
+        oldAttrs = oldAttrs.length() > 1 ? (oldAttrs.substring(0, oldAttrs.length()-2) + "]") : "[]";
+        
+        return oldAttributes != null ? String.format(" - from: %s - to: %s -", oldAttrs, newAttrs) : newAttrs;
+    }
+    
+    public static boolean isNumeric(String str) {
+        try {
+            double d = Double.parseDouble(str);
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
+        return true;
     }
 }

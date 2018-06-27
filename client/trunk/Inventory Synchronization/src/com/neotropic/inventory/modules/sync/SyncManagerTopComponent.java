@@ -68,8 +68,8 @@ public final class SyncManagerTopComponent extends TopComponent implements
         em = new ExplorerManager();
         initComponents();
         initCustomComponents();
-        setName(Bundle.CTL_SyncTopComponent());
-        setToolTipText(Bundle.HINT_SyncTopComponent());
+        setName("Inventory Sync Manager");
+        setToolTipText("Manage the inventory synchronization tasks");
     }
     
     public void initCustomComponents() {

@@ -24,6 +24,7 @@ import java.awt.datatransfer.Transferable;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
@@ -155,7 +156,7 @@ public class SyncConfigurationNode extends AbstractNode implements PropertyChang
                 try {
                     propertyDevice.setValue(deviceObj);
                     propertyDeviceId.setValue(parameters.get("deviceId"));
-                } catch (Exception ex) {
+                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                 }
             }
         }

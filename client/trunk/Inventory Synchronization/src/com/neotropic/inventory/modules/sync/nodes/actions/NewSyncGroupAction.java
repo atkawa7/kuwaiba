@@ -19,6 +19,7 @@ import com.neotropic.inventory.modules.sync.nodes.SyncGroupRootNode;
 import com.neotropic.inventory.modules.sync.nodes.SyncGroupRootNode.SyncGroupRootChildren;
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -53,23 +54,26 @@ class NewSyncGroupAction extends GenericInventoryAction {
         JTextField txtSyncGroupName = new JTextField();
         txtSyncGroupName.setName("txtSyncGroupName");
         txtSyncGroupName.setColumns(10);
-        
-        JTextField txtSyncProviderName = new JTextField();
-        txtSyncProviderName.setText("com.neotropic.kuwaiba.sync.connectors.snmp.reference.ReferenceSnmpSyncProvider");
-        txtSyncProviderName.setName("txtSyncProviderName");
-        txtSyncProviderName.setColumns(10);
-        txtSyncProviderName.setEnabled(false);
+//        JTextField txtSyncProviderName = new JTextField();
+//        txtSyncProviderName.setText("com.neotropic.kuwaiba.sync.connectors.snmp.reference.ReferenceSnmpSyncProvider");
+//        txtSyncProviderName.setName("txtSyncProviderName");
+//        txtSyncProviderName.setColumns(10);
+//        txtSyncProviderName.setEnabled(false);
+        JComboBox<String> cboProviders = new JComboBox<>();
+        cboProviders.setName("txtSyncProviderName");
+        cboProviders.addItem("com.neotropic.kuwaiba.sync.connectors.snmp.reference.ReferenceSnmpSyncProvider");
+        cboProviders.addItem("com.neotropic.kuwaiba.sync.connectors.snmp.cisco.SnmpCiscoSyncProvider");
         
         JComplexDialogPanel pnlPoolProperties = new JComplexDialogPanel(
             new String[] {I18N.gm("sync_group_name"), I18N.gm("sync_provider")}, 
-            new JComponent[] {txtSyncGroupName, txtSyncProviderName});
+            new JComponent[] {txtSyncGroupName, cboProviders});
         
         if (JOptionPane.showConfirmDialog(null, pnlPoolProperties, I18N.gm("new_sync_group"), 
             JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
             LocalSyncGroup newSyncGroup = CommunicationsStub.getInstance().createSyncGroup(
                 ((JTextField) pnlPoolProperties.getComponent("txtSyncGroupName")).getText(),
-                ((JTextField) pnlPoolProperties.getComponent("txtSyncProviderName")).getText());
+                (String)((JComboBox) pnlPoolProperties.getComponent("txtSyncProviderName")).getSelectedItem());
             
             if (newSyncGroup == null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 

@@ -35,7 +35,8 @@ public class SyncConfigurationNativeTypeProperty extends PropertySupport.ReadWri
     private final SyncConfigurationNode syncConfigNode;
     private Object value;
     
-    public SyncConfigurationNativeTypeProperty(String name, Class type, String displayName, String shortDescription, SyncConfigurationNode syncConfigNode, Object value) {
+    public SyncConfigurationNativeTypeProperty(String name, Class type, 
+            String displayName, String shortDescription, SyncConfigurationNode syncConfigNode, Object value) {
         super(name, type, displayName, shortDescription);
         this.syncConfigNode = syncConfigNode;
         this.value = value;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2017 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -82,6 +82,9 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
             }
             */
             SyncRunnable myRun = new SyncRunnable();
+            LocalSyncGroup localSyncGroup = selectedNode.getLookup().lookup(LocalSyncGroup.class);
+            String provider = localSyncGroup.getProvider();
+            
             CommunicationsStub.getInstance().launchSupervisedSynchronizationTask(selectedNode.getLookup().lookup(LocalSyncGroup.class), myRun);
         }
     }
@@ -90,7 +93,6 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
     public LocalPrivilege getPrivilege() {
         return new LocalPrivilege(LocalPrivilege.PRIVILEGE_SYNC, LocalPrivilege.ACCESS_LEVEL_READ_WRITE);
     }
-    
     
     /**
      * Gets the list of findings and shows a dialog to allow the user to choose what actions will be performed
@@ -107,7 +109,7 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
         @Override
         public void runSync() {
             List<LocalSyncFinding> findings = getFindings();
-            if (findings == null)
+            if (findings == null)//can't connect to the router
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else {
