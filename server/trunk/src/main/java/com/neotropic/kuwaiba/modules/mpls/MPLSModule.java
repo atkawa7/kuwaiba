@@ -113,9 +113,9 @@ public class MPLSModule implements GenericCommercialModule {
      * @param defaultName
      * @return 
      * @throws ServerSideException If the given linkType is no subclass of GenericLogicalConnection
-     *                             If any of the requested objects can't be found
-     *                             If any of the classes provided can not be found
-     *                             If any of the objects involved can't be connected
+     *                              If any of the requested objects can't be found
+     *                              If any of the classes provided can not be found
+     *                              If any of the objects involved can't be connected
      */
     public long createMPLSLink(String classNameEndpointA, long idEndpointA, 
             String classNameEndpointB, long idEndpointB, String linkType, String defaultName) throws ServerSideException {
@@ -127,7 +127,7 @@ public class MPLSModule implements GenericCommercialModule {
                 throw new ServerSideException(String.format("Class %s is not subclass of GenericLogicalConnection", linkType));
 
             HashMap<String, String> attributesToBeSet = new HashMap<>();
-            attributesToBeSet.put(Constants.PROPERTY_NAME, defaultName == null ? "" : defaultName );
+            attributesToBeSet.put(Constants.PROPERTY_NAME, defaultName == null ? "" : defaultName);
             
             BusinessObject communicationsEquipmentA = bem.getParentOfClass(classNameEndpointA, idEndpointA, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
             if (communicationsEquipmentA == null)
@@ -141,9 +141,7 @@ public class MPLSModule implements GenericCommercialModule {
                        
             bem.createSpecialRelationship(linkType, newConnectionId, classNameEndpointA, idEndpointA, RELATIONSHIP_MPLSENDPOINTA, true);
             bem.createSpecialRelationship(linkType, newConnectionId, classNameEndpointB, idEndpointB, RELATIONSHIP_MPLSENDPOINTB, true);
-            
-            //We add a relationship between the shelves and the Transport LInks so we can easily find a route between two equipment when creatin low order connections
-            //based on TransportLinks paths            
+                       
             bem.createSpecialRelationship(communicationsEquipmentA.getClassName(), communicationsEquipmentA.getId(), 
                     linkType, newConnectionId, RELATIONSHIP_MPLSLINK, false);
             
