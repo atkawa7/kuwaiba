@@ -16,7 +16,6 @@
 package com.neotropic.kuwaiba.sync.connectors.snmp.reference;
 
 import com.neotropic.kuwaiba.sync.connectors.snmp.SnmpManager;
-import com.neotropic.kuwaiba.sync.connectors.snmp.mngmt.ifx.SnmpifXTableResocurceDefinition;
 import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
 import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
 import com.neotropic.kuwaiba.sync.model.PollResult;
