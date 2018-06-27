@@ -374,9 +374,33 @@ public class Constants {
      */
     public static final String CLASS_GENERICPORT = "GenericPort";
     /**
+     * Class SFPPort 
+     */
+    public static final String CLASS_SFPPORT = "SFPPort";
+    /**
+     * Class OpticalPort 
+     */
+    public static final String CLASS_OPTICALPORT = "OpticalPort";
+    /**
+     * Class ElectricalPort 
+     */
+    public static final String CLASS_ELECTRICALPORT = "ElectricalPort";
+    /**
+     * Class MPLS Tunnel
+     */
+    public static final String CLASS_MPLSTUNNEL = "MPLSTunnel";
+    /**
+     * Class MPLS Tunnel
+     */
+    public static final String CLASS_BRIDGEDOMAININTERFACE = "BridgeDomainInterface";
+    /**
      * Class GenericLogicalPort 
      */
     public static final String CLASS_VIRTUALPORT = "VirtualPort";
+    /**
+     * Class GenericLogicalPort 
+     */
+    public static final String CLASS_SERIALPORT = "SerialPort";
     /**
      * Class GenericPhysicalPort 
      */
