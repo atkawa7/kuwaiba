@@ -178,7 +178,7 @@ public interface BusinessEntityManager {
      * @param objectId object id
      * @return The list of special children.
      * @throws MetadataObjectNotFoundException If the class could not be found
-     * @throws BusinessObjectNotFoundException  If the object could not be found.
+     * @throws BusinessObjectNotFoundException If the object could not be found.
      */
     public List<BusinessObjectLight> getObjectSpecialChildren(String objectClass, long objectId)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
