@@ -16,22 +16,21 @@
 package com.neotropic.vaadin.lienzo.client.core.shape;
 
 /**
- * 
+ * A widget that represents a node in the canvas
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
 public class SrvNodeWidget extends ServerElement {
-    private static long idCounter = 0;
     private String caption;
     private String urlIcon;
+
+    public SrvNodeWidget() { }
     
-    public SrvNodeWidget() {        
-        super(idCounter);
-        idCounter += 1;
+    public SrvNodeWidget(long nodeId) {        
+        super(nodeId);
     }
     
-    public SrvNodeWidget(ServerElement parent) {
-        super(idCounter, parent);
-        idCounter += 1;        
+    public SrvNodeWidget(long nodeId, ServerElement parent) {
+        super(nodeId, parent);
     }
     
     public String getCaption() {

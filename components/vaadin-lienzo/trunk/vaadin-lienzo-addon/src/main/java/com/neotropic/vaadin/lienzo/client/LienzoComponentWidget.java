@@ -109,7 +109,7 @@ public class LienzoComponentWidget extends LienzoPanel implements ClntFrameWidge
                     if (line == null) {
                         line = new Line(x1, y1, x2, y2);
                         line.setStrokeColor("black");
-                        line.setStrokeWidth(5);
+                        line.setStrokeWidth(3);
                         
                         edgeLayer.add(line);
                     }
@@ -149,7 +149,7 @@ public class LienzoComponentWidget extends LienzoPanel implements ClntFrameWidge
 	public void addEdgeWidget() {
             edgeLayer.remove(line);
                         
-            SrvEdgeWidget clntNewEdge = new SrvEdgeWidget();
+            SrvEdgeWidget clntNewEdge = new SrvEdgeWidget(293434236);
                         
             List<Point> controlPoints = new ArrayList<>();
             controlPoints.add(new Point(source.getX(), source.getY()));

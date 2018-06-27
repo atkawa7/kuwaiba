@@ -26,7 +26,7 @@ public class LienzoComponentState extends AbstractComponentState {
     
     public boolean enableConnectionTool = false;    
     
-    public double labelsFontSize = 11;
+    public double labelsFontSize = 10;
     public double labelsPaddingTop = 16;
     public double labelsPaddingLeft = 16;
     // Scene background

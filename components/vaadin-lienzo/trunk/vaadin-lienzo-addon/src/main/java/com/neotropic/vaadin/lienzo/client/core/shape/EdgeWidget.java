@@ -46,7 +46,7 @@ public class EdgeWidget {
     
     private String caption;
     private String strokeColor = "BLACK";
-    private double strokeWidth = 5;
+    private double strokeWidth = 3;
     
     private Layer edgeLayer;
     private PolyLine polyLine;
@@ -363,7 +363,7 @@ public class EdgeWidget {
     
     public void addEdgeWidgetUpdateListener(ClntEdgeWidgetUpdateListener listener) {
         if (listeners == null)
-            listeners = new ArrayList<ClntEdgeWidgetUpdateListener>();
+            listeners = new ArrayList<>();
         
         listeners.add(listener);
     }

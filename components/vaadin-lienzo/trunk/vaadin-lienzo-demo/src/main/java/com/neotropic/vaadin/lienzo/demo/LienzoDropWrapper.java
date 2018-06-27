@@ -63,7 +63,7 @@ public final class LienzoDropWrapper extends Panel {
                 
                 if (dataTransferData != null) {
                     SampleBusinessObject droppedObject = SampleBusinessObject.deserialize(dataTransferData.get());
-                    String url = "http://localhost:8080/vaadin-lienzo-demo/VAADIN/themes/demo/images/node.png";
+                    String url = "/vaadin-lienzo-demo/VAADIN/themes/demo/images/node.png";
                     srvNodeWidget = new SrvNodeWidget();
                     srvNodeWidget.setUrlIcon(url);
                     srvNodeWidget.setCaption(droppedObject.toString());
@@ -71,13 +71,13 @@ public final class LienzoDropWrapper extends Panel {
             }
         });
         
-        String url = "http://localhost:8080/vaadin-lienzo-demo/VAADIN/themes/demo/images/background.png";        
+        String url = "/vaadin-lienzo-demo/VAADIN/themes/demo/images/background.png";        
         lienzoComponent.addBackground(url, 0, 0);
                 
         SrvFrameWidget frame = new SrvFrameWidget("Frame", 400, 100, 300, 300);
         lienzoComponent.addFrameWidget(frame);
         
-        String cloudUrlIcon = "http://localhost:8080/vaadin-lienzo-demo/VAADIN/themes/demo/images/cloud-big.png";
+        String cloudUrlIcon = "/vaadin-lienzo-demo/VAADIN/themes/demo/images/cloud-big.png";
         SrvNodeWidget cloudNode = new SrvNodeWidget();
         cloudNode.setCaption("Cloud");
         cloudNode.setUrlIcon(cloudUrlIcon);

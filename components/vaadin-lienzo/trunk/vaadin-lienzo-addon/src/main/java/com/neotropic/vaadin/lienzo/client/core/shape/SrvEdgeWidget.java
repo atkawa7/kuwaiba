@@ -19,12 +19,10 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * 
+ * A widget that represents a connection between two nodes
  * @author Johny Andres Ortega Ruiz johny.ortega@kuwaiba.org
  */
 public class SrvEdgeWidget implements Serializable {
-    private static long idCounter = 0;
-    
     private long id;
     private SrvNodeWidget source;
     private SrvNodeWidget target;
@@ -32,10 +30,11 @@ public class SrvEdgeWidget implements Serializable {
     private String color = "BLACK";
     private List<Point> controlPoints;
     private boolean editable = true;
+
+    public SrvEdgeWidget() { }
     
-    public SrvEdgeWidget() {
-        id = idCounter;
-        idCounter += 1;        
+    public SrvEdgeWidget(long edgeId) {
+        id = edgeId;
     }
     
     public long getId() {
