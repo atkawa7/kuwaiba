@@ -508,15 +508,15 @@ public class EntPhysicalSynchronizer {
                     parentId = Long.toString(id);
 
                 String objectName = entityData.get("entPhysicalName").get(i); //NOI18N
-                if (objectName.contains("GigabitEthernet")) 
-                    objectName = objectName.replace("GigabitEthernet", "Gi"); //NOI18N
-                
                 //We parse the class Id from SNMP into kuwaiba's class name
                 String mappedClass = parseClass(
                         entityData.get("entPhysicalModelName").get(i),
                         entityData.get("entPhysicalClass").get(i), 
                         objectName, entityData.get("entPhysicalDescr").get(i)); //NOI18N
-                
+                //We standarized the port names
+                if(SyncUtil.isSynchronizable(objectName) && mappedClass.toLowerCase().contains("port") && !objectName.contains("Power") && !mappedClass.contains("Power"))
+                    objectName = SyncUtil.wrapPortName(objectName);
+                                
                 if(mappedClass == null) //it was impossible to parse the SNMP class into kuwaiba's class
                     findings.add(new SyncFinding(SyncFinding.EVENT_ERROR,
                                 I18N.gm("empty_fields_in_the_data"),
@@ -812,7 +812,7 @@ public class EntPhysicalSynchronizer {
                 branch.set(0, jObj);
                 return new ArrayList<>();
             }
-            //This iare the less accurate methods 
+            //This is the less accurate method 
             //we only check for the parent name of the first element of the new 
             //branch with the last element of the old branch.
             for (long i : currentObjectStructure.keySet()) {
@@ -918,7 +918,7 @@ public class EntPhysicalSynchronizer {
     private void readCurrentDeviceStructure(List<BusinessObjectLight> objects)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
         for (BusinessObjectLight object : objects) {
-            if (!mem.isSubClass("GenericLogicalPort", object.getClassName()) || !mem.isSubClass("Pseudowire", object.getClassName())) 
+            if (!mem.isSubClass("GenericLogicalPort", object.getClassName()) && !mem.isSubClass("Pseudowire", object.getClassName())) 
                 tempAuxOldBranch.add(object);
             
             if (object.getClassName().contains("Port") && !object.getClassName().contains("Virtual") && !object.getClassName().contains("Power")) 
@@ -986,10 +986,6 @@ public class EntPhysicalSynchronizer {
         return jsonObj;
     }
 
-   
-
-    
-
     /**
      * Create a hash map for the attributes of the given index encathc of the data read it from SNMP
      * @param index the index of the entry
@@ -1005,9 +1001,9 @@ public class EntPhysicalSynchronizer {
         ClassMetadata mappedClassMetadata = mem.getClass(mappedClass);
                
         String objectName = entityData.get("entPhysicalName").get(index);//NOI18N
-        
-        if (objectName.contains("GigabitEthernet"))//NO18N For optical ports
-            objectName = objectName.replace("GigabitEthernet", "Gi");//NOI18N
+        //We standarized the port names
+        if(SyncUtil.isSynchronizable(objectName) && mappedClass.toLowerCase().contains("port") && !objectName.contains("Power") && !mappedClass.contains("Power"))
+            objectName = SyncUtil.wrapPortName(objectName);
         
         attributes.put("name", objectName);//NOI18N
         String description = entityData.get("entPhysicalDescr").get(index).trim();
@@ -1067,8 +1063,10 @@ public class EntPhysicalSynchronizer {
     public void checkDataToBeDeleted() throws MetadataObjectNotFoundException {
         JsonObject json = Json.createObjectBuilder().add("type", "old_object_to_delete").build();
         for (BusinessObjectLight currentChildFirstLevel : currentFirstLevelChildren) {
-            if (!mem.isSubClass("GenericLogicalPort", currentChildFirstLevel.getClassName()) && !mem.isSubClass("Pseudowire", currentChildFirstLevel.getClassName())) {
-                
+            if (!mem.isSubClass("GenericLogicalPort", currentChildFirstLevel.getClassName()) 
+                    && !mem.isSubClass("Pseudowire", currentChildFirstLevel.getClassName()) 
+                    && !currentChildFirstLevel.getName().toLowerCase().equals("gi0")) 
+            {
                 JsonObject jdevice = Json.createObjectBuilder()
                             .add("deviceId", Long.toString(currentChildFirstLevel.getId()))
                             .add("deviceName", currentChildFirstLevel.getName())
@@ -1160,8 +1158,7 @@ public class EntPhysicalSynchronizer {
             BusinessObjectNotFoundException, MetadataObjectNotFoundException,
             OperationNotPermittedException {
         //List<BusinessObjectLight> foundOldPorts = new ArrayList<>(); //for debug
-        //List<JsonObject> foundNewPorts = new ArrayList<>(); //for debug
-        BusinessObjectLight mngmntPort = null;
+        List<JsonObject> foundNewPorts = new ArrayList<>(); //for debug
         for (BusinessObjectLight oldPort : currentPorts) {
             if(!oldPort.getName().toLowerCase().equals("gi0")){
                 //We copy the new attributes into the old port, to keep the relationships
@@ -1170,8 +1167,10 @@ public class EntPhysicalSynchronizer {
 
                 if (portFound != null) {
                     String parentName = oldPortParent.getName();
-                    //foundOldPorts.add(oldPort); foundNewPorts.add(portFound); //for debug
-                    portFound = SyncUtil.wrapPortName(portFound);
+                    //foundOldPorts.add(oldPort); 
+                    foundNewPorts.add(portFound); //for debug
+                    if(SyncUtil.isSynchronizable(portFound.getJsonObject("attributes").getString("name")))
+                        portFound = SyncUtil.wrapPortName(portFound);
                     //We found the port, but needs to be moved
                     if(!parentName.equals(portFound.getString("parentName"))){ 
                         portFound = SyncUtil.joBuilder(portFound).add("type", "object_port_move").build();
@@ -1210,22 +1209,19 @@ public class EntPhysicalSynchronizer {
                     notMatchedPorts.add(oldPortWithNoMatch);
                 }
             }
-            else
-                mngmntPort = oldPort;
-            
         }//end for
-        currentPorts.remove(mngmntPort);
         //we remove the ports from both lists the old port and the new ones
         //for debuging don't delete        
-        
 //        for (BusinessObjectLight goodPort : foundOldPorts)
 //            oldPorts.remove(goodPort);
-//
-//        for (JsonObject foundNewPort : foundNewPorts) {
-//            int index = removeMatchedNewPorts(foundNewPort);
-//            if (index > -1) 
-//                newPorts.remove(index);
-//        }
+
+        //we must delete de new ports that were found in the old structure, the 
+        //remaining new ports that were not found will be created
+        for (JsonObject foundNewPort : foundNewPorts) {
+            int index = removeMatchedNewPorts(foundNewPort);
+            if (index > -1) 
+                newPorts.remove(index);
+        }
     }
 
     private int removeMatchedNewPorts(JsonObject jnewportFound) {
@@ -1397,6 +1393,7 @@ public class EntPhysicalSynchronizer {
             String createdClassName = "";
             long createdId = 0; 
             boolean found = false;
+            boolean wasHighSpeedUpdated = false;
             attributes.put(Constants.PROPERTY_NAME, ifName);
             attributes.put("highSpeed", portSpeed);    
             //Mngmnt, virtualPorts, and Loopbacks
@@ -1426,8 +1423,8 @@ public class EntPhysicalSynchronizer {
                 //The virtual port doesn't exists, so we will create it
                 if(ifName.contains(".") && currrentInterface == null){
                     //we search for the physical port parent of the virtual port 
-                    currrentInterface = searchInCurrentStructure(ifName.split("\\.")[0], 1);
-                    if(currrentInterface != null && currrentInterface.getName().equals(ifName.split("\\.")[0])){
+                    currrentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName.split("\\.")[0]), 1);
+                    if(currrentInterface != null && currrentInterface.getName().equals(SyncUtil.wrapPortName(ifName.split("\\.")[0]))){
                         createdId = bem.createObject(Constants.CLASS_VIRTUALPORT, currrentInterface.getClassName(), currrentInterface.getId(), attributes, -1);
                         createdClassName = "VirtualPort";
                         found = true;
@@ -1476,16 +1473,22 @@ public class EntPhysicalSynchronizer {
                 }//we Update attributes, for now only high speed
                 else if(currrentInterface != null){ 
                     attributes = bem.getObject(currrentInterface.getId()).getAttributes();
-                    if(!ifName.toLowerCase().contains("tu"))
-                        attributes.put("highSpeed", portSpeed);
+                    if(!ifName.toLowerCase().contains("tu")){
+                        String currenthighSpeed = attributes.get("highSpeed");
+                        if(!currenthighSpeed.equals(portSpeed)){
+                            attributes.put("highSpeed", portSpeed);
+                            wasHighSpeedUpdated = true;
+                        }
+                    }
                     else if(ifName.toLowerCase().contains("tu"))
                         attributes.put("ifAlias", ifAlias);
-                    
-                    bem.updateObject(currrentInterface.getClassName(), currrentInterface.getId(), attributes);
-                    createdClassName = currrentInterface.getClassName();
-                    createdId = currrentInterface.getId();
-                    status = "attribute: highSpeed updated";
-                    found = true;
+                    if(wasHighSpeedUpdated){
+                        bem.updateObject(currrentInterface.getClassName(), currrentInterface.getId(), attributes);
+                        createdClassName = currrentInterface.getClassName();
+                        createdId = currrentInterface.getId();
+                        status = "attribute: highSpeed updated";
+                        found = true;
+                    }
                 }
                 else
                     status = String.format(I18N.gm("sync.no_match"), ifName);
@@ -1494,10 +1497,10 @@ public class EntPhysicalSynchronizer {
                 serviceStatus = checkServices(ifAlias, createdId, createdClassName);
             
             jsonResults.add(Json.createObjectBuilder()
-                            .add("ifName", ifName)
+                            .add("ifName", SyncUtil.wrapPortName(ifName))
                             .add("ifAlias", ifAlias)
                             .add("status", status)
-                            .add("related-service", serviceStatus)
+                            .add("related - service", serviceStatus)
                             .build());
         }//end for ifNames
                         
