@@ -62,13 +62,13 @@ public class SyncUtil {
     public static boolean isSynchronizable(String ifName){
         //ignorar eo, cpp, span, dwdm
         return ifName.toLowerCase().equals("gi0") || 
-                ifName.toLowerCase().contains("lo") ||
-                ifName.toLowerCase().contains("po") || 
-                ifName.toLowerCase().contains("se") || 
-                ifName.toLowerCase().contains("tu") ||
-                ifName.toLowerCase().contains("vl") ||
-                ifName.toLowerCase().contains("br") ||
-                ifName.toLowerCase().contains("bd") ||
+                ifName.toLowerCase().substring(0, 2).equals("lo") ||
+                (ifName.toLowerCase().contains("po") && ifName.contains("/")) || 
+                ifName.toLowerCase().substring(0, 2).equals("se") || 
+                ifName.toLowerCase().substring(0, 2).equals("tu") ||
+                ifName.toLowerCase().substring(0, 2).equals("vl") ||
+                ifName.toLowerCase().substring(0, 2).equals("br") ||
+                ifName.toLowerCase().substring(0, 2).equals("bd") ||
                 ifName.toLowerCase().contains("vlan") ||
                 ifName.contains("/");
     }
@@ -102,8 +102,7 @@ public class SyncUtil {
      * @return standardized port name 
      */
     public static String wrapPortName(String currentPortName){
-        System.out.println(currentPortName.length());
-        currentPortName =currentPortName.toLowerCase().replace("_", "/");
+        currentPortName = currentPortName.toLowerCase().replace("_", "/");
         //Fastethernet
         if(currentPortName.toLowerCase().contains("fastethernet"))
             return currentPortName.toLowerCase().replace("fastethernet", "fa");
@@ -132,7 +131,7 @@ public class SyncUtil {
         if(currentPortName.toLowerCase().contains("se"))
             return currentPortName.toLowerCase().replace("se", "se");
         
-        return "-";
+        return currentPortName.toLowerCase();
     }
     
     /**
