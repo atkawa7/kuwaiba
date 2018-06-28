@@ -20,16 +20,10 @@ import com.neotropic.vaadin.lienzo.LienzoComponent;
 import com.neotropic.vaadin.lienzo.client.core.shape.Point;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
-import com.vaadin.server.Page;
-import com.vaadin.server.Resource;
-import com.vaadin.server.ResourceReference;
-import com.vaadin.server.StreamResource;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -278,7 +272,7 @@ public class EndToEndViewScene extends VerticalLayout {
         ClassIcon ci = new ClassIcon();
         try {
             
-            newNode.setUrlIcon("/kuwaiba/VAADIN/themes/nuqui/img/node.png");
+            newNode.setUrlIcon("/icons/" + node.getClassName() + ".png");
             RemoteClassMetadata classMetadata = wsBean.getClass(node.getClassName(), ipAddress, sessionId);
             
 //            StreamResource resource = new StreamResource(

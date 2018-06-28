@@ -1954,11 +1954,15 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public List<BusinessObjectLightList> findRoutesThroughSpecialRelationships(String objectAClassName, 
             long objectAId, String objectBClassName, long objectBId, String relationshipName) {
         List<BusinessObjectLightList> paths = new ArrayList<>();
+//        String cypherQuery = String.format("MATCH path = (a)-[:%s*1..20{name:\"%s\"}]-(b) " +
+//                            "WHERE id(a) = %s AND id(b) = %s " +
+//                            "RETURN nodes(path) as path ORDER BY size(path) ASC LIMIT %s", RelTypes.RELATED_TO_SPECIAL, relationshipName, objectAId, objectBId, 
+//                                                                    aem.getConfiguration().get("maxRoutes")); //NOI18N
         String cypherQuery = String.format("MATCH path = (a)-[:%s*1..30{name:\"%s\"}]-(b) " +
                             "WHERE id(a) = %s AND id(b) = %s " +
-                            "RETURN nodes(path) as path ORDER BY size(path) ASC LIMIT %s", RelTypes.RELATED_TO_SPECIAL, relationshipName, objectAId, objectBId, 
+                            "RETURN nodes(path) as path LIMIT %s", RelTypes.RELATED_TO_SPECIAL, relationshipName, objectAId, objectBId, 
                                                                     aem.getConfiguration().get("maxRoutes")); //NOI18N
-                                
+        System.out.println(cypherQuery);  
         try (Transaction tx = graphDb.beginTx()){
            
             Result result = graphDb.execute(cypherQuery);
@@ -1971,6 +1975,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 paths.add(aPath);
             }
         }
+        
+        //We implement the path length sorting here since the cypher query seems to be too expensive (?) if the sort is done there
+        paths.sort((o1, o2) -> {
+            return Integer.compare(o1.getList().size(), o2.getList().size());
+        });
+        
         return paths;
         
     }
