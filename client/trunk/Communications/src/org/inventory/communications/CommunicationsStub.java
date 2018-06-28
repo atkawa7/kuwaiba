@@ -1641,8 +1641,8 @@ public class CommunicationsStub {
             long taskId = service.createTask(name, description, enabled, commitOnExecute, script, 
                    remoteParameters, atsd, tnd, session.getSessionId());
             
-            return null;// new LocalTask(taskId, name, description, enabled, commitOnExecute, script, 
-                    //null, schedule, notificationType, new ArrayList<>());
+            return new LocalTask(taskId, name, description, enabled, commitOnExecute, script, 
+                    null, schedule, notificationType, new ArrayList<>());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
