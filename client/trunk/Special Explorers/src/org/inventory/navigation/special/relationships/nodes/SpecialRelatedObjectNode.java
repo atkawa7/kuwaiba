@@ -79,11 +79,10 @@ public class SpecialRelatedObjectNode extends ObjectNode {
                         relationshipNames.add(0, Constants.PROPERTY_PARENT);
                         specialRelationships.put(Constants.PROPERTY_PARENT, new LocalObjectLight[] { listOfParents.get(0) });
                     }
-                    
                     setKeys(relationshipNames);
                 }
             }
-         }
+        }
          
          @Override
          public void removeNotify() {
