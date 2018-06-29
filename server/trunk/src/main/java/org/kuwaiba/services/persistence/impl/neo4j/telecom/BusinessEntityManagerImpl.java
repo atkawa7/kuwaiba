@@ -1962,7 +1962,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                             "WHERE id(a) = %s AND id(b) = %s " +
                             "RETURN nodes(path) as path LIMIT %s", RelTypes.RELATED_TO_SPECIAL, relationshipName, objectAId, objectBId, 
                                                                     aem.getConfiguration().get("maxRoutes")); //NOI18N
-        System.out.println(cypherQuery);  
         try (Transaction tx = graphDb.beginTx()){
            
             Result result = graphDb.execute(cypherQuery);
