@@ -37,6 +37,10 @@ import org.openide.util.Utilities;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 class NewSyncGroupAction extends GenericInventoryAction {
+    
+    private final static String PROVIDER_ENTITY_IF_MIB = "entityMIB/ifMIB";
+    private final static String PROVIDER_CISCO_MPLS_MIB = "cisco-mplsMIB";
+    
     public NewSyncGroupAction() {
         putValue(NAME, "New Sync Group");
     }
@@ -54,15 +58,10 @@ class NewSyncGroupAction extends GenericInventoryAction {
         JTextField txtSyncGroupName = new JTextField();
         txtSyncGroupName.setName("txtSyncGroupName");
         txtSyncGroupName.setColumns(10);
-//        JTextField txtSyncProviderName = new JTextField();
-//        txtSyncProviderName.setText("com.neotropic.kuwaiba.sync.connectors.snmp.reference.ReferenceSnmpSyncProvider");
-//        txtSyncProviderName.setName("txtSyncProviderName");
-//        txtSyncProviderName.setColumns(10);
-//        txtSyncProviderName.setEnabled(false);
         JComboBox<String> cboProviders = new JComboBox<>();
         cboProviders.setName("txtSyncProviderName");
-        cboProviders.addItem("com.neotropic.kuwaiba.sync.connectors.snmp.reference.ReferenceSnmpSyncProvider");
-        cboProviders.addItem("com.neotropic.kuwaiba.sync.connectors.snmp.cisco.SnmpCiscoSyncProvider");
+        cboProviders.addItem(PROVIDER_ENTITY_IF_MIB);
+        cboProviders.addItem(PROVIDER_CISCO_MPLS_MIB);
         
         JComplexDialogPanel pnlPoolProperties = new JComplexDialogPanel(
             new String[] {I18N.gm("sync_group_name"), I18N.gm("sync_provider")}, 
@@ -70,10 +69,19 @@ class NewSyncGroupAction extends GenericInventoryAction {
         
         if (JOptionPane.showConfirmDialog(null, pnlPoolProperties, I18N.gm("new_sync_group"), 
             JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
+            String provider = "";
+            switch((String)((JComboBox) pnlPoolProperties.getComponent("txtSyncProviderName")).getSelectedItem()){
+                case PROVIDER_ENTITY_IF_MIB:
+                    provider = "com.neotropic.kuwaiba.sync.connectors.snmp.reference.ReferenceSnmpSyncProvider";
+                    break;
+                case PROVIDER_CISCO_MPLS_MIB:
+                    provider = "com.neotropic.kuwaiba.sync.connectors.snmp.cisco.SnmpCiscoSyncProvider";
+                    break;    
+            }
             
             LocalSyncGroup newSyncGroup = CommunicationsStub.getInstance().createSyncGroup(
                 ((JTextField) pnlPoolProperties.getComponent("txtSyncGroupName")).getText(),
-                (String)((JComboBox) pnlPoolProperties.getComponent("txtSyncProviderName")).getSelectedItem());
+                provider);
             
             if (newSyncGroup == null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 
