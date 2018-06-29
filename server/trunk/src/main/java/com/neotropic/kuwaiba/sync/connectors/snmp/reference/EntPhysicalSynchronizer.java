@@ -647,6 +647,8 @@ public class EntPhysicalSynchronizer {
                     for (int i = 0; i < oldBranch.size(); i++) {
                         oldObj = oldBranch.get(i);
                         BusinessObjectLight oldParent = bem.getParent(oldObj.getClassName(), oldObj.getId());
+                        oldParent = SyncUtil.wrapPortName(oldParent);
+                        
                         HashMap<String, String> oldAttributes = bem.getObject(oldObj.getId()).getAttributes();
 
                         currentObj = branch.get(i);
@@ -719,6 +721,8 @@ public class EntPhysicalSynchronizer {
                 if (!className.equals(objClassName)) {
                     BusinessObjectLight oldObj = oldBranch.get(w);
                     BusinessObjectLight oldParent = bem.getParent(oldObj.getClassName(), oldObj.getId());
+                    oldParent = SyncUtil.wrapPortName(oldParent); //we standardize if the parent object is a port, important in ASR9001 hwere ports are not leafs in the structure
+                    
                     //The name of the Router will be diferent in most of the cases so we must avoid the name in this case..
                     if(oldParent.getClassName().equals(className) && objParentClassName.equals(className))
                         objParentName = oldParent.getName();
@@ -757,6 +761,8 @@ public class EntPhysicalSynchronizer {
                     if (!className.equals(objClassName)) {
                         BusinessObjectLight oldObj = oldBranch.get(o-1);
                         BusinessObjectLight oldParent = bem.getParent(oldObj.getClassName(), oldObj.getId());
+                        oldParent = SyncUtil.wrapPortName(oldParent); //we standardize if the parent object is a port, important in ASR9001 hwere ports are not leafs in the structure
+                                
                         //The name of the Router will be diferent in most of the cases so we must avoid the name in this case..
                         if(oldParent.getClassName().equals(className) && objParentClassName.equals(className))
                             objParentName = oldParent.getName();
@@ -792,6 +798,8 @@ public class EntPhysicalSynchronizer {
                 if (!className.equals(objClassName)) {
                     BusinessObjectLight oldObj = oldBranch.get(oldBranch.size()-1);
                     BusinessObjectLight oldParent = bem.getParent(oldObj.getClassName(), oldObj.getId());
+                    oldParent = SyncUtil.wrapPortName(oldParent);//we standardize if the parent object is a port, important in ASR9001 hwere ports are not leafs in the structure
+                    
                     //The name of the Router will be diferent in most of the cases so we must avoid the name in this case..
                     if(oldParent.getClassName().equals(className) && objParentClassName.equals(className))
                         objParentName = oldParent.getName();
@@ -920,9 +928,7 @@ public class EntPhysicalSynchronizer {
         for (BusinessObjectLight object : objects) {
             if (!mem.isSubClass("GenericLogicalPort", object.getClassName()) && !mem.isSubClass("Pseudowire", object.getClassName())){ 
                 //We standarized the port names
-                if(SyncUtil.isSynchronizable(object.getName()) && object.getClassName().toLowerCase().contains("port") && !object.getName().contains("Power") && !object.getClassName().contains("Power"))
-                    object.setName(SyncUtil.wrapPortName(object.getName()));
-
+                object = SyncUtil.wrapPortName(object);
                 tempAuxOldBranch.add(object);
             }
             

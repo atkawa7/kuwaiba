@@ -97,6 +97,22 @@ public class SyncUtil {
     }
     
     /**
+     * Checks if the object is a port an wraps the name into a 
+     * standardized name
+     * @param obj a given object
+     * @return the object with the port name wrapped
+     */
+    public static BusinessObjectLight wrapPortName(BusinessObjectLight obj){
+        if(SyncUtil.isSynchronizable(obj.getName()) && 
+                obj.getClassName().toLowerCase().contains("port") && 
+                !obj.getName().contains("Power") && 
+                !obj.getClassName().contains("Power"))
+            obj.setName(wrapPortName(obj.getName()));
+       
+        return obj;
+    }
+    
+    /**
      * Wraps the port name into a standardized port name gi, te, fa, pos
      * @param currentPortName raw port name
      * @return standardized port name 
