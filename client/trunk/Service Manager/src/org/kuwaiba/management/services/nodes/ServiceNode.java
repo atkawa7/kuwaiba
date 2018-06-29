@@ -29,8 +29,9 @@ import org.inventory.navigation.favorites.actions.AddObjectToFavoritesFolderActi
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.ExecuteClassLevelReportAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
+import org.inventory.navigation.special.attachments.nodes.actions.AttachFileAction;
 import org.kuwaiba.management.services.nodes.actions.ServiceManagerActionFactory;
-import org.kuwaiba.management.services.nodes.actions.ShowEndToEndSimpleViewAction;
+import org.kuwaiba.management.services.nodes.actions.ShowEndToEndViewAction;
 import org.kuwaiba.management.services.nodes.actions.ShowServiceTopologyViewAction;
 import org.openide.actions.PasteAction;
 import org.openide.nodes.Node;
@@ -61,10 +62,9 @@ public class ServiceNode extends ObjectNode {
             ExecuteClassLevelReportAction.getInstance(),
             ServiceManagerActionFactory.getDeleteServiceAction(),
             null,
-            Lookup.getDefault().lookup(ShowEndToEndSimpleViewAction.class),
+            Lookup.getDefault().lookup(ShowEndToEndViewAction.class),
             Lookup.getDefault().lookup(ShowServiceTopologyViewAction.class),
-            //Lookup.getDefault().lookup(ShowEndToEndViewAction.class),
-            //Lookup.getDefault().lookup(ShowEndToEndDetailedViewAction.class),
+            Lookup.getDefault().lookup(AttachFileAction.class),
             Lookup.getDefault().lookup(AddObjectToFavoritesFolderAction.class),
             null,
             ShowMoreInformationAction.getInstance(getObject().getId(), getObject().getClassName())

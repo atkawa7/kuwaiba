@@ -21,6 +21,7 @@ import org.inventory.core.contacts.actions.AddContactAction;
 import org.inventory.core.contacts.actions.ShowContactsAction;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
+import org.inventory.navigation.special.attachments.nodes.actions.AttachFileAction;
 import org.kuwaiba.management.services.nodes.actions.ServiceManagerActionFactory;
 import org.openide.util.Lookup;
 
@@ -40,6 +41,7 @@ public class CustomerNode extends ObjectNode {
         return new Action [] { ServiceManagerActionFactory.getCreateServicePoolAction(),
             ServiceManagerActionFactory.getDeleteCustomerAction(),
             null,
+            Lookup.getDefault().lookup(AttachFileAction.class),
             Lookup.getDefault().lookup(AddContactAction.class),
             Lookup.getDefault().lookup(ShowContactsAction.class),
             null,

@@ -66,7 +66,7 @@ public class EndToEndViewTopComponent extends TopComponent implements
         }
         else {
             for (LocalObjectViewLight serviceView : serviceViews) {
-                if (EndToEndViewSimpleScene.VIEW_CLASS.equals(serviceView.getClassName())) {
+                if (EndToEndViewScene.VIEW_CLASS.equals(serviceView.getClassName())) {
                     currentView = com.getObjectRelatedView(currentService.getId(), currentService.getClassName(), serviceView.getId());
                     if (currentView == null) {
                         NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
@@ -101,7 +101,7 @@ public class EndToEndViewTopComponent extends TopComponent implements
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    ((EndToEndViewSimpleScene)scene).addFreeFrame();
+                    ((EndToEndViewScene)scene).addFreeFrame();
                 }
             });
 
@@ -152,11 +152,11 @@ public class EndToEndViewTopComponent extends TopComponent implements
 
     private void saveView() {   
         if (currentView == null) { //The service does not have a saved view associated yet, so create a new one
-            long newViewId = com.createObjectRelatedView(currentService.getId(), currentService.getClassName(), EndToEndViewSimpleScene.VIEW_CLASS, 
-                    null, EndToEndViewSimpleScene.VIEW_CLASS, scene.getAsXML(), null);
+            long newViewId = com.createObjectRelatedView(currentService.getId(), currentService.getClassName(), EndToEndViewScene.VIEW_CLASS, 
+                    null, EndToEndViewScene.VIEW_CLASS, scene.getAsXML(), null);
             
             if (newViewId != -1) {
-                currentView = new LocalObjectView(newViewId, EndToEndViewSimpleScene.VIEW_CLASS, null, null, scene.getAsXML(), scene.getBackgroundImage());
+                currentView = new LocalObjectView(newViewId, EndToEndViewScene.VIEW_CLASS, null, null, scene.getAsXML(), scene.getBackgroundImage());
                 saved = true;
                 setHtmlDisplayName(getHtmlDisplayName());
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, "The view was saved successfully");
