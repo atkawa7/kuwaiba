@@ -15,9 +15,23 @@
  */
 package org.inventory.core.contacts.actions;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.net.ConnectException;
+import java.util.List;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalContact;
+import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.core.contacts.ContactsTable;
+import org.inventory.core.contacts.ContactsTableModel;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
 import org.openide.util.Utilities;
@@ -52,8 +66,30 @@ public class ShowContactsAction extends GenericObjectNodeAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         ObjectNode selectedNode = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
-               
-        JOptionPane.showMessageDialog(null, "Not implemented yet");
+        LocalObjectLight selectedObject = selectedNode.getLookup().lookup(LocalObjectLight.class);
+                
+        List<LocalContact> contactsForCustomer = CommunicationsStub.getInstance().getContactsForCustomer(selectedObject.getClassName(), selectedObject.getId());
+        
+        if (contactsForCustomer == null) 
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError()); //NOI18N
+        else {
+            if (contactsForCustomer.isEmpty()){
+                JOptionPane.showMessageDialog(null, "No contacts were found for this customer", I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            try {
+                ContactsTable tblContacts = new ContactsTable(new ContactsTableModel(contactsForCustomer));
+                JFrame wdwContacts = new JFrame(String.format("Contacts for %s", selectedObject));
+                wdwContacts.setLocationRelativeTo(null);
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                wdwContacts.setSize(screenSize.width, screenSize.height / 3);
+                wdwContacts.setLayout(new BorderLayout());
+                wdwContacts.add(new JScrollPane(tblContacts));
+                wdwContacts.setVisible(true);
+            } catch(ConnectException ex) {
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, ex.getMessage()); //NOI18N
+            } 
+        }        
     }
 
     @Override

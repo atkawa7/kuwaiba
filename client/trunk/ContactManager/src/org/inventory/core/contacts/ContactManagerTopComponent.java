@@ -16,12 +16,9 @@
 package org.inventory.core.contacts;
 
 import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyVetoException;
@@ -34,7 +31,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import javax.swing.KeyStroke;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadataLight;
 import org.inventory.communications.core.LocalContact;
@@ -84,7 +80,7 @@ import org.openide.util.Utilities;
 })
 public final class ContactManagerTopComponent extends TopComponent implements ExportableTable, ExplorerManager.Provider {
     private ExplorerManager em;
-    private ETable contactsTable;
+    private ContactsTable contactsTable;
     private MouseAdapter mouseAdapter;
     
     public ContactManagerTopComponent() {
@@ -393,26 +389,8 @@ public final class ContactManagerTopComponent extends TopComponent implements Ex
     }
 
     private void initCustomComponents() {
-        this.contactsTable = new ETable();
-        this.contactsTable.setColumnSelectionAllowed(false);
+        this.contactsTable = new ContactsTable();
         this.contactsTable.setAutoResizeMode(ETable.AUTO_RESIZE_OFF);
-
-
-        final KeyStroke stroke = KeyStroke.getKeyStroke(KeyEvent.VK_C, ActionEvent.CTRL_MASK, false);
-        //Credits to https://pugnodifagioli.wordpress.com/2008/02/19/how-to-implement-the-copypaste-for-a-jtable/
-        this.contactsTable.registerKeyboardAction((e) -> {
-            int col = contactsTable.getSelectedColumn();
-            int row = contactsTable.getSelectedRow();
-            if (col != -1 && row != -1) {
-                Object value = contactsTable.getValueAt(row, col);
-                String data = value == null ? "" : value.toString();
-
-                final StringSelection selection = new StringSelection(data);     
-
-                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, selection);
-            }
-        }, "Copy Cell Contents", stroke, JComponent.WHEN_FOCUSED);
-
         this.pnlScrollMain.setViewportView(contactsTable);
         this.pnlScrollMain.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         
