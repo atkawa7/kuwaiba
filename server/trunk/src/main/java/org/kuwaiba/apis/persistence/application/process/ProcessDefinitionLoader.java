@@ -59,6 +59,7 @@ public class ProcessDefinitionLoader {
         public static final String START_ACTIVITY_ID="startActivityId"; //NOI18N
         public static final String NEXT_ACTIVITY_DEFINITION_ID = "nextActivityDefinitionId"; //NOI18N
         public static final String ACTOR_ID = "actorId"; //NOI18N
+        public static final String IDLING = "idling";
     }
     public class XMLProcessDefinitionException extends Exception {
         
@@ -173,7 +174,8 @@ public class ProcessDefinitionLoader {
                                         reader.getAttributeValue(null, Attribute.DESCRIPTION), 
                                         activityDefinitionType, 
                                         null, 
-                                        null);
+                                        null, 
+                                        Boolean.valueOf(reader.getAttributeValue(null, Attribute.IDLING)));
                                 }
                                 activityDefinitions.put(activityDefinitionId, activityDefinition);
                                 activityactor.put(activityDefinitionId, Long.valueOf(reader.getAttributeValue(null, Attribute.ACTOR_ID)));

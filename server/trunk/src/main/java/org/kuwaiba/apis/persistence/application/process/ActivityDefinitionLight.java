@@ -58,17 +58,22 @@ public class ActivityDefinitionLight {
      */
     private int type;
     /**
+     * Define if an Activity can be mark as idle activity
+     */    
+    private boolean idling;
+    /**
      * Artifact associated to the activity definition
      */
     private ArtifactDefinition arfifact;
     
     public ActivityDefinitionLight(long id, String name, String description, 
-            int type, ArtifactDefinition arfifact) {
+            int type, ArtifactDefinition arfifact, boolean idling) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.type = type;
         this.arfifact = arfifact;
+        this.idling = idling;
     }
 
     public long getId() {
@@ -110,7 +115,14 @@ public class ActivityDefinitionLight {
     public void setArfifact(ArtifactDefinition arfifact) {
         this.arfifact = arfifact;
     }
-
+    
+    public boolean isIdling() {
+        return idling;
+    }
+        
+    public void setIdling(boolean idling) {
+        this.idling = idling;                
+    }
     
     @Override
     public int hashCode() {

@@ -46,6 +46,10 @@ public class RemoteActivityDefinition implements Serializable {
      */
     private int type;
     /**
+     * Define if an Activity can be mark as idle activity
+     */    
+    private boolean idling;
+    /**
      * Artifact associated to the activity definition
      */
     private RemoteArtifactDefinition arfifact;
@@ -59,13 +63,14 @@ public class RemoteActivityDefinition implements Serializable {
     private RemoteActivityDefinition nextActivity;
 
     public RemoteActivityDefinition(long id, String name, String description, 
-            int type, RemoteArtifactDefinition arfifact, RemoteActor actor) {
+            int type, RemoteArtifactDefinition arfifact, RemoteActor actor, boolean idling) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.type = type;
         this.arfifact = arfifact;
         this.actor = actor;
+        this.idling = idling;
     }
 
     public long getId() {
@@ -124,6 +129,14 @@ public class RemoteActivityDefinition implements Serializable {
         this.nextActivity = nextActivity;
     }
     
+    public boolean isIdling() {
+        return idling;
+    }
+        
+    public void setIdling(boolean idling) {
+        this.idling = idling;                
+    }
+    
     public static RemoteActivityDefinition asRemoteActivityDefinition(ActivityDefinition activityDefinition) {
         RemoteActivityDefinition res = null;
         
@@ -143,7 +156,8 @@ public class RemoteActivityDefinition implements Serializable {
             res = new RemoteActivityDefinition(activityDefinition.getId(), activityDefinition.getName(), 
                 activityDefinition.getDescription(), activityDefinition.getType(), 
                 new RemoteArtifactDefinition(activityDefinition.getArfifact().getId(), activityDefinition.getArfifact().getName(), activityDefinition.getArfifact().getDescription(), activityDefinition.getArfifact().getVersion(), activityDefinition.getArfifact().getType(), activityDefinition.getArfifact().getDefinition(), activityDefinition.getArfifact().getPreconditionsScript(), activityDefinition.getArfifact().getPostconditionsScript()), 
-                new RemoteActor(activityDefinition.getActor().getId(), activityDefinition.getActor().getName(), activityDefinition.getActor().getType()));
+                new RemoteActor(activityDefinition.getActor().getId(), activityDefinition.getActor().getName(), activityDefinition.getActor().getType()),
+                activityDefinition.isIdling());
             
             if (activityDefinition.getNextActivity() != null) 
                 res.setNextActivity(RemoteActivityDefinition.asRemoteActivityDefinition(activityDefinition.getNextActivity()));

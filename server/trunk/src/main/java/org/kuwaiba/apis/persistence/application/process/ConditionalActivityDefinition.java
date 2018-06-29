@@ -25,7 +25,12 @@ public class ConditionalActivityDefinition extends ActivityDefinition {
     public ConditionalActivityDefinition(long id, String name, String description, 
         int type, ArtifactDefinition arfifact, Actor actor) {
         
-        super(id, name, description, type, arfifact, actor);
+        super(id, name, description, type, arfifact, actor, false);
+    }
+    
+    @Override
+    public boolean isIdling() {
+        return false;
     }
     
     public ActivityDefinition getNextActivityIfTrue() {

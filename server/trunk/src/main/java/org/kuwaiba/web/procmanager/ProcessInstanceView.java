@@ -278,7 +278,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
             artifactContainer.setExpandRatio(pnlArtifact, 9f);
             artifactContainer.setExpandRatio(secondHorizontalLayout, 1f);
             
-            if (true) {
+            if (currentActivity.isIdling()) {
                 VerticalLayout artifactPanel = new VerticalLayout();
                 artifactPanel.setSizeFull();
                                 

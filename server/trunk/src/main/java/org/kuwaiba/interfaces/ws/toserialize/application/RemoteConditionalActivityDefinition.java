@@ -31,7 +31,12 @@ public class RemoteConditionalActivityDefinition extends RemoteActivityDefinitio
     public RemoteConditionalActivityDefinition(long id, String name, String description, 
         int type, RemoteArtifactDefinition arfifact, RemoteActor actor) {
         
-        super(id, name, description, type, arfifact, actor);
+        super(id, name, description, type, arfifact, actor, false);
+    }
+    
+    @Override
+    public boolean isIdling() {
+        return false;
     }
     
     public RemoteActivityDefinition getNextActivityIfTrue() {
