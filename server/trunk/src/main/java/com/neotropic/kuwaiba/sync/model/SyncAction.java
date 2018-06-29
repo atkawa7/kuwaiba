@@ -57,14 +57,14 @@ public class SyncAction {
     private final static String ACTION_PORT_NO_MATCH = "This %s has no match, please check it manually";
     
     
-    private List<SyncFinding> findings;
-    private List<SyncResult> results;
-    private BusinessEntityManager bem;
-    private MetadataEntityManager mem;
-    private HashMap<Long, Long> createdIdsToMap;
+    private final List<SyncFinding> findings;
+    private final List<SyncResult> results;
+    private final BusinessEntityManager bem;
+    private final MetadataEntityManager mem;
+    private final HashMap<Long, Long> createdIdsToMap;
    
-    private HashMap<Long, List<String>> newCreatedPortsToCreate;
-    private List<StringPair> nameOfCreatedPorts;
+    private final HashMap<Long, List<String>> newCreatedPortsToCreate;
+    private final List<StringPair> nameOfCreatedPorts;
         
     public SyncAction(List<SyncFinding> findings) {
         this.findings = findings;
@@ -123,12 +123,18 @@ public class SyncAction {
                                 for (JsonValue jsonValue : jsonArray) {
                                     try (final JsonReader childReader = Json.createReader(new StringReader(jsonValue.toString()))){
                                         JsonObject child = childReader.readObject();
-                                        String ifName = child.getJsonObject("result").getString("ifName");
-                                        String ifalias = child.getJsonObject("result").getString("ifAlias");
-                                        String status = child.getJsonObject("result").getString("status");
-                                        String serviceStatus = child.getJsonObject("result").getString("related-service");
+                                        String ifName = "", ifalias = "", status = "", serviceStatus = "";
+                                        if(child.getJsonObject("result").get("ifName") != null)
+                                            ifName = child.getJsonObject("result").getString("ifName");
+                                        if(child.getJsonObject("result").get("ifAlias") != null)
+                                            ifalias = child.getJsonObject("result").getString("ifAlias");
+                                        if(child.getJsonObject("result").get("status") != null)
+                                            status = child.getJsonObject("result").getString("status");
+                                        if(child.getJsonObject("result").get("related-service") != null)
+                                            serviceStatus = child.getJsonObject("result").getString("related-service");
+                                        
                                         results.add(new SyncResult(SyncResult.SUCCESS, 
-                                                String.format("Interface: %s, %s", ifName, status) + (!ifalias.isEmpty() ? String.format("- Service: %s, %s", ifalias, serviceStatus) : "")
+                                                String.format("Interface: %s, %s", ifName, status) + (!ifalias.isEmpty() ? String.format(" - Service: %s, %s", ifalias, serviceStatus) : "")
                                                 , "Info"));
                                     }                                
                                 }

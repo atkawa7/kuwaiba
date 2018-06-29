@@ -918,8 +918,13 @@ public class EntPhysicalSynchronizer {
     private void readCurrentDeviceStructure(List<BusinessObjectLight> objects)
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
         for (BusinessObjectLight object : objects) {
-            if (!mem.isSubClass("GenericLogicalPort", object.getClassName()) && !mem.isSubClass("Pseudowire", object.getClassName())) 
+            if (!mem.isSubClass("GenericLogicalPort", object.getClassName()) && !mem.isSubClass("Pseudowire", object.getClassName())){ 
+                //We standarized the port names
+                if(SyncUtil.isSynchronizable(object.getName()) && object.getClassName().toLowerCase().contains("port") && !object.getName().contains("Power") && !object.getClassName().contains("Power"))
+                    object.setName(SyncUtil.wrapPortName(object.getName()));
+
                 tempAuxOldBranch.add(object);
+            }
             
             if (object.getClassName().contains("Port") && !object.getClassName().contains("Virtual") && !object.getClassName().contains("Power")) 
                 currentPorts.add(object);
@@ -1063,8 +1068,7 @@ public class EntPhysicalSynchronizer {
     public void checkDataToBeDeleted() throws MetadataObjectNotFoundException {
         JsonObject json = Json.createObjectBuilder().add("type", "old_object_to_delete").build();
         for (BusinessObjectLight currentChildFirstLevel : currentFirstLevelChildren) {
-            if (!mem.isSubClass("GenericLogicalPort", currentChildFirstLevel.getClassName()) 
-                    && !mem.isSubClass("Pseudowire", currentChildFirstLevel.getClassName()) 
+            if (!mem.isSubClass("Pseudowire", currentChildFirstLevel.getClassName()) 
                     && !currentChildFirstLevel.getName().toLowerCase().equals("gi0")) 
             {
                 JsonObject jdevice = Json.createObjectBuilder()
@@ -1475,7 +1479,7 @@ public class EntPhysicalSynchronizer {
                     attributes = bem.getObject(currrentInterface.getId()).getAttributes();
                     if(!ifName.toLowerCase().contains("tu")){
                         String currenthighSpeed = attributes.get("highSpeed");
-                        if(!currenthighSpeed.equals(portSpeed)){
+                        if(currenthighSpeed != null && !currenthighSpeed.equals(portSpeed)){
                             attributes.put("highSpeed", portSpeed);
                             wasHighSpeedUpdated = true;
                         }
