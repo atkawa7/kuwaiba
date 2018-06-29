@@ -60,6 +60,14 @@ public class ArtifactDefinition {
      */
     private byte[] definition;
     /**
+     * Script to verify preconditions to execute the Artifact
+     */
+    private byte[] preconditionsScript;
+    /**
+     * Script to verify postconditions to execute the Artifact
+     */
+    private byte[] postconditionsScript;    
+    /**
      * In the current process. Information which can be shared between an activity 
      * instance and to other activity instances or the process instance.
      */
@@ -128,6 +136,22 @@ public class ArtifactDefinition {
     
     public void setSharedInformation(List<String> sharedInformation) {
         this.sharedInformation = sharedInformation;
+    }
+    
+    public void setPreconditionsScript(byte[] preconditionsScript) {
+        this.preconditionsScript = preconditionsScript;
+    }
+    
+    public byte[] getPreconditionsScript() {
+        return preconditionsScript;
+    }
+    
+    public void setPostconditionsScript(byte[] postconditionsScript) {
+        this.postconditionsScript = postconditionsScript;
+    }
+    
+    public byte[] getPostconditionsScript() {
+        return postconditionsScript;
     }
 
     @Override

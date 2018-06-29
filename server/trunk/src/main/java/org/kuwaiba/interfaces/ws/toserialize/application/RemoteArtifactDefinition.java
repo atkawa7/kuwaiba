@@ -56,14 +56,24 @@ public class RemoteArtifactDefinition implements Serializable {
      * instance and to other activity instances or the process instance.
      */
     private List<String> sharedInformation;
+    /**
+     * Script to verify preconditions to execute the Artifact
+     */
+    private byte[] preconditionsScript;
+    /**
+     * Script to verify postconditions to execute the Artifact
+     */
+    private byte[] postconditionsScript;  
 
-    public RemoteArtifactDefinition(long id, String name, String description, String version, int type, byte[] definition) {
+    public RemoteArtifactDefinition(long id, String name, String description, String version, int type, byte[] definition, byte[] preconditionsScript, byte[] postconditionsScript) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.version = version;
         this.type = type;
         this.definition = definition;
+        this.preconditionsScript = preconditionsScript;
+        this.postconditionsScript = postconditionsScript;
     }
 
     public long getId() {
@@ -120,6 +130,22 @@ public class RemoteArtifactDefinition implements Serializable {
     
     public void setSharedInformation(List<String> sharedInformation) {
         this.sharedInformation = sharedInformation;
+    }
+    
+    public void setPreconditionsScript(byte[] preconditionsScript) {
+        this.preconditionsScript = preconditionsScript;
+    }
+    
+    public byte[] getPreconditionsScript() {
+        return preconditionsScript;
+    }
+    
+    public void setPostconditionsScript(byte[] postconditionsScript) {
+        this.postconditionsScript = postconditionsScript;
+    }
+    
+    public byte[] getPostconditionsScript() {
+        return postconditionsScript;
     }
 
     @Override

@@ -32,7 +32,6 @@ public class ArtifactView extends Panel {
     private final WebserviceBean wsBean;
     private final RemoteSession session;
     private ArtifactRenderer artifactRenderer;
-////    private final List<RemoteArtifact> remoteArtifacts;
     private final RemoteProcessInstance processInstance;
     
     public ArtifactView(RemoteArtifactDefinition artifactDefinition, RemoteArtifact artifact, WebserviceBean wsBean, RemoteSession session, RemoteProcessInstance processInstance/*, List<RemoteArtifact> remoteArtifacts*/) {
@@ -41,7 +40,6 @@ public class ArtifactView extends Panel {
         this.wsBean = wsBean;
         this.session = session;
         
-////        this.remoteArtifacts = remoteArtifacts;
         this.processInstance = processInstance;
         
         setStyleName("formmanager");
@@ -56,7 +54,7 @@ public class ArtifactView extends Panel {
                 setContent(artifactRenderer.renderArtifact());
             break;
             case ArtifactDefinition.TYPE_CONDITIONAL: 
-                artifactRenderer = new ConditionalArtifactRender(artifactDefinition, artifact);
+                artifactRenderer = new ConditionalArtifactRender(artifactDefinition, artifact, wsBean, session, processInstance);
                 setContent(artifactRenderer.renderArtifact());
             break;
             case ArtifactDefinition.TYPE_FORM: 

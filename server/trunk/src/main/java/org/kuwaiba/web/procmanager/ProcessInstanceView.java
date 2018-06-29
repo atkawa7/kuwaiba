@@ -14,18 +14,21 @@
  */
 package org.kuwaiba.web.procmanager;
 
+import com.vaadin.data.HasValue;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
 import java.util.HashMap;
 import java.util.List;
+import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfoLight;
@@ -36,11 +39,10 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinitio
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.openide.util.Exceptions;
 import org.kuwaiba.beans.WebserviceBean;
 
 /**
- *
+ * Render the current activity and all activities of a process instance
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ProcessInstanceView extends HorizontalSplitPanel {
@@ -145,10 +147,9 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
             artifactWrapperLayout.setHeight("100%");
             artifactWrapperLayout.setStyleName("formmanager");
 
-            VerticalSplitPanel artifactContainer = new VerticalSplitPanel();
+            VerticalLayout artifactContainer = new VerticalLayout();
             artifactContainer.setSizeFull();
-            artifactContainer.setSplitPosition(91, Unit.PERCENTAGE);
-
+            
             HorizontalLayout secondHorizontalLayout = new HorizontalLayout();
             secondHorizontalLayout.setSpacing(false);
             secondHorizontalLayout.setSizeFull();
@@ -182,7 +183,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
                         try {
                             content = artifactView.getArtifactRenderer().getContent();
                         } catch (Exception ex1) {
-                            Notification.show("Error", ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+                            Notification.show("Error", ex1.getMessage(), Notification.Type.ERROR_MESSAGE);
                             return;
                         }
                         
@@ -266,12 +267,60 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
             
             secondHorizontalLayout.addComponent(gl);
             secondHorizontalLayout.setComponentAlignment(gl, Alignment.MIDDLE_CENTER);
-                                    
-            artifactContainer.setFirstComponent(artifactView = new ArtifactView(artifactDefinition, artifact, wsBean, remoteSession, processInstance));
-            artifactContainer.setSecondComponent(secondHorizontalLayout);
-
-            artifactWrapperLayout.addComponent(artifactContainer);
-
+                        
+            Panel pnlArtifact = new Panel();
+            pnlArtifact.setSizeFull();
+            pnlArtifact.setContent(artifactView = new ArtifactView(artifactDefinition, artifact, wsBean, remoteSession, processInstance));
+            
+            artifactContainer.addComponent(pnlArtifact);
+            artifactContainer.addComponent(secondHorizontalLayout);
+            
+            artifactContainer.setExpandRatio(pnlArtifact, 9f);
+            artifactContainer.setExpandRatio(secondHorizontalLayout, 1f);
+            
+            if (true) {
+                VerticalLayout artifactPanel = new VerticalLayout();
+                artifactPanel.setSizeFull();
+                                
+                VerticalLayout artifactTools = new VerticalLayout();
+                artifactTools.setWidth(100, Unit.PERCENTAGE);
+                
+                CheckBox chkIdleActivity = new CheckBox("Idle Activity");
+                boolean idleActivity = false;
+                
+                if (artifact != null) {
+                    for (StringPair pair : artifact.getSharedInformation()) {
+                        if (pair.getKey().equals("__idle__")) {
+                            idleActivity = Boolean.valueOf(pair.getValue());
+                            artifactView.getArtifactRenderer().getSharedMap().put("__idle__", pair.getValue());
+                            break;
+                        }
+                    }
+                }
+                chkIdleActivity.setValue(idleActivity);
+                
+                chkIdleActivity.addValueChangeListener(new HasValue.ValueChangeListener() {
+                    @Override
+                    public void valueChange(HasValue.ValueChangeEvent event) {
+                        artifactView.getArtifactRenderer().getSharedMap().put("__idle__", event.getValue().toString());
+                        Notification.show(event.getValue().toString());
+                    }
+                });
+                artifactTools.addComponent(chkIdleActivity);
+                
+                artifactPanel.addComponent(artifactTools);
+                artifactPanel.addComponent(artifactContainer);
+                
+                artifactPanel.setExpandRatio(artifactTools, 0.1f);
+                artifactPanel.setExpandRatio(artifactContainer, 9.9f);
+                
+                artifactWrapperLayout.addComponent(artifactPanel);
+                
+            } else {
+                
+                artifactWrapperLayout.addComponent(artifactContainer);                
+            }
+            
             ProcessInstanceView.this.setSecondComponent(artifactWrapperLayout);
         } else {
             Notifications.showError("His Role does not allow to start this activity");

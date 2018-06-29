@@ -29,7 +29,6 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.openide.util.Exceptions;
 import org.kuwaiba.beans.WebserviceBean;
 
 /**
@@ -39,65 +38,61 @@ import org.kuwaiba.beans.WebserviceBean;
 public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
     private final WebserviceBean wsBean;
     private final RemoteSession session;
-    
-    private List<RemoteScriptQuery> scriptQueries;
-    
-    private RemoteProcessInstance processInstance;
-////    private final List<RemoteArtifact> remoteArtifacts;
-    
-    public ScriptQueryExecutorImpl(WebserviceBean wsBean, RemoteSession session, RemoteProcessInstance processInstance/*, List<RemoteArtifact> remoteArtifacts*/) {
+    private final RemoteProcessInstance processInstance;
+    private final List<RemoteScriptQuery> scriptQueries;
+        
+    public ScriptQueryExecutorImpl(WebserviceBean wsBean, RemoteSession session, RemoteProcessInstance processInstance) {
         this.wsBean = wsBean;
         this.session = session;
-////        this.remoteArtifacts = remoteArtifacts;
+        
         this.processInstance = processInstance;
+        
+        List<RemoteScriptQuery> remoteScriptQueries = null;
         try {
-            scriptQueries = wsBean.getScriptQueries(Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-            
+            remoteScriptQueries = wsBean.getScriptQueries(Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
         } catch (ServerSideException ex) {
-                        
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
         }
+        scriptQueries = remoteScriptQueries != null ? remoteScriptQueries : new ArrayList();
     }
     
     @Override
     public Object execute(String scriptQueryName, List<String> parameterNames, List<String> parameterValues) {
         if ("shared".equals(scriptQueryName)) {
             try {
+                long activityId = Long.valueOf(parameterValues.get(0));
+                String sharedId = parameterValues.get(1);
+                
                 List<RemoteActivityDefinition> path = wsBean.getProcessInstanceActivitiesPath(
                     processInstance.getId(), 
                     Page.getCurrent().getWebBrowser().getAddress(), 
                     session.getSessionId());
-              
-                List<RemoteArtifact> remoteArtifacts = new ArrayList();
                 
                 for (RemoteActivityDefinition activity : path) {
-                    try {
+                    
+                    if (activity.getId() == activityId) {
+                        
                         RemoteArtifact remoteArtifact = wsBean.getArtifactForActivity(
                             processInstance.getId(), 
                             activity.getId(), 
                             Page.getCurrent().getWebBrowser().getAddress(), 
                             session.getSessionId());
                         
-                        remoteArtifacts.add(remoteArtifact);
+                        List<StringPair> sharedInformation = remoteArtifact.getSharedInformation();
                         
-                    } catch (ServerSideException ex) {
-                    }
-                }
-                
-                if (!remoteArtifacts.isEmpty()) {
-                    
-                    List<StringPair> sharedInformation = remoteArtifacts.get(Integer.valueOf(parameterValues.get(0))).getSharedInformation();
-                    
-                    if (sharedInformation != null) {
-                        for (StringPair pair : sharedInformation) {
-                            if (parameterValues.get(1).equals(pair.getKey())) {
-                                return pair.getValue();
+                        if (sharedInformation != null) {
+                            
+                            for (StringPair pair : sharedInformation) {
+                                
+                                if (sharedId.equals(pair.getKey()))
+                                    return pair.getValue();
                             }
                         }
+                        break;
                     }
                 }
                 return null;
-                
+                                
             } catch (ServerSideException ex) {
                 Notifications.showError(ex.getMessage());
                 return null;

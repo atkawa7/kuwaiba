@@ -16,13 +16,14 @@ package org.kuwaiba.web.procmanager;
 
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
-import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.apis.forms.FormInstanceCreator;
 import org.kuwaiba.apis.forms.FormInstanceLoader;
 import org.kuwaiba.apis.forms.FormRenderer;
+import org.kuwaiba.apis.forms.ScriptQueryExecutorImpl;
 import org.kuwaiba.apis.forms.elements.FormDefinitionLoader;
 import org.kuwaiba.apis.forms.elements.AbstractFormInstanceLoader;
+import org.kuwaiba.apis.forms.elements.FunctionRunner;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
@@ -34,7 +35,7 @@ import org.kuwaiba.beans.WebserviceBean;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class FormArtifactRenderer implements ArtifactRenderer {
+public class FormArtifactRenderer extends ArtifactRenderer {
     private final RemoteArtifactDefinition artifactDefinition;
     private final RemoteArtifact artifact;
     private final WebserviceBean wsBean;
@@ -42,39 +43,33 @@ public class FormArtifactRenderer implements ArtifactRenderer {
     
     private FormRenderer formRenderer;
     private FormInstanceCreator formInstanceCreator;
-////    private final List<RemoteArtifact> remoteArtifacts;
-    //TODO: only to test the concept the communicator share the information of one form
-    //in the future it can be suport many forms
-//    public class FormInformationCommunicator {
-//        private HashMap<String, String> publicInformation;   
-//        
-//        public FormInformationCommunicator(HashMap<String, String> publicInformation) {
-//            this.publicInformation = publicInformation;
-//        }
-//        
-//        public HashMap<String, String> getPublicInformation() {
-//            return publicInformation;
-//        }
-//        
-//        public void getPublicInformation(HashMap<String, String> publicInformation) {
-//            this.publicInformation = publicInformation;
-//        }
-//    }
-    private RemoteProcessInstance processInstance;
+    private final RemoteProcessInstance processInstance;
     
-    public FormArtifactRenderer(RemoteArtifactDefinition artifactDefinition, RemoteArtifact artifact, WebserviceBean wsBean, RemoteSession session, RemoteProcessInstance processInstance/*, List<RemoteArtifact> remoteArtifacts*/) {
+    public FormArtifactRenderer(RemoteArtifactDefinition artifactDefinition, RemoteArtifact artifact, WebserviceBean wsBean, RemoteSession session, RemoteProcessInstance processInstance) {
         this.artifactDefinition = artifactDefinition;
         this.artifact = artifact;
         this.wsBean = wsBean;
         this.session = session;
         this.processInstance = processInstance;
-////        this.remoteArtifacts = remoteArtifacts;
     }
         
     @Override
-    public Component renderArtifact() {
+    public Component renderArtifact() {  
+
         
         if (artifactDefinition != null) {
+            
+            if (artifactDefinition.getPreconditionsScript() != null) {
+                ScriptQueryExecutorImpl scriptQueryExecutorImpl = new ScriptQueryExecutorImpl(wsBean, session, processInstance);
+                String script = new String(artifactDefinition.getPreconditionsScript());
+                FunctionRunner functionRunner = new FunctionRunner("precondition", null, script);
+                functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
+                
+                Object result = functionRunner.run(null);
+                
+                if (!Boolean.valueOf(result.toString()))
+                    return new Label(result.toString());
+            }
                         
             if (artifact != null) {
                 
@@ -113,6 +108,8 @@ public class FormArtifactRenderer implements ArtifactRenderer {
 
     @Override
     public byte[] getContent() throws Exception {
+
+        
         formInstanceCreator = new FormInstanceCreator(formRenderer.getFormStructure(), wsBean, session);
         return formInstanceCreator.getStructure();
     }
@@ -120,8 +117,8 @@ public class FormArtifactRenderer implements ArtifactRenderer {
     @Override
     public List<StringPair> getSharedInformation() {
         
-        List<StringPair> pairs = new ArrayList();
-        
+        List<StringPair> pairs = super.getSharedInformation();
+                
         for (String pair : formInstanceCreator.getSharedInformation().keySet()) {
             
             String key = pair;

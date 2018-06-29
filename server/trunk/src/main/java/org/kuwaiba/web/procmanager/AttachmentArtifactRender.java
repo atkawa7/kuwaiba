@@ -31,8 +31,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.namespace.QName;
@@ -40,7 +38,6 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.forms.components.impl.ComponentUpload;
-import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
 
@@ -48,7 +45,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinitio
  * Renders a Attachment Artifact
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class AttachmentArtifactRender implements ArtifactRenderer {
+public class AttachmentArtifactRender extends ArtifactRenderer {
     private final RemoteArtifactDefinition remoteArtifactDefinition;
     private final RemoteArtifact remoteArtifact;
     private AttachmentArtifactUploader uploader;
@@ -80,8 +77,12 @@ public class AttachmentArtifactRender implements ArtifactRenderer {
 
                     if (event == XMLStreamConstants.START_ELEMENT) {
 
-                        if (reader.getName().equals(tagValue))
-                            file = new File(reader.getElementText());
+                        if (reader.getName().equals(tagValue)) {
+                            String path = reader.getElementText();
+                            
+                            if (path != null)
+                                file = new File(path);
+                        }
                     }
                 }
 
@@ -92,7 +93,8 @@ public class AttachmentArtifactRender implements ArtifactRenderer {
     }
 
     @Override
-    public Component renderArtifact() {
+    public Component renderArtifact() {        
+        
         String strDefinition = remoteArtifactDefinition != null ? new String(remoteArtifactDefinition.getDefinition()) : null;
         if (strDefinition != null) {
             Label lbl = new Label(strDefinition);
@@ -134,16 +136,16 @@ public class AttachmentArtifactRender implements ArtifactRenderer {
 
     @Override
     public byte[] getContent() throws Exception {
-        if (file == null)
-            throw new Exception("The process can not continue to next activity meanwhile the attachment is not uploaded");
-        String strContent = "<artifact type=\"attachment\"><value>" + file.getAbsolutePath() + "</value></artifact>";
+//        if (file == null)
+//            throw new Exception("The process can not continue to next activity meanwhile the attachment is not uploaded");
+        String strContent = "<artifact type=\"attachment\"><value>" + (file != null ? file.getAbsolutePath() : "") + "</value></artifact>";
         return strContent.getBytes();
     }
 
-    @Override
-    public List<StringPair> getSharedInformation() {
-        return new ArrayList();
-    }
+////    @Override
+////    public List<StringPair> getSharedInformation() {
+////        return new ArrayList();
+////    }
     
     private class AttachmentArtifactUploader implements Upload.Receiver, Upload.SucceededListener {
         
@@ -174,11 +176,13 @@ public class AttachmentArtifactRender implements ArtifactRenderer {
     public void setArtifactContentView() {
         upload.setButtonCaption("Update File");
         link.setVisible(true);
-        link.setResource(getStreamResource());
-        link.setCaption(file.getName());
+        if (file != null) {
+            link.setResource(getStreamResource());
+            link.setCaption(file.getName());
+        }
     }
     
-    public StreamResource getStreamResource() {
+    private StreamResource getStreamResource() {
         StreamResource streamResource = new StreamResource(new StreamResource.StreamSource() {
             
                 @Override

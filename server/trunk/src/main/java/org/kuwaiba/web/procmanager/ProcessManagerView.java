@@ -19,7 +19,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.VerticalSplitPanel;
+import com.vaadin.ui.VerticalLayout;
 import java.util.List;
 import javax.inject.Inject;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -27,8 +27,6 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.kuwaiba.web.LoginView;
-import org.kuwaiba.web.modules.servmanager.ServiceManagerView;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.web.IndexUI;
 /**
@@ -36,7 +34,7 @@ import org.kuwaiba.web.IndexUI;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @CDIView("application")
-public class ProcessManagerView extends VerticalSplitPanel implements View {
+public class ProcessManagerView extends VerticalLayout implements View {
     public static String VIEW_NAME = "application";
     
     @Inject
@@ -47,14 +45,17 @@ public class ProcessManagerView extends VerticalSplitPanel implements View {
         addStyleName("misc");
         addStyleName("darklayout");
         
-        setSplitPosition(4, Unit.PERCENTAGE);
         setSizeFull();
     }
     
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        setFirstComponent(((IndexUI)getUI()).getMainMenu());
         
+        MenuBar mainMenu = ((IndexUI)getUI()).getMainMenu();
+        
+        addComponent(mainMenu);
+        setExpandRatio(mainMenu, 0.5f);
+                
         RemoteProcessDefinition processDefinition = (RemoteProcessDefinition) getSession().getAttribute("selectedProcessDefinition");
         
         try {
@@ -63,7 +64,9 @@ public class ProcessManagerView extends VerticalSplitPanel implements View {
                 Page.getCurrent().getWebBrowser().getAddress(), 
                 ((RemoteSession) getSession().getAttribute("session")).getSessionId());
 
-            setSecondComponent(new ProcessInstancesView(processDefinition, processInstances, wsBean, ((RemoteSession) getSession().getAttribute("session"))));
+            ProcessInstancesView processInstancesView = new ProcessInstancesView(processDefinition, processInstances, wsBean, ((RemoteSession) getSession().getAttribute("session")));
+            addComponent(processInstancesView);
+            setExpandRatio(processInstancesView, 9.5f);
 
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());

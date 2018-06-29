@@ -2058,6 +2058,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         pools.add(Util.createPoolFromNode(poolNode));
                 }
             }
+            tx.success();
             return pools;
         }
     }

@@ -16,34 +16,57 @@ package org.kuwaiba.web.procmanager;
 
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
 import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
-import org.kuwaiba.apis.persistence.util.StringPair;
+import org.kuwaiba.apis.forms.ScriptQueryExecutorImpl;
+import org.kuwaiba.apis.forms.elements.FunctionRunner;
+import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
  * Renders a Conditional Artifact
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ConditionalArtifactRender implements ArtifactRenderer {
-    private final RemoteArtifactDefinition remoteArtifactDefinition;
+public class ConditionalArtifactRender extends ArtifactRenderer {
+    private final RemoteArtifactDefinition artifactDefinition;
     private final RemoteArtifact remoteArtifact;
     private CheckBox checkBox;
     
-    public ConditionalArtifactRender(RemoteArtifactDefinition remoteArtifactDefinition, RemoteArtifact remoteArtifact) {
+    private final WebserviceBean wsBean;
+    private final RemoteSession session;
+    private final RemoteProcessInstance processInstance;
+    
+    public ConditionalArtifactRender(RemoteArtifactDefinition remoteArtifactDefinition, RemoteArtifact remoteArtifact, WebserviceBean wsBean, RemoteSession session, RemoteProcessInstance processInstance) {
         this.remoteArtifact = remoteArtifact;
-        this.remoteArtifactDefinition = remoteArtifactDefinition;
+        this.artifactDefinition = remoteArtifactDefinition;
+        
+        this.wsBean = wsBean;
+        this.session = session;
+        this.processInstance = processInstance;
     }
 
     @Override
     public Component renderArtifact() {
-        checkBox = new CheckBox(remoteArtifactDefinition != null ? new String(remoteArtifactDefinition.getDefinition()) : "<Not Set>");
+        if (artifactDefinition.getPreconditionsScript() != null) {
+            ScriptQueryExecutorImpl scriptQueryExecutorImpl = new ScriptQueryExecutorImpl(wsBean, session, processInstance);
+            String script = new String(artifactDefinition.getPreconditionsScript());
+            FunctionRunner functionRunner = new FunctionRunner("precondition", null, script);
+            functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
+
+            Object result = functionRunner.run(null);
+
+            if (!Boolean.valueOf(result.toString()))
+                return new Label(result.toString());
+        }
+        
+        checkBox = new CheckBox(artifactDefinition != null ? new String(artifactDefinition.getDefinition()) : "<Not Set>");
         checkBox.setValue(getConditionalArtifactContent());
         
         if (remoteArtifact != null)
@@ -58,10 +81,10 @@ public class ConditionalArtifactRender implements ArtifactRenderer {
         return strContent.getBytes();
     }
 
-    @Override
-    public List<StringPair> getSharedInformation() {
-        return new ArrayList();
-    }
+////    @Override
+////    public List<StringPair> getSharedInformation() {
+////        return new ArrayList();
+////    }
     
     private boolean getConditionalArtifactContent() {
         if (remoteArtifact != null) {

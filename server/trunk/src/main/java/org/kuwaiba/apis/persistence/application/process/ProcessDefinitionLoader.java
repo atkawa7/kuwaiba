@@ -232,60 +232,23 @@ public class ProcessDefinitionLoader {
                                         reader.nextTag();
                                         if (reader.getEventType() == XMLStreamConstants.START_ELEMENT &&
                                                 reader.getName().equals(tagParameters)) {
-                                            // Attribute Name
-                                            reader.nextTag();
+                                                                                        
+                                            while (true) {
+                                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
+                                                    if (reader.getName().equals(tagParameter)) {
+                                                        
+                                                        String attributeName = reader.getAttributeValue(null, Attribute.NAME);
+                                                        String attributeValue = reader.getElementText();
 
-                                            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT && 
-                                                reader.getName().equals(tagParameter)) {
-
-                                                String attributeName = reader.getAttributeValue(null, Attribute.NAME);
-                                                String attributeValue = reader.getElementText();
-
-                                                artifactParameters.put(attributeName, attributeValue);
-                                            }
-                                            // Attribute Description
-                                            reader.nextTag();
-
-                                            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT && 
-                                                reader.getName().equals(tagParameter)) {
-
-                                                String attributeName = reader.getAttributeValue(null, Attribute.NAME);
-                                                String attributeValue = reader.getElementText();
-
-                                                artifactParameters.put(attributeName, attributeValue);
-                                            }
-                                            // Attribute Version
-                                            reader.nextTag();
-
-                                            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT && 
-                                                reader.getName().equals(tagParameter)) {
-
-                                                String attributeName = reader.getAttributeValue(null, Attribute.NAME);
-                                                String attributeValue = reader.getElementText();
-
-                                                artifactParameters.put(attributeName, attributeValue);
-                                            }
-                                            // Attribute Definition
-                                            reader.nextTag();
-
-                                            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT && 
-                                                reader.getName().equals(tagParameter)) {
-
-                                                String attributeName = reader.getAttributeValue(null, Attribute.NAME);
-                                                String attributeValue = reader.getElementText();
-
-                                                artifactParameters.put(attributeName, attributeValue);
-                                            }
-                                            // Attribute Shared Keys
-                                            reader.nextTag();
-
-                                            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT && 
-                                                reader.getName().equals(tagParameter)) {
-
-                                                String attributeName = reader.getAttributeValue(null, Attribute.NAME);
-                                                String attributeValue = reader.getElementText();
-
-                                                artifactParameters.put(attributeName, attributeValue);
+                                                        artifactParameters.put(attributeName, attributeValue);
+                                                    }
+                                                }
+                                                if (reader.getEventType() == XMLStreamConstants.END_ELEMENT) {
+                                                    
+                                                    if (reader.getName().equals(tagParameters))
+                                                        break;
+                                                }
+                                                reader.next();
                                             }
                                         }
                                         byte[] definition = null;
@@ -301,6 +264,9 @@ public class ProcessDefinitionLoader {
                                             artifactParameters.get("version"), 
                                             type, 
                                             definition);
+                                        
+                                        artifactDefinition.setPreconditionsScript(artifactParameters.containsKey("preconditionsScript") ? artifactParameters.get("preconditionsScript").getBytes() : null);
+                                        artifactDefinition.setPostconditionsScript(artifactParameters.containsKey("postconditionsScript") ? artifactParameters.get("postconditionsScript").getBytes() : null);
 
                                         artifactDefinitions.put(artifactDefinition.getId(), artifactDefinition);
                                         activityartifact.put(activityDefinitionId, artifactDefinition.getId());

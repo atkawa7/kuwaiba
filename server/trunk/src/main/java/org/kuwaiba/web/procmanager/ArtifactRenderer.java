@@ -15,6 +15,8 @@
 package org.kuwaiba.web.procmanager;
 
 import com.vaadin.ui.Component;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.util.StringPair;
 
@@ -22,21 +24,35 @@ import org.kuwaiba.apis.persistence.util.StringPair;
  * Renders an artifact type
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public interface ArtifactRenderer {
+public abstract class ArtifactRenderer {
+    private final List<StringPair> sharedInformation = new ArrayList();
+    private final HashMap<String, String> sharedMap = new HashMap();
+    
     /**
      * Return the Vaadin Component to render
      * @return
      */
-    public Component renderArtifact();
+    public abstract Component renderArtifact();
     /**
      * Gets the content
      * @return The content of the artifact
      * @throws Exception Throws if the content is no the expected
      */
-    public byte[] getContent() throws Exception;
+    public abstract byte[] getContent() throws Exception;
     /**
      * Gets the shared information
      * @return
      */
-    public List<StringPair> getSharedInformation();
+    public List<StringPair> getSharedInformation() {
+        sharedInformation.clear();
+        
+        for (String key : sharedMap.keySet())
+            sharedInformation.add(new StringPair(key, sharedMap.get(key)));
+        
+        return sharedInformation;
+    }
+    
+    public HashMap<String, String> getSharedMap() {
+        return sharedMap;
+    }
 }

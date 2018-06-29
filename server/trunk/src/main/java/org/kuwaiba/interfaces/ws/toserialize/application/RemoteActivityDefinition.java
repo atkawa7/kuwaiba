@@ -130,7 +130,7 @@ public class RemoteActivityDefinition implements Serializable {
         if (activityDefinition instanceof ConditionalActivityDefinition) {
             res = new RemoteConditionalActivityDefinition(activityDefinition.getId(), activityDefinition.getName(), 
                 activityDefinition.getDescription(), activityDefinition.getType(), 
-                new RemoteArtifactDefinition(activityDefinition.getArfifact().getId(), activityDefinition.getArfifact().getName(), activityDefinition.getArfifact().getDescription(), activityDefinition.getArfifact().getVersion(), activityDefinition.getArfifact().getType(), activityDefinition.getArfifact().getDefinition()), 
+                new RemoteArtifactDefinition(activityDefinition.getArfifact().getId(), activityDefinition.getArfifact().getName(), activityDefinition.getArfifact().getDescription(), activityDefinition.getArfifact().getVersion(), activityDefinition.getArfifact().getType(), activityDefinition.getArfifact().getDefinition(), activityDefinition.getArfifact().getPreconditionsScript(), activityDefinition.getArfifact().getPostconditionsScript()), 
                 new RemoteActor(activityDefinition.getActor().getId(), activityDefinition.getActor().getName(), activityDefinition.getActor().getType()));
             
             if (((ConditionalActivityDefinition) activityDefinition).getNextActivityIfTrue() != null) 
@@ -142,7 +142,7 @@ public class RemoteActivityDefinition implements Serializable {
         } else {
             res = new RemoteActivityDefinition(activityDefinition.getId(), activityDefinition.getName(), 
                 activityDefinition.getDescription(), activityDefinition.getType(), 
-                new RemoteArtifactDefinition(activityDefinition.getArfifact().getId(), activityDefinition.getArfifact().getName(), activityDefinition.getArfifact().getDescription(), activityDefinition.getArfifact().getVersion(), activityDefinition.getArfifact().getType(), activityDefinition.getArfifact().getDefinition()), 
+                new RemoteArtifactDefinition(activityDefinition.getArfifact().getId(), activityDefinition.getArfifact().getName(), activityDefinition.getArfifact().getDescription(), activityDefinition.getArfifact().getVersion(), activityDefinition.getArfifact().getType(), activityDefinition.getArfifact().getDefinition(), activityDefinition.getArfifact().getPreconditionsScript(), activityDefinition.getArfifact().getPostconditionsScript()), 
                 new RemoteActor(activityDefinition.getActor().getId(), activityDefinition.getActor().getName(), activityDefinition.getActor().getType()));
             
             if (activityDefinition.getNextActivity() != null) 

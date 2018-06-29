@@ -22,6 +22,8 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.renderers.ButtonRenderer;
@@ -35,6 +37,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.openide.util.Exceptions;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.web.IndexUI;
 
 /**
  * Shows a set of process instances
@@ -90,7 +93,19 @@ public class ProcessInstancesView extends VerticalLayout {
                                         Page.getCurrent().getWebBrowser().getAddress(),
                                         ((RemoteSession) getSession().getAttribute("session")).getSessionId());
                                 
-                                ((ProcessManagerView) getUI().getContent()).setSecondComponent(new ProcessInstanceView(processInstance, processDefinition, wsBean,session));
+                                UI ui = getUI();
+                                
+                                MenuBar mainMenu = ((IndexUI) ui).getMainMenu();
+                                
+                                ((ProcessManagerView) ui.getContent()).removeAllComponents();
+                                
+                                ((ProcessManagerView) ui.getContent()).addComponent(mainMenu);
+                                ((ProcessManagerView) ui.getContent()).setExpandRatio(mainMenu, 0.5f);
+                                
+                                ProcessInstanceView processInstanceView = new ProcessInstanceView(processInstance, processDefinition, wsBean,session);
+                                
+                                ((ProcessManagerView) ui.getContent()).addComponent(processInstanceView);
+                                ((ProcessManagerView) ui.getContent()).setExpandRatio(processInstanceView, 9.5f);
                                                                                                 
                             } catch (ServerSideException ex) {
                                 Exceptions.printStackTrace(ex);
@@ -128,9 +143,24 @@ public class ProcessInstancesView extends VerticalLayout {
             @Override
             public void click(ClickableRenderer.RendererClickEvent event) {
                 ProcessInstanceBean processInstanceBean = (ProcessInstanceBean) event.getItem();
+                /*
                 ((ProcessManagerView) getUI().getContent()).setSecondComponent(
                 new ProcessInstanceView(processInstanceBean.getProcessInstance(), processInstanceBean.getProcessDefinition(), wsBean, session)
                 );
+                */
+                UI ui = getUI();
+                
+                MenuBar mainMenu = ((IndexUI) ui).getMainMenu();
+                
+                ((ProcessManagerView) ui.getContent()).removeAllComponents();
+                
+                ((ProcessManagerView) ui.getContent()).addComponent(mainMenu);
+                ((ProcessManagerView) ui.getContent()).setExpandRatio(mainMenu, 0.5f);
+
+                ProcessInstanceView processInstanceView = new ProcessInstanceView(processInstanceBean.getProcessInstance(), processInstanceBean.getProcessDefinition(), wsBean, session);
+
+                ((ProcessManagerView) ui.getContent()).addComponent(processInstanceView);
+                ((ProcessManagerView) ui.getContent()).setExpandRatio(processInstanceView, 9.5f);
             }
         });
         
