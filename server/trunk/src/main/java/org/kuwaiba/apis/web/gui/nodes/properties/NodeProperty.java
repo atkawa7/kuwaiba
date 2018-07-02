@@ -21,7 +21,6 @@ import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
 import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
-import org.kuwaiba.apis.web.gui.nodes.listmanagernodes.ListTypeChildNode;
 import org.kuwaiba.web.modules.osp.google.overlays.MarkerNode;
 
 /**

@@ -26,15 +26,15 @@ import org.kuwaiba.beans.WebserviceBean;
  * The definition of the List Types Manager module
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ListManagerModule  extends AbstractModule {
+public class ListTypeManagerModule  extends AbstractModule {
     /**
      * The actual component
      */
-    private ListManagerComponent listManager;
+    private ListTypeManagerComponent listManager;
     private WebserviceBean wsBean;
     private RemoteSession session;
     
-    public ListManagerModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
+    public ListTypeManagerModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
         super(eventBus);
         this.wsBean = wsBean;
         this.session = session;
@@ -53,7 +53,7 @@ public class ListManagerModule  extends AbstractModule {
 
     @Override
     public String getVersion() {
-        return "1.0";
+        return "1.1";
     }
 
     @Override
@@ -73,7 +73,7 @@ public class ListManagerModule  extends AbstractModule {
 
     @Override
     public View open() {
-        listManager = new ListManagerComponent(eventBus, wsBean, session);
+        listManager = new ListTypeManagerComponent(eventBus, wsBean, session);
         //Register components in the event bus
         listManager.registerComponents();
         return listManager;

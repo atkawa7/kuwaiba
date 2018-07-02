@@ -42,6 +42,8 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.web.modules.servmanager.ServiceManagerView;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
+import org.kuwaiba.web.modules.ltmanager.ListTypeManagerComponent;
+import org.kuwaiba.web.modules.ltmanager.ListTypeManagerModule;
 import org.kuwaiba.web.procmanager.ProcessManagerView;
 
 /**
@@ -68,6 +70,7 @@ public class IndexUI extends UI {
     protected void init(VaadinRequest request) {
         this.setNavigator(new Navigator(this, this));
         this.getNavigator().addProvider(viewProvider);
+        this.getNavigator().setErrorView(new ErrorView());
         
         if (getSession().getAttribute("session") == null)
             this.getNavigator().navigateTo(LoginView.VIEW_NAME);
@@ -116,6 +119,17 @@ public class IndexUI extends UI {
                 @Override
                 public void menuSelected(MenuBar.MenuItem selectedItem) {
                     getUI().getNavigator().navigateTo(ServiceManagerView.VIEW_NAME);
+                }
+            });
+            
+            this.mnuMain.addItem("List Type Manager", new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    ListTypeManagerModule ltmModule = new ListTypeManagerModule(null, wsBean, 
+                            (RemoteSession) getSession().getAttribute("session"));
+                    
+                    getUI().getNavigator().addView(ListTypeManagerComponent.VIEW_NAME, ltmModule.open());
+                    getUI().getNavigator().navigateTo(ListTypeManagerComponent.VIEW_NAME);
                 }
             });
 
