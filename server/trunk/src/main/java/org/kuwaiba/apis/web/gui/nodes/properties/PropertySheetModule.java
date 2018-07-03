@@ -17,10 +17,8 @@ package org.kuwaiba.apis.web.gui.nodes.properties;
 
 import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
-import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.MenuBar;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * The definition of the property sheet module.
@@ -58,8 +56,7 @@ public class PropertySheetModule extends AbstractModule {
     }
 
     @Override
-    public String getMenuEntry() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void attachToMenu(MenuBar menuBar) {
     }
 
     @Override

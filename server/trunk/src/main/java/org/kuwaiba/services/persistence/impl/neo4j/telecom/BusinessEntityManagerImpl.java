@@ -1954,24 +1954,31 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public List<BusinessObjectLightList> findRoutesThroughSpecialRelationships(String objectAClassName, 
             long objectAId, String objectBClassName, long objectBId, String relationshipName) {
         List<BusinessObjectLightList> paths = new ArrayList<>();
-//        String cypherQuery = String.format("MATCH path = (a)-[:%s*1..20{name:\"%s\"}]-(b) " +
-//                            "WHERE id(a) = %s AND id(b) = %s " +
-//                            "RETURN nodes(path) as path ORDER BY size(path) ASC LIMIT %s", RelTypes.RELATED_TO_SPECIAL, relationshipName, objectAId, objectBId, 
-//                                                                    aem.getConfiguration().get("maxRoutes")); //NOI18N
+
         String cypherQuery = String.format("MATCH path = (a)-[:%s*1..30{name:\"%s\"}]-(b) " +
                             "WHERE id(a) = %s AND id(b) = %s " +
                             "RETURN nodes(path) as path LIMIT %s", RelTypes.RELATED_TO_SPECIAL, relationshipName, objectAId, objectBId, 
                                                                     aem.getConfiguration().get("maxRoutes")); //NOI18N
-        try (Transaction tx = graphDb.beginTx()){
+        try (Transaction tx = graphDb.beginTx()) {
            
             Result result = graphDb.execute(cypherQuery);
             Iterator<List<Node>> column = result.columnAs("path");
             
-            for (List<Node> list : Iterators.asIterable(column)){
+            //Filtering the routes with repeated nodes didn't work using a cypher query, so we do it here
+            //at least while we figure out a working cypher query
+            for (List<Node> list : Iterators.asIterable(column)) {
                 BusinessObjectLightList aPath = new BusinessObjectLightList();
-                for (Node aNode : list)
-                    aPath.add(Util.createRemoteObjectLightFromNode(aNode));
-                paths.add(aPath);
+                boolean discardPath = false;
+                for (Node aNode : list) {
+                    BusinessObjectLight aHop = Util.createRemoteObjectLightFromNode(aNode);
+                    if (aPath.getList().contains(aHop)) {
+                        discardPath = true;
+                        break;
+                    } else
+                        aPath.add(aHop);
+                }
+                if (!discardPath)
+                    paths.add(aPath);
             }
         }
         

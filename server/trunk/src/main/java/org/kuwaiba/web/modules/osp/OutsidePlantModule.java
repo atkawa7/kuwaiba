@@ -18,6 +18,7 @@ package org.kuwaiba.web.modules.osp;
 import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.MenuBar;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
@@ -72,9 +73,7 @@ public class OutsidePlantModule extends AbstractModule {
         return MODULE_TYPE_FREE_CORE;
     }
 
-    @Override
-    public String getMenuEntry() {
-        return "Tools/Advanced";
+    public void attachToMenu(MenuBar menuBar) {
     }
 
     @Override

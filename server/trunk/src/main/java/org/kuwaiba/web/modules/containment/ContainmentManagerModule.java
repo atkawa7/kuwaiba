@@ -18,6 +18,7 @@ package org.kuwaiba.web.modules.containment;
 import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.MenuBar;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
@@ -67,8 +68,7 @@ public class ContainmentManagerModule extends AbstractModule {
     }
 
     @Override
-    public String getMenuEntry() {
-        return "Tools/Advanced";
+    public void attachToMenu(MenuBar menuBar) {
     }
 
     @Override

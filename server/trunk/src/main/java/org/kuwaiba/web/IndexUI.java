@@ -42,7 +42,6 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.web.modules.servmanager.ServiceManagerView;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
-import org.kuwaiba.web.modules.ltmanager.ListTypeManagerComponent;
 import org.kuwaiba.web.modules.ltmanager.ListTypeManagerModule;
 import org.kuwaiba.web.procmanager.ProcessManagerView;
 
@@ -122,16 +121,10 @@ public class IndexUI extends UI {
                 }
             });
             
-            this.mnuMain.addItem("List Type Manager", new MenuBar.Command() {
-                @Override
-                public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    ListTypeManagerModule ltmModule = new ListTypeManagerModule(null, wsBean, 
-                            (RemoteSession) getSession().getAttribute("session"));
-                    
-                    getUI().getNavigator().addView(ListTypeManagerComponent.VIEW_NAME, ltmModule.open());
-                    getUI().getNavigator().navigateTo(ListTypeManagerComponent.VIEW_NAME);
-                }
-            });
+            ListTypeManagerModule ltmModule = new ListTypeManagerModule(null, wsBean, 
+                        (RemoteSession) getSession().getAttribute("session"));
+            
+            ltmModule.attachToMenu(mnuMain);
 
             this.mnuMain.addItem("Log Out", new MenuBar.Command() {
                 @Override

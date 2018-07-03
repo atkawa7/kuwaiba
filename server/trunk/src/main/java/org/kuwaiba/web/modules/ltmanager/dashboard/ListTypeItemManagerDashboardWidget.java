@@ -14,12 +14,16 @@
  */
 package org.kuwaiba.web.modules.ltmanager.dashboard;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.ListSelect;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -56,18 +60,13 @@ public class ListTypeItemManagerDashboardWidget extends AbstractDashboardWidget 
 
     @Override
     public void createContent() { 
-        VerticalLayout lytContent = new VerticalLayout();
-        Grid<RemoteObjectLight> lstListTypeItems = new Grid<>();
+        HorizontalLayout lytContent = new HorizontalLayout();
         try {
             List<RemoteObjectLight> listTypeItems = wsBean.getListTypeItems(listType.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), 
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-            if (listTypeItems.isEmpty())
-                lytContent.addComponent(new Label("There are no list type items associated to this list type"));
-            else {
-                lstListTypeItems.setItems(listTypeItems);
-                lstListTypeItems.addColumn(RemoteObjectLight::getName).setCaption("List Type Items");
-                lytContent.addComponent(lstListTypeItems);
-            }
+            
+            lytContent.addComponent(new ListTypeItemsControlTable(listTypeItems));
+            
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
         }
@@ -75,4 +74,107 @@ public class ListTypeItemManagerDashboardWidget extends AbstractDashboardWidget 
         addComponent(contentComponent);
     }
     
+    /**
+     * The combination of a table containing the list type items and a few buttons with options 
+     */
+    private class ListTypeItemsControlTable extends VerticalLayout {
+        /**
+         * A button to add new list type items
+         */
+        private Button btnAddListTypeItem;
+        /**
+         * A button to see what objects refer to the selected list type item
+         */
+        private Button btnDeleteListTypeItem;
+        /**
+         * A button to delete the selected list type item
+         */
+        private Button btnSeeListTypeItemUses;
+        /**
+         * The list with the actual list type items
+         */
+        private Grid<RemoteObjectLight> lstListTypeItems;
+        
+        public ListTypeItemsControlTable(List<RemoteObjectLight> listTypeItems) {
+            HorizontalLayout lytButtons = new HorizontalLayout();
+            btnAddListTypeItem = new Button("Add", (event) -> {
+                Window wdwAddListTypeItem = new Window("New List Type Item");
+                
+                TextField txtName = new TextField("Name");
+                TextField txtDisplayName = new TextField("Display Name");
+                
+                Button btnOK = new Button("OK", (e) -> {
+                    try {
+                        wsBean.createListTypeItem(listType.getClassName(), txtName.getValue(), 
+                                txtDisplayName.getValue(), Page.getCurrent().getWebBrowser().getAddress(), 
+                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                        refreshListTypeItemsList();
+                    } catch (ServerSideException ex) {
+                        Notifications.showError(ex.getMessage());
+                    }
+                    wdwAddListTypeItem.close();
+                });
+                
+                Button btnCancel = new Button("Cancel", (e) -> {
+                    wdwAddListTypeItem.close();
+                });
+ 
+                wdwAddListTypeItem.setContent(new FormLayout(txtName, txtDisplayName, btnOK, btnCancel));
+                
+                getUI().addWindow(wdwAddListTypeItem);
+            });
+            btnAddListTypeItem.setWidth(100, Unit.PERCENTAGE);
+            btnAddListTypeItem.setIcon(VaadinIcons.INSERT);
+            
+            btnSeeListTypeItemUses = new Button("See Uses", (event) -> {
+                Notifications.showError("Not Implemented Yet");
+            });
+            btnSeeListTypeItemUses.setWidth(100, Unit.PERCENTAGE);
+            btnSeeListTypeItemUses.setIcon(VaadinIcons.ARROW_CIRCLE_RIGHT);
+            
+            btnDeleteListTypeItem = new Button("Delete", (event) -> {
+                if (lstListTypeItems.getSelectedItems().isEmpty())
+                    Notifications.showError("You need to select an item first");
+                else {
+                    RemoteObjectLight selectedItem = lstListTypeItems.getSelectedItems().iterator().next();
+                    try {
+                        wsBean.deleteListTypeItem(selectedItem.getClassName(), selectedItem.getId(), 
+                                false, Page.getCurrent().getWebBrowser().getAddress(), 
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                        refreshListTypeItemsList();
+                    } catch (ServerSideException ex) {
+                        Notifications.showError(ex.getMessage());
+                    }
+                }
+            });
+            btnDeleteListTypeItem.setWidth(100, Unit.PERCENTAGE);
+            btnDeleteListTypeItem.setIcon(VaadinIcons.CLOSE);
+            
+            lytButtons.setWidth(100, Unit.PERCENTAGE);
+            lytButtons.setSpacing(false);
+            lytButtons.setSizeFull();
+            lytButtons.addComponents(btnAddListTypeItem, btnSeeListTypeItemUses, btnDeleteListTypeItem);
+            
+            lstListTypeItems = new Grid<>();
+            lstListTypeItems.setSelectionMode(Grid.SelectionMode.SINGLE);
+            lstListTypeItems.setItems(listTypeItems);
+            lstListTypeItems.addColumn(RemoteObjectLight::getName).setCaption("Items in this List Type");
+            
+            setSpacing(false);
+            setSizeUndefined();
+            addComponents(lstListTypeItems, lytButtons);
+        }
+        
+        public void refreshListTypeItemsList() {
+            try {
+                List<RemoteObjectLight> listTypeItems = wsBean.getListTypeItems(listType.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), 
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+
+                lstListTypeItems.setItems(listTypeItems);
+
+            } catch (ServerSideException ex) {
+                Notifications.showError(ex.getMessage());
+            }
+        }
+    }
 }

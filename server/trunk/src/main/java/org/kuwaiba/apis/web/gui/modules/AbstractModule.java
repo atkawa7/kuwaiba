@@ -16,8 +16,10 @@
 package org.kuwaiba.apis.web.gui.modules;
 
 import com.google.common.eventbus.EventBus;
+import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.server.Resource;
+import com.vaadin.ui.MenuBar;
 
 /**
  * The root class of all the pluggable modules (like Navigation Tree, Physical View, etc)
@@ -79,10 +81,10 @@ public abstract class AbstractModule {
      */
     public abstract int getType();
     /**
-     * Where should the menu entry to launch the module be located
-     * @return A string of menu sections separated by a slash (/). Example: "Tools/Advanced"
+     * Attaches a menu option to an existing menu
+     * @param menuBar
      */
-    public abstract String getMenuEntry();
+    public abstract void attachToMenu(MenuBar menuBar);
     /**
      * Gets the icon used in menus and buttons.
      * @return The icon.

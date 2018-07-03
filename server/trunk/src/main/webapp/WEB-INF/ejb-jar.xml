@@ -79,7 +79,7 @@
            <description>Max number of routes to be return by the findRoutesThroughSpecialRelationships method</description>
            <env-entry-name>maxRoutes</env-entry-name>
            <env-entry-type>java.lang.Integer</env-entry-type>
-           <env-entry-value>30</env-entry-value>
+           <env-entry-value>500</env-entry-value>
         </env-entry>
 
         <!-- Other -->

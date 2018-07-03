@@ -18,6 +18,8 @@ package org.kuwaiba.web.modules.ltmanager;
 import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.UI;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
@@ -30,7 +32,7 @@ public class ListTypeManagerModule  extends AbstractModule {
     /**
      * The actual component
      */
-    private ListTypeManagerComponent listManager;
+    private ListTypeManagerComponent listTypeManagerComponent;
     private WebserviceBean wsBean;
     private RemoteSession session;
     
@@ -43,7 +45,7 @@ public class ListTypeManagerModule  extends AbstractModule {
 
     @Override
     public String getName() {
-        return "List Manager";
+        return "List Type Manager";
     }
 
     @Override
@@ -67,21 +69,28 @@ public class ListTypeManagerModule  extends AbstractModule {
     }
 
     @Override
-    public String getMenuEntry() {
-        return "Tools/Navigation";
+    public void attachToMenu(MenuBar menuBar) {
+        MenuBar.MenuItem listTypeManagerMenuItem = menuBar.addItem(getName(), new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                UI.getCurrent().getNavigator().addView(ListTypeManagerComponent.VIEW_NAME, open());
+                UI.getCurrent().getNavigator().navigateTo(ListTypeManagerComponent.VIEW_NAME);
+            }
+        });
+        listTypeManagerMenuItem.setDescription(getDescription());
     }
 
     @Override
     public View open() {
-        listManager = new ListTypeManagerComponent(eventBus, wsBean, session);
+        listTypeManagerComponent = new ListTypeManagerComponent(eventBus, wsBean, session);
         //Register components in the event bus
-        listManager.registerComponents();
-        return listManager;
+        listTypeManagerComponent.registerComponents();
+        return listTypeManagerComponent;
     }
 
     @Override
     public void close() {
         //Unregister components from the event bus
-        listManager.unregisterComponents();
+        listTypeManagerComponent.unregisterComponents();
     }
 }
