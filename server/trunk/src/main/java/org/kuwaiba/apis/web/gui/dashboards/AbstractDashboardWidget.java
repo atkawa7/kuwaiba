@@ -100,13 +100,12 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
      * Displays the contents of the content widget in a separate modal window
      */
     public void launch() {
-        Window wnwContent = new Window(title);
-        wnwContent.setModal(true);
-        
-        if (contentComponent != null)
+        if (contentComponent != null) {
+            Window wnwContent = new Window(title);
+            wnwContent.setModal(true);
             wnwContent.setContent(contentComponent);
-        
-        getUI().addWindow(wnwContent);
+            getUI().addWindow(wnwContent);
+        }
     }
     
     /**

@@ -16,6 +16,7 @@ package org.kuwaiba.web.modules.ltmanager.dashboard;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
@@ -101,7 +102,12 @@ public class ListTypeItemManagerDashboardWidget extends AbstractDashboardWidget 
                 Window wdwAddListTypeItem = new Window("New List Type Item");
                 
                 TextField txtName = new TextField("Name");
+                txtName.setRequiredIndicatorVisible(true);
+                txtName.setSizeFull();
+                
+                
                 TextField txtDisplayName = new TextField("Display Name");
+                txtDisplayName.setSizeFull();
                 
                 Button btnOK = new Button("OK", (e) -> {
                     try {
@@ -115,11 +121,25 @@ public class ListTypeItemManagerDashboardWidget extends AbstractDashboardWidget 
                     wdwAddListTypeItem.close();
                 });
                 
+                btnOK.setEnabled(false);
+                txtName.addValueChangeListener((e) -> {
+                    btnOK.setEnabled(!txtName.isEmpty());
+                });
+                
                 Button btnCancel = new Button("Cancel", (e) -> {
                     wdwAddListTypeItem.close();
                 });
  
-                wdwAddListTypeItem.setContent(new FormLayout(txtName, txtDisplayName, btnOK, btnCancel));
+                wdwAddListTypeItem.setModal(true);
+                wdwAddListTypeItem.setWidth(10, Unit.PERCENTAGE);
+                wdwAddListTypeItem.center();
+                
+                FormLayout lytTextFields = new FormLayout(txtName, txtDisplayName);
+                HorizontalLayout lytMoreButtons = new HorizontalLayout(btnOK, btnCancel);
+                VerticalLayout lytMain = new VerticalLayout(lytTextFields, lytMoreButtons);
+                lytMain.setComponentAlignment(lytMoreButtons, Alignment.TOP_RIGHT);
+                
+                wdwAddListTypeItem.setContent(lytMain);
                 
                 getUI().addWindow(wdwAddListTypeItem);
             });

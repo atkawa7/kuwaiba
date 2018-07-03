@@ -111,6 +111,7 @@ public class ListTypeManagerComponent extends AbstractTopComponent {
             lytLeftPanel.setExpandRatio(tblListTypes, 9);
             lytLeftPanel.setSizeFull();
             pnlMain.setFirstComponent(lytLeftPanel);
+            pnlMain.setSplitPosition(20, Unit.PERCENTAGE);
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
         }
