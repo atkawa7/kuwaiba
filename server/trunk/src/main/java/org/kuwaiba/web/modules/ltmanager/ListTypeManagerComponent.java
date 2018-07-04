@@ -30,6 +30,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import java.util.List;
 import java.util.Optional;
+import javax.inject.Inject;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -62,6 +63,11 @@ public class ListTypeManagerComponent extends AbstractTopComponent {
      * Layout for all the graphic components on the left side
      */
     private VerticalLayout lytLeftPanel;
+    /**
+     * The backend bean
+     */
+    @Inject
+    private WebserviceBean wsBean;
     
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -118,7 +124,7 @@ public class ListTypeManagerComponent extends AbstractTopComponent {
     }
     
     public ListTypeManagerComponent(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        super(wsBean, eventBus, session);
+        //super(wsBean, eventBus, session);
     }
     
     private void onTxtFilterChange(HasValue.ValueChangeEvent<String> event) {

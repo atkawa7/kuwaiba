@@ -17,15 +17,12 @@ package org.kuwaiba.apis.web.gui.nodes.properties;
 
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.ui.CustomComponent;
-import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
-import org.kuwaiba.apis.web.gui.modules.TopComponent;
 
 /**
  * Abstract component for the property sheet of any node
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
-public abstract class AbstractNodeProperty extends CustomComponent implements 
-        EmbeddableComponent
+public abstract class AbstractNodeProperty extends CustomComponent 
 {
 //    protected Sheet sheet;
 //    private final TopComponent parentComponent;

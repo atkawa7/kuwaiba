@@ -19,6 +19,8 @@ import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.ui.MenuBar;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
+import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
  * The definition of the property sheet module.
@@ -26,8 +28,8 @@ import org.kuwaiba.apis.web.gui.modules.AbstractModule;
  */
 public class PropertySheetModule extends AbstractModule {
 
-    public PropertySheetModule(EventBus eventBus) {
-        super(eventBus);
+    public PropertySheetModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
+        super(eventBus, wsBean, session);
     }
 
     @Override

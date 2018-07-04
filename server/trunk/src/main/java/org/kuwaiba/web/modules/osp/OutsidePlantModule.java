@@ -32,19 +32,10 @@ public class OutsidePlantModule extends AbstractModule {
      * The actual component
      */
     private OutsidePlantComponent gisView;
-    /**
-     * Reference to the WebserviceBean
-     */
-    private WebserviceBean wsBean;
-    /**
-     * Reference to the current session
-     */
-    private RemoteSession session;
+    
     
     public OutsidePlantModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        super(eventBus);
-        this.wsBean = wsBean;
-        this.session = session;
+        super(eventBus, wsBean, session);
         icon = new ThemeResource("img/mod_icon_osp.png");
     }
     

@@ -27,18 +27,19 @@ import org.kuwaiba.beans.WebserviceBean;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class OutsidePlantComponent extends AbstractTopComponent {
-    private final MapComponentWrapper googleMapWrapper;
-    private final OutsidePlantTooledComponent tooledComponent;
+    private MapComponentWrapper googleMapWrapper;
+    private OutsidePlantTooledComponent tooledComponent;
             
     public OutsidePlantComponent(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        super(wsBean, eventBus, session);
         
-        googleMapWrapper = new MapComponentWrapper(this);
-        googleMapWrapper.setSizeFull();
-        
-        tooledComponent = new OutsidePlantTooledComponent(this);
-        
-        enableTools(false);
+//        super();
+//        
+//        googleMapWrapper = new MapComponentWrapper(this);
+//        googleMapWrapper.setSizeFull();
+//        
+//        tooledComponent = new OutsidePlantTooledComponent(this);
+//        
+//        enableTools(false);
     }
     
     public MapComponentWrapper getGoogleMapWrapper() {
@@ -61,13 +62,13 @@ public class OutsidePlantComponent extends AbstractTopComponent {
             
     @Override
     public void registerComponents() {
-        googleMapWrapper.register();
-        tooledComponent.register();
+//        googleMapWrapper.register();
+//        tooledComponent.register();
     }
     
     @Override
     public void unregisterComponents() {
-        googleMapWrapper.unregister();
-        tooledComponent.unregister();
+//        googleMapWrapper.unregister();
+//        tooledComponent.unregister();
     }
 }

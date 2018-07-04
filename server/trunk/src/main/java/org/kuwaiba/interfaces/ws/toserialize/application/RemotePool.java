@@ -98,6 +98,11 @@ public class RemotePool {
     public void setClassName(String className) {
         this.className = className;
     }
+    
+    @Override
+    public String toString() {
+        return this.name;
+    }
 
     public static RemotePool[] toRemotePoolArray(List<RemotePool> toBeWrapped){
         if (toBeWrapped == null)

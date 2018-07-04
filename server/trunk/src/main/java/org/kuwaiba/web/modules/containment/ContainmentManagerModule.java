@@ -32,13 +32,9 @@ public class ContainmentManagerModule extends AbstractModule {
      * The actual component
      */
     private ContainmentManagerComponent containment;
-    private WebserviceBean wsBean;
-    private RemoteSession session;
     
     public ContainmentManagerModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        super(eventBus);
-        this.wsBean = wsBean;
-        this.session = session;
+        super(eventBus, wsBean, session);
         icon = new ThemeResource("img/mod_icon_containment.png");
     }
 

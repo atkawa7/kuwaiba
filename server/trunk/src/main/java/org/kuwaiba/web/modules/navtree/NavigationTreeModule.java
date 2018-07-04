@@ -32,13 +32,9 @@ public class NavigationTreeModule extends AbstractModule {
      * The actual component
      */
     private NavigationTreeComponent treeNavTree;
-    private final WebserviceBean wsBean;
-    private final RemoteSession session;
     
     public NavigationTreeModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        super(eventBus);
-        this.wsBean = wsBean;
-        this.session = session;
+        super(eventBus, wsBean, session);
         icon = new ThemeResource("img/mod_icon_navtree.png");
     }
     

@@ -16,10 +16,11 @@
 package org.kuwaiba.apis.web.gui.modules;
 
 import com.google.common.eventbus.EventBus;
-import com.vaadin.navigator.Navigator;
 import com.vaadin.navigator.View;
 import com.vaadin.server.Resource;
 import com.vaadin.ui.MenuBar;
+import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
  * The root class of all the pluggable modules (like Navigation Tree, Physical View, etc)
@@ -43,6 +44,14 @@ public abstract class AbstractModule {
      */
     protected EventBus eventBus;
     /**
+     * Reference to the WebserviceBean
+     */
+    protected WebserviceBean wsBean;
+    /**
+     * Reference to the current session
+     */
+    protected RemoteSession session;
+    /**
      * The icon used in buttons and menus. Preferably use a 24x24 icon.
      */
     protected Resource icon;
@@ -50,9 +59,13 @@ public abstract class AbstractModule {
     /**
      * Use this constructor if the module will need to exchange messages with other modules.
      * @param eventBus The eventBus used to exchange messages with other modules
+     * @param wsBean A reference to the web service bean
+     * @param session The current session
      */
-    public AbstractModule(EventBus eventBus) {
+    public AbstractModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
         this.eventBus = eventBus;
+        this.wsBean = wsBean;
+        this.session = session;
     }
     
     /**

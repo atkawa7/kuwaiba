@@ -16,7 +16,6 @@
 package org.kuwaiba.web.modules.osp.google.actions;
 
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.apis.web.gui.notifications.MessageBoxShowObjectId;
 import org.kuwaiba.web.modules.osp.google.OSPTopComponent;
@@ -35,16 +34,16 @@ public class ShowObjectIdAction extends AbstractAction {
 
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
-        TopComponent parentComponent = ((OSPTopComponent) sourceComponent).getTopComponent();
-        RemoteObjectLight object = null;
-        
-        if (targetObject instanceof ConnectionPolyline)
-            object = ((ConnectionPolyline) targetObject).getConnectionInfo();
-            
-        if (targetObject instanceof MarkerNode)
-            object = ((MarkerNode) targetObject).getRemoteObjectLight();
-        
-        MessageBoxShowObjectId messageBox = new MessageBoxShowObjectId(parentComponent, object);
-        messageBox.open();
+//        TopComponent parentComponent = ((OSPTopComponent) sourceComponent).getTopComponent();
+//        RemoteObjectLight object = null;
+//        
+//        if (targetObject instanceof ConnectionPolyline)
+//            object = ((ConnectionPolyline) targetObject).getConnectionInfo();
+//            
+//        if (targetObject instanceof MarkerNode)
+//            object = ((MarkerNode) targetObject).getRemoteObjectLight();
+//        
+//        MessageBoxShowObjectId messageBox = new MessageBoxShowObjectId(parentComponent, object);
+//        messageBox.open();
     }
 }

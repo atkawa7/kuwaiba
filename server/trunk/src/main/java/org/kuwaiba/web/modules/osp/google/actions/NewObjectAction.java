@@ -17,7 +17,7 @@ package org.kuwaiba.web.modules.osp.google.actions;
 
 import com.vaadin.ui.Notification;
 import org.kuwaiba.apis.web.gui.actions.CreateInventoryObjectChildAction;
-import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
+import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.modules.osp.google.overlays.MarkerNode;
 
@@ -39,7 +39,7 @@ public class NewObjectAction extends CreateInventoryObjectChildAction {
     
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
-        if (!(sourceComponent instanceof EmbeddableComponent))
+        if (!(sourceComponent instanceof AbstractTopComponent))
             return;
         
         if (!(targetObject instanceof MarkerNode))

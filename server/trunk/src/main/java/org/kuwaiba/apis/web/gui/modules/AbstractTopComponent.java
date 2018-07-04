@@ -16,48 +16,21 @@
 package org.kuwaiba.apis.web.gui.modules;
 
 import com.vaadin.navigator.View;
-import com.google.common.eventbus.EventBus;
 import com.vaadin.ui.VerticalLayout;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * The superclass of all components to be embedded in a Kuwaiba module. 
  * Note that you don't need to inherit from this class if you don't plan to use persistence
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public abstract class AbstractTopComponent extends VerticalLayout implements TopComponent, View {
+public abstract class AbstractTopComponent extends VerticalLayout implements View {
     /**
-     * Reference to the global WebService bean instance, which doesn't seem to be injected using CDI.
+     * Registers all relevant components in the global event bus
      */
-    protected WebserviceBean wsBean;
+    public abstract void registerComponents();
     /**
-     * Reference to the global EventBus bean instance, which doesn't seem to be injected using CDI.
+     * Registers all relevant components from the global event bus
      */
-    protected EventBus eventBus;
-    /**
-     * Reference to the current session
-     */
-    protected RemoteSession session;
-
-    public AbstractTopComponent(WebserviceBean wsBean, EventBus eventBus, RemoteSession session) {
-        this.wsBean = wsBean;
-        this.eventBus = eventBus;
-        this.session = session;
-    }
-
-    @Override
-    public final WebserviceBean getWsBean() {
-        return wsBean;
-    }
-
-    @Override
-    public final EventBus getEventBus() {
-        return eventBus;
-    }
-    
-    @Override
-    public final RemoteSession getApplicationSession() {
-        return session;
-    }   
+    public abstract void unregisterComponents();
+       
 }

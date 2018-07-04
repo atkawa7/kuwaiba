@@ -42,7 +42,7 @@ class NavigationTreeComponent extends AbstractTopComponent {
         private DynamicTree tree;
        
         public NavigationTreeComponent(EventBus eventBus, WebserviceBean wsBean, RemoteSession session){
-            super(wsBean, eventBus, session);
+            super();
             
             try {
                 List<RemoteObjectLight> rootChildren = wsBean.getObjectChildren("DummyRoot", -1, 0, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());

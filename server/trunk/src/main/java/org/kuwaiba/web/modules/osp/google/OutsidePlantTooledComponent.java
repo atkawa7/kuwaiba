@@ -25,8 +25,7 @@ import com.vaadin.ui.Notification;
 import de.steinwedel.messagebox.MessageBox;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
-import org.kuwaiba.apis.web.gui.modules.TopComponent;
+import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.web.custom.core.AbstractTooledComponent;
 import org.kuwaiba.web.modules.osp.OutsidePlantComponent;
@@ -41,7 +40,7 @@ import org.kuwaiba.web.modules.osp.OutsidePlantComponent;
  * The tooled component that wrapped the DragAndDropWrapper GoogleMapWrapper
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class OutsidePlantTooledComponent extends AbstractTooledComponent implements EmbeddableComponent {
+public class OutsidePlantTooledComponent extends AbstractTooledComponent  {
     public static final String ACTION_CAPTION_DELETE = "Delete";
     public static final String ACTION_CAPTION_FILTER = "Filter";
     public static final String ACTION_CAPTION_NEW = "New";
@@ -95,9 +94,9 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
     
     private final ToolBarSize toolBarSize = AbstractTooledComponent.ToolBarSize.NORMAL;
     
-    private final TopComponent parentComponent;
+    private final AbstractTopComponent parentComponent;
         
-    public OutsidePlantTooledComponent(TopComponent parentComponent) {
+    public OutsidePlantTooledComponent(AbstractTopComponent parentComponent) {
         super(new AbstractAction[0], 
                 AbstractTooledComponent.TOOLBAR_ORIENTATION_HORIZONTAL, 
                 AbstractTooledComponent.ToolBarSize.NORMAL);
@@ -323,41 +322,41 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
         
         btnClean.addClickListener((Button.ClickEvent event) -> {
                                     
-            MessageBox mbClean = MessageBox.createQuestion()
-                .withCaption("Confirmation")
-                .withMessage("Delete all elements in the current view")
-                .withOkButton(() -> {
-                    MapComponentWrapper mapWrapper = ((OutsidePlantComponent) parentComponent)
-                        .getGoogleMapWrapper();
-                    
-                    OSPTopComponent map = ((OutsidePlantComponent) parentComponent)
-                        .getGoogleMapWrapper().getMap();
-                    
-                    if (mapWrapper.getCurrentView() != null) {
-                        try {
-                            map.enableCleanTool();
-                            
-                            parentComponent.getWsBean().updateGeneralView(
-                                    mapWrapper.getCurrentView().getId(),
-                                    mapWrapper.getCurrentView().getName(),
-                                    mapWrapper.getCurrentView().getDescription(),
-                                    map.getAsXML(),
-                                    null,
-                                    Page.getCurrent().getWebBrowser().getAddress(),
-                                    parentComponent.getApplicationSession().getSessionId());
-                            
-                            Notification.show("The view was cleaned", Notification.Type.TRAY_NOTIFICATION);
-                        } catch (ServerSideException ex) {
-                            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-                        }
-                    } else {
-                        map.enableCleanTool();
-                        Notification.show("The view was cleaned", Notification.Type.TRAY_NOTIFICATION);
-                    }
-                })
-                .withCancelButton();
-            
-            mbClean.open();
+//            MessageBox mbClean = MessageBox.createQuestion()
+//                .withCaption("Confirmation")
+//                .withMessage("Delete all elements in the current view")
+//                .withOkButton(() -> {
+//                    MapComponentWrapper mapWrapper = ((OutsidePlantComponent) parentComponent)
+//                        .getGoogleMapWrapper();
+//                    
+//                    OSPTopComponent map = ((OutsidePlantComponent) parentComponent)
+//                        .getGoogleMapWrapper().getMap();
+//                    
+//                    if (mapWrapper.getCurrentView() != null) {
+//                        try {
+//                            map.enableCleanTool();
+//                            
+//                            parentComponent.getWsBean().updateGeneralView(
+//                                    mapWrapper.getCurrentView().getId(),
+//                                    mapWrapper.getCurrentView().getName(),
+//                                    mapWrapper.getCurrentView().getDescription(),
+//                                    map.getAsXML(),
+//                                    null,
+//                                    Page.getCurrent().getWebBrowser().getAddress(),
+//                                    parentComponent.getApplicationSession().getSessionId());
+//                            
+//                            Notification.show("The view was cleaned", Notification.Type.TRAY_NOTIFICATION);
+//                        } catch (ServerSideException ex) {
+//                            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                        }
+//                    } else {
+//                        map.enableCleanTool();
+//                        Notification.show("The view was cleaned", Notification.Type.TRAY_NOTIFICATION);
+//                    }
+//                })
+//                .withCancelButton();
+//            
+//            mbClean.open();
         });
     }
     
@@ -417,20 +416,5 @@ public class OutsidePlantTooledComponent extends AbstractTooledComponent impleme
         btnClean.setEnabled(enable);
         cboSearch.setEnabled(enable);
         btnSearch.setEnabled(enable);
-    }
-        
-    public void register() {
-        if (parentComponent != null)
-            parentComponent.getEventBus().register(this);
-    }
-    
-    public void unregister() {
-        if (parentComponent != null)
-            parentComponent.getEventBus().unregister(this);
-    }
-
-    @Override
-    public TopComponent getTopComponent() {
-        return parentComponent;
-    }
+    }        
 }

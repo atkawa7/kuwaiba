@@ -25,8 +25,7 @@ import com.vaadin.ui.Notification;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
-import org.kuwaiba.apis.web.gui.modules.TopComponent;
+import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
@@ -37,7 +36,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  * Give the power of drag and drop elements to the map
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class MapComponentWrapper extends DragAndDropWrapper implements EmbeddableComponent {
+public class MapComponentWrapper extends DragAndDropWrapper {
     private DropHandler dropHandler = new DropHandler() {
 
         @Override
@@ -59,14 +58,14 @@ public class MapComponentWrapper extends DragAndDropWrapper implements Embeddabl
     };
         
     public static String CLASS_VIEW = "OutsidePlantModuleView";
-    private TopComponent parentComponent;
+    private AbstractTopComponent parentComponent;
     private OSPTopComponent map;
     
     private RemoteViewObject currentView;
     private boolean viewClosedByNewView = false;
     private boolean viewClosedByOpenView = false;
     
-    public MapComponentWrapper(TopComponent parentComponent) {
+    public MapComponentWrapper(AbstractTopComponent parentComponent) {
         this.parentComponent = parentComponent;
         
         try {
@@ -127,21 +126,21 @@ public class MapComponentWrapper extends DragAndDropWrapper implements Embeddabl
     }
     
     public void register() {
-        if (parentComponent != null) {
-            parentComponent.getEventBus().register(this);
-            map.register();
-        }
+//        if (parentComponent != null) {
+//            parentComponent.getEventBus().register(this);
+//            map.register();
+//        }
     }
     
     public void unregister() {
-        if (parentComponent != null) {
-            parentComponent.getEventBus().unregister(this);
-            map.unregister();
-        }
+//        if (parentComponent != null) {
+//            parentComponent.getEventBus().unregister(this);
+//            map.unregister();
+//        }
     }
     
-    @Override
-    public TopComponent getTopComponent() {
-        return parentComponent;
-    }
+//    @Override
+//    public TopComponent getTopComponent() {
+//        return parentComponent;
+//    }
 }

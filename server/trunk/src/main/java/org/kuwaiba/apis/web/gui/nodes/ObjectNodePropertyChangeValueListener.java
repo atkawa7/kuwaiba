@@ -21,7 +21,6 @@ import com.vaadin.event.FieldEvents;
 import com.vaadin.server.Page;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.properties.AbstractNodePorpertyValueChangeListener;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;

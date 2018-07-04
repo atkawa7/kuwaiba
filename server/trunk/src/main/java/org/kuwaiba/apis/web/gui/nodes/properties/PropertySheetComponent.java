@@ -27,7 +27,7 @@ import org.kuwaiba.beans.WebserviceBean;
 public class PropertySheetComponent extends AbstractTopComponent{
 
     public PropertySheetComponent(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        super(wsBean, eventBus, session);
+        super();
     }
 
     @Override

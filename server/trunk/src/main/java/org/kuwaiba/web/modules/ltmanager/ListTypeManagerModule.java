@@ -35,13 +35,9 @@ public class ListTypeManagerModule  extends AbstractModule {
      * The actual component
      */
     private ListTypeManagerComponent listTypeManagerComponent;
-    private WebserviceBean wsBean;
-    private RemoteSession session;
     
     public ListTypeManagerModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        super(eventBus);
-        this.wsBean = wsBean;
-        this.session = session;
+        super(eventBus, wsBean, session);
         icon = new ThemeResource("img/mod_icon_list.png");
     }
 
@@ -72,11 +68,10 @@ public class ListTypeManagerModule  extends AbstractModule {
 
     @Override
     public void attachToMenu(MenuBar menuBar) {
-        
-        MenuBar.MenuItem listTypeManagerMenuItem = menuBar.addItem(getName(), null);
+        MenuBar.MenuItem listTypeManagerMenuItem = menuBar.addItem("List Types", null);
         listTypeManagerMenuItem.setDescription(getDescription());
         
-        listTypeManagerMenuItem.addItem("Manage List Types", new MenuBar.Command() {
+        listTypeManagerMenuItem.addItem(getName(), new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 UI.getCurrent().getNavigator().addView(ListTypeManagerComponent.VIEW_NAME, open());
@@ -97,8 +92,6 @@ public class ListTypeManagerModule  extends AbstractModule {
                 UI.getCurrent().addWindow(wdwNewListTypeItem);
             }
         });
-                
-            
     }
 
     @Override

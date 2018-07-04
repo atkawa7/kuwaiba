@@ -21,8 +21,6 @@ import com.vaadin.server.Resource;
 import com.vaadin.ui.Notification;
 import java.util.List;
 import java.util.Objects;
-import org.kuwaiba.apis.web.gui.resources.ResourceFactory;
-import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.custom.tree.DynamicTree;

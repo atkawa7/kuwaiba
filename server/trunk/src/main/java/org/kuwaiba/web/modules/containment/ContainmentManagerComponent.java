@@ -51,7 +51,7 @@ import org.kuwaiba.beans.WebserviceBean;
 public class ContainmentManagerComponent extends AbstractTopComponent {
         
     public ContainmentManagerComponent(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        super(wsBean, eventBus, session);
+        super();
         
         VerticalLayout compositionRoot = new VerticalLayout();
         compositionRoot.setSizeFull();

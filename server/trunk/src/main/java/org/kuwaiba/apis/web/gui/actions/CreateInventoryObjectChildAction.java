@@ -18,8 +18,7 @@ package org.kuwaiba.apis.web.gui.actions;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
 import java.util.List;
-import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
-import org.kuwaiba.apis.web.gui.modules.TopComponent;
+import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
@@ -41,56 +40,56 @@ public class CreateInventoryObjectChildAction extends AbstractComposedAction {
 
     @Override
     public void finalActionPerformed(Object sourceComponent, Object targetObject, Object selectedOption) {
-        try {
-            if (!(sourceComponent instanceof EmbeddableComponent))
-                return;
-            
-            if (!(targetObject instanceof RemoteObjectLight))
-                return;
-            
-            TopComponent parentComponent = ((EmbeddableComponent) sourceComponent).getTopComponent();
-            RemoteObjectLight object = (RemoteObjectLight) targetObject;
-            
-            long oid = parentComponent.getWsBean().createObject(((RemoteClassMetadataLight) selectedOption).getClassName(), 
-                    "DummyRoot".equals(((RemoteClassMetadataLight) selectedOption).getClassName()) ? null : object.getClassName(), //NOI18N
-                    object.getId(),
-                    new String[0],
-                    new String[0],
-                    -1,
-                    Page.getCurrent().getWebBrowser().getAddress(), 
-                    parentComponent.getApplicationSession().getSessionId());
-            
-            newObject = parentComponent.getWsBean().getObjectLight(((RemoteClassMetadataLight) selectedOption).getClassName(), 
-                    oid, 
-                    Page.getCurrent().getWebBrowser().getAddress(), 
-                    parentComponent.getApplicationSession().getSessionId());
-        } catch (ServerSideException ex) {
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-        }
+//        try {
+//            if (!(sourceComponent instanceof AbstractTopComponent))
+//                return;
+//            
+//            if (!(targetObject instanceof RemoteObjectLight))
+//                return;
+//            
+//            AbstractTopComponent parentComponent = ((AbstractTopComponent) sourceComponent).getTopComponent();
+//            RemoteObjectLight object = (RemoteObjectLight) targetObject;
+//            
+//            long oid = parentComponent.getWsBean().createObject(((RemoteClassMetadataLight) selectedOption).getClassName(), 
+//                    "DummyRoot".equals(((RemoteClassMetadataLight) selectedOption).getClassName()) ? null : object.getClassName(), //NOI18N
+//                    object.getId(),
+//                    new String[0],
+//                    new String[0],
+//                    -1,
+//                    Page.getCurrent().getWebBrowser().getAddress(), 
+//                    parentComponent.getApplicationSession().getSessionId());
+//            
+//            newObject = parentComponent.getWsBean().getObjectLight(((RemoteClassMetadataLight) selectedOption).getClassName(), 
+//                    oid, 
+//                    Page.getCurrent().getWebBrowser().getAddress(), 
+//                    parentComponent.getApplicationSession().getSessionId());
+//        } catch (ServerSideException ex) {
+//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//        }
     }
 
     @Override
     public void actionPerformed(Object sourceComponent, Object targetObject) {
-        try {
-            if (!(sourceComponent instanceof EmbeddableComponent))
-                return;
-            if (!(targetObject instanceof RemoteObjectLight))
-                return;
-            
-            TopComponent parentComponent = ((EmbeddableComponent) sourceComponent).getTopComponent();
-            RemoteObjectLight object = (RemoteObjectLight) targetObject;
-            
-            List<RemoteClassMetadataLight> possiblyChildren = parentComponent.getWsBean().getPossibleChildren(
-                    object.getClassName(),
-                    Page.getCurrent().getWebBrowser().getAddress(),
-                    parentComponent.getApplicationSession().getSessionId());
-            
-            if (!possiblyChildren.isEmpty())
-                showSubMenu(sourceComponent, targetObject, possiblyChildren);
-            
-        } catch (ServerSideException ex) {
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-        }
+//        try {
+//            if (!(sourceComponent instanceof EmbeddableComponent))
+//                return;
+//            if (!(targetObject instanceof RemoteObjectLight))
+//                return;
+//            
+//            TopComponent parentComponent = ((EmbeddableComponent) sourceComponent).getTopComponent();
+//            RemoteObjectLight object = (RemoteObjectLight) targetObject;
+//            
+//            List<RemoteClassMetadataLight> possiblyChildren = parentComponent.getWsBean().getPossibleChildren(
+//                    object.getClassName(),
+//                    Page.getCurrent().getWebBrowser().getAddress(),
+//                    parentComponent.getApplicationSession().getSessionId());
+//            
+//            if (!possiblyChildren.isEmpty())
+//                showSubMenu(sourceComponent, targetObject, possiblyChildren);
+//            
+//        } catch (ServerSideException ex) {
+//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//        }
     }
     
 }

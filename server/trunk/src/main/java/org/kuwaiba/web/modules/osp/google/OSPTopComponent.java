@@ -52,10 +52,8 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.resources.ResourceFactory;
 import org.kuwaiba.apis.web.gui.menus.RawContextMenu;
-import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
-import org.kuwaiba.apis.web.gui.modules.TopComponent;
+import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
@@ -71,8 +69,7 @@ import org.kuwaiba.beans.WebserviceBean;
  * Custom GoogleMapsComponent for Kuwaiba
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class OSPTopComponent extends GoogleMapsComponent implements AbstractGISView, 
-    EmbeddableComponent, Window.CloseListener {
+public class OSPTopComponent extends GoogleMapsComponent implements AbstractGISView, Window.CloseListener {
         
     /**
      * Set implementation for edge, map, marker and polygon action listener
@@ -242,7 +239,7 @@ public class OSPTopComponent extends GoogleMapsComponent implements AbstractGISV
     private static final String DRAWING_MODE_POLYGON = "Polygon";
     private static final String DRAWING_MODE_EDGE = "Polyline";
             
-    private final TopComponent parentComponent;
+    private final AbstractTopComponent parentComponent;
     /**
      * List of edges for markerNode
      */
@@ -265,7 +262,7 @@ public class OSPTopComponent extends GoogleMapsComponent implements AbstractGISV
     
     private boolean isContainer = false;
             
-    public OSPTopComponent(TopComponent parentComponent, String apiKey, String clientId, String language) {
+    public OSPTopComponent(AbstractTopComponent parentComponent, String apiKey, String clientId, String language) {
         super(apiKey, clientId, language);
         
         this.parentComponent = parentComponent;
@@ -302,18 +299,17 @@ public class OSPTopComponent extends GoogleMapsComponent implements AbstractGISV
         this.updateView = updateView;
     }
     
-    public void register() {
-        if (parentComponent != null)
-            parentComponent.getEventBus().register(this);
-    }
-    
-    public void unregister() {
-        if (parentComponent != null)
-            parentComponent.getEventBus().unregister(this);
-    }
+//    public void register() {
+//        if (parentComponent != null)
+//            parentComponent.getEventBus().register(this);
+//    }
+//    
+//    public void unregister() {
+//        if (parentComponent != null)
+//            parentComponent.getEventBus().unregister(this);
+//    }
 
-    @Override
-    public TopComponent getTopComponent() {
+    public AbstractTopComponent getTopComponent() {
         return parentComponent;
     }
     
@@ -421,22 +417,22 @@ public class OSPTopComponent extends GoogleMapsComponent implements AbstractGISV
     }
         
     public void deletePhysicalConnection(ConnectionPolyline physicalConnection) {
-        try {
-            RemoteObjectLight phyConnInfo = physicalConnection.getConnectionInfo();
-            
-            getTopComponent().getWsBean().deletePhysicalConnection(
-                phyConnInfo.getClassName(), 
-                phyConnInfo.getId(), 
-                Page.getCurrent().getWebBrowser().getAddress(), 
-                getTopComponent().getApplicationSession().getSessionId());
-            
-            edgesForNode.get(physicalConnection.getSource().getId())
-                    .remove(physicalConnection);
-            edgesForNode.get(physicalConnection.getTarget().getId())
-                    .remove(physicalConnection);
-        } catch (ServerSideException ex) {
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-        }
+//        try {
+//            RemoteObjectLight phyConnInfo = physicalConnection.getConnectionInfo();
+//            
+//            getTopComponent().getWsBean().deletePhysicalConnection(
+//                phyConnInfo.getClassName(), 
+//                phyConnInfo.getId(), 
+//                Page.getCurrent().getWebBrowser().getAddress(), 
+//                getTopComponent().getApplicationSession().getSessionId());
+//            
+//            edgesForNode.get(physicalConnection.getSource().getId())
+//                    .remove(physicalConnection);
+//            edgesForNode.get(physicalConnection.getTarget().getId())
+//                    .remove(physicalConnection);
+//        } catch (ServerSideException ex) {
+//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//        }
     }
     
     public void physicalConnectionsSaved() {
@@ -590,179 +586,179 @@ public class OSPTopComponent extends GoogleMapsComponent implements AbstractGISV
     
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
-        try {
-            XMLInputFactory xmlif = XMLInputFactory.newInstance();
-            ByteArrayInputStream bais = new ByteArrayInputStream(structure);
-            XMLStreamReader reader = xmlif.createXMLStreamReader(bais);
-            
-            WebserviceBean wsBean = getTopComponent().getWsBean();
-            String ipAddress = getUI().getPage().getWebBrowser().getAddress();
-            String sessionId = getTopComponent().getApplicationSession().getSessionId();
-            
-            QName qnCenter = new QName("center");
-            QName qnZoom = new QName("zoom");
-            QName qnNode = new QName("node");
-            QName qnEdge = new QName("edge");
-            QName qnPolygon = new QName("polygon");
-            QName qnCoordinate = new QName("coordinate");
-            
-            while (reader.hasNext()) {
-                int event = reader.next();
-                if (event == XMLStreamConstants.START_ELEMENT) {
-                    if (reader.getName().equals(qnCenter)) {
-                        double lat = Double.parseDouble(reader.getAttributeValue(null, "lat"));
-                        double lon = Double.parseDouble(reader.getAttributeValue(null, "lon"));
-                        setCenter(new LatLon(lat, lon));
-                    }
-                    if (reader.getName().equals(qnZoom)) {
-                        int zoom = Integer.parseInt(reader.getAttributeValue(null, "value"));
-                        setZoom(zoom);
-                    }
-                    if (reader.getName().equals(qnNode)) {
-                        double lat = Double.parseDouble(reader.getAttributeValue(null, "lat"));
-                        double lon = Double.parseDouble(reader.getAttributeValue(null, "lon"));
-                        long oid = Long.parseLong(reader.getAttributeValue(null, "id"));
-                        String objectClass = reader.getAttributeValue(null, "class");
-                        boolean visible = Boolean.valueOf(
-                                reader.getAttributeValue(null, "visible"));
-                                                                                                
-                        try {
-                            RemoteObjectLight objectNode = wsBean
-                                .getObjectLight(objectClass, oid, ipAddress, sessionId);
-                            
-                            MarkerNode markerNode = new MarkerNode(objectNode);
-                            markerNode.setId(oid);
-                            markerNode.setCaption(objectNode.toString());
-                            markerNode.setPosition(new LatLon(lat, lon));
-                            markerNode.setVisible(visible);
-                            markerNode.setIconUrl(getMarkerNodeIconUrl(objectNode));
-                            
-                            getState().markers.put(oid, markerNode);
-                            nodeClassesFilter.add(objectNode.getClassName());
-                        } catch (ServerSideException ex) {
-                            //Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-                            updateView = true;
-                        }
-                    }
-                    else {
-                        if (reader.getName().equals(qnEdge)) {                            
-                            long oid = Long.parseLong(reader.getAttributeValue(null, "id"));
-                            String strokeColor = reader.getAttributeValue(
-                                    null, "strokeColor");
-                            double strokeOpacity = Double.valueOf(
-                                    reader.getAttributeValue(null, "strokeOpacity"));
-                            int strokeWeight = Integer.valueOf(
-                                    reader.getAttributeValue(null, "strokeWeight"));
-                            boolean visible = Boolean.valueOf(
-                                    reader.getAttributeValue(null, "visible"));
-                            String name = reader.getAttributeValue(null, "name");
-                            String objectClass = reader.getAttributeValue(null, "objectClass");                            
-                            
-                            long aside = Long.parseLong(reader.getAttributeValue(null, "aside"));
-                            long bside = Long.parseLong(reader.getAttributeValue(null, "bside"));
-                            
-                            try {
-                                RemoteObjectLight edgeInfo = wsBean.getObjectLight(objectClass, oid, ipAddress, sessionId);
-                                
-                                MarkerNode source = (MarkerNode) getState().markers.get(aside);
-                                MarkerNode target = (MarkerNode) getState().markers.get(bside);
-
-                                ConnectionPolyline edge = new ConnectionPolyline(source, target);
-                                edge.setId(oid);
-                                edge.setCaption(name);
-                                edge.setStrokeColor(strokeColor);
-                                edge.setStrokeOpacity(strokeOpacity);
-                                edge.setStrokeWeight(strokeWeight);
-                                edge.setVisible(visible);
-                                edge.setConnectionInfo(edgeInfo);
-
-                                List<LatLon> coordinates = new ArrayList();
-                                while (true) {
-                                    reader.nextTag();
-                                    if (reader.getName().equals(qnCoordinate)) {
-                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
-                                            Double lat = Double.parseDouble(
-                                                    reader.getAttributeValue(null, "lat"));
-                                            Double lon = Double.parseDouble(
-                                                    reader.getAttributeValue(null, "lon"));
-                                            coordinates.add(new LatLon(lat, lon));
-                                        }
-                                    }
-                                    else {
-                                        edge.setCoordinates(coordinates);
-                                        break;
-                                    }
-                                }
-                                edge.setSaved(true);
-
-                                if (!edgesForNode.containsKey(source.getId()))
-                                    edgesForNode.put(source.getId(), new ArrayList());
-                                edgesForNode.get(source.getId()).add(edge);
-
-                                if (!edgesForNode.containsKey(target.getId()))
-                                    edgesForNode.put(target.getId(), new ArrayList());
-                                edgesForNode.get(target.getId()).add(edge);
-
-                                if (!phyConnClassesFilter.contains(edge.getConnectionInfo().getClassName()))
-                                    phyConnClassesFilter.add(edge.getConnectionInfo().getClassName());
-
-                                addEdge(edge, edge.getSource(), edge.getTarget());                                
-                            } catch (ServerSideException ex) {
-                                updateView = true;
-                            }
-                        }
-                        else {
-                            if (reader.getName().equals(qnPolygon)) {                                
-                                String fillColor = reader.getAttributeValue(
-                                    null, "fillColor");
-                                double fillOpacity = Double.valueOf(reader
-                                        .getAttributeValue(null, "fillOpacity"));
-                                String strokeColor = reader.getAttributeValue(
-                                        null, "strokeColor");
-                                double strokeOpacity = Double.valueOf(reader.
-                                        getAttributeValue(null, "strokeOpacity"));
-                                int strokeWeight = Integer.valueOf(reader
-                                        .getAttributeValue(null, "strokeWeight"));
-                                boolean visible = Boolean.valueOf(reader
-                                        .getAttributeValue(null, "visible"));
-                                
-                                Polygon polygon = new Polygon();
-                                polygon.setFillColor(fillColor);
-                                polygon.setFillOpacity(fillOpacity);
-                                polygon.setStrokeColor(strokeColor);
-                                polygon.setStrokeOpacity(strokeOpacity);
-                                polygon.setStrokeWeight(strokeWeight);
-                                polygon.setVisible(visible);
-                                
-                                List<LatLon> coordinates = new ArrayList();
-                                while (true) {
-                                    reader.nextTag();
-                                    if (reader.getName().equals(qnCoordinate)) {
-                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
-                                            Double lat = Double.parseDouble(
-                                                    reader.getAttributeValue(
-                                                            null, "lat"));
-                                            Double lon = Double.parseDouble(
-                                                    reader.getAttributeValue(
-                                                            null, "lon"));
-                                            coordinates.add(new LatLon(lat, lon));
-                                        }
-                                    }
-                                    else {                                                                                
-                                        polygon.setCoordinates(coordinates);                                        
-                                        break;
-                                    }
-                                }                                
-                                getState().polygons.put(polygon.getId(), polygon);
-                            } // end if polygons
-                        } // end if edges
-                    } // end if nodes
-                } // end if
-            } // end while
-            reader.close();
-        } catch(XMLStreamException ex) {
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-        }
+//        try {
+//            XMLInputFactory xmlif = XMLInputFactory.newInstance();
+//            ByteArrayInputStream bais = new ByteArrayInputStream(structure);
+//            XMLStreamReader reader = xmlif.createXMLStreamReader(bais);
+//            
+//            WebserviceBean wsBean = getTopComponent().getWsBean();
+//            String ipAddress = getUI().getPage().getWebBrowser().getAddress();
+//            String sessionId = getTopComponent().getApplicationSession().getSessionId();
+//            
+//            QName qnCenter = new QName("center");
+//            QName qnZoom = new QName("zoom");
+//            QName qnNode = new QName("node");
+//            QName qnEdge = new QName("edge");
+//            QName qnPolygon = new QName("polygon");
+//            QName qnCoordinate = new QName("coordinate");
+//            
+//            while (reader.hasNext()) {
+//                int event = reader.next();
+//                if (event == XMLStreamConstants.START_ELEMENT) {
+//                    if (reader.getName().equals(qnCenter)) {
+//                        double lat = Double.parseDouble(reader.getAttributeValue(null, "lat"));
+//                        double lon = Double.parseDouble(reader.getAttributeValue(null, "lon"));
+//                        setCenter(new LatLon(lat, lon));
+//                    }
+//                    if (reader.getName().equals(qnZoom)) {
+//                        int zoom = Integer.parseInt(reader.getAttributeValue(null, "value"));
+//                        setZoom(zoom);
+//                    }
+//                    if (reader.getName().equals(qnNode)) {
+//                        double lat = Double.parseDouble(reader.getAttributeValue(null, "lat"));
+//                        double lon = Double.parseDouble(reader.getAttributeValue(null, "lon"));
+//                        long oid = Long.parseLong(reader.getAttributeValue(null, "id"));
+//                        String objectClass = reader.getAttributeValue(null, "class");
+//                        boolean visible = Boolean.valueOf(
+//                                reader.getAttributeValue(null, "visible"));
+//                                                                                                
+//                        try {
+//                            RemoteObjectLight objectNode = wsBean
+//                                .getObjectLight(objectClass, oid, ipAddress, sessionId);
+//                            
+//                            MarkerNode markerNode = new MarkerNode(objectNode);
+//                            markerNode.setId(oid);
+//                            markerNode.setCaption(objectNode.toString());
+//                            markerNode.setPosition(new LatLon(lat, lon));
+//                            markerNode.setVisible(visible);
+//                            markerNode.setIconUrl(getMarkerNodeIconUrl(objectNode));
+//                            
+//                            getState().markers.put(oid, markerNode);
+//                            nodeClassesFilter.add(objectNode.getClassName());
+//                        } catch (ServerSideException ex) {
+//                            //Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//                            updateView = true;
+//                        }
+//                    }
+//                    else {
+//                        if (reader.getName().equals(qnEdge)) {                            
+//                            long oid = Long.parseLong(reader.getAttributeValue(null, "id"));
+//                            String strokeColor = reader.getAttributeValue(
+//                                    null, "strokeColor");
+//                            double strokeOpacity = Double.valueOf(
+//                                    reader.getAttributeValue(null, "strokeOpacity"));
+//                            int strokeWeight = Integer.valueOf(
+//                                    reader.getAttributeValue(null, "strokeWeight"));
+//                            boolean visible = Boolean.valueOf(
+//                                    reader.getAttributeValue(null, "visible"));
+//                            String name = reader.getAttributeValue(null, "name");
+//                            String objectClass = reader.getAttributeValue(null, "objectClass");                            
+//                            
+//                            long aside = Long.parseLong(reader.getAttributeValue(null, "aside"));
+//                            long bside = Long.parseLong(reader.getAttributeValue(null, "bside"));
+//                            
+//                            try {
+//                                RemoteObjectLight edgeInfo = wsBean.getObjectLight(objectClass, oid, ipAddress, sessionId);
+//                                
+//                                MarkerNode source = (MarkerNode) getState().markers.get(aside);
+//                                MarkerNode target = (MarkerNode) getState().markers.get(bside);
+//
+//                                ConnectionPolyline edge = new ConnectionPolyline(source, target);
+//                                edge.setId(oid);
+//                                edge.setCaption(name);
+//                                edge.setStrokeColor(strokeColor);
+//                                edge.setStrokeOpacity(strokeOpacity);
+//                                edge.setStrokeWeight(strokeWeight);
+//                                edge.setVisible(visible);
+//                                edge.setConnectionInfo(edgeInfo);
+//
+//                                List<LatLon> coordinates = new ArrayList();
+//                                while (true) {
+//                                    reader.nextTag();
+//                                    if (reader.getName().equals(qnCoordinate)) {
+//                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
+//                                            Double lat = Double.parseDouble(
+//                                                    reader.getAttributeValue(null, "lat"));
+//                                            Double lon = Double.parseDouble(
+//                                                    reader.getAttributeValue(null, "lon"));
+//                                            coordinates.add(new LatLon(lat, lon));
+//                                        }
+//                                    }
+//                                    else {
+//                                        edge.setCoordinates(coordinates);
+//                                        break;
+//                                    }
+//                                }
+//                                edge.setSaved(true);
+//
+//                                if (!edgesForNode.containsKey(source.getId()))
+//                                    edgesForNode.put(source.getId(), new ArrayList());
+//                                edgesForNode.get(source.getId()).add(edge);
+//
+//                                if (!edgesForNode.containsKey(target.getId()))
+//                                    edgesForNode.put(target.getId(), new ArrayList());
+//                                edgesForNode.get(target.getId()).add(edge);
+//
+//                                if (!phyConnClassesFilter.contains(edge.getConnectionInfo().getClassName()))
+//                                    phyConnClassesFilter.add(edge.getConnectionInfo().getClassName());
+//
+//                                addEdge(edge, edge.getSource(), edge.getTarget());                                
+//                            } catch (ServerSideException ex) {
+//                                updateView = true;
+//                            }
+//                        }
+//                        else {
+//                            if (reader.getName().equals(qnPolygon)) {                                
+//                                String fillColor = reader.getAttributeValue(
+//                                    null, "fillColor");
+//                                double fillOpacity = Double.valueOf(reader
+//                                        .getAttributeValue(null, "fillOpacity"));
+//                                String strokeColor = reader.getAttributeValue(
+//                                        null, "strokeColor");
+//                                double strokeOpacity = Double.valueOf(reader.
+//                                        getAttributeValue(null, "strokeOpacity"));
+//                                int strokeWeight = Integer.valueOf(reader
+//                                        .getAttributeValue(null, "strokeWeight"));
+//                                boolean visible = Boolean.valueOf(reader
+//                                        .getAttributeValue(null, "visible"));
+//                                
+//                                Polygon polygon = new Polygon();
+//                                polygon.setFillColor(fillColor);
+//                                polygon.setFillOpacity(fillOpacity);
+//                                polygon.setStrokeColor(strokeColor);
+//                                polygon.setStrokeOpacity(strokeOpacity);
+//                                polygon.setStrokeWeight(strokeWeight);
+//                                polygon.setVisible(visible);
+//                                
+//                                List<LatLon> coordinates = new ArrayList();
+//                                while (true) {
+//                                    reader.nextTag();
+//                                    if (reader.getName().equals(qnCoordinate)) {
+//                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
+//                                            Double lat = Double.parseDouble(
+//                                                    reader.getAttributeValue(
+//                                                            null, "lat"));
+//                                            Double lon = Double.parseDouble(
+//                                                    reader.getAttributeValue(
+//                                                            null, "lon"));
+//                                            coordinates.add(new LatLon(lat, lon));
+//                                        }
+//                                    }
+//                                    else {                                                                                
+//                                        polygon.setCoordinates(coordinates);                                        
+//                                        break;
+//                                    }
+//                                }                                
+//                                getState().polygons.put(polygon.getId(), polygon);
+//                            } // end if polygons
+//                        } // end if edges
+//                    } // end if nodes
+//                } // end if
+//            } // end while
+//            reader.close();
+//        } catch(XMLStreamException ex) {
+//            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+//        }
     }
 
     @Override
@@ -803,28 +799,28 @@ public class OSPTopComponent extends GoogleMapsComponent implements AbstractGISV
      * Initialize the object dropped in the map 
      */
     public void addNodeMarker(RemoteObjectLight objectNode) {
-        if (getState().markers.containsKey(objectNode.getId())) {
-            Notification.show(String.format("This view already contains the object %s", objectNode), Notification.Type.WARNING_MESSAGE);
-            return;
-        }
-        
-        WebserviceBean wsBean = getTopComponent().getWsBean();
-        String ipAddress = getUI().getPage().getWebBrowser().getAddress();
-        String sessionId = getTopComponent().getApplicationSession().getSessionId();
-        
-        try {
-            if (!wsBean.isSubclassOf(objectNode.getClassName(), "ViewableObject", ipAddress, sessionId)) { //NOI18N
-                Notification.show("Only ViewableObject are allowed", Notification.Type.WARNING_MESSAGE);
-                return;
-            }
-        } catch(ServerSideException ex) {
-            Notification.show(String.format("Unexpected error: %s", ex.getMessage()), Notification.Type.ERROR_MESSAGE);
-        }
-        markerNodeAdded = new MarkerNode(objectNode);
-        markerNodeAdded.setId(objectNode.getId());
-        markerNodeAdded.setCaption(objectNode.toString());
-                                
-        markerNodeAdded.setIconUrl(getMarkerNodeIconUrl(objectNode));
+//        if (getState().markers.containsKey(objectNode.getId())) {
+//            Notification.show(String.format("This view already contains the object %s", objectNode), Notification.Type.WARNING_MESSAGE);
+//            return;
+//        }
+//        
+//        WebserviceBean wsBean = getTopComponent().getWsBean();
+//        String ipAddress = getUI().getPage().getWebBrowser().getAddress();
+//        String sessionId = getTopComponent().getApplicationSession().getSessionId();
+//        
+//        try {
+//            if (!wsBean.isSubclassOf(objectNode.getClassName(), "ViewableObject", ipAddress, sessionId)) { //NOI18N
+//                Notification.show("Only ViewableObject are allowed", Notification.Type.WARNING_MESSAGE);
+//                return;
+//            }
+//        } catch(ServerSideException ex) {
+//            Notification.show(String.format("Unexpected error: %s", ex.getMessage()), Notification.Type.ERROR_MESSAGE);
+//        }
+//        markerNodeAdded = new MarkerNode(objectNode);
+//        markerNodeAdded.setId(objectNode.getId());
+//        markerNodeAdded.setCaption(objectNode.toString());
+//                                
+//        markerNodeAdded.setIconUrl(getMarkerNodeIconUrl(objectNode));
     }
     
     private String getMarkerNodeIconUrl(RemoteObjectLight objectNode) {

@@ -21,7 +21,6 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Notification;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.nodes.properties.Sheet;
 import org.kuwaiba.exceptions.ServerSideException;

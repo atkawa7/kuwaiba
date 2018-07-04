@@ -101,7 +101,7 @@ public class AddListTypeItemWindow extends Window {
             List<RemoteClassMetadataLight> listTypes = wsBean.getSubClassesLight(Constants.CLASS_GENERICOBJECTLIST, false, false, Page.getCurrent().getWebBrowser().getAddress(), 
                         ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
             
-            ComboBox<RemoteClassMetadataLight> cmbListTypes = new ComboBox<>("Available List Types", listTypes);
+            ComboBox<RemoteClassMetadataLight> cmbListTypes = new ComboBox<>("List Type", listTypes);
             cmbListTypes.setEmptySelectionAllowed(false);
             cmbListTypes.setRequiredIndicatorVisible(true);
             cmbListTypes.setTextInputAllowed(false);

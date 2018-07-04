@@ -14,12 +14,12 @@
  */
 package org.kuwaiba.web.modules.servmanager;
 
+import com.google.common.eventbus.EventBus;
 import com.vaadin.cdi.CDIView;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.selection.SingleSelectionEvent;
 import com.vaadin.event.selection.SingleSelectionListener;
-import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.ui.ComboBox;
@@ -32,6 +32,7 @@ import com.vaadin.ui.VerticalLayout;
 import java.util.List;
 import java.util.Optional;
 import javax.inject.Inject;
+import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -46,7 +47,7 @@ import org.kuwaiba.beans.WebserviceBean;
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
 @CDIView("smanager")
-public class ServiceManagerView extends VerticalLayout implements View {
+public class ServiceManagerComponent extends AbstractTopComponent {
     /**
      * View identifier
      */
@@ -145,6 +146,10 @@ public class ServiceManagerView extends VerticalLayout implements View {
         
     }
     
+    public ServiceManagerComponent(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
+        //super(wsBean, eventBus, session);
+    }
+    
     private void onTxtFilterChange(HasValue.ValueChangeEvent<String> event) {
         ListDataProvider<RemoteObjectLight> dataProvider = (ListDataProvider<RemoteObjectLight>) tblServices.getDataProvider();
         dataProvider.setFilter((source) -> {
@@ -152,5 +157,11 @@ public class ServiceManagerView extends VerticalLayout implements View {
             return source.getName().toLowerCase().contains(filterAsLowerCase) || source.getClassName().toLowerCase().contains(filterAsLowerCase);
         });
     }
+
+    @Override
+    public void registerComponents() { }
+
+    @Override
+    public void unregisterComponents() { }
     
 }

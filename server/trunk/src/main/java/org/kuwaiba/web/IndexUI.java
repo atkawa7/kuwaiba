@@ -39,10 +39,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.kuwaiba.web.modules.servmanager.ServiceManagerView;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.web.modules.ltmanager.ListTypeManagerModule;
+import org.kuwaiba.web.modules.servmanager.ServiceManagerModule;
 import org.kuwaiba.web.procmanager.ProcessManagerView;
 
 /**
@@ -114,16 +114,12 @@ public class IndexUI extends UI {
                 }
             });
             
-            this.mnuMain.addItem("Service Manager", new MenuBar.Command() {
-                @Override
-                public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    getUI().getNavigator().navigateTo(ServiceManagerView.VIEW_NAME);
-                }
-            });
+            ServiceManagerModule servManagerModule = new ServiceManagerModule(null, wsBean, 
+                        (RemoteSession) getSession().getAttribute("session"));
+            servManagerModule.attachToMenu(mnuMain);
             
             ListTypeManagerModule ltmModule = new ListTypeManagerModule(null, wsBean, 
                         (RemoteSession) getSession().getAttribute("session"));
-            
             ltmModule.attachToMenu(mnuMain);
 
             this.mnuMain.addItem("Log Out", new MenuBar.Command() {

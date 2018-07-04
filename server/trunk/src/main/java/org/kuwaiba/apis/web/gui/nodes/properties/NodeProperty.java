@@ -17,8 +17,6 @@ package org.kuwaiba.apis.web.gui.nodes.properties;
 
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.ui.CustomComponent;
-import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
-import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.web.modules.osp.google.overlays.MarkerNode;
@@ -29,13 +27,9 @@ import org.kuwaiba.web.modules.osp.google.overlays.MarkerNode;
  * for the selected object. 
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
-public class NodeProperty extends CustomComponent implements 
-        EmbeddableComponent{
+public class NodeProperty extends CustomComponent  {
 
-    @Override
-    public TopComponent getTopComponent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+  
     
 //    protected Sheet sheet;
 //    private final TopComponent parentComponent;

@@ -18,7 +18,6 @@ package org.kuwaiba.web.modules.physicalconnections.windows;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
 import java.util.List;
-import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;

@@ -21,8 +21,6 @@ import com.vaadin.event.CollapseEvent;
 import com.vaadin.event.ExpandEvent;
 import com.vaadin.ui.TreeGrid;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.modules.EmbeddableComponent;
-import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
@@ -32,7 +30,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
 public class DynamicTree extends TreeGrid<RemoteObjectLight> implements ExpandEvent.ExpandListener<AbstractNode>, 
-        CollapseEvent.CollapseListener<AbstractNode>, EmbeddableComponent 
+        CollapseEvent.CollapseListener<AbstractNode> 
 {
 
     @Override
@@ -44,12 +42,7 @@ public class DynamicTree extends TreeGrid<RemoteObjectLight> implements ExpandEv
     public void itemCollapse(CollapseEvent<AbstractNode> event) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
-    @Override
-    public TopComponent getTopComponent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
+   
     
 //    /**
 //     * Currently selected node

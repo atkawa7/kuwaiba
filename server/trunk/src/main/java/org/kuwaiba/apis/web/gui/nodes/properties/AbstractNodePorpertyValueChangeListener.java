@@ -18,7 +18,6 @@ package org.kuwaiba.apis.web.gui.nodes.properties;
 import com.google.common.eventbus.EventBus;
 import com.vaadin.data.HasValue;
 import com.vaadin.event.FieldEvents;
-import org.kuwaiba.apis.web.gui.modules.TopComponent;
 import org.kuwaiba.services.persistence.util.Constants;
 
 /**
