@@ -70,7 +70,6 @@ public class ServiceManagerModule extends AbstractModule {
         serviceManagerMenuItem.addItem(getName(), new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                UI.getCurrent().getNavigator().addView(ServiceManagerComponent.VIEW_NAME, open());
                 UI.getCurrent().getNavigator().navigateTo(ServiceManagerComponent.VIEW_NAME);
             }
         });

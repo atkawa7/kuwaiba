@@ -74,7 +74,6 @@ public class ListTypeManagerModule  extends AbstractModule {
         listTypeManagerMenuItem.addItem(getName(), new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                //UI.getCurrent().getNavigator().addView(ListTypeManagerComponent.VIEW_NAME, open());
                 UI.getCurrent().getNavigator().navigateTo(ListTypeManagerComponent.VIEW_NAME);
             }
         });
