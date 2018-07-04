@@ -15,7 +15,6 @@
  */
 package org.kuwaiba.web.modules.ltmanager;
 
-import com.google.common.eventbus.EventBus;
 import com.vaadin.cdi.CDIView;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.ListDataProvider;
@@ -123,9 +122,9 @@ public class ListTypeManagerComponent extends AbstractTopComponent {
         }
     }
     
-    public ListTypeManagerComponent(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        //super(wsBean, eventBus, session);
-    }
+//    public ListTypeManagerComponent(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
+//        //super(wsBean, eventBus, session);
+//    }
     
     private void onTxtFilterChange(HasValue.ValueChangeEvent<String> event) {
         ListDataProvider<RemoteClassMetadataLight> dataProvider = (ListDataProvider<RemoteClassMetadataLight>) tblListTypes.getDataProvider();

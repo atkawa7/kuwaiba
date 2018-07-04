@@ -117,7 +117,7 @@ public class SDHModule implements GenericCommercialModule {
     
     @Override
     public String getVendor() {
-        return "Neotropic SAS"; //NOI18N
+        return "Neotropic SAS <contact@neotropic.co>"; //NOI18N
     }
 
     @Override

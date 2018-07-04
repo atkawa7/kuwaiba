@@ -14,7 +14,6 @@
  */
 package org.kuwaiba.web.modules.servmanager;
 
-import com.google.common.eventbus.EventBus;
 import com.vaadin.cdi.CDIView;
 import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.ListDataProvider;
@@ -144,10 +143,6 @@ public class ServiceManagerComponent extends AbstractTopComponent {
             Notifications.showError(ex.getMessage());
         }
         
-    }
-    
-    public ServiceManagerComponent(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        //super(wsBean, eventBus, session);
     }
     
     private void onTxtFilterChange(HasValue.ValueChangeEvent<String> event) {

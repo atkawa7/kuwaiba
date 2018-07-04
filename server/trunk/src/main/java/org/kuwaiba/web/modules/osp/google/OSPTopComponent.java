@@ -330,7 +330,7 @@ public class OSPTopComponent extends GoogleMapsComponent implements AbstractGISV
 
     @Override
     public String getVendor() {
-        return "Neotropic SAS";
+        return "Neotropic SAS <contact@neotropic.co>";
     }
 
     @Override

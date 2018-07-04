@@ -99,7 +99,7 @@ public class PropertySheetModule extends AbstractModule {
 //
 //    @Override
 //    public String getVendor() {
-//        return "Neotropic SAS";
+//        return "Neotropic SAS <contact@neotropic.co>";
 //    }
 //
 //    @Override

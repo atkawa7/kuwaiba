@@ -58,7 +58,7 @@ public class ListTypeManagerModule  extends AbstractModule {
 
     @Override
     public String getVendor() {
-        return "Neotropic SAS";
+        return "Neotropic SAS <contact@neotropic.co>";
     }
 
     @Override
@@ -74,7 +74,7 @@ public class ListTypeManagerModule  extends AbstractModule {
         listTypeManagerMenuItem.addItem(getName(), new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
-                UI.getCurrent().getNavigator().addView(ListTypeManagerComponent.VIEW_NAME, open());
+                //UI.getCurrent().getNavigator().addView(ListTypeManagerComponent.VIEW_NAME, open());
                 UI.getCurrent().getNavigator().navigateTo(ListTypeManagerComponent.VIEW_NAME);
             }
         });
@@ -96,7 +96,7 @@ public class ListTypeManagerModule  extends AbstractModule {
 
     @Override
     public View open() {
-        listTypeManagerComponent = new ListTypeManagerComponent(eventBus, wsBean, session);
+        listTypeManagerComponent = new ListTypeManagerComponent();
         //Register components in the event bus
         listTypeManagerComponent.registerComponents();
         return listTypeManagerComponent;

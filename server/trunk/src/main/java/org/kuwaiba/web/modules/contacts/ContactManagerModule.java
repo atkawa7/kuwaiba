@@ -13,39 +13,33 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.web.modules.containment;
+package org.kuwaiba.web.modules.contacts;
 
 import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
-import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.MenuBar;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
- * The definition of the Containment Manager module.
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ *
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ContainmentManagerModule extends AbstractModule {
-    /**
-     * The actual component
-     */
-    private ContainmentManagerComponent containment;
-    
-    public ContainmentManagerModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
+public class ContactManagerModule extends AbstractModule {
+
+    public ContactManagerModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
         super(eventBus, wsBean, session);
-        icon = new ThemeResource("img/mod_icon_containment.png");
     }
 
     @Override
     public String getName() {
-        return "Containment Manager";
+        return "Contact Manager";
     }
 
     @Override
     public String getDescription() {
-        return "This module allows to tailor the Containment Hierachy to your needs";
+        return "Manage the contacts associated to your customers and providers";
     }
 
     @Override
@@ -60,24 +54,22 @@ public class ContainmentManagerModule extends AbstractModule {
 
     @Override
     public int getType() {
-        return MODULE_TYPE_FREE_CORE;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void attachToMenu(MenuBar menuBar) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public View open() {
-        containment = new ContainmentManagerComponent(eventBus, wsBean, session);
-        //Register components in the event bus
-        containment.registerComponents();
-        return containment;
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void close() {
-        //Unregister components from the event bus
-        containment.unregisterComponents();
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+    
 }

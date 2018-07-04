@@ -54,7 +54,7 @@ public class ServiceManagerModule extends AbstractModule {
 
     @Override
     public String getVendor() {
-        return "Neotropic SAS";
+        return "Neotropic SAS <contact@neotropic.co>";
     }
 
     @Override
@@ -104,7 +104,7 @@ public class ServiceManagerModule extends AbstractModule {
 
     @Override
     public View open() {
-        servManagementComponent = new ServiceManagerComponent(eventBus, wsBean, session);
+        servManagementComponent = new ServiceManagerComponent();
         //Register components in the event bus
         servManagementComponent.registerComponents();
         return servManagementComponent;

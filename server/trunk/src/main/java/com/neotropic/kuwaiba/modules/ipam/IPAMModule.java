@@ -90,7 +90,7 @@ public class IPAMModule implements GenericCommercialModule{
 
     @Override
     public String getVendor() {
-        return "Neotropic SAS";
+        return "Neotropic SAS <contact@neotropic.co>";
     }
 
     @Override
