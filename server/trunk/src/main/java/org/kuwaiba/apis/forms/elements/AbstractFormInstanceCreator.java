@@ -93,8 +93,43 @@ public abstract class AbstractFormInstanceCreator {
                         sharedInformation.put(elementField.getId(), elementField.getValue().toString());
                 }
                 XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.DATA_TYPE, ((AbstractElementField) parent).getDataType());
+                
                 addTagAttributes(xmlew, xmlef, ((AbstractElementField) parent));
                 
+            } if (parent instanceof ElementGrid) {
+                ElementGrid elementGrid = (ElementGrid) parent;
+                
+                List<List<Object>> rows = ((ElementGrid) parent).getRows();
+                
+                if (rows != null) {
+                    
+                    if (!rows.isEmpty()) {
+                        
+                        if (elementGrid.getId() != null && elementGrid.isShared()) {
+                            int rowsCount = rows.size();
+                            int columnsCount = rows.get(0).size();
+                            
+                            sharedInformation.put(elementGrid.getId() + "rowscount", String.valueOf(rowsCount));
+                            sharedInformation.put(elementGrid.getId() + "columnscount", String.valueOf(columnsCount));
+                            
+                            for (int i = 0; i < rowsCount; i += 1) {
+                                
+                                for (int j = 0; j < columnsCount; j += 1) {
+                                    
+                                    sharedInformation.put(elementGrid.getId() + i + j, rows.get(i).get(j).toString());
+                                }
+                            }
+                        }
+                                                                        
+                        QName tagRows = new QName(Constants.Tag.ROWS);
+                        xmlew.add(xmlef.createStartElement(tagRows, null, null));
+
+                        for (List<Object> row : rows)
+                            addGridRow(xmlew, xmlef, row);
+
+                        xmlew.add(xmlef.createEndElement(tagRows, null));
+                    }
+                }
             } else if (parent instanceof AbstractElementContainer) {
                 List<AbstractElement> children = ((AbstractElementContainer) parent).getChildren();
 
@@ -110,6 +145,21 @@ public abstract class AbstractFormInstanceCreator {
         }
     }
     
+    public void addGridRow(XMLEventWriter xmlew, XMLEventFactory xmlef, List<Object> row) throws XMLStreamException {
+        QName tagRow = new QName(Constants.Tag.ROW);
+        QName tagData = new QName(Constants.Tag.DATA);
+                
+        xmlew.add(xmlef.createStartElement(tagRow, null, null));
+                        
+        for (Object data : row) {
+            
+            xmlew.add(xmlef.createStartElement(tagData, null, null));
+            xmlew.add(xmlef.createCharacters(data.toString()));
+            xmlew.add(xmlef.createEndElement(tagData, null));
+        }        
+        xmlew.add(xmlef.createEndElement(tagRow, null));
+    }
+        
     /**
      * Add a set of attributes based on a given data type
      */

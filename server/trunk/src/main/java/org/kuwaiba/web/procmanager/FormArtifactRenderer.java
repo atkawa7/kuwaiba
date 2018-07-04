@@ -54,9 +54,8 @@ public class FormArtifactRenderer extends ArtifactRenderer {
     }
         
     @Override
-    public Component renderArtifact() {  
-
-        
+    public Component renderArtifact() {
+                
         if (artifactDefinition != null) {
             
             if (artifactDefinition.getPreconditionsScript() != null) {
@@ -81,7 +80,7 @@ public class FormArtifactRenderer extends ArtifactRenderer {
                     AbstractFormInstanceLoader fil = new FormInstanceLoader(wsBean, session);
                     
                     FormDefinitionLoader formLoader = fil.load(artifactDefinition.getDefinition(), artifact.getContent());
-                                        
+                    
                     formRenderer = new FormRenderer(formLoader, processInstance);
                     formRenderer.render(wsBean, session);
 
@@ -108,8 +107,6 @@ public class FormArtifactRenderer extends ArtifactRenderer {
 
     @Override
     public byte[] getContent() throws Exception {
-
-        
         formInstanceCreator = new FormInstanceCreator(formRenderer.getFormStructure(), wsBean, session);
         return formInstanceCreator.getStructure();
     }

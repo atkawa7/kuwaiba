@@ -16,6 +16,7 @@ package org.kuwaiba.web.procmanager;
 
 import com.vaadin.server.Page;
 import java.util.List;
+import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -32,9 +33,9 @@ import org.kuwaiba.beans.WebserviceBean;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ProcessInstanceBean {
-    private RemoteProcessInstance processInstance;
+    private final RemoteProcessInstance processInstance;
     private final WebserviceBean wsBean;
-    private RemoteSession session;
+    private final RemoteSession session;
                     
     public ProcessInstanceBean(RemoteProcessInstance processInstance, WebserviceBean wsBean, RemoteSession session) {
         this.processInstance = processInstance;
@@ -167,11 +168,11 @@ public class ProcessInstanceBean {
     
     public String getEditButtonCaption() {
         if (getCurrentActivityDefinition() == null)
-            return "Proceso sin Iniciar";
+            return "Created";
             
-        if (getCurrentActivityDefinition().getNextActivity() == null)
-            return "Proceso Finalizado";
-        return "Continuar";
+        if (getCurrentActivityDefinition().getType() == ActivityDefinition.TYPE_END)
+            return "Finalized";
+        return "Continue";
     }
     
     public String getViewButtonCaption() {

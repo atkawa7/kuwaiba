@@ -42,8 +42,11 @@ public class ComponentDateField extends GraphicalComponent {
     @Override
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementDateField) {
+            
+            ElementDateField dateField = (ElementDateField) element;
+            
             getComponent().addStyleName(ValoTheme.DATEFIELD_ALIGN_RIGHT);
-            getComponent().setValue(LocalDate.now());
+            getComponent().setValue(dateField.getValue() != null ? (LocalDate) dateField.getValue() : LocalDate.now());
             
             getComponent().addValueChangeListener(new ValueChangeListener<LocalDate>() {
                 @Override

@@ -14,14 +14,14 @@
  */
 package org.kuwaiba.web.procmanager;
 
+import com.google.common.eventbus.EventBus;
 import com.vaadin.cdi.CDIView;
-import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.VerticalLayout;
 import java.util.List;
 import javax.inject.Inject;
+import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
@@ -30,26 +30,25 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.web.IndexUI;
 /**
- *
+ * The main component of the Process Manager module.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-@CDIView("application")
-public class ProcessManagerView extends VerticalLayout implements View {
-    public static String VIEW_NAME = "application";
-    
+@CDIView("procmanager")
+public class ProcessManagerComponent extends AbstractTopComponent {
+    public static String VIEW_NAME = "procmanager";
+    /**
+     * The backend bean
+     */
     @Inject
     private WebserviceBean wsBean;
         
-    public ProcessManagerView() {
+    @Override
+    public void enter(ViewChangeListener.ViewChangeEvent event) {
         setStyleName("processmanager");
         addStyleName("misc");
         addStyleName("darklayout");
         
         setSizeFull();
-    }
-    
-    @Override
-    public void enter(ViewChangeListener.ViewChangeEvent event) {
         
         MenuBar mainMenu = ((IndexUI)getUI()).getMainMenu();
         
@@ -71,6 +70,14 @@ public class ProcessManagerView extends VerticalLayout implements View {
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
         }
+    }
+
+    @Override
+    public void registerComponents() {
+    }
+
+    @Override
+    public void unregisterComponents() {
     }
     
 }

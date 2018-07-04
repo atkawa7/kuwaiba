@@ -57,7 +57,7 @@ public class ElementButton extends AbstractElement {
 
                     String elementId = functionParams.get(0);
 
-                    List<String> elements = new ArrayList();
+                    List<Object> elements = new ArrayList();
 
                     for (int i = 1; i < functionParams.size(); i += 1) {
                         AbstractElement ae = getFormStructure().getElementById(functionParams.get(i));
@@ -71,8 +71,10 @@ public class ElementButton extends AbstractElement {
 
                     AbstractElement anElement = getFormStructure().getElementById(elementId);
 
-                    if (anElement instanceof ElementGrid)
+                    if (anElement instanceof ElementGrid) {
+                        ((ElementGrid) anElement).addRow(elements);
                         anElement.fireElementEvent(new EventDescriptor(Constants.EventAttribute.ONPROPERTYCHANGE, Constants.Property.ROWS, elements, null));
+                    }
 
                 } else if (Constants.Function.CLOSE.equals(key)) {
 

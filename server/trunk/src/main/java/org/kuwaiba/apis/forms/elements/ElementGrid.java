@@ -26,8 +26,9 @@ import javax.xml.stream.XMLStreamReader;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ElementGrid extends AbstractElement {        
-    List<ElementColumn> columns;
-    List<List<Object>> rows;
+    private List<ElementColumn> columns;
+    private List<List<Object>> rows;
+    private boolean shared = false;
         
     public ElementGrid() {
         
@@ -45,13 +46,34 @@ public class ElementGrid extends AbstractElement {
         return rows;        
     }
     
+    public boolean addRow(List<Object> row) {
+        if (row == null)                
+            return false;
+        
+        if (rows == null)
+            rows = new ArrayList();
+        
+        rows.add(row);
+        
+        return true;
+    }
+    
     public void setRows(List<List<Object>> rows) {
         this.rows = rows;
+    }
+    
+    public boolean isShared() {
+        return shared;
+    }
+    
+    public void setShared(boolean shared) {
+        this.shared = shared;        
     }
     
     @Override
     public void initFromXML(XMLStreamReader reader) throws XMLStreamException {
         super.initFromXML(reader);
+        setShared(reader);
         
         columns = new ArrayList();
         QName tagGrid = new QName(Constants.Tag.GRID);
@@ -77,6 +99,10 @@ public class ElementGrid extends AbstractElement {
         }
     }
     
+    private void setShared(XMLStreamReader reader) {
+        shared = Boolean.valueOf(reader.getAttributeValue(null, Constants.Attribute.SHARED));
+    }
+    
     @Override
     public void onComponentEvent(EventDescriptor event) {
         super.onComponentEvent(event);        
@@ -85,6 +111,53 @@ public class ElementGrid extends AbstractElement {
     @Override
     public String getTagName() {
         return Constants.Tag.GRID;       
+    }
+    
+    @Override
+    public void fireOnLoad() {
+        super.fireOnLoad(); 
+        
+        if (hasProperty(Constants.EventAttribute.ONLOAD, Constants.Property.ROWS)) {
+            
+            List<String> list = getEvents().get(Constants.EventAttribute.ONLOAD).get(Constants.Property.ROWS);
+            
+            loadValue(list);
+        }                        
+    }
+    
+    private void loadValue(List<String> list) {
+        if (list != null && !list.isEmpty()) {
+
+            String functionName = list.get(0);
+
+            Runner runner = getFormStructure().getElementScript().getFunctionByName(functionName);
+
+            List parameters = new ArrayList();
+
+            for (int i = 1; i < list.size(); i += 1) {
+                AbstractElement anElement = getFormStructure().getElementById(list.get(i));
+                parameters.add(anElement != null ? anElement : list.get(i));
+            }
+
+            Object newValue = runner.run(parameters);
+            
+            if (newValue != null) {
+                
+                setRows((List<List<Object>>) newValue);
+
+                for (List<Object> row : getRows()) {
+
+                    fireElementEvent(new EventDescriptor(
+                        Constants.EventAttribute.ONPROPERTYCHANGE, 
+                        Constants.Property.ROWS, 
+                        row, 
+                        null));
+                }
+            }
+//            fireElementEvent(new EventDescriptor(
+//                Constants.EventAttribute.ONPROPERTYCHANGE, 
+//                Constants.Property.VALUE, newValue, null));
+        }
     }
     
 }

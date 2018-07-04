@@ -46,6 +46,9 @@ public class Constants {
         public static final String LIST_SELECT_FILTER = "listSelectFilter"; //NOI18N
         public static final String FORM_INSTANCE = "formInstance"; //NOI18N
         public static final String UPLOAD = "upload"; //NOI18N
+        public static final String ROWS = "rows"; //NOI18N
+        public static final String ROW = "row"; //NOI18N
+        public static final String DATA = "data"; //NOI18N
     }
     
     public class Attribute {
@@ -76,7 +79,7 @@ public class Constants {
         public static final String CLASS_NAME = "classname"; //NOI18N
         public static final String FORM_ID = "formid"; //NOI18N
         public static final String SHARED = "shared"; //NOI18N
-        
+                
         public class DataType {
             public static final String REMOTE_OBJECT = "RemoteObject"; //NOI18N
             public static final String REMOTE_OBJECT_LIGTH = "RemoteObjectLight"; //NOI18N

@@ -15,9 +15,13 @@
 package org.kuwaiba.apis.forms.elements;
 
 import java.io.ByteArrayInputStream;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -83,6 +87,13 @@ public abstract class AbstractFormInstanceLoader {
                 if (value != null)
                     return value;
             break;
+            case Constants.Attribute.DataType.DATE:
+                
+                value = reader.getAttributeValue(null, Constants.Attribute.VALUE);
+                
+                if (value != null)
+                    return LocalDate.parse(value);
+            break;
             default:
                 return null;
         }
@@ -96,10 +107,15 @@ public abstract class AbstractFormInstanceLoader {
             ByteArrayInputStream bais = new ByteArrayInputStream(content);
             XMLStreamReader reader = xmlif.createXMLStreamReader(bais);
             
+            QName tagGrid = new QName(Constants.Tag.GRID);
+            QName tagRows = new QName(Constants.Tag.ROWS);
+            QName tagRow = new QName(Constants.Tag.ROW);
+            QName tagData = new QName(Constants.Tag.DATA);
+            
             while (reader.hasNext()) {
-                int event = reader.next();
+                reader.next();
                 
-                if (event == XMLStreamConstants.START_ELEMENT) {
+                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
                                         
                     if (formid == null)
                         formid = reader.getAttributeValue(null, Constants.Attribute.FORM_ID);
@@ -113,6 +129,46 @@ public abstract class AbstractFormInstanceLoader {
                                                         
                             if (value != null)
                                 values.put(id, value);
+                        }
+                        
+                        if (reader.getName().equals(tagGrid)) {
+                            
+                            List<List<Object>> rows = new ArrayList();
+                            
+                            while (true) {
+                                
+                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
+                                    
+                                    if (reader.getName().equals(tagRow)) {
+                                        
+                                        List<Object> row = new ArrayList();
+                                                                                
+                                        while (true) {
+                                            
+                                            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
+                                                
+                                                if (reader.getName().equals(tagData)) {
+                                                    row.add(reader.getElementText());
+                                                }
+                                                
+                                            } if (reader.getEventType() == XMLStreamConstants.END_ELEMENT) {
+                                                
+                                                if (reader.getName().equals(tagRow))
+                                                    break;
+                                            }
+                                            reader.next();
+                                        }
+                                        rows.add(row);
+                                    }
+                                }
+                                if (reader.getEventType() == XMLStreamConstants.END_ELEMENT) {
+                                    
+                                    if (reader.getName().equals(tagGrid) || reader.getName().equals(tagRows))
+                                        break;
+                                }
+                                reader.next();
+                            }
+                            values.put(id, rows);
                         }
                     }
                 }
@@ -136,6 +192,10 @@ public abstract class AbstractFormInstanceLoader {
                 if (element != null) {
                     if (element instanceof AbstractElementField) {
                         ((AbstractElementField) element).setValue(values.get(id));
+                        
+                    } else if (element instanceof ElementGrid) {
+                        ((ElementGrid) element).setRows((List<List<Object>>) values.get(id));
+                        
                     }
                 }
             }

@@ -15,6 +15,7 @@
 package org.kuwaiba.web.procmanager;
 
 import com.vaadin.data.HasValue;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -26,6 +27,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.util.StringPair;
@@ -99,7 +101,13 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
     private void renderActivityButton(VerticalLayout activitiesLayout, RemoteActivityDefinition nextActivity) {
         
         Button btnActivity = new Button(nextActivity.getName());
+//        if (nextActivity.isIdling())
+//            btnActivity.setIcon(VaadinIcons.THIN_SQUARE);
+//        else
+            btnActivity.setIcon(VaadinIcons.CHECK_SQUARE_O);
+        
         btnActivity.setStyleName("activity");
+                
         btnActivity.setWidth("100%");
         activitiesLayout.addComponent(btnActivity);
         activitiesLayout.setComponentAlignment(btnActivity,  Alignment.TOP_CENTER);
@@ -221,7 +229,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
                                     Page.getCurrent().getWebBrowser().getAddress(),
                                     remoteSession.getSessionId());
 
-                            Notification.show("Success", "The artifact was updated", Notification.Type.TRAY_NOTIFICATION);
+                            Notification.show("Success", "The activity was updated", Notification.Type.TRAY_NOTIFICATION);
 
                         }
                         processInstance = wsBean.getProcessInstance(
@@ -354,7 +362,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
                 renderActivityButton(activitiesLayout, activity);      
             
             if (lstActivities != null && !lstActivities.isEmpty()) {
-
+                activities.get(lstActivities.get(lstActivities.size() - 1)).setIcon(VaadinIcons.THIN_SQUARE);
                 activities.get(lstActivities.get(lstActivities.size() - 1)).addStyleName("activity-current");
                 renderArtifact(lstActivities.get(lstActivities.size() - 1));
             }

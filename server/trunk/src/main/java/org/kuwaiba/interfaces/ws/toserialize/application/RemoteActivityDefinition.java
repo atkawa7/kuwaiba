@@ -189,5 +189,10 @@ public class RemoteActivityDefinition implements Serializable {
         }
         return true;
     }
-        
+
+    @Override
+    public String toString() {
+        return name != null ? name : "";
+    }
+    
 }

@@ -27,11 +27,9 @@ import com.vaadin.server.SessionDestroyListener;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinSession;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.MenuBar.MenuItem;
 import com.vaadin.ui.UI;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import javax.inject.Inject;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -40,10 +38,9 @@ import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.web.modules.ltmanager.ListTypeManagerModule;
 import org.kuwaiba.web.modules.servmanager.ServiceManagerModule;
-import org.kuwaiba.web.procmanager.ProcessManagerView;
+import org.kuwaiba.web.procmanager.ProcessManagerModule;
 
 /**
  * Main application entry point. It also serves as the fallback controller
@@ -77,47 +74,15 @@ public class IndexUI extends UI {
             this.mnuMain = new MenuBar();
             this.mnuMain.setStyleName("misc-main");
             this.mnuMain.setWidth("100%");
-            
-            MenuItem menuProcessManager = this.mnuMain.addItem("Process Manager", null);
-            MenuItem menuItem = menuProcessManager.addItem("Processes", null);
-
-            try {
-                List<RemoteProcessDefinition> processDefinitions = wsBean.getProcessDefinitions(
-                    Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) getSession().getAttribute("session")).getSessionId());
-                
-                for (RemoteProcessDefinition processDefinition : processDefinitions) {
-                    
-                    menuItem.addItem(processDefinition.getName(), null, new MenuBar.Command() {
-                        @Override
-                        public void menuSelected(MenuBar.MenuItem selectedItem) {
-                            getSession().setAttribute("selectedProcessDefinition", processDefinition);
-                            IndexUI.this.getNavigator().navigateTo(ProcessManagerView.VIEW_NAME);                            
-                        }
-                    });
-                }
-                
-            } catch (ServerSideException ex) {
-                Notifications.showError(ex.getMessage());
-            }
-            MenuItem menuItemOptions = menuProcessManager.addItem("Options", null);
-            menuItemOptions.addItem("Reload", null, new MenuBar.Command() {
-                @Override
-                public void menuSelected(MenuBar.MenuItem selectedItem) {
-                    try {
-                        wsBean.reloadProcessDefinitions(
-                                Page.getCurrent().getWebBrowser().getAddress(),
-                                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
-                    } catch (ServerSideException ex) {
-                        Notifications.showError(ex.getMessage());
-                    }
-                }
-            });
-            
+            // Adding Process Manager Module
+            ProcessManagerModule processManagerModule = new ProcessManagerModule(null, wsBean, 
+                (RemoteSession) getSession().getAttribute("session"));
+            processManagerModule.attachToMenu(mnuMain);
+            // Adding Service Manager Module
             ServiceManagerModule servManagerModule = new ServiceManagerModule(null, wsBean, 
                         (RemoteSession) getSession().getAttribute("session"));
             servManagerModule.attachToMenu(mnuMain);
-            
+            // Adding List Type Manager Module
             ListTypeManagerModule ltmModule = new ListTypeManagerModule(null, wsBean, 
                         (RemoteSession) getSession().getAttribute("session"));
             ltmModule.attachToMenu(mnuMain);

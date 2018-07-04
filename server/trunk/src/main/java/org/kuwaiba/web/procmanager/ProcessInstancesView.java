@@ -14,22 +14,29 @@
  */
 package org.kuwaiba.web.procmanager;
 
+import com.vaadin.data.HasValue;
+import com.vaadin.data.HasValue.ValueChangeListener;
 import org.kuwaiba.apis.web.gui.notifications.MessageBox;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.components.grid.HeaderCell;
+import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
@@ -37,6 +44,9 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.openide.util.Exceptions;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActor;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConditionalActivityDefinition;
 import org.kuwaiba.web.IndexUI;
 
 /**
@@ -60,6 +70,9 @@ public class ProcessInstancesView extends VerticalLayout {
         this.processes = processes;
         this.wsBean = wsBean;
         this.session = session;
+        
+        getAllActivities(processDefinition.getStartActivity());
+        
         initView();
     }
     
@@ -71,7 +84,7 @@ public class ProcessInstancesView extends VerticalLayout {
         HorizontalLayout tools = new HorizontalLayout();
         tools.setWidth("100%");
                 
-        btnCreateProcessInstance = new Button("Nueva Alta de Servicio", VaadinIcons.PLUS);
+        btnCreateProcessInstance = new Button("New Service", VaadinIcons.PLUS);
                         
         btnCreateProcessInstance.addClickListener(new Button.ClickListener() {
             @Override
@@ -97,15 +110,15 @@ public class ProcessInstancesView extends VerticalLayout {
                                 
                                 MenuBar mainMenu = ((IndexUI) ui).getMainMenu();
                                 
-                                ((ProcessManagerView) ui.getContent()).removeAllComponents();
+                                ((ProcessManagerComponent) ui.getContent()).removeAllComponents();
                                 
-                                ((ProcessManagerView) ui.getContent()).addComponent(mainMenu);
-                                ((ProcessManagerView) ui.getContent()).setExpandRatio(mainMenu, 0.5f);
+                                ((ProcessManagerComponent) ui.getContent()).addComponent(mainMenu);
+                                ((ProcessManagerComponent) ui.getContent()).setExpandRatio(mainMenu, 0.5f);
                                 
                                 ProcessInstanceView processInstanceView = new ProcessInstanceView(processInstance, processDefinition, wsBean,session);
                                 
-                                ((ProcessManagerView) ui.getContent()).addComponent(processInstanceView);
-                                ((ProcessManagerView) ui.getContent()).setExpandRatio(processInstanceView, 9.5f);
+                                ((ProcessManagerComponent) ui.getContent()).addComponent(processInstanceView);
+                                ((ProcessManagerComponent) ui.getContent()).setExpandRatio(processInstanceView, 9.5f);
                                                                                                 
                             } catch (ServerSideException ex) {
                                 Exceptions.printStackTrace(ex);
@@ -117,50 +130,95 @@ public class ProcessInstancesView extends VerticalLayout {
                     
             }
         });
+                
         grid = new Grid<>();
         grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.setWidth("100%");
         
         List<ProcessInstanceBean> beans = new ArrayList();
-        
+                
         for (RemoteProcessInstance process : processes)
             beans.add(new ProcessInstanceBean(process, wsBean, session));
         
+        String columnOrderNumberId = "columnOrderNumber"; //NOI18N
+        String columnServiceCodeId = "columnServiceCode"; //NOI18N
+        String columnCurrentActivityId = "columnCurrentActivity"; //NOI18N
+        String columnActorId = "columnActor"; //NOI18N
+        String columnStatusId = "columnStatus"; //NOI18N        
+        
         grid.setItems(beans);
-        grid.addColumn(ProcessInstanceBean::getOrderNumber).setCaption("Order Number");
-        grid.addColumn(ProcessInstanceBean::getServiceCode).setCaption("Service Code");
-        grid.addColumn(ProcessInstanceBean::getCurrentActivity).setCaption("Current Activity");
-        grid.addColumn(ProcessInstanceBean::getCurrentActivityActor).setCaption("Actor");
-        /*
-        grid.addColumn(ProcessInstanceBean::getViewButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
+        grid.addColumn(ProcessInstanceBean::getOrderNumber).setCaption("Order Number").setId(columnOrderNumberId);
+        grid.addColumn(ProcessInstanceBean::getServiceCode).setCaption("Service Code").setId(columnServiceCodeId);
+        grid.addColumn(ProcessInstanceBean::getCurrentActivity).setCaption("Current Activity").setId(columnCurrentActivityId);
+        grid.addColumn(ProcessInstanceBean::getCurrentActivityActor).setCaption("Actor").setId(columnActorId);
+        
+        HeaderRow headerRow = grid.appendHeaderRow();
+        // Filter to Order Number                
+        HeaderCell orderNumberHeaderCell = headerRow.getCell(columnOrderNumberId);
+        
+        TextField txtOrderNumber = new TextField();
+        orderNumberHeaderCell.setComponent(txtOrderNumber);
+        
+        txtOrderNumber.addValueChangeListener(new ValueChangeListener<String>() {
+            
             @Override
-            public void click(ClickableRenderer.RendererClickEvent event) {
-                Notification.show("Hola");
+            public void valueChange(HasValue.ValueChangeEvent<String> event) {
+                Iterator<ProcessInstanceBean> iterator = beans.iterator();
+                
+                List<ProcessInstanceBean> filteredItems = new ArrayList();
+                
+                while (iterator.hasNext()) {
+                    ProcessInstanceBean element = iterator.next();
+
+                    if (captionFilter.test(element != null ? element.getOrderNumber() : null, event.getValue()))
+                        filteredItems.add(element);
+                }
+                grid.setItems(filteredItems);
             }
-        })).setCaption("View");
-        */
+        });
+        // Filter to Service Code
+        HeaderCell serviceCodeHeaderCell = headerRow.getCell(columnServiceCodeId);
+        
+        TextField txtServiceCode = new TextField();
+        serviceCodeHeaderCell.setComponent(txtServiceCode);
+        
+        txtServiceCode.addValueChangeListener(new ValueChangeListener<String>() {
+            
+            @Override
+            public void valueChange(HasValue.ValueChangeEvent<String> event) {
+                Iterator<ProcessInstanceBean> iterator = beans.iterator();
+                
+                List<ProcessInstanceBean> filteredItems = new ArrayList();
+                
+                while (iterator.hasNext()) {
+                    ProcessInstanceBean element = iterator.next();
+
+                    if (captionFilter.test(element != null ? element.getServiceCode() : null, event.getValue()))
+                        filteredItems.add(element);
+                }
+                grid.setItems(filteredItems);
+            }
+        });
+        
+        
         ButtonRenderer buttonContinuar = new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
             @Override
             public void click(ClickableRenderer.RendererClickEvent event) {
                 ProcessInstanceBean processInstanceBean = (ProcessInstanceBean) event.getItem();
-                /*
-                ((ProcessManagerView) getUI().getContent()).setSecondComponent(
-                new ProcessInstanceView(processInstanceBean.getProcessInstance(), processInstanceBean.getProcessDefinition(), wsBean, session)
-                );
-                */
+                
                 UI ui = getUI();
                 
                 MenuBar mainMenu = ((IndexUI) ui).getMainMenu();
                 
-                ((ProcessManagerView) ui.getContent()).removeAllComponents();
+                ((ProcessManagerComponent) ui.getContent()).removeAllComponents();
                 
-                ((ProcessManagerView) ui.getContent()).addComponent(mainMenu);
-                ((ProcessManagerView) ui.getContent()).setExpandRatio(mainMenu, 0.5f);
+                ((ProcessManagerComponent) ui.getContent()).addComponent(mainMenu);
+                ((ProcessManagerComponent) ui.getContent()).setExpandRatio(mainMenu, 0.5f);
 
                 ProcessInstanceView processInstanceView = new ProcessInstanceView(processInstanceBean.getProcessInstance(), processInstanceBean.getProcessDefinition(), wsBean, session);
 
-                ((ProcessManagerView) ui.getContent()).addComponent(processInstanceView);
-                ((ProcessManagerView) ui.getContent()).setExpandRatio(processInstanceView, 9.5f);
+                ((ProcessManagerComponent) ui.getContent()).addComponent(processInstanceView);
+                ((ProcessManagerComponent) ui.getContent()).setExpandRatio(processInstanceView, 9.5f);
             }
         });
         
@@ -183,7 +241,7 @@ public class ProcessInstancesView extends VerticalLayout {
             }
         });
                 
-        grid.addColumn(ProcessInstanceBean::getEditButtonCaption, buttonContinuar).setCaption("Continuar");
+        grid.addColumn(ProcessInstanceBean::getEditButtonCaption, buttonContinuar).setCaption("Status").setId("columnStatus");
         grid.addColumn(ProcessInstanceBean::getViewButtonCaption, buttonView).setCaption("View");
         /*
         grid.addColumn(ProcessInstanceBean::getDeleteButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
@@ -193,7 +251,88 @@ public class ProcessInstancesView extends VerticalLayout {
             }
         })).setCaption("Delete");
         */
-        Label lbl = new Label("Altas de Servicio");
+        // Filter To Status
+        HeaderCell statusHeaderCell = headerRow.getCell(columnStatusId);
+        
+        ComboBox cmbStatus = new ComboBox();
+        
+        List<String> status = new ArrayList();
+        status.add("Created");
+        status.add("Finalized");
+        status.add("Continue");
+        
+        cmbStatus.setItems(status);
+        statusHeaderCell.setComponent(cmbStatus);
+        
+        cmbStatus.addValueChangeListener(new ValueChangeListener<String>() {
+            
+            @Override
+            public void valueChange(HasValue.ValueChangeEvent<String> event) {
+                Iterator<ProcessInstanceBean> iterator = beans.iterator();
+                
+                List<ProcessInstanceBean> filteredItems = new ArrayList();
+                
+                while (iterator.hasNext()) {
+                    ProcessInstanceBean element = iterator.next();
+
+                    if (captionFilter.test(element != null ? element.getEditButtonCaption() : null, event.getValue() != null ? event.getValue() : ""))
+                        filteredItems.add(element);
+                }
+                grid.setItems(filteredItems);
+            }
+        });
+        // Filter To Current Activity
+        HeaderCell currentActivityHeaderCell = headerRow.getCell(columnCurrentActivityId);
+        
+        ComboBox cmbCurrentActivity = new ComboBox();
+        
+        cmbCurrentActivity.setItems(allActivities);
+        currentActivityHeaderCell.setComponent(cmbCurrentActivity);
+        
+        cmbCurrentActivity.addValueChangeListener(new ValueChangeListener<RemoteActivityDefinition>() {
+            
+            @Override
+            public void valueChange(HasValue.ValueChangeEvent<RemoteActivityDefinition> event) {
+                Iterator<ProcessInstanceBean> iterator = beans.iterator();
+                
+                List<ProcessInstanceBean> filteredItems = new ArrayList();
+                
+                while (iterator.hasNext()) {
+                    ProcessInstanceBean element = iterator.next();
+
+                    if (captionFilter.test(element != null ? element.getCurrentActivity() : null, event.getValue() != null ? event.getValue().toString() : ""))
+                        filteredItems.add(element);
+                }
+                grid.setItems(filteredItems);
+            }
+        });
+        // Filter To Actor
+        HeaderCell actorHeaderCell = headerRow.getCell(columnActorId);
+        
+        ComboBox cmbActor = new ComboBox();
+        
+        cmbActor.setItems(allActors);
+        actorHeaderCell.setComponent(cmbActor);
+        
+        cmbActor.addValueChangeListener(new ValueChangeListener<RemoteActor>() {
+            
+            @Override
+            public void valueChange(HasValue.ValueChangeEvent<RemoteActor> event) {
+                Iterator<ProcessInstanceBean> iterator = beans.iterator();
+                
+                List<ProcessInstanceBean> filteredItems = new ArrayList();
+                
+                while (iterator.hasNext()) {
+                    ProcessInstanceBean element = iterator.next();
+
+                    if (captionFilter.test(element != null ? element.getCurrentActivityActor() : null, event.getValue() != null ? event.getValue().toString() : ""))
+                        filteredItems.add(element);
+                }
+                grid.setItems(filteredItems);                
+            }
+        });
+                
+        Label lbl = new Label("Services");
                 
         wrapper.addComponent(lbl);
         wrapper.setComponentAlignment(lbl, Alignment.TOP_CENTER);
@@ -205,5 +344,38 @@ public class ProcessInstancesView extends VerticalLayout {
         wrapper.addComponent(grid);
         
         addComponent(wrapper);
+    }
+    
+    
+    
+    private final ComboBox.CaptionFilter captionFilter = new ComboBox.CaptionFilter() {        
+        
+        @Override
+        public boolean test(String itemCaption, String filterText) {
+            
+            if (itemCaption == null || filterText == null)
+                return false;
+            
+            return itemCaption.toLowerCase().contains(filterText.toLowerCase());
+        }
+    };
+    
+    private final List<RemoteActivityDefinition> allActivities = new ArrayList();
+    private final List<RemoteActor> allActors = new ArrayList();
+    
+    private void getAllActivities(RemoteActivityDefinition activity) {
+        if (activity != null && !allActivities.contains(activity)) {
+            allActivities.add(activity);
+            
+            if (!allActors.contains(activity.getActor()))
+                allActors.add(activity.getActor());
+            
+            if (activity instanceof RemoteConditionalActivityDefinition) {
+                getAllActivities(((RemoteConditionalActivityDefinition) activity).getNextActivityIfTrue());
+                getAllActivities(((RemoteConditionalActivityDefinition) activity).getNextActivityIfFalse());
+            } else {
+                getAllActivities(activity.getNextActivity());
+            }
+        }
     }
 }

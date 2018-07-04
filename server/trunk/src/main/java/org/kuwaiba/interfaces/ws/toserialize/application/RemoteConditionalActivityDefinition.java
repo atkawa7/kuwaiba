@@ -53,6 +53,6 @@ public class RemoteConditionalActivityDefinition extends RemoteActivityDefinitio
     
     public void setNextActivityIfFalse(RemoteActivityDefinition nextActivityIfFalse) {
         this.nextActivityIfFalse = nextActivityIfFalse;
-    }
+    }    
         
 }

@@ -32,7 +32,6 @@ import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.forms.components.impl.ObjectHierarchyProvider;
 import org.kuwaiba.apis.forms.elements.FormStructure;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
@@ -45,13 +44,11 @@ public class FormRenderer extends CustomComponent {
     private final VerticalLayout content;
     private final FormDefinitionLoader formLoader;
     private final HashMap<Component, GraphicalComponent> components = new HashMap();
-////    private final List<RemoteArtifact> remoteArtifacts;
     private final RemoteProcessInstance processInstance;
     
-    public FormRenderer(FormDefinitionLoader formLoader, RemoteProcessInstance processInstance/*, List<RemoteArtifact> remoteArtifacts*/) {
+    public FormRenderer(FormDefinitionLoader formLoader, RemoteProcessInstance processInstance) {
                         
         this.formLoader = formLoader;
-////        this.remoteArtifacts = remoteArtifacts;
         this.processInstance = processInstance;
         
         if (formLoader.getRoot() != null && 
