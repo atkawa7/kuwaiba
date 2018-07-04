@@ -20,7 +20,9 @@ import com.vaadin.navigator.View;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.UI;
+import org.kuwaiba.apis.web.gui.events.OperationResultListener;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
 
@@ -70,14 +72,33 @@ public class ListTypeManagerModule  extends AbstractModule {
 
     @Override
     public void attachToMenu(MenuBar menuBar) {
-        MenuBar.MenuItem listTypeManagerMenuItem = menuBar.addItem(getName(), new MenuBar.Command() {
+        
+        MenuBar.MenuItem listTypeManagerMenuItem = menuBar.addItem(getName(), null);
+        listTypeManagerMenuItem.setDescription(getDescription());
+        
+        listTypeManagerMenuItem.addItem("Manage List Types", new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 UI.getCurrent().getNavigator().addView(ListTypeManagerComponent.VIEW_NAME, open());
                 UI.getCurrent().getNavigator().navigateTo(ListTypeManagerComponent.VIEW_NAME);
             }
         });
-        listTypeManagerMenuItem.setDescription(getDescription());
+        
+        //Apart from the full-fledged List Type Manager, we add a small action to create a type
+        listTypeManagerMenuItem.addItem("Add List Type Item", new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                AddListTypeItemWindow wdwNewListTypeItem = new AddListTypeItemWindow(wsBean, new OperationResultListener() {
+                    @Override
+                    public void doIt() {
+                        Notifications.showInfo("List Type added successfully");
+                    }
+                });
+                UI.getCurrent().addWindow(wdwNewListTypeItem);
+            }
+        });
+                
+            
     }
 
     @Override

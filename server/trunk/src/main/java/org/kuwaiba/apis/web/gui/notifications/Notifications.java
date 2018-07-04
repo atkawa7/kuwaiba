@@ -27,7 +27,7 @@ public class Notifications {
     /**
      * Time an error message will be displayed on screen
      */
-    public static int ERROR_POPUP_DELAY = 3000;
+    public static int POPUP_DELAY = 3000;
     
     /**
      * Shows a simple error message at the bottom of the screen for ERROR_POPUP_DELAY milliseconds
@@ -36,7 +36,14 @@ public class Notifications {
     public static void showError(String message) {
         Notification ntfLoginError = new Notification(message, Notification.Type.ERROR_MESSAGE);
         ntfLoginError.setPosition(Position.BOTTOM_CENTER);
-        ntfLoginError.setDelayMsec(3000);
+        ntfLoginError.setDelayMsec(POPUP_DELAY);
+        ntfLoginError.show(Page.getCurrent());
+    }
+    
+    public static void showInfo(String message) {
+        Notification ntfLoginError = new Notification(message, Notification.Type.ASSISTIVE_NOTIFICATION);
+        ntfLoginError.setPosition(Position.BOTTOM_CENTER);
+        ntfLoginError.setDelayMsec(POPUP_DELAY);
         ntfLoginError.show(Page.getCurrent());
     }
 }

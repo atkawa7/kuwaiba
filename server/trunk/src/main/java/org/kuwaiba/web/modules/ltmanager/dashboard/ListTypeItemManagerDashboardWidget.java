@@ -16,23 +16,26 @@ package org.kuwaiba.web.modules.ltmanager.dashboard;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
+import org.kuwaiba.apis.web.gui.events.OperationResultListener;
+import org.kuwaiba.apis.web.gui.nodes.PropertyFactory;
+import org.kuwaiba.apis.web.gui.nodes.PropertySheet;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
+import org.kuwaiba.web.modules.ltmanager.AddListTypeItemWindow;
 
 /**
  * A dashboard widget that allows to manage the list type items associated to a given list type
@@ -43,6 +46,14 @@ public class ListTypeItemManagerDashboardWidget extends AbstractDashboardWidget 
      * The list type associated to this widget
      */
     private RemoteClassMetadataLight listType;
+    /**
+     * Table containing the related list type items
+     */
+    private ListTypeItemsControlTable tblListTypeItems;
+    /**
+     * The property sheet that allows to edit a list type item properties
+     */
+    private PropertySheet propertySheet;
     /**
      * Reference to the ws bean
      */
@@ -62,17 +73,47 @@ public class ListTypeItemManagerDashboardWidget extends AbstractDashboardWidget 
     @Override
     public void createContent() { 
         HorizontalLayout lytContent = new HorizontalLayout();
+        lytContent.setMargin(true);
         try {
             List<RemoteObjectLight> listTypeItems = wsBean.getListTypeItems(listType.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), 
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-            
-            lytContent.addComponent(new ListTypeItemsControlTable(listTypeItems));
+            this.tblListTypeItems = new ListTypeItemsControlTable(listTypeItems);
+            lytContent.addComponent(this.tblListTypeItems);
+            this.propertySheet = new PropertySheet(new ArrayList<>(), "");
+            lytContent.addComponent(this.propertySheet);
             
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
         }
         this.contentComponent = lytContent;
         addComponent(contentComponent);
+    }
+    
+    /**
+     * Updates the property sheet depending on the selection
+     */
+    public void updatePropertySheet() {
+        if (!this.tblListTypeItems.getLstListTypeItems().getSelectedItems().isEmpty()) {
+            try {
+                
+                RemoteObjectLight selectedItem = this.tblListTypeItems.getLstListTypeItems().getSelectedItems().iterator().next();
+                
+                RemoteObject seletedItemDetails = wsBean.getObject(selectedItem.getClassName(), selectedItem.getId(), Page.getCurrent().getWebBrowser().getAddress(), 
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                
+                RemoteClassMetadata listTypeClassMetadata = wsBean.getClass(listType.getClassName(),Page.getCurrent().getWebBrowser().getAddress(), 
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                
+                this.propertySheet.setCaption(String.format("Properties in %s", selectedItem));
+                this.propertySheet.setItems(PropertyFactory.propertiesFromRemoteObject(seletedItemDetails, listTypeClassMetadata));
+                
+                
+            } catch (ServerSideException ex) {
+                this.propertySheet.clear();
+                Notifications.showError(ex.getMessage());
+            }
+        } else
+            this.propertySheet.clear();
     }
     
     /**
@@ -99,47 +140,12 @@ public class ListTypeItemManagerDashboardWidget extends AbstractDashboardWidget 
         public ListTypeItemsControlTable(List<RemoteObjectLight> listTypeItems) {
             HorizontalLayout lytButtons = new HorizontalLayout();
             btnAddListTypeItem = new Button("Add", (event) -> {
-                Window wdwAddListTypeItem = new Window("New List Type Item");
-                
-                TextField txtName = new TextField("Name");
-                txtName.setRequiredIndicatorVisible(true);
-                txtName.setSizeFull();
-                
-                
-                TextField txtDisplayName = new TextField("Display Name");
-                txtDisplayName.setSizeFull();
-                
-                Button btnOK = new Button("OK", (e) -> {
-                    try {
-                        wsBean.createListTypeItem(listType.getClassName(), txtName.getValue(), 
-                                txtDisplayName.getValue(), Page.getCurrent().getWebBrowser().getAddress(), 
-                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                AddListTypeItemWindow wdwAddListTypeItem = new AddListTypeItemWindow(listType, wsBean, new OperationResultListener() {
+                    @Override
+                    public void doIt() {
                         refreshListTypeItemsList();
-                    } catch (ServerSideException ex) {
-                        Notifications.showError(ex.getMessage());
                     }
-                    wdwAddListTypeItem.close();
                 });
-                
-                btnOK.setEnabled(false);
-                txtName.addValueChangeListener((e) -> {
-                    btnOK.setEnabled(!txtName.isEmpty());
-                });
-                
-                Button btnCancel = new Button("Cancel", (e) -> {
-                    wdwAddListTypeItem.close();
-                });
- 
-                wdwAddListTypeItem.setModal(true);
-                wdwAddListTypeItem.setWidth(10, Unit.PERCENTAGE);
-                wdwAddListTypeItem.center();
-                
-                FormLayout lytTextFields = new FormLayout(txtName, txtDisplayName);
-                HorizontalLayout lytMoreButtons = new HorizontalLayout(btnOK, btnCancel);
-                VerticalLayout lytMain = new VerticalLayout(lytTextFields, lytMoreButtons);
-                lytMain.setComponentAlignment(lytMoreButtons, Alignment.TOP_RIGHT);
-                
-                wdwAddListTypeItem.setContent(lytMain);
                 
                 getUI().addWindow(wdwAddListTypeItem);
             });
@@ -180,6 +186,10 @@ public class ListTypeItemManagerDashboardWidget extends AbstractDashboardWidget 
             lstListTypeItems.setItems(listTypeItems);
             lstListTypeItems.addColumn(RemoteObjectLight::getName).setCaption("Items in this List Type");
             
+            lstListTypeItems.addSelectionListener((e) -> {
+                updatePropertySheet();
+            });
+            
             setSpacing(false);
             setSizeUndefined();
             addComponents(lstListTypeItems, lytButtons);
@@ -195,6 +205,10 @@ public class ListTypeItemManagerDashboardWidget extends AbstractDashboardWidget 
             } catch (ServerSideException ex) {
                 Notifications.showError(ex.getMessage());
             }
+        }
+
+        public Grid<RemoteObjectLight> getLstListTypeItems() {
+            return lstListTypeItems;
         }
     }
 }

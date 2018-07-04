@@ -58,6 +58,15 @@ public class RemoteObject extends RemoteObjectLight implements Serializable {
     public List<StringPair> getAttributes() {
         return attributes;
     }
+    
+    public String getAttribute(String attributeName) {
+        for (StringPair attribute : attributes) {
+            if (attribute.getKey().equals(attributeName))
+                return attribute.getValue();
+        }
+        
+        return null;
+    }
 
     public void setAttributes(List<StringPair> attributes) {
         this.attributes = attributes;

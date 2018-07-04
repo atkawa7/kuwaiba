@@ -28,6 +28,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -821,6 +822,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             }
             tx.success();
         }
+        
+        Collections.sort(children);
+        
         return children;
     }
     
