@@ -18,12 +18,15 @@ package org.kuwaiba.web.modules.contacts;
 import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.UI;
+import org.kuwaiba.apis.web.gui.events.OperationResultListener;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
- *
+ * A module to manage the contacts associated to customers and services
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ContactManagerModule extends AbstractModule {
@@ -54,12 +57,25 @@ public class ContactManagerModule extends AbstractModule {
 
     @Override
     public int getType() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return MODULE_TYPE_FREE_CORE;
     }
 
     @Override
     public void attachToMenu(MenuBar menuBar) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        MenuBar.MenuItem contactManagerMenuItem = menuBar.addItem("Contacts", null);
+        
+        contactManagerMenuItem.addItem("Add Contact", new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                AddContactWindow wdwNewListTypeItem = new AddContactWindow(wsBean, new OperationResultListener() {
+                    @Override
+                    public void doIt() {
+                        Notifications.showInfo("Contact added successfully");
+                    }
+                });
+                UI.getCurrent().addWindow(wdwNewListTypeItem);
+            }
+        });
     }
 
     @Override

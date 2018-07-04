@@ -414,6 +414,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICCONTRACT = "GenericContract"; //NOI18N
     /**
+     * Class Generic Contact
+     */
+    public static final String CLASS_GENERICCONTACT = "GenericContact"; //NOI18N
+    /**
      * Class Generic Project
      */
     public static final String CLASS_GENERICPROJECT = "GenericProject"; //NOI18N
