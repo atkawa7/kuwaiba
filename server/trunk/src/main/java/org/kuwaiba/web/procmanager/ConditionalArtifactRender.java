@@ -69,8 +69,8 @@ public class ConditionalArtifactRender extends ArtifactRenderer {
         checkBox = new CheckBox(artifactDefinition != null ? new String(artifactDefinition.getDefinition()) : "<Not Set>");
         checkBox.setValue(getConditionalArtifactContent());
         
-        if (remoteArtifact != null)
-            checkBox.setEnabled(false);
+////        if (remoteArtifact != null)
+////            checkBox.setEnabled(false);
                     
         return checkBox;
     }

@@ -32,8 +32,8 @@ public class ActivityDefinition extends ActivityDefinitionLight {
     private ActivityDefinition nextActivity;
     
     public ActivityDefinition(long id, String name, String description, 
-            int type, ArtifactDefinition arfifact, Actor actor, boolean idling) {
-        super(id, name, description, type, arfifact, idling);
+            int type, ArtifactDefinition arfifact, Actor actor, boolean idling, boolean confirm) {
+        super(id, name, description, type, arfifact, idling, confirm);
         this.actor = actor;
     }
     public Actor getActor() {
@@ -51,15 +51,15 @@ public class ActivityDefinition extends ActivityDefinitionLight {
     public void setNextActivity(ActivityDefinition nextActivity) {
         this.nextActivity = nextActivity;
     }
-    
+
     @Override
     public int hashCode() {
         return super.hashCode();
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         return super.equals(obj);
     }
-    
+        
 }

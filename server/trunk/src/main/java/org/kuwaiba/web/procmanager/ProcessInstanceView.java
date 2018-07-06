@@ -23,14 +23,15 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
-import com.vaadin.ui.themes.ValoTheme;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.util.StringPair;
+import org.kuwaiba.apis.web.gui.notifications.MessageBox;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfoLight;
@@ -42,6 +43,8 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConditionalActivityDefinition;
+import org.kuwaiba.util.i18n.I18N;
 
 /**
  * Render the current activity and all activities of a process instance
@@ -123,6 +126,82 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
         
         activities.put(nextActivity, btnActivity);
     }
+    
+    private void setArtifact(RemoteActivityDefinition currentActivity, Button btnNext, Button eventBtn) {
+        RemoteArtifact remoteArtifact = null;
+
+        try {
+            remoteArtifact = wsBean.getArtifactForActivity(
+                processInstance.getId(),
+                currentActivity.getId(),
+                Page.getCurrent().getWebBrowser().getAddress(),
+                remoteSession.getSessionId());
+
+            try {
+                remoteArtifact.setContent(artifactView.getArtifactRenderer().getContent());
+            } catch (Exception ex) {
+                Notification.show(I18N.gm("error"), ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+                return;
+            }
+            remoteArtifact.setSharedInformation(artifactView.getArtifactRenderer().getSharedInformation());
+
+        } catch (ServerSideException ex) {
+            byte[] content;
+            try {
+                content = artifactView.getArtifactRenderer().getContent();
+            } catch (Exception ex1) {
+                Notification.show(I18N.gm("error"), ex1.getMessage(), Notification.Type.ERROR_MESSAGE);
+                return;
+            }
+
+            remoteArtifact = new RemoteArtifact(
+                ProcessCache.artifactCounter++, 
+                "", 
+                "", 
+                content, 
+                artifactView.getArtifactRenderer().getSharedInformation());
+        }
+
+        try {
+////                        if (artifact == null && event.getButton().equals(btnNext)) {
+            if (eventBtn.equals(btnNext)) {
+
+                wsBean.commitActivity(
+                        processInstance.getId(),
+                        currentActivity.getId(),
+                        remoteArtifact,
+                        Page.getCurrent().getWebBrowser().getAddress(),
+                        remoteSession.getSessionId());
+
+                processInstance = wsBean.getProcessInstance(
+                    processInstance.getId(), 
+                    Page.getCurrent().getWebBrowser().getAddress(),
+                    remoteSession.getSessionId());
+
+                updateActivities();
+
+            } else {
+
+                wsBean.updateActivity(
+                        processInstance.getId(),
+                        currentActivity.getId(),
+                        remoteArtifact,
+                        Page.getCurrent().getWebBrowser().getAddress(),
+                        remoteSession.getSessionId());
+
+                Notification.show(I18N.gm("success"), "The activity was updated", Notification.Type.TRAY_NOTIFICATION);
+
+            }
+            processInstance = wsBean.getProcessInstance(
+                processInstance.getId(), 
+                Page.getCurrent().getWebBrowser().getAddress(),
+                remoteSession.getSessionId());
+
+        } catch (ServerSideException ex) {
+            Notifications.showError(ex.getMessage());
+        }
+        
+    }
         
     private void renderArtifact(RemoteActivityDefinition currentActivity) {
         try {
@@ -133,6 +212,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
                 remoteSession.getSessionId());
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
+            return;
         }
 
         if (artifactDefinition != null) {
@@ -161,89 +241,54 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
             HorizontalLayout secondHorizontalLayout = new HorizontalLayout();
             secondHorizontalLayout.setSpacing(false);
             secondHorizontalLayout.setSizeFull();
-            Button btnSave = new Button(artifact == null ? "OK" : "Update");
-
-            if (!actorEnabled(currentActivity.getActor()))
+            
+            Button btnSave = new Button(I18N.gm("save"));
+            Button btnNext = new Button(I18N.gm("next"));
+            
+            // Current Activity can be updated
+            if (processInstance.getCurrentActivity() != currentActivity.getId()) {
                 btnSave.setEnabled(false);
+                btnNext.setEnabled(false);
+            }
+            // Only Idle Activities can be modified if the Selected Activity
+            // are no equals to Process Instance Current Activity
+            if (currentActivity.isIdling())
+                btnSave.setEnabled(true);
+            // If the activity is a conditional can update the value
+            if (currentActivity instanceof RemoteConditionalActivityDefinition)
+                btnSave.setEnabled(true);
+            // The actor is authorized
+            if (!actorEnabled(currentActivity.getActor())) {
+                btnSave.setEnabled(false);
+                btnNext.setEnabled(false);
+            }
 
-            btnSave.addClickListener(new Button.ClickListener() {
+            Button.ClickListener clickListener = new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent event) {
-                    RemoteArtifact remoteArtifact = null;
-
-                    try {
-                        remoteArtifact = wsBean.getArtifactForActivity(
-                            processInstance.getId(),
-                            currentActivity.getId(),
-                            Page.getCurrent().getWebBrowser().getAddress(),
-                            remoteSession.getSessionId());
-
-                        try {
-                            remoteArtifact.setContent(artifactView.getArtifactRenderer().getContent());
-                        } catch (Exception ex) {
-                            Notification.show("Error", ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-                            return;
-                        }
-                        remoteArtifact.setSharedInformation(artifactView.getArtifactRenderer().getSharedInformation());
-
-                    } catch (ServerSideException ex) {
-                        byte[] content;
-                        try {
-                            content = artifactView.getArtifactRenderer().getContent();
-                        } catch (Exception ex1) {
-                            Notification.show("Error", ex1.getMessage(), Notification.Type.ERROR_MESSAGE);
-                            return;
-                        }
+                    Button eventBtn = event.getButton();
+                    
+                    if (currentActivity.confirm()) {
                         
-                        remoteArtifact = new RemoteArtifact(
-                            ProcessCache.artifactCounter++, 
-                            "", 
-                            "", 
-                            content, 
-                            artifactView.getArtifactRenderer().getSharedInformation());
-                    }
-
-                    try {
-                        if (artifact == null) {
-
-                            wsBean.commitActivity(
-                                    processInstance.getId(),
-                                    currentActivity.getId(),
-                                    remoteArtifact,
-                                    Page.getCurrent().getWebBrowser().getAddress(),
-                                    remoteSession.getSessionId());
-                            
-                            processInstance = wsBean.getProcessInstance(
-                                processInstance.getId(), 
-                                Page.getCurrent().getWebBrowser().getAddress(),
-                                remoteSession.getSessionId());
-                            
-                            updateActivities();
-                            
-                        } else {
-
-                            wsBean.updateActivity(
-                                    processInstance.getId(),
-                                    currentActivity.getId(),
-                                    remoteArtifact,
-                                    Page.getCurrent().getWebBrowser().getAddress(),
-                                    remoteSession.getSessionId());
-
-                            Notification.show("Success", "The activity was updated", Notification.Type.TRAY_NOTIFICATION);
-
-                        }
-                        processInstance = wsBean.getProcessInstance(
-                            processInstance.getId(), 
-                            Page.getCurrent().getWebBrowser().getAddress(),
-                            remoteSession.getSessionId());
+                        Label label = new Label("Are you sure you want to save this Activity?");
+                        label.setIcon(VaadinIcons.QUESTION_CIRCLE_O);
                         
-                    } catch (ServerSideException ex) {
-                        Notifications.showError(ex.getMessage());
-                    }
+                        MessageBox.getInstance().showMessage(label).addClickListener(new Button.ClickListener() {
+                            @Override
+                            public void buttonClick(Button.ClickEvent event) {
+                                
+                                if (MessageBox.getInstance().continues())
+                                    setArtifact(currentActivity, btnNext, eventBtn);
+                            }
+                        });
+                    } else
+                        setArtifact(currentActivity, btnNext, eventBtn);
                 }
-            });
-            
-            Button btnViewProcessInstance = new Button("View");
+            };    
+            btnSave.addClickListener(clickListener);
+            btnNext.addClickListener(clickListener);
+                        
+            Button btnViewProcessInstance = new Button(I18N.gm("view"));
             btnViewProcessInstance.setDescription("View Process Instance");
             btnViewProcessInstance.addClickListener(new Button.ClickListener() {
                 @Override
@@ -265,13 +310,15 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
             
             GridLayout gl = new GridLayout();
             gl.setSizeFull();
-            gl.setColumns(2);
+            gl.setColumns(3);
             gl.setRows(1);
             gl.addComponent(btnSave);
             gl.addComponent(btnViewProcessInstance);
+            gl.addComponent(btnNext);
 
-            gl.setComponentAlignment(btnViewProcessInstance, Alignment.MIDDLE_LEFT);
             gl.setComponentAlignment(btnSave, Alignment.MIDDLE_RIGHT);
+            gl.setComponentAlignment(btnViewProcessInstance, Alignment.MIDDLE_CENTER);
+            gl.setComponentAlignment(btnNext, Alignment.MIDDLE_LEFT);
             
             secondHorizontalLayout.addComponent(gl);
             secondHorizontalLayout.setComponentAlignment(gl, Alignment.MIDDLE_CENTER);
@@ -286,35 +333,59 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
             artifactContainer.setExpandRatio(pnlArtifact, 9f);
             artifactContainer.setExpandRatio(secondHorizontalLayout, 1f);
             
-            if (currentActivity.isIdling()) {
+            boolean idleActivity = false;
+            boolean interruptedActivity = false;
+
+            if (artifact != null) {
+                for (StringPair pair : artifact.getSharedInformation()) {
+
+                    if (pair.getKey().equals("__idle__")) {
+                        idleActivity = Boolean.valueOf(pair.getValue());
+                        artifactView.getArtifactRenderer().getSharedMap().put("__idle__", pair.getValue());
+                    }
+
+                    if (pair.getKey().equals("__interrupted__")) {
+                        interruptedActivity = Boolean.valueOf(pair.getValue());                            
+                        artifactView.getArtifactRenderer().getSharedMap().put("__idle__", pair.getValue());
+                    }
+                }
+            }
+            
+            if (currentActivity.isIdling() || interruptedActivity) {
                 VerticalLayout artifactPanel = new VerticalLayout();
                 artifactPanel.setSizeFull();
                                 
-                VerticalLayout artifactTools = new VerticalLayout();
+                HorizontalLayout artifactTools = new HorizontalLayout();
                 artifactTools.setWidth(100, Unit.PERCENTAGE);
                 
-                CheckBox chkIdleActivity = new CheckBox("Idle Activity");
-                boolean idleActivity = false;
-                
-                if (artifact != null) {
-                    for (StringPair pair : artifact.getSharedInformation()) {
-                        if (pair.getKey().equals("__idle__")) {
-                            idleActivity = Boolean.valueOf(pair.getValue());
-                            artifactView.getArtifactRenderer().getSharedMap().put("__idle__", pair.getValue());
-                            break;
-                        }
-                    }
+                if (interruptedActivity) {
+////                    CheckBox chkInterruptedActivity = new CheckBox("Interrupted Activity");
+////
+////                    chkInterruptedActivity.setValue(interruptedActivity);
+////
+////                    chkInterruptedActivity.addValueChangeListener(new HasValue.ValueChangeListener() {
+////                        @Override
+////                        public void valueChange(HasValue.ValueChangeEvent event) {
+////                            artifactView.getArtifactRenderer().getSharedMap().put("__interrupted__", event.getValue().toString());
+////                        }
+////                    });
+                    artifactTools.addComponent(new Label("Interrupted Activity"));
                 }
-                chkIdleActivity.setValue(idleActivity);
                 
-                chkIdleActivity.addValueChangeListener(new HasValue.ValueChangeListener() {
-                    @Override
-                    public void valueChange(HasValue.ValueChangeEvent event) {
-                        artifactView.getArtifactRenderer().getSharedMap().put("__idle__", event.getValue().toString());
-                        Notification.show(event.getValue().toString());
-                    }
-                });
-                artifactTools.addComponent(chkIdleActivity);
+                if (currentActivity.isIdling()) {
+                    CheckBox chkIdleActivity = new CheckBox("Idle Activity");
+                    
+                    chkIdleActivity.setValue(idleActivity);
+
+                    chkIdleActivity.addValueChangeListener(new HasValue.ValueChangeListener() {
+                        @Override
+                        public void valueChange(HasValue.ValueChangeEvent event) {
+                            artifactView.getArtifactRenderer().getSharedMap().put("__idle__", event.getValue().toString());
+                        }
+                    });
+
+                    artifactTools.addComponent(chkIdleActivity);
+                }
                 
                 artifactPanel.addComponent(artifactTools);
                 artifactPanel.addComponent(artifactContainer);

@@ -261,6 +261,7 @@ public final class ProcessCache {
                         return Boolean.valueOf(reader.getElementText());
                 }
             }
+            reader.close();
             
         } catch (Exception ex) {
             throw new InventoryException("Conditional Artifact Content Malformed") {};
@@ -352,14 +353,33 @@ public final class ProcessCache {
         while (activity != null && activity.getId() != activityDefinitionId)
             activity = getNextActivityForProcessInstance(processInstanceId, activity.getId());
         
-        if (activity != null) {
+        if (activity != null && artifact != null) {
             if (processInstanceArtifacts.containsKey(processInstance)) {
+                                
+                if (activity instanceof ConditionalActivityDefinition) {
+                    Artifact oldArtifact = null;
+                    
+                    try {
+                        oldArtifact = getArtifactForActivity(processInstanceId, activity.getId());
+                    } catch(Exception ex) {
+                    }
+                    
+                    if (oldArtifact != null) {
+                        boolean oldValue = getConditionalArtifactContent(oldArtifact);
+                        boolean newValue = getConditionalArtifactContent(artifact);
+                        
+                        if (oldValue != newValue)
+                            processInstance.setCurrentActivity(activity.getId());
+                    }
+                }
+                
                 HashMap<ArtifactDefinition, Artifact> artifactInstance = processInstanceArtifacts.get(processInstance);
                 
-                if (artifactInstance.containsKey(activity.getArfifact()))
-                    artifactInstance.replace(activity.getArfifact(), artifact);
-                else
-                    throw new InventoryException("Process Instances Artifact can not be found") {};
+                artifactInstance.put(activity.getArfifact(), artifact);                
+////                if (artifactInstance.containsKey(activity.getArfifact()))
+////                    artifactInstance.put(activity.getArfifact(), artifact);
+////                else
+////                    throw new InventoryException("Process Instances Artifact can not be found") {};
             } else
                 throw new InventoryException("Process Instances can not be found") {};
             
@@ -380,7 +400,8 @@ public final class ProcessCache {
         if (activity != null) {
             if (processInstanceArtifacts.containsKey(processInstance)) {
                 HashMap<ArtifactDefinition, Artifact> artifactInstance = processInstanceArtifacts.get(processInstance);
-                if (!artifactInstance.containsKey(activity.getArfifact()))
+////                if (!artifactInstance.containsKey(activity.getArfifact()))
+                if (processInstance.getCurrentActivity() == activityDefinitionId)
                     artifactInstance.put(activity.getArfifact(), artifact);
                 else
                     throw new InventoryException("Process Instances Artifact can no be committed newly") {};
@@ -483,12 +504,35 @@ public final class ProcessCache {
             
             xmlew.add(xmlef.createStartElement(tagArtifacts, null, null));
             
+            List<ActivityDefinition> activityDefs = new ArrayList();
+
+            if (processActivityDefinitions.containsKey(processInstance.getProcessDefinition()))
+                activityDefs = processActivityDefinitions.get(processInstance.getProcessDefinition());
+            
             List<ActivityDefinition> path = getProcessInstanceActivitiesPath(processInstanceId);
             if (path != null) {
-                for (ActivityDefinition activityDefinition : path) {
+                for (ActivityDefinition activityDefinition : activityDefs) {
+                    
+                    Artifact artifact = null;                            
                     try {                    
-                        Artifact artifact = getArtifactForActivity(processInstanceId, activityDefinition.getId());
-
+                        artifact = getArtifactForActivity(processInstanceId, activityDefinition.getId());
+                    } catch(InventoryException ex) {
+                    }
+                    
+                    if (artifact != null) {
+                        
+                        boolean contain = false;
+                        for (ActivityDefinition a : path) {
+                            if (activityDefinition.getId() == a.getId()) {
+                                contain = true;
+                                break;
+                            }
+                        }
+                        if (!contain) {
+                            if (artifact.getSharedInformation() != null)
+                                artifact.getSharedInformation().add(new StringPair("__interrupted__", "true"));
+                        }
+                        
                         xmlew.add(xmlef.createStartElement(tagArtifact, null, null));
                         xmlew.add(xmlef.createAttribute(new QName(ATTR_ID), Long.toString(artifact.getId())));
                         xmlew.add(xmlef.createAttribute(new QName(ATTR_NAME), artifact.getName()));
@@ -511,8 +555,6 @@ public final class ProcessCache {
                         }
 
                         xmlew.add(xmlef.createEndElement(tagArtifact, null));
-                    } catch(InventoryException ex) {
-                                                
                     }
                 }
             }

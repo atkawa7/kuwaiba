@@ -62,18 +62,23 @@ public class ActivityDefinitionLight {
      */    
     private boolean idling;
     /**
+     * Define if is necessary Confirm before commit the Activity
+     */
+    private boolean confirm;
+    /**
      * Artifact associated to the activity definition
      */
     private ArtifactDefinition arfifact;
     
     public ActivityDefinitionLight(long id, String name, String description, 
-            int type, ArtifactDefinition arfifact, boolean idling) {
+            int type, ArtifactDefinition arfifact, boolean idling, boolean confirm) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.type = type;
         this.arfifact = arfifact;
         this.idling = idling;
+        this.confirm = confirm;
     }
 
     public long getId() {
@@ -124,6 +129,14 @@ public class ActivityDefinitionLight {
         this.idling = idling;                
     }
     
+    public boolean confirm() {
+        return confirm;
+    }
+        
+    public void setConfirm(boolean confirm) {
+        this.confirm = confirm;        
+    }
+            
     @Override
     public int hashCode() {
         int hash = 7;

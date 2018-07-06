@@ -43,8 +43,9 @@ public class MessageBox {
         window.setClosable(false);
         window.setResizable(false);
         window.setModal(true);
-        window.setHeight("35%");
-        window.setWidth("35%");
+//        window.setSizeUndefined();
+        window.setHeight("15%");
+        window.setWidth("25%");
         
         VerticalSplitPanel vsp = new VerticalSplitPanel();
         vsp.setSplitPosition(85, Sizeable.Unit.PERCENTAGE);
@@ -69,7 +70,7 @@ public class MessageBox {
         });
         
         Button btnNo = new Button("No");
-        btnYes.addClickListener(new Button.ClickListener() {
+        btnNo.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 continues = false;                

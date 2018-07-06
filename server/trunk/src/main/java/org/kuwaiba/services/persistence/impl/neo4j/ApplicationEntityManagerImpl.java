@@ -4482,14 +4482,17 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
             
             try {
-                Artifact a = ProcessCache.getInstance().getArtifact(processInstanceId, activityDefinitionId);
-                a.setId(artifact.getId());
-                a.setName(artifact.getName());
-                a.setContentType(artifact.getContentType());
-                a.setContent(artifact.getContent());
-                a.setSharedInformation(artifact.getSharedInformation());
-                ProcessCache.getInstance().updateActivity(processInstanceId, activityDefinitionId, a);
-                
+                Artifact anArtifact = ProcessCache.getInstance().getArtifact(processInstanceId, activityDefinitionId);
+                if (anArtifact != null) {
+                    anArtifact.setId(artifact.getId());
+                    anArtifact.setName(artifact.getName());
+                    anArtifact.setContentType(artifact.getContentType());
+                    anArtifact.setContent(artifact.getContent());
+                    anArtifact.setSharedInformation(artifact.getSharedInformation());
+                    ProcessCache.getInstance().updateActivity(processInstanceId, activityDefinitionId, anArtifact);
+                } else
+                    ProcessCache.getInstance().updateActivity(processInstanceId, activityDefinitionId, artifact);
+                                    
                 ProcessInstance processInstace = ProcessCache.getInstance().getProcessInstance(processInstanceId);
                 if (processInstace.getArtifactsContent() != null)
                     processInstanceNode.setProperty(Constants.PROPERTY_ARTIFACTS_CONTENT, processInstace.getArtifactsContent());
