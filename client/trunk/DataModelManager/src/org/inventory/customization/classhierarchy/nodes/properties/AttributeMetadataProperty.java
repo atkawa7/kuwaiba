@@ -68,7 +68,8 @@ public class AttributeMetadataProperty extends PropertySupport.ReadWrite {
                 getName().equals(Constants.PROPERTY_NOCOPY) ? (Boolean)t : null,
                 getName().equals(Constants.PROPERTY_READONLY) ? (Boolean)t : null,
                 getName().equals(Constants.PROPERTY_UNIQUE) ? (Boolean)t : null,
-                getName().equals(Constants.PROPERTY_VISIBLE) ? (Boolean)t : null))
+                getName().equals(Constants.PROPERTY_VISIBLE) ? (Boolean)t : null,
+                getName().equals(Constants.PROPERTY_ORDER) ? (Integer)t : null))
         {
             this.value = t;
 

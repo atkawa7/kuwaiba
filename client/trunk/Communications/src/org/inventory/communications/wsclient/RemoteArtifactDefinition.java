@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="definition" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
  *         &lt;element name="sharedInformation" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="preconditionsScript" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
+ *         &lt;element name="postconditionsScript" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -42,7 +44,9 @@ import javax.xml.bind.annotation.XmlType;
     "version",
     "type",
     "definition",
-    "sharedInformation"
+    "sharedInformation",
+    "preconditionsScript",
+    "postconditionsScript"
 })
 public class RemoteArtifactDefinition {
 
@@ -54,6 +58,8 @@ public class RemoteArtifactDefinition {
     protected byte[] definition;
     @XmlElement(nillable = true)
     protected List<String> sharedInformation;
+    protected byte[] preconditionsScript;
+    protected byte[] postconditionsScript;
 
     /**
      * Gets the value of the id property.
@@ -208,6 +214,50 @@ public class RemoteArtifactDefinition {
             sharedInformation = new ArrayList<String>();
         }
         return this.sharedInformation;
+    }
+
+    /**
+     * Gets the value of the preconditionsScript property.
+     * 
+     * @return
+     *     possible object is
+     *     byte[]
+     */
+    public byte[] getPreconditionsScript() {
+        return preconditionsScript;
+    }
+
+    /**
+     * Sets the value of the preconditionsScript property.
+     * 
+     * @param value
+     *     allowed object is
+     *     byte[]
+     */
+    public void setPreconditionsScript(byte[] value) {
+        this.preconditionsScript = value;
+    }
+
+    /**
+     * Gets the value of the postconditionsScript property.
+     * 
+     * @return
+     *     possible object is
+     *     byte[]
+     */
+    public byte[] getPostconditionsScript() {
+        return postconditionsScript;
+    }
+
+    /**
+     * Sets the value of the postconditionsScript property.
+     * 
+     * @param value
+     *     allowed object is
+     *     byte[]
+     */
+    public void setPostconditionsScript(byte[] value) {
+        this.postconditionsScript = value;
     }
 
 }

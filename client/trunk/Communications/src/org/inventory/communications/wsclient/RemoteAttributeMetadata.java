@@ -7,12 +7,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for attributeInfo complex type.
+ * <p>Java class for remoteAttributeMetadata complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="attributeInfo">
+ * &lt;complexType name="remoteAttributeMetadata">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="mandatory" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="noCopy" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;element name="order" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
  *         &lt;element name="readOnly" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="unique" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
@@ -37,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "attributeInfo", propOrder = {
+@XmlType(name = "remoteAttributeMetadata", propOrder = {
     "administrative",
     "description",
     "displayName",
@@ -46,12 +47,13 @@ import javax.xml.bind.annotation.XmlType;
     "mandatory",
     "name",
     "noCopy",
+    "order",
     "readOnly",
     "type",
     "unique",
     "visible"
 })
-public class AttributeInfo {
+public class RemoteAttributeMetadata {
 
     protected Boolean administrative;
     protected String description;
@@ -61,6 +63,7 @@ public class AttributeInfo {
     protected Boolean mandatory;
     protected String name;
     protected Boolean noCopy;
+    protected Integer order;
     protected Boolean readOnly;
     protected String type;
     protected Boolean unique;
@@ -248,6 +251,30 @@ public class AttributeInfo {
      */
     public void setNoCopy(Boolean value) {
         this.noCopy = value;
+    }
+
+    /**
+     * Gets the value of the order property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Integer }
+     *     
+     */
+    public Integer getOrder() {
+        return order;
+    }
+
+    /**
+     * Sets the value of the order property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Integer }
+     *     
+     */
+    public void setOrder(Integer value) {
+        this.order = value;
     }
 
     /**

@@ -98,6 +98,11 @@ public class AttributeMetadataNode extends AbstractNode  {
                 Constants.PROPERTY_NOCOPY,
                 I18N.gm("no_copy.description"),  
                 attribute.isNoCopy(),this));
+        generalPropertySet.put(new AttributeMetadataProperty(classNode.getClassMetadata(), 
+                Constants.PROPERTY_ORDER,
+                I18N.gm("order.display_name"),
+                I18N.gm("order.description"),  
+                attribute.getOrder(),this));
                 
         generalPropertySet.setName("1");
 

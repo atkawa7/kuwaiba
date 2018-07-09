@@ -17,6 +17,7 @@ package org.inventory.communications.core;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.inventory.communications.util.Constants;
@@ -40,12 +41,13 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
     private boolean [] attributesVisibles;
     private int [] attributesMappings;
     private String [] attributesDescriptions;
+    private int [] attributesOrders;
     /**
      * Creation Date
      */
     private long creationDate;
      
-    public LocalClassMetadata(){
+    public LocalClassMetadata() {
         super();
     }
     
@@ -58,10 +60,11 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
             String[] attributesNames, 
             String[] attributesTypes, 
             String[] attributesDisplayNames,
+            String[] attributesDescriptions, 
             List<Boolean> attributesMandatories, 
             List<Boolean> attributesUniques,
             List<Boolean> attributesVisibles, 
-            String[] attributesDescriptions) {
+            List<Integer> attributesOrders) {
         
         super(id, className, displayName, parentName, _abstract, viewable, listType, 
             custom, inDesign, smallIcon, color, validators);
@@ -72,13 +75,15 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
         this.attributesMandatories = new boolean[attributesMandatories.size()];
         this.attributesUniques = new boolean[attributesUniques.size()];
         this.attributesVisibles = new boolean[attributesVisibles.size()];
+        this.attributesOrders = new int[attributesOrders.size()];
         
-        for (int i = 0; i < attributesIds.size(); i++){
+        for (int i = 0; i < attributesIds.size(); i++) {
             this.attributesIds[i] = attributesIds.get(i);
             this.attributesMappings[i] = getMappingFromType(attributesTypes[i]);
             this.attributesVisibles[i] = attributesVisibles.get(i);
             this.attributesMandatories[i] = attributesMandatories.get(i);
             this.attributesUniques[i] = attributesUniques.get(i);
+            this.attributesOrders[i] = attributesOrders.get(i);
         }
 
         this.attributesNames = attributesNames;
@@ -117,6 +122,10 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
 
     public boolean[] getAttributesUniques() {
         return attributesUniques;
+    }
+
+    public int[] getAttributesOrders() {
+        return attributesOrders;
     }
 
     public String getDisplayNameForAttribute(String att){
@@ -164,19 +173,19 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
     }
 
 
-    public LocalAttributeMetadata[] getAttributes() {
-        LocalAttributeMetadata[] res =
-                new LocalAttributeMetadata[attributesNames.length];
-        for (int i = 0; i < res.length; i++){
-            res[i] = new LocalAttributeMetadata(
+    public List<LocalAttributeMetadata> getAttributes() {
+        List<LocalAttributeMetadata> res = new ArrayList<>();
+        
+        for (int i = 0; i < attributesNames.length; i++) {
+            res.add(new LocalAttributeMetadata(
                                     attributesIds[i],
                                     attributesNames[i],
                                     attributesTypes[i],
                                     attributesDisplayNames[i],
+                                    attributesDescriptions[i],
                                     attributesVisibles[i],
                                     attributesMandatories[i],
-                                    attributesUniques[i],
-                                    attributesDescriptions[i]);
+                                    attributesUniques[i], attributesOrders[i]));
         }
         return res;
     }
@@ -187,10 +196,6 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
     
     public long[] getAttributeIds() {
         return attributesIds;
-    }
-
-    public long getId() {
-        return id;
     }
 
     public String getDescription() {

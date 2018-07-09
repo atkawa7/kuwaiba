@@ -132,10 +132,10 @@ public class ClassHierarchyReaderImpl implements ClassHierarchyReader {
         LocalClassMetadata lcm = new LocalClassMetadata(
                 id, className, "", parentName, 
                 Modifier.isAbstract(javaModifiers), false, false, false, false, 
-                new byte[0], 0, new HashMap(), new byte[0], "", new ArrayList<Long>(), 
+                new byte[0], 0, new HashMap(), new byte[0], "", new ArrayList<>(), 
                 attributesNames.toArray(new String[0]), 
-                attributesTypes.toArray(new String[0]), new String[0], 
-                new ArrayList<Boolean>(),new ArrayList<Boolean>(), new ArrayList<Boolean>(), new String[0]);
+                attributesTypes.toArray(new String[0]), new String[0], new String[0], 
+                new ArrayList<>(),new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         
         return lcm;
     }

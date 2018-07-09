@@ -84,11 +84,11 @@ public class CreateAttributeAction extends GenericInventoryAction {
                 JOptionPane.OK_CANCEL_OPTION,
                 JOptionPane.QUESTION_MESSAGE) == JOptionPane.OK_OPTION){
                     if (CommunicationsStub.getInstance().createAttribute(classNode.getClassMetadata().getId(), 
-                            ((JTextField)pnlMyDialog.getComponent("txtName")).getText(), 
-                            ((JTextField)pnlMyDialog.getComponent("txtDisplayName")).getText(), 
-                            ((JTextField)pnlMyDialog.getComponent("txtDescription")).getText(), 
-                            (String)((JComboBox)pnlMyDialog.getComponent("lstType")).getSelectedItem(), 
-                            false, false, true, false, false, false)){
+                            txtName.getText(), 
+                            txtDisplayName.getText(), 
+                            txtDescription.getText(), 
+                            (String)lstType.getSelectedItem(), 
+                            false, false, true, false, false, false, 1000)){
                         NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, I18N.gm("attributed_added_successfully"));
                         Cache.getInstace().resetAll();
                         classNode.refresh();

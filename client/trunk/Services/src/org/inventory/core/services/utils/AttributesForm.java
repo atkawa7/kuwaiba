@@ -49,9 +49,9 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 public class AttributesForm {
     
     private CommunicationsStub com = CommunicationsStub.getInstance();
-    final LocalAttributeMetadata[] mandatoryObjectAttributes;
+    final List<LocalAttributeMetadata> mandatoryObjectAttributes;
 
-    public AttributesForm(LocalAttributeMetadata[] mandatoryObjectAttributes) {
+    public AttributesForm(List<LocalAttributeMetadata> mandatoryObjectAttributes) {
         this.mandatoryObjectAttributes = mandatoryObjectAttributes;
     }
     
@@ -71,7 +71,7 @@ public class AttributesForm {
                 mandatoryAttrtsState.put(mandatoryObjectAttribute.getName(), false);
         }
         
-        if(mandatoryObjectAttributes.length > 0){
+        if(!mandatoryObjectAttributes.isEmpty()){
             final JButton ok = new JButton("OK");
             ok.setEnabled(false);
             final JComplexDialogPanel pnlMyDialog = createFields(mandatoryObjectAttributes);
@@ -204,16 +204,16 @@ public class AttributesForm {
      * @param mandatoryObjectAttributes the object's mandatory attributes
      * @return the complex panel with all the mandatory fields
      */
-    private JComplexDialogPanel createFields(LocalAttributeMetadata[] mandatoryObjectAttributes){
-        String[]  labels = new String[mandatoryObjectAttributes.length];
-        JComponent[] jComponents = new JComponent[mandatoryObjectAttributes.length];
+    private JComplexDialogPanel createFields(List<LocalAttributeMetadata> mandatoryObjectAttributes){
+        String[]  labels = new String[mandatoryObjectAttributes.size()];
+        JComponent[] jComponents = new JComponent[mandatoryObjectAttributes.size()];
         JComplexDialogPanel pnlMyDialog;
         
-        for (int i = 0; i < mandatoryObjectAttributes.length; i++) {
-            labels[i] = mandatoryObjectAttributes[i].getName();
-            switch (mandatoryObjectAttributes[i].getMapping()) {
+        for (int i = 0; i < mandatoryObjectAttributes.size(); i++) {
+            labels[i] = mandatoryObjectAttributes.get(i).getName();
+            switch (mandatoryObjectAttributes.get(i).getMapping()) {
                 case Constants.MAPPING_MANYTOONE:
-                    List<LocalObjectListItem> list = com.getList(mandatoryObjectAttributes[i].getListAttributeClassName(), true, false);
+                    List<LocalObjectListItem> list = com.getList(mandatoryObjectAttributes.get(i).getListAttributeClassName(), true, false);
                     if (list == null) {
                         NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
                         return null;
@@ -230,19 +230,19 @@ public class AttributesForm {
                     jComponents[i] = datePicker;
                     break;
                 case Constants.MAPPING_PRIMITIVE:
-                    if (mandatoryObjectAttributes[i].getType().equals(Boolean.class)){ //boolean fields
+                    if (mandatoryObjectAttributes.get(i).getType().equals(Boolean.class)){ //boolean fields
                         JCheckBox checkBox = new JCheckBox();
                         checkBox.setName(labels[i]);
                         jComponents[i] = checkBox;
                     }
                     else {
                         final JTextField attributeField = new JTextField();
-                        attributeField.setName(mandatoryObjectAttributes[i].getName());
+                        attributeField.setName(mandatoryObjectAttributes.get(i).getName());
 
-                        if (mandatoryObjectAttributes[i].getType().equals(Float.class)
-                                || mandatoryObjectAttributes[i].getType().equals(Integer.class)
-                                || mandatoryObjectAttributes[i].getType().equals(Long.class)) {
-                            labels[i] = mandatoryObjectAttributes[i].getName() + "#";
+                        if (mandatoryObjectAttributes.get(i).getType().equals(Float.class)
+                                || mandatoryObjectAttributes.get(i).getType().equals(Integer.class)
+                                || mandatoryObjectAttributes.get(i).getType().equals(Long.class)) {
+                            labels[i] = mandatoryObjectAttributes.get(i).getName() + "#";
                         }
                         jComponents[i] = attributeField;
                     }

@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}attributeInfo" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}remoteAttributeMetadata" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -33,17 +33,17 @@ import javax.xml.bind.annotation.XmlType;
 public class GetAttributeResponse {
 
     @XmlElement(name = "return")
-    protected AttributeInfo _return;
+    protected RemoteAttributeMetadata _return;
 
     /**
      * Gets the value of the return property.
      * 
      * @return
      *     possible object is
-     *     {@link AttributeInfo }
+     *     {@link RemoteAttributeMetadata }
      *     
      */
-    public AttributeInfo getReturn() {
+    public RemoteAttributeMetadata getReturn() {
         return _return;
     }
 
@@ -52,10 +52,10 @@ public class GetAttributeResponse {
      * 
      * @param value
      *     allowed object is
-     *     {@link AttributeInfo }
+     *     {@link RemoteAttributeMetadata }
      *     
      */
-    public void setReturn(AttributeInfo value) {
+    public void setReturn(RemoteAttributeMetadata value) {
         this._return = value;
     }
 

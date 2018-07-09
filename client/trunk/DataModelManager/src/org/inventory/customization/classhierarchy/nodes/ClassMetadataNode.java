@@ -19,6 +19,7 @@ import java.awt.Color;
 import java.awt.Image;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalAttributeMetadata;
@@ -171,7 +172,7 @@ public class ClassMetadataNode extends AbstractNode implements PropertyChangeLis
         attributePropertySet.setName("2");
         attributePropertySet.setDisplayName(I18N.gm("class_attributes"));
         attributePropertySet.setExpert(true);
-        LocalAttributeMetadata[] attributes = lcm.getAttributes();
+        List<LocalAttributeMetadata> attributes = lcm.getAttributes();
         
         if(attributes != null){
             for (LocalAttributeMetadata localAttributeMetadata : attributes){

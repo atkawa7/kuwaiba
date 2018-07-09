@@ -380,6 +380,10 @@ public class Constants {
      */
     public static final String PROPERTY_VISIBLE = "visible";
     /**
+     * Property order
+     */
+    public static final String PROPERTY_ORDER = "order";
+    /**
      * Property read only
      */
     public static final String PROPERTY_READONLY = "readOnly";

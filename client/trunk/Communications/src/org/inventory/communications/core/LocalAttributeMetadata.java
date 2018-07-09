@@ -22,7 +22,7 @@ import org.inventory.communications.util.Utils;
  * Represents the metadata associated to a single attribute
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class LocalAttributeMetadata {
+public class LocalAttributeMetadata implements Comparable<LocalAttributeMetadata>{
 
     private String name;
     private long id;
@@ -36,14 +36,15 @@ public class LocalAttributeMetadata {
     private boolean unique;
     private boolean mandatory;
     private boolean readOnly;
-    private String listAttributeClassName = null;
+    private int order;
+    private String listAttributeClassName;
 
     public LocalAttributeMetadata() {
         this.displayName = "";
     }
 
-    public LocalAttributeMetadata(long oid, String name, String type, String displayName,
-            boolean isVisible, boolean mandatory, boolean unique, String description) 
+    public LocalAttributeMetadata(long oid, String name, String type, String displayName, String description,
+            boolean isVisible, boolean mandatory, boolean unique, int order) 
     {
         this.id = oid;
         this.name = name;
@@ -54,13 +55,13 @@ public class LocalAttributeMetadata {
         this.isVisible = isVisible;
         this.mapping = getMappingFromType(type);
         this.description = description;
+        this.order = order;
         if (this.type.equals(LocalObjectLight.class)) 
             listAttributeClassName = type;
     }
     
-    public LocalAttributeMetadata(long oid, String name, Class type, String displayName,
-            boolean isVisible, boolean mandatory, boolean unique, 
-            Integer mapping, String description) 
+    public LocalAttributeMetadata(long oid, String name, Class type, String displayName, String description,
+            boolean isVisible, boolean mandatory, boolean unique, Integer mapping, int order) 
     {
         this.id = oid;
         this.name = name;
@@ -71,6 +72,7 @@ public class LocalAttributeMetadata {
         this.isVisible = isVisible;
         this.mapping = mapping;
         this.description = description;
+        this.order = order;
     }
 
     public String getDescription() {
@@ -152,6 +154,14 @@ public class LocalAttributeMetadata {
         return this.getId() == ((LocalAttributeMetadata) obj).getId();
     }
 
+    public int getOrder() {
+        return order;
+    }
+
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
     @Override
     public int hashCode() {
         int hash = 3;
@@ -169,5 +179,10 @@ public class LocalAttributeMetadata {
         if (type.equals("Binary"))
             return Constants.MAPPING_BINARY;
         return Constants.MAPPING_MANYTOONE;
+    }
+
+    @Override
+    public int compareTo(LocalAttributeMetadata o) {
+        return Integer.compare(order, o.getOrder());
     }
 }

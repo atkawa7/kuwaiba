@@ -23,6 +23,7 @@ import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -136,7 +137,10 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         
         object.setName(lo.getName());
         
-        for (LocalAttributeMetadata lam : meta.getAttributes()) {
+        List<LocalAttributeMetadata>sortedAttributes = new ArrayList<>(meta.getAttributes());
+        Collections.sort(sortedAttributes);
+        
+        for (LocalAttributeMetadata lam : sortedAttributes) {
             if (lam.isVisible()) {
                 PropertySupport.ReadWrite property = null;
                 int mapping = lam.getMapping();

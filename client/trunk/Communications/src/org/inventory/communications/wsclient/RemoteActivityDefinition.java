@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="idling" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="arfifact" type="{http://ws.interfaces.kuwaiba.org/}remoteArtifactDefinition" minOccurs="0"/>
  *         &lt;element name="actor" type="{http://ws.interfaces.kuwaiba.org/}remoteActor" minOccurs="0"/>
  *         &lt;element name="nextActivity" type="{http://ws.interfaces.kuwaiba.org/}remoteActivityDefinition" minOccurs="0"/>
@@ -37,6 +38,7 @@ import javax.xml.bind.annotation.XmlType;
     "name",
     "description",
     "type",
+    "idling",
     "arfifact",
     "actor",
     "nextActivity"
@@ -47,6 +49,7 @@ public class RemoteActivityDefinition {
     protected String name;
     protected String description;
     protected int type;
+    protected boolean idling;
     protected RemoteArtifactDefinition arfifact;
     protected RemoteActor actor;
     protected RemoteActivityDefinition nextActivity;
@@ -129,6 +132,22 @@ public class RemoteActivityDefinition {
      */
     public void setType(int value) {
         this.type = value;
+    }
+
+    /**
+     * Gets the value of the idling property.
+     * 
+     */
+    public boolean isIdling() {
+        return idling;
+    }
+
+    /**
+     * Sets the value of the idling property.
+     * 
+     */
+    public void setIdling(boolean value) {
+        this.idling = value;
     }
 
     /**

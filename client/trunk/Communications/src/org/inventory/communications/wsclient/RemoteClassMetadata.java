@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="attributesUniques" type="{http://www.w3.org/2001/XMLSchema}boolean" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributesVisibles" type="{http://www.w3.org/2001/XMLSchema}boolean" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributesDescriptions" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="attributesOrders" type="{http://www.w3.org/2001/XMLSchema}int" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="icon" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="creationDate" type="{http://www.w3.org/2001/XMLSchema}long"/>
@@ -49,6 +50,7 @@ import javax.xml.bind.annotation.XmlType;
     "attributesUniques",
     "attributesVisibles",
     "attributesDescriptions",
+    "attributesOrders",
     "icon",
     "description",
     "creationDate",
@@ -74,6 +76,8 @@ public class RemoteClassMetadata
     protected List<Boolean> attributesVisibles;
     @XmlElement(nillable = true)
     protected List<String> attributesDescriptions;
+    @XmlElement(nillable = true)
+    protected List<Integer> attributesOrders;
     protected byte[] icon;
     protected String description;
     protected long creationDate;
@@ -309,6 +313,35 @@ public class RemoteClassMetadata
             attributesDescriptions = new ArrayList<String>();
         }
         return this.attributesDescriptions;
+    }
+
+    /**
+     * Gets the value of the attributesOrders property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the attributesOrders property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getAttributesOrders().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Integer }
+     * 
+     * 
+     */
+    public List<Integer> getAttributesOrders() {
+        if (attributesOrders == null) {
+            attributesOrders = new ArrayList<Integer>();
+        }
+        return this.attributesOrders;
     }
 
     /**

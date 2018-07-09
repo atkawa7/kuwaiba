@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="noCopy" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="unique" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="mandatory" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="order" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -49,6 +50,7 @@ import javax.xml.bind.annotation.XmlType;
     "noCopy",
     "unique",
     "mandatory",
+    "order",
     "sessionId"
 })
 public class CreateAttribute {
@@ -64,6 +66,7 @@ public class CreateAttribute {
     protected boolean noCopy;
     protected boolean unique;
     protected boolean mandatory;
+    protected int order;
     protected String sessionId;
 
     /**
@@ -280,6 +283,22 @@ public class CreateAttribute {
      */
     public void setMandatory(boolean value) {
         this.mandatory = value;
+    }
+
+    /**
+     * Gets the value of the order property.
+     * 
+     */
+    public int getOrder() {
+        return order;
+    }
+
+    /**
+     * Sets the value of the order property.
+     * 
+     */
+    public void setOrder(int value) {
+        this.order = value;
     }
 
     /**

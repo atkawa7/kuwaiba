@@ -57,10 +57,10 @@ public final class CreateSpecialBusinessObjectAction extends GenericObjectNodeAc
     public void actionPerformed(ActionEvent ev) {
         ObjectNode node = Utilities.actionsGlobalContext().lookup(ObjectNode.class);
         String className = ((JMenuItem)ev.getSource()).getName();
-        final LocalAttributeMetadata[] mandatoryObjectAttributes = com.getMandatoryAttributesInClass(className);
+        final List<LocalAttributeMetadata> mandatoryObjectAttributes = com.getMandatoryAttributesInClass(className);
         AttributesForm mandatoryAttributesForm = new AttributesForm(mandatoryObjectAttributes);
         HashMap<String, Object> attributes = new HashMap<>();
-        if(mandatoryObjectAttributes.length > 0){
+        if(!mandatoryObjectAttributes.isEmpty()){
             attributes = mandatoryAttributesForm.createNewObjectForm();
             if(!attributes.isEmpty()) //the createNewObject form is closed, and the ok button is never clicked 
                 createSpecialObject(className, node, attributes);

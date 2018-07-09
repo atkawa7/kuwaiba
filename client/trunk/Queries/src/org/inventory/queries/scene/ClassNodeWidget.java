@@ -74,16 +74,16 @@ public class ClassNodeWidget extends QueryEditorNodeWidget{
 
         if (hasParentField){
             LocalAttributeMetadata attributeParent = new LocalAttributeMetadata(0, 
-                    Constants.PROPERTY_PARENT,LocalObjectLight.class, null, true, false, false, 
-                    Constants.MAPPING_MANYTOONE, null);
+                    Constants.PROPERTY_PARENT, LocalObjectLight.class, null, null, true, false, false, 
+                    Constants.MAPPING_MANYTOONE, 0);
             ((QueryEditorScene)getScene()).addPin(myClass, attributeParent);
         }
 
         //We add the attribute "id" manually since it's a special one and it's not in the metadata
         if (hasIdField){
             LocalAttributeMetadata attributeId = new LocalAttributeMetadata(-1, 
-                    Constants.PROPERTY_ID,Long.class, null, true, 
-                    false, false, Constants.MAPPING_PRIMITIVE, null);
+                    Constants.PROPERTY_ID,Long.class, null, null, true, 
+                    false, false, Constants.MAPPING_PRIMITIVE, 0);
             ((QueryEditorScene)getScene()).addPin(myClass, attributeId);
         }
 

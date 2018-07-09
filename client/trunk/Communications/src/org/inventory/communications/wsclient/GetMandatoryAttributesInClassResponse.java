@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}attributeInfo" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}remoteAttributeMetadata" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,7 +35,7 @@ import javax.xml.bind.annotation.XmlType;
 public class GetMandatoryAttributesInClassResponse {
 
     @XmlElement(name = "return")
-    protected List<AttributeInfo> _return;
+    protected List<RemoteAttributeMetadata> _return;
 
     /**
      * Gets the value of the return property.
@@ -55,13 +55,13 @@ public class GetMandatoryAttributesInClassResponse {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link AttributeInfo }
+     * {@link RemoteAttributeMetadata }
      * 
      * 
      */
-    public List<AttributeInfo> getReturn() {
+    public List<RemoteAttributeMetadata> getReturn() {
         if (_return == null) {
-            _return = new ArrayList<AttributeInfo>();
+            _return = new ArrayList<RemoteAttributeMetadata>();
         }
         return this._return;
     }

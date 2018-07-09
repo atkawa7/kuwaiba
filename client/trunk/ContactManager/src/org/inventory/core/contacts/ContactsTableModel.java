@@ -66,7 +66,7 @@ public class ContactsTableModel  implements TableModel {
 
     @Override
     public int getColumnCount() {
-        return genericContactMetadata.getAttributes().length + 2; // +1 = company, +1 = type
+        return genericContactMetadata.getAttributes().size() + 2; // +1 = company, +1 = type
      }
 
     @Override
@@ -77,7 +77,7 @@ public class ContactsTableModel  implements TableModel {
             case 1:
                 return "type";
             default:
-                return genericContactMetadata.getAttributes()[columnIndex - 2].getDisplayName();
+                return genericContactMetadata.getAttributes().get(columnIndex - 2).getDisplayName();
         }
     }
 

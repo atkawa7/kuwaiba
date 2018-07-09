@@ -65,9 +65,9 @@ public final class CreateBusinessObjectAction extends GenericObjectNodeAction im
     public void actionPerformed(ActionEvent ev) {
         String objectClass = ((JMenuItem) ev.getSource()).getName();
             
-        final LocalAttributeMetadata[] mandatoryObjectAttributes = com.getMandatoryAttributesInClass(objectClass);
+        final List<LocalAttributeMetadata> mandatoryObjectAttributes = com.getMandatoryAttributesInClass(objectClass);
         HashMap<String, Object> attributes = new HashMap<>();
-        if(mandatoryObjectAttributes.length > 0){
+        if(!mandatoryObjectAttributes.isEmpty()){
             AttributesForm mandatoryAttributeForm = new AttributesForm(mandatoryObjectAttributes);
             attributes = mandatoryAttributeForm.createNewObjectForm();
             if(!attributes.isEmpty()) //the createNewObject form is closed, but the ok button is never clicked 
