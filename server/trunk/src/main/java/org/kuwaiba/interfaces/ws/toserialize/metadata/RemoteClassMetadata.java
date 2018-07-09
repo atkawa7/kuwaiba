@@ -15,7 +15,9 @@
  */
 package org.kuwaiba.interfaces.ws.toserialize.metadata;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
@@ -62,6 +64,10 @@ public class RemoteClassMetadata extends RemoteClassMetadataLight {
      */
     private String [] attributesDescriptions;
     /**
+     * Attributes orders
+     */
+    private Integer [] attributesOrders;
+    /**
      * 32x32 icon
      */
     protected byte[] icon;
@@ -86,7 +92,8 @@ public class RemoteClassMetadata extends RemoteClassMetadataLight {
         super (myClass, validators);
         this._abstract = myClass.isAbstract();
         this.icon = myClass.getIcon();
-        Set<AttributeMetadata> ar = myClass.getAttributes();
+        List<AttributeMetadata> ar = new ArrayList<>(myClass.getAttributes());
+        Collections.sort(ar);
         this.attributesIds = new long[ar.size()];
         this.attributesNames = new String[ar.size()];
         this.attributesTypes = new String[this.attributesNames.length];
@@ -95,6 +102,7 @@ public class RemoteClassMetadata extends RemoteClassMetadataLight {
         this.attributesMandatories = new boolean[this.attributesNames.length];
         this.attributesVisibles = new boolean[this.attributesNames.length];
         this.attributesDescriptions = new String[this.attributesNames.length];
+        this.attributesOrders = new Integer[this.attributesNames.length];
         this.description = myClass.getDescription();
         this.countable = myClass.isCountable();
         int i = 0;
@@ -107,8 +115,9 @@ public class RemoteClassMetadata extends RemoteClassMetadataLight {
             this.attributesMandatories[i] = myAtt.isMandatory();
             this.attributesUniques[i] = myAtt.isUnique();
             this.attributesVisibles[i] = myAtt.isVisible();
-            this.attributesDescriptions[i] = myAtt.getDescription()==null?
+            this.attributesDescriptions[i] = myAtt.getDescription()==null ?
                 "":myAtt.getDescription();
+            this.attributesOrders[i] = myAtt.getOrder();
             i++;
         }
     }
@@ -171,6 +180,14 @@ public class RemoteClassMetadata extends RemoteClassMetadataLight {
 
     public void setAttributesIds(long[] attributesIds) {
         this.attributesIds = attributesIds;
+    }
+
+    public Integer[] getAttributesOrders() {
+        return attributesOrders;
+    }
+
+    public void setAttributesOrders(Integer[] attributesOrders) {
+        this.attributesOrders = attributesOrders;
     }
 
     public String getDescription() {

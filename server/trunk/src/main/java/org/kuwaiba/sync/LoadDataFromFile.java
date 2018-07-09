@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.persistence.PersistenceService;
@@ -198,7 +197,7 @@ public final class LoadDataFromFile{
                     
                     //if there are any list type value in the atributes we should find its ids in order to create the objects
                     ClassMetadata aClass = mem.getClass(className);
-                    Set<AttributeMetadata> classAttributes = aClass.getAttributes();
+                    List<AttributeMetadata> classAttributes = aClass.getAttributes();
                     for (AttributeMetadata classAttribute : classAttributes) {
                         if(!isPrimitive(classAttribute.getType())){
                             String attributeValue = attributes.get(classAttribute.getName());

@@ -373,6 +373,16 @@ public interface ApplicationEntityManager {
         throws MetadataObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException;
     
     /**
+     * Retrieves the objects that make reference to a given list type item
+     * @param listTypeItemClass The list type class
+     * @param listTypeItemId The list type item id
+     * @param limit The limit of results. Use -1 to retrieve all.
+     * @return The list of business objects related to the list type item
+     * @throws ApplicationObjectNotFoundException 
+     */
+    public List<BusinessObjectLight> getListTypeItemUses(String listTypeItemClass, long listTypeItemId, int limit) throws ApplicationObjectNotFoundException;
+    
+    /**
      * Gets the list of template elements with a device layout
      * @return the list of template elements with a device layout
      */

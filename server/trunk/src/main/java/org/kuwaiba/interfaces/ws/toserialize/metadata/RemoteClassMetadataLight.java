@@ -195,6 +195,6 @@ public class RemoteClassMetadataLight implements Serializable {
     
     @Override
     public String toString() {
-        return className;
+        return displayName == null || displayName.trim().isEmpty() ? className : displayName;
     }
 }

@@ -21,6 +21,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
@@ -153,7 +154,33 @@ public class ListTypeItemManagerDashboardWidget extends AbstractDashboardWidget 
             btnAddListTypeItem.setIcon(VaadinIcons.INSERT);
             
             btnSeeListTypeItemUses = new Button("See Uses", (event) -> {
-                Notifications.showError("Not Implemented Yet");
+                try {
+                    if (lstListTypeItems.getSelectedItems().isEmpty())
+                        Notifications.showError("You need to select an item first");
+                    else {
+                        RemoteObjectLight selectedItem = lstListTypeItems.getSelectedItems().iterator().next();
+                        List<RemoteObjectLight> listTypeItemUses = wsBean.getListTypeItemUses(selectedItem.getClassName(), selectedItem.getId(), -1, Page.getCurrent().getWebBrowser().getAddress(), 
+                                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                        if (listTypeItemUses.isEmpty()) 
+                            Notifications.showInfo("This list type item is not used by any inventory object");
+                        else {
+                            Window wdwListTypeItemUses = new Window(String.format("Objects using %s", selectedItem));
+                            Grid<RemoteObjectLight> tblListTypeItemUses = new Grid<>();
+                            tblListTypeItemUses.setItems(listTypeItemUses);
+                            tblListTypeItemUses.addColumn(RemoteObjectLight::getName).setCaption("Name");
+                            tblListTypeItemUses.addColumn(RemoteObjectLight::getClassName).setCaption("Type");
+                            tblListTypeItemUses.setWidth(100, Unit.PERCENTAGE);
+                            
+                            wdwListTypeItemUses.setContent(tblListTypeItemUses);
+                            wdwListTypeItemUses.center();
+                            wdwListTypeItemUses.setWidth(20, Unit.PERCENTAGE);
+                            wdwListTypeItemUses.setModal(true);
+                            UI.getCurrent().addWindow(wdwListTypeItemUses);
+                        }
+                    }
+                } catch (ServerSideException ex) {
+                    Notifications.showError(ex.getLocalizedMessage());
+                }
             });
             btnSeeListTypeItemUses.setWidth(100, Unit.PERCENTAGE);
             btnSeeListTypeItemUses.setIcon(VaadinIcons.ARROW_CIRCLE_RIGHT);

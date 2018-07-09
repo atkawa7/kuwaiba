@@ -20,7 +20,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
@@ -604,7 +603,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
         else
             rootClasses = String.format("\'%s\'", Constants.CLASS_INVENTORYOBJECT);
         
-        String cypherQuery = "MATCH (inventory:classes) <-[:" + (RelTypes.EXTENDS.toString()) + "*]-(classmetadata) " +
+        String cypherQuery = "MATCH (inventory:classes) <-[:" + RelTypes.EXTENDS + "*]-(classmetadata) " +
                              "WHERE inventory.name IN [" + rootClasses + "] " +
                              "RETURN classmetadata, inventory " +
                              "ORDER BY classmetadata.name ASC";
@@ -889,6 +888,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         oldValues = " ";
                         newValues = newAttributeDefinition.isMandatory() + " ";
                     }
+                    if(newAttributeDefinition.getOrder() != null) {
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ORDER, newAttributeDefinition.getOrder());
+                        
+                        affectedProperties = Constants.PROPERTY_ORDER + " ";
+                        oldValues = " ";
+                        newValues = newAttributeDefinition.getOrder() + " ";
+                    }
+                    
                     //Refresh cache for the affected classes
                     refreshCacheOn(classNode);
                     tx.success();                    
@@ -1017,6 +1024,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         oldValues = " ";
                         newValues = newAttributeDefinition.isMandatory() + " ";
                     }
+                    if(newAttributeDefinition.getOrder() != null) {
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ORDER, newAttributeDefinition.getOrder());
+                        
+                        affectedProperties = Constants.PROPERTY_ORDER + " ";
+                        oldValues = " ";
+                        newValues = newAttributeDefinition.getOrder() + " ";
+                    }
+                    
                     //Refresh cache for the affected classes
                     refreshCacheOn(classNode);
                     tx.success();
@@ -1620,13 +1635,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     public List<AttributeMetadata> getMandatoryAttributesInClass(String className) 
             throws MetadataObjectNotFoundException
     {
-        List<AttributeMetadata> mandatoryAttributes = new ArrayList<>();
+        
         ClassMetadata aClass = getClass(className);
-        Set<AttributeMetadata> classAttributes = aClass.getAttributes();
-        for (AttributeMetadata mandatoryAttribute : classAttributes) {
-            if(mandatoryAttribute.isMandatory())
-                 mandatoryAttributes.add(mandatoryAttribute);
-        }
+        List<AttributeMetadata> mandatoryAttributes = new ArrayList<>(aClass.getAttributes());
+        
+        mandatoryAttributes.stream().filter(att -> att.isMandatory());
+        
         return mandatoryAttributes;
     }
     

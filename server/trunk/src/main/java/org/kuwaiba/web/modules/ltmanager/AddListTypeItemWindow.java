@@ -15,6 +15,7 @@
  */
 package org.kuwaiba.web.modules.ltmanager;
 
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -67,6 +68,7 @@ public class AddListTypeItemWindow extends Window {
             }
             close();
         });
+        btnOK.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
         btnOK.setEnabled(false);
         txtName.addValueChangeListener((e) -> {
@@ -104,7 +106,6 @@ public class AddListTypeItemWindow extends Window {
             ComboBox<RemoteClassMetadataLight> cmbListTypes = new ComboBox<>("List Type", listTypes);
             cmbListTypes.setEmptySelectionAllowed(false);
             cmbListTypes.setRequiredIndicatorVisible(true);
-            cmbListTypes.setTextInputAllowed(false);
             cmbListTypes.setSizeFull();
         
             TextField txtName = new TextField("Name");

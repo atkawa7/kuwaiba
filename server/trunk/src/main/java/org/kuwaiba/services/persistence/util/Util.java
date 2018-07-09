@@ -34,10 +34,8 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.forms.FormDefinition;
 import org.kuwaiba.apis.persistence.application.forms.FormInstance;
@@ -336,7 +334,7 @@ public class Util {
     public static ClassMetadata createClassMetadataFromNode(Node classNode)
     {
         ClassMetadata myClass = new ClassMetadata();
-        Set<AttributeMetadata> listAttributes = new HashSet<>();
+        List<AttributeMetadata> listAttributes = new ArrayList<>();
 
         myClass.setName((String)classNode.getProperty(Constants.PROPERTY_NAME));
         Iterable<Label> labels = classNode.getLabels();
@@ -395,6 +393,7 @@ public class Util {
         attribute.setMandatory(attributeNode.hasProperty(Constants.PROPERTY_MANDATORY) ? (Boolean)attributeNode.getProperty(Constants.PROPERTY_MANDATORY) : false );
         attribute.setUnique((Boolean)attributeNode.getProperty(Constants.PROPERTY_UNIQUE));
         attribute.setId(attributeNode.getId());
+        attribute.setOrder(attributeNode.hasProperty(Constants.PROPERTY_ORDER) ? (int)attributeNode.getProperty(Constants.PROPERTY_ORDER) : 1000);
 
         return attribute;
     }
@@ -972,6 +971,7 @@ public class Util {
             attrNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
             attrNode.setProperty(Constants.PROPERTY_NO_COPY, attributeDefinition.isNoCopy() == null ? false : attributeDefinition.isNoCopy());
             attrNode.setProperty(Constants.PROPERTY_UNIQUE, attributeDefinition.isUnique() == null ? false : attributeDefinition.isUnique());
+            attrNode.setProperty(Constants.PROPERTY_ORDER, attributeDefinition.getOrder() == null ? 1000 : attributeDefinition.getOrder());
             
             p.endNode().createRelationshipTo(attrNode, RelTypes.HAS_ATTRIBUTE);
         }
@@ -1032,7 +1032,7 @@ public class Util {
         }//end for
     }
     
-    public static void changeAttributeProperty (Node classNode, String attributeName, String propertyName, Object propertyValue) throws InvalidArgumentException {
+    public static void changeAttributeProperty (Node classNode, String attributeName, String propertyName, Object propertyValue) {        
         final TraversalDescription UPDATE_TRAVERSAL = classNode.getGraphDatabase().traversalDescription().
                     breadthFirst().
                     relationships(RelTypes.EXTENDS, Direction.INCOMING);

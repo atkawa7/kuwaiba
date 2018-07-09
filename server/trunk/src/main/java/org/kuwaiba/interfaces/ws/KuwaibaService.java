@@ -77,7 +77,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHContainerLinkDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHPosition;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.AttributeInfo;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteAttributeMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.beans.WebserviceBean;
@@ -3171,7 +3171,7 @@ public class KuwaibaService {
      * @throws ServerSideException If the class doesn't exist
      */
     @WebMethod(operationName = "getMandatoryAttributesInClass")
-    public List<AttributeInfo> getMandatoryAttributesInClass(
+    public List<RemoteAttributeMetadata> getMandatoryAttributesInClass(
             @WebParam(name = "className") String className,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException{
         try{
@@ -4123,7 +4123,7 @@ public class KuwaibaService {
      *                             If the attributeName does not exist
      */
     @WebMethod(operationName = "getAttribute")
-    public AttributeInfo getAttribute(@WebParam(name = "className")
+    public RemoteAttributeMetadata getAttribute(@WebParam(name = "className")
     String className, @WebParam(name = "attributeName")
     String attributeName, @WebParam(name = "sesionId")
     String sessionId) throws ServerSideException {
@@ -4149,7 +4149,7 @@ public class KuwaibaService {
      *                             If the attributeName does not exist
      */
     @WebMethod(operationName = "getAttributeForClassWithId")
-    public AttributeInfo getAttributeForClassWithId(@WebParam(name = "classId")
+    public RemoteAttributeMetadata getAttributeForClassWithId(@WebParam(name = "classId")
         String classId, @WebParam(name = "attributeName")
         String attributeName, @WebParam(name = "sessionId")
         String sessionId) throws ServerSideException{
@@ -4166,7 +4166,7 @@ public class KuwaibaService {
     }
    
     /**
-     * Adds an attribute to a class using its name as key to find it
+     * Adds an attribute to a class using its name as key to find it. If value of a given attribute is null, a default value will be set (except for the name, which is mandatory)
      * @param className Class name where the attribute will be attached
      * @param name attribute name
      * @param displayName attribute display name
@@ -4178,6 +4178,8 @@ public class KuwaibaService {
      * @param isReadOnly is the attribute read only?
      * @param unique should this attribute be unique?
      * @param mandatory is the attribute mandatory when an object is created
+     * @param order Tells the system how to sort the attributes. A call to any method that returns the attributes of a class will return them sorted by order.
+     * This is useful to show the attributes in property sheets in order of importance, for example. The default value is 1000
      * @param sessionId session token
      * @throws ServerSideException If there is no a class with such className
      *                             If any of the parameters to create the attribute has a wrong value
@@ -4194,12 +4196,13 @@ public class KuwaibaService {
         boolean isReadOnly, @WebParam(name = "noCopy")
         boolean noCopy, @WebParam(name = "unique")
         boolean unique, @WebParam(name = "mandatory")
-        boolean mandatory, @WebParam(name = "sessionId")
+        boolean mandatory, @WebParam(name = "order")
+        int order, @WebParam(name = "sessionId")
         String sessionId) throws ServerSideException {
 
         try {
-            AttributeInfo attrInfo = new AttributeInfo(name, displayName, type, administrative, 
-                    visible, isReadOnly, unique, mandatory, description, noCopy);
+            RemoteAttributeMetadata attrInfo = new RemoteAttributeMetadata(name, displayName, type, administrative, 
+                    visible, isReadOnly, unique, mandatory, description, noCopy, order);
 
             wsBean.createAttribute(className, attrInfo, getIPAddress(), sessionId);
 
@@ -4214,7 +4217,7 @@ public class KuwaibaService {
     }
 
     /**
-     * Adds an attribute to a class using its id as key to find it
+     * Adds an attribute to a class using its id as key to find it. If value of a given attribute is null, a default value will be put in place (except for the name, which is mandatory)
      * @param ClassId Class id where the attribute will be attached
      * @param name attribute name
      * @param displayName attribute display name
@@ -4226,6 +4229,8 @@ public class KuwaibaService {
      * @param noCopy Marks an attribute as not to be copied during a copy operation.
      * @param unique should this attribute be unique?
      * @param mandatory is the attribute mandatory when an object is created
+     * @param order Tells the system how to sort the attributes. A call to any method that returns the attributes of a class will return them sorted by order.
+     * This is useful to show the attributes in property sheets in order of importance, for example. The default value is 1000
      * @param sessionId session token
      * @throws ServerSideException If any of the parameters to create the attribute has a wrong value
      */
@@ -4241,12 +4246,13 @@ public class KuwaibaService {
         boolean readOnly, @WebParam(name = "noCopy")
         boolean noCopy, @WebParam(name = "unique")
         boolean unique, @WebParam(name = "mandatory")
-        boolean mandatory, @WebParam(name = "sessionId")
+        boolean mandatory, @WebParam(name = "order")
+        int order, @WebParam(name = "sessionId")
         String sessionId) throws ServerSideException {
 
         try {
-            AttributeInfo attrInfo = new AttributeInfo(name, displayName, type, administrative, 
-                                   visible, readOnly, unique, mandatory, description, noCopy);
+            RemoteAttributeMetadata attrInfo = new RemoteAttributeMetadata(name, displayName, type, administrative, 
+                                   visible, readOnly, unique, mandatory, description, noCopy, order);
 
             wsBean.createAttribute(ClassId, attrInfo, getIPAddress(), sessionId);
 
@@ -4261,7 +4267,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Updates a class attribute taking its name as key to find it
+     * Updates a class attribute taking its name as key to find it. If value of a given attribute is null, the old value will remain unchanged.
      * @param className Class the attribute belongs to
      * @param attributeId attribute id
      * @param name attribute name
@@ -4274,6 +4280,8 @@ public class KuwaibaService {
      * @param unique should this attribute be unique?
      * @param mandatory is the attribute mandatory when an object is created
      * @param noCopy can this attribute be copy in copy/paste operation?
+     * @param order Tells the system how to sort the attributes. A call to any method that returns the attributes of a class will return them sorted by order.
+     * This is useful to show the attributes in property sheets in order of importance, for example. The default value is 1000
      * @param sessionId session token
      * @throws ServerSideException If an object can't be find, while it is checking 
      *                             if every object of the class (or subclasses) has 
@@ -4292,13 +4300,14 @@ public class KuwaibaService {
         Boolean noCopy, @WebParam(name = "readOnly")
         Boolean readOnly, @WebParam(name = "unique")
         Boolean unique, @WebParam(name = "visible")
-        Boolean visible, @WebParam(name = "sessionId")
+        Boolean visible, @WebParam(name = "order")
+        Integer order, @WebParam(name = "sessionId")
         String sessionId) throws ServerSideException {
 
         try {
-            AttributeInfo ai = new AttributeInfo(attributeId, name, displayName,
+            RemoteAttributeMetadata ai = new RemoteAttributeMetadata(attributeId, name, displayName,
                     type, administrative, visible, readOnly, unique, mandatory, 
-                    description, noCopy);
+                    description, noCopy, order);
             wsBean.setAttributeProperties(className, ai, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
@@ -4311,7 +4320,7 @@ public class KuwaibaService {
     }
 
     /**
-     * Updates a class attribute taking its id as key to find it
+     * Updates a class attribute taking its id as key to find it. If value of a given attribute is null, the old value will remain unchanged.
      * @param classId Class the attribute belongs to
      * @param attributeId attribute id
      * @param name attribute name
@@ -4324,6 +4333,8 @@ public class KuwaibaService {
      * @param unique should this attribute be unique?
      * @param mandatory is the attribute mandatory when an object is created
      * @param noCopy can this attribute be copy in copy/paste operation?
+     * @param order Tells the system how to sort the attributes. A call to any method that returns the attributes of a class will return them sorted by order.
+     * This is useful to show the attributes in property sheets in order of importance, for example. The default value is 1000
      * @param sessionId session token
      * @throws ServerSideException If an object can't be find, while it is checking 
      *                             if every object of the class (or subclasses) has 
@@ -4342,13 +4353,14 @@ public class KuwaibaService {
         Boolean noCopy, @WebParam(name = "readOnly")
         Boolean readOnly, @WebParam(name = "unique")
         Boolean unique, @WebParam(name = "visible")
-        Boolean visible, @WebParam(name = "sessionId")
+        Boolean visible, @WebParam(name = "order")
+        Integer order, @WebParam(name = "sessionId")
         String sessionId) throws ServerSideException {
 
         try {
-            AttributeInfo ai = new AttributeInfo(attributeId, name, displayName, 
+            RemoteAttributeMetadata ai = new RemoteAttributeMetadata(attributeId, name, displayName, 
                     type, administrative, visible, readOnly, unique, mandatory, 
-                    description, noCopy);
+                    description, noCopy, order);
             wsBean.setAttributeProperties(classId, ai, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)

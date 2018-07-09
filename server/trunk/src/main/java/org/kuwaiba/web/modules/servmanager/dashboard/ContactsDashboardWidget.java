@@ -51,7 +51,7 @@ public class ContactsDashboardWidget extends AbstractDashboardWidget {
         this.customer = customer;
         this.wsBean = wsBean;
         this.createCover();
-        this.createContent();
+        
     }
     
     @Override
@@ -60,8 +60,10 @@ public class ContactsDashboardWidget extends AbstractDashboardWidget {
         Label lblText = new Label(title);
         lblText.setStyleName("text-bottomright");
         lytContactsWidgetCover.addLayoutClickListener((event) -> {
-            if (event.getButton() == MouseEventDetails.MouseButton.LEFT)
+            if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
+                this.createContent();
                 launch();
+            }
         });
         
         lytContactsWidgetCover.addComponent(lblText);

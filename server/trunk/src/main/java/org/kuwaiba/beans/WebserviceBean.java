@@ -70,7 +70,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHContainerLinkDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHPosition;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.AttributeInfo;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteAttributeMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 
@@ -124,19 +124,19 @@ public interface WebserviceBean {
 
     public RemoteClassMetadata getClass(long classId, String ipAddress, String sessionId) throws ServerSideException;
     
-    public void createAttribute(String className, AttributeInfo attributeDefinition, String ipAddress, String sessionId) throws ServerSideException;
+    public void createAttribute(String className, RemoteAttributeMetadata attributeDefinition, String ipAddress, String sessionId) throws ServerSideException;
 
-    public void createAttribute(long classId, AttributeInfo attributeDefinition, String ipAddress, String sessionId) throws ServerSideException;
+    public void createAttribute(long classId, RemoteAttributeMetadata attributeDefinition, String ipAddress, String sessionId) throws ServerSideException;
     
     public boolean hasAttribute(String className, String attributeName, String ipAddress, String sessionId) throws ServerSideException;
 
-    public AttributeInfo getAttribute(String className, String attributeName, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteAttributeMetadata getAttribute(String className, String attributeName, String ipAddress, String sessionId) throws ServerSideException;
 
-    public AttributeInfo getAttribute(long classId, long attributeId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteAttributeMetadata getAttribute(long classId, long attributeId, String ipAddress, String sessionId) throws ServerSideException;
 
-    public void setAttributeProperties(long classId, AttributeInfo newAttributeDefinition, String ipAddress, String sessionId) throws ServerSideException;
+    public void setAttributeProperties(long classId, RemoteAttributeMetadata newAttributeDefinition, String ipAddress, String sessionId) throws ServerSideException;
 
-    public void setAttributeProperties(String className, AttributeInfo newAttributeDefinition, String ipAddress, String sessionId) throws ServerSideException;
+    public void setAttributeProperties(String className, RemoteAttributeMetadata newAttributeDefinition, String ipAddress, String sessionId) throws ServerSideException;
 
     public void deleteAttribute(String className, String attributeName, String ipAddress, String sessionId) throws ServerSideException;
 
@@ -219,7 +219,7 @@ public interface WebserviceBean {
     public long[] copySpecialObjects(String targetClass, long targetOid, String[] templateClasses, long[] templateOids, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
     public long copyPoolItem(long poolId, String poolItemClassName, long poolItemId, boolean recursive, String ipAddress, String sessionId) throws ServerSideException;
     
-    public List<AttributeInfo> getMandatoryAttributesInClass(String className, String ipAddress, String sessionId)  throws ServerSideException;
+    public List<RemoteAttributeMetadata> getMandatoryAttributesInClass(String className, String ipAddress, String sessionId)  throws ServerSideException;
         
     public long [] createBulkObjects(String className, String parentClassName, long parentOid, int numberOfObjects, String namePattern, String ipAddress, String sessionId) throws ServerSideException;
     public long[] createBulkSpecialObjects(String className, String parentClassName, long parentId, int numberOfSpecialObjects, String namePattern, String ipAddress, String sessionId) throws ServerSideException;
@@ -293,6 +293,9 @@ public interface WebserviceBean {
     
     public void deleteListTypeItemRelatedView(long listTypeItemId, String listTypeItemClass, long viewId, String ipAddress, String sessionId) throws ServerSideException;
 
+    public List<RemoteObjectLight> getListTypeItemUses(String listTypeItemClass, long listTypeItemId, int limit, 
+        String ipAddress, String sessionId) throws ServerSideException;
+    
     public RemoteViewObject getObjectRelatedView(long oid, String objectClass, long viewId, String ipAddress, String sessionId) throws ServerSideException;
 
     public List<RemoteViewObjectLight> getObjectRelatedViews(long oid, String objectClass, int viewType, int limit, String ipAddress, String sessionId) throws ServerSideException;

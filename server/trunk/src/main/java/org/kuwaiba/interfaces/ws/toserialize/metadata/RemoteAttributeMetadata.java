@@ -24,7 +24,7 @@ import java.io.Serializable;
  *
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class AttributeInfo implements Serializable {
+public class RemoteAttributeMetadata implements Serializable {
 
     /**
      * Attribute's id
@@ -74,11 +74,16 @@ public class AttributeInfo implements Serializable {
      * Cannot change or delete a locked attribute
      */
     private Boolean locked;
+    /**
+     * Tells the system how to sort the attributes. A call to any method that returns the attributes of a class will return them sorted by order.
+     * This is useful to show the attributes in property sheets in order of importance, for example. The default value is 1000
+     */
+    private Integer order;
 
-    public AttributeInfo() {
+    public RemoteAttributeMetadata() {
     }
 
-    public AttributeInfo(String name, String displayName, String type, 
+    public RemoteAttributeMetadata(String name, String displayName, String type, 
             Boolean administrative, Boolean visible, Boolean unique, Boolean mandatory, String description) {
         this.name = name;
         this.displayName = displayName;
@@ -90,12 +95,12 @@ public class AttributeInfo implements Serializable {
         this.description = description;
     }
 
-    public AttributeInfo(long id, String name, 
+    public RemoteAttributeMetadata(long id, String name, 
             String displayName, String type, 
             Boolean administrative,
             Boolean visible, Boolean readOnly, 
             Boolean unique, Boolean mandatory, 
-            String description, Boolean noCopy) {
+            String description, Boolean noCopy, Integer order) {
         this.id = id;
         this.name = name;
         this.displayName = displayName;
@@ -107,12 +112,13 @@ public class AttributeInfo implements Serializable {
         this.mandatory = mandatory;
         this.description = description;
         this.noCopy = noCopy;
+        this.order = order;
     }
     
-    public AttributeInfo(String name, String displayName, String type, 
+    public RemoteAttributeMetadata(String name, String displayName, String type, 
                          Boolean administrative, Boolean visible, 
                          Boolean readOnly, Boolean unique, Boolean mandatory, 
-                         String description, Boolean noCopy) {
+                         String description, Boolean noCopy, Integer order) {
         this.name = name;
         this.displayName = displayName;
         this.type = type;
@@ -123,6 +129,7 @@ public class AttributeInfo implements Serializable {
         this.mandatory = mandatory;
         this.description = description;
         this.noCopy = noCopy;
+        this.order = order;
     }
 
     public Boolean isAdministrative() {
@@ -219,5 +226,13 @@ public class AttributeInfo implements Serializable {
 
     public void setLocked(Boolean locked) {
         this.locked = locked;
+    }
+
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
     }
 }

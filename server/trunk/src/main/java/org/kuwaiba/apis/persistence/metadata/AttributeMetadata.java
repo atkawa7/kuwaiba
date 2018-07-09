@@ -19,13 +19,13 @@ package org.kuwaiba.apis.persistence.metadata;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.AttributeInfo;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteAttributeMetadata;
 
 /**
  * Contains the detailed metadata information about a class attribute
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class AttributeMetadata implements Serializable {
+public class AttributeMetadata implements Serializable, Comparable<AttributeMetadata> {
     /**
      * Integer, Float, Long, Boolean, String or Text
      */
@@ -102,6 +102,11 @@ public class AttributeMetadata implements Serializable {
      * Cannot change or delete a locked attribute
      */
     private Boolean locked;
+    /**
+     * Tells the system how to sort the attributes. A call to any method that returns the attributes of a class will return them sorted by order.
+     * This is useful to show the attributes in property sheets in order of importance, for example. The default value is 1000
+     */
+    private Integer order;
     /**
      * The attribute mapping, that is, how should it be interpreted by a parser. See MAPPING_XXXX  constants for possible values
      * @return If this attribute is marked as administrative or not
@@ -212,13 +217,14 @@ public class AttributeMetadata implements Serializable {
         this.locked = locked;
     }
 
-//    public int getMapping() {
-//        return mapping;
-//    }
-//
-//    public void setMapping(int mapping) {
-//        this.mapping = mapping;
-//    }
+    public Integer getOrder() {
+        return order;
+    }
+
+    public void setOrder(Integer order) {
+        this.order = order;
+    }
+    
     // </editor-fold>
     
     @Override
@@ -251,15 +257,20 @@ public class AttributeMetadata implements Serializable {
                 || type.equals("Timestamp") || type.equals("Binary");
     }
     
-    public static List<AttributeInfo> toAttributeInfo(List<AttributeMetadata> toBeWrapped){
+    public static List<RemoteAttributeMetadata> toAttributeInfo(List<AttributeMetadata> toBeWrapped){
         if (toBeWrapped == null)
             return null;
         
-        List<AttributeInfo> res = new ArrayList<>();
+        List<RemoteAttributeMetadata> res = new ArrayList<>();
         
         for (AttributeMetadata toBeWrapped1 : toBeWrapped) 
-            res.add(new AttributeInfo(toBeWrapped1.getName(), toBeWrapped1.getDisplayName(), toBeWrapped1.getType(), toBeWrapped1.isAdministrative(), toBeWrapped1.isVisible(), toBeWrapped1.isUnique(), toBeWrapped1.isMandatory(), toBeWrapped1.getDescription()));
+            res.add(new RemoteAttributeMetadata(toBeWrapped1.getName(), toBeWrapped1.getDisplayName(), toBeWrapped1.getType(), toBeWrapped1.isAdministrative(), toBeWrapped1.isVisible(), toBeWrapped1.isUnique(), toBeWrapped1.isMandatory(), toBeWrapped1.getDescription()));
         
         return res;
+    }
+
+    @Override
+    public int compareTo(AttributeMetadata o) {
+        return order.compareTo(o.order);
     }
 }

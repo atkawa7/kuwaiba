@@ -14,6 +14,7 @@
  */
 package org.kuwaiba.web.modules.servmanager;
 
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -79,6 +80,7 @@ public class AddServiceWindow extends Window {
                     Notifications.showError(ex.getMessage());
                 }
             });
+            btnOK.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
             btnOK.setEnabled(false);
             txtName.addValueChangeListener((e) -> {

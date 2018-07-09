@@ -24,9 +24,7 @@ import java.io.InputStream;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.namespace.QName;
@@ -181,7 +179,7 @@ public class XMLBackupReader {
             clmt.setSmallIcon(new byte[0]);
             clmt.setInDesign(false);
             
-            Set<AttributeMetadata> attList = new HashSet<>();
+            List<AttributeMetadata> attList = new ArrayList<>();
             
             for (LocalAttributeWrapper law : lcw.getAttributes()) {
                 AttributeMetadata attr = new AttributeMetadata();

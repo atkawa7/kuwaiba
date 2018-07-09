@@ -16,9 +16,8 @@
 
 package org.kuwaiba.apis.persistence.metadata;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
@@ -44,7 +43,7 @@ public class ClassMetadata extends ClassMetadataLight {
     /**
      *  Classmetada's attributes
      */
-    private Set<AttributeMetadata> attributes;
+    private List<AttributeMetadata> attributes;
     /**
      *  Classmetada's category
      */
@@ -59,7 +58,7 @@ public class ClassMetadata extends ClassMetadataLight {
     private long creationDate;
 
     public ClassMetadata() {
-        attributes = new HashSet<>();
+        attributes = new ArrayList<>();
     }
     
    // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
@@ -87,11 +86,11 @@ public class ClassMetadata extends ClassMetadataLight {
         this.icon = icon;
     }
 
-    public Set<AttributeMetadata> getAttributes() {
+    public List<AttributeMetadata> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(Set<AttributeMetadata> attributes) {
+    public void setAttributes(List<AttributeMetadata> attributes) {
         this.attributes = attributes;
     }
 

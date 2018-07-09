@@ -24,7 +24,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import org.kuwaiba.apis.persistence.application.ApplicationEntityManager;
 import org.kuwaiba.apis.persistence.business.AnnotatedBusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
@@ -1120,7 +1119,7 @@ public class DefaultReports {
         }
         else {
             HashMap<String, String> serviceAttributes = theService.getAttributes();
-            Set<AttributeMetadata> serviceClassAttributes = mem.getClass(serviceClassName).getAttributes();
+            List<AttributeMetadata> serviceClassAttributes = mem.getClass(serviceClassName).getAttributes();
             title = "Service detail Report for " + theService;
             ServiceDetailReportText = getHeader(title);
             ServiceDetailReportText += "<body>"
@@ -1140,7 +1139,7 @@ public class DefaultReports {
             
             HashMap<String, String> customerAttributes = serviceCustomer.getAttributes();
             ClassMetadata customerClass = mem.getClass(serviceCustomer.getClassName());
-            Set<AttributeMetadata> customerClassAttributes = customerClass.getAttributes();
+            List<AttributeMetadata> customerClassAttributes = customerClass.getAttributes();
             
             ServiceDetailReportText += createAttributesOfClass(serviceAttributes, serviceClassAttributes);
             ServiceDetailReportText += "<table><tr><td><h2>Customer Details: "+serviceCustomer.toString()+"</h1></td><td></td></tr></table>\n"
@@ -1326,7 +1325,7 @@ public class DefaultReports {
             return String.format("%s [%s - %s - %s]", position, k, l, m);
         }
     
-    private String createAttributesOfClass(HashMap<String, String> attributes, Set<AttributeMetadata> classAttributes) 
+    private String createAttributesOfClass(HashMap<String, String> attributes, List<AttributeMetadata> classAttributes) 
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, 
             InvalidArgumentException, ApplicationObjectNotFoundException, 
             NotAuthorizedException {

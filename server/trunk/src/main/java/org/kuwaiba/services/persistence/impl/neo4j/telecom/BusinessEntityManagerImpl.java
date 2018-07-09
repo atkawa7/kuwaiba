@@ -1515,6 +1515,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                             Util.createRemoteObjectLightFromNode(rel.getStartNode()) : Util.createRemoteObjectLightFromNode(rel.getEndNode()));
                 }
             }
+            tx.success();
             return res;
         }
     }

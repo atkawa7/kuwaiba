@@ -939,7 +939,6 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public long createListTypeItemRelatedView(long listTypeItemId, String listTypeItemClassName, String viewClassName, String name, String description, byte [] structure, byte [] background) 
         throws MetadataObjectNotFoundException, InvalidArgumentException {
-        long id;
         try (Transaction tx = graphDb.beginTx()) {
             Node listTypeItemNode = getListTypeItemNode(listTypeItemId, listTypeItemClassName);
             if (listTypeItemNode == null)
@@ -969,9 +968,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 }
             }
             tx.success();
-            id = viewNode.getId();
+            return viewNode.getId();
         }
-        return id;
     }
     
     @Override
@@ -1092,7 +1090,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             for (Relationship rel : listTypeItemNode.getRelationships(RelTypes.HAS_VIEW, Direction.OUTGOING)) {
                 if (limit != -1) {
                     if (i < limit)
-                        i += 1;
+                        i++;
                     else
                         break;
                 }
@@ -1127,6 +1125,26 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             tx.success();
         }
         throw new BusinessObjectNotFoundException("View", viewId);
+    }
+    
+    @Override
+    public List<BusinessObjectLight> getListTypeItemUses(String listTypeItemClass, long listTypeItemId, int limit) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            String cypherQuery = String.format("MATCH (ltItem:%s)<-[:%s]-(ltUser) WHERE id(ltItem) = %s RETURN ltUser ORDER BY ltUser.name ASC %s", 
+                    listTypeItemLabel, RelTypes.RELATED_TO, listTypeItemId, limit < 1 ? "" : "LIMIT " + limit);
+            
+            List<BusinessObjectLight> res = new ArrayList<>();
+            Result result = graphDb.execute(cypherQuery);
+        
+            Iterator<Node> n_column = result.columnAs("ltUser");
+            
+            for (Node node : Iterators.asIterable(n_column)) 
+                res.add(Util.createRemoteObjectLightFromNode(node));
+            
+            tx.success();
+            return res;
+        }
     }
     
     @Override

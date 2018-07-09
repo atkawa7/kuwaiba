@@ -139,7 +139,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelatio
 import org.kuwaiba.interfaces.ws.toserialize.business.ServiceLevelCorrelatedInformation;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHContainerLinkDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHPosition;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.AttributeInfo;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteAttributeMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.openide.util.Exceptions;
@@ -396,7 +396,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public void createAttribute(String className, AttributeInfo attributeDefinition, String ipAddress, String sessionId) throws ServerSideException {
+    public void createAttribute(String className, RemoteAttributeMetadata attributeDefinition, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -412,6 +412,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             attributeMetadata.setMandatory(attributeDefinition.isMandatory());
             attributeMetadata.setVisible(attributeDefinition.isVisible());
             attributeMetadata.setNoCopy(attributeDefinition.isNoCopy());
+            attributeMetadata.setOrder(attributeDefinition.getOrder());
 
             mem.createAttribute(className, attributeMetadata, true);
             
@@ -425,7 +426,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public void createAttribute(long classId, AttributeInfo attributeDefinition, String ipAddress, String sessionId) throws ServerSideException {
+    public void createAttribute(long classId, RemoteAttributeMetadata attributeDefinition, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -441,6 +442,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
             attributeMetadata.setMandatory(attributeDefinition.isMandatory());
             attributeMetadata.setVisible(attributeDefinition.isVisible());
             attributeMetadata.setNoCopy(attributeDefinition.isNoCopy());
+            attributeMetadata.setOrder(attributeDefinition.getOrder());
+            
             ClassMetadata classMetadata = mem.getClass(classId);
             mem.createAttribute(classId, attributeMetadata);
             
@@ -498,14 +501,14 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public AttributeInfo getAttribute(String className, String attributeName, String ipAddress, String sessionId) throws ServerSideException {
+    public RemoteAttributeMetadata getAttribute(String className, String attributeName, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getAttribute", ipAddress, sessionId);
             AttributeMetadata atrbMtdt = mem.getAttribute(className, attributeName);
 
-            AttributeInfo atrbInfo = new AttributeInfo(atrbMtdt.getName(),
+            RemoteAttributeMetadata atrbInfo = new RemoteAttributeMetadata(atrbMtdt.getName(),
                                                        atrbMtdt.getDisplayName(),
                                                        atrbMtdt.getType(),
                                                        atrbMtdt.isAdministrative(),
@@ -520,7 +523,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public AttributeInfo getAttribute(long classId, long attributeId, String ipAddress, String sessionId) throws ServerSideException{
+    public RemoteAttributeMetadata getAttribute(long classId, long attributeId, String ipAddress, String sessionId) throws ServerSideException{
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -528,7 +531,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.validateWebServiceCall("setClassProperties", ipAddress, sessionId);
             AttributeMetadata atrbMtdt = mem.getAttribute(classId, attributeId);
 
-            AttributeInfo attrInfo = new AttributeInfo(atrbMtdt.getName(),
+            RemoteAttributeMetadata attrInfo = new RemoteAttributeMetadata(atrbMtdt.getName(),
                                                        atrbMtdt.getDisplayName(),
                                                        atrbMtdt.getType(),
                                                        atrbMtdt.isAdministrative(),
@@ -544,7 +547,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public void setAttributeProperties(long classId, AttributeInfo newAttributeDefinition, String ipAddress, String sessionId) throws ServerSideException {
+    public void setAttributeProperties(long classId, RemoteAttributeMetadata newAttributeDefinition, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -562,6 +565,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             attrMtdt.setVisible(newAttributeDefinition.isVisible());
             attrMtdt.setReadOnly(newAttributeDefinition.isReadOnly());
             attrMtdt.setNoCopy(newAttributeDefinition.isNoCopy());
+            attrMtdt.setOrder(newAttributeDefinition.getOrder());
 
             ChangeDescriptor changeDescriptor = mem.setAttributeProperties(classId, attrMtdt);
             
@@ -575,7 +579,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public void setAttributeProperties(String className, AttributeInfo newAttributeDefinition, String ipAddress, String sessionId) throws ServerSideException {
+    public void setAttributeProperties(String className, RemoteAttributeMetadata newAttributeDefinition, String ipAddress, String sessionId) throws ServerSideException {
         if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
@@ -593,6 +597,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             attrMtdt.setVisible(newAttributeDefinition.isVisible());
             attrMtdt.setReadOnly(newAttributeDefinition.isReadOnly());
             attrMtdt.setNoCopy(newAttributeDefinition.isNoCopy());
+            attrMtdt.setOrder(newAttributeDefinition.getOrder());
 
             mem.setAttributeProperties(className, attrMtdt);
             
@@ -1655,7 +1660,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public List<AttributeInfo> getMandatoryAttributesInClass(String className, String ipAddress, String sessionId)  throws ServerSideException{
+    public List<RemoteAttributeMetadata> getMandatoryAttributesInClass(String className, String ipAddress, String sessionId)  throws ServerSideException{
          if (mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         
@@ -2659,6 +2664,20 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("deleteListTypeItemRelatedView", ipAddress, sessionId);
             aem.deleteListTypeItemRelatedView(listTypeItemId, listTypeItemClass, viewId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());            
+        }
+    }
+    
+    @Override
+    public List<RemoteObjectLight> getListTypeItemUses(String listTypeItemClass, long listTypeItemId, int limit, 
+        String ipAddress, String sessionId) throws ServerSideException {        
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getListTypeItemUses", ipAddress, sessionId);
+            List<BusinessObjectLight> listTypeItemUses = aem.getListTypeItemUses(listTypeItemClass, listTypeItemId, limit);
+            return RemoteObjectLight.toRemoteObjectLightArray(listTypeItemUses);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());            
         }

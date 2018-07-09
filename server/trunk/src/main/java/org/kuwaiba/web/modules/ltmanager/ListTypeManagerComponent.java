@@ -96,7 +96,7 @@ public class ListTypeManagerComponent extends AbstractTopComponent {
             
             tblListTypes = new Grid<>();
             tblListTypes.setItems(currentListTypes);
-            tblListTypes.addColumn(RemoteClassMetadataLight::getClassName).setCaption("Name");
+            tblListTypes.addColumn(RemoteClassMetadataLight::toString).setCaption("Name");
             tblListTypes.setSizeFull();
             tblListTypes.setSelectionMode(Grid.SelectionMode.SINGLE);
             

@@ -559,7 +559,7 @@ public interface BusinessEntityManager {
             throws MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
-     * Creates a relationship between two elements and labels it
+     * Creates a relationship between two elements and labels it. Use with extreme care, since it can create arbitrary relationships
      * @param aObjectClass a side object class
      * @param aObjectId a side object id
      * @param bObjectClass b side object class
