@@ -541,7 +541,7 @@ public class DefaultReports {
 "            <div id=\"43749\" class=\"connectable important\"><div class=\"label\">France <br />(Paris TH2)</div></div>\n" +
 "            <div class=\"segment-text\" style=\"left:0\">Segment 1</div> \n" +
 "        </div>\n" +
-"    </div><br/> <br/> <br/> <br/>\n";
+"    </div><br/> <br/> <br/> <br/><br/> <br/> <br/><br/> <br/> <br/><br/><br/> <br/><br/>\n";
             
             //Used resources
             List<BusinessObjectLight> container = bem.getSpecialAttribute(tributaryLinkClass, tributaryLinkId, SDHModule.RELATIONSHIP_SDHDELIVERS);
@@ -552,13 +552,12 @@ public class DefaultReports {
             else {
                 List<AnnotatedBusinessObjectLight> transportLinks = bem.getAnnotatedSpecialAttribute(container.get(0).getClassName(), 
                         container.get(0).getId(), SDHModule.RELATIONSHIP_SDHTRANSPORTS);
-                usedResources = "<table><tr><th>Transport Link Name</th><th>Transport Link Position</th></tr>";
+                usedResources = "<table><tr><th>Transport Link List</th></tr>";
                
                 int i = 0;
                 String transportLinksToBeHighlighted = "";
                 for (AnnotatedBusinessObjectLight transportLink : transportLinks) {
-                    usedResources += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + transportLink.getObject() + "</td>"
-                                    + "<td>" + transportLink.getProperties().get(SDHModule.PROPERTY_SDHPOSITION) +"</td></tr>";
+                    usedResources += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + transportLink.getObject() + "</td></tr>";
                     transportLinksToBeHighlighted += (transportLink.getObject().getId() + ",");
                     i ++;
                 }
@@ -571,10 +570,15 @@ public class DefaultReports {
 "                anchor:[[ 0.75, 0, 0, -1 ], [ 0.25, 0, 0, -1 ]],\n" +
 "                endpoint:[ \"Rectangle\", { width:1, height:1 } ]\n" +
 "            };\n" +
+"            var topCenter = {\n" +
+"                connector: [\"Bezier\", { curviness:80 }],\n" +
+"                anchor:[[ 0.5, 1, 0, -1 ], [ 0.5, 1, 0, -1 ]],\n" +
+"                endpoint:[ \"Rectangle\", { width:1, height:1 } ]\n" +
+"            };\n" +    
 "\n" +
 "            var bottomRightLeftBlue = {\n" +
 "                connector: [\"Flowchart\"],\n" +
-"                anchor:[[ 0.5, 1, 0, 1, 0, -5 ], [ 0.5, 1, 0, 1, 0, -5 ]],\n" +
+"                anchor:[[ 0.75, 1, 0, 1 ], [ 0.25, 1, 0, 1 ]],\n" +
 "                endpoint:[ \"Rectangle\", { width:1, height:1 } ]\n" +
 "            };\n" +
 "\n" +
@@ -595,13 +599,11 @@ public class DefaultReports {
 "                   44137,43811,43735,\n" +
 "                   44140,43671,44008,\n" +
 "                   44135,43888,43811,\n" +
-"                   44146,43735,43909,\n" +
 "                   44148,43735,43970,\n" +
 "                   44142,44008,43923,\n" +
 "                   44155,44025,44038,\n" +
 "                   44153,44071,44025,\n" +
 "                   44150,43970,44071,\n" +
-"                   44159,44025,43770,\n" +
 "                   44099,43703,43690,\n" +
 "                   44157,43770,43749,\n" +
 "                   44102,43690,43994,\n" +
@@ -616,7 +618,7 @@ public class DefaultReports {
 "                    target: nonExpressTriplets[i + 2].toString(),\n" +
 "                    paintStyle:{ stroke:\"blue\", strokeWidth: 3  },\n" +
 "                    endpointStyle:{ fill:\"blue\", outlineStroke:\"blue\", outlineWidth: 1 }\n" +
-"                }, topRightLeft);\n" +
+"                }, bottomRightLeftBlue);\n" +
 "\n" +
 "                connections[nonExpressTriplets[i].toString()] = aConnection;\n" +
 "            }\n" +
@@ -632,20 +634,20 @@ public class DefaultReports {
 "                    target: expressTriplets[i + 2].toString(),\n" +
 "                    paintStyle:{ stroke:\"black\", strokeWidth: 5  },\n" +
 "                    endpointStyle:{ fill:\"black\", outlineStroke:\"black\", outlineWidth: 1 }\n" +
-"                }, bottomCenter);\n" +
+"                }, topRightLeft);\n" +
 "                connections[expressTriplets[i].toString()] = aConnection;\n" +
 "            }\n" +
 "            \n" +
 "            //The non-express connections that connect the endpoints using the bottom anchors\n" +
-"            var nonExpressNonDirectTriplets = [42228, 41991, 41956,\n" +
-"                                             42219, 42066, 42014];\n" +
+"            var nonExpressNonDirectTriplets = [44146,43735,43909,\n" +
+"                                             44159,44025,43770];\n" +
 "            for (var i = 0; i < nonExpressNonDirectTriplets.length; i = i + 3) {\n" +
 "                var aConnection = jsPlumb.connect({\n" +
 "                    source: nonExpressNonDirectTriplets[i + 1].toString(),\n" +
 "                    target: nonExpressNonDirectTriplets[i + 2].toString(),\n" +
 "                    paintStyle:{ stroke:\"blue\", strokeWidth: 3  },\n" +
 "                    endpointStyle:{ fill:\"blue\", outlineStroke:\"blue\", outlineWidth: 1 }\n" +
-"                }, bottomRightLeftBlue);\n" +
+"                }, topCenter);\n" +
 "                connections[nonExpressNonDirectTriplets[i].toString()] = aConnection;\n" +
 "            }\n" 
                         + "var transportLinksToBeHighlighted = [" + transportLinksToBeHighlighted + "];\n"

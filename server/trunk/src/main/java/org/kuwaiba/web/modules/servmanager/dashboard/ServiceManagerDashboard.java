@@ -33,6 +33,6 @@ public class ServiceManagerDashboard extends AbstractDashboard {
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 0, new ServiceViewsDashboardWidget(service, wsBean));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(0, 1, new DummyDashboardWidget("Tickets", "dashboard_cover_widget-darkorange"));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 1, new DummyDashboardWidget("SLAs", "dashboard_cover_widget-darkpurple"));
-        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 1, new DummyDashboardWidget("Reports", "dashboard_cover_widget-darkgrey"));
+        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 1, new ReportsDashboardWidget(service, wsBean));
     }
 }
