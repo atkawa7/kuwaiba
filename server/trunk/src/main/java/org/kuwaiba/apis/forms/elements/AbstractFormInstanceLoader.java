@@ -28,7 +28,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 /**
- *
+ * Abstract class to define the procedure to load a form instance
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public abstract class AbstractFormInstanceLoader {
@@ -148,7 +148,18 @@ public abstract class AbstractFormInstanceLoader {
                                             if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
                                                 
                                                 if (reader.getName().equals(tagData)) {
-                                                    row.add(reader.getElementText());
+                                                    
+                                                    String rowDataType = reader.getAttributeValue(null, Constants.Attribute.DATA_TYPE);
+                                                                                                        
+                                                    if (rowDataType != null) {
+
+                                                        Object value = getValue(reader, rowDataType);
+                                                        
+                                                        if (value != null)                                                            
+                                                            row.add(value);
+                                                        else
+                                                            row.add(reader.getElementText());
+                                                    }
                                                 }
                                                 
                                             } if (reader.getEventType() == XMLStreamConstants.END_ELEMENT) {

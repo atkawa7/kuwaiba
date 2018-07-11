@@ -188,6 +188,9 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
                         remoteArtifact,
                         Page.getCurrent().getWebBrowser().getAddress(),
                         remoteSession.getSessionId());
+                
+                if (currentActivity instanceof RemoteConditionalActivityDefinition)
+                    updateActivities();                                        
 
                 Notification.show(I18N.gm("success"), "The activity was updated", Notification.Type.TRAY_NOTIFICATION);
 

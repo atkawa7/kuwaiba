@@ -66,10 +66,10 @@ public class ComponentButton extends GraphicalComponent {
         
         if (Constants.EventAttribute.ONCLICK.equals(event.getEventName())) {
             
-            if (Constants.Function.OPEN_FORM.equals(event.getPropertyName())) {
+////            if (Constants.Function.OPEN_FORM.equals(event.getPropertyName())) {
 ////                File file = new File(Variable.FORM_RESOURCE_STRUCTURES + "/" + event.getNewValue() + ".xml");
 ////                FormDisplayer.getInstance().display(file, false);
-            }
+////            }
             if (Constants.Function.SAVE.equals(event.getPropertyName())) {
                 
                 try {

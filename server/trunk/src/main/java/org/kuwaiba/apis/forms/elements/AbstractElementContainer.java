@@ -30,6 +30,31 @@ public abstract class AbstractElementContainer extends AbstractElement {
         return children;
     }
     
+    public List<AbstractElement> getChildrenRecursive() {
+        
+        List<AbstractElement> result = new ArrayList();
+        
+        getChildrenRecursive(this, result);
+        
+        return result;
+    }
+    
+    private void getChildrenRecursive(AbstractElement parent, List<AbstractElement> result) {
+                
+        result.add(parent);
+        
+        if (parent instanceof AbstractElementContainer) {
+            
+            AbstractElementContainer container = (AbstractElementContainer) parent;
+            
+            if (container.getChildren() != null) {
+                                
+                for (AbstractElement child : container.getChildren())
+                    getChildrenRecursive(child, result);
+            }
+        }
+    }
+        
     public void addChild(AbstractElement child) {
         if (children == null)
             children = new ArrayList();

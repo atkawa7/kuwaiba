@@ -29,11 +29,20 @@ public class ElementGrid extends AbstractElement {
     private List<ElementColumn> columns;
     private List<List<Object>> rows;
     private boolean shared = false;
+    private long selectedRow = -1;
         
     public ElementGrid() {
         
-    }    
+    }
     
+    public long getSelectedRow() {
+        return selectedRow;
+    }
+        
+    public void setSelectedRow(long selectedRow) {
+        this.selectedRow = selectedRow;
+    }
+        
     public void setColumns(List<ElementColumn> columns) {
         this.columns = columns;        
     }
@@ -58,6 +67,29 @@ public class ElementGrid extends AbstractElement {
         return true;
     }
     
+    public boolean editRow(List<Object> newRow, long rowToEdit) {
+        
+        if (newRow != null && rows != null && rowToEdit != -1 && rowToEdit < rows.size()) {
+            
+            List<Object> oldRow = rows.get((int) rowToEdit);
+            
+            for (int i = 0; i < oldRow.size(); i += 1) {
+                
+                oldRow.set(i, newRow.get(i));
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    public boolean removeRow(long rowToRemove) {
+        if (rows != null && rowToRemove != -1 && rowToRemove < rows.size()) {
+            rows.remove((int) rowToRemove);
+            return true;
+        }
+        return false;
+    }
+    
     public void setRows(List<List<Object>> rows) {
         this.rows = rows;
     }
@@ -68,6 +100,25 @@ public class ElementGrid extends AbstractElement {
     
     public void setShared(boolean shared) {
         this.shared = shared;        
+    }
+    
+    public Object getData(int idRow, int idColumn) {
+        if (rows != null) {
+            
+            if (idRow >= 0 && idRow < rows.size()) {
+                
+                List<Object> row = rows.get(idRow);
+                
+                if (idColumn >= 0 && idColumn < row.size()) {
+                    
+                    Object data = row.get(idColumn);
+                    
+                    if (data != null)
+                        return data;
+                }
+            }
+        }
+        return null;        
     }
     
     @Override
@@ -105,6 +156,14 @@ public class ElementGrid extends AbstractElement {
     
     @Override
     public void onComponentEvent(EventDescriptor event) {
+        if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+            if (event.getNewValue() != null || event.getOldValue() != null) {
+                
+                if (Constants.Property.SELECTED_ROW.equals(event.getPropertyName())) {
+                    setSelectedRow((long) event.getNewValue());
+                }
+            }
+        }
         super.onComponentEvent(event);        
     }
     
@@ -154,9 +213,6 @@ public class ElementGrid extends AbstractElement {
                         null));
                 }
             }
-//            fireElementEvent(new EventDescriptor(
-//                Constants.EventAttribute.ONPROPERTYCHANGE, 
-//                Constants.Property.VALUE, newValue, null));
         }
     }
     

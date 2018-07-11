@@ -15,6 +15,8 @@
 package org.kuwaiba.apis.forms;
 
 import com.vaadin.server.Page;
+import java.util.List;
+import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLStreamException;
@@ -43,6 +45,41 @@ public class FormInstanceCreator extends AbstractFormInstanceCreator {
         super(formStructure);
         this.wsBean = wsBean;
         this.session = session;
+    }
+    
+    @Override
+    public void addGridRow(XMLEventWriter xmlew, XMLEventFactory xmlef, List<Object> row) throws XMLStreamException {
+        QName tagRow = new QName(Constants.Tag.ROW);
+        QName tagData = new QName(Constants.Tag.DATA);
+                
+        xmlew.add(xmlef.createStartElement(tagRow, null, null));
+                        
+        for (Object data : row) {
+            
+            xmlew.add(xmlef.createStartElement(tagData, null, null));
+            
+            if (data instanceof RemoteObjectLight) {
+                RemoteObjectLight remoteObjectLight = (RemoteObjectLight) data;
+
+                try {
+                    RemoteClassMetadata classInfo = wsBean.getClass(remoteObjectLight.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                    
+                    XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.DATA_TYPE, Constants.Attribute.DataType.REMOTE_OBJECT_LIGTH);
+                    XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.OBJECT_ID, String.valueOf(remoteObjectLight.getId()));
+                    XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.OBJECT_NAME, remoteObjectLight.getName());
+                    XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.CLASS_ID, String.valueOf(classInfo.getId()));
+
+                } catch (ServerSideException ex) {
+                    Notifications.showError(ex.getMessage());
+                }
+            }
+            if (data instanceof String) {
+                XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.DATA_TYPE, Constants.Attribute.DataType.STRING);
+            }
+            xmlew.add(xmlef.createCharacters(data.toString()));
+            xmlew.add(xmlef.createEndElement(tagData, null));
+        }        
+        xmlew.add(xmlef.createEndElement(tagRow, null));
     }
 
     @Override

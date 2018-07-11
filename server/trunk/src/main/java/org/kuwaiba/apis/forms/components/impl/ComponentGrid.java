@@ -25,6 +25,7 @@ import com.vaadin.ui.Grid;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 /**
  *
@@ -72,15 +73,15 @@ public class ComponentGrid extends GraphicalComponent {
         }
     }
     
-    private final List<HashMap<String, String>> rows = new ArrayList();
+    private final List<HashMap<String, Object>> rows = new ArrayList();
     
     public ComponentGrid() {        
-        super(new Grid<HashMap<String, String>>());
+        super(new Grid<HashMap<String, Object>>());
     }
     
     @Override
-    public Grid<HashMap<String, String>> getComponent() {
-        return (Grid<HashMap<String, String>>) super.getComponent();
+    public Grid<HashMap<String, Object>> getComponent() {
+        return (Grid<HashMap<String, Object>>) super.getComponent();
     }
 
     @Override
@@ -100,14 +101,12 @@ public class ComponentGrid extends GraphicalComponent {
                     
                     List<ElementColumn> columns = grid.getColums();
                     
-                    List<String> strRow = new ArrayList();
+                    List<Object> strRow = new ArrayList();
                     
                     for (Object data : gridRow)
                         strRow.add(data.toString());
-                                        
-                    List<String> values = strRow;
                     
-                    addRow(values, columns);
+                    addRow(strRow, columns);
                 }
             }
             if (grid.getWidth() != null)
@@ -118,17 +117,33 @@ public class ComponentGrid extends GraphicalComponent {
             getComponent().addSelectionListener(new SelectionListener() {
                 @Override
                 public void selectionChange(SelectionEvent event) {
-                    int i = 0;
+                    long idSelectRow = -1;
+                    
+                    if (!event.getFirstSelectedItem().equals(Optional.empty())) {
+                        
+                        Object selectedItem = event.getFirstSelectedItem().get();
+                        
+                        if (selectedItem instanceof IndexedHashMap) {
+                            IndexedHashMap selectedRow = (IndexedHashMap) selectedItem;
+                            idSelectRow = selectedRow.getIndex();
+                        }
+                    }
+                    if (event.isUserOriginated()) {
+                        fireComponentEvent(new EventDescriptor(
+                            Constants.EventAttribute.ONPROPERTYCHANGE, 
+                            Constants.Property.SELECTED_ROW, 
+                            idSelectRow, -1));
+                    }
                 }
             });
         }
     }
     
-    private void addRow(List<String> values, List<ElementColumn> columns) {
+    private void addRow(List<Object> values, List<ElementColumn> columns) {
         
         if (values.size() == columns.size()) {
             
-            IndexedHashMap<String, String> row = new IndexedHashMap(rows.size());
+            IndexedHashMap<String, Object> row = new IndexedHashMap(rows.size());
 
             for (int i = 0; i < values.size(); i += 1)
                 row.put(columns.get(i).getCaption(), values.get(i));
@@ -138,20 +153,37 @@ public class ComponentGrid extends GraphicalComponent {
         }
     }
     
+    private void updateRows() {
+                
+        ElementGrid grid = (ElementGrid) getComponentEventListener();
+        List<ElementColumn> columns = grid.getColums();
+        
+        List<List<Object>> gridRows = grid.getRows();
+        
+        if (gridRows != null) {
+            
+            rows.clear();
+                        
+            for (int i = 0; i < gridRows.size(); i += 1) {
+                
+                IndexedHashMap<String, Object> row = new IndexedHashMap(i);
+                List<Object> gridRow = gridRows.get(i);
+                
+                for (int j = 0; j < gridRow.size(); j += 1)
+                    row.put(columns.get(j).getCaption(), gridRow.get(j));
+                
+                rows.add(row);
+            }
+            getComponent().setItems(rows);
+        }
+    }
+    
     @Override
     public void onElementEvent(EventDescriptor event) {
         if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
-            if (Constants.Property.ROWS.equals(event.getPropertyName())) {
-                if (event.getNewValue() instanceof List) {
-                    
-                    ElementGrid grid = (ElementGrid) getComponentEventListener();
-                    
-                    List<ElementColumn> columns = grid.getColums();
-                    List<String> values = (List<String>) event.getNewValue();
-                    
-                    addRow(values, columns);
-                }
-            }
+            
+            if (Constants.Property.ROWS.equals(event.getPropertyName()))
+                updateRows();
         }
     }
     

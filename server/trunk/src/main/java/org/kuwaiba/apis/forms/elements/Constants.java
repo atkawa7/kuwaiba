@@ -107,7 +107,9 @@ public class Constants {
         public static final String VALIDATE = "validate"; //NOI18N
         public static final String I18N = "i18n"; //NOI18N
         public static final String ADD_GRID_ROW = "addgridrow"; //NOI18N
-        public static final String OPEN_FORM = "openform"; //NOI18N
+        public static final String EDIT_GRID_ROW = "editgridrow"; //NOI18N
+        public static final String DELETE_GRID_ROW = "deletegridrow"; //NOI18N
+////        public static final String OPEN_FORM = "openform"; //NOI18N
         public static final String SAVE="save"; //NOI18N
         
         public class Type {
@@ -127,5 +129,6 @@ public class Constants {
         public static final String WIDTH = "width"; //NOI18N
         public static final String HIDDEN = "hidden"; //NOI18N
         public static final String REPAINT = "repaint"; //NOI18N
+        public static final String SELECTED_ROW = "selectedRow"; //NOI18N
     }
 }

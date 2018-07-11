@@ -58,6 +58,8 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
     
     @Override
     public Object execute(String scriptQueryName, List<String> parameterNames, List<String> parameterValues) {
+        // The Keyword "shared" is used as Function Name to get to the execution 
+        // of a Script Query the Artifacts shared values
         if ("shared".equals(scriptQueryName)) {
             try {
                 long activityId = Long.valueOf(parameterValues.get(0));
@@ -102,40 +104,33 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
         if (scriptQueries != null) {
             
             for (RemoteScriptQuery scriptQuery : scriptQueries) {
-                                
-                if (parameterNames != null && parameterValues != null && parameterNames.size() == parameterValues.size()) {
-                    try {
-                        List<StringPair> newParameters = new ArrayList();
-                        
-                        for (int i = 0; i < parameterNames.size(); i += 1)
-                            newParameters.add(new StringPair(parameterNames.get(i), parameterValues.get(i)));
-                        
-                        wsBean.updateScriptQueryParameters(scriptQuery.getId(), newParameters, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-                        
-                    } catch (ServerSideException ex) {
-                        
-                        Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-                    }
-                }
-                
+                // Finds the Script Query to execute
                 if (scriptQuery.getName().equals(scriptQueryName)) {
-                    
-                    if ("false".equals(scriptQuery.getCountable())) {
+                    // Checks if the arrays to parameters match in size
+                    if (parameterNames != null && parameterValues != null && parameterNames.size() == parameterValues.size()) {
                         try {
-                            RemoteScriptQueryResult scriptQueryResult = wsBean.executeScriptQuery(scriptQuery.getId(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-                            return scriptQueryResult.getResult();
+                            List<StringPair> newParameters = new ArrayList();
+
+                            for (int i = 0; i < parameterNames.size(); i += 1)
+                                newParameters.add(new StringPair(parameterNames.get(i), parameterValues.get(i)));
+                            // Updating the parameters
+                            wsBean.updateScriptQueryParameters(scriptQuery.getId(), newParameters, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
                             
-                        } catch (ServerSideException ex) {
-                            
-                            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-                        }
-                    }
-                    
-                    if ("true".equals(scriptQuery.getCountable())) {
-                        try {
-                            RemoteScriptQueryResultCollection scriptQueryResultCollection = wsBean.executeScriptQueryCollection(scriptQuery.getId(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-                            return scriptQueryResultCollection.getResults();
-                            
+                            if ("false".equals(scriptQuery.getCountable())) {
+                                // Excecuting the Script Query to No Countable result
+                                RemoteScriptQueryResult scriptQueryResult = wsBean.executeScriptQuery(
+                                    scriptQuery.getId(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                                
+                                return scriptQueryResult.getResult();
+                            }
+                            if ("true".equals(scriptQuery.getCountable())) {
+                                // Excecuting the Script Query to Countable results
+                                RemoteScriptQueryResultCollection scriptQueryResultCollection = wsBean.executeScriptQueryCollection(
+                                    scriptQuery.getId(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                                
+                                return scriptQueryResultCollection.getResults();
+                            }
+
                         } catch (ServerSideException ex) {
                             
                             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
