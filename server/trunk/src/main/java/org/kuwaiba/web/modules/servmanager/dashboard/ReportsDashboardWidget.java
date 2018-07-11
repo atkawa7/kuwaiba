@@ -20,6 +20,7 @@ import com.vaadin.server.FileDownloader;
 import com.vaadin.server.Page;
 import com.vaadin.server.StreamResource;
 import com.vaadin.shared.MouseEventDetails;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
@@ -92,25 +93,29 @@ public class ReportsDashboardWidget extends AbstractDashboardWidget {
                 tblReports.addColumn(RemoteReportLight::getDescription).setCaption("Description");
                 tblReports.setSizeFull();
                 
+                Button btnDownload = new Button("Download Report");
+                btnDownload.setEnabled(false);
+                
                 tblReports.addItemClickListener((e) -> {
                     if (e.getMouseEventDetails().isDoubleClick()) {
                         try {
                             byte[] reportBody = wsBean.executeClassLevelReport(businessObject.getClassName(), 
                                     businessObject.getId(), e.getItem().getId(), Page.getCurrent().getWebBrowser().getAddress(),
                                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-                            Button btnDownload = new Button("Download Report");
+                            
                             StreamResource fileStream = getFileStream(reportBody, businessObject.getClassName() + "_" + Calendar.getInstance().getTimeInMillis() + ".html");
                             FileDownloader fileDownloader = new FileDownloader(fileStream);
                             fileDownloader.extend(btnDownload);
-                            lytReports.addComponent(btnDownload);
+                            btnDownload.setEnabled(true);
                         } catch (ServerSideException ex) {
                             Notifications.showError(ex.getLocalizedMessage());
                         }
                     }
                 });
                 
-                lytReports.addComponents(new Label("Double click on a report to launch it"), tblReports);
+                lytReports.addComponents(new Label("Double click on a report to generate a download link"), tblReports, btnDownload);
                 lytReports.setWidth(100, Unit.PERCENTAGE);
+                lytReports.setComponentAlignment(btnDownload, Alignment.BOTTOM_CENTER);
                 this.contentComponent = lytReports;
             }
         } catch (ServerSideException ex) {

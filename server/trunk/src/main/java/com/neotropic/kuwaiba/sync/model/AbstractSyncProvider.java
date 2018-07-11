@@ -58,9 +58,24 @@ public abstract class AbstractSyncProvider implements Serializable{
      * @return True if it doesn't require approval, False otherwise
      */
     public abstract boolean isAutomated();
-        
+    /**
+     * Some synchronization processes are related to a specific inventory object (for example when syncing the hardware of a given device). 
+     * But there are some other scenarios where the the sync process uses information from many sources and none of them are necessarily mapped to an inventory object. 
+     * A common example is when the sync process does not retrieve information from particular devices, but from an NMS, and the NMS provides information about the whole network, 
+     * e.g. the logical circuits between different nodes in the network. This method should be implemented for the latter.
+     * @param syncGroup The sync group to be synchronized
+     * @return The raw information necessary to actually perform the synchronization process. This information is not related to any particular inventory object.
+     */
     public abstract List<AbstractDataEntity> unmappedPoll(SynchronizationGroup syncGroup);
-            
+    /**
+     * Some synchronization processes are related to a specific inventory object (for example when syncing the hardware of a given device). 
+     * But there are some other scenarios where the the sync process uses information from many sources and none of them are necessarily mapped to an inventory object. 
+     * A common example is when the sync process does not retrieve information from particular devices, but from an NMS, and the NMS provides information about the whole network, 
+     * e.g. the logical circuits between different nodes in the network. This method should be implemented for the former.
+     * @param syncGroup The sync group to be synchronized
+     * @return The raw information necessary to actually perform the synchronization process. Each PollResult object contains the information of how the polling process 
+     * turned out per each one of the Sync Configurations contained in the Sync Group, that is, each PollResult maps an inventory object
+     */        
     public abstract PollResult mappedPoll(SynchronizationGroup syncGroup);
     /**
      * Implement this method if the synchronization process will be associated to an object in the inventory, for example, 

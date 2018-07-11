@@ -236,7 +236,7 @@ public class SnmpManager {
         if (oids == null)
             return null;
         
-        if (oids.length <= 0)
+        if (oids.length < 1)
             return null;
         
         switch (version) {
