@@ -515,7 +515,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
                                                        atrbMtdt.isVisible(),
                                                        atrbMtdt.isUnique(),
                                                        atrbMtdt.isMandatory(),
-                                                       atrbMtdt.getDescription());
+                                                       atrbMtdt.getDescription(), 
+                                                       atrbMtdt.getOrder());
             return atrbInfo;
          } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -538,7 +539,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
                                                        atrbMtdt.isVisible(),
                                                        atrbMtdt.isUnique(),
                                                        atrbMtdt.isMandatory(),
-                                                       atrbMtdt.getDescription());
+                                                       atrbMtdt.getDescription(), 
+                                                       atrbMtdt.getOrder());
             return attrInfo;
 
          } catch (InventoryException ex) {

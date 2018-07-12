@@ -84,7 +84,7 @@ public class RemoteAttributeMetadata implements Serializable {
     }
 
     public RemoteAttributeMetadata(String name, String displayName, String type, 
-            Boolean administrative, Boolean visible, Boolean unique, Boolean mandatory, String description) {
+            Boolean administrative, Boolean visible, Boolean unique, Boolean mandatory, String description, Integer order) {
         this.name = name;
         this.displayName = displayName;
         this.type = type;
@@ -93,6 +93,7 @@ public class RemoteAttributeMetadata implements Serializable {
         this.unique = unique;
         this.mandatory = mandatory;
         this.description = description;
+        this.order = order;
     }
 
     public RemoteAttributeMetadata(long id, String name, 

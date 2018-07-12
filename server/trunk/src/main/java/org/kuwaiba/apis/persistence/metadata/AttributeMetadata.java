@@ -264,7 +264,7 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
         List<RemoteAttributeMetadata> res = new ArrayList<>();
         
         for (AttributeMetadata toBeWrapped1 : toBeWrapped) 
-            res.add(new RemoteAttributeMetadata(toBeWrapped1.getName(), toBeWrapped1.getDisplayName(), toBeWrapped1.getType(), toBeWrapped1.isAdministrative(), toBeWrapped1.isVisible(), toBeWrapped1.isUnique(), toBeWrapped1.isMandatory(), toBeWrapped1.getDescription()));
+            res.add(new RemoteAttributeMetadata(toBeWrapped1.getName(), toBeWrapped1.getDisplayName(), toBeWrapped1.getType(), toBeWrapped1.isAdministrative(), toBeWrapped1.isVisible(), toBeWrapped1.isUnique(), toBeWrapped1.isMandatory(), toBeWrapped1.getDescription(), toBeWrapped1.getOrder()));
         
         return res;
     }
