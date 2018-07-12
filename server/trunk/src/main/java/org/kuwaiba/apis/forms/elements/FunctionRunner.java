@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class FunctionRunner implements Runner {
     private String functionName;
-    private List<String> parameterNames;
+    private List<String> parameterNames = new ArrayList();;
     private String script;
         
     private ScriptQueryExecutor scriptQueryExecutor;

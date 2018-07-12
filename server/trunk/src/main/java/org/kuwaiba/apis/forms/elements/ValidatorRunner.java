@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class ValidatorRunner implements Runner {
     private String validatorName;
-    private List<String> parameterNames;
+    private List<String> parameterNames = new ArrayList();
     private String script;
     private String message;
     
