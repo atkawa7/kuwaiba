@@ -88,7 +88,6 @@ public class ServiceManagerComponent extends AbstractTopComponent {
         setExpandRatio(pnlMain, 9.5f);
         setSizeFull();
         
-        
         try {
             List<RemoteObjectLight> currentCustomers = wsBean.getObjectsOfClassLight(Constants.CLASS_GENERICCUSTOMER, -1, Page.getCurrent().getWebBrowser().getAddress(), 
                     ((RemoteSession) getSession().getAttribute("session")).getSessionId());
@@ -100,10 +99,15 @@ public class ServiceManagerComponent extends AbstractTopComponent {
                 public void selectionChange(SingleSelectionEvent<RemoteObjectLight> event) {
                     RemoteObjectLight selectedCustomer = event.getValue();
                     try {
-                        List<RemoteObjectLight> servicesForCustomer = wsBean.getServicesForCustomer(selectedCustomer.getClassName(), selectedCustomer.getId(), -1, Page.getCurrent().getWebBrowser().getAddress(), 
-                                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
-                        
-                        tblServices.setItems(servicesForCustomer);
+                        if (cmbCustomers.getSelectedItem().isPresent()) {
+                            List<RemoteObjectLight> servicesForCustomer = wsBean.getServicesForCustomer(selectedCustomer.getClassName(), selectedCustomer.getId(), -1, Page.getCurrent().getWebBrowser().getAddress(), 
+                                    ((RemoteSession) getSession().getAttribute("session")).getSessionId());
+
+                            tblServices.setItems(servicesForCustomer);
+                        } else {
+                            tblServices.setItems();
+                            txtServiceFilter.clear();
+                        }
                         
                         if (pnlMain.getSecondComponent() != null)
                             pnlMain.removeComponent(pnlMain.getSecondComponent());
