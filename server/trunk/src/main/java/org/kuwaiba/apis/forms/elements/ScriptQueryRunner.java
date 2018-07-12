@@ -25,7 +25,7 @@ import java.util.List;
 public class ScriptQueryRunner implements Runner {
     private String name;
     private String queryName;
-    private List<String> parameterNames;
+    private List<String> parameterNames = new ArrayList();
     
     private ScriptQueryExecutor scriptQueryExecutor;
     
