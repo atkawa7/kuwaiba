@@ -909,6 +909,8 @@ public class EntPhysicalSynchronizer {
                 currentMplsTunnels.add(child);
             else if (child.getClassName().equals(Constants.CLASS_BRIDGEDOMAININTERFACE))
                 currentBridgeDomains.add(child);
+            else if (child.getClassName().equals(Constants.CLASS_VIRTUALPORT))
+                currentVirtualPorts.add(child);
             else if (child.getClassName().equals(Constants.CLASS_VLAN))
                 currentVlans.add(child);
             readCurrentSpecialStructure(bem.getObjectSpecialChildren(child.getClassName(), child.getId()));
@@ -1405,7 +1407,8 @@ public class EntPhysicalSynchronizer {
             boolean found = false;
             boolean wasHighSpeedUpdated = false;
             attributes.put(Constants.PROPERTY_NAME, ifName);
-            attributes.put("highSpeed", portSpeed);    
+            attributes.put("highSpeed", portSpeed);  
+            //attributes.put("ifAlias", ifAlias);  
             //Mngmnt, virtualPorts, and Loopbacks
             if(SyncUtil.isSynchronizable(ifName)){
                 BusinessObjectLight currrentInterface;
@@ -1449,6 +1452,7 @@ public class EntPhysicalSynchronizer {
                     status = "Management port Created";
                 }//MPLS Tunnel
                 else if(currrentInterface == null && ifName.toLowerCase().contains("tu")){
+                    attributes.put("ifAlias", ifAlias);
                     createdId = bem.createSpecialObject(Constants.CLASS_MPLSTUNNEL, className, id, attributes, -1); 
                     currentMplsTunnels.add(new BusinessObject(createdId, ifName, Constants.CLASS_MPLSTUNNEL));
                     createdClassName = Constants.CLASS_MPLSTUNNEL;

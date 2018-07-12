@@ -25,7 +25,7 @@ import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
  */
 public class DummyDashboardWidget extends AbstractDashboardWidget {
     
-    private String style;
+    private final String style;
     
     public DummyDashboardWidget(String title, String style) {
         super(title);

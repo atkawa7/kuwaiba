@@ -127,8 +127,6 @@ $v-field-background-color: #ccffe6;
         font-size: 1em;
     }
     
-    
-    
     .v-tree-node-bold {
         font-weight: bold;
         color: #eb2977
@@ -463,4 +461,88 @@ $v-field-background-color: #ccffe6;
         }
     }
     
+    //START of end to end view forms
+    #header{ font-size: 3em; }
+
+    #title{ color: #548235; }
+
+    #container:after{
+        content: url("https://149.6.144.166:8181/reports/imgs/logo_afr-ix.png");
+        filter:alpha(opacity=10);
+        filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0.1);
+        opacity:.10;
+        z-index: 9999;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+
+        -webkit-pointer-events: none;
+        -moz-pointer-events: none;
+        -ms-pointer-events: none;
+        -o-pointer-events: none;
+        pointer-events: none;
+
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: no
+    }
+
+    .device-title{
+        border-top-right-radius: 8px; 
+        border-top-left-radius: 8px; 
+        border-bottom-right-radius: 8px; 
+        border-bottom-left-radius: 8px;
+        color: #ffffff; 
+        top:-10px; 
+        position: relative;
+        z-index:6;
+        font-size: 16px;
+        text-align: center;
+        width: 100%;
+        padding: 0;
+        height: 50px;
+        line-height: 50px; 
+    }
+
+    .peering{ background: #00cc99; }
+
+    .router{ background: #66ff66; }
+
+    .adm{ background: #33cc33; }
+
+    .odf{ background: #aae600; }
+
+    .provider{ background: #008000; }
+
+    .external_equipment{ background: #a6a6a6; }
+
+    .vc{ background: #ffcc00; }
+
+    .cell-with-border{
+        border: solid 1px black;
+        padding-left: 5px;
+        width: 100%;
+    }
+
+    .cell-with-border-img{
+        text-align: center;
+        border: solid 1px black;
+        width: 100%;
+    }
+
+    .v-slot-foot {
+        position: fixed;
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        text-align: center;
+    }
+    //END of end to end View forms
 }

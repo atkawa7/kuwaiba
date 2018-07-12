@@ -42,7 +42,6 @@ public final class EndToEndView extends Panel {
                     break;
                 }
             }
-
             scene.render(service); //First we render the default view with all the resources associated to the service
             if (theSavedView != null) //if there's a saved view already, change the location of the nodes and connections created using the default render method
                 scene.render(theSavedView.getStructure());

@@ -20,10 +20,15 @@ import com.neotropic.vaadin.lienzo.LienzoComponent;
 import com.neotropic.vaadin.lienzo.client.core.shape.Point;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
+import com.vaadin.server.Page;
+import com.vaadin.server.Resource;
+import com.vaadin.server.ResourceReference;
+import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -247,7 +252,6 @@ public class EndToEndViewScene extends VerticalLayout {
                                     physicalLinkWidgetB.setTarget(bSideEquipmentPhysicalWidget);
 
                                     lastAddedBSideEquipmentPhysical = bSideEquipmentPhysical;
-                                    
                                 }
                             }
                         }
@@ -255,7 +259,7 @@ public class EndToEndViewScene extends VerticalLayout {
                 }
                 addComponent(lienzoComponent);
             }
-        } catch (Exception ex) {
+        } catch (ServerSideException ex) {
             clear();
             Notifications.showError(ex.getMessage());
         }
@@ -275,26 +279,26 @@ public class EndToEndViewScene extends VerticalLayout {
             newNode.setUrlIcon("/icons/" + node.getClassName() + ".png");
             RemoteClassMetadata classMetadata = wsBean.getClass(node.getClassName(), ipAddress, sessionId);
             
-//            StreamResource resource = new StreamResource(
-//            new StreamResource.StreamSource() {
-//                private static final long serialVersionUID = 1L;
-//
-//                @Override
-//                public InputStream getStream() {
-//                    return new ByteArrayInputStream(classMetadata.getIcon());
-//                }
-//            }, classMetadata.getClassName());
-//            
-//            String protocol = Page.getCurrent().getLocation().getScheme();
-//            String currentUrl = Page.getCurrent().getLocation().getAuthority();
-//            String cid = this.getConnectorId();
-//            Integer uiId = Page.getCurrent().getUI().getUIId();
-//            String filename = resource.getFilename();
+            StreamResource resource = new StreamResource(
+            new StreamResource.StreamSource() {
+                private static final long serialVersionUID = 1L;
+
+                @Override
+                public InputStream getStream() {
+                    return new ByteArrayInputStream(classMetadata.getIcon());
+                }
+            }, classMetadata.getClassName());
+            
+            String protocol = Page.getCurrent().getLocation().getScheme();
+            String currentUrl = Page.getCurrent().getLocation().getAuthority();
+            String cid = this.getConnectorId();
+            Integer uiId = Page.getCurrent().getUI().getUIId();
+            String filename = resource.getFilename();
             
             
-            //Resource icon = ci.getIcon(classMetadata);
-            //ResourceReference rr = ResourceReference.create(resource, Page.getCurrent().getUI(), Long.toString(node.getId()));
-            //newNode.setUrlIcon(protocol+"://"+currentUrl+"/APP/connector/"+uiId+"/"+cid+"/source/"+filename);
+            Resource icon = ci.getIcon(classMetadata);
+            ResourceReference rr = ResourceReference.create(resource, Page.getCurrent().getUI(), Long.toString(node.getId()));
+            newNode.setUrlIcon(protocol+"://"+currentUrl+"/APP/connector/"+uiId+"/"+cid+"/source/"+filename);
             newNode.setHeight(32);
             newNode.setWidth(32);
             newNode.setCaption(node.toString());
@@ -305,6 +309,10 @@ public class EndToEndViewScene extends VerticalLayout {
         } catch (ServerSideException ex) {
             return null;
         }
+    }
+    
+    public void createForm(){
+    
     }
 
     protected SrvEdgeWidget attachEdgeWidget(RemoteObjectLight edge) {
