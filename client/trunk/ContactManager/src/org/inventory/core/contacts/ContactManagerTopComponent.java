@@ -41,7 +41,6 @@ import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.netbeans.api.settings.ConvertAsProperties;
-import org.netbeans.swing.etable.ETable;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -390,7 +389,6 @@ public final class ContactManagerTopComponent extends TopComponent implements Ex
 
     private void initCustomComponents() {
         this.contactsTable = new ContactsTable();
-        this.contactsTable.setAutoResizeMode(ETable.AUTO_RESIZE_OFF);
         this.pnlScrollMain.setViewportView(contactsTable);
         this.pnlScrollMain.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         
