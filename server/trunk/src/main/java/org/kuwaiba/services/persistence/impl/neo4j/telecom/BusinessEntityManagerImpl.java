@@ -30,6 +30,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -643,6 +644,34 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             return getObjectsWithFilter(classNode, filterName, filterValue);
         }
+    }
+    
+    @Override
+    public String getAttributeValueAsString (String objectClass, long objectId, String attributeName) 
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
+        ClassMetadata theClass = mem.getClass(objectClass);
+            AttributeMetadata theAttribute = theClass.getAttribute(attributeName);
+            
+            BusinessObject theObject = getObject(objectClass, objectId);
+            if (theObject.getAttributes().get(attributeName) == null)
+                return null;
+            else {
+                
+                switch (theAttribute.getType()) {
+                    case "String": //NOI18N
+                    case "Boolean": //NOI18N
+                    case "Integer": //NOI18N
+                    case "Float": //NOI18N
+                    case "Long": //NOI18N
+                        return theObject.getAttributes().get(attributeName);
+                    case "Date": //NOI18N
+                    case "Time": //NOI18N
+                    case "Timestamp": //NOI18N
+                        return new Date(Long.valueOf(theObject.getAttributes().get(attributeName))).toString();
+                    default: //It's (or at least should be) a list type
+                        return aem.getListTypeItem(theAttribute.getType(), Long.valueOf(theObject.getAttributes().get(attributeName))).getName();
+                }
+            }
     }
     
     @Override
@@ -1336,6 +1365,35 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         else break;
                     }
                     instances.add(Util.createRemoteObjectLightFromNode(rel.getStartNode()));
+                }
+            }
+            
+            Collections.sort(instances);
+            return instances;
+        }
+    }
+    
+    @Override
+    public List<BusinessObject> getObjectsOfClass(String className, int maxResults)
+            throws MetadataObjectNotFoundException, InvalidArgumentException {
+        try(Transaction tx = graphDb.beginTx()) {
+            Node classMetadataNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
+            
+            if (classMetadataNode == null)
+                throw new MetadataObjectNotFoundException(className);
+
+            List<BusinessObject> instances = new ArrayList<>();
+
+            TraversalDescription traversal = graphDb.traversalDescription().breadthFirst().relationships(RelTypes.EXTENDS, Direction.INCOMING);
+            int counter = 0;
+            for(Path p : traversal.traverse(classMetadataNode)){
+                for (Relationship rel : p.endNode().getRelationships(RelTypes.INSTANCE_OF)){
+                    if (maxResults > 0){
+                        if (counter < maxResults)
+                            counter ++;
+                        else break;
+                    }
+                    instances.add(Util.createRemoteObjectFromNode(rel.getStartNode()));
                 }
             }
             

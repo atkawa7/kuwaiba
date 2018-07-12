@@ -17,7 +17,7 @@ package org.kuwaiba.apis.web.gui.nodes.properties;
 
 import com.google.common.eventbus.Subscribe;
 import com.vaadin.ui.CustomComponent;
-import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
+import org.kuwaiba.apis.web.gui.navigation.AbstractNode;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.web.modules.osp.google.overlays.MarkerNode;
 

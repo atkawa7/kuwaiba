@@ -34,10 +34,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
+import org.kuwaiba.apis.web.gui.navigation.AbstractNode;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.web.custom.tree.DynamicTree;
+import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
 
 /**
  * Connection Link Tool to connect ports with physical links

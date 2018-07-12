@@ -43,6 +43,7 @@ public final class CurrentUser {
      * Sets the name of the current user and stores it in the current session.
      * Using a {@code null} username will remove the username from the session.
      * 
+     * @param currentUser
      * @throws IllegalStateException
      *             if the current session cannot be accessed.
      */

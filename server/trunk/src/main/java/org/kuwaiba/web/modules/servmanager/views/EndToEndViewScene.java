@@ -20,15 +20,10 @@ import com.neotropic.vaadin.lienzo.LienzoComponent;
 import com.neotropic.vaadin.lienzo.client.core.shape.Point;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
-import com.vaadin.server.Page;
-import com.vaadin.server.Resource;
-import com.vaadin.server.ResourceReference;
-import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +33,6 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
-import org.kuwaiba.apis.web.gui.resources.ClassIcon;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteLogicalConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.services.persistence.util.Constants;
@@ -273,42 +267,17 @@ public class EndToEndViewScene extends VerticalLayout {
     protected SrvNodeWidget attachNodeWidget(RemoteObjectLight node) {
         SrvNodeWidget newNode = new SrvNodeWidget(node.getId());
         lienzoComponent.addNodeWidget(newNode);
-        ClassIcon ci = new ClassIcon();
-        try {
             
-            newNode.setUrlIcon("/icons/" + node.getClassName() + ".png");
-            RemoteClassMetadata classMetadata = wsBean.getClass(node.getClassName(), ipAddress, sessionId);
-            
-            StreamResource resource = new StreamResource(
-            new StreamResource.StreamSource() {
-                private static final long serialVersionUID = 1L;
+        newNode.setUrlIcon("/icons/" + node.getClassName() + ".png");
 
-                @Override
-                public InputStream getStream() {
-                    return new ByteArrayInputStream(classMetadata.getIcon());
-                }
-            }, classMetadata.getClassName());
-            
-            String protocol = Page.getCurrent().getLocation().getScheme();
-            String currentUrl = Page.getCurrent().getLocation().getAuthority();
-            String cid = this.getConnectorId();
-            Integer uiId = Page.getCurrent().getUI().getUIId();
-            String filename = resource.getFilename();
-            
-            
-            Resource icon = ci.getIcon(classMetadata);
-            ResourceReference rr = ResourceReference.create(resource, Page.getCurrent().getUI(), Long.toString(node.getId()));
-            newNode.setUrlIcon(protocol+"://"+currentUrl+"/APP/connector/"+uiId+"/"+cid+"/source/"+filename);
-            newNode.setHeight(32);
-            newNode.setWidth(32);
-            newNode.setCaption(node.toString());
-            newNode.setX(nodes.size() * 200);
-            newNode.setY((nodes.size() % 2) * 200 );
-            nodes.put(node, newNode);
-            return newNode;
-        } catch (ServerSideException ex) {
-            return null;
-        }
+        newNode.setHeight(32);
+        newNode.setWidth(32);
+        newNode.setCaption(node.toString());
+        newNode.setX(nodes.size() * 200);
+        newNode.setY((nodes.size() % 2) * 200 );
+        nodes.put(node, newNode);
+        return newNode;
+        
     }
     
     public void createForm(){

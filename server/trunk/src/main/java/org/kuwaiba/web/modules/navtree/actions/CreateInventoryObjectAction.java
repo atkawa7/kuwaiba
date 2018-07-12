@@ -17,7 +17,7 @@ package org.kuwaiba.web.modules.navtree.actions;
 
 import com.vaadin.ui.Notification;
 import org.kuwaiba.apis.web.gui.actions.CreateInventoryObjectChildAction;
-import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
+import org.kuwaiba.apis.web.gui.navigation.AbstractNode;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectRootNode;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;

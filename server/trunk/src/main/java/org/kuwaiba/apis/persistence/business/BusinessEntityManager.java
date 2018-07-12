@@ -218,6 +218,21 @@ public interface BusinessEntityManager {
             String filterName, String filterValue) throws MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
+     * Utility method that returns the value of an attribute of a given object as a string. In date-type attributes, it will return 
+     * the formated dated, while in list types, it will return the name of the linked element
+     * @param objectClass The class of the object
+     * @param objectId The id of the object
+     * @param attributeName The attribute whose value will be retrieved
+     * @return The value of the requested attribute. Null values are possible
+     * @throws MetadataObjectNotFoundException If the class of the object could not be found
+     * @throws BusinessObjectNotFoundException If the object itself could not be found
+     * @throws InvalidArgumentException Check with the data model integrity, because this would mean that a the type of the attribute should be a list type, but it's not
+     * @throws ApplicationObjectNotFoundException Check with the data model integrity, because this would mean that a list type item related to the object is not an instance of the right list type class
+     */
+    public String getAttributeValueAsString (String objectClass, long objectId, String attributeName) 
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException;
+    
+    /**
      * Gets the common parent between an a object and b object
      * @param aObjectClass Object a class name
      * @param aOid Object a id
@@ -548,7 +563,7 @@ public interface BusinessEntityManager {
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
     
     /**
-     * Recursively gets all the instances of  given class
+     * Recursively gets all the light instances of given class
      * @param className Class name. It mist be a subclass of InventoryObject
      * @param maxResults Max number of results. 0 to get all
      * @return a list of instances 
@@ -556,6 +571,17 @@ public interface BusinessEntityManager {
      * @throws InvalidArgumentException If the class is not subclass of InventoryObject
      */
     public List<BusinessObjectLight> getObjectsOfClassLight(String className, int maxResults)
+            throws MetadataObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Recursively gets all the instances of given class
+     * @param className Class name. It mist be a subclass of InventoryObject
+     * @param maxResults Max number of results. 0 to get all
+     * @return a list of instances 
+     * @throws MetadataObjectNotFoundException if the class can not be found
+     * @throws InvalidArgumentException If the class is not subclass of InventoryObject
+     */
+    public List<BusinessObject> getObjectsOfClass(String className, int maxResults)
             throws MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**

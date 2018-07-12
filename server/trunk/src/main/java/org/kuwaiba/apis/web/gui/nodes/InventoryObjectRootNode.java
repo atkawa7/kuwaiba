@@ -18,14 +18,14 @@ package org.kuwaiba.apis.web.gui.nodes;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.web.custom.tree.DynamicTree;
+import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
 import org.kuwaiba.web.modules.navtree.actions.ActionsFactory;
 
 /**
  * This node should be used as root in all trees composed by inventory nodes (e.g. Navigation Tree)
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
-public class InventoryObjectRootNode extends AbstractRootNode {
+public class InventoryObjectRootNode  {
 //    private final List<RemoteObjectLight> initialChildren;
 //    public InventoryObjectRootNode(String caption, List<RemoteObjectLight> initialChildren) {
 //        super(caption);

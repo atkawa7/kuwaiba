@@ -15,6 +15,7 @@
  */
 package org.kuwaiba.web.modules.ltmanager;
 
+import org.kuwaiba.web.modules.ltmanager.actions.AddListTypeItemWindow;
 import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.server.ThemeResource;

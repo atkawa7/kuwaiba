@@ -21,18 +21,18 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Notification;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.nodes.AbstractNode;
+import org.kuwaiba.apis.web.gui.navigation.AbstractNode;
 import org.kuwaiba.apis.web.gui.nodes.properties.Sheet;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
-import org.kuwaiba.web.custom.tree.DynamicTree;
+import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
 import org.kuwaiba.web.modules.containment.actions.ActionsFactory;
 
 /**
  * 
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ContainmentNode extends AbstractNode {
+public class ContainmentNode  {
 //    /**
 //     * The id.
 //     * For this node is assigned automatically by the tree when add this node

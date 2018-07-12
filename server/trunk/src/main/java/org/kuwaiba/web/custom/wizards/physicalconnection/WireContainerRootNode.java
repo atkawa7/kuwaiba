@@ -24,7 +24,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class WireContainerRootNode extends AbstractRootNode {
+public class WireContainerRootNode  {
 //    private final List<RemoteObjectLight> existingWireContainersList;
 //    
 //    public WireContainerRootNode(String caption, List<RemoteObjectLight> existingWireContainersList) {

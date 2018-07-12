@@ -15,8 +15,9 @@
  */
 package org.kuwaiba.apis.web.gui.nodes;
 
+import org.kuwaiba.apis.web.gui.navigation.AbstractNode;
 import com.vaadin.server.FontAwesome;
-import org.kuwaiba.web.custom.tree.DynamicTree;
+import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
 
 /**
  * Root class of all root nodes

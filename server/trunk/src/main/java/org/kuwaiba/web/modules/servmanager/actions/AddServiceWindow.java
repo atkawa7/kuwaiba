@@ -12,7 +12,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.kuwaiba.web.modules.servmanager;
+package org.kuwaiba.web.modules.servmanager.actions;
 
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.server.Page;

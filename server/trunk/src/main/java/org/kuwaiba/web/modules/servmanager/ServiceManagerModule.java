@@ -15,6 +15,8 @@
  */
 package org.kuwaiba.web.modules.servmanager;
 
+import org.kuwaiba.web.modules.servmanager.actions.AddServiceWindow;
+import org.kuwaiba.web.modules.servmanager.actions.AddCustomerWindow;
 import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.ui.MenuBar;

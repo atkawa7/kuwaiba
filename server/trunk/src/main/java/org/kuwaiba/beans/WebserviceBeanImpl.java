@@ -879,29 +879,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getAttributeValueAsString", ipAddress, sessionId);
-            ClassMetadata theClass = mem.getClass(objectClass);
-            AttributeMetadata theAttribute = theClass.getAttribute(attributeName);
-            
-            BusinessObject theObject = bem.getObject(objectClass, objectId);
-            if (theObject.getAttributes().get(attributeName) == null)
-                return null;
-            else {
-                
-                switch (theAttribute.getType()) {
-                    case "String":
-                    case "Boolean":
-                    case "Integer":
-                    case "Float":
-                    case "Long":
-                        return theObject.getAttributes().get(attributeName);
-                    case "Date":
-                    case "Time":
-                    case "Timestamp":
-                        return new Date(Long.valueOf(theObject.getAttributes().get(attributeName))).toString();
-                    default: //It's a list type
-                        return aem.getListTypeItem(theAttribute.getType(), Long.valueOf(theObject.getAttributes().get(attributeName))).getName();
-                }
-            }
+            return bem.getAttributeValueAsString(objectClass, objectId, attributeName);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1332,6 +1310,18 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("getObjectsOfClassLight", ipAddress, sessionId);
             return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectsOfClassLight(className, maxResults));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public List<RemoteObject> getObjectsOfClass(String className, int maxResults, String ipAddress, String sessionId) throws ServerSideException{
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getObjectsOfClass", ipAddress, sessionId);
+            return RemoteObject.toRemoteObjectArray(bem.getObjectsOfClass(className, maxResults));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

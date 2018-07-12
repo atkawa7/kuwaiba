@@ -15,6 +15,7 @@
  */
 package org.kuwaiba.apis.web.gui.nodes;
 
+import org.kuwaiba.apis.web.gui.navigation.AbstractNode;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import com.vaadin.server.Page;
 import com.vaadin.server.Resource;
@@ -23,7 +24,7 @@ import java.util.List;
 import java.util.Objects;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.web.custom.tree.DynamicTree;
+import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
 import org.kuwaiba.web.modules.navtree.actions.ActionsFactory;
 
 /**
@@ -32,7 +33,7 @@ import org.kuwaiba.web.modules.navtree.actions.ActionsFactory;
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class InventoryObjectNode extends AbstractNode<RemoteObjectLight>{
+public class InventoryObjectNode {
     
 //    public InventoryObjectNode(RemoteObjectLight object) {
 //        super(object);

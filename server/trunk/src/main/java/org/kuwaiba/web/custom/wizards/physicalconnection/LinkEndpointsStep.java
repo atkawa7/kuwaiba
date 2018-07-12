@@ -23,7 +23,7 @@ import com.vaadin.ui.VerticalLayout;
 import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.web.custom.tree.DynamicTree;
+import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
 import org.vaadin.teemu.wizards.WizardStep;
 
 /**

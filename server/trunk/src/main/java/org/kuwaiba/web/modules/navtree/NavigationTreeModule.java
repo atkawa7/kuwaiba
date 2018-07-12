@@ -19,12 +19,14 @@ import com.google.common.eventbus.EventBus;
 import com.vaadin.navigator.View;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.UI;
 import org.kuwaiba.apis.web.gui.modules.AbstractModule;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
 
 /**
- * The definition of the Navigation Tree module.
+ * This is the next generation equivalent of the old navigation tree, which provides a quick way to 
+ * navigate through the containment hierarchy
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class NavigationTreeModule extends AbstractModule {
@@ -50,7 +52,7 @@ public class NavigationTreeModule extends AbstractModule {
 
     @Override
     public String getVersion() {
-        return "1.0";
+        return "2.0";
     }
 
     @Override
@@ -65,11 +67,18 @@ public class NavigationTreeModule extends AbstractModule {
 
     @Override
     public void attachToMenu(MenuBar menuBar) {
+        MenuBar.MenuItem navTreeMenuItem = menuBar.addItem(getName(), new MenuBar.Command() {
+            @Override
+            public void menuSelected(MenuBar.MenuItem selectedItem) {
+                UI.getCurrent().getNavigator().navigateTo(NavigationTreeComponent.VIEW_NAME);
+            }
+        });
+        navTreeMenuItem.setDescription(getDescription());
     }
 
     @Override
     public View open() {
-        treeNavTree = new NavigationTreeComponent(eventBus, wsBean, session);
+        treeNavTree = new NavigationTreeComponent();
         //Register components in the event bus
         treeNavTree.registerComponents();
         return treeNavTree;

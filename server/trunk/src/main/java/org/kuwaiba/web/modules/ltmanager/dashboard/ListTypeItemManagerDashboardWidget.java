@@ -36,7 +36,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
-import org.kuwaiba.web.modules.ltmanager.AddListTypeItemWindow;
+import org.kuwaiba.web.modules.ltmanager.actions.AddListTypeItemWindow;
 
 /**
  * A dashboard widget that allows to manage the list type items associated to a given list type
