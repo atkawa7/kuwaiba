@@ -78,22 +78,7 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 public interface WebserviceBean {
 
     // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
-    /**
-     *
-     * @param user
-     * @param password
-     * @param IPAddress
-     * @return
-     * @throws NotAuthorizedException
-     */
-    public RemoteSession createSession(String user, String password, String IPAddress) throws ServerSideException;
-    /**
-     * Closes a session
-     * @param sessionId
-     * @param remoteAddress
-     * @throws org.kuwaiba.exceptions.ServerSideException
-     * @throws org.kuwaiba.exceptions.NotAuthorizedException
-     */
+    public RemoteSession createSession(String user, String password, int sessionType, String IPAddress) throws ServerSideException;
     public void closeSession(String sessionId, String remoteAddress) throws ServerSideException, NotAuthorizedException;
 
     // </editor-fold>

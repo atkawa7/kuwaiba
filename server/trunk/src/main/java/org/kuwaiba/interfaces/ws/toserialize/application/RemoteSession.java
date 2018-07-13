@@ -28,21 +28,57 @@ import org.kuwaiba.apis.persistence.application.UserProfile;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteSession implements Serializable {
+    /**
+     * Identifies a session opened from a desktop client
+     */
+    public static final int TYPE_DESKTOP = 1;
+    /**
+     * Identifies a session opened from a web client
+     */
+    public static final int TYPE_WEB = 2;
+    /**
+     * Identifies a session opened from a web service client
+     */
+    public static final int TYPE_WS = 3;
+    /**
+     * Identifies a session opened from a mobile client (a mobile application)
+     */
+    public static final int TYPE_MOBILE = 4;
+    /**
+     * A unique string representing the session id
+     */
     private String sessionId;
+    /**
+     * The user name
+     */
     private String username;
+    /**
+     * The id of the user
+     */
     private long userId;
+    /**
+     * What type of session depending of the type of client. Only one session per session type is allowed. See RemoteSession.TYPE_XXX for possible values
+     */
+    private int sessionType;
+    /**
+     * The first name of the user
+     */
     private String firstName;
+    /**
+     * The last name of the user
+     */
     private String lastName;
 
     //No-arg constructor required
     public RemoteSession() {    }
 
-    public RemoteSession(String sessionID, UserProfile user) {
+    public RemoteSession(String sessionID, UserProfile user, int sessionType) {
         this.sessionId = sessionID;
         this.username = user.getUserName();
         this.userId = user.getId();
         this.firstName = user.getFirstName();
         this.lastName = user.getLastName();
+        this.sessionType = sessionType;
     }
 
     public String getSessionId() {
@@ -83,5 +119,13 @@ public class RemoteSession implements Serializable {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public int getSessionType() {
+        return sessionType;
+    }
+
+    public void setSessionType(int sessionType) {
+        this.sessionType = sessionType;
     }
 }

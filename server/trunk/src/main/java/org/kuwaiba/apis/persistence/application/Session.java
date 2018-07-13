@@ -27,11 +27,31 @@ import java.util.Date;
  * Represents a single user session
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class Session implements Serializable{
+public class Session implements Serializable {
+    /**
+     * Identifies a session opened from a desktop client
+     */
+    public static final int TYPE_DESKTOP = 1;
+    /**
+     * Identifies a session opened from a web client
+     */
+    public static final int TYPE_WEB = 2;
+    /**
+     * Identifies a session opened from a web service client
+     */
+    public static final int TYPE_WS = 3;
+    /**
+     * Identifies a session opened from a mobile client (a mobile application)
+     */
+    public static final int TYPE_MOBILE = 4;
     /**
      * User associated to this session
      */
     private UserProfile user;
+    /**
+     * What type of session depending of the type of client. Only one session per session type is allowed. See Session.TYPE_XXX for possible values
+     */
+    private int sessionType;
     /**
      * Login timestamp
      */
@@ -44,16 +64,14 @@ public class Session implements Serializable{
      * IP Address where this session was established from
      */
     protected String ipAddress;
-    /**
-     * Client details like OS, components version, etc
-     */
-    //protected ClientDetail detail;
 
-    public Session(UserProfile user, String ipAddress) {
+
+    public Session(UserProfile user, String ipAddress, int sessionType) {
         this.user = user;
         this.ipAddress = ipAddress;
         this.loginTime = Calendar.getInstance().getTime();
         this.token = generateSessionToken();
+        this.sessionType = sessionType;
     }
 
     public String getIpAddress() {
@@ -88,6 +106,14 @@ public class Session implements Serializable{
         this.user = user;
     }
 
+    public int getSessionType() {
+        return sessionType;
+    }
+
+    public void setSessionType(int sessionType) {
+        this.sessionType = sessionType;
+    }
+    
     @Override
     public String toString() {
         return getUser() +"["+getLoginTime()+"]"; //NOI18N

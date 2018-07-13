@@ -2260,7 +2260,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public Session createSession(String userName, String password, String IPAddress) throws ApplicationObjectNotFoundException, NotAuthorizedException {
+    public Session createSession(String userName, String password, int sessionType, String IPAddress) throws ApplicationObjectNotFoundException, NotAuthorizedException {
         if (userName == null || password == null)
             throw  new ApplicationObjectNotFoundException("User or Password must not be null or empty");
         
@@ -2277,13 +2277,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 UserProfile user = Util.createUserProfileWithGroupPrivilegesFromNode(userNode);
 
                 for (Session aSession : sessions.values()){
-                    if (aSession.getUser().getUserName().equals(userName)){
-                        Logger.getLogger("createSession").log(Level.INFO, String.format("An existing session for user %s has been dropped", aSession.getUser().getUserName()));
+                    if (aSession.getUser().getUserName().equals(userName) 
+                            && aSession.getSessionType() == sessionType) { //Multiple sessions withe the same user are allowed as long as they have a different type (e.g. one mobile session and the other web session)
                         sessions.remove(aSession.getToken());
                         break;
                     }
                 }
-                Session newSession = new Session(user, IPAddress);
+                Session newSession = new Session(user, IPAddress, sessionType);
                 sessions.put(newSession.getToken(), newSession);
                 cm.putUser(user);
                 return newSession;

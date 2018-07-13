@@ -102,19 +102,20 @@ public class KuwaibaService {
 
     // <editor-fold defaultstate="collapsed" desc="Application methods. Click on the + sign on the left to edit the code.">
     /**
-     * Creates a session
+     * Creates a session. Only one session per type is allowed. If a new session is created and there was already one of the same type, the old one will be discarded. See RemoteSession.TYPE_XXX for possible session types
      * @param username user login name
      * @param password user password
+     * @param sessionType The type of session to be created. This type depends on what kind of client is trying to access (a desktop client, a web client, a web service user, etc. See RemoteSession.TYPE_XXX for possible session types
      * @return A session object, including the session token
      * @throws ServerSideException If the user does not exist
      *                             If the password is incorrect or if the user is not enabled.
      */
     @WebMethod(operationName = "createSession")
     public RemoteSession createSession(@WebParam(name = "username") String username,
-            @WebParam(name = "password") String password) throws ServerSideException{
+            @WebParam(name = "password") String password, @WebParam(name = "sessionType") int sessionType) throws ServerSideException{
         try {
             String remoteAddress = getIPAddress();
-            return wsBean.createSession(username, password, remoteAddress);
+            return wsBean.createSession(username, password, sessionType, remoteAddress);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

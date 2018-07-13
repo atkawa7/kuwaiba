@@ -95,7 +95,7 @@ public class LoginView extends CustomComponent implements View {
         btnLogin.addClickListener((Button.ClickEvent event) -> {
             try {
                 RemoteSession aSession = bean.createSession(txtUsername.getValue(), //NOI18N
-                        txtPassword.getValue(),  //NOI18N
+                        txtPassword.getValue(),  RemoteSession.TYPE_WEB,
                         Page.getCurrent().getWebBrowser().getAddress());
                 getSession().setAttribute("session", aSession); //NOI18N
                 //Update the login view to go to welcome view if the login was successful

@@ -36,7 +36,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -886,8 +885,6 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(ex.getMessage());
         }
     }
-    
-    
 
     @Override
     public long createListTypeItem(String className, String name, String displayName, String ipAddress, String sessionId) throws ServerSideException{
@@ -1037,14 +1034,15 @@ public class WebserviceBeanImpl implements WebserviceBean {
 
     // <editor-fold defaultstate="collapsed" desc="Session methods. Click on the + sign on the left to edit the code.">
     @Override
-    public RemoteSession createSession(String user, String password, String IPAddress)
+    public RemoteSession createSession(String user, String password, int sessionType, String IPAddress)
             throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
-            Session newSession = aem.createSession(user, password, IPAddress);
+            
+            Session newSession = aem.createSession(user, password, sessionType, IPAddress);
             aem.createGeneralActivityLogEntry(user, ActivityLogEntry.ACTIVITY_TYPE_OPEN_SESSION, String.format("Connected from %s", IPAddress));
-            return new RemoteSession(newSession.getToken(), newSession.getUser());
+            return new RemoteSession(newSession.getToken(), newSession.getUser(), sessionType);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage()); 
         }
