@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="username" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="userId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="sessionType" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="firstName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="lastName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
@@ -34,6 +35,7 @@ import javax.xml.bind.annotation.XmlType;
     "sessionId",
     "username",
     "userId",
+    "sessionType",
     "firstName",
     "lastName"
 })
@@ -42,6 +44,7 @@ public class RemoteSession {
     protected String sessionId;
     protected String username;
     protected long userId;
+    protected int sessionType;
     protected String firstName;
     protected String lastName;
 
@@ -107,6 +110,22 @@ public class RemoteSession {
      */
     public void setUserId(long value) {
         this.userId = value;
+    }
+
+    /**
+     * Gets the value of the sessionType property.
+     * 
+     */
+    public int getSessionType() {
+        return sessionType;
+    }
+
+    /**
+     * Sets the value of the sessionType property.
+     * 
+     */
+    public void setSessionType(int value) {
+        this.sessionType = value;
     }
 
     /**

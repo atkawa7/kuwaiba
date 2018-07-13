@@ -224,7 +224,7 @@ public class CommunicationsStub {
             ((BindingProvider)service).getRequestContext().put(MessageContext.HTTP_REQUEST_HEADERS,
                 Collections.singletonMap("Accept-Encoding",Collections.singletonList("gzip"))); //NOI18N
             
-            this.session = new LocalSession(this.service.createSession(user, password));
+            this.session = new LocalSession(this.service.createSession(user, password, 1 /*A desktop session*/));
             return true;
         }catch(MalformedURLException | ServerSideException_Exception ex) { 
             this.error =  ex.getMessage();

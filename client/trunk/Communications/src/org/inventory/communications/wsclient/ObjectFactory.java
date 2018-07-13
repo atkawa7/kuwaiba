@@ -598,13 +598,13 @@ public class ObjectFactory {
     private final static QName _CreateClass_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "createClass");
     private final static QName _CreateSDHTransportLink_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "createSDHTransportLink");
     private final static QName _GetObjectLight_QNAME = new QName("http://ws.interfaces.kuwaiba.org/", "getObjectLight");
-    private final static QName _ExecuteClassLevelReportResponseReturn_QNAME = new QName("", "return");
-    private final static QName _AttachFileToObjectFile_QNAME = new QName("", "file");
-    private final static QName _UpdateListTypeItemRelatedViewStructure_QNAME = new QName("", "structure");
-    private final static QName _UpdateListTypeItemRelatedViewBackground_QNAME = new QName("", "background");
-    private final static QName _SaveQueryQueryStructure_QNAME = new QName("", "queryStructure");
+    private final static QName _UpdateProcessDefinitionStructure_QNAME = new QName("", "structure");
     private final static QName _CreateClassIcon_QNAME = new QName("", "icon");
     private final static QName _CreateClassSmallIcon_QNAME = new QName("", "smallIcon");
+    private final static QName _GetDeviceLayoutStructureResponseReturn_QNAME = new QName("", "return");
+    private final static QName _UpdateObjectRelatedViewBackground_QNAME = new QName("", "background");
+    private final static QName _AttachFileToObjectFile_QNAME = new QName("", "file");
+    private final static QName _CreateQueryQueryStructure_QNAME = new QName("", "queryStructure");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.inventory.communications.wsclient
@@ -10807,198 +10807,9 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "return", scope = ExecuteClassLevelReportResponse.class)
-    public JAXBElement<byte[]> createExecuteClassLevelReportResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, ExecuteClassLevelReportResponse.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "return", scope = GetDeviceLayoutStructureResponse.class)
-    public JAXBElement<byte[]> createGetDeviceLayoutStructureResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, GetDeviceLayoutStructureResponse.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "file", scope = AttachFileToObject.class)
-    public JAXBElement<byte[]> createAttachFileToObjectFile(byte[] value) {
-        return new JAXBElement<byte[]>(_AttachFileToObjectFile_QNAME, byte[].class, AttachFileToObject.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "structure", scope = UpdateListTypeItemRelatedView.class)
-    public JAXBElement<byte[]> createUpdateListTypeItemRelatedViewStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewStructure_QNAME, byte[].class, UpdateListTypeItemRelatedView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "background", scope = UpdateListTypeItemRelatedView.class)
-    public JAXBElement<byte[]> createUpdateListTypeItemRelatedViewBackground(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewBackground_QNAME, byte[].class, UpdateListTypeItemRelatedView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "return", scope = DownloadBulkLoadLogResponse.class)
-    public JAXBElement<byte[]> createDownloadBulkLoadLogResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, DownloadBulkLoadLogResponse.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "structure", scope = CreateProcessDefinition.class)
-    public JAXBElement<byte[]> createCreateProcessDefinitionStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewStructure_QNAME, byte[].class, CreateProcessDefinition.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "structure", scope = CreateListTypeItemRelatedView.class)
-    public JAXBElement<byte[]> createCreateListTypeItemRelatedViewStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewStructure_QNAME, byte[].class, CreateListTypeItemRelatedView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "background", scope = CreateListTypeItemRelatedView.class)
-    public JAXBElement<byte[]> createCreateListTypeItemRelatedViewBackground(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewBackground_QNAME, byte[].class, CreateListTypeItemRelatedView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "file", scope = BulkUpload.class)
-    public JAXBElement<byte[]> createBulkUploadFile(byte[] value) {
-        return new JAXBElement<byte[]>(_AttachFileToObjectFile_QNAME, byte[].class, BulkUpload.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "queryStructure", scope = SaveQuery.class)
-    public JAXBElement<byte[]> createSaveQueryQueryStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_SaveQueryQueryStructure_QNAME, byte[].class, SaveQuery.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "structure", scope = CreateGeneralView.class)
-    public JAXBElement<byte[]> createCreateGeneralViewStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewStructure_QNAME, byte[].class, CreateGeneralView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "background", scope = CreateGeneralView.class)
-    public JAXBElement<byte[]> createCreateGeneralViewBackground(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewBackground_QNAME, byte[].class, CreateGeneralView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
     @XmlElementDecl(namespace = "", name = "structure", scope = UpdateProcessDefinition.class)
     public JAXBElement<byte[]> createUpdateProcessDefinitionStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewStructure_QNAME, byte[].class, UpdateProcessDefinition.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "structure", scope = UpdateGeneralView.class)
-    public JAXBElement<byte[]> createUpdateGeneralViewStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewStructure_QNAME, byte[].class, UpdateGeneralView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "background", scope = UpdateGeneralView.class)
-    public JAXBElement<byte[]> createUpdateGeneralViewBackground(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewBackground_QNAME, byte[].class, UpdateGeneralView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "return", scope = GetClassHierarchyResponse.class)
-    public JAXBElement<byte[]> createGetClassHierarchyResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, GetClassHierarchyResponse.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "structure", scope = CreateObjectRelatedView.class)
-    public JAXBElement<byte[]> createCreateObjectRelatedViewStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewStructure_QNAME, byte[].class, CreateObjectRelatedView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "background", scope = CreateObjectRelatedView.class)
-    public JAXBElement<byte[]> createCreateObjectRelatedViewBackground(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewBackground_QNAME, byte[].class, CreateObjectRelatedView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "return", scope = ExecuteInventoryLevelReportResponse.class)
-    public JAXBElement<byte[]> createExecuteInventoryLevelReportResponseReturn(byte[] value) {
-        return new JAXBElement<byte[]>(_ExecuteClassLevelReportResponseReturn_QNAME, byte[].class, ExecuteInventoryLevelReportResponse.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "structure", scope = UpdateObjectRelatedView.class)
-    public JAXBElement<byte[]> createUpdateObjectRelatedViewStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewStructure_QNAME, byte[].class, UpdateObjectRelatedView.class, ((byte[]) value));
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "", name = "background", scope = UpdateObjectRelatedView.class)
-    public JAXBElement<byte[]> createUpdateObjectRelatedViewBackground(byte[] value) {
-        return new JAXBElement<byte[]>(_UpdateListTypeItemRelatedViewBackground_QNAME, byte[].class, UpdateObjectRelatedView.class, ((byte[]) value));
+        return new JAXBElement<byte[]>(_UpdateProcessDefinitionStructure_QNAME, byte[].class, UpdateProcessDefinition.class, ((byte[]) value));
     }
 
     /**
@@ -11023,9 +10834,54 @@ public class ObjectFactory {
      * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
      * 
      */
-    @XmlElementDecl(namespace = "", name = "queryStructure", scope = CreateQuery.class)
-    public JAXBElement<byte[]> createCreateQueryQueryStructure(byte[] value) {
-        return new JAXBElement<byte[]>(_SaveQueryQueryStructure_QNAME, byte[].class, CreateQuery.class, ((byte[]) value));
+    @XmlElementDecl(namespace = "", name = "return", scope = GetDeviceLayoutStructureResponse.class)
+    public JAXBElement<byte[]> createGetDeviceLayoutStructureResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_GetDeviceLayoutStructureResponseReturn_QNAME, byte[].class, GetDeviceLayoutStructureResponse.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "structure", scope = CreateProcessDefinition.class)
+    public JAXBElement<byte[]> createCreateProcessDefinitionStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateProcessDefinitionStructure_QNAME, byte[].class, CreateProcessDefinition.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "structure", scope = UpdateObjectRelatedView.class)
+    public JAXBElement<byte[]> createUpdateObjectRelatedViewStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateProcessDefinitionStructure_QNAME, byte[].class, UpdateObjectRelatedView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "background", scope = UpdateObjectRelatedView.class)
+    public JAXBElement<byte[]> createUpdateObjectRelatedViewBackground(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateObjectRelatedViewBackground_QNAME, byte[].class, UpdateObjectRelatedView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "structure", scope = CreateObjectRelatedView.class)
+    public JAXBElement<byte[]> createCreateObjectRelatedViewStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateProcessDefinitionStructure_QNAME, byte[].class, CreateObjectRelatedView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "background", scope = CreateObjectRelatedView.class)
+    public JAXBElement<byte[]> createCreateObjectRelatedViewBackground(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateObjectRelatedViewBackground_QNAME, byte[].class, CreateObjectRelatedView.class, ((byte[]) value));
     }
 
     /**
@@ -11044,6 +10900,150 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "", name = "smallIcon", scope = SetClassProperties.class)
     public JAXBElement<byte[]> createSetClassPropertiesSmallIcon(byte[] value) {
         return new JAXBElement<byte[]>(_CreateClassSmallIcon_QNAME, byte[].class, SetClassProperties.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "return", scope = ExecuteClassLevelReportResponse.class)
+    public JAXBElement<byte[]> createExecuteClassLevelReportResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_GetDeviceLayoutStructureResponseReturn_QNAME, byte[].class, ExecuteClassLevelReportResponse.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "file", scope = AttachFileToObject.class)
+    public JAXBElement<byte[]> createAttachFileToObjectFile(byte[] value) {
+        return new JAXBElement<byte[]>(_AttachFileToObjectFile_QNAME, byte[].class, AttachFileToObject.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "structure", scope = CreateListTypeItemRelatedView.class)
+    public JAXBElement<byte[]> createCreateListTypeItemRelatedViewStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateProcessDefinitionStructure_QNAME, byte[].class, CreateListTypeItemRelatedView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "background", scope = CreateListTypeItemRelatedView.class)
+    public JAXBElement<byte[]> createCreateListTypeItemRelatedViewBackground(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateObjectRelatedViewBackground_QNAME, byte[].class, CreateListTypeItemRelatedView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "return", scope = GetClassHierarchyResponse.class)
+    public JAXBElement<byte[]> createGetClassHierarchyResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_GetDeviceLayoutStructureResponseReturn_QNAME, byte[].class, GetClassHierarchyResponse.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "return", scope = DownloadBulkLoadLogResponse.class)
+    public JAXBElement<byte[]> createDownloadBulkLoadLogResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_GetDeviceLayoutStructureResponseReturn_QNAME, byte[].class, DownloadBulkLoadLogResponse.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "structure", scope = UpdateGeneralView.class)
+    public JAXBElement<byte[]> createUpdateGeneralViewStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateProcessDefinitionStructure_QNAME, byte[].class, UpdateGeneralView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "background", scope = UpdateGeneralView.class)
+    public JAXBElement<byte[]> createUpdateGeneralViewBackground(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateObjectRelatedViewBackground_QNAME, byte[].class, UpdateGeneralView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "structure", scope = CreateGeneralView.class)
+    public JAXBElement<byte[]> createCreateGeneralViewStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateProcessDefinitionStructure_QNAME, byte[].class, CreateGeneralView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "background", scope = CreateGeneralView.class)
+    public JAXBElement<byte[]> createCreateGeneralViewBackground(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateObjectRelatedViewBackground_QNAME, byte[].class, CreateGeneralView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "return", scope = ExecuteInventoryLevelReportResponse.class)
+    public JAXBElement<byte[]> createExecuteInventoryLevelReportResponseReturn(byte[] value) {
+        return new JAXBElement<byte[]>(_GetDeviceLayoutStructureResponseReturn_QNAME, byte[].class, ExecuteInventoryLevelReportResponse.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "file", scope = BulkUpload.class)
+    public JAXBElement<byte[]> createBulkUploadFile(byte[] value) {
+        return new JAXBElement<byte[]>(_AttachFileToObjectFile_QNAME, byte[].class, BulkUpload.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "queryStructure", scope = CreateQuery.class)
+    public JAXBElement<byte[]> createCreateQueryQueryStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_CreateQueryQueryStructure_QNAME, byte[].class, CreateQuery.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "queryStructure", scope = SaveQuery.class)
+    public JAXBElement<byte[]> createSaveQueryQueryStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_CreateQueryQueryStructure_QNAME, byte[].class, SaveQuery.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "structure", scope = UpdateListTypeItemRelatedView.class)
+    public JAXBElement<byte[]> createUpdateListTypeItemRelatedViewStructure(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateProcessDefinitionStructure_QNAME, byte[].class, UpdateListTypeItemRelatedView.class, ((byte[]) value));
+    }
+
+    /**
+     * Create an instance of {@link JAXBElement }{@code <}{@link byte[]}{@code >}}
+     * 
+     */
+    @XmlElementDecl(namespace = "", name = "background", scope = UpdateListTypeItemRelatedView.class)
+    public JAXBElement<byte[]> createUpdateListTypeItemRelatedViewBackground(byte[] value) {
+        return new JAXBElement<byte[]>(_UpdateObjectRelatedViewBackground_QNAME, byte[].class, UpdateListTypeItemRelatedView.class, ((byte[]) value));
     }
 
 }

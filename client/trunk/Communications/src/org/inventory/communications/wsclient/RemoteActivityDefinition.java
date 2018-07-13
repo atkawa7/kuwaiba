@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="idling" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="confirm" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="arfifact" type="{http://ws.interfaces.kuwaiba.org/}remoteArtifactDefinition" minOccurs="0"/>
  *         &lt;element name="actor" type="{http://ws.interfaces.kuwaiba.org/}remoteActor" minOccurs="0"/>
  *         &lt;element name="nextActivity" type="{http://ws.interfaces.kuwaiba.org/}remoteActivityDefinition" minOccurs="0"/>
@@ -39,6 +40,7 @@ import javax.xml.bind.annotation.XmlType;
     "description",
     "type",
     "idling",
+    "confirm",
     "arfifact",
     "actor",
     "nextActivity"
@@ -50,6 +52,7 @@ public class RemoteActivityDefinition {
     protected String description;
     protected int type;
     protected boolean idling;
+    protected boolean confirm;
     protected RemoteArtifactDefinition arfifact;
     protected RemoteActor actor;
     protected RemoteActivityDefinition nextActivity;
@@ -148,6 +151,22 @@ public class RemoteActivityDefinition {
      */
     public void setIdling(boolean value) {
         this.idling = value;
+    }
+
+    /**
+     * Gets the value of the confirm property.
+     * 
+     */
+    public boolean isConfirm() {
+        return confirm;
+    }
+
+    /**
+     * Sets the value of the confirm property.
+     * 
+     */
+    public void setConfirm(boolean value) {
+        this.confirm = value;
     }
 
     /**
