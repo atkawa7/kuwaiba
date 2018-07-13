@@ -14,7 +14,6 @@
  */
 package org.kuwaiba.web.procmanager;
 
-import com.google.common.eventbus.EventBus;
 import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;

@@ -3084,6 +3084,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             environmentParameters.setVariable("graphDb", graphDb); //NOI18N
             environmentParameters.setVariable("inventoryObjectLabel", inventoryObjectLabel);
             environmentParameters.setVariable("classLabel", classLabel); //NOI18N
+            environmentParameters.setVariable("processInstanceLabel", processInstanceLabel); //NOI18N            
             environmentParameters.setVariable("Constants", Constants.class); //NOI18N
             environmentParameters.setVariable("Direction", Direction.class); //NOI18N
             environmentParameters.setVariable("RelTypes", RelTypes.class); //NOI18N            
@@ -4594,6 +4595,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     throw new ApplicationObjectNotFoundException(ex.getMessage());
                 }
             }
+            tx.success();
         }
         try {
             return ProcessCache.getInstance().getProcessInstances(processDefinitionId);
@@ -4649,17 +4651,34 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             processInstanceNode.setProperty(Constants.PROPERTY_DESCRIPTION, processInstanceDescription != null ? processInstanceDescription : "");
             
             try {
-                long processInstaceId = ProcessCache.getInstance().createProcessInstance(processInstanceNode.getId(), processDefinitionId, processInstanceName, processInstanceDescription);
+                long processInstanceId = ProcessCache.getInstance().createProcessInstance(processInstanceNode.getId(), processDefinitionId, processInstanceName, processInstanceDescription);
                 
-                ProcessInstance processInstance = ProcessCache.getInstance().getProcessInstance(processInstaceId);
+                ProcessInstance processInstance = ProcessCache.getInstance().getProcessInstance(processInstanceId);
                 
                 processInstanceNode.setProperty(Constants.PROPERTY_CURRENT_ACTIVITY_ID, processInstance.getCurrentActivity());
                 tx.success();
-                return processInstaceId;
+                return processInstanceId;
                 
             } catch (InventoryException ex) {
                 throw new ApplicationObjectNotFoundException(ex.getMessage());
             }
+        }
+    }
+    
+    @Override
+    public void deleteProcessInstance(long processInstanceId) throws OperationNotPermittedException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node processInstanceNode = Util.findNodeByLabelAndId(processInstanceLabel, processInstanceId);
+                        
+            for (Relationship rel : processInstanceNode.getRelationships(RelTypes.HAS_PROCESS_INSTANCE, Direction.INCOMING)) {
+                
+                Node startNode = rel.getStartNode();
+                rel.delete();
+                Util.deleteObject(startNode, false);
+            }
+            processInstanceNode.delete();
+            
+            tx.success();
         }
     }
     

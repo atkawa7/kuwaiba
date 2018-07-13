@@ -51,4 +51,5 @@ public enum RelTypes implements RelationshipType {
     INSTANCE_OF_SPECIAL, //Used to relate a class with an instance that makes part of a template. These instances are not indexed and can not be searched, that's why they need a special relationship
     HAS_BOOKMARK, //Used to relate a bookmark with an user
     IS_BOOKMARK_ITEM_IN, //Used to relate an object with a bookmark/favorite folder
+    HAS_PROCESS_INSTANCE //Used to related a process instance with an instance of GenericServiceClass
 }

@@ -5548,6 +5548,20 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
+    public void deleteProcessInstance(long processInstanceId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("deleteProcessInstance", ipAddress, sessionId);
+            
+            aem.deleteProcessInstance(processInstanceId);
+                        
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
     public void reloadProcessDefinitions(String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));

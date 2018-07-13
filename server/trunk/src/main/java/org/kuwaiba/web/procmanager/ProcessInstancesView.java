@@ -26,6 +26,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -55,7 +56,7 @@ import org.kuwaiba.web.IndexUI;
  */
 public class ProcessInstancesView extends VerticalLayout {
     private final RemoteProcessDefinition processDefinition;
-    private final List<RemoteProcessInstance> processes;
+    private List<RemoteProcessInstance> processes;
     private Grid<ProcessInstanceBean> grid;
     
     private Button btnCreateProcessInstance;
@@ -242,15 +243,47 @@ public class ProcessInstancesView extends VerticalLayout {
         });
                 
         grid.addColumn(ProcessInstanceBean::getEditButtonCaption, buttonContinuar).setCaption("Status").setId("columnStatus");
-        grid.addColumn(ProcessInstanceBean::getViewButtonCaption, buttonView).setCaption("View");
-        /*
+        grid.addColumn(ProcessInstanceBean::getViewButtonCaption, buttonView).setCaption("View");        
         grid.addColumn(ProcessInstanceBean::getDeleteButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
             @Override
             public void click(ClickableRenderer.RendererClickEvent event) {
-                Notification.show("Hola");
+                ProcessInstanceBean processInstanceBean = (ProcessInstanceBean) event.getItem();
+                
+                MessageBox.getInstance().showMessage(new Label("Create an instance of the process")).addClickListener(new Button.ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                                                
+                        if (MessageBox.getInstance().continues()) {
+                            try {
+                                String address = Page.getCurrent().getWebBrowser().getAddress();
+                                String sesionId = ((RemoteSession) getSession().getAttribute("session")).getSessionId();
+                                
+                                wsBean.deleteProcessInstance(
+                                    processInstanceBean.getProcessInstance().getId(),
+                                    address,
+                                    sesionId);
+                                // Updating the rows in the grid
+                                processes.clear();
+                                beans.clear();
+                                
+                                processes = wsBean.getProcessInstances(
+                                    processDefinition.getId(), 
+                                    address, 
+                                    sesionId);
+                                                                
+                                for (RemoteProcessInstance process : processes)
+                                    beans.add(new ProcessInstanceBean(process, wsBean, session));
+                                
+                                grid.setItems(beans);
+                                                                                                                                
+                            } catch (ServerSideException ex) {
+                                Exceptions.printStackTrace(ex);
+                            }
+                        }
+                    }
+                });
             }
-        })).setCaption("Delete");
-        */
+        })).setCaption("Delete");        
         // Filter To Status
         HeaderCell statusHeaderCell = headerRow.getCell(columnStatusId);
         

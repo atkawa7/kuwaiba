@@ -28,6 +28,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.persistence.util.StringPair;
@@ -246,7 +247,11 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
             secondHorizontalLayout.setSizeFull();
             
             Button btnSave = new Button(I18N.gm("save"));
+            btnSave.setIcon(VaadinIcons.CHECK_CIRCLE);
+                        
             Button btnNext = new Button(I18N.gm("next"));
+            btnNext.setIcon(VaadinIcons.CHEVRON_CIRCLE_RIGHT);
+            btnNext.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
             
             // Current Activity can be updated
             if (processInstance.getCurrentActivity() != currentActivity.getId()) {
@@ -290,9 +295,12 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
             };    
             btnSave.addClickListener(clickListener);
             btnNext.addClickListener(clickListener);
-                        
+                                    
             Button btnViewProcessInstance = new Button(I18N.gm("view"));
             btnViewProcessInstance.setDescription("View Process Instance");
+            btnViewProcessInstance.setIcon(VaadinIcons.SITEMAP);
+            btnViewProcessInstance.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+            
             btnViewProcessInstance.addClickListener(new Button.ClickListener() {
                 @Override
                 public void buttonClick(Button.ClickEvent event) {

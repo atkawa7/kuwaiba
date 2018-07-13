@@ -168,6 +168,9 @@ public class Util {
 
             if (instance.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.INCOMING).iterator().hasNext())
                 throw new OperationNotPermittedException(String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
+            
+            if (instance.getRelationships(RelTypes.HAS_PROCESS_INSTANCE, Direction.OUTGOING).iterator().hasNext())
+                throw new OperationNotPermittedException(String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
         }
 
         for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL))

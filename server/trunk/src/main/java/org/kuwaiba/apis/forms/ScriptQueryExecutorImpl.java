@@ -60,45 +60,55 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
     public Object execute(String scriptQueryName, List<String> parameterNames, List<String> parameterValues) {
         // The Keyword "shared" is used as Function Name to get to the execution 
         // of a Script Query the Artifacts shared values
-        if ("shared".equals(scriptQueryName)) {
-            try {
-                long activityId = Long.valueOf(parameterValues.get(0));
-                String sharedId = parameterValues.get(1);
-                
-                List<RemoteActivityDefinition> path = wsBean.getProcessInstanceActivitiesPath(
-                    processInstance.getId(), 
-                    Page.getCurrent().getWebBrowser().getAddress(), 
-                    session.getSessionId());
-                
-                for (RemoteActivityDefinition activity : path) {
-                    
-                    if (activity.getId() == activityId) {
-                        
-                        RemoteArtifact remoteArtifact = wsBean.getArtifactForActivity(
-                            processInstance.getId(), 
-                            activity.getId(), 
-                            Page.getCurrent().getWebBrowser().getAddress(), 
-                            session.getSessionId());
-                        
-                        List<StringPair> sharedInformation = remoteArtifact.getSharedInformation();
-                        
-                        if (sharedInformation != null) {
+        if ("shared".equals(scriptQueryName) && parameterValues != null && parameterValues.size() >= 1) {
+            
+            String paramValue0 = parameterValues.get(0);
+            
+            if (paramValue0.equals("__processInstanceId__"))
+                return String.valueOf(processInstance.getId());
+            
+            if (parameterValues.size() == 2) {
                             
-                            for (StringPair pair : sharedInformation) {
-                                
-                                if (sharedId.equals(pair.getKey()))
-                                    return pair.getValue();
+                try {
+                    long activityId = Long.valueOf(paramValue0);
+                    String sharedId = parameterValues.get(1);
+
+                    List<RemoteActivityDefinition> path = wsBean.getProcessInstanceActivitiesPath(
+                        processInstance.getId(), 
+                        Page.getCurrent().getWebBrowser().getAddress(), 
+                        session.getSessionId());
+
+                    for (RemoteActivityDefinition activity : path) {
+
+                        if (activity.getId() == activityId) {
+
+                            RemoteArtifact remoteArtifact = wsBean.getArtifactForActivity(
+                                processInstance.getId(), 
+                                activity.getId(), 
+                                Page.getCurrent().getWebBrowser().getAddress(), 
+                                session.getSessionId());
+
+                            List<StringPair> sharedInformation = remoteArtifact.getSharedInformation();
+
+                            if (sharedInformation != null) {
+
+                                for (StringPair pair : sharedInformation) {
+
+                                    if (sharedId.equals(pair.getKey()))
+                                        return pair.getValue();
+                                }
                             }
+                            break;
                         }
-                        break;
                     }
+                    return null;
+
+                } catch (ServerSideException ex) {
+                    Notifications.showError(ex.getMessage());
+                    return null;
                 }
-                return null;
-                                
-            } catch (ServerSideException ex) {
-                Notifications.showError(ex.getMessage());
-                return null;
             }
+            return null;
         }
         
         if (scriptQueries != null) {

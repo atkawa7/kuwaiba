@@ -1606,4 +1606,10 @@ public interface ApplicationEntityManager {
     */
     public long createProcessInstance(long processDefinitionId, String processInstanceName, String processInstanceDescription) 
             throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Deletes a process instance
+     * @param processInstanceId Process Instance Id
+     * @throws OperationNotPermittedException If the process can no be deleted
+     */
+    public void deleteProcessInstance(long processInstanceId) throws OperationNotPermittedException;
 }
