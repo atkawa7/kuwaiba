@@ -26,12 +26,11 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.Calendar;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
+import org.kuwaiba.apis.web.gui.resources.ResourceFactory;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -103,7 +102,7 @@ public class ReportsDashboardWidget extends AbstractDashboardWidget {
                                     businessObject.getId(), e.getItem().getId(), Page.getCurrent().getWebBrowser().getAddress(),
                                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                             
-                            StreamResource fileStream = getFileStream(reportBody, businessObject.getClassName() + "_" + Calendar.getInstance().getTimeInMillis() + ".html");
+                            StreamResource fileStream = ResourceFactory.getFileStream(reportBody, businessObject.getClassName() + "_" + Calendar.getInstance().getTimeInMillis() + ".html");
                             FileDownloader fileDownloader = new FileDownloader(fileStream);
                             fileDownloader.extend(btnDownload);
                             btnDownload.setEnabled(true);
@@ -121,25 +120,5 @@ public class ReportsDashboardWidget extends AbstractDashboardWidget {
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getLocalizedMessage());
         }
-    }
-    
-    /**
-     * Creates a file stream from a byte array, so it can be downloaded. Credits to https://vaadin.com/forum/thread/2864064
-     * @param fileContents The contents of the file
-     * @param fileName The name of the file
-     * @return The stream to the file
-     */
-    private StreamResource getFileStream(byte[] fileContents, String fileName) {
-        StreamResource.StreamSource source = new StreamResource.StreamSource() {
-                @Override
-                public InputStream getStream() {
-                    InputStream input = new ByteArrayInputStream(fileContents);
-                    return input;
-            }
-        };
-  	StreamResource resource = new StreamResource ( source, fileName);
-        resource.setCacheTime(-1);
-        resource.setMIMEType("text/html");
-        return resource;
     }
 }

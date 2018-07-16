@@ -50,13 +50,11 @@
            <artifactId>messagebox</artifactId>
            <version>3.0.19</version>
         </dependency>
-        <!--
         <dependency>
-           <groupId>org.vaadin.addons</groupId>
-           <artifactId>stepper</artifactId>
-           <version>2.3.0</version>
+            <groupId>eu.maxschuster</groupId>
+            <artifactId>vaadin-autocompletetextfield</artifactId>
+            <version>3.0-alpha-2</version>
         </dependency>
-        -->
         <dependency>
            <groupId>org.vaadin.addons</groupId>
            <artifactId>wizards-for-vaadin</artifactId>
@@ -64,13 +62,6 @@
             <type>jar</type>
         </dependency>
                
-        <!--
-        <dependency>
-            <groupId>com.vaadin.tapio</groupId>
-            <artifactId>googlemaps</artifactId>
-            <version>1.4.1-NEOTROPIC</version>
-        </dependency>-->
-        
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

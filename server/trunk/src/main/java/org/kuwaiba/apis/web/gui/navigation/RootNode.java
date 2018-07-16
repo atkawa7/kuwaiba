@@ -16,18 +16,26 @@
 
 package org.kuwaiba.apis.web.gui.navigation;
 
-import com.vaadin.data.provider.ListDataProvider;
-import java.util.Collection;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 
 /**
- * Not defined yet if it's to be used
+ * This node should be used as the root of all trees
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
-public class ContainmentDataProvider extends ListDataProvider<RemoteObjectLight> {
+public class RootNode extends AbstractNode {
 
-    public ContainmentDataProvider(Collection<RemoteObjectLight> items) {
-        super(items);
+    public RootNode(Object object) {
+        super(object);
+    }
+
+    @Override
+    public AbstractAction[] getActions() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void refresh(boolean recursive) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

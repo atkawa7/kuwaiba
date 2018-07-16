@@ -83,11 +83,8 @@ public abstract class AbstractNode<T> {
     
     @Override
     public boolean equals(Object obj) {
+        return obj instanceof AbstractNode ? (getObject().equals(((AbstractNode)obj).getObject())): false;
         
-        if (obj instanceof AbstractNode) 
-            return object.equals(((AbstractNode)obj).getObject());
-        else
-            return false;
     }
 
     @Override
