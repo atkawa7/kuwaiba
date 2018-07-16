@@ -20,7 +20,6 @@ import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
-import com.vaadin.server.Sizeable;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalSplitPanel;
@@ -74,7 +73,7 @@ public class ListTypeManagerComponent extends AbstractTopComponent {
         addStyleName("misc");
         
         HorizontalSplitPanel pnlMain = new HorizontalSplitPanel();
-        pnlMain.setSplitPosition(33, Sizeable.Unit.PERCENTAGE);
+        pnlMain.setSplitPosition(33, Unit.PERCENTAGE);
         MenuBar mnuMain = ((IndexUI)getUI()).getMainMenu();
 
         addComponent(mnuMain);

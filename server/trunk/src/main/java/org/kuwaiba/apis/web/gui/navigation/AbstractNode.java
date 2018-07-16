@@ -15,26 +15,8 @@
  */
 package org.kuwaiba.apis.web.gui.navigation;
 
-import java.util.ArrayList;
-import com.vaadin.server.Page;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
-import org.kuwaiba.apis.web.gui.nodes.properties.NodeProperty;
-import org.kuwaiba.apis.web.gui.nodes.properties.Sheet;
-import org.kuwaiba.apis.web.gui.notifications.Notifications;
-import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
-import org.kuwaiba.services.persistence.util.Util;
-import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
-import org.kuwaiba.apis.web.gui.nodes.ObjectNodePropertyChangeValueListener;
 import org.kuwaiba.apis.web.gui.nodes.PropertySheet;
 
 /**
@@ -52,8 +34,6 @@ public abstract class AbstractNode<T> {
      */
     protected String displayName;
 
-    public AbstractNode() {}
-    
     public AbstractNode(T object) {
         this.object = object;
     }
@@ -66,27 +46,10 @@ public abstract class AbstractNode<T> {
         this.displayName = displayName;
     }
 
-    public Object getObject() {
+    public T getObject() {
         return object;
     }
-       
-    /**
-     * What to do when expanding the node is requested. 
-     * @return The children 
-     */
-    public abstract List<T> expand();
-    /**
-     * What to do when collapsing the node is requested. Always check if the tree has been set!
-     */
-    public abstract void collapse();
-    
-    /**
-     * Deletes the node and its children
-     */
-    public void delete() {
-
-    }
-        
+               
     /**
      * Actions associated to this node
      * @return An array of actions

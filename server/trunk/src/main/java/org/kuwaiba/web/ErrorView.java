@@ -24,7 +24,7 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 
 /**
- * A simple error handler
+ * A simple error screen
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
 @CDIView("error")

@@ -54,7 +54,7 @@ public class RemoteObjectLight implements Serializable, Comparable<RemoteObjectL
      */
     protected RemoteObjectLight(){}
 
-    public RemoteObjectLight(long oid, String name, String className) {
+    public RemoteObjectLight(String className, long oid, String name) {
         this.id = oid;
         this.name = name;
         this.className = className;

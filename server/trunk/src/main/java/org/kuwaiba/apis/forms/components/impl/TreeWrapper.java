@@ -14,8 +14,6 @@
  */
 package org.kuwaiba.apis.forms.components.impl;
 
-//import org.kuwaiba.apis.forms.KuwaibaClient;
-//import org.inventory.communications.wsclient.RemoteObjectLight;
 import com.vaadin.data.TreeData;
 import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.event.ExpandEvent;
@@ -23,6 +21,7 @@ import com.vaadin.event.ExpandEvent.ExpandListener;
 import com.vaadin.ui.Tree;
 import java.util.List;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  *
@@ -44,7 +43,7 @@ public class TreeWrapper {
         treeData = new TreeData();
         treeDataProvider = new TreeDataProvider(treeData);
         
-        RemoteObjectLight root = new RemoteObjectLight(-1, "DummyRoot", "DummyRoot");
+        RemoteObjectLight root = new RemoteObjectLight(Constants.DUMMY_ROOT, -1, Constants.DUMMY_ROOT);
                 
         tree.setDataProvider(treeDataProvider);
                 

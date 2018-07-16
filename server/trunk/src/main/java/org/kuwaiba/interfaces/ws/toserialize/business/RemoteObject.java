@@ -48,7 +48,7 @@ public class RemoteObject extends RemoteObjectLight implements Serializable {
      * @param object The object to be serialized
      */
     public RemoteObject(BusinessObject object) {
-        super(object.getId(), object.getName(), object.getClassName());
+        super(object.getClassName(), object.getId(), object.getName());
         this.attributes = new ArrayList<>();
         
         for (String attribute : object.getAttributes().keySet())

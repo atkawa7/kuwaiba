@@ -65,7 +65,7 @@ public class FormsDashboardWidget extends AbstractDashboardWidget{
         
         lytViewsWidgetCover.addComponent(lblText);
         lytViewsWidgetCover.setSizeFull();
-        lytViewsWidgetCover.setStyleName("dashboard_cover_widget-darkred");
+        lytViewsWidgetCover.setStyleName("dashboard_cover_widget-darkorange");
         this.coverComponent = lytViewsWidgetCover;
         addComponent(coverComponent);
     }

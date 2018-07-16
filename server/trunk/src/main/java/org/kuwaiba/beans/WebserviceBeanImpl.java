@@ -1187,9 +1187,9 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.validateWebServiceCall("getCommonParent", ipAddress, sessionId);
             BusinessObjectLight commonParent = bem.getCommonParent(aObjectClass, aOid, bObjectClass, bOid);
             if (commonParent.getId() != -1) // is not DummyRoot
-                return new RemoteObjectLight(commonParent.getId(), commonParent.getName(), commonParent.getClassName());
+                return new RemoteObjectLight(commonParent.getClassName(), commonParent.getId(), commonParent.getName());
             else
-                return new RemoteObjectLight(-1L, "", "");
+                return new RemoteObjectLight("", -1 , "");
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -1202,7 +1202,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("getParent", ipAddress, sessionId);
             BusinessObjectLight parent = bem.getParent(objectClass, oid);
-            return new RemoteObjectLight(parent.getId(), parent.getName(), parent.getClassName());
+            return new RemoteObjectLight(parent.getClassName(), parent.getId(), parent.getName());
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -2927,9 +2927,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
 
             ResultRecord[] resultArray = new ResultRecord[resultRecordList.size()];
             
-            for (int i=0;resultRecordList.size() >i; i++)
-            {
-                RemoteObjectLight rol = new RemoteObjectLight(resultRecordList.get(i).getId(), resultRecordList.get(i).getName(), resultRecordList.get(i).getClassName());
+            for (int i=0;resultRecordList.size() >i; i++) {
+                RemoteObjectLight rol = new RemoteObjectLight(resultRecordList.get(i).getClassName(), resultRecordList.get(i).getId(), resultRecordList.get(i).getName());
                 resultArray[i] = new ResultRecord(rol, (ArrayList<String>) resultRecordList.get(i).getExtraColumns());
             }
 
@@ -3211,12 +3210,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
     
+    @Override
     public void updateFileProperties(long fileObjectId, List<StringPair> properties, 
             String className, long objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
-            aem.validateWebServiceCall("getFile", ipAddress, sessionId);
+            aem.validateWebServiceCall("updateFileProperties", ipAddress, sessionId);
             bem.updateFileProperties(fileObjectId, properties, className, objectId);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());

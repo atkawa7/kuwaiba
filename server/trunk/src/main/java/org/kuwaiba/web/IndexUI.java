@@ -40,6 +40,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.web.modules.contacts.ContactManagerModule;
 import org.kuwaiba.web.modules.ltmanager.ListTypeManagerModule;
+import org.kuwaiba.web.modules.navtree.NavigationTreeModule;
 import org.kuwaiba.web.modules.servmanager.ServiceManagerModule;
 import org.kuwaiba.web.procmanager.ProcessManagerModule;
 
@@ -75,15 +76,18 @@ public class IndexUI extends UI {
             this.mnuMain = new MenuBar();
             this.mnuMain.setStyleName("misc-main");
             this.mnuMain.setWidth("100%");
-            // Adding Process Manager Module
-            ProcessManagerModule processManagerModule = new ProcessManagerModule(null, wsBean, 
-                (RemoteSession) getSession().getAttribute("session"));
-            processManagerModule.attachToMenu(mnuMain);
-            // Adding Service Manager Module
+            
+            // Navigation Tree Module
+            NavigationTreeModule navTreeModule = new NavigationTreeModule(null, wsBean, 
+                        (RemoteSession) getSession().getAttribute("session"));
+            navTreeModule.attachToMenu(mnuMain);
+            
+            // Service Manager Module
             ServiceManagerModule servManagerModule = new ServiceManagerModule(null, wsBean, 
                         (RemoteSession) getSession().getAttribute("session"));
             servManagerModule.attachToMenu(mnuMain);
-            // Adding List Type Manager Module
+            
+            // List Type Manager Module
             ListTypeManagerModule ltmModule = new ListTypeManagerModule(null, wsBean, 
                         (RemoteSession) getSession().getAttribute("session"));
             ltmModule.attachToMenu(mnuMain);
@@ -91,6 +95,11 @@ public class IndexUI extends UI {
             ContactManagerModule cmModule = new ContactManagerModule(null, wsBean, 
                         (RemoteSession) getSession().getAttribute("session"));
             cmModule.attachToMenu(mnuMain);
+            
+            // Process Manager Module
+            ProcessManagerModule processManagerModule = new ProcessManagerModule(null, wsBean, 
+                (RemoteSession) getSession().getAttribute("session"));
+            processManagerModule.attachToMenu(mnuMain);
 
             this.mnuMain.addItem("Log Out", new MenuBar.Command() {
                 @Override

@@ -15,38 +15,76 @@
  */
 package org.kuwaiba.apis.web.gui.navigation;
 
-import com.vaadin.event.CollapseEvent;
+import com.vaadin.data.TreeData;
+import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.event.ExpandEvent;
-import com.vaadin.ui.TreeGrid;
+import com.vaadin.server.Page;
+import com.vaadin.ui.Tree;
+import java.util.ArrayList;
+import java.util.List;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
+import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * A tree that extends the features of the default one and makes use of the Nodes API
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
-public class DynamicTree extends TreeGrid<RemoteObjectLight> implements ExpandEvent.ExpandListener<AbstractNode>, 
-        CollapseEvent.CollapseListener<AbstractNode>  {
+public class DynamicTree extends Tree<RemoteObjectLight> {
 
-    private RemoteObjectLight rootBusinessObject;
-    
     /**
      *  Default constructor
      * @param root The root of the hierarchy
+     * @param expandListener What to do when expanding a node. See org.kuwaiba.apis.web.gui.navigation.events.* for reference examples
      */
-    public DynamicTree(RemoteObjectLight root) {
-        
-    }
+    public DynamicTree(RemoteObjectLight root, ChildrenProvider p) {
+        TestData treeData = new TestData(p);
+        //TreeData<RemoteObjectLight> treeData = new TreeData<>();
+        treeData.addRootItems(root);
+        setDataProvider(new TestDataProvider(treeData));
+        //setData(treeData);
+        setSizeFull();
+    }   
     
     
+    private class TestDataProvider extends TreeDataProvider<RemoteObjectLight> {
 
-    @Override
-    public void itemExpand(ExpandEvent<AbstractNode> event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        public TestDataProvider(TreeData<RemoteObjectLight> treeData) {
+            super(treeData);
+        }
+     
     }
+    
+    private class TestData extends TreeData<RemoteObjectLight> {
+        private ChildrenProvider p;
+        public TestData(ChildrenProvider p) {
+            super();
+            this.p = p;
+        }
 
-    @Override
-    public void itemCollapse(CollapseEvent<AbstractNode> event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                
+        @Override
+        public List<RemoteObjectLight> getChildren(RemoteObjectLight expandedItem) {
+//            List<AbstractNode> res = new ArrayList<>();
+//                for (RemoteObjectLight child : p.getChildren((RemoteObjectLight)expandedItem.getObject()))
+//                    res.add(new InventoryObjectNode(child));
+//             return res;
+            if (expandedItem == null)
+                return super.getChildren(expandedItem);
+            else {
+                List<RemoteObjectLight> children = p.getChildren((RemoteObjectLight)expandedItem);
+                for (RemoteObjectLight child : children) {
+                    if (!contains(child))
+                        addItem(expandedItem, child);
+                }
+                
+                return children;
+            }
+        }
+    }
+    
+    public interface ChildrenProvider {
+        public List<RemoteObjectLight> getChildren(RemoteObjectLight c);
     }
    
     

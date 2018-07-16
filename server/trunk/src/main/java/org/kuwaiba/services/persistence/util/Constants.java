@@ -502,5 +502,8 @@ public class Constants {
      * Name of the validator to indicate if a given class is the endpoint to a connection
      */
     public static final String VALIDATOR_PHYSICAL_NODE = "physicalNode";
-    
+    /**
+     * The dummy root of the navigation tree
+     */
+    public static final String DUMMY_ROOT = "DummyRoot";
 }
