@@ -58,7 +58,6 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
         this.setMargin(true);
     }
 
-
     public int getColSpan() {
         return colSpan;
     }

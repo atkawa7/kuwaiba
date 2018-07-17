@@ -15,7 +15,7 @@
  */
 package org.kuwaiba.web.modules.osp.google.overlays;
 
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
+//import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
@@ -26,33 +26,33 @@ import org.kuwaiba.web.modules.osp.google.actions.ActionsFactory;
  * Custom GoogleMapMarker for Kuwaiba
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class MarkerNode extends GoogleMapMarker {
-    List<AbstractAction> actions;
-    
-    private final RemoteObjectLight remoteObjectLight;
-    
-    public MarkerNode(RemoteObjectLight remoteObjectLight) {
-        this.remoteObjectLight = remoteObjectLight;
-        setDraggable(true);
-    }
-    
-    public RemoteObjectLight getRemoteObjectLight() {
-        return remoteObjectLight;
-    }
-    
-    public List<AbstractAction> getActions() {
-        if (actions == null) {
-            actions = new ArrayList();
-            actions.add(ActionsFactory.createNewObjectAction());
-            actions.add(ActionsFactory.createDeleteMarkerNodeAction());
-            actions.add(ActionsFactory.createShowObjectIdAction());
-            actions.add(ActionsFactory.getViewAction());
-        }
-        return actions;
-    }
-        
-    @Override
-    public String toString() {
-        return remoteObjectLight.toString();
-    }
+public class MarkerNode {//extends GoogleMapMarker {
+//    List<AbstractAction> actions;
+//    
+//    private final RemoteObjectLight remoteObjectLight;
+//    
+//    public MarkerNode(RemoteObjectLight remoteObjectLight) {
+//        this.remoteObjectLight = remoteObjectLight;
+//        setDraggable(true);
+//}
+//    
+//    public RemoteObjectLight getRemoteObjectLight() {
+//        return remoteObjectLight;
+//    }
+//    
+//    public List<AbstractAction> getActions() {
+//        if (actions == null) {
+//            actions = new ArrayList();
+//            actions.add(ActionsFactory.createNewObjectAction());
+//            actions.add(ActionsFactory.createDeleteMarkerNodeAction());
+//            actions.add(ActionsFactory.createShowObjectIdAction());
+//            actions.add(ActionsFactory.getViewAction());
+//        }
+//        return actions;
+//    }
+//        
+//    @Override
+//    public String toString() {
+//        return remoteObjectLight.toString();
+//    }
 }

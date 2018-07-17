@@ -16,8 +16,8 @@
 package org.kuwaiba.web.modules.osp.google.actions;
 
 import com.vaadin.server.ThemeResource;
-import com.vaadin.tapio.googlemaps.GoogleMapsComponent;
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
+//import com.vaadin.tapio.googlemaps.GoogleMapsComponent;
+//import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.web.modules.osp.google.OSPTopComponent;
 
@@ -25,15 +25,15 @@ import org.kuwaiba.web.modules.osp.google.OSPTopComponent;
  * Action to delete a polygon overlay
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class DeletePolygonAction extends AbstractAction {
+public class DeletePolygonAction {//extends AbstractAction {
     
-    public DeletePolygonAction() {
-        super("Delete Polygon", new ThemeResource("img/warning.gif"));
-    }
-    
-    @Override
-    public void actionPerformed(Object sourceComponent, Object targetObject) {
-        ((GoogleMapsComponent) sourceComponent).removePolygonOverlay((GoogleMapPolygon) targetObject);
-        ((OSPTopComponent) sourceComponent).setUpdateView(true);
-    }
+//    public DeletePolygonAction() {
+//        super("Delete Polygon", new ThemeResource("img/warning.gif"));
+//    }
+//    
+//    @Override
+//    public void actionPerformed(Object sourceComponent, Object targetObject) {
+//        ((GoogleMapsComponent) sourceComponent).removePolygonOverlay((GoogleMapPolygon) targetObject);
+//        ((OSPTopComponent) sourceComponent).setUpdateView(true);
+//    }
 }

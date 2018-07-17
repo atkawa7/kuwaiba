@@ -25,28 +25,28 @@ import org.kuwaiba.web.modules.osp.google.overlays.MarkerNode;
  * Create a inventory object child for marker node
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class NewObjectAction extends CreateInventoryObjectChildAction {
+public class NewObjectAction {//extends CreateInventoryObjectChildAction {
 
-    public NewObjectAction() {
-        super("New Object");
-    }
-    
-    @Override
-    public void finalActionPerformed(Object sourceComponent, Object targetObject, Object selectedOption) {
-        super.finalActionPerformed(sourceComponent, targetObject, selectedOption);
-        Notification.show("Object created successfully",  Notification.Type.TRAY_NOTIFICATION);
-    }
-    
-    @Override
-    public void actionPerformed(Object sourceComponent, Object targetObject) {
-        if (!(sourceComponent instanceof AbstractTopComponent))
-            return;
-        
-        if (!(targetObject instanceof MarkerNode))
-            return;
-        
-        RemoteObjectLight object = ((MarkerNode)targetObject).getRemoteObjectLight();
-        
-        super.actionPerformed(sourceComponent, object);
-    }
+//    public NewObjectAction() {
+//        super("New Object");
+//    }
+//    
+//    @Override
+//    public void finalActionPerformed(Object sourceComponent, Object targetObject, Object selectedOption) {
+//        super.finalActionPerformed(sourceComponent, targetObject, selectedOption);
+//        Notification.show("Object created successfully",  Notification.Type.TRAY_NOTIFICATION);
+//    }
+//    
+//    @Override
+//    public void actionPerformed(Object sourceComponent, Object targetObject) {
+//        if (!(sourceComponent instanceof AbstractTopComponent))
+//            return;
+//        
+//        if (!(targetObject instanceof MarkerNode))
+//            return;
+//        
+//        RemoteObjectLight object = ((MarkerNode)targetObject).getRemoteObjectLight();
+//        
+//        super.actionPerformed(sourceComponent, object);
+//    }
 }

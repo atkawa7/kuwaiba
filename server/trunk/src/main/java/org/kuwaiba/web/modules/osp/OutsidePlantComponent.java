@@ -26,49 +26,49 @@ import org.kuwaiba.beans.WebserviceBean;
  * The main component of the OSP module.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class OutsidePlantComponent extends AbstractTopComponent {
-    private MapComponentWrapper googleMapWrapper;
-    private OutsidePlantTooledComponent tooledComponent;
-            
-    public OutsidePlantComponent(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        
-//        super();
+public class OutsidePlantComponent {//extends AbstractTopComponent {
+//    private MapComponentWrapper googleMapWrapper;
+//    private OutsidePlantTooledComponent tooledComponent;
+//            
+//    public OutsidePlantComponent(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
 //        
-//        googleMapWrapper = new MapComponentWrapper(this);
-//        googleMapWrapper.setSizeFull();
-//        
-//        tooledComponent = new OutsidePlantTooledComponent(this);
-//        
+////        super();
+////        
+////        googleMapWrapper = new MapComponentWrapper(this);
+////        googleMapWrapper.setSizeFull();
+////        
+////        tooledComponent = new OutsidePlantTooledComponent(this);
+////        
+////        enableTools(false);
+//    }
+//    
+//    public MapComponentWrapper getGoogleMapWrapper() {
+//        return googleMapWrapper;
+//    }
+//    
+//    public void addMainComponentToTooledComponent() {
+//        if (tooledComponent.getMainComponent() == null)
+//            tooledComponent.setMainComponent(googleMapWrapper);
+//    }
+//            
+//    public void removeMainComponentToTooledComponent() {
 //        enableTools(false);
-    }
-    
-    public MapComponentWrapper getGoogleMapWrapper() {
-        return googleMapWrapper;
-    }
-    
-    public void addMainComponentToTooledComponent() {
-        if (tooledComponent.getMainComponent() == null)
-            tooledComponent.setMainComponent(googleMapWrapper);
-    }
-            
-    public void removeMainComponentToTooledComponent() {
-        enableTools(false);
-        tooledComponent.setMainComponent(null);
-    }
-    
-    public void enableTools(boolean enable) {
-        tooledComponent.enableTools(enable);
-    }
-            
-    @Override
-    public void registerComponents() {
-//        googleMapWrapper.register();
-//        tooledComponent.register();
-    }
-    
-    @Override
-    public void unregisterComponents() {
-//        googleMapWrapper.unregister();
-//        tooledComponent.unregister();
-    }
+//        tooledComponent.setMainComponent(null);
+//    }
+//    
+//    public void enableTools(boolean enable) {
+//        tooledComponent.enableTools(enable);
+//    }
+//            
+//    @Override
+//    public void registerComponents() {
+////        googleMapWrapper.register();
+////        tooledComponent.register();
+//    }
+//    
+//    @Override
+//    public void unregisterComponents() {
+////        googleMapWrapper.unregister();
+////        tooledComponent.unregister();
+//    }
 }

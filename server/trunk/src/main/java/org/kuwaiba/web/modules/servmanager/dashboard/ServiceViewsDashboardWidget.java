@@ -15,16 +15,23 @@
  */
 package org.kuwaiba.web.modules.servmanager.dashboard;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.shared.MouseEventDetails;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.modules.servmanager.views.EndToEndView;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.web.modules.servmanager.views.ServManagerFormCreator;
+import org.openide.util.Exceptions;
 
 /**
  * A simple dashboard widget that shows the available views for a particular service
@@ -68,7 +75,47 @@ public class ServiceViewsDashboardWidget extends AbstractDashboardWidget {
 
     @Override
     public void createContent() {
-        this.contentComponent = new EndToEndView(service, wsBean, Page.getCurrent().getWebBrowser().getAddress(), 
-                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        VerticalLayout contetLayout = new VerticalLayout();
+        try {
+             String status = wsBean.getAttributeValueAsString(service.getClassName(), service.getId(), "Status", 
+                    Page.getCurrent().getWebBrowser().getAddress(),
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            
+            String bandwidth = wsBean.getAttributeValueAsString(service.getClassName(), service.getId(), "Bandwidth", 
+                    Page.getCurrent().getWebBrowser().getAddress(),
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            
+            Label lblTitle = new Label(service.getName());
+            lblTitle.addStyleNames("header", "title");
+        
+            Label info = new Label(String.format("Status: %s - Bandwidth: %s" , status != null ? status : " ", bandwidth != null ? bandwidth : " "));
+            
+            contetLayout.addComponent(new HorizontalLayout(lblTitle, info));
+        
+            Button btnFormTable = new Button("Show Form", VaadinIcons.GRID_H);
+            contetLayout.addComponent(btnFormTable);
+
+            btnFormTable.addClickListener(click ->{
+                Window formWindow = new Window(" ");
+                formWindow.addStyleName("v-window-center");
+                 try {
+                    ServManagerFormCreator servManagerFormCreator = new ServManagerFormCreator(service, wsBean, Page.getCurrent().getWebBrowser().getAddress(),
+                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                    formWindow.setContent(servManagerFormCreator.createForm());
+                    formWindow.center();
+                    getUI().addWindow(formWindow);
+                    
+                 } catch (ServerSideException ex) {
+                     Exceptions.printStackTrace(ex);
+                 }
+            });
+
+            contetLayout.addComponent(new EndToEndView(service, wsBean, Page.getCurrent().getWebBrowser().getAddress(), 
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()));
+            
+            this.contentComponent = contetLayout;
+        } catch (ServerSideException ex) {
+            Exceptions.printStackTrace(ex);
+        }
     }
 }

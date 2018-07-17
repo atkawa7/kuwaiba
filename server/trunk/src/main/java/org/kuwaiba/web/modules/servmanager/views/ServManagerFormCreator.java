@@ -1,7 +1,17 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *
+ *  Licensed under the EPL License, Version 1.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.eclipse.org/legal/epl-v10.html
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  */
 package org.kuwaiba.web.modules.servmanager.views;
 
@@ -14,8 +24,8 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 import java.util.List;
-import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -27,12 +37,11 @@ import org.kuwaiba.services.persistence.util.Constants;
 import org.openide.util.Exceptions;
 
 /**
- * This component implements the End to End view forms for SDH/MPLS services
+ * Has methods to create form tables for end to end view
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
-public class FormView extends AbstractDashboardWidget{
-
-    /**
+public class ServManagerFormCreator{
+   /**
      * For ADM side A
      */
     private static final int SIDE_A = 1;
@@ -80,15 +89,26 @@ public class FormView extends AbstractDashboardWidget{
     /**
      * Web service bean reference
      */
-    private WebserviceBean wsBean;
+    private final WebserviceBean wsBean;
     /**
      * Service reference
      */
-    private RemoteObjectLight service;
-
+    private final RemoteObjectLight service;
+    private List<RemoteObjectLight> serviceResources;
+    /**
+     * use it to check if we are trying to draw a service with MPLS resources
+     */
+    private boolean hasMPLSLinks;
+    /**
+     * IP address reference
+     */
+    private final String ipAddress;
+    /**
+     * Session id referecne
+     */
+    private final String sessionId;
     
-    public FormView(RemoteObjectLight service, WebserviceBean wsBean, String ipAddress, String sessionId) throws ServerSideException {
-        super(service.getName());
+    public ServManagerFormCreator(RemoteObjectLight service, WebserviceBean wsBean, String ipAddress, String sessionId) throws ServerSideException {
         this.wsBean = wsBean;
         this.service = service;
         divA = null;
@@ -97,12 +117,27 @@ public class FormView extends AbstractDashboardWidget{
         divD = null;
         divE = null;
         divF = null;
-        
+        hasMPLSLinks = false;
+        this.ipAddress = ipAddress;
+        this.sessionId = sessionId;
+    }
+    
+    /**
+     * Collects all the data need it to create the form tables
+     * @return the final layout
+     */
+    public Component createForm(){
         try {
-            List<RemoteObjectLight> serviceResources = wsBean.getServiceResources(service.getClassName(), service.getId(), ipAddress, sessionId);
+            serviceResources = wsBean.getServiceResources(service.getClassName(), service.getId(), ipAddress, sessionId);
             if (serviceResources.isEmpty())
-                addComponent(new Label(String.format("%s does not have any resources associated to it", service)));
+                return new VerticalLayout(new Label(String.format("%s does not have any resources associated to it", service)));
             else {
+                for (RemoteObjectLight serviceResource : serviceResources) {
+                    if (serviceResource.getClassName().equals("MPLSLink")){
+                        hasMPLSLinks = true;
+                        break;
+                    }
+                }
                 for (RemoteObjectLight serviceResource : serviceResources) {
                     if (wsBean.isSubclassOf(serviceResource.getClassName(), "GenericLogicalConnection", ipAddress, sessionId)) {
                         RemoteLogicalConnectionDetails logicalCircuitDetails = wsBean.getLogicalLinkDetails(
@@ -112,10 +147,10 @@ public class FormView extends AbstractDashboardWidget{
                         RemoteObjectLight sdhDelivers = wsBean.getSpecialAttribute(
                                 logicalCircuitDetails.getConnectionObject().getClassName(), 
                                 logicalCircuitDetails.getConnectionObject().getId(), "sdhDelivers", ipAddress, sessionId).get(0);
-                        
+
                         RemoteObjectLight sdhTransportLink = wsBean.getSpecialAttribute(sdhDelivers.getClassName(), 
                                 sdhDelivers.getId(), "sdhTransports", ipAddress, sessionId).get(0);
-                        
+
                         RemoteObject provider = wsBean.getObject(sdhTransportLink.getClassName(), sdhTransportLink.getId(), ipAddress, sessionId);
                         String hop2NameId = provider.getAttribute("Hop2_name"); //type ProviderType
                         if(hop2NameId != null){
@@ -126,11 +161,11 @@ public class FormView extends AbstractDashboardWidget{
                                 divC = createProviderTable(provider, legalOwner);
                             }
                         }
-                        
+
                         String hop1NameId = provider.getAttribute("Hop1_name"); //listType ProviderType
                         if(hop1NameId != null)
                             divD = createProviderTableS(provider);
-                                                
+
                         //Let's create the nodes corresponding to the endpoint A of the logical circuit
                         List<RemoteObjectLight> parentsUntilFirstComEquipmentA; 
                         if(wsBean.isSubclassOf(logicalCircuitDetails.getEndpointA().getClassName(), Constants.CLASS_GENERICLOGICALPORT, ipAddress, sessionId)){
@@ -152,8 +187,8 @@ public class FormView extends AbstractDashboardWidget{
                         else if (wsBean.isSubclassOf(aSideEquipmentLogical.getClassName(), "Cloud", ipAddress, sessionId))
                            divB =  createPeering(aSideEquipmentLogical);
                         else if (wsBean.isSubclassOf(aSideEquipmentLogical.getClassName(), "GenericNetworkElement", ipAddress, sessionId))
-                           divB = creatRouter(aSideEquipmentLogical, logicalCircuitDetails.getEndpointA());
-                        
+                           divB = createRouter(aSideEquipmentLogical, logicalCircuitDetails.getEndpointA());
+
                         //Now the other side
                         List<RemoteObjectLight> parentsUntilFirstComEquipmentB;
                         if(wsBean.isSubclassOf(logicalCircuitDetails.getEndpointB().getClassName(), Constants.CLASS_GENERICLOGICALPORT, ipAddress, sessionId)){
@@ -175,20 +210,20 @@ public class FormView extends AbstractDashboardWidget{
                         else if (wsBean.isSubclassOf(bSideEquipmentLogical.getClassName(), "Cloud", ipAddress, sessionId))
                             divE = createPeering(bSideEquipmentLogical);
                         else if (wsBean.isSubclassOf(bSideEquipmentLogical.getClassName(), "GenericNetworkElement", ipAddress, sessionId))
-                            divE = creatRouter(bSideEquipmentLogical, logicalCircuitDetails.getEndpointB());
+                            divE = createRouter(bSideEquipmentLogical, logicalCircuitDetails.getEndpointB());
                         //We start with the A side
                         if (!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()) {
                             int i = 2;
                             if (wsBean.isSubclassOf(logicalCircuitDetails.getPhysicalPathForEndpointA().get(0).getClassName(), 
                                     Constants.CLASS_GENERICLOGICALPORT, ipAddress, sessionId))
                                 i = 3;
-                            
+
                             for(int index = i; index < logicalCircuitDetails.getPhysicalPathForEndpointA().size(); index += 3){
                                 RemoteObjectLight nextPhysicalHop = logicalCircuitDetails.getPhysicalPathForEndpointA().get(index);
                                 //If the physical equipment is not a subclass of GenericCommunicationsElement, nothing will be shown.
                                 RemoteObjectLight aSidePhysicalEquipment = wsBean.getFirstParentOfClass(nextPhysicalHop.getClassName(), 
                                         nextPhysicalHop.getId(), "ConfigurationItem", ipAddress, sessionId);
-                                
+
                                 if(aSidePhysicalEquipment != null && aSidePhysicalEquipment.getClassName().equals("ODF")){
                                     Component odfTable = createODF(aSidePhysicalEquipment, nextPhysicalHop);
                                     if(divB != null){
@@ -201,9 +236,9 @@ public class FormView extends AbstractDashboardWidget{
                                 else if(aSidePhysicalEquipment != null && !aSidePhysicalEquipment.getClassName().equals("ODF")){
                                     aSidePhysicalEquipment = wsBean.getFirstParentOfClass(nextPhysicalHop.getClassName(), 
                                             nextPhysicalHop.getId(), "GenericCommunicationsElement", ipAddress, sessionId);
-                                    divA = creatRouter(aSidePhysicalEquipment, nextPhysicalHop);
+                                    divA = createRouter(aSidePhysicalEquipment, nextPhysicalHop);
                                 }
-                                
+
                                 if(aSidePhysicalEquipment == null)
                                     Notifications.showError("No communications equipment was found for this endpoint");
                             }
@@ -225,11 +260,11 @@ public class FormView extends AbstractDashboardWidget{
                                        divE = odfTable;
                                    }
                                 }
-                                
+
                                 else if(bSideEquipmentPhysical != null && !bSideEquipmentPhysical.getClassName().equals("ODF")){
                                     bSideEquipmentPhysical = wsBean.getFirstParentOfClass(nextPhysicalHop.getClassName(), nextPhysicalHop.getId(), 
                                             "GenericCommunicationsElement", ipAddress, sessionId);
-                                    divF = creatRouter(bSideEquipmentPhysical, nextPhysicalHop);
+                                    divF = createRouter(bSideEquipmentPhysical, nextPhysicalHop);
                                 }
                                 //If the equipemt physical is not a subclass of GenericCommunicationsElement, nothing will be shown.
                                 if(bSideEquipmentPhysical == null)
@@ -242,18 +277,63 @@ public class FormView extends AbstractDashboardWidget{
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
         }
-        createContent();
-    }
-    
-    /**
-     * Creates the foot
-     */
-    private void createFoot(){
-       HorizontalLayout lytFoot = new HorizontalLayout(new Label("This report is powered by <a href=\"http://www.kuwaiba.org\">Kuwaiba Open Network Inventory</a>", ContentMode.HTML));
-       lytFoot.addStyleName("foot");
-       addComponent(lytFoot);
+        return createContent();
     }
    
+    /**
+     * Check the content of every need it table an creates the content
+     * @return a layout with a header, the form tables and a footer
+     */
+    private Component createContent() {
+        VerticalLayout content = new VerticalLayout();
+        try {        
+            //We create the fom title and the state
+            Label lblTitle = new Label(service.getName());
+            lblTitle.setId("title");
+            RemoteObject obj = wsBean.getObject(service.getClassName(), service.getId(),
+                    Page.getCurrent().getWebBrowser().getAddress(),
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            //We get the service attributes
+            String status = wsBean.getAttributeValueAsString(service.getClassName(), service.getId(), "Status",
+                    Page.getCurrent().getWebBrowser().getAddress(),
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); 
+            
+            String bandwidth = obj.getAttribute("Bandwidth"); 
+            Label lblServStatus = new Label(String.format("Status: %s - Bandwidth: %s" , status != null ? status : " ", bandwidth != null ? bandwidth : " "));
+            lblServStatus.setId("properties");
+            //we set the form header
+            VerticalLayout lytHeader = new VerticalLayout(lblTitle, lblServStatus);
+            lytHeader.setId("header");
+            content.addComponent(lytHeader);
+            HorizontalLayout lytContent = new HorizontalLayout();
+            //We add the tables
+            lytContent.setSpacing(true);
+            lytContent.setId("content");
+            if(divA != null)
+                lytContent.addComponent(divA);
+            if(divB != null)
+                lytContent.addComponent(divB);
+            if(divC != null)
+                lytContent.addComponent(divC);
+            if(divD != null)
+                lytContent.addComponent(divD);
+            if(divE != null)
+                lytContent.addComponent(divE);
+            if(divF != null)
+                lytContent.addComponent(divF);
+            content.addComponent(lytContent);
+            content.setId("container");
+            //We create the foot
+            HorizontalLayout lytFoot = new HorizontalLayout(new Label("This report is powered by <a href=\"http://www.kuwaiba.org\">Kuwaiba Open Network Inventory</a>", ContentMode.HTML));
+            lytFoot.addStyleName("foot");
+            content.addComponent(lytFoot);
+            
+        } catch (ServerSideException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return content;
+    }
+    
     /**
      * Creates the title for the table
      * @param text title text
@@ -303,41 +383,41 @@ public class FormView extends AbstractDashboardWidget{
     }
     
     /**
-     * Creates the icons for the tables
+     * Retrieves the path to the need it icon for the table creation
      * @param icon which icon should be load
-     * @return Image with the icon
+     * @return a string with the path to the img
      */
     private Component createIcon(int icon){
-        String path = "";
+        String path;
         switch(icon) {
             case ROUTER: //Router
-            path = "https://149.6.144.166:8181/reports/imgs/router.png"; break;
+            path = "/icons/router.png"; break;
             case ADM: //ADM
-            path = "https://149.6.144.166:8181/reports/imgs/adm.png"; break;
+            path = "/icons/adm.png"; break;
             case ODF: //ODF
-            path = "https://149.6.144.166:8181/reports/imgs/odf.png"; break;
+            path = "/icons/odf.png"; break;
             case PEERING: //cloud
-            path = "https://149.6.144.166:8181/reports/imgs/cloud.png"; break;
+            path = "/icons/cloud.png"; break;
             case EXTERNAL_EQUIPMENT: //External equipment
-            path = "https://149.6.144.166:8181/reports/imgs/external_equipment.png"; break;
+            path = "/icons/externalequipment.png"; break;
             case WACS: //WACS
-            path = "https://149.6.144.166:8181/reports/imgs/logo_wacs.png"; break;
+            path = "/icons/logo_wacs.png"; break;
             case ORANGE: //Orange
-            path = "https://149.6.144.166:8181/reports/imgs/logo_orange.png"; break;
+            path = "/icons/logo_orange.png"; break;
             case PTC: //PTC
-            path = "https://149.6.144.166:8181/reports/imgs/logo_ptc.png"; break;
+            path = "/icons/logo_ptc.png"; break;
             case ACE: //ACE
-            path = "https://149.6.144.166:8181/reports/imgs/logo_ace.png"; break;
+            path = "/icons/logo_ace.png"; break;
             case TATA: //TATA
-            path = "https://149.6.144.166:8181/reports/imgs/logo_tata.png"; break;
+            path = "/icons/logo_tata.png"; break;
             case SAT: //3SAT
-            path = "https://149.6.144.166:8181/reports/imgs/logo_3sat.png"; break;
+            path = "/icons/logo_3sat.png"; break;
             case PCCW: //PCCW
-            path = "https://149.6.144.166:8181/reports/imgs/logo_pccw.png"; break;
+            path = "/icons/logo_pccw.png"; break;
             case INTER: //INTERROUTE
-            path = "https://149.6.144.166:8181/reports/imgs/logo_interoute.png"; break;
+            path = "/icons/logo_interoute.png"; break;
             default:
-            path = "https://149.6.144.166:8181/report/imgs/no.png"; break;
+            path = "/icons/no.png"; break;
         }
         Image image = new Image("", new ExternalResource(path));
         image.setWidth("100px");
@@ -349,9 +429,12 @@ public class FormView extends AbstractDashboardWidget{
     
     /**
      * Creates a table for a Router
+     * @param objLight the given object
+     * @param port the port where the link ends
      * @return a grid layout with the router's information
+     * @throws oServerSideException if some attributes need it ot create the table couldn't be retrieved
      */
-    private Component creatRouter(RemoteObjectLight objLight, RemoteObjectLight port) throws ServerSideException{
+    public Component createRouter(RemoteObjectLight objLight, RemoteObjectLight port) throws ServerSideException{
         
         RemoteObject obj = wsBean.getObject(objLight.getClassName(), objLight.getId(),
                 Page.getCurrent().getWebBrowser().getAddress(),
@@ -404,9 +487,11 @@ public class FormView extends AbstractDashboardWidget{
     
     /**
      * Creates a table for a Peering
+     * @param objLight the given object
      * @return a grid layout with the peering's information
+     * @throws ServerSideException if some attributes need it ot create the table couldn't be retrieved
      */
-    private Component createPeering(RemoteObjectLight objLight) throws ServerSideException{
+    public Component createPeering(RemoteObjectLight objLight) throws ServerSideException{
 
         RemoteObject obj = wsBean.getObject(objLight.getClassName(), objLight.getId(),
                 Page.getCurrent().getWebBrowser().getAddress(),
@@ -435,14 +520,18 @@ public class FormView extends AbstractDashboardWidget{
     
     /**
      * Creates a table for an ADM
+     * @param objLight the given object
+     * @param port the port where the link ends
+     * @param physicalPath the path to check the port where the logical connection ends
+     * @param side which side is been drawing, this is important for the cards order
      * @return a grid layout with the ADM's information
+     * @throws ServerSideException if one attribute need it to create the table coulnd't be retrieved 
      */
-    private Component createADM(RemoteObjectLight objLight, RemoteObjectLight port, List<RemoteObjectLight> physicalPath, int side) throws ServerSideException{
+    public Component createADM(RemoteObjectLight objLight, 
+            RemoteObjectLight port, List<RemoteObjectLight> physicalPath, int side) throws ServerSideException{
         RemoteObject obj = wsBean.getObject(objLight.getClassName(), objLight.getId(),
                 Page.getCurrent().getWebBrowser().getAddress(),
                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-        
-        
         
         String rackUnits = obj.getAttribute("rackUnits");
         String rackPosition = obj.getAttribute("rackPosition");
@@ -531,9 +620,12 @@ public class FormView extends AbstractDashboardWidget{
     
     /**
      * Creates a table for a ODF
+     * @param objLight the given object
+     * @param port the port where the links ends
      * @return a grid layout with the ODF's information
+     * @throws ServerSideException if one of the attributes need it to create the table couldn't be retrieved
      */
-    private Component createODF(RemoteObjectLight objLight, RemoteObjectLight port) throws ServerSideException{
+    public Component createODF(RemoteObjectLight objLight, RemoteObjectLight port) throws ServerSideException{
         
         RemoteObject odf = wsBean.getObject(objLight.getClassName(), objLight.getId(),
                 Page.getCurrent().getWebBrowser().getAddress(),
@@ -563,9 +655,11 @@ public class FormView extends AbstractDashboardWidget{
     
     /**
      * Creates a table for a provider
+     * @param provider the given object
+     * @param legalOwner
      * @return a grid layout with the provider's information
      */
-    private Component createProviderTable(RemoteObject provider, RemoteObject legalOwner){
+    public Component createProviderTable(RemoteObject provider, RemoteObject legalOwner){
         
         GridLayout grdProvider = new GridLayout(2, 4);
         grdProvider.addComponent(createTitle(provider.getName(), PROVIDER), 0, 0, 1, 0);
@@ -581,7 +675,12 @@ public class FormView extends AbstractDashboardWidget{
         return grdProvider;
     }
     
-    private int selectLogo(String providerName){
+    /**
+     * Returns the logo id with the name of the provider
+     * @param providerName the provider name
+     * @return a in that represents the providers logo id
+     */
+    public int selectLogo(String providerName){
         if(providerName.toLowerCase().contains("wacs"))
             return WACS;
         else if(providerName.toLowerCase().contains("ace"))
@@ -604,26 +703,26 @@ public class FormView extends AbstractDashboardWidget{
     
     /**
      * Creates a table for a providers (submarine cable)
+     * @param provider the given object
      * @return a grid layout with the router's information
+     * @throws ServerSideException if some attributes need it to create the table could get retrieved
      */
-    private Component createProviderTableS(RemoteObject provider) throws ServerSideException{
-        String segmentId, segment = "", endNode = "", euNode = "";
+    public Component createProviderTableS(RemoteObject provider) throws ServerSideException{
+        String segmentId, segment = "";
         //EuropeanNode or euNode
-        String europeanNodeId = provider.getAttribute("EuropeanNode"); //listType ProviderType
-        if(europeanNodeId != null)
-            euNode = wsBean.getObject("NodeType", Long.valueOf(europeanNodeId),
+        String euNode = wsBean.getAttributeValueAsString(provider.getClassName(), provider.getId(), "EuropeanNode",
                     Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).getName();//Listtype NodeType
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());//Listtype NodeType
                 
         //EndNode
-        String landingPointId = provider.getAttribute("LandingPoint");
-        if(landingPointId != null)
-            endNode = wsBean.getObject("NodeType", Long.valueOf(landingPointId), Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).getName();//Listtype NodeType
-
-        String carfNumber = provider.getAttribute("HopCarf"); //listType ProviderType
-        String hop1Name = wsBean.getObject("ProviderType", Long.valueOf(provider.getAttribute("Hop1_name")), Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).getName();
+        String endNode = wsBean.getAttributeValueAsString(provider.getClassName(), provider.getId(), "LandingPoint", 
+                Page.getCurrent().getWebBrowser().getAddress(), 
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());//Listtype NodeType
+        
+        String hop1Name = wsBean.getAttributeValueAsString(provider.getClassName(), provider.getId(), "Hop1_name", 
+                Page.getCurrent().getWebBrowser().getAddress(), 
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        
         if(selectLogo(hop1Name) == ACE){
             segmentId = provider.getAttribute("ACE_segment");
             if(segmentId != null)
@@ -635,13 +734,14 @@ public class FormView extends AbstractDashboardWidget{
                 segment = wsBean.getObject("WacsegmentType", Long.valueOf(segmentId), Page.getCurrent().getWebBrowser().getAddress(), 
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).getName();
         }
+        
+        String carfNumber = provider.getAttribute("HopCarf"); //listType ProviderType
         String moreAttributes = provider.getAttribute("More_Information");
         String hop1Id = provider.getAttribute("Hop1_id");
-        String hop1LegalOwnerId = provider.getAttribute("Hop1LegalOwner");
-        String hop1LegalOwner = "";
-        if(hop1LegalOwnerId != null)
-            hop1LegalOwner = wsBean.getObject("Companies", Long.valueOf(hop1LegalOwnerId), Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).getName();
+        
+        String hop1LegalOwner = wsBean.getAttributeValueAsString(provider.getClassName(), provider.getId(), "Hop1LegalOwner", 
+                Page.getCurrent().getWebBrowser().getAddress(), 
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                             
         GridLayout grdProviderSubmarineCable = new GridLayout(2, 9);
         grdProviderSubmarineCable.addComponent(createTitle(hop1Name, PROVIDER), 0, 0, 1, 0);
@@ -667,26 +767,33 @@ public class FormView extends AbstractDashboardWidget{
     }
     
     /**
-     * Creates a table for a VC
+     * Creates a table for a VC (MPLSLinks)
+     * @param objLight the given object in this case a MPLSLink
      * @return a grid layout with the vc's information
+     * @throws org.kuwaiba.exceptions.ServerSideException cpuld not find the attribute
      */
-    private Component cretateVC(RemoteObjectLight objLight){
+    public Component createVC(RemoteObjectLight objLight) throws ServerSideException{
         GridLayout grdVC = new GridLayout(2, 3);
         grdVC.addComponent(createTitle("VC-ALGO", VC), 0, 0, 1, 0);
         
+        String ipSource = wsBean.getAttributeValueAsString(objLight.getClassName(), objLight.getId(), "ipSource", ipAddress, sessionId);
         grdVC.addComponent(createCell("PW: xxxx"), 0, 1);
-        grdVC.addComponent(createCell("IP: xxxx"), 0, 2);
+        grdVC.addComponent(createCell("IP: " + ipSource), 0, 2);
 
+        
+        String ipDestiny = wsBean.getAttributeValueAsString(objLight.getClassName(), objLight.getId(), "ipDestiny", ipAddress, sessionId);
+                
         grdVC.addComponent(createCell("PW: xxxx"), 1, 1);
-        grdVC.addComponent(createCell("IP: xxxx"), 1, 2);
+        grdVC.addComponent(createCell("IP: " + ipDestiny), 1, 2);
         return grdVC;
     }
     
     /**
      * Creates a table for a Switch
+     * @param objLight the given object
      * @return a grid layout with the switch's information
      */
-    private Component createSwitch(RemoteObjectLight objLight){
+    public Component createSwitch(RemoteObjectLight objLight){
         GridLayout grdSwitch = new GridLayout(2, 12);
         grdSwitch.addComponent(createTitle("SWITCH", SWITCH), 0, 0, 1, 0);
         grdSwitch.addComponent(createCell("CARD"), 0, 1);
@@ -719,71 +826,22 @@ public class FormView extends AbstractDashboardWidget{
 
     /**
      * Creates a table for an external equipment
+     * @param objLight the given object
      * @return a grid layout with the external equipment's information
+     * @throws ServerSideException if an attribute need it to create the table could get retrieved 
      */
-    private Component createExternalEquipment(RemoteObjectLight objLight) throws ServerSideException{
-        
-        RemoteObject obj = wsBean.getObject(objLight.getClassName(), objLight.getId(),
-                Page.getCurrent().getWebBrowser().getAddress(),
-                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+    public Component createExternalEquipment(RemoteObjectLight objLight) throws ServerSideException{
         
         GridLayout grdExternalEquipment = new GridLayout(2, 4);
         grdExternalEquipment.addComponent(createTitle(objLight.getName(), EXTERNAL_EQUIPMENT), 0, 0, 1, 0);
         grdExternalEquipment.addComponent(createCell("DEVICE LOCATION"), 0, 1);
         grdExternalEquipment.addComponent(createCell("DEVICE OWNER"), 0, 2);
         grdExternalEquipment.addComponent(createCell(getCityLocation(objLight)), 1, 1);
-        grdExternalEquipment.addComponent(createCell(getOwner(obj)), 1, 2);
+        grdExternalEquipment.addComponent(createCell(getOwner(objLight)), 1, 2);
         grdExternalEquipment.addComponent(createIcon(EXTERNAL_EQUIPMENT), 0, 3, 1, 3);
 
         return grdExternalEquipment;
     }
-    
-    @Override
-    public void createCover() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void createContent() {
-        try {        
-            //We create the fom title and the state
-            Label lblTitle = new Label(service.getName());
-            lblTitle.setId("title");
-            RemoteObject obj = wsBean.getObject(service.getClassName(), service.getId(),
-                    Page.getCurrent().getWebBrowser().getAddress(),
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-            //We get the service attributes
-            String status = obj.getAttribute("Status"); 
-            String bandwidth = obj.getAttribute("Bandwidth"); 
-            //we set the form header
-            HorizontalLayout lytHeader = new HorizontalLayout(lblTitle, 
-                    new Label(String.format("Status: %s - Bandwidth: %s" , status != null ? status : " ", bandwidth != null ? bandwidth : " ")));
-            lytHeader.setId("header");
-            addComponent(lytHeader);
-            HorizontalLayout lytContent = new HorizontalLayout();
-            //We add the tables
-            lytContent.setSpacing(true);
-            lytContent.setId("content");
-            if(divA != null)
-                lytContent.addComponent(divA);
-            if(divB != null)
-                lytContent.addComponent(divB);
-            if(divC != null)
-                lytContent.addComponent(divC);
-            if(divD != null)
-                lytContent.addComponent(divD);
-            if(divE != null)
-                lytContent.addComponent(divE);
-            if(divF != null)
-                lytContent.addComponent(divF);
-            addComponent(lytContent);
-            this.setId("container");
-            createFoot();
-        } catch (ServerSideException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-    }
-    
     /**
      * Creates the location of a given object until the City
      * @param objLight the given object
@@ -801,8 +859,7 @@ public class FormView extends AbstractDashboardWidget{
         
         return location;
     }
-    
-     /**
+    /**
      * Creates the location of a given object until the City
      * @param objLight the given object
      * @return a string with the location
@@ -815,31 +872,22 @@ public class FormView extends AbstractDashboardWidget{
         return parents.get(parents.size() -1).getName();
     }
     
-    private String getOwner(RemoteObject obj) throws ServerSideException{
-        String ownerId = obj.getAttribute("LegalOwner");
-        String owner = "";
-        if(ownerId != null)
-            owner= wsBean.getObject("Companies", Long.valueOf(ownerId),
+    private String getOwner(RemoteObjectLight obj) throws ServerSideException{
+        return wsBean.getAttributeValueAsString(obj.getClassName(), obj.getId(), "LegalOwner",
                     Page.getCurrent().getWebBrowser().getAddress(),
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).getName();
-        return owner;
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
     }
     
-    private String getHoster(RemoteObject obj) throws ServerSideException{
-        String hosterId = obj.getAttribute("Hoster"), hoster = "";
-        if(hosterId != null)
-            hoster = wsBean.getObject("Companies", Long.valueOf(hosterId),
+    private String getHoster(RemoteObjectLight obj) throws ServerSideException{
+        return wsBean.getAttributeValueAsString(obj.getClassName(), obj.getId(), "Hoster",
                     Page.getCurrent().getWebBrowser().getAddress(),
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).getName();
-        return hoster;
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
     }
     
-    private String getHandE(RemoteObject obj) throws ServerSideException{
-        String h_eId = obj.getAttribute("handsandeyes"), he = "";
-        if(h_eId != null)
-            he = wsBean.getObject("Companies", Long.valueOf(h_eId),
+    private String getHandE(RemoteObjectLight obj) throws ServerSideException{
+        return wsBean.getAttributeValueAsString(obj.getClassName(), obj.getId(), "handsandeyes", 
                 Page.getCurrent().getWebBrowser().getAddress(),
-                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).getName();
-        return he;
+                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
     }
+     
 }

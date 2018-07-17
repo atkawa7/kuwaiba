@@ -24,15 +24,15 @@ import org.kuwaiba.web.modules.osp.google.overlays.MarkerNode;
  * Action to delete a marker node overlay
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class DeleteMarkerNodeAction extends AbstractAction {
+public class DeleteMarkerNodeAction {// extends AbstractAction {
     
-    public DeleteMarkerNodeAction() {
-        super("Delete", new ThemeResource("img/warning.gif"));
-    }
-
-    @Override
-    public void actionPerformed(Object sourceComponent, Object targetObject) {
-        ((OSPTopComponent) sourceComponent).deleteMarkerNode((MarkerNode) targetObject);
-        ((OSPTopComponent) sourceComponent).setUpdateView(true);
-    }
+//    public DeleteMarkerNodeAction() {
+//        super("Delete", new ThemeResource("img/warning.gif"));
+//    }
+//
+//    @Override
+//    public void actionPerformed(Object sourceComponent, Object targetObject) {
+//        ((OSPTopComponent) sourceComponent).deleteMarkerNode((MarkerNode) targetObject);
+//        ((OSPTopComponent) sourceComponent).setUpdateView(true);
+//    }
 }

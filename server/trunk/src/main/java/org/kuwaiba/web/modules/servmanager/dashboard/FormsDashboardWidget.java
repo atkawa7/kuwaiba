@@ -26,7 +26,7 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.util.i18n.I18N;
-import org.kuwaiba.web.modules.servmanager.views.FormView;
+import org.kuwaiba.web.modules.servmanager.views.ServManagerFormCreator;
 import org.openide.util.Exceptions;
 
 /**
@@ -73,8 +73,10 @@ public class FormsDashboardWidget extends AbstractDashboardWidget{
     @Override
     public void createContent() {
         try {
-            this.contentComponent = new FormView(service, wsBean, Page.getCurrent().getWebBrowser().getAddress(),
+            
+            ServManagerFormCreator servManagerFormCreator = new ServManagerFormCreator(service, wsBean, Page.getCurrent().getWebBrowser().getAddress(),
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            
         } catch (ServerSideException ex) {
             Exceptions.printStackTrace(ex);
         }

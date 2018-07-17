@@ -24,18 +24,18 @@ import org.kuwaiba.web.modules.osp.google.overlays.ConnectionPolyline;
  * Action to delete a edge overlay of a physical connection
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class DeletePhysicalConnectionAction extends AbstractAction {
+public class DeletePhysicalConnectionAction {//extends AbstractAction {
     
-    public DeletePhysicalConnectionAction() {
-        super("", new ThemeResource("img/warning.gif"));
-    }
-
-    @Override
-    public void actionPerformed(Object sourceComponent, Object targetObject) {
-        ((OSPTopComponent) sourceComponent)
-                .deletePhysicalConnection((ConnectionPolyline) targetObject);
-        ((OSPTopComponent) sourceComponent)
-                .removeEdge((ConnectionPolyline) targetObject);
-        ((OSPTopComponent) sourceComponent).setUpdateView(true);
-    }
+//    public DeletePhysicalConnectionAction() {
+//        super("", new ThemeResource("img/warning.gif"));
+//    }
+//
+//    @Override
+//    public void actionPerformed(Object sourceComponent, Object targetObject) {
+//        ((OSPTopComponent) sourceComponent)
+//                .deletePhysicalConnection((ConnectionPolyline) targetObject);
+//        ((OSPTopComponent) sourceComponent)
+//                .removeEdge((ConnectionPolyline) targetObject);
+//        ((OSPTopComponent) sourceComponent).setUpdateView(true);
+//    }
 }

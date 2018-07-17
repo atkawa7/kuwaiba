@@ -1607,44 +1607,8 @@ div.v-layout.v-horizontal.v-widget {
 	vertical-align: top;
 }
 
-@font-face {
-	font-family: ubuntu-r;
-	font-weight: normal;
-	font-style: normal;
-	src: url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-r.eot);
-	src: url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-r.eot?#iefix) format("embedded-opentype"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-r.woff) format("woff"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-r.ttf) format("truetype"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-r.svg#ubuntu-r) format("svg");
-}
-
-.ubuntu-r {
-	font-family: ubuntu-r;
-	font-style: normal;
-	font-weight: normal;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	display: inline-block;
-	text-align: center;
-}
-
-@font-face {
-	font-family: ubuntu-l;
-	font-weight: normal;
-	font-style: normal;
-	src: url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-l.eot);
-	src: url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-l.eot?#iefix) format("embedded-opentype"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-l.woff) format("woff"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-l.ttf) format("truetype"), url(../valo/util/bourbon/css3/../../../../nuqui/fonts/ubuntu-l.svg#ubuntu-l) format("svg");
-}
-
-.ubuntu-l {
-	font-family: ubuntu-l;
-	font-style: normal;
-	font-weight: normal;
-	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
-	display: inline-block;
-	text-align: center;
-}
-
 .nuqui.v-app, .nuqui.v-app-loading {
-	font: 400 13px/1.55 ubuntu-r;
+	font: 400 13px/1.55 lato-normal, sans-serif;
 	color: #464646;
 	background-color: #fafafa;
 	cursor: default;
@@ -15382,15 +15346,25 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui #header {
-	font-size: 3em;
+	text-align: left;
 }
 
 .nuqui #title {
+	font-size: 1.8em;
 	color: #548235;
 }
 
+.nuqui #properties {
+	font-size: 1.4em;
+}
+
+.nuqui #content {
+	text-align: center;
+	width: 100%;
+}
+
 .nuqui #container:after {
-	content: url("https://149.6.144.166:8181/reports/imgs/logo_afr-ix.png");
+	content: url("/img/company_logo.png");
 	filter: alpha(opacity=10);
 	filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0.1);
 	opacity: 0.1;
@@ -15459,9 +15433,14 @@ div.v-layout.v-horizontal.v-widget {
 	background: #ffcc00;
 }
 
+.nuqui .v-window-center {
+	text-align: center;
+}
+
 .nuqui .cell-with-border {
 	border: solid 1px black;
 	padding-left: 5px;
+	text-align: left !important;
 	width: 100%;
 }
 

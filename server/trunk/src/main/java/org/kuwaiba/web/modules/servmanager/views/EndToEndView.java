@@ -31,7 +31,7 @@ import org.kuwaiba.exceptions.ServerSideException;
 public final class EndToEndView extends Panel {
     
     public EndToEndView(RemoteObjectLight service, WebserviceBean wsBean, String ipAddress, String sessionId) {
-        EndToEndViewScene scene = new EndToEndViewScene(wsBean, sessionId, ipAddress);
+        EndToEndViewScene scene = new EndToEndViewScene(service, wsBean, sessionId, ipAddress);
         
         try {
             List<RemoteViewObjectLight> objectViews = wsBean.getObjectRelatedViews(service.getId(), service.getClassName(), 10, -1, ipAddress, sessionId);

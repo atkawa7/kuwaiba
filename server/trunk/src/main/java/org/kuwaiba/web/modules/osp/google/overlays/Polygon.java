@@ -15,7 +15,7 @@
  */
 package org.kuwaiba.web.modules.osp.google.overlays;
 
-import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
+//import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapPolygon;
 import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
@@ -25,29 +25,29 @@ import org.kuwaiba.web.modules.osp.google.actions.ActionsFactory;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class Polygon extends GoogleMapPolygon {
-    public static final String DEFAULT_POLYGON_COLOR = "#AAD400";
-    public static final double DEFAULT_FILL_OPACITY = 0.5;
-    
-    List<AbstractAction> actions;
-    
-    public Polygon() {
-        setStrokeColor(Polygon.DEFAULT_POLYGON_COLOR);
-        setFillColor(Polygon.DEFAULT_POLYGON_COLOR);
-        setFillOpacity(Polygon.DEFAULT_FILL_OPACITY);
-    }
-    
-    public Polygon(GoogleMapPolygon gmPolygon) {
-        this();
-        setId(gmPolygon.getId());
-        setCoordinates(gmPolygon.getCoordinates());
-    }
-    
-    public List<AbstractAction> getActions() {
-        if (actions == null) {
-            actions = new ArrayList();        
-            actions.add(ActionsFactory.createDeletePolygonAction());
-        }
-        return actions;
-    }
+public class Polygon {//extends GoogleMapPolygon {
+//    public static final String DEFAULT_POLYGON_COLOR = "#AAD400";
+//    public static final double DEFAULT_FILL_OPACITY = 0.5;
+//    
+//    List<AbstractAction> actions;
+//    
+//    public Polygon() {
+//        setStrokeColor(Polygon.DEFAULT_POLYGON_COLOR);
+//        setFillColor(Polygon.DEFAULT_POLYGON_COLOR);
+//        setFillOpacity(Polygon.DEFAULT_FILL_OPACITY);
+//}
+//    
+//    public Polygon(GoogleMapPolygon gmPolygon) {
+//        this();
+//        setId(gmPolygon.getId());
+//        setCoordinates(gmPolygon.getCoordinates());
+//    }
+//    
+//    public List<AbstractAction> getActions() {
+//        if (actions == null) {
+//            actions = new ArrayList();        
+//            actions.add(ActionsFactory.createDeletePolygonAction());
+//        }
+//        return actions;
+//    }
 }

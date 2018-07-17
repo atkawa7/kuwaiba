@@ -82,6 +82,7 @@ public class LoginView extends CustomComponent implements View {
         txtUsername = new TextField();
         txtUsername.setWidth(18, Unit.EM);
         txtUsername.setPlaceholder("User");
+        txtUsername.focus();
         
         txtPassword = new PasswordField();
         txtPassword.setWidth(18, Unit.EM);

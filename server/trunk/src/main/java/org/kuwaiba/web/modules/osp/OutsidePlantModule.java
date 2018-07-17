@@ -27,57 +27,57 @@ import org.kuwaiba.beans.WebserviceBean;
  * The definition of the OSP module.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class OutsidePlantModule extends AbstractModule {
-    /**
-     * The actual component
-     */
-    private OutsidePlantComponent gisView;
-    
-    
-    public OutsidePlantModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
-        super(eventBus, wsBean, session);
-        icon = new ThemeResource("img/mod_icon_osp.png");
-    }
-    
-    @Override
-    public String getName() {
-        return "Outside Plant Module";
-    }
-
-    @Override
-    public String getDescription() {
-        return "Manage your outside plant and locate your assets on a map";
-    }
-
-    @Override
-    public String getVersion() {
-        return "1.0";
-    }
-
-    @Override
-    public String getVendor() {
-        return "Neotropic SAS <contact@neotropic.co>";
-    }
-
-    @Override
-    public int getType() {
-        return MODULE_TYPE_FREE_CORE;
-    }
-
-    public void attachToMenu(MenuBar menuBar) {
-    }
-
-    @Override
-    public View open() {
-        gisView = new OutsidePlantComponent(eventBus, wsBean, session);
-        //Register components in the event bus
-        gisView.registerComponents();
-        return gisView;
-    }
-
-    @Override
-    public void close() {
-        //Unregister components from the event bus
-        gisView.unregisterComponents();
-    }
+public class OutsidePlantModule {//extends AbstractModule {
+//    /**
+//     * The actual component
+//     */
+//    private OutsidePlantComponent gisView;
+//    
+//    
+//    public OutsidePlantModule(EventBus eventBus, WebserviceBean wsBean, RemoteSession session) {
+//        super(eventBus, wsBean, session);
+//        icon = new ThemeResource("img/mod_icon_osp.png");
+//    }
+//    
+//    @Override
+//    public String getName() {
+//        return "Outside Plant Module";
+//    }
+//
+//    @Override
+//    public String getDescription() {
+//        return "Manage your outside plant and locate your assets on a map";
+//    }
+//
+//    @Override
+//    public String getVersion() {
+//        return "1.0";
+//    }
+//
+//    @Override
+//    public String getVendor() {
+//        return "Neotropic SAS <contact@neotropic.co>";
+//    }
+//
+//    @Override
+//    public int getType() {
+//        return MODULE_TYPE_FREE_CORE;
+//    }
+//
+//    public void attachToMenu(MenuBar menuBar) {
+//    }
+//
+//    @Override
+//    public View open() {
+//        gisView = new OutsidePlantComponent(eventBus, wsBean, session);
+//        //Register components in the event bus
+//        gisView.registerComponents();
+//        return gisView;
+//    }
+//
+//    @Override
+//    public void close() {
+//        //Unregister components from the event bus
+//        gisView.unregisterComponents();
+//    }
 }

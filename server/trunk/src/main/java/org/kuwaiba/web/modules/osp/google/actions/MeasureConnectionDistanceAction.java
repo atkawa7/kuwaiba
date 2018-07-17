@@ -22,20 +22,20 @@ import org.kuwaiba.web.modules.osp.google.OSPTopComponent;
  * Action to show the Google Map Control for Measure distance
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class MeasureConnectionDistanceAction extends AbstractAction {
+public class MeasureConnectionDistanceAction {//extends AbstractAction {
     
-    public MeasureConnectionDistanceAction() {
-        super("Measure distance");
-    }
-    
-    @Override
-    public void actionPerformed(Object sourceComponent, Object targetObject) {
-        OSPTopComponent map = (OSPTopComponent) sourceComponent;
-        
-        map.setMeasureEdgeDistance(!map.getMesaureEdgeDistance());
-        if (map.getMesaureEdgeDistance())
-            setCaption("Clear measurement");
-        else
-            setCaption("Measure distance");
-    }    
+//    public MeasureConnectionDistanceAction() {
+//        super("Measure distance");
+//    }
+//    
+//    @Override
+//    public void actionPerformed(Object sourceComponent, Object targetObject) {
+//        OSPTopComponent map = (OSPTopComponent) sourceComponent;
+//        
+//        map.setMeasureEdgeDistance(!map.getMesaureEdgeDistance());
+//        if (map.getMesaureEdgeDistance())
+//            setCaption("Clear measurement");
+//        else
+//            setCaption("Measure distance");
+//    }    
 }

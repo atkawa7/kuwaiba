@@ -22,59 +22,59 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ActionsFactory {
-    private static NewObjectAction newObjectAction;
-    private static DeleteMarkerNodeAction deleteMarkerNodeAction;
-    private static DeletePolygonAction deletePolygonAction;
-    private static DeletePhysicalConnectionAction deletePhysicalConnectionAction;
-    private static ConnectLinksAction connectLinksAction;
-    private static ShowObjectIdAction showObjectIdAction;
-    private static MeasureConnectionDistanceAction measureConnectionDistanceAction;
-    private static GetViewAction getViewAction;
-    
-    public static GetViewAction getViewAction() {
-        return getViewAction == null ? getViewAction = new GetViewAction() : getViewAction;
-    }
-    
-    public static NewObjectAction createNewObjectAction() {
-        if (newObjectAction == null)
-            newObjectAction = new NewObjectAction();
-        return newObjectAction;
-    }
-    
-    public static DeleteMarkerNodeAction createDeleteMarkerNodeAction() {
-        if (deleteMarkerNodeAction == null)
-            deleteMarkerNodeAction = new DeleteMarkerNodeAction();
-        return deleteMarkerNodeAction;
-    }
-    
-    public static AbstractAction createDeletePolygonAction() {
-        if (deletePolygonAction == null)
-            deletePolygonAction = new DeletePolygonAction();
-        return deletePolygonAction;            
-    }
-        
-    public static DeletePhysicalConnectionAction createDeletePhysicalConnectionAction(String caption) {
-        if (deletePhysicalConnectionAction == null)
-            deletePhysicalConnectionAction = new DeletePhysicalConnectionAction();
-        deletePhysicalConnectionAction.setCaption(caption);
-        return deletePhysicalConnectionAction;
-    }
-        
-    public static ConnectLinksAction createConnectLinksAction() {
-        if (connectLinksAction == null)
-            connectLinksAction = new ConnectLinksAction();
-        return connectLinksAction;
-    }
-    
-    public static ShowObjectIdAction createShowObjectIdAction() {
-        if (showObjectIdAction == null)
-            showObjectIdAction = new ShowObjectIdAction();
-        return showObjectIdAction;
-    }
-        
-    public static MeasureConnectionDistanceAction createMeasureConnectionDistanceAction() {
-        if (measureConnectionDistanceAction == null)
-            measureConnectionDistanceAction = new MeasureConnectionDistanceAction();
-        return measureConnectionDistanceAction;
-    }
+//    private static NewObjectAction newObjectAction;
+//    private static DeleteMarkerNodeAction deleteMarkerNodeAction;
+//    private static DeletePolygonAction deletePolygonAction;
+//    private static DeletePhysicalConnectionAction deletePhysicalConnectionAction;
+//    private static ConnectLinksAction connectLinksAction;
+//    private static ShowObjectIdAction showObjectIdAction;
+//    private static MeasureConnectionDistanceAction measureConnectionDistanceAction;
+//    private static GetViewAction getViewAction;
+//    
+//    public static GetViewAction getViewAction() {
+//        return getViewAction == null ? getViewAction = new GetViewAction() : getViewAction;
+//    }
+//    
+//    public static NewObjectAction createNewObjectAction() {
+//        if (newObjectAction == null)
+//            newObjectAction = new NewObjectAction();
+//        return newObjectAction;
+//    }
+//    
+//    public static DeleteMarkerNodeAction createDeleteMarkerNodeAction() {
+//        if (deleteMarkerNodeAction == null)
+//            deleteMarkerNodeAction = new DeleteMarkerNodeAction();
+//        return deleteMarkerNodeAction;
+//    }
+//    
+//    public static AbstractAction createDeletePolygonAction() {
+//        if (deletePolygonAction == null)
+//            deletePolygonAction = new DeletePolygonAction();
+//        return deletePolygonAction;            
+//    }
+//        
+//    public static DeletePhysicalConnectionAction createDeletePhysicalConnectionAction(String caption) {
+//        if (deletePhysicalConnectionAction == null)
+//            deletePhysicalConnectionAction = new DeletePhysicalConnectionAction();
+//        deletePhysicalConnectionAction.setCaption(caption);
+//        return deletePhysicalConnectionAction;
+//    }
+//        
+//    public static ConnectLinksAction createConnectLinksAction() {
+//        if (connectLinksAction == null)
+//            connectLinksAction = new ConnectLinksAction();
+//        return connectLinksAction;
+//    }
+//    
+//    public static ShowObjectIdAction createShowObjectIdAction() {
+//        if (showObjectIdAction == null)
+//            showObjectIdAction = new ShowObjectIdAction();
+//        return showObjectIdAction;
+//    }
+//        
+//    public static MeasureConnectionDistanceAction createMeasureConnectionDistanceAction() {
+//        if (measureConnectionDistanceAction == null)
+//            measureConnectionDistanceAction = new MeasureConnectionDistanceAction();
+//        return measureConnectionDistanceAction;
+//    }
 }

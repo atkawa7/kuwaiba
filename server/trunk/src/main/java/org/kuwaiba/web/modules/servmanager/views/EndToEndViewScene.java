@@ -13,15 +13,18 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.kuwaiba.web.modules.servmanager.views;
 
 import com.neotropic.vaadin.lienzo.LienzoComponent;
 import com.neotropic.vaadin.lienzo.client.core.shape.Point;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
+import com.neotropic.vaadin.lienzo.client.events.EdgeWidgetClickListener;
+import com.neotropic.vaadin.lienzo.client.events.NodeWidgetClickListener;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -38,7 +41,10 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
+import org.openide.util.Exceptions;
 
 /**
  * Shows an end-to-end view of a service by trying to match the endpoints of the logical circuits
@@ -50,21 +56,106 @@ public class EndToEndViewScene extends VerticalLayout {
     
     public final static String VIEW_CLASS = "ServiceSimpleView"; 
     
-    private LienzoComponent lienzoComponent;
+    private final LienzoComponent lienzoComponent;
     
     private HashMap<RemoteObjectLight, SrvNodeWidget> nodes;
     private HashMap<RemoteObjectLight, SrvEdgeWidget> edges;
     
-    private WebserviceBean wsBean;
-    private String ipAddress;
-    private String sessionId;
+    private final WebserviceBean wsBean;
+    private final String ipAddress;
+    private final String sessionId;
+    private RemoteObjectLight service ;
     
-    public EndToEndViewScene(WebserviceBean wsBean, String sessionId, String ipAddress) {
+    public EndToEndViewScene(RemoteObjectLight service, WebserviceBean wsBean, String sessionId, String ipAddress) {
         this.sessionId = sessionId;
         this.ipAddress = ipAddress;
         this.wsBean = wsBean;
+        this.service = service;
         this.lienzoComponent = new LienzoComponent();
+        lienzoComponent.addNodeWidgetClickListener(nodeWidgetClickListener);
+        lienzoComponent.addEdgeWidgetClickListener(edgeWidgetClickListener);
     }
+    
+    EdgeWidgetClickListener edgeWidgetClickListener = new EdgeWidgetClickListener() {
+
+        @Override
+        public void edgeWidgetClicked(long id) {
+            SrvEdgeWidget srvEdge = lienzoComponent.getEdge(id);
+            Window tableInfo = new Window(" ");
+            tableInfo.addStyleName("v-window-center");
+            try {
+                ServManagerFormCreator formView = new ServManagerFormCreator(service, wsBean, ipAddress, sessionId);
+
+                for (RemoteObjectLight edge : edges.keySet()) {
+                    if(edge.getId() == id && edge.getClassName().toLowerCase().equals("mplslink")){
+                        Component x = formView.createVC(edge);
+                        tableInfo.setContent(x);
+                        getUI().addWindow(tableInfo);
+                    }
+                }
+            lienzoComponent.updateEdgeWidget(srvEdge.getId());
+            } catch (ServerSideException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+    };
+    
+    NodeWidgetClickListener nodeWidgetClickListener = new NodeWidgetClickListener() {
+
+        @Override
+        public void nodeWidgetClicked(long id) {
+            SrvNodeWidget srvNode = lienzoComponent.getNodeWidget(id);
+            Window tableInfo = new Window(" ");
+            tableInfo.addStyleName("v-window-center");
+            try {
+                Component x = null;
+                for (RemoteObjectLight device : nodes.keySet()) {
+                    if (device.getId() == id){
+                        ServManagerFormCreator formView = new ServManagerFormCreator(service, wsBean, ipAddress, sessionId);
+                        
+                        List<SrvEdgeWidget> connectedEdgeWidgets = lienzoComponent.getNodeEdgeWidgets(srvNode);
+                        for(SrvEdgeWidget edge : connectedEdgeWidgets){
+                            RemoteObjectLight foundEdge = findEdge(edge.getId());
+                            RemoteObjectSpecialRelationships specialAttributes = wsBean.getSpecialAttributes(foundEdge.getClassName(), foundEdge.getId(), ipAddress, sessionId);
+                            List<RemoteObjectLightList> relatedObjects = specialAttributes.getRelatedObjects();
+                            List<String> relationships = specialAttributes.getRelationships();
+                            for(int i=0; i < relationships.size(); i++){
+                                String relationShipName = relationships.get(i);
+                                if(relationShipName.toLowerCase().contains("endpoint")){
+                                    RemoteObjectLightList get = relatedObjects.get(i);
+                                    RemoteObjectLight port = get.getList().get(0);
+                                    if(port.getClassName().toLowerCase().contains("port")){
+                                        List<RemoteObjectLight> parentsUntilFirstOfClass = wsBean.getParentsUntilFirstOfClass(port.getClassName(), port.getId(), device.getClassName(), ipAddress, sessionId);
+                                        if(parentsUntilFirstOfClass.contains(device)){
+                                            if(device.getClassName().toLowerCase().contains("router"))
+                                                x = formView.createRouter(device, port);
+                                            else if(device.getClassName().toLowerCase().contains("odf"))
+                                                x = formView.createODF(device, port);
+                                            else if(device.getClassName().toLowerCase().contains("external"))
+                                                x = formView.createExternalEquipment(device);
+                                            else if(device.getClassName().toLowerCase().contains("cloud"))
+                                                x = formView.createPeering(device);
+                                            tableInfo.setCaption(device.toString());
+                                            tableInfo.center();
+                                            //tableInfo.setWidth("100%");
+                                            tableInfo.setContent(x);
+                                            getUI().addWindow(tableInfo);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+               
+            } catch (ServerSideException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+            
+            lienzoComponent.updateNodeWidget(id);
+        }
+    };
     
     public void render(byte[] structure) throws IllegalArgumentException { 
        //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
@@ -172,12 +263,12 @@ public class EndToEndViewScene extends VerticalLayout {
                         SrvNodeWidget bSideEquipmentLogicalWidget = attachNodeWidget(bSideEquipmentLogical);
 
                         //Now the logical link
-                        SrvEdgeWidget logicalLinkWidget = attachEdgeWidget(logicalCircuitDetails.getConnectionObject());
+                        SrvEdgeWidget logicalLinkWidget = attachEdgeWidget(logicalCircuitDetails.getConnectionObject(), 
+                                aSideEquipmentLogicalWidget, 
+                                bSideEquipmentLogicalWidget);
+                        
                         logicalLinkWidget.setCaption(aSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointA().getName() + " ** " +
                                 bSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointB().getName());
-
-                        logicalLinkWidget.setSource(aSideEquipmentLogicalWidget);
-                        logicalLinkWidget.setTarget(bSideEquipmentLogicalWidget);
 
                         //Now we render the physical part
                         //We start with the A side
@@ -203,12 +294,13 @@ public class EndToEndViewScene extends VerticalLayout {
                                 else {
                                     SrvNodeWidget aSideEquipmentPhysicalWidget = attachNodeWidget(aSidePhysicalEquipment);
 
-                                    SrvEdgeWidget physicalLinkWidgetA = attachEdgeWidget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(index - 1));
+                                    SrvEdgeWidget physicalLinkWidgetA = attachEdgeWidget( logicalCircuitDetails.getPhysicalPathForEndpointA().get(index - 1),
+                                            findNodeWidget(index <= 3 ? aSideEquipmentLogical : lastAddedASidePhysicalEquipment), 
+                                            aSideEquipmentPhysicalWidget
+                                    );
                                     physicalLinkWidgetA.setCaption(aSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointA().getName() + " ** " +
                                         aSidePhysicalEquipment.getName() + ":" + nextPhysicalHop.getName());
 
-                                    physicalLinkWidgetA.setSource(findNodeWidget(index <= 3 ? aSideEquipmentLogical : lastAddedASidePhysicalEquipment));
-                                    physicalLinkWidgetA.setTarget(aSideEquipmentPhysicalWidget);
 
                                     lastAddedASidePhysicalEquipment = aSidePhysicalEquipment;
                                 }
@@ -236,15 +328,14 @@ public class EndToEndViewScene extends VerticalLayout {
                                 else {
                                     SrvNodeWidget bSideEquipmentPhysicalWidget = attachNodeWidget(bSideEquipmentPhysical);
                                      
-                                    SrvEdgeWidget physicalLinkWidgetB = attachEdgeWidget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(index - 1));
+                                    SrvEdgeWidget physicalLinkWidgetB = attachEdgeWidget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(index - 1),
+                                            findNodeWidget(index <=3 ? bSideEquipmentLogical : lastAddedBSideEquipmentPhysical),
+                                            bSideEquipmentPhysicalWidget
+                                    );
 
                                     physicalLinkWidgetB.setCaption(bSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointB().getName() + " ** " +
                                         bSideEquipmentPhysical.getName() + ":" + nextPhysicalHop.getName());
                                     
-                                    
-                                    physicalLinkWidgetB.setSource(findNodeWidget(index <=3 ? bSideEquipmentLogical : lastAddedBSideEquipmentPhysical));
-                                    physicalLinkWidgetB.setTarget(bSideEquipmentPhysicalWidget);
-
                                     lastAddedBSideEquipmentPhysical = bSideEquipmentPhysical;
                                 }
                             }
@@ -268,7 +359,7 @@ public class EndToEndViewScene extends VerticalLayout {
         SrvNodeWidget newNode = new SrvNodeWidget(node.getId());
         lienzoComponent.addNodeWidget(newNode);
             
-        newNode.setUrlIcon("/icons/" + node.getClassName() + ".png");
+        newNode.setUrlIcon("/icons/" + node.getClassName().toLowerCase() + ".png");
 
         newNode.setHeight(32);
         newNode.setWidth(32);
@@ -277,16 +368,13 @@ public class EndToEndViewScene extends VerticalLayout {
         newNode.setY((nodes.size() % 2) * 200 );
         nodes.put(node, newNode);
         return newNode;
-        
     }
     
-    public void createForm(){
-    
-    }
-
-    protected SrvEdgeWidget attachEdgeWidget(RemoteObjectLight edge) {
+    protected SrvEdgeWidget attachEdgeWidget(RemoteObjectLight edge, SrvNodeWidget sourceNode, SrvNodeWidget targetNode) {
         try {
             SrvEdgeWidget newEdge = new SrvEdgeWidget(edge.getId());
+            newEdge.setSource(sourceNode);
+            newEdge.setTarget(targetNode);
             lienzoComponent.addEdgeWidget(newEdge);
             RemoteClassMetadata classMetadata = wsBean.getClass(edge.getClassName(), ipAddress, sessionId);
             newEdge.setColor(toHexString(new Color(classMetadata.getColor())));
@@ -303,7 +391,6 @@ public class EndToEndViewScene extends VerticalLayout {
             if (aNode.getId() == nodeId)
                 return nodes.get(aNode);
         }
-        
         return null;
     }
     
@@ -325,17 +412,26 @@ public class EndToEndViewScene extends VerticalLayout {
     }
     
     public static String toHexString(Color c) {
-  StringBuilder sb = new StringBuilder("#");
+        StringBuilder sb = new StringBuilder("#");
 
-  if (c.getRed() < 16) sb.append('0');
-  sb.append(Integer.toHexString(c.getRed()));
+        if (c.getRed() < 16) sb.append('0');
+        sb.append(Integer.toHexString(c.getRed()));
 
-  if (c.getGreen() < 16) sb.append('0');
-  sb.append(Integer.toHexString(c.getGreen()));
+        if (c.getGreen() < 16) sb.append('0');
+        sb.append(Integer.toHexString(c.getGreen()));
 
-  if (c.getBlue() < 16) sb.append('0');
-  sb.append(Integer.toHexString(c.getBlue()));
+        if (c.getBlue() < 16) sb.append('0');
+        sb.append(Integer.toHexString(c.getBlue()));
 
-  return sb.toString();
-}
+        return sb.toString();
+    }
+    
+    public RemoteObjectLight findEdge(long id){
+        for (RemoteObjectLight edge : edges.keySet()) {
+            if(edge.getId() == id)
+                return edge;
+        }
+        return null;
+    }
+  
 }

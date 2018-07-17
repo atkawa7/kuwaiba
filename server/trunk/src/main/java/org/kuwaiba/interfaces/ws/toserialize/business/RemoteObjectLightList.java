@@ -59,4 +59,12 @@ public class RemoteObjectLightList implements  Serializable {
     public boolean remove(RemoteObjectLight element) {
         return list.remove(element);
     }
+
+    public List<RemoteObjectLight> getList() {
+        return list;
+    }
+
+    public void setList(List<RemoteObjectLight> list) {
+        this.list = list;
+    }
 }
