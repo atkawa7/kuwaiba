@@ -22,17 +22,17 @@ import java.util.List;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
- * A TreeData implementation that manages 
+ * A TreeData implementation for trees that show case inventory objects (e.g. the navigation tree or the special children explorer)
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
 
-public class StandardContainmentTreeData extends TreeData<AbstractNode> {
+public class InventoryObjectTreeData extends TreeData<AbstractNode> {
     /**
      * A custom data provider that returns the children in the standard containment hierarchy of a given inventory object
      */
     private ChildrenProvider<RemoteObjectLight, RemoteObjectLight> childrenProvider;
 
-    public StandardContainmentTreeData(ChildrenProvider childrenProvider) {
+    public InventoryObjectTreeData(ChildrenProvider childrenProvider) {
         super();
         this.childrenProvider = childrenProvider;
     }

@@ -41,7 +41,7 @@ public class ShelfDashboardLayout extends VerticalLayout {
     public ShelfDashboardLayout(String title) {
         setSizeFull();
         pnlMain = new HorizontalSplitPanel();
-        pnlMain.setSplitPosition(80, Unit.PERCENTAGE);
+        pnlMain.setSplitPosition(70, Unit.PERCENTAGE);
         pnlMain.setLocked(true);
         pnlMain.setSizeFull();
         lytRightPanel = new VerticalLayout();

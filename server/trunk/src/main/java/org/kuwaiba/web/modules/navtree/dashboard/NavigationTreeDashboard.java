@@ -28,10 +28,11 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
 public class NavigationTreeDashboard extends AbstractDashboard {
-    private WebserviceBean wsBean;
     public NavigationTreeDashboard(RemoteObjectLight selectedObject, WebserviceBean wsBean) {
         super(selectedObject.toString(), new ShelfDashboardLayout(selectedObject.toString()));
         ((ShelfDashboardLayout)getDashboardLayout()).setMainDashboardWidget(new NavigationTreeExplorerDashboardWidget(selectedObject, wsBean));
+        ((ShelfDashboardLayout)getDashboardLayout()).addToPile(new RelationshipsDashboardWidget(selectedObject, wsBean));
+        ((ShelfDashboardLayout)getDashboardLayout()).addToPile(new SpecialChildrenDashboardWidget(selectedObject, wsBean));
         ((ShelfDashboardLayout)getDashboardLayout()).addToPile(new ReportsDashboardWidget(selectedObject, wsBean));
         
         Page.getCurrent().setTitle(String.format("Kuwaiba Open Network Inventory - Exploring %s", selectedObject));

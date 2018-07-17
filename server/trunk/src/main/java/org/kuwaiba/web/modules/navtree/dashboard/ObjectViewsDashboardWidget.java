@@ -14,28 +14,12 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.apis.web.gui.navigation;
-
-import org.kuwaiba.apis.web.gui.actions.AbstractAction;
+package org.kuwaiba.web.modules.navtree.dashboard;
 
 /**
- * This node should be used as the root of all trees
+ *
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
-public class RootNode extends AbstractNode {
-
-    public RootNode(Object object) {
-        super(object);
-    }
-
-    @Override
-    public AbstractAction[] getActions() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void refresh(boolean recursive) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+public class ObjectViewsDashboardWidget {
 
 }

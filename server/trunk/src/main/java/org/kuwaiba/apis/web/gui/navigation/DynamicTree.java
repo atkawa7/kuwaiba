@@ -28,13 +28,13 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 public class DynamicTree extends Tree<AbstractNode> {
 
     /**
-     *  Default constructor
+     *  Constructor for trees with only one root node
      * @param root The root of the hierarchy
      * @param childrenProvider The object that will provide the children of an expanded node
      * @param iconGenerator To generate the icons
      */
     public DynamicTree(RemoteObjectLight root, ChildrenProvider childrenProvider, IconGenerator<AbstractNode> iconGenerator) {
-        StandardContainmentTreeData treeData = new StandardContainmentTreeData(childrenProvider);
+        InventoryObjectTreeData treeData = new InventoryObjectTreeData(childrenProvider);
         treeData.addRootItems(new AbstractNode<RemoteObjectLight>(root) {
             @Override
             public AbstractAction[] getActions() { return new AbstractAction[0]; }

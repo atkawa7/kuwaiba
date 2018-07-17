@@ -63,6 +63,7 @@ public class NavigationTreeExplorerDashboardWidget extends AbstractDashboardWidg
     public void createContent() {
         HorizontalLayout lytContent = new HorizontalLayout();
         lytContent.setMargin(true);
+        lytContent.setSizeFull();
         try {
             RemoteObject seletedItemDetails = wsBean.getObject(selectedObject.getClassName(), selectedObject.getId(), Page.getCurrent().getWebBrowser().getAddress(), 
                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
