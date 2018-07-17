@@ -94,7 +94,7 @@ public class ServerElement implements Serializable {
         if (children != null)
             children.remove(child);
     }
-    
+
     public double getX() {
         return x;
     }

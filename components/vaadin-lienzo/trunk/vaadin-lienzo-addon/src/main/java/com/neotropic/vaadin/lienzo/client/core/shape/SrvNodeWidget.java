@@ -32,7 +32,7 @@ public class SrvNodeWidget extends ServerElement {
     public SrvNodeWidget(long nodeId, ServerElement parent) {
         super(nodeId, parent);
     }
-    
+  
     public String getCaption() {
         return caption;
     }

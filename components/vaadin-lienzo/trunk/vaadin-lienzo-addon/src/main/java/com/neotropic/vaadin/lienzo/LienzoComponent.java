@@ -114,7 +114,7 @@ public class LienzoComponent extends AbstractComponent {
         }
     };
     private final NodeWidgetUpdatedServerRpc nodeWidgetUpdatedServerRpc = new NodeWidgetUpdatedServerRpc() {
-
+    
         @Override
         public void nodeWidgetUpdated(SrvNodeWidget clntNode) {
             SrvNodeWidget srvNode = nodes.get(clntNode.getId());
@@ -374,7 +374,7 @@ public class LienzoComponent extends AbstractComponent {
     public void updateNodeWidget(long id) {
         if (nodes.containsKey(id))
             getRpcProxy(UpdateNodeWidgetClientRpc.class).updateNodeWidget(nodes.get(id));
-    }
+        }
     public void removeNodeWidget(Long id) {
         if (nodes.containsKey(id)) {
             SrvNodeWidget node = nodes.remove(id);
@@ -418,7 +418,19 @@ public class LienzoComponent extends AbstractComponent {
     
     public SrvEdgeWidget getEdge(long id) {
         return edges.get(id);
-    }    
+    } 
+    
+    public List<SrvEdgeWidget> getNodeEdgeWidgets(SrvNodeWidget srvNodeWidget){
+        List<SrvEdgeWidget> edgeWidgets = new ArrayList<>();
+        if (nodeOutputEdges.containsKey(srvNodeWidget))
+            edgeWidgets.addAll(nodeOutputEdges.get(srvNodeWidget));
+
+        if (nodeInputEdges.containsKey(srvNodeWidget))
+            edgeWidgets.addAll(nodeInputEdges.get(srvNodeWidget));
+        
+        return edgeWidgets;
+    }
+    
     public void addEdgeWidget(SrvEdgeWidget srvEdge) {
         edges.put(srvEdge.getId(), srvEdge);
         
