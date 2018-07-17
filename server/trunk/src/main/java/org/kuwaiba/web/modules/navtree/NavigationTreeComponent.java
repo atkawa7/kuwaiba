@@ -42,6 +42,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.web.IndexUI;
+import org.kuwaiba.web.modules.navtree.dashboard.NavigationTreeDashboard;
 
 /**
  * The main component of the Navigation Tree module.
@@ -79,6 +80,7 @@ class NavigationTreeComponent extends AbstractTopComponent {
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         setStyleName("dashboards");
         addStyleName("misc");
+        addStyleName("navtree");
         
         HorizontalSplitPanel pnlMain = new HorizontalSplitPanel();
         pnlMain.setSplitPosition(33, Unit.PERCENTAGE);
@@ -86,8 +88,8 @@ class NavigationTreeComponent extends AbstractTopComponent {
 
         addComponent(mnuMain);
         addComponent(pnlMain);
-        setExpandRatio(mnuMain, 0.5f);
-        setExpandRatio(pnlMain, 9.5f);
+        setExpandRatio(mnuMain, 0.3f);
+        setExpandRatio(pnlMain, 9.7f);
         setSizeFull();
         
         this.session = ((RemoteSession) getSession().getAttribute("session"));
@@ -134,12 +136,25 @@ class NavigationTreeComponent extends AbstractTopComponent {
 
                             }
                 });
+        
+        tree.addSelectionListener((e) -> {
+            if ((e.getAllSelectedItems().isEmpty() || e.getAllSelectedItems().size() > 1) && pnlMain.getSecondComponent() != null) 
+                    pnlMain.removeComponent(pnlMain.getSecondComponent());
+                
+            else {
+                if (e.getFirstSelectedItem().get() instanceof InventoryObjectNode)
+                    pnlMain.setSecondComponent(
+                            new NavigationTreeDashboard((RemoteObjectLight)e.getFirstSelectedItem().get().getObject(), wsBean));
+            }
+        });
 
         lytLeftPanel.addComponents(txtFilter, tree);
         lytLeftPanel.setExpandRatio(tree, 9);
         lytLeftPanel.setExpandRatio(txtFilter, 1);
         lytLeftPanel.setSizeFull();
         pnlMain.setFirstComponent(lytLeftPanel);
+        
+        Page.getCurrent().setTitle(String.format("Kuwaiba Open Network Inventory - Navigation Tree - [%s]", session.getUsername()));
     }
     
         

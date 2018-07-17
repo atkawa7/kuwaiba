@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.web.modules.servmanager.dashboard;
+package org.kuwaiba.apis.web.gui.dashboards.layouts.widgets;
 
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
@@ -23,11 +23,11 @@ import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
  * Just a cover
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
-public class DummyDashboardWidget extends AbstractDashboardWidget {
+public class DummyCoverDashboardWidget extends AbstractDashboardWidget {
     
     private final String style;
     
-    public DummyDashboardWidget(String title, String style) {
+    public DummyCoverDashboardWidget(String title, String style) {
         super(title);
         this.style = style;
         this.createCover();

@@ -13,41 +13,32 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.web.modules.servmanager.dashboard;
+
+package org.kuwaiba.apis.web.gui.dashboards.layouts.widgets;
 
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Label;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.beans.WebserviceBean;
 
 /**
- * A simple dashboard widget that shows the resources associated to a service
+ * A dummy widget with no cover that simply shows a text
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
-public class TrafficDashboardWidget extends AbstractDashboardWidget {
-    /**
-     * The service we want the resources from
-     */
-    private RemoteObjectLight service;
-    /**
-     * Web service bean reference
-     */
-    private WebserviceBean wsBean;
-    
-    public TrafficDashboardWidget(RemoteObjectLight service, WebserviceBean wsBean) {
-        super("General Overview");
-        this.service = service;
-        this.wsBean = wsBean;
-        this.createContent();
+public class DummyContentDashboardWidget extends AbstractDashboardWidget {
+
+    public DummyContentDashboardWidget(String title) {
+        super(title);
+        addComponent(new Label("<h1>" + title + "</h1>", ContentMode.HTML));
     }
     
     @Override
-    public void createCover() { }
+    public void createCover() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 
     @Override
     public void createContent() {
-        this.contentComponent = new Label(String.format("<h1>%s</h1>", service), ContentMode.HTML);
-        addComponent(this.contentComponent);
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
 }

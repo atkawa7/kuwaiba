@@ -16,17 +16,25 @@
 
 package org.kuwaiba.web.modules.navtree.dashboard;
 
-import com.vaadin.ui.AbstractOrderedLayout;
+import com.vaadin.server.Page;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
+import org.kuwaiba.apis.web.gui.dashboards.layouts.ShelfDashboardLayout;
+import org.kuwaiba.apis.web.gui.dashboards.layouts.widgets.ReportsDashboardWidget;
+import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * The dashboard for the Navigation Tree module
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
 public class NavigationTreeDashboard extends AbstractDashboard {
-
-    public NavigationTreeDashboard(String title, AbstractOrderedLayout dashboardLayout) {
-        super(title, dashboardLayout);
+    private WebserviceBean wsBean;
+    public NavigationTreeDashboard(RemoteObjectLight selectedObject, WebserviceBean wsBean) {
+        super(selectedObject.toString(), new ShelfDashboardLayout(selectedObject.toString()));
+        ((ShelfDashboardLayout)getDashboardLayout()).setMainDashboardWidget(new NavigationTreeExplorerDashboardWidget(selectedObject, wsBean));
+        ((ShelfDashboardLayout)getDashboardLayout()).addToPile(new ReportsDashboardWidget(selectedObject, wsBean));
+        
+        Page.getCurrent().setTitle(String.format("Kuwaiba Open Network Inventory - Exploring %s", selectedObject));
     }
 
 }

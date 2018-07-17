@@ -37,14 +37,10 @@ public class DynamicTree extends Tree<AbstractNode> {
         StandardContainmentTreeData treeData = new StandardContainmentTreeData(childrenProvider);
         treeData.addRootItems(new AbstractNode<RemoteObjectLight>(root) {
             @Override
-            public AbstractAction[] getActions() {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
+            public AbstractAction[] getActions() { return new AbstractAction[0]; }
             
             @Override
-            public void refresh(boolean recursive) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
+            public void refresh(boolean recursive) { }
         });
         
         setDataProvider(new TreeDataProvider(treeData));

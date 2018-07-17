@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.web.modules.servmanager.dashboard;
+package org.kuwaiba.apis.web.gui.dashboards.layouts.widgets;
 
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.vaadin.server.FileDownloader;

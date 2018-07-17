@@ -69,7 +69,6 @@ public class ListTypeManagerComponent extends AbstractTopComponent {
     
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        setStyleName("dashboards");
         addStyleName("misc");
         
         HorizontalSplitPanel pnlMain = new HorizontalSplitPanel();

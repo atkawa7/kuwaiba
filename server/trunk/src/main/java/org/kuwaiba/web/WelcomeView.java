@@ -51,7 +51,7 @@ class WelcomeView extends VerticalLayout implements View {
         if (session == null) //NOI18N
              getUI().getNavigator().navigateTo(LoginView.VIEW_NAME);
         else {
-            Page.getCurrent().setTitle(String.format("%s - [%s]", "Kuwaiba Open Network Inventory", session.getUsername()));
+            Page.getCurrent().setTitle(String.format("Kuwaiba Open Network Inventory - [%s]", session.getUsername()));
             addStyleName("misc");
             setSizeFull();
             
