@@ -647,6 +647,30 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
+    public List<BusinessObjectLight> getSuggestedObjectsWithFilter(String filter) {
+        try (Transaction tx = graphDb.beginTx()) {
+            String cypherQuery = "MATCH (object:" + inventoryObjectLabel + ")-[:INSTANCE_OF]->(class:"  //NOI18N
+                    + classLabel + ") WHERE TOLOWER(object.name) CONTAINS TOLOWER({searchString}) OR TOLOWER(class.name) CONTAINS TOLOWER({searchString}) RETURN object.name as oname, id(object) as oid, class.name as cname ORDER BY object.name ASC LIMIT 15"; //NOI18N
+            
+            HashMap<String, Object> parameters = new HashMap<>();
+            parameters.put("searchString", filter);
+            Result queryResult = graphDb.execute(cypherQuery, parameters);
+            
+            List<BusinessObjectLight> res  = new ArrayList<>();
+            
+            while (queryResult.hasNext()) {
+                Map<String, Object> row = queryResult.next();
+                res.add(new BusinessObjectLight((long)row.get("oid"), 
+                        (String)row.get("oname"), 
+                        (String)row.get("cname")));
+            }
+            
+            tx.success();
+            return res;
+        }
+    }
+    
+    @Override
     public String getAttributeValueAsString (String objectClass, long objectId, String attributeName) 
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         ClassMetadata theClass = mem.getClass(objectClass);
@@ -747,8 +771,6 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                              "WHERE id(n) = " + oid + " " +
                             "RETURN m as parents";
       
-        Map<String, Object> params = new HashMap<>();
-        params.put("oid", oid);
         try (Transaction tx = graphDb.beginTx()) {
             Result result = graphDb.execute(cypherQuery);
             Iterator<Node> column = result.columnAs("parents");
@@ -1806,7 +1828,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         (maxResults > 0 ? (" LIMIT " + maxResults) : ""); //NOI18N
             else //Search the string in the contact and customer name
                 cypherQuery = "MATCH (n:contacts)<-[r:" + RelTypes.RELATED_TO_SPECIAL + "]-(c) WHERE " +
-                        "LOWER(n.name) contains LOWER({searchString}) OR LOWER(c.name) contains LOWER({searchString}) RETURN n AS contact ORDER BY c.name, n.name ASC" +
+                        "TOLOWER(n.name) contains TOLOWER({searchString}) OR TOLOWER(c.name) contains TOLOWER({searchString}) RETURN n AS contact ORDER BY c.name, n.name ASC" +
                         (maxResults > 0 ? (" LIMIT " + maxResults) : ""); //NOI18N
             
             List<Contact> res = new ArrayList<>();

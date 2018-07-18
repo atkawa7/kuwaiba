@@ -16,10 +16,12 @@
 package org.kuwaiba.apis.web.gui.nodes;
 
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.themes.ValoTheme;
 import java.util.List;
 
 /**
- * A en embeddable property sheet 
+ * An embeddable property sheet 
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
 public class PropertySheet extends Grid<AbstractProperty> {
@@ -28,9 +30,14 @@ public class PropertySheet extends Grid<AbstractProperty> {
         setItems(properties);
         setCaption(caption);
         setHeaderVisible(false);
-        setSizeFull();
+        setSizeUndefined();
         addColumn(AbstractProperty::getName);
-        addColumn(AbstractProperty::getAsString);
+        addComponentColumn((property) -> {
+            Label label = new Label(property.getAsString());
+            label.setWidthUndefined();
+            label.setStyleName(ValoTheme.LAYOUT_HORIZONTAL_WRAPPING);
+            return label;
+        });
     }
 
     public void clear() {

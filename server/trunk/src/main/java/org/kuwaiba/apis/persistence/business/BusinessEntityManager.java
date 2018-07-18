@@ -218,6 +218,13 @@ public interface BusinessEntityManager {
             String filterName, String filterValue) throws MetadataObjectNotFoundException, InvalidArgumentException;
     
     /**
+     * Suggests a number (by default, 10) of objects based on a search string. This search string will be case-insensitive-matched against the name of the objects and classes in the inventory
+     * @param filter The search string
+     * @return A list of up to 10 suggested objects matching the criteria, alphabetically sorted
+     */
+    public List<BusinessObjectLight> getSuggestedObjectsWithFilter(String filter);
+    
+    /**
      * Utility method that returns the value of an attribute of a given object as a string. In date-type attributes, it will return 
      * the formated dated, while in list types, it will return the name of the linked element
      * @param objectClass The class of the object

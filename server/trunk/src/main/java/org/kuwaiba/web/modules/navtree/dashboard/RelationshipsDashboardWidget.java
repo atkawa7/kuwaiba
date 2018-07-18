@@ -18,16 +18,9 @@ package org.kuwaiba.web.modules.navtree.dashboard;
 
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import java.util.ArrayList;
-import java.util.List;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
-import org.kuwaiba.apis.web.gui.navigation.ChildrenProvider;
-import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
-import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
 import org.kuwaiba.beans.WebserviceBean;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
@@ -71,23 +64,23 @@ public class RelationshipsDashboardWidget extends AbstractDashboardWidget {
 
     @Override
     public void createContent() {
-        DynamicTree treeRelationships = new DynamicTree(selectedObject, new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
-                    @Override
-                    public List<RemoteObjectLight> getChildren(RemoteObjectLight parentObject) {
-                        return new ArrayList<>();
+//        DynamicTree treeRelationships = new DynamicTree(selectedObject, new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
+//                    @Override
+//                    public List<RemoteObjectLight> getChildren(RemoteObjectLight parentObject) {
+//                        return new ArrayList<>();
 //                        try {
 //                            
 //                        } catch (ServerSideException ex) {
 //                            Notifications.showError(ex.getLocalizedMessage());
 //                            return new ArrayList<>();
 //                        }
-                    }
-                }, new SimpleIconGenerator(wsBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")));
+//                    }
+//                }, new SimpleIconGenerator(wsBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")));
 
-        treeRelationships.expand(treeRelationships.getTreeData().getRootItems());
-        VerticalLayout lytSpecialChildren = new VerticalLayout(treeRelationships);
-        lytSpecialChildren.setWidth(100, Unit.PERCENTAGE);
+//        treeRelationships.expand(treeRelationships.getTreeData().getRootItems());
+//        VerticalLayout lytSpecialChildren = new VerticalLayout(treeRelationships);
+//        lytSpecialChildren.setWidth(100, Unit.PERCENTAGE);
 
-        this.contentComponent = lytSpecialChildren;
+        this.contentComponent = new Label("Not imlemented yet");
     }
 }

@@ -20,12 +20,19 @@ import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
+import eu.maxschuster.vaadin.autocompletetextfield.AutocompleteQuery;
+import eu.maxschuster.vaadin.autocompletetextfield.AutocompleteSuggestion;
+import eu.maxschuster.vaadin.autocompletetextfield.AutocompleteSuggestionProvider;
+import eu.maxschuster.vaadin.autocompletetextfield.AutocompleteTextField;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import javax.inject.Inject;
+import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
+import org.kuwaiba.apis.web.gui.navigation.AbstractNode;
 import org.kuwaiba.apis.web.gui.navigation.ChildrenProvider;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
@@ -52,7 +59,7 @@ class NavigationTreeComponent extends AbstractTopComponent {
     /**
      * Text field to filter the services
      */
-    private TextField txtFilter;
+    private AutocompleteTextField txtFilter;
     /**
      * Layout for all the graphic components on the left side
      */
@@ -90,12 +97,41 @@ class NavigationTreeComponent extends AbstractTopComponent {
         this.session = ((RemoteSession) getSession().getAttribute("session"));
         this.lytLeftPanel = new VerticalLayout();
 
-        this.txtFilter = new TextField();
+        this.txtFilter = new AutocompleteTextField();
         this.txtFilter.setWidth(100, Unit.PERCENTAGE);
         this.txtFilter.setPlaceholder("Search...");
+        this.txtFilter.setMinChars(3);
+        this.txtFilter.setDelay(500);
+        this.txtFilter.setSuggestionProvider(new AutocompleteSuggestionProvider() {
+            @Override
+            public Collection<AutocompleteSuggestion> querySuggestions(AutocompleteQuery query) {
+                try {
+                    
+                    List<RemoteObjectLight> suggestedObjects = wsBean.getSuggestedObjectsWithFilter(query.getTerm(), Page.getCurrent().getWebBrowser().getAddress(),
+                            session.getSessionId());
+                    
+                    List<AutocompleteSuggestion> suggestions = new ArrayList<>();
+                    
+                    for (RemoteObjectLight aSuggestedObject : suggestedObjects) {
+                        AutocompleteSuggestion suggestion = new AutocompleteSuggestion(aSuggestedObject.getName(), "<b>" + aSuggestedObject.getClassName() + "</b>");
+                        suggestion.setData(aSuggestedObject);
+                        suggestions.add(suggestion);
+                    }
+                    return suggestions;
+                    
+                } catch (ServerSideException ex) {
+                    return Arrays.asList(new AutocompleteSuggestion(ex.getLocalizedMessage()));
+                }
+            }
+        });
+        
+        this.txtFilter.addSelectListener((e) -> {
+            this.tree.resetTo(new InventoryObjectNode((RemoteObjectLight)e.getSuggestion().getData()));
+        });
         
 
-        this.tree = new DynamicTree(new RemoteObjectLight(Constants.DUMMY_ROOT, -1, "Navigation Root"), new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
+        this.tree = new DynamicTree(
+                new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                         @Override
                         public List<RemoteObjectLight> getChildren(RemoteObjectLight c) {
                             try {
@@ -108,7 +144,14 @@ class NavigationTreeComponent extends AbstractTopComponent {
                                 return new ArrayList<>();
                             }
                         }
-                    }, new SimpleIconGenerator(wsBean, session));
+                    }, new SimpleIconGenerator(wsBean, session), 
+                    new AbstractNode<RemoteObjectLight>(new RemoteObjectLight(Constants.DUMMY_ROOT, -1, "Navigation Root")) {
+                        @Override
+                        public AbstractAction[] getActions() { return new AbstractAction[0]; }
+
+                        @Override
+                        public void refresh(boolean recursive) { }
+                });
         
         this.tree.addSelectionListener((e) -> {
             if ((e.getAllSelectedItems().isEmpty() || e.getAllSelectedItems().size() > 1) && pnlMain.getSecondComponent() != null) 

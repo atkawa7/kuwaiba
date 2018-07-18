@@ -26,6 +26,7 @@ import java.util.List;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.navigation.ChildrenProvider;
 import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
+import org.kuwaiba.apis.web.gui.navigation.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
@@ -74,7 +75,7 @@ public class SpecialChildrenDashboardWidget extends AbstractDashboardWidget {
 
     @Override
     public void createContent() {
-        DynamicTree treeSpecialChildren = new DynamicTree(selectedObject, new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
+        DynamicTree treeSpecialChildren = new DynamicTree(new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                     @Override
                     public List<RemoteObjectLight> getChildren(RemoteObjectLight parentObject) {
                         try {
@@ -86,7 +87,9 @@ public class SpecialChildrenDashboardWidget extends AbstractDashboardWidget {
                             return new ArrayList<>();
                         }
                     }
-                }, new SimpleIconGenerator(wsBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")));
+                }, new SimpleIconGenerator(wsBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")),
+                new InventoryObjectNode(selectedObject)
+            );
 
         treeSpecialChildren.expand(treeSpecialChildren.getTreeData().getRootItems());
         VerticalLayout lytSpecialChildren = new VerticalLayout(treeSpecialChildren);

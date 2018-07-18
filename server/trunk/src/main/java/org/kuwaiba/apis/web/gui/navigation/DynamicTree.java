@@ -18,8 +18,6 @@ package org.kuwaiba.apis.web.gui.navigation;
 import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.ui.IconGenerator;
 import com.vaadin.ui.Tree;
-import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * A tree that extends the features of the default one and makes use of the Nodes API
@@ -29,22 +27,26 @@ public class DynamicTree extends Tree<AbstractNode> {
 
     /**
      *  Constructor for trees with only one root node
-     * @param root The root of the hierarchy
+     * @param roots The root nodes of the tree
      * @param childrenProvider The object that will provide the children of an expanded node
      * @param iconGenerator To generate the icons
      */
-    public DynamicTree(RemoteObjectLight root, ChildrenProvider childrenProvider, IconGenerator<AbstractNode> iconGenerator) {
+    public DynamicTree(ChildrenProvider childrenProvider, IconGenerator<AbstractNode> iconGenerator, AbstractNode... roots) {
         InventoryObjectTreeData treeData = new InventoryObjectTreeData(childrenProvider);
-        treeData.addRootItems(new AbstractNode<RemoteObjectLight>(root) {
-            @Override
-            public AbstractAction[] getActions() { return new AbstractAction[0]; }
-            
-            @Override
-            public void refresh(boolean recursive) { }
-        });
+        treeData.addRootItems(roots);
         
         setDataProvider(new TreeDataProvider(treeData));
         setSizeFull();
         setItemIconGenerator(iconGenerator);
-    }   
+    }
+    
+    /**
+     * Resets the tree to the roots provided 
+     * @param newRoots The roots to replace the current one
+     */
+    public void resetTo(AbstractNode... newRoots) {
+        this.getTreeData().clear();
+        this.getTreeData().addRootItems(newRoots);
+        this.setTreeData(getTreeData());
+    }
 }

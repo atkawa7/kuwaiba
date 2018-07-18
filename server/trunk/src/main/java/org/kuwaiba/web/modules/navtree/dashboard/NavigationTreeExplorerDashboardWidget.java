@@ -40,7 +40,7 @@ public class NavigationTreeExplorerDashboardWidget extends AbstractDashboardWidg
      */
     private PropertySheet propertySheet;
     /**
-     * Reference to the ws bean
+     * Reference to the backend bean
      */
     private WebserviceBean wsBean;
     /**

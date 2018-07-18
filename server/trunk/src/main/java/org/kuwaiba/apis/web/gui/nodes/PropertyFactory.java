@@ -27,11 +27,23 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 public class PropertyFactory {
     public static List<AbstractProperty> propertiesFromRemoteObject(RemoteObject businessObject, RemoteClassMetadata classMetadata) {
         ArrayList<AbstractProperty> propertySet = new ArrayList<>();
-        for (int i = 0; i < classMetadata.getAttributesNames().length; i++) 
-            propertySet.add(new StringProperty(classMetadata.getAttributesNames()[i], 
-                    classMetadata.getAttributesDisplayNames()[i], 
-                    classMetadata.getAttributesDescriptions()[i], 
-                    businessObject.getAttribute(classMetadata.getAttributesNames()[i])));
+        for (int i = 0; i < classMetadata.getAttributesNames().length; i++) {
+            switch (classMetadata.getAttributesTypes()[i]) {
+                case "Date":
+                    propertySet.add(new DateProperty(classMetadata.getAttributesNames()[i], 
+                        classMetadata.getAttributesDisplayNames()[i], 
+                        classMetadata.getAttributesDescriptions()[i], 
+                        Long.valueOf(businessObject.getAttribute(classMetadata.getAttributesNames()[i]))));
+                    break;
+                default:
+                    propertySet.add(new StringProperty(classMetadata.getAttributesNames()[i], 
+                        classMetadata.getAttributesDisplayNames()[i], 
+                        classMetadata.getAttributesDescriptions()[i], 
+                        businessObject.getAttribute(classMetadata.getAttributesNames()[i])));
+            }
+            
+            
+        }
         
         return propertySet;
     }
