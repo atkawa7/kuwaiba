@@ -20,7 +20,11 @@ import org.kuwaiba.apis.forms.elements.ElementTree;
 import org.kuwaiba.apis.forms.elements.EventDescriptor;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.Tree.ItemClickListener;
+import org.kuwaiba.apis.web.gui.actions.AbstractAction;
+import org.kuwaiba.apis.web.gui.navigation.AbstractNode;
 import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
+import org.kuwaiba.apis.web.gui.navigation.InventoryObjectNode;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
@@ -39,7 +43,7 @@ public class ComponentTree extends GraphicalComponent {
     @Override
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementTree) {
-            ElementTree tree = (ElementTree) element;
+            //ElementTree tree = (ElementTree) element;
             
             getComponent().addItemClickListener(new ItemClickListener() {
                 
@@ -48,7 +52,7 @@ public class ComponentTree extends GraphicalComponent {
                     
                     fireComponentEvent(new EventDescriptor(
                         Constants.EventAttribute.ONPROPERTYCHANGE, 
-                        Constants.Property.VALUE, event.getItem(), null));
+                        Constants.Property.VALUE, ((AbstractNode) event.getItem()).getObject(), null));
                 }
             });
         }
@@ -56,7 +60,24 @@ public class ComponentTree extends GraphicalComponent {
 
     @Override
     public void onElementEvent(EventDescriptor event) {
-        //TODO: implements events
+        
+        if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+            
+            if (Constants.Property.VALUE.equals(event.getPropertyName())) {
+                
+                if (event.getNewValue() != null)
+                    getComponent().resetTo(new InventoryObjectNode((RemoteObjectLight) event.getNewValue()));                                
+                else {
+                    getComponent().resetTo(new AbstractNode<RemoteObjectLight>(new RemoteObjectLight(org.kuwaiba.services.persistence.util.Constants.DUMMY_ROOT, -1, "Navigation Root")) {
+                        @Override
+                        public AbstractAction[] getActions() { return new AbstractAction[0]; }
+
+                        @Override
+                        public void refresh(boolean recursive) { }
+                    });
+                }
+            }
+        }
     }
     
 }

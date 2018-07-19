@@ -99,27 +99,6 @@ public class ComponentFactory {
             graphicalComponent = new ComponentPanel();            
         } else if (element instanceof ElementTree) {
             
-////            RemoteObjectLight root = new RemoteObjectLight(
-////                org.kuwaiba.services.persistence.util.Constants.DUMMY_ROOT, 
-////                -1, 
-////                org.kuwaiba.services.persistence.util.Constants.DUMMY_ROOT);
-            
-////            DynamicTree dynamicTree = new DynamicTree(root, new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
-////                
-////                @Override
-////                public List<RemoteObjectLight> getChildren(RemoteObjectLight parentObject) {
-////                        try {
-////                            return wsBean.getObjectChildren(
-////                                    parentObject.getClassName(), 
-////                                    parentObject.getId(), -1, Page.getCurrent().getWebBrowser().getAddress(), 
-////                                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-////                        } catch (ServerSideException ex) {
-////                            Notifications.showError(ex.getLocalizedMessage());
-////                            return new ArrayList<>();
-////                        }
-////                    }
-////                }, new SimpleIconGenerator(wsBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")));
-            
             DynamicTree dynamicTree = new DynamicTree(new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                         @Override
                         public List<RemoteObjectLight> getChildren(RemoteObjectLight parentObject) {
