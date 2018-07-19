@@ -20,20 +20,20 @@ import org.kuwaiba.apis.forms.elements.ElementTree;
 import org.kuwaiba.apis.forms.elements.EventDescriptor;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.Tree.ItemClickListener;
-
+import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ComponentTree extends GraphicalComponent {
 
-    public ComponentTree(TreeWrapper treeWrapper) {
-        super(treeWrapper.getTree());
+    public ComponentTree(DynamicTree dynamicTree) {
+        super(dynamicTree);        
     }
     
     @Override
-    public Tree getComponent() {
-        return (Tree) super.getComponent();
+    public DynamicTree getComponent() {
+        return (DynamicTree) super.getComponent();
     }
 
     @Override

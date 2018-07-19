@@ -26,7 +26,6 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -48,6 +47,7 @@ import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActor;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConditionalActivityDefinition;
+import org.kuwaiba.util.i18n.I18N;
 import org.kuwaiba.web.IndexUI;
 
 /**
@@ -85,50 +85,13 @@ public class ProcessInstancesView extends VerticalLayout {
         HorizontalLayout tools = new HorizontalLayout();
         tools.setWidth("100%");
                 
-        btnCreateProcessInstance = new Button("New Service", VaadinIcons.PLUS);
+        btnCreateProcessInstance = new Button(I18N.gm("new"), VaadinIcons.PLUS);
                         
         btnCreateProcessInstance.addClickListener(new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                MessageBox.getInstance().showMessage(new Label("Create an instance of the process")).addClickListener(new Button.ClickListener() {
-                    @Override
-                    public void buttonClick(Button.ClickEvent event) {
-                        if (MessageBox.getInstance().continues()) {
-                            try {
-                                long id = wsBean.createProcessInstance
-                                        (processDefinition.getId(),
-                                                "",
-                                                "",
-                                                Page.getCurrent().getWebBrowser().getAddress(),
-                                                ((RemoteSession) getSession().getAttribute("session")).getSessionId());
-                                
-                                RemoteProcessInstance processInstance = wsBean.getProcessInstance(
-                                        id, 
-                                        Page.getCurrent().getWebBrowser().getAddress(),
-                                        ((RemoteSession) getSession().getAttribute("session")).getSessionId());
-                                
-                                UI ui = getUI();
-                                
-                                MenuBar mainMenu = ((IndexUI) ui).getMainMenu();
-                                
-                                ((ProcessManagerComponent) ui.getContent()).removeAllComponents();
-                                
-                                ((ProcessManagerComponent) ui.getContent()).addComponent(mainMenu);
-                                ((ProcessManagerComponent) ui.getContent()).setExpandRatio(mainMenu, 0.5f);
-                                
-                                ProcessInstanceView processInstanceView = new ProcessInstanceView(processInstance, processDefinition, wsBean,session);
-                                
-                                ((ProcessManagerComponent) ui.getContent()).addComponent(processInstanceView);
-                                ((ProcessManagerComponent) ui.getContent()).setExpandRatio(processInstanceView, 9.5f);
-                                                                                                
-                            } catch (ServerSideException ex) {
-                                Exceptions.printStackTrace(ex);
-                            }
-                            
-                        }
-                    }
-                });
-                    
+                
+                createProcessInstance(processDefinition, wsBean, session);
             }
         });
                 
@@ -249,7 +212,7 @@ public class ProcessInstancesView extends VerticalLayout {
             public void click(ClickableRenderer.RendererClickEvent event) {
                 ProcessInstanceBean processInstanceBean = (ProcessInstanceBean) event.getItem();
                 
-                MessageBox.getInstance().showMessage(new Label("Create an instance of the process")).addClickListener(new Button.ClickListener() {
+                MessageBox.getInstance().showMessage(new Label("Delete an instance of the process")).addClickListener(new Button.ClickListener() {
                     @Override
                     public void buttonClick(Button.ClickEvent event) {
                                                 
@@ -377,6 +340,50 @@ public class ProcessInstancesView extends VerticalLayout {
         wrapper.addComponent(grid);
         
         addComponent(wrapper);
+    }
+    
+    public static void createProcessInstance(RemoteProcessDefinition processDef, WebserviceBean webserviceBean, RemoteSession remoteSession) {
+                
+        MessageBox.getInstance().showMessage(new Label("Create an instance of the process")).addClickListener(new Button.ClickListener() {
+                                                
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                
+                if (MessageBox.getInstance().continues()) {
+
+                    try {
+                        long id = webserviceBean.createProcessInstance
+                                (processDef.getId(),
+                                        "",
+                                        "",
+                                        Page.getCurrent().getWebBrowser().getAddress(),
+                                        remoteSession.getSessionId());
+
+                        RemoteProcessInstance processInstance = webserviceBean.getProcessInstance(
+                                id, 
+                                Page.getCurrent().getWebBrowser().getAddress(),
+                                remoteSession.getSessionId());
+
+                        UI ui = UI.getCurrent();
+
+                        MenuBar mainMenu = ((IndexUI) ui).getMainMenu();
+
+                        ((ProcessManagerComponent) ui.getContent()).removeAllComponents();
+
+                        ((ProcessManagerComponent) ui.getContent()).addComponent(mainMenu);
+                        ((ProcessManagerComponent) ui.getContent()).setExpandRatio(mainMenu, 0.5f);
+
+                        ProcessInstanceView processInstanceView = new ProcessInstanceView(processInstance, processDef, webserviceBean,remoteSession);
+
+                        ((ProcessManagerComponent) ui.getContent()).addComponent(processInstanceView);
+                        ((ProcessManagerComponent) ui.getContent()).setExpandRatio(processInstanceView, 9.5f);
+                    } catch (ServerSideException ex) {
+                        Exceptions.printStackTrace(ex);
+                    }
+                    
+                }
+            }
+        });
     }
     
     

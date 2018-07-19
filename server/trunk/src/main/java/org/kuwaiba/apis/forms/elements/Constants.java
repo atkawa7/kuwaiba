@@ -107,6 +107,8 @@ public class Constants {
         public static final String VALIDATE = "validate"; //NOI18N
         public static final String I18N = "i18n"; //NOI18N
         public static final String ADD_GRID_ROW = "addgridrow"; //NOI18N
+        public static final String ADD_GRID_ROW_FROM_SCRIPT = "addgridrowfromscript"; //NOI18N        
+        public static final String ADD_GRID_ROWS = "addgridrows"; //NOI18N
         public static final String EDIT_GRID_ROW = "editgridrow"; //NOI18N
         public static final String DELETE_GRID_ROW = "deletegridrow"; //NOI18N
 ////        public static final String OPEN_FORM = "openform"; //NOI18N

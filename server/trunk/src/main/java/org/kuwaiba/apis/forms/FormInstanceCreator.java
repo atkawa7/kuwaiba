@@ -15,6 +15,7 @@
 package org.kuwaiba.apis.forms;
 
 import com.vaadin.server.Page;
+import java.util.HashMap;
 import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
@@ -83,10 +84,10 @@ public class FormInstanceCreator extends AbstractFormInstanceCreator {
     }
 
     @Override
-    protected void addRemoteObjectLight(XMLEventWriter xmlew, XMLEventFactory xmlef, AbstractElementField element) throws XMLStreamException {
-        if (element.getValue() instanceof RemoteObjectLight) {
+    protected void addRemoteObjectLight(XMLEventWriter xmlew, XMLEventFactory xmlef, Object object) throws XMLStreamException {
+        if (object instanceof RemoteObjectLight) {
                         
-            RemoteObjectLight remoteObjectLight = (RemoteObjectLight) element.getValue();
+            RemoteObjectLight remoteObjectLight = (RemoteObjectLight) object;
                         
             try {
                 RemoteClassMetadata classInfo = wsBean.getClass(remoteObjectLight.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
@@ -109,6 +110,36 @@ public class FormInstanceCreator extends AbstractFormInstanceCreator {
             
             XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.CLASS_ID, String.valueOf(classInfoLight.getId()));
             XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.CLASS_NAME, classInfoLight.getClassName());
+        }
+    }
+    
+    @Override
+    protected boolean isRemoteObjectLight(Object object) {
+        return object instanceof RemoteObjectLight;
+    }
+    
+    @Override
+    protected HashMap<String, String> getRemoteObjectLightInformation(Object object) {
+        try {
+            
+            if (object instanceof RemoteObjectLight) {
+                
+                RemoteObjectLight rol = (RemoteObjectLight) object;
+
+                HashMap<String, String> info = new HashMap();
+                
+                RemoteClassMetadata classInfo = wsBean.getClass(rol.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                                
+                info.put(Constants.Attribute.DATA_TYPE, Constants.Attribute.DataType.REMOTE_OBJECT_LIGTH);
+                info.put(Constants.Attribute.OBJECT_NAME, rol.getName());
+                info.put(Constants.Attribute.OBJECT_ID, String.valueOf(rol.getId()));
+                info.put(Constants.Attribute.CLASS_ID, String.valueOf(classInfo.getId()));
+                
+                return info;            
+            }
+            return null;
+        } catch (ServerSideException ex) {
+            return null;
         }
     }
     

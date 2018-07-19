@@ -27,6 +27,7 @@ import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.util.i18n.I18N;
 
 /**
  * This module allows to manage the process instances for the available process definition previously created
@@ -69,8 +70,8 @@ public class ProcessManagerModule extends AbstractModule {
 
     @Override
     public void attachToMenu(MenuBar menuBar) {
-        MenuItem menuProcessManager = menuBar.addItem("Process Manager", null);
-        MenuItem menuItem = menuProcessManager.addItem("Processes", null);
+        MenuItem menuProcessManager = menuBar.addItem(I18N.gm("procmanager"), null);
+        MenuItem menuItem = menuProcessManager.addItem(I18N.gm("procmanager.processes"), null);
 
         try {
             List<RemoteProcessDefinition> processDefinitions = wsBean.getProcessDefinitions(
@@ -79,12 +80,25 @@ public class ProcessManagerModule extends AbstractModule {
 
             for (RemoteProcessDefinition processDefinition : processDefinitions) {
 
-                menuItem.addItem(processDefinition.getName(), null, new MenuBar.Command() {
+                MenuItem processDefItem = menuItem.addItem(processDefinition.getName(), null, new MenuBar.Command() {
+                    
                     @Override
                     public void menuSelected(MenuBar.MenuItem selectedItem) {
-                        UI.getCurrent().getSession().setAttribute("selectedProcessDefinition", processDefinition);
+                        UI.getCurrent().getSession().setAttribute("selectedProcessDefinition", processDefinition); //NOI18N
                         UI.getCurrent().getNavigator().addView(ProcessManagerComponent.VIEW_NAME, open());
                         UI.getCurrent().getNavigator().navigateTo(ProcessManagerComponent.VIEW_NAME);
+                    }
+                });
+                
+                processDefItem.addItem(I18N.gm("new"), null, new MenuBar.Command() {
+                    
+                    @Override
+                    public void menuSelected(MenuItem selectedItem) {
+                        UI.getCurrent().getSession().setAttribute("selectedProcessDefinition", processDefinition); //NOI18N
+                        UI.getCurrent().getNavigator().addView(ProcessManagerComponent.VIEW_NAME, open());
+                        UI.getCurrent().getNavigator().navigateTo(ProcessManagerComponent.VIEW_NAME);
+                        
+                        ProcessInstancesView.createProcessInstance(processDefinition, wsBean, session);
                     }
                 });
             }
@@ -92,8 +106,8 @@ public class ProcessManagerModule extends AbstractModule {
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
         }
-        MenuItem menuItemOptions = menuProcessManager.addItem("Options", null);
-        menuItemOptions.addItem("Reload", null, new MenuBar.Command() {
+        MenuItem menuItemOptions = menuProcessManager.addItem(I18N.gm("options"), null);
+        menuItemOptions.addItem(I18N.gm("reload"), null, new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {
                 try {

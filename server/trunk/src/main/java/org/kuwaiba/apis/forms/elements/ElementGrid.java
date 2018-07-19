@@ -155,6 +155,15 @@ public class ElementGrid extends AbstractElement {
     }
     
     @Override
+    public void propertyChange() {
+        if (hasProperty(Constants.EventAttribute.ONPROPERTYCHANGE, Constants.Property.ROWS)) {
+            List<String> list = getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE).get(Constants.Property.ROWS);
+            loadValue(list);
+            super.propertyChange();
+        }
+    }
+    
+    @Override
     public void onComponentEvent(EventDescriptor event) {
         if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
             if (event.getNewValue() != null || event.getOldValue() != null) {
@@ -184,8 +193,9 @@ public class ElementGrid extends AbstractElement {
         }                        
     }
     
-    private void loadValue(List<String> list) {
+    public final void loadValue(List<String> list) {
         if (list != null && !list.isEmpty()) {
+            List<List<Object>> oldRows = getRows();
 
             String functionName = list.get(0);
 
@@ -204,14 +214,14 @@ public class ElementGrid extends AbstractElement {
                 
                 setRows((List<List<Object>>) newValue);
 
-                for (List<Object> row : getRows()) {
+////                for (List<Object> row : getRows()) {
 
                     fireElementEvent(new EventDescriptor(
                         Constants.EventAttribute.ONPROPERTYCHANGE, 
                         Constants.Property.ROWS, 
-                        row, 
-                        null));
-                }
+                        getRows()/*row*/, 
+                        oldRows));
+////                }
             }
         }
     }

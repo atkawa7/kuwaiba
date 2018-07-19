@@ -116,7 +116,21 @@ public abstract class AbstractFormInstanceCreator {
                                 
                                 for (int j = 0; j < columnsCount; j += 1) {
                                     
-                                    sharedInformation.put(elementGrid.getId() + i + j, rows.get(i).get(j).toString());
+                                    Object data = rows.get(i).get(j);
+                                    
+                                    sharedInformation.put(elementGrid.getId() + i + j + Constants.Attribute.DATA_TYPE, Constants.Attribute.DataType.STRING);
+                                    sharedInformation.put(elementGrid.getId() + i + j, data.toString());
+                                    
+                                    if (isRemoteObjectLight(data)) {
+                                        
+                                        HashMap<String, String> info = getRemoteObjectLightInformation(data);
+                                                                                
+                                        sharedInformation.put(elementGrid.getId() + i + j + Constants.Attribute.DATA_TYPE, info.get(Constants.Attribute.DATA_TYPE));
+                                        sharedInformation.put(elementGrid.getId() + i + j + Constants.Attribute.OBJECT_NAME, info.get(Constants.Attribute.OBJECT_NAME));
+                                        sharedInformation.put(elementGrid.getId() + i + j + Constants.Attribute.OBJECT_ID, info.get(Constants.Attribute.OBJECT_ID));
+                                        sharedInformation.put(elementGrid.getId() + i + j + Constants.Attribute.CLASS_ID, info.get(Constants.Attribute.CLASS_ID));
+                                                                                
+                                    }
                                 }
                             }
                         }
@@ -169,7 +183,7 @@ public abstract class AbstractFormInstanceCreator {
         
         switch(element.getDataType()) {
             case Constants.Attribute.DataType.REMOTE_OBJECT_LIGTH:
-                addRemoteObjectLight(xmlew, xmlef, element);                
+                addRemoteObjectLight(xmlew, xmlef, element.getValue());
             break;
             case Constants.Attribute.DataType.CLASS_INFO_LIGTH:
                 addClassInfoLight(xmlew, xmlef, element);
@@ -198,8 +212,11 @@ public abstract class AbstractFormInstanceCreator {
         }
     }
     
-    protected abstract void addRemoteObjectLight(XMLEventWriter xmlew, XMLEventFactory xmlef, AbstractElementField element) throws XMLStreamException;
+    protected abstract void addRemoteObjectLight(XMLEventWriter xmlew, XMLEventFactory xmlef, Object object) throws XMLStreamException;
     
     protected abstract void addClassInfoLight(XMLEventWriter xmlew, XMLEventFactory xmlef, AbstractElementField element) throws XMLStreamException;
     
+    protected abstract boolean isRemoteObjectLight(Object object);
+    
+    protected abstract HashMap<String, String> getRemoteObjectLightInformation(Object object);
 }

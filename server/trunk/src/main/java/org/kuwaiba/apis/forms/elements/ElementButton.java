@@ -58,7 +58,8 @@ public class ElementButton extends AbstractElement {
                         anElement.fireElementEvent(new EventDescriptor(Constants.EventAttribute.ONCLICK, Constants.Function.OPEN));
                     }
 
-                } else if (Constants.Function.ADD_GRID_ROW.equals(key)) {
+                }
+                else if (Constants.Function.ADD_GRID_ROW.equals(key)) {
                     List<String> functionParams = getEvents().get(Constants.EventAttribute.ONCLICK).get(Constants.Function.ADD_GRID_ROW);
 
                     String elementId = functionParams.get(0);
@@ -82,7 +83,27 @@ public class ElementButton extends AbstractElement {
                         anElement.firePropertyChangeEvent();
                     }
 
-                } else if (Constants.Function.EDIT_GRID_ROW.equals(key)) {
+                }
+                else if (Constants.Function.ADD_GRID_ROWS.equals(key)) {
+                    List<String> functionParams = getEvents().get(Constants.EventAttribute.ONCLICK).get(Constants.Function.ADD_GRID_ROWS);
+
+                    String elementId = functionParams.get(0);
+                    
+                    AbstractElement anElement = getFormStructure().getElementById(elementId);
+
+                    if (anElement instanceof ElementGrid) {
+                        ElementGrid grid = (ElementGrid) anElement;
+                        // Removing the first parameter
+                        List<String> list = new ArrayList();
+                                                                        
+                        for (int i = 1; i < functionParams.size(); i += 1)
+                            list.add(functionParams.get(i));
+                                                                        
+                        grid.loadValue(list);
+                    }
+                    
+                } 
+                else if (Constants.Function.EDIT_GRID_ROW.equals(key)) {
                     
                     List<String> functionParams = getEvents().get(Constants.EventAttribute.ONCLICK).get(Constants.Function.EDIT_GRID_ROW);
 

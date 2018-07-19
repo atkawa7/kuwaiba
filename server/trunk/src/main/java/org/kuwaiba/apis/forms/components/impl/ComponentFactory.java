@@ -14,6 +14,10 @@
  */
 package org.kuwaiba.apis.forms.components.impl;
 
+import com.vaadin.server.Page;
+import com.vaadin.ui.UI;
+import java.util.ArrayList;
+import java.util.List;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.ElementButton;
 import org.kuwaiba.apis.forms.elements.ElementComboBox;
@@ -31,6 +35,18 @@ import org.kuwaiba.apis.forms.elements.ElementTextField;
 import org.kuwaiba.apis.forms.elements.ElementTree;
 import org.kuwaiba.apis.forms.elements.ElementUpload;
 import org.kuwaiba.apis.forms.elements.ElementVerticalLayout;
+import org.kuwaiba.apis.web.gui.actions.AbstractAction;
+import org.kuwaiba.apis.web.gui.navigation.AbstractNode;
+import org.kuwaiba.apis.web.gui.navigation.ChildrenProvider;
+import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
+import org.kuwaiba.apis.web.gui.navigation.InventoryObjectNode;
+import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
+import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  *
@@ -46,6 +62,11 @@ public class ComponentFactory {
         return instance == null ? instance = new ComponentFactory() : instance;
     }
     
+    private WebserviceBean wsBean;
+    
+    public void setWebserviceBean(WebserviceBean wsBean) {
+        this.wsBean = wsBean;
+    }
     
     public GraphicalComponent getComponent(AbstractElement element) {
         GraphicalComponent graphicalComponent = null;
@@ -77,7 +98,53 @@ public class ComponentFactory {
         } else if (element instanceof ElementPanel) {
             graphicalComponent = new ComponentPanel();            
         } else if (element instanceof ElementTree) {
-            graphicalComponent = new ComponentTree(new TreeWrapper());            
+            
+////            RemoteObjectLight root = new RemoteObjectLight(
+////                org.kuwaiba.services.persistence.util.Constants.DUMMY_ROOT, 
+////                -1, 
+////                org.kuwaiba.services.persistence.util.Constants.DUMMY_ROOT);
+            
+////            DynamicTree dynamicTree = new DynamicTree(root, new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
+////                
+////                @Override
+////                public List<RemoteObjectLight> getChildren(RemoteObjectLight parentObject) {
+////                        try {
+////                            return wsBean.getObjectChildren(
+////                                    parentObject.getClassName(), 
+////                                    parentObject.getId(), -1, Page.getCurrent().getWebBrowser().getAddress(), 
+////                                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+////                        } catch (ServerSideException ex) {
+////                            Notifications.showError(ex.getLocalizedMessage());
+////                            return new ArrayList<>();
+////                        }
+////                    }
+////                }, new SimpleIconGenerator(wsBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")));
+            
+            DynamicTree dynamicTree = new DynamicTree(new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
+                        @Override
+                        public List<RemoteObjectLight> getChildren(RemoteObjectLight parentObject) {
+                            try {
+                                return wsBean.getObjectChildren(
+                                        parentObject.getClassName(), 
+                                        parentObject.getId(), -1, Page.getCurrent().getWebBrowser().getAddress(), 
+                                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                            } catch (ServerSideException ex) {
+                                Notifications.showError(ex.getLocalizedMessage());
+                                return new ArrayList<>();
+                            }
+                        }
+                    }, new SimpleIconGenerator(wsBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")),
+                    new AbstractNode<RemoteObjectLight>(new RemoteObjectLight(Constants.DUMMY_ROOT, -1, "Navigation Root")) {
+                        @Override
+                        public AbstractAction[] getActions() { return new AbstractAction[0]; }
+
+                        @Override
+                        public void refresh(boolean recursive) { }
+                }
+                );
+            
+            graphicalComponent = new ComponentTree(dynamicTree);
+            
         } else if (element instanceof ElementListSelectFilter) {
             graphicalComponent = new ComponentListSelectFilter();            
         } else if (element instanceof ElementUpload) {

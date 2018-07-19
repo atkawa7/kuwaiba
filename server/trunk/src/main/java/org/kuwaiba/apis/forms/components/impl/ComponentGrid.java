@@ -23,6 +23,7 @@ import org.kuwaiba.apis.forms.elements.ElementColumn;
 import org.kuwaiba.apis.forms.elements.ElementGrid;
 import com.vaadin.ui.Grid;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -94,20 +95,8 @@ public class ComponentGrid extends GraphicalComponent {
                     getComponent().addColumn(row -> row.get(column.getCaption())).setCaption(column.getCaption());                
             }
             if (grid.getRows() != null) {
-                
-                List<List<Object>> gridRows = grid.getRows();
-                
-                for (List<Object> gridRow : gridRows) {
-                    
-                    List<ElementColumn> columns = grid.getColums();
-                    
-                    List<Object> strRow = new ArrayList();
-                    
-                    for (Object data : gridRow)
-                        strRow.add(data.toString());
-                    
-                    addRow(strRow, columns);
-                }
+                                
+                updateRows(grid);
             }
             if (grid.getWidth() != null)
                 getComponent().setWidth(grid.getWidth());
@@ -138,24 +127,9 @@ public class ComponentGrid extends GraphicalComponent {
             });
         }
     }
-    
-    private void addRow(List<Object> values, List<ElementColumn> columns) {
         
-        if (values.size() == columns.size()) {
-            
-            IndexedHashMap<String, Object> row = new IndexedHashMap(rows.size());
-
-            for (int i = 0; i < values.size(); i += 1)
-                row.put(columns.get(i).getCaption(), values.get(i));
-
-            rows.add(row);
-            getComponent().setItems(rows);
-        }
-    }
-    
-    private void updateRows() {
-                
-        ElementGrid grid = (ElementGrid) getComponentEventListener();
+    private void updateRows(ElementGrid grid) {
+                        
         List<ElementColumn> columns = grid.getColums();
         
         List<List<Object>> gridRows = grid.getRows();
@@ -174,6 +148,7 @@ public class ComponentGrid extends GraphicalComponent {
                 
                 rows.add(row);
             }
+            getComponent().setItems(Collections.EMPTY_LIST);
             getComponent().setItems(rows);
         }
     }
@@ -182,8 +157,10 @@ public class ComponentGrid extends GraphicalComponent {
     public void onElementEvent(EventDescriptor event) {
         if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
             
-            if (Constants.Property.ROWS.equals(event.getPropertyName()))
-                updateRows();
+            if (Constants.Property.ROWS.equals(event.getPropertyName())) {
+                ElementGrid grid = (ElementGrid) getComponentEventListener();
+                updateRows(grid);
+            }
         }
     }
     

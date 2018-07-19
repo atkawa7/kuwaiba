@@ -75,6 +75,8 @@ public class FormRenderer extends CustomComponent {
         
         content.removeAllComponents();
         
+        ComponentFactory.getInstance().setWebserviceBean(wsBean);
+        
         renderRecursive(formLoader.getRoot(), content);
         
         formLoader.fireOnload(new ScriptQueryExecutorImpl(wsBean, session, processInstance));

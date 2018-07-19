@@ -3756,7 +3756,18 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List collection = (List) aem.executeScriptQuery(scriptQueryId).getResult();
             
             if (collection != null && !collection.isEmpty()) {
-                if (collection.get(0) instanceof BusinessObjectLight) {
+                
+                if (collection.get(0) instanceof BusinessObject) {
+                    
+                    List<RemoteObject> result = new ArrayList();                    
+                    
+                    for (Object item : collection)
+                        result.add(new RemoteObject((BusinessObject) item));
+                                        
+                    return new RemoteScriptQueryResultCollection(result);
+                    
+                }
+                else if (collection.get(0) instanceof BusinessObjectLight) {
                     
                     List<RemoteObjectLight> result = new ArrayList();                    
                     
@@ -3765,7 +3776,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
                     
                     return new RemoteScriptQueryResultCollection(result);
                     
-                } else if (collection.get(0) instanceof ClassMetadataLight) {
+                }
+                else if (collection.get(0) instanceof ClassMetadataLight) {
                     
                     List<RemoteClassMetadataLight> result = new ArrayList();
                     
@@ -3782,6 +3794,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                         result.add(new RemoteClassMetadataLight(classMetadataLight, validators.toArray(new Validator[0])));
                     }
                     return new RemoteScriptQueryResultCollection(result);
+                    
                 }
             }
             return new RemoteScriptQueryResultCollection(collection);
