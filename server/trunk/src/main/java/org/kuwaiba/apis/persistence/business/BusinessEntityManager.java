@@ -220,9 +220,19 @@ public interface BusinessEntityManager {
     /**
      * Suggests a number (by default, 10) of objects based on a search string. This search string will be case-insensitive-matched against the name of the objects and classes in the inventory
      * @param filter The search string
-     * @return A list of up to 10 suggested objects matching the criteria, alphabetically sorted
+     * @param limit The limit of results. Use -1 to retrieve all
+     * @return A list of up to #{@code limit} suggested objects matching the criteria, alphabetically sorted
      */
-    public List<BusinessObjectLight> getSuggestedObjectsWithFilter(String filter);
+    public List<BusinessObjectLight> getSuggestedObjectsWithFilter(String filter, int limit);
+    
+    /**
+     * Same as #{@code getSuggestedObjectsWithFilter(String)}, but the results will be instances of the super class provided or one of its subclasses
+     * @param filter The search string
+     * @param superClass The results will be instances of this class or one of its subclasses
+     * @param limit The limit of results. Use -1 to retrieve all
+     * @return A list of up to #{@code limit} suggested objects matching the criteria, alphabetically sorted
+     */
+    public List<BusinessObjectLight> getSuggestedObjectsWithFilter(String filter, String superClass, int limit);
     
     /**
      * Utility method that returns the value of an attribute of a given object as a string. In date-type attributes, it will return 

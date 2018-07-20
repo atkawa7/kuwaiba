@@ -18,7 +18,7 @@ package org.kuwaiba.web.modules.physicalconnections.windows;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
 import java.util.List;
-import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
+//import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
@@ -27,7 +27,7 @@ import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class EndpointNode extends InventoryObjectNode {
+public class EndpointNode  {
 //    private boolean free = true;
 //    private RemoteObjectLight objectLink = null;
 //        

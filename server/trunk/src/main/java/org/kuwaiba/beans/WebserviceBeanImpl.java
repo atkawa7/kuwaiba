@@ -1180,18 +1180,28 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public List<RemoteObjectLight> getSuggestedObjectsWithFilter(String filter, String ipAddress, String sessionId) throws ServerSideException {
+    public List<RemoteObjectLight> getSuggestedObjectsWithFilter(String filter, int limit, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getSuggestedObjectsWithFilter", ipAddress, sessionId);
-            return RemoteObjectLight.toRemoteObjectLightArray(bem.getSuggestedObjectsWithFilter(filter));
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getSuggestedObjectsWithFilter(filter, limit));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
     
-    
+    @Override
+    public List<RemoteObjectLight> getSuggestedObjectsWithFilter(String filter, String superClass, int limit, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getSuggestedObjectsWithFilter", ipAddress, sessionId);
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getSuggestedObjectsWithFilter(filter, superClass, limit));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
     
     @Override
     public RemoteObjectLight getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid, String ipAddress, String sessionId) throws ServerSideException {

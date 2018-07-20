@@ -339,6 +339,10 @@ public class Constants {
      */
     public static final String CLASS_PHYSICALCONNECTION= "GenericPhysicalConnection"; //NOI18N
     /**
+     * Class GenericBox
+     */
+    public static final String CLASS_GENERICADDRESS = "GenericAddress"; //NOI18N
+    /**
      * IP Address
      */
     public static final String CLASS_IP_ADDRESS = "IPAddress"; //NOI18N
@@ -365,7 +369,7 @@ public class Constants {
     /**
      * Class GenericBox
      */
-    public static final String CLASS_GENERICBOX = "GenericBox";
+    public static final String CLASS_GENERICBOX = "GenericBox"; //NOI18N
     /**
      * Class GenericBox
      */

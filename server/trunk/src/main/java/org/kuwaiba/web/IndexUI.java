@@ -39,6 +39,7 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.web.modules.contacts.ContactManagerModule;
+import org.kuwaiba.web.modules.ipam.IPAddressManagerModule;
 import org.kuwaiba.web.modules.ltmanager.ListTypeManagerModule;
 import org.kuwaiba.web.modules.navtree.NavigationTreeModule;
 import org.kuwaiba.web.modules.servmanager.ServiceManagerModule;
@@ -92,14 +93,20 @@ public class IndexUI extends UI {
                         (RemoteSession) getSession().getAttribute("session"));
             ltmModule.attachToMenu(mnuMain);
             
-            ContactManagerModule cmModule = new ContactManagerModule(null, wsBean, 
+            // IP Address Manager module
+            IPAddressManagerModule ipamModule = new IPAddressManagerModule(null, wsBean, 
                         (RemoteSession) getSession().getAttribute("session"));
-            cmModule.attachToMenu(mnuMain);
+            ipamModule.attachToMenu(mnuMain);
             
             // Process Manager Module
             ProcessManagerModule processManagerModule = new ProcessManagerModule(null, wsBean, 
                 (RemoteSession) getSession().getAttribute("session"));
             processManagerModule.attachToMenu(mnuMain);
+            
+            // Contacts Module
+            ContactManagerModule cmModule = new ContactManagerModule(null, wsBean, 
+                        (RemoteSession) getSession().getAttribute("session"));
+            cmModule.attachToMenu(mnuMain);
 
             this.mnuMain.addItem("Log Out", new MenuBar.Command() {
                 @Override

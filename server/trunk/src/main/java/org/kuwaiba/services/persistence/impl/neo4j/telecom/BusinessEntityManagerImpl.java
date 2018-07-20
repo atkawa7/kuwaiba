@@ -647,13 +647,40 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     }
     
     @Override
-    public List<BusinessObjectLight> getSuggestedObjectsWithFilter(String filter) {
+    public List<BusinessObjectLight> getSuggestedObjectsWithFilter(String filter, int limit) {
         try (Transaction tx = graphDb.beginTx()) {
             String cypherQuery = "MATCH (object:" + inventoryObjectLabel + ")-[:INSTANCE_OF]->(class:"  //NOI18N
-                    + classLabel + ") WHERE TOLOWER(object.name) CONTAINS TOLOWER({searchString}) OR TOLOWER(class.name) CONTAINS TOLOWER({searchString}) RETURN object.name as oname, id(object) as oid, class.name as cname ORDER BY object.name ASC LIMIT 15"; //NOI18N
+                    + ") WHERE TOLOWER(object.name) CONTAINS TOLOWER({searchString}) OR TOLOWER(class.name) CONTAINS TOLOWER({searchString}) RETURN object.name as oname, id(object) as oid, class.name as cname ORDER BY object.name ASC" + (limit > 0 ? " LIMIT " + limit : ""); //NOI18N
             
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("searchString", filter);
+            Result queryResult = graphDb.execute(cypherQuery, parameters);
+            
+            List<BusinessObjectLight> res  = new ArrayList<>();
+            
+            while (queryResult.hasNext()) {
+                Map<String, Object> row = queryResult.next();
+                res.add(new BusinessObjectLight((long)row.get("oid"), 
+                        (String)row.get("oname"), 
+                        (String)row.get("cname")));
+            }
+            
+            tx.success();
+            return res;
+        }
+    }
+    
+    @Override
+    public List<BusinessObjectLight> getSuggestedObjectsWithFilter(String filter, String superClass, int limit) {
+        try (Transaction tx = graphDb.beginTx()) {
+            String cypherQuery = "MATCH (object:" + inventoryObjectLabel + ")-[:INSTANCE_OF]->(class)" +
+                    "-[:EXTENDS*0..]->(superclass) WHERE (TOLOWER(object.name) CONTAINS TOLOWER({searchString})" + 
+                    " OR TOLOWER(class.name) CONTAINS TOLOWER({searchString})) AND superclass.name={superclass} " + 
+                    "RETURN object.name as oname, id(object) as oid, class.name as cname ORDER BY object.name ASC" + (limit > 0 ? " LIMIT " + limit : "");
+
+            HashMap<String, Object> parameters = new HashMap<>();
+            parameters.put("searchString", filter);
+            parameters.put("superclass", superClass);
             Result queryResult = graphDb.execute(cypherQuery, parameters);
             
             List<BusinessObjectLight> res  = new ArrayList<>();

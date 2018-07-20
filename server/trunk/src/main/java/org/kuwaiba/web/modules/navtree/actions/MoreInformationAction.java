@@ -17,7 +17,7 @@ package org.kuwaiba.web.modules.navtree.actions;
 
 import org.kuwaiba.apis.web.gui.notifications.MessageBoxShowObjectId;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
+//import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**

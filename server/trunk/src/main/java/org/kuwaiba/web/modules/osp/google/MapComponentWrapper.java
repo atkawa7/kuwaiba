@@ -26,7 +26,7 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
-import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
+//import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
