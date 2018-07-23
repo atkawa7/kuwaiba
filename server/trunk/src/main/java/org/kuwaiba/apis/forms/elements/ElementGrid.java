@@ -178,7 +178,7 @@ public class ElementGrid extends AbstractElement {
     
     @Override
     public String getTagName() {
-        return Constants.Tag.GRID;       
+        return Constants.Tag.GRID;
     }
     
     @Override
@@ -214,14 +214,11 @@ public class ElementGrid extends AbstractElement {
                 
                 setRows((List<List<Object>>) newValue);
 
-////                for (List<Object> row : getRows()) {
-
-                    fireElementEvent(new EventDescriptor(
-                        Constants.EventAttribute.ONPROPERTYCHANGE, 
-                        Constants.Property.ROWS, 
-                        getRows()/*row*/, 
-                        oldRows));
-////                }
+                fireElementEvent(new EventDescriptor(
+                    Constants.EventAttribute.ONPROPERTYCHANGE, 
+                    Constants.Property.ROWS, 
+                    getRows(), 
+                    oldRows));
             }
         }
     }

@@ -31,6 +31,8 @@ import com.vaadin.ui.VerticalLayout;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.forms.components.impl.ObjectHierarchyProvider;
+import org.kuwaiba.apis.forms.elements.Constants;
+import org.kuwaiba.apis.forms.elements.ElementMiniApplication;
 import org.kuwaiba.apis.forms.elements.FormStructure;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -111,7 +113,8 @@ public class FormRenderer extends CustomComponent {
                 
                 if (childComponent != null) {
                     
-                    if (!(childElement instanceof ElementSubform)) {
+                    if (!(childElement instanceof ElementSubform) && 
+                        !(childElement instanceof ElementMiniApplication && Constants.Attribute.Mode.DETACHED.equals(((ElementMiniApplication) childElement).getMode()))) {
                         
                         if (!childElement.isHidden()) {
                             

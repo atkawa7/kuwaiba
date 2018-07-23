@@ -287,7 +287,6 @@ public final class ProcessCache {
             result.add(activity);
         
         return result;
-        //throw new InventoryException("Process Not Found") {};
     }
     
     public ActivityDefinition getNextActivityForProcessInstance(long processInstanceId, long currentActivityId) throws InventoryException {
@@ -375,11 +374,8 @@ public final class ProcessCache {
                 
                 HashMap<ArtifactDefinition, Artifact> artifactInstance = processInstanceArtifacts.get(processInstance);
                 
-                artifactInstance.put(activity.getArfifact(), artifact);                
-////                if (artifactInstance.containsKey(activity.getArfifact()))
-////                    artifactInstance.put(activity.getArfifact(), artifact);
-////                else
-////                    throw new InventoryException("Process Instances Artifact can not be found") {};
+                artifactInstance.put(activity.getArfifact(), artifact);
+                
             } else
                 throw new InventoryException("Process Instances can not be found") {};
             
@@ -400,7 +396,7 @@ public final class ProcessCache {
         if (activity != null) {
             if (processInstanceArtifacts.containsKey(processInstance)) {
                 HashMap<ArtifactDefinition, Artifact> artifactInstance = processInstanceArtifacts.get(processInstance);
-////                if (!artifactInstance.containsKey(activity.getArfifact()))
+                
                 if (processInstance.getCurrentActivity() == activityDefinitionId)
                     artifactInstance.put(activity.getArfifact(), artifact);
                 else
@@ -434,7 +430,6 @@ public final class ProcessCache {
     }
     
     public List<ProcessDefinition> getProcessDefinitions() throws InventoryException {
-//        updateArtifacts();
         return processDefinitions;
     }
     

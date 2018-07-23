@@ -28,6 +28,7 @@ import org.kuwaiba.apis.forms.elements.ElementHorizontalLayout;
 import org.kuwaiba.apis.forms.elements.ElementImage;
 import org.kuwaiba.apis.forms.elements.ElementLabel;
 import org.kuwaiba.apis.forms.elements.ElementListSelectFilter;
+import org.kuwaiba.apis.forms.elements.ElementMiniApplication;
 import org.kuwaiba.apis.forms.elements.ElementPanel;
 import org.kuwaiba.apis.forms.elements.ElementSubform;
 import org.kuwaiba.apis.forms.elements.ElementTextArea;
@@ -39,7 +40,6 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.navigation.AbstractNode;
 import org.kuwaiba.apis.web.gui.navigation.ChildrenProvider;
 import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
-import org.kuwaiba.apis.web.gui.navigation.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
@@ -128,6 +128,8 @@ public class ComponentFactory {
             graphicalComponent = new ComponentListSelectFilter();            
         } else if (element instanceof ElementUpload) {
             graphicalComponent = new ComponentUpload();            
+        } else if (element instanceof ElementMiniApplication) {
+            graphicalComponent = new ComponentMiniApplication();            
         }
         
         if (graphicalComponent != null && element != null) {
@@ -141,8 +143,6 @@ public class ComponentFactory {
             graphicalComponent.setComponentEventListener(element);
         }
         return graphicalComponent;
-////        return component != null && component.getComponent() != null && 
-////            component.getComponent() instanceof Component ? component.getComponent() : null;
     }
         
 }

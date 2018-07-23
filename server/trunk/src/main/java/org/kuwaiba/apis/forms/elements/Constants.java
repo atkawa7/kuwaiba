@@ -49,6 +49,7 @@ public class Constants {
         public static final String ROWS = "rows"; //NOI18N
         public static final String ROW = "row"; //NOI18N
         public static final String DATA = "data"; //NOI18N
+        public static final String MINI_APPLICATION = "miniApplication"; //NOI18N
     }
     
     public class Attribute {
@@ -79,6 +80,10 @@ public class Constants {
         public static final String CLASS_NAME = "classname"; //NOI18N
         public static final String FORM_ID = "formid"; //NOI18N
         public static final String SHARED = "shared"; //NOI18N
+        public static final String SRC = "src"; //NOI18N
+        public static final String MODE = "mode"; //NOI18N
+        public static final String PACKAGE = "package"; //NOI18N
+        public static final String DESCRIPTION = "description"; //NOI18N
                 
         public class DataType {
             public static final String REMOTE_OBJECT = "RemoteObject"; //NOI18N
@@ -89,7 +94,12 @@ public class Constants {
             public static final String STRING = "String"; //NOI18N
             public static final String EMAIL = "Email"; //NOI18N, Data type to use default validators
             public static final String DATE = "Date"; //NOI18N
-        }        
+        }
+        
+        public class Mode {
+            public static final String DETACHED = "detached";
+            public static final String EMBEDDED = "embedded";
+        }
     }
     
     public class EventAttribute {
@@ -111,7 +121,6 @@ public class Constants {
         public static final String ADD_GRID_ROWS = "addgridrows"; //NOI18N
         public static final String EDIT_GRID_ROW = "editgridrow"; //NOI18N
         public static final String DELETE_GRID_ROW = "deletegridrow"; //NOI18N
-////        public static final String OPEN_FORM = "openform"; //NOI18N
         public static final String SAVE="save"; //NOI18N
         
         public class Type {

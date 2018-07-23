@@ -57,7 +57,11 @@ public class ElementButton extends AbstractElement {
                                                 
                         anElement.fireElementEvent(new EventDescriptor(Constants.EventAttribute.ONCLICK, Constants.Function.OPEN));
                     }
-
+                    
+                    if (anElement instanceof ElementMiniApplication) {
+                        ElementMiniApplication miniApp = (ElementMiniApplication) anElement;
+                        miniApp.fireElementEvent(new EventDescriptor(Constants.EventAttribute.ONCLICK, Constants.Function.OPEN));
+                    }
                 }
                 else if (Constants.Function.ADD_GRID_ROW.equals(key)) {
                     List<String> functionParams = getEvents().get(Constants.EventAttribute.ONCLICK).get(Constants.Function.ADD_GRID_ROW);

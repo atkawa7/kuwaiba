@@ -50,7 +50,7 @@ public class ElementScript implements Tag {
         QName tagScript = new QName(Constants.Tag.SCRIPT);
         QName tagFunction = new QName(Constants.Tag.FUNCTION);
                         
-        functions = new HashMap();
+////        functions = new HashMap();
         
         while (true) {
             reader.nextTag();
@@ -71,15 +71,15 @@ public class ElementScript implements Tag {
                         
                         if (Constants.Function.Type.FUNCTION.equals(functionType)) {
                             if (blockOfCode != null)
-                                functions.put(functionName, new FunctionRunner(functionName, parameterNames, blockOfCode));
+                                getFunctions().put(functionName, new FunctionRunner(functionName, parameterNames, blockOfCode));
                         }
                         if (Constants.Function.Type.QUERY.equals(functionType)) {
                             if (queryName != null)
-                                functions.put(functionName, new ScriptQueryRunner(functionName, queryName, parameterNames));
+                                getFunctions().put(functionName, new ScriptQueryRunner(functionName, queryName, parameterNames));
                         }
                         if (Constants.Function.Type.VALIDATOR.equals(functionType)) {
                             if (message != null)
-                                functions.put(functionName, new ValidatorRunner(functionName, parameterNames, blockOfCode, message));
+                                getFunctions().put(functionName, new ValidatorRunner(functionName, parameterNames, blockOfCode, message));
                         }
                     }
                 }

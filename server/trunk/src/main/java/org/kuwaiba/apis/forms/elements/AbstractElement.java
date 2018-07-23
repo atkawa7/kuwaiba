@@ -26,9 +26,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 /**
- * 
- * API IN TOP FORM
- * General java representation of a Tag
+ * An abstract element is a java representation of a Tag
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public abstract class AbstractElement implements Tag, ComponentEventListener, PropertyChangeListener {

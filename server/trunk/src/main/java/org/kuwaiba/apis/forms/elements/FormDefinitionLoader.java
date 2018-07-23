@@ -15,6 +15,7 @@
 package org.kuwaiba.apis.forms.elements;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -24,6 +25,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.kuwaiba.apis.persistence.application.process.ProcessDefinitionLoader;
 
 /**
  * This class reads an structure xml and create the form elements containment 
@@ -51,6 +53,7 @@ public class FormDefinitionLoader {
     public static final QName TAG_TREE = new QName(Constants.Tag.TREE);
     public static final QName TAG_LIST_SELECT_FILTER = new QName(Constants.Tag.LIST_SELECT_FILTER);
     public static final QName TAG_UPLOAD = new QName(Constants.Tag.UPLOAD);
+    public static final QName TAG_MINI_APPLICATION = new QName(Constants.Tag.MINI_APPLICATION);
     
     private final List<QName> containers;
     
@@ -93,57 +96,74 @@ public class FormDefinitionLoader {
                 if (reader.getName().equals(TAG_GRID_LAYOUT)) {
                     child = new ElementGridLayout();
                     
-                } else if (reader.getName().equals(TAG_VERTICAL_LAYOUT)) {
+                }
+                else if (reader.getName().equals(TAG_VERTICAL_LAYOUT)) {
                     child = new ElementVerticalLayout();
                     
-                } else if (reader.getName().equals(TAG_SUBFORM)) {
+                }
+                else if (reader.getName().equals(TAG_SUBFORM)) {
                     child = new ElementSubform();
                     
-                } else if (reader.getName().equals(TAG_HORIZONTAL_LAYOUT)) {
+                }
+                else if (reader.getName().equals(TAG_HORIZONTAL_LAYOUT)) {
                     child = new ElementHorizontalLayout();
                     
-                } else if (reader.getName().equals(TAG_LABEL)) {
+                }
+                else if (reader.getName().equals(TAG_LABEL)) {
                     child = new ElementLabel();
                     
-                } else if (reader.getName().equals(TAG_TEXT_FIELD)) {
+                }
+                else if (reader.getName().equals(TAG_TEXT_FIELD)) {
                     child = new ElementTextField();
                     
-                } else if (reader.getName().equals(TAG_TEXT_AREA)) {
+                }
+                else if (reader.getName().equals(TAG_TEXT_AREA)) {
                     child = new ElementTextArea();
                     
-                } else if (reader.getName().equals(TAG_DATE_FIELD)) {
+                }
+                else if (reader.getName().equals(TAG_DATE_FIELD)) {
                     child = new ElementDateField();
                     
-                } else if (reader.getName().equals(TAG_COMBO_BOX)) {
+                }
+                else if (reader.getName().equals(TAG_COMBO_BOX)) {
                     child = new ElementComboBox();
                     
-                } else if (reader.getName().equals(TAG_GRID)) {
+                }
+                else if (reader.getName().equals(TAG_GRID)) {
                     child = new ElementGrid();
                     
-                } else if (reader.getName().equals(TAG_BUTTON)) {
+                }
+                else if (reader.getName().equals(TAG_BUTTON)) {
                     child = new ElementButton();
                     
-                } else if (reader.getName().equals(TAG_IMAGE)) {
+                }
+                else if (reader.getName().equals(TAG_IMAGE)) {
                     child = new ElementImage();
                     
-                } else if (reader.getName().equals(TAG_PANEL)) {
+                }
+                else if (reader.getName().equals(TAG_PANEL)) {
                     child = new ElementPanel();
                     
-                } else if (reader.getName().equals(TAG_TREE)) {
+                }
+                else if (reader.getName().equals(TAG_TREE)) {
                     child = new ElementTree();
                     
-                } else if (reader.getName().equals(TAG_LIST_SELECT_FILTER)) {
+                }
+                else if (reader.getName().equals(TAG_LIST_SELECT_FILTER)) {
                     child = new ElementListSelectFilter();
                     
-                } else if (reader.getName().equals(TAG_UPLOAD)) {
+                }
+                else if (reader.getName().equals(TAG_UPLOAD)) {
                     child = new ElementUpload();
-                    
-                } else if (reader.getName().equals(TAG_I18N)) {
+                }
+                else if (reader.getName().equals(TAG_MINI_APPLICATION)) {
+                    child = new ElementMiniApplication();
+                }
+                else if (reader.getName().equals(TAG_I18N)) {
                     return event;
-                    
-                } else if (reader.getName().equals(TAG_SCRIPT)) {
+                }
+                else if (reader.getName().equals(TAG_SCRIPT)) {
                     return event;
-                    
                 }
                                 
                 if (child != null) {
@@ -161,6 +181,36 @@ public class FormDefinitionLoader {
         }
         return event;
     }    
+    
+    private void loadExternalScript(String src) {
+        if (src != null) {
+            
+            File file = new File(src);
+            byte [] externalScript = ProcessDefinitionLoader.getFileAsByteArray(file);
+            
+            if (externalScript != null) {
+                
+                try {
+                    XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+                    ByteArrayInputStream bais = new ByteArrayInputStream(externalScript);
+                    XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+
+                    while (reader.hasNext()) {
+                        
+                        int event = reader.next();
+                        
+                        if (event == XMLStreamConstants.START_ELEMENT) {
+
+                            if (reader.getName().equals(TAG_SCRIPT))
+                                elementScript.initFromXML(reader);
+                        }
+                    }
+
+                } catch (XMLStreamException ex) {
+                }
+            }
+        }
+    }
     
     public void build() {
 
@@ -188,8 +238,14 @@ public class FormDefinitionLoader {
                         elementI18N = new ElementI18N();
                         elementI18N.initFromXML(reader);
                     }
-                    if (reader.getName().equals(TAG_SCRIPT))
+                    if (reader.getName().equals(TAG_SCRIPT)) {
+                        String src = reader.getAttributeValue(null, Constants.Attribute.SRC);
+
                         elementScript.initFromXML(reader);
+                        
+                        if (src != null)
+                            loadExternalScript(src);
+                    }
                 }
             }
             reader.close();

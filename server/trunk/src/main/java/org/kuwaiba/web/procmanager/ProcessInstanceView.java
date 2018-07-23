@@ -84,9 +84,9 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
     private boolean actorEnabled(RemoteActor actor) {
         try {
             List<GroupInfoLight> groups = wsBean.getGroupsForUser(
-                    remoteSession.getUserId(),
-                    Page.getCurrent().getWebBrowser().getAddress(),
-                    remoteSession.getSessionId());
+                remoteSession.getUserId(),
+                Page.getCurrent().getWebBrowser().getAddress(),
+                remoteSession.getSessionId());
             
             if (actor != null) {
                 
@@ -164,7 +164,6 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
         }
 
         try {
-////                        if (artifact == null && event.getButton().equals(btnNext)) {
             if (eventBtn.equals(btnNext)) {
 
                 wsBean.commitActivity(
@@ -369,20 +368,9 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
                 HorizontalLayout artifactTools = new HorizontalLayout();
                 artifactTools.setWidth(100, Unit.PERCENTAGE);
                 
-                if (interruptedActivity) {
-////                    CheckBox chkInterruptedActivity = new CheckBox("Interrupted Activity");
-////
-////                    chkInterruptedActivity.setValue(interruptedActivity);
-////
-////                    chkInterruptedActivity.addValueChangeListener(new HasValue.ValueChangeListener() {
-////                        @Override
-////                        public void valueChange(HasValue.ValueChangeEvent event) {
-////                            artifactView.getArtifactRenderer().getSharedMap().put("__interrupted__", event.getValue().toString());
-////                        }
-////                    });
+                if (interruptedActivity)
                     artifactTools.addComponent(new Label("Interrupted Activity"));
-                }
-                
+                                
                 if (currentActivity.isIdling()) {
                     CheckBox chkIdleActivity = new CheckBox("Idle Activity");
                     
