@@ -138,11 +138,6 @@ public class IPAddressManagerComponent extends AbstractTopComponent {
         });
         
         Button btnSearch = new Button(VaadinIcons.SEARCH, (e) -> {
-            
-            if (this.txtFilter.getValue().length() < 2) {
-                Notifications.showInfo("Please refine your search");
-                return;
-            }
             try {
                 this.tblIps.setItems();
 

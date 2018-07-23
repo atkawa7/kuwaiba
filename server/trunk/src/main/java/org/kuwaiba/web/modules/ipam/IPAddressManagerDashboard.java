@@ -32,7 +32,7 @@ import org.kuwaiba.web.modules.navtree.dashboard.SpecialChildrenDashboardWidget;
  */
 public class IPAddressManagerDashboard extends AbstractDashboard {
     public IPAddressManagerDashboard(RemoteObjectLight selectedObject, WebserviceBean wsBean) {
-        super(selectedObject.toString(), new ShelfDashboardLayout(selectedObject.toString()));
+        super(selectedObject.toString(), new ShelfDashboardLayout(selectedObject.toString(), String.format("Object id: %s", selectedObject.getId())));
         ((ShelfDashboardLayout)getDashboardLayout()).setMainDashboardWidget(new IPAddressManagerExplorerDashboardWidget(selectedObject, wsBean));
         ((ShelfDashboardLayout)getDashboardLayout()).addToPile(new RelationshipsDashboardWidget(selectedObject, wsBean));
         ((ShelfDashboardLayout)getDashboardLayout()).addToPile(new SpecialChildrenDashboardWidget(selectedObject, wsBean));

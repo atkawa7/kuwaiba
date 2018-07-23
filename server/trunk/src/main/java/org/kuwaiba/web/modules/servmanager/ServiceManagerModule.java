@@ -89,6 +89,7 @@ public class ServiceManagerModule extends AbstractModule {
                 UI.getCurrent().addWindow(wdwNewCustomer);
             }
         });
+        
         serviceManagerMenuItem.addItem("Add Service", new MenuBar.Command() {
             @Override
             public void menuSelected(MenuBar.MenuItem selectedItem) {

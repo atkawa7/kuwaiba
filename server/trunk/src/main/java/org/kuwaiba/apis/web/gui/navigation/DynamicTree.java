@@ -18,6 +18,7 @@ package org.kuwaiba.apis.web.gui.navigation;
 import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.ui.IconGenerator;
 import com.vaadin.ui.Tree;
+import java.util.List;
 
 /**
  * A tree that extends the features of the default one and makes use of the Nodes API
@@ -38,6 +39,16 @@ public class DynamicTree extends Tree<AbstractNode> {
         setDataProvider(new TreeDataProvider(treeData));
         setSizeFull();
         setItemIconGenerator(iconGenerator);
+    }
+    
+    /**
+     * Resets the tree to the roots provided 
+     * @param newRoots The roots to replace the current one
+     */
+    public void resetTo(List<AbstractNode> newRoots) {
+        this.getTreeData().clear();
+        this.getTreeData().addRootItems(newRoots);
+        this.setTreeData(getTreeData());
     }
     
     /**

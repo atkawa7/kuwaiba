@@ -64,7 +64,6 @@ $v-layout-spacing-vertical: round($v-unit-size / 1.8) !default;
 $v-layout-spacing-horizontal: round($v-unit-size / 1.8) !default;
 
 $v-field-background-color: #ccffe6;
-//nice pink color color: #eb2977;
 
 @import "../valo/valo.scss";
 
@@ -214,6 +213,18 @@ $v-field-background-color: #ccffe6;
     .v-button-selected {
         background: #999999;
     }
+    
+    .v-Notification-gray {
+        background: #8A8A8A;
+        color: white;
+    }
+       
+    .v-Notification .v-Notification-caption {
+	color: white;
+	font-size: 14px;
+	line-height: 1;
+    }   
+    
     // PROCESS MANAGER STYLE DEFINITION
     .v-layout {
         padding: 0 0 0 0;      
@@ -457,13 +468,40 @@ $v-field-background-color: #ccffe6;
     .servmanager {
         
     }
-    
+            
     .misc {
         .v-menubar-misc-main {
             background: #008080;
             color: white;
         }
     }
+    
+    .v-menubar-popup .v-menubar-menuitem-selected {
+	background-color: #008080;
+	background-image: -webkit-linear-gradient(top, #008081 2%, #008070 98%);
+	background-image: linear-gradient(to bottom,#008081 2%, #008070 98%);
+	color: white;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
+    }
+    
+    .v-menubar > .v-menubar-menuitem-selected {
+	color: white;
+	border-radius: 0;
+	border: 1px solid #4b7eb8;
+	border-top-color: #5183b9;
+	border-bottom-color: #4272af;
+	background-color: #008080;
+	background-image: -webkit-linear-gradient(top, #008081 2%, #008070 98%);
+	background-image: linear-gradient(to bottom,#008081 2%, #008070 98%);
+	-webkit-box-shadow: inset 0 1px 0 #93bbed, inset 0 -1px 0 #008060;
+	box-shadow: inset 0 1px 0 #34A2A3, inset 0 -1px 0 #008060;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
+	border-top-width: 0;
+	border-left-width: 0;
+	border-bottom-width: 0;
+	z-index: 2;
+}
+    
     
     //START of end to end view forms
     #header{ text-align: left;}

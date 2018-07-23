@@ -17,8 +17,12 @@
 package org.kuwaiba.web.modules.navtree.dashboard;
 
 import com.vaadin.server.Page;
-import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.nodes.PropertyFactory;
 import org.kuwaiba.apis.web.gui.nodes.PropertySheet;
@@ -49,7 +53,7 @@ public class NavigationTreeExplorerDashboardWidget extends AbstractDashboardWidg
     private RemoteObjectLight selectedObject;
     
     public NavigationTreeExplorerDashboardWidget(RemoteObjectLight selectedObject, WebserviceBean wsBean) {
-        super(String.format("Properties for %s", selectedObject));
+        super(String.format("Properties of %s", selectedObject));
         this.wsBean = wsBean;
         this.selectedObject = selectedObject;
         this.createContent();
@@ -61,7 +65,7 @@ public class NavigationTreeExplorerDashboardWidget extends AbstractDashboardWidg
 
     @Override
     public void createContent() {
-        HorizontalLayout lytContent = new HorizontalLayout();
+        VerticalLayout lytContent = new VerticalLayout();
         lytContent.setMargin(true);
         lytContent.setSizeFull();
         try {
@@ -72,7 +76,29 @@ public class NavigationTreeExplorerDashboardWidget extends AbstractDashboardWidg
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
 
             this.propertySheet = new PropertySheet(PropertyFactory.propertiesFromRemoteObject(seletedItemDetails, listTypeClassMetadata), title);
-            lytContent.addComponent(this.propertySheet);
+            
+            Button btnShowHierarchyInformation = new Button("Hierarchy Information...", (event) -> {
+                try {
+                    List<RemoteObjectLight> parents = wsBean.getParents(selectedObject.getClassName(), selectedObject.getId(),Page.getCurrent().getWebBrowser().getAddress(), 
+                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                    
+                    if (parents.size() == 1) //It's right under the dummy root
+                        Notifications.showMoreInfo("Navigation Tree Root");
+                    else {
+                        parents.remove(parents.get(parents.size() - 1)); //Ignore the dummy root
+
+                        Notifications.showMoreInfo(parents.stream().
+                                map(RemoteObjectLight::toString).collect(Collectors.joining("/")));
+                    }
+                    
+                } catch (ServerSideException ex) {
+                    Notifications.showError(ex.getLocalizedMessage());
+                }
+            });
+            btnShowHierarchyInformation.setStyleName(ValoTheme.BUTTON_LINK);
+            lytContent.addComponents(btnShowHierarchyInformation, this.propertySheet);
+            lytContent.setExpandRatio(btnShowHierarchyInformation, 0.2f);
+            lytContent.setExpandRatio(this.propertySheet, 9.8f);
             this.contentComponent = lytContent;
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getLocalizedMessage());

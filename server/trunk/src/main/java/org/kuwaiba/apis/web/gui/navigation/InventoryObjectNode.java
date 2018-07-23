@@ -16,6 +16,8 @@
 
 package org.kuwaiba.apis.web.gui.navigation;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
@@ -38,5 +40,14 @@ public class InventoryObjectNode extends AbstractNode<RemoteObjectLight>{
     public void refresh(boolean recursive) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    
+    public static List<AbstractNode> asNodeList(List<RemoteObjectLight> inventoryObjects) {
+        List<AbstractNode> res = new ArrayList<>();
+        
+        inventoryObjects.stream().forEach((inventoryObject) -> { 
+                res.add(new InventoryObjectNode(inventoryObject));
+        });
+        
+        return res;
+    }
 }

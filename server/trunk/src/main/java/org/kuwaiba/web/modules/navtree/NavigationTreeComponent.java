@@ -16,8 +16,12 @@
 package org.kuwaiba.web.modules.navtree;
 
 import com.vaadin.cdi.CDIView;
+import com.vaadin.event.ShortcutAction;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.VerticalLayout;
@@ -129,6 +133,28 @@ class NavigationTreeComponent extends AbstractTopComponent {
             this.tree.resetTo(new InventoryObjectNode((RemoteObjectLight)e.getSuggestion().getData()));
         });
         
+        
+        Button btnSearch = new Button(VaadinIcons.SEARCH, (e) -> {
+            
+            if (this.txtFilter.getValue().length() < 3) {
+                Notifications.showInfo("Please refine your search");
+                return;
+            }
+            try {
+                List<RemoteObjectLight> suggestedObjects = wsBean.getSuggestedObjectsWithFilter(this.txtFilter.getValue(),
+                        -1, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                
+                if (suggestedObjects.isEmpty())
+                    Notifications.showInfo("Your search has 0 results");
+                else
+                    this.tree.resetTo(InventoryObjectNode.asNodeList(suggestedObjects));
+                
+                
+            } catch (ServerSideException ex) {
+                Notifications.showError(ex.getLocalizedMessage());
+            }
+        });
+        btnSearch.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
         this.tree = new DynamicTree(
                 new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
@@ -167,10 +193,14 @@ class NavigationTreeComponent extends AbstractTopComponent {
                 }
             }
         });
-        lytLeftPanel.setMargin(true);
-        lytLeftPanel.addComponents(txtFilter, tree);
+        
+        HorizontalLayout lytFilter = new HorizontalLayout(txtFilter, btnSearch);
+        lytFilter.setMargin(true);
+        lytFilter.setSizeFull();
+        
+        lytLeftPanel.addComponents(lytFilter, tree);
         lytLeftPanel.setExpandRatio(tree, 9.5f);
-        lytLeftPanel.setExpandRatio(txtFilter, 0.5f);
+        lytLeftPanel.setExpandRatio(lytFilter, 0.5f);
         lytLeftPanel.setSizeFull();
         pnlMain.setFirstComponent(lytLeftPanel);
         

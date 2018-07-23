@@ -55,5 +55,23 @@ public class InventoryObjectTreeData extends TreeData<AbstractNode> {
             return newNodes;
         }
     }
+
+    /**
+     * It was necessary to override this method, because it is possible that the same tree has the same item many times 
+     * (for example, when searching an object using the search box in the navigation tree, the result might be an object AND a child of that object. 
+     * If the user expands the parent, eventually will get to the child that was also result of the former search. When resetting the tree, 
+     * the node will be queued to be deleted twice, hence rasing an exception)
+     * @param item The item to be removed
+     * @return The modified tree data
+     */
+    @Override
+    public TreeData<AbstractNode> removeItem(AbstractNode item) {
+        if (contains(item))
+            return super.removeItem(item); //To change body of generated methods, choose Tools | Templates.
+        else // Do nothing
+            return this;
+    }
+    
+    
 }
 

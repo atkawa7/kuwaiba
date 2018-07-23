@@ -15172,6 +15172,17 @@ div.v-layout.v-horizontal.v-widget {
 	background: #999999;
 }
 
+.nuqui .v-Notification-gray {
+	background: #8A8A8A;
+	color: white;
+}
+
+.nuqui .v-Notification .v-Notification-caption {
+	color: white;
+	font-size: 14px;
+	line-height: 1;
+}
+
 .nuqui .v-layout {
 	padding: 0 0 0 0;
 }
@@ -15379,6 +15390,32 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .misc .v-menubar-misc-main {
 	background: #008080;
 	color: white;
+}
+
+.nuqui .v-menubar-popup .v-menubar-menuitem-selected {
+	background-color: #008080;
+	background-image: -webkit-linear-gradient(top, #008081 2%, #008070 98%);
+	background-image: linear, to bottom, #008081 2%, #008070 98%;
+	color: white;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+.nuqui .v-menubar > .v-menubar-menuitem-selected {
+	color: white;
+	border-radius: 0;
+	border: 1px solid #4b7eb8;
+	border-top-color: #5183b9;
+	border-bottom-color: #4272af;
+	background-color: #008080;
+	background-image: -webkit-linear-gradient(top, #008081 2%, #008070 98%);
+	background-image: linear, to bottom, #008081 2%, #008070 98%;
+	-webkit-box-shadow: inset 0 1px 0 #93bbed, inset 0 -1px 0 #008060;
+	box-shadow: inset 0 1px 0 #34A2A3, inset 0 -1px 0 #008060;
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.05);
+	border-top-width: 0;
+	border-left-width: 0;
+	border-bottom-width: 0;
+	z-index: 2;
 }
 
 .nuqui #header {

@@ -38,7 +38,7 @@ public class ShelfDashboardLayout extends VerticalLayout {
      */
     private HorizontalSplitPanel pnlMain;
     
-    public ShelfDashboardLayout(String title) {
+    public ShelfDashboardLayout(String title, String subtitle) {
         setSizeFull();
         pnlMain = new HorizontalSplitPanel();
         pnlMain.setSplitPosition(70, Unit.PERCENTAGE);
@@ -47,8 +47,10 @@ public class ShelfDashboardLayout extends VerticalLayout {
         lytRightPanel = new VerticalLayout();
         lytRightPanel.setSizeFull();
         pnlMain.setSecondComponent(lytRightPanel);
-        addComponents(new Label("<h1>" + title + "</h1>", ContentMode.HTML), pnlMain);
-        setExpandRatio(pnlMain, 9.5f);
+        Label lblTitle = new Label(String.format("<b>%s</b><h2>%s</h2>", subtitle, title), ContentMode.HTML);
+        addComponents(lblTitle, pnlMain);
+        setExpandRatio(pnlMain, 9.4f);
+        setExpandRatio(lblTitle, 0.6f);
     }
     
     public void addToPile (AbstractDashboardWidget aDashboardWidget) {

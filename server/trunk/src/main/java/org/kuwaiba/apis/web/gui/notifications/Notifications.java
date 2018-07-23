@@ -16,6 +16,7 @@
 package org.kuwaiba.apis.web.gui.notifications;
 
 import com.vaadin.server.Page;
+import com.vaadin.server.ThemeResource;
 import com.vaadin.shared.Position;
 import com.vaadin.ui.Notification;
 
@@ -27,23 +28,36 @@ public class Notifications {
     /**
      * Time an error message will be displayed on screen
      */
-    public static int POPUP_DELAY = 3000;
+    public static int POPUP_DELAY = 4000;
     
     /**
      * Shows a simple error message at the bottom of the screen for ERROR_POPUP_DELAY milliseconds
      * @param message The message to be displayed
      */
     public static void showError(String message) {
-        Notification ntfLoginError = new Notification(message, Notification.Type.ERROR_MESSAGE);
-        ntfLoginError.setPosition(Position.BOTTOM_CENTER);
-        ntfLoginError.setDelayMsec(POPUP_DELAY);
-        ntfLoginError.show(Page.getCurrent());
+        Notification wdwError = new Notification(message, Notification.Type.ERROR_MESSAGE);
+        wdwError.setPosition(Position.BOTTOM_CENTER);
+        wdwError.setDelayMsec(POPUP_DELAY);
+        wdwError.setIcon(new ThemeResource("icons/icon_error.png")); //NOI18N
+        wdwError.setStyleName("gray"); //NOI18N
+        wdwError.show(Page.getCurrent());
     }
     
     public static void showInfo(String message) {
-        Notification ntfLoginError = new Notification(message, Notification.Type.ASSISTIVE_NOTIFICATION);
-        ntfLoginError.setPosition(Position.BOTTOM_CENTER);
-        ntfLoginError.setDelayMsec(POPUP_DELAY);
-        ntfLoginError.show(Page.getCurrent());
+        Notification wdwInfo = new Notification(message, Notification.Type.ASSISTIVE_NOTIFICATION);
+        wdwInfo.setPosition(Position.BOTTOM_CENTER);
+        wdwInfo.setDelayMsec(POPUP_DELAY);
+        wdwInfo.setStyleName("gray"); //NOI18N
+        wdwInfo.setIcon(new ThemeResource("icons/icon_info.png")); //NOI18N
+        wdwInfo.show(Page.getCurrent());
+    }
+    
+    public static void showMoreInfo(String message) {
+        Notification wdwInfo = new Notification(message, Notification.Type.ASSISTIVE_NOTIFICATION);
+        wdwInfo.setPosition(Position.TOP_CENTER);
+        wdwInfo.setDelayMsec(POPUP_DELAY);
+        wdwInfo.setIcon(new ThemeResource("icons/icon_more_info.png")); //NOI18N
+        wdwInfo.setStyleName("gray"); //NOI18N
+        wdwInfo.show(Page.getCurrent());
     }
 }

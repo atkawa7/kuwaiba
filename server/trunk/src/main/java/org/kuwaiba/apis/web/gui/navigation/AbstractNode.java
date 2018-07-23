@@ -17,7 +17,6 @@ package org.kuwaiba.apis.web.gui.navigation;
 
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import java.util.Objects;
-import org.kuwaiba.apis.web.gui.nodes.PropertySheet;
 
 /**
  * A node that represents a business domain object from the model.
@@ -61,21 +60,7 @@ public abstract class AbstractNode<T> {
      * @param recursive Refresh the children nodes.
      */
     public abstract void refresh(boolean recursive);
-    
-    /**
-     * Adds a child node
-     * @param node 
-     */
-    public void add(AbstractNode node) {
-    }
-    
-    /**
-     * Removes a node
-     * @param node 
-     */
-    public void remove(AbstractNode node) {
-    }
-    
+     
     @Override
     public String toString() {
         return displayName == null ? object.toString() : displayName;
@@ -92,9 +77,5 @@ public abstract class AbstractNode<T> {
         int hash = 7;
         hash = 71 * hash + Objects.hashCode(this.object);
         return hash;
-    }
-    
-    public PropertySheet createPropertySheet(){
-        return null;
     }
 }

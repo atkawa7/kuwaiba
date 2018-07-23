@@ -29,7 +29,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  */
 public class NavigationTreeDashboard extends AbstractDashboard {
     public NavigationTreeDashboard(RemoteObjectLight selectedObject, WebserviceBean wsBean) {
-        super(selectedObject.toString(), new ShelfDashboardLayout(selectedObject.toString()));
+        super(selectedObject.toString(), new ShelfDashboardLayout(selectedObject.toString(), String.format("Object id: %s", selectedObject.getId())));
         ((ShelfDashboardLayout)getDashboardLayout()).setMainDashboardWidget(new NavigationTreeExplorerDashboardWidget(selectedObject, wsBean));
         ((ShelfDashboardLayout)getDashboardLayout()).addToPile(new RelationshipsDashboardWidget(selectedObject, wsBean));
         ((ShelfDashboardLayout)getDashboardLayout()).addToPile(new SpecialChildrenDashboardWidget(selectedObject, wsBean));
