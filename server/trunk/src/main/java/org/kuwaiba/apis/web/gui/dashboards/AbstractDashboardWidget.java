@@ -15,9 +15,13 @@
  */
 package org.kuwaiba.apis.web.gui.dashboards;
 
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
+import org.kuwaiba.web.modules.servmanager.ServiceManagerComponent;
 
 /**
  * A small embeddable component that can be inserted into an AbstractDashboard. A DashboardWidget has two "faces": 
@@ -47,6 +51,10 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
      */
     protected Component contentComponent;
     /**
+     * the component where this dashboard its been displayed
+     */
+    protected Component parentComponent;
+    /**
      * Dashboard widget title
      */
     protected String title;
@@ -54,6 +62,15 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
         this.colSpan = 1;
         this.rowSpan = 1;
         this.title = title;
+        this.activeContent = ActiveContent.CONTENT_COVER;
+        this.setMargin(true);
+    }
+    
+    public AbstractDashboardWidget(String title, Component parentComponent) {
+        this.colSpan = 1;
+        this.rowSpan = 1;
+        this.title = title;
+        this.parentComponent = parentComponent;
         this.activeContent = ActiveContent.CONTENT_COVER;
         this.setMargin(true);
     }
@@ -108,6 +125,25 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
     }
     
     /**
+     * Displays the contents of the content widget replacing the whole dashboard space
+     * @param parentComponent
+     */
+    public void swap() {
+        if (contentComponent != null) {
+            Component oldContent = ((ServiceManagerComponent)parentComponent).getPnlMain().getSecondComponent();
+        
+            Button btnBack = new Button(VaadinIcons.CHEVRON_LEFT, click -> {
+                    ((ServiceManagerComponent)parentComponent).getPnlMain().setSecondComponent(oldContent);
+                });
+            btnBack.setCaption(title);
+            btnBack.addStyleNames(ValoTheme.BUTTON_BORDERLESS , "v-button-borderless-back");
+
+            VerticalLayout content =  new VerticalLayout(btnBack, contentComponent);
+            ((ServiceManagerComponent)parentComponent).getPnlMain().setSecondComponent(content);
+        }
+    }
+    
+    /**
      * Creates the cover component. Note that implementors must set the coverComponent attribute and manage the respective events
      */
     public abstract void createCover();
@@ -117,4 +153,5 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
         CONTENT_COVER,
         CONTENT_CONTENT
     }
+   
 }

@@ -14,6 +14,7 @@
  */
 package org.kuwaiba.web.modules.servmanager.dashboard;
 
+import com.vaadin.ui.Component;
 import org.kuwaiba.apis.web.gui.dashboards.layouts.widgets.ReportsDashboardWidget;
 import org.kuwaiba.apis.web.gui.dashboards.layouts.widgets.DummyCoverDashboardWidget;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
@@ -28,14 +29,14 @@ import org.kuwaiba.beans.WebserviceBean;
  */
 public class ServiceManagerDashboard extends AbstractDashboard {
     
-    public ServiceManagerDashboard(RemoteObjectLight customer, RemoteObjectLight service, WebserviceBean wsBean) {
+    public ServiceManagerDashboard(Component component, RemoteObjectLight customer, RemoteObjectLight service, WebserviceBean wsBean) {
         super(service.toString(), new TheaterDashboardLayout(3, 2));
         ((TheaterDashboardLayout)getDashboardLayout()).setScreenWidget(new DummyContentDashboardWidget(service.toString()));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(0, 0, new ResourcesDashboardWidget(service, wsBean));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 0, new ContactsDashboardWidget(customer, wsBean));
-        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 0, new ServiceViewsDashboardWidget(service, wsBean));
-        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(0, 1, new DummyCoverDashboardWidget("Tickets", "dashboard_cover_widget-darkpurple"));
-        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 1, new DummyCoverDashboardWidget("SLAs", "dashboard_cover_widget-darkpurple"));
+        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 0, new ServiceViewsDashboardWidget(component, service, wsBean));
+        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(0, 1, new DummyCoverDashboardWidget(component, "Tickets", "dashboard_cover_widget-darkpurple"));
+        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 1, new DummyCoverDashboardWidget(component, "SLAs", "dashboard_cover_widget-darkpurple"));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 1, new ReportsDashboardWidget(service, wsBean));
     }
 }

@@ -33,14 +33,18 @@ import javax.json.Json;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.util.i18n.I18N;
+import org.openide.util.Exceptions;
 import org.snmp4j.smi.OID;
 
 /**
@@ -186,7 +190,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
     }
     
     @Override
-    public List<SyncFinding> sync(PollResult pollResult) throws Exception {
+    public List<SyncFinding> sync(PollResult pollResult) {
         HashMap<BusinessObjectLight, List<AbstractDataEntity>> originalData = pollResult.getResult();
         List<SyncFinding> findings = new ArrayList<>();
         // Adding to findings list the not blocking execution exception found during the mapped poll
@@ -202,11 +206,13 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                 mibTables.add((TableData)value);
             });
             EntPhysicalSynchronizer x = new EntPhysicalSynchronizer(entrySet.getKey(), mibTables);
+            
             try {
                 findings.addAll(x.sync());
-            } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-                throw new Exception(ex.getMessage());
+            } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException | ArraySizeMismatchException | NotAuthorizedException | ServerSideException ex) {
+                Exceptions.printStackTrace(ex);
             }
+           
         }
         return findings;
     }

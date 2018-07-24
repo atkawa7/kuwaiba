@@ -15085,6 +15085,20 @@ div.v-layout.v-horizontal.v-widget {
 	transform: translatex(100%);
 }
 
+.nuqui .v-button-borderless:after {
+	display: none;
+	width: 10%;
+}
+
+.nuqui .v-button-borderless-back {
+	font-size: 1.8em;
+	color: cornflowerblue;
+}
+
+.nuqui .widget-content {
+	padding: 10px;
+}
+
 .nuqui .visible-right {
 	-webkit-transform: none;
 	-moz-transform: none;

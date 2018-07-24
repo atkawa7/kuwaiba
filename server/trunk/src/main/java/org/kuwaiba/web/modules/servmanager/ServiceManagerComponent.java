@@ -72,13 +72,17 @@ public class ServiceManagerComponent extends AbstractTopComponent {
      */
     @Inject
     private WebserviceBean wsBean;
+    /**
+     * main panel
+     */
+    private HorizontalSplitPanel pnlMain;
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         setStyleName("dashboards");
         addStyleName("misc");
         
-        HorizontalSplitPanel pnlMain = new HorizontalSplitPanel();
+        pnlMain = new HorizontalSplitPanel();
         pnlMain.setSplitPosition(33, Unit.PERCENTAGE);
         MenuBar mnuMain = ((IndexUI)getUI()).getMainMenu();
 
@@ -127,10 +131,11 @@ public class ServiceManagerComponent extends AbstractTopComponent {
             tblServices.addColumn(RemoteObjectLight::getClassName).setCaption("Type");
             tblServices.setSizeFull();
             tblServices.setSelectionMode(Grid.SelectionMode.SINGLE);
-            tblServices.addSelectionListener((selectionEvent) -> {
+            tblServices.addSelectionListener(selectionEvent -> {
                 if (!selectionEvent.getAllSelectedItems().isEmpty()) {
                     Optional<RemoteObjectLight> selectedService = selectionEvent.getFirstSelectedItem();
-                    pnlMain.setSecondComponent(new ServiceManagerDashboard(cmbCustomers.getSelectedItem().get(), selectedService.get(), wsBean));
+                    ServiceManagerDashboard secondComponent = new ServiceManagerDashboard(this, cmbCustomers.getSelectedItem().get(), selectedService.get(), wsBean);
+                    pnlMain.setSecondComponent(secondComponent);
                 }
             });
             
@@ -162,5 +167,8 @@ public class ServiceManagerComponent extends AbstractTopComponent {
 
     @Override
     public void unregisterComponents() { }
-    
+
+    public HorizontalSplitPanel getPnlMain() {
+        return pnlMain;
+    }
 }

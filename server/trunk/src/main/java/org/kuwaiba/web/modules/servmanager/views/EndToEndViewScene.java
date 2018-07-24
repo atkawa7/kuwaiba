@@ -148,11 +148,9 @@ public class EndToEndViewScene extends VerticalLayout {
                         break;
                     }
                 }
-               
             } catch (ServerSideException ex) {
                 Exceptions.printStackTrace(ex);
             }
-            
             lienzoComponent.updateNodeWidget(id);
         }
     };

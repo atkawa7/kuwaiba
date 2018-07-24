@@ -20,7 +20,6 @@ import org.snmp4j.smi.OID;
 
 /**
  * Oids that will be retrieved from the agent for 
- * 
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class SnmpifXTableResocurceDefinition extends HashMap<String, OID>{

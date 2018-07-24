@@ -127,7 +127,7 @@ public class EntPhysicalSynchronizer {
     /**
      * The if-mib table loaded into the memory
      */
-    private final HashMap<String, List<String>> ifData;
+    private final HashMap<String, List<String>> ifXTable;
     /**
      * Default initial ParentId in the SNMP table data
      */
@@ -170,7 +170,7 @@ public class EntPhysicalSynchronizer {
         this.className = obj.getClassName();
         this.id = obj.getId();
         entityData = (HashMap<String, List<String>>)data.get(0).getValue();
-        ifData = (HashMap<String, List<String>>)data.get(1).getValue();
+        ifXTable = (HashMap<String, List<String>>)data.get(1).getValue();
         currentObjectStructure = new HashMap<>();
         newPorts = new ArrayList<>();
         currentPorts = new ArrayList<>();
@@ -1390,9 +1390,9 @@ public class EntPhysicalSynchronizer {
             BusinessObjectNotFoundException, InvalidArgumentException, 
             OperationNotPermittedException, ApplicationObjectNotFoundException, ArraySizeMismatchException
     {
-        List<String> services = ifData.get("ifAlias"); //NOI18N
-        List<String> portNames = ifData.get("ifName"); //NOI18N
-        List<String> portSpeeds = ifData.get("ifHighSpeed"); //NOI18N
+        List<String> services = ifXTable.get("ifAlias"); //NOI18N
+        List<String> portNames = ifXTable.get("ifName"); //NOI18N
+        List<String> portSpeeds = ifXTable.get("ifHighSpeed"); //NOI18N
         
         JsonObject ifMibj = Json.createObjectBuilder().build();
         
@@ -1557,15 +1557,15 @@ public class EntPhysicalSynchronizer {
                 }
             }
         }//Now we check the resources with the given serviceName or ifAlias
-        for(BusinessObjectLight actualService : servicesCreatedInKuwaiba){
+        for(BusinessObjectLight currentService : servicesCreatedInKuwaiba){
             //The service is al ready created in kuwaiba
-            if(serviceName.equals(actualService.getName())){
-                List<BusinessObjectLight> serviceResources = bem.getSpecialAttribute(actualService.getClassName(), actualService.getId(), "uses");
+            if(serviceName.equals(currentService.getName())){
+                List<BusinessObjectLight> serviceResources = bem.getSpecialAttribute(currentService.getClassName(), currentService.getId(), "uses");
                 for (BusinessObjectLight resource : serviceResources) {
                     if(resource.getId() == portId) //The port is already a resource of the service
                         return "Service is already related with the interface";
                 }
-                bem.createSpecialRelationship(actualService.getClassName(), actualService.getId(), portClassName, portId, "uses", true);
+                bem.createSpecialRelationship(currentService.getClassName(), currentService.getId(), portClassName, portId, "uses", true);
                 return "Related successfully with the interface";
             }
         }

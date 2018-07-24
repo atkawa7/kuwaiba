@@ -85,7 +85,7 @@ public abstract class AbstractSyncProvider implements Serializable{
      * @return A set of results (e.g. new board on slot xxx, different serial number found for router yyyy)
      * @throws InvalidArgumentException
      */
-    public abstract List<SyncFinding> sync(PollResult pollResult) throws Exception;
+    public abstract List<SyncFinding> sync(PollResult pollResult);
     /**
      * Implement this method if the synchronization process won't be associated to a single object in the inventory, for example, 
      * if you want to see what virtual circuits were re-routed after switching to a backup link during a network failure 

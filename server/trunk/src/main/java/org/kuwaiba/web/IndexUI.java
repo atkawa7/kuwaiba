@@ -156,8 +156,6 @@ public class IndexUI extends UI {
             }
             super.writeStaticResourceResponse(request, response, resourceUrl);
         }
-
-        
     }
     
     private class KuwaibaSessionDestroyHandler implements SessionDestroyListener {

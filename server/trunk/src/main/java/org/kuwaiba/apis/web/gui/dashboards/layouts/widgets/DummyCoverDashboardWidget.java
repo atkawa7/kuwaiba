@@ -15,9 +15,11 @@
  */
 package org.kuwaiba.apis.web.gui.dashboards.layouts.widgets;
 
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
+import org.kuwaiba.web.modules.servmanager.ServiceManagerComponent;
 
 /**
  * Just a cover
@@ -27,8 +29,9 @@ public class DummyCoverDashboardWidget extends AbstractDashboardWidget {
     
     private final String style;
     
-    public DummyCoverDashboardWidget(String title, String style) {
-        super(title);
+    
+    public DummyCoverDashboardWidget(Component parentComponent, String title, String style) {
+        super(title, parentComponent);
         this.style = style;
         this.createCover();
     }
@@ -41,7 +44,7 @@ public class DummyCoverDashboardWidget extends AbstractDashboardWidget {
         
         lytViewsWidgetCover.addLayoutClickListener((event) -> {
             createContent();
-            launch();
+            swap();
         });
         
         lytViewsWidgetCover.addComponent(lblText);

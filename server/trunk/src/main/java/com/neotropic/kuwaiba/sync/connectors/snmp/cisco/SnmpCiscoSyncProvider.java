@@ -190,7 +190,7 @@ public class SnmpCiscoSyncProvider extends AbstractSyncProvider {
     }
     
     @Override
-    public List<SyncFinding> sync(PollResult pollResult) throws Exception {
+    public List<SyncFinding> sync(PollResult pollResult){
         HashMap<BusinessObjectLight, List<AbstractDataEntity>> originalData = pollResult.getResult();
         List<SyncFinding> findings = new ArrayList<>();
         // Adding to findings list the not blocking execution exception found during the mapped poll

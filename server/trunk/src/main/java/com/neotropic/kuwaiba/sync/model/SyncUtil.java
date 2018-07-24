@@ -119,6 +119,8 @@ public class SyncUtil {
      */
     public static String wrapPortName(String currentPortName){
         currentPortName = currentPortName.toLowerCase().replace("_", "/");
+        if(currentPortName.toLowerCase().contains("lo") && currentPortName.length() < 6)
+            return currentPortName.toLowerCase().replace("lo", "loopback");
         //Fastethernet
         if(currentPortName.toLowerCase().contains("fastethernet"))
             return currentPortName.toLowerCase().replace("fastethernet", "fa");

@@ -162,6 +162,22 @@ $v-field-background-color: #ccffe6;
       @include transform(translatex(100%));
     }
 
+    //for back button
+    .v-button-borderless:after{
+      display: none;
+      width: 10%;
+    }
+    
+    .v-button-borderless-back{
+        font-size: 1.8em;
+        color: cornflowerblue;
+    }
+    
+    //Content
+    .widget-content{
+        padding: 10px;
+    }
+    
     // Enables animation for opening rigth panel 
     .visible-right {
         @include transform(none);

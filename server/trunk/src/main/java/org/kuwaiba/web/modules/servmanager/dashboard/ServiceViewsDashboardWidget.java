@@ -19,6 +19,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
@@ -47,8 +48,8 @@ public class ServiceViewsDashboardWidget extends AbstractDashboardWidget {
      */
     private WebserviceBean wsBean;
     
-    public ServiceViewsDashboardWidget(RemoteObjectLight service, WebserviceBean wsBean) {
-        super("End to End View");
+    public ServiceViewsDashboardWidget(Component parent, RemoteObjectLight service, WebserviceBean wsBean) {
+        super("End to End View", parent);
         this.service = service;
         this.wsBean = wsBean;
         this.createCover();
@@ -62,7 +63,7 @@ public class ServiceViewsDashboardWidget extends AbstractDashboardWidget {
         lytViewsWidgetCover.addLayoutClickListener((event) -> {
             if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
                 createContent();
-                launch();
+                swap();
             }
         });
         
@@ -103,7 +104,7 @@ public class ServiceViewsDashboardWidget extends AbstractDashboardWidget {
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                     formWindow.setContent(servManagerFormCreator.createForm());
                     formWindow.center();
-                    getUI().addWindow(formWindow);
+                    parentComponent.getUI().addWindow(formWindow);
                     
                  } catch (ServerSideException ex) {
                      Exceptions.printStackTrace(ex);

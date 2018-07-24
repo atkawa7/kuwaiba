@@ -17,7 +17,7 @@
 package com.neotropic.kuwaiba.sync.connectors.snmp.ip;
 
 import com.neotropic.kuwaiba.sync.connectors.snmp.SnmpManager;
-import com.neotropic.kuwaiba.sync.connectors.snmp.reference.ReferenceSnmpEntPhysicalTableResourceDefinition;
+import com.neotropic.kuwaiba.sync.connectors.snmp.reference.SnmpIPResourceDefinition;
 import com.neotropic.kuwaiba.sync.connectors.snmp.reference.SnmpifXTableResocurceDefinition;
 import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
 import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
@@ -29,12 +29,17 @@ import com.neotropic.kuwaiba.sync.model.SyncUtil;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import com.neotropic.kuwaiba.sync.model.TableData;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import javax.json.Json;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
+import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
+import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.util.i18n.I18N;
 import org.snmp4j.smi.OID;
@@ -144,9 +149,9 @@ public class IPAddressesSyncProvider extends AbstractSyncProvider {
                     snmpManager.setPrivacyProtocol(agent.getParameters().get(Constants.PROPERTY_PRIVACY_PROTOCOL));
                     snmpManager.setPrivacyPass(agent.getParameters().get(Constants.PROPERTY_PRIVACY_PASS));
                 }
-                //ENTITY-MIB table
-                ReferenceSnmpEntPhysicalTableResourceDefinition entPhysicalTable = new ReferenceSnmpEntPhysicalTableResourceDefinition();
-                List<List<String>> tableAsString = snmpManager.getTableAsString(entPhysicalTable.values().toArray(new OID[0]));
+                //ipAddrTable table
+                SnmpIPResourceDefinition ipAddrTable = new SnmpIPResourceDefinition();
+                List<List<String>> tableAsString = snmpManager.getTableAsString(ipAddrTable.values().toArray(new OID[0]));
 
                 if (tableAsString == null) {
                     pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
@@ -156,8 +161,7 @@ public class IPAddressesSyncProvider extends AbstractSyncProvider {
 
                 pollResult.getResult().put(mappedObjLight, new ArrayList<>());
                 pollResult.getResult().get(mappedObjLight).add(
-                        new TableData("entPhysicalTable", SyncUtil.parseMibTable("instance", entPhysicalTable, tableAsString))); //NOI18N
-
+                        new TableData("ipAddrTable", SyncUtil.parseMibTable("instance", ipAddrTable, tableAsString))); //NOI18N
                 //
                 SnmpifXTableResocurceDefinition ifMibTable = new SnmpifXTableResocurceDefinition();
                 List<List<String>> ifMibTableAsString = snmpManager.getTableAsString(ifMibTable.values().toArray(new OID[0]));
@@ -179,8 +183,31 @@ public class IPAddressesSyncProvider extends AbstractSyncProvider {
     }
 
     @Override
-    public List<SyncFinding> sync(PollResult pollResult) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<SyncFinding> sync(PollResult pollResult){
+        HashMap<BusinessObjectLight, List<AbstractDataEntity>> originalData = pollResult.getResult();
+        List<SyncFinding> findings = new ArrayList<>();
+        // Adding to findings list the not blocking execution exception found during the mapped poll
+        for (SyncDataSourceConfiguration agent : pollResult.getExceptions().keySet()) {
+            for (Exception exception : pollResult.getExceptions().get(agent))
+                findings.add(new SyncFinding(SyncFinding.EVENT_ERROR, 
+                        exception.getMessage(), 
+                        Json.createObjectBuilder().add("type","ex").build().toString()));
+        }
+        for (Map.Entry<BusinessObjectLight, List<AbstractDataEntity>> entrySet : originalData.entrySet()) {
+            try {
+                List<TableData> mibTables = new ArrayList<>();
+                entrySet.getValue().forEach((value) -> {
+                    mibTables.add((TableData)value);
+                });
+                IPSynchronizer ipSync = new IPSynchronizer(entrySet.getKey(), mibTables);
+                findings.addAll(ipSync.execute());
+            } catch (OperationNotPermittedException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                findings.add(new SyncFinding(SyncFinding.EVENT_ERROR, 
+                        ex.getMessage(), 
+                        Json.createObjectBuilder().add("type","ex").build().toString()));
+            }
+        }
+        return findings;
     }
 
     @Override
