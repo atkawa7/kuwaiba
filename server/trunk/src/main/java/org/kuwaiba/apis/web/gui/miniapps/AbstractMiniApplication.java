@@ -16,12 +16,14 @@
 
 package org.kuwaiba.apis.web.gui.miniapps;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
  * This class defines the behavior of all mini applications. A mini application is a piece of code (wrapped in a graphical or console element
  * such as window or a panel) that can be used to perform complex tasks. These mini applications are thought to be used in an automated context,
- * so in most cases, the mini applications will be instatiated using reflection in scripts or modules that don't know beforehand what's the class of the miniapplication to be launched
+ * so in most cases, the mini applications will be instantiated using reflection in scripts or modules that don't know beforehand what's the class of the miniapplication to be launched
  * 
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  * @param <D> The type of the mini application component to be used in detached mode
@@ -47,7 +49,11 @@ public abstract class AbstractMiniApplication<D, E> {
     /**
      * The results of the operations performed by the mini applications can be 
      */
-    protected Properties outputParameters;
+    protected Properties miniApplicationData;
+    /**
+     * Listeners to events during the execution of the mini application
+     */
+    List<MiniApplicationResultListener> listeners;
 
     /**
      * Default constructor. Use [AbstractMiniApplicationSubclass].getConstructor(Properties.class).newInstance(...) to create instances using reflection
@@ -55,7 +61,24 @@ public abstract class AbstractMiniApplication<D, E> {
      */
     public AbstractMiniApplication(Properties inputParameters) {
         this.inputParameters = inputParameters;
-        this.outputParameters = new Properties();
+        this.miniApplicationData = new Properties();
+        this.listeners = new ArrayList<>();
+    }
+    
+    /**
+     * Adds a result listener
+     * @param listener The listener to be added
+     */
+    public void addResultListener(MiniApplicationResultListener listener){
+        this.listeners.add(listener);
+    }
+    
+    /**
+     * Removes a listener
+     * @param listener The listener to be removed
+     */
+    public void removeResultListener(MiniApplicationResultListener listener) {
+        this.listeners.remove(listener);
     }
     
     /**
@@ -80,8 +103,8 @@ public abstract class AbstractMiniApplication<D, E> {
      * Retrieves the results of the operations performed by the mini application
      * @return An object with a list of (optional) results (like inventory objects or result descriptors) of the miniapplication execution
      */
-    public Properties getOutputParameters() {
-        return this.outputParameters;
+    public Properties getMiniApplicationData() {
+        return this.miniApplicationData;
     }
     
     /**

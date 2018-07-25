@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.navigation.ChildrenProvider;
-import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
+import org.kuwaiba.apis.web.gui.navigation.SimpleTree;
 import org.kuwaiba.apis.web.gui.navigation.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -75,7 +75,7 @@ public class SpecialChildrenDashboardWidget extends AbstractDashboardWidget {
 
     @Override
     public void createContent() {
-        DynamicTree treeSpecialChildren = new DynamicTree(new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
+        SimpleTree treeSpecialChildren = new SimpleTree(new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                     @Override
                     public List<RemoteObjectLight> getChildren(RemoteObjectLight parentObject) {
                         try {

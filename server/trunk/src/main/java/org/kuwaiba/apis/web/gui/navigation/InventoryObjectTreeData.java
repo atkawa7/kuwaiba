@@ -22,7 +22,7 @@ import java.util.List;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
- * A TreeData implementation for trees that show case inventory objects (e.g. the navigation tree or the special children explorer)
+ * A TreeData implementation for trees that showcase inventory objects (e.g. the navigation tree or the special children explorer)
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
 

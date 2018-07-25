@@ -25,7 +25,7 @@ import org.kuwaiba.apis.web.gui.navigation.AbstractNode;
 import org.kuwaiba.apis.web.gui.nodes.properties.Sheet;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
-import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
+import org.kuwaiba.apis.web.gui.navigation.SimpleTree;
 import org.kuwaiba.web.modules.containment.actions.ActionsFactory;
 
 /**

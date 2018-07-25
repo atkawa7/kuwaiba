@@ -2170,7 +2170,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             for (BusinessObjectLight aCommunicationsPort : allCommunicationsPorts) {
                 List<BusinessObjectLight> physicalPath = bem.getPhysicalPath(aCommunicationsPort.getClassName(), aCommunicationsPort.getId());
                 if (physicalPath.size() > 1)
-                    res.add(new RemoteObjectLightList(RemoteObjectLight.toRemoteObjectLightArray(physicalPath)));
+                    res.add(new RemoteObjectLightList(physicalPath));
             }
             
             return res;

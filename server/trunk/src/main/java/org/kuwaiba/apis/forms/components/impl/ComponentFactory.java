@@ -39,7 +39,7 @@ import org.kuwaiba.apis.forms.elements.ElementVerticalLayout;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.navigation.AbstractNode;
 import org.kuwaiba.apis.web.gui.navigation.ChildrenProvider;
-import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
+import org.kuwaiba.apis.web.gui.navigation.SimpleTree;
 import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
@@ -99,7 +99,7 @@ public class ComponentFactory {
             graphicalComponent = new ComponentPanel();            
         } else if (element instanceof ElementTree) {
             
-            DynamicTree dynamicTree = new DynamicTree(new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
+            SimpleTree dynamicTree = new SimpleTree(new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                         @Override
                         public List<RemoteObjectLight> getChildren(RemoteObjectLight parentObject) {
                             try {

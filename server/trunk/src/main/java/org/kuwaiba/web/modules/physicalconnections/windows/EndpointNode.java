@@ -21,7 +21,7 @@ import java.util.List;
 //import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
+import org.kuwaiba.apis.web.gui.navigation.SimpleTree;
 
 /**
  *

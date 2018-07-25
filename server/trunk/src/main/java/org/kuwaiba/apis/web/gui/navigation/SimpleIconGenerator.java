@@ -32,7 +32,7 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
  * A simple IconGenerator implementation to be used in trees displaying inventory object nodes
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
-public class SimpleIconGenerator implements IconGenerator<AbstractNode>{
+public class SimpleIconGenerator implements IconGenerator<AbstractNode> {
     /**
      * Backend bean reference
      */
@@ -64,9 +64,12 @@ public class SimpleIconGenerator implements IconGenerator<AbstractNode>{
                     return ResourceFactory.DEFAULT_SMALL_ICON;
                 }
             }
-        } else
-            return VaadinIcons.STAR;
-
+        }
+        
+        if (item instanceof LabelNode)
+            return ResourceFactory.getInstance().getColoredIcon(((LabelNode)item).getColor(), 10, 10);
+        
+        return VaadinIcons.STAR; //else, it's a root, generic icon
 
     }
 }

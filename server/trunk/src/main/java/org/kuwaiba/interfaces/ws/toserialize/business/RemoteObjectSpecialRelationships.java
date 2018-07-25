@@ -29,7 +29,14 @@ import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteObjectSpecialRelationships implements Serializable {
+    /**
+     * The name of the relationships
+     */
     private List<String> relationships;
+    /**
+     * The related objects. The indexes of this list are synced with those in #{@code relationships} and were separated from the 
+     * original HashMap to allow an easier serialization of the data structure
+     */
     private List<RemoteObjectLightList> relatedObjects;
 
     public RemoteObjectSpecialRelationships() { }
@@ -40,7 +47,7 @@ public class RemoteObjectSpecialRelationships implements Serializable {
 
         for (String relationshipName : relationships.keySet()){
             this.relationships.add(relationshipName);
-            this.relatedObjects.add(new RemoteObjectLightList(RemoteObjectLight.toRemoteObjectLightArray(relationships.get(relationshipName))));
+            this.relatedObjects.add(new RemoteObjectLightList(relationships.get(relationshipName)));
         }
     }
     public List<String> getRelationships() {
@@ -49,5 +56,17 @@ public class RemoteObjectSpecialRelationships implements Serializable {
 
     public List<RemoteObjectLightList> getRelatedObjects() {
         return relatedObjects;
+    }
+    
+    /**
+     * Organizes the relationships as a HashMap object
+     * @return A HashMap object with the relationships
+     */
+    public HashMap<String, RemoteObjectLightList> asHashMap() {
+        HashMap<String, RemoteObjectLightList> res = new HashMap<>();
+        for (int i = 0; i < relationships.size(); i++)
+            res.put(relationships.get(i), relatedObjects.get(i));
+        
+        return res;
     }
 }

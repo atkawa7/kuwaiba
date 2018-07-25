@@ -24,7 +24,7 @@ import java.util.List;
  * A tree that extends the features of the default one and makes use of the Nodes API
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
-public class DynamicTree extends Tree<AbstractNode> {
+public class SimpleTree extends Tree<AbstractNode> {
 
     /**
      *  Constructor for trees with only one root node
@@ -32,7 +32,8 @@ public class DynamicTree extends Tree<AbstractNode> {
      * @param childrenProvider The object that will provide the children of an expanded node
      * @param iconGenerator To generate the icons
      */
-    public DynamicTree(ChildrenProvider childrenProvider, IconGenerator<AbstractNode> iconGenerator, AbstractNode... roots) {
+    public SimpleTree(ChildrenProvider childrenProvider, IconGenerator<AbstractNode> iconGenerator, 
+            AbstractNode... roots) {
         InventoryObjectTreeData treeData = new InventoryObjectTreeData(childrenProvider);
         treeData.addRootItems(roots);
         

@@ -17,7 +17,6 @@ package org.kuwaiba.interfaces.ws.toserialize.business;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -32,32 +31,22 @@ import org.kuwaiba.apis.persistence.business.BusinessObjectLightList;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteObjectLightList implements  Serializable {
+    /**
+     * The actual list. JAX-WS doesn't seem to serialize correctly classes inheriting from List, so instead of inheriting, we just use composition
+     */
     private List<RemoteObjectLight> list;
 
-    public RemoteObjectLightList() {
-        list = new ArrayList<>();
-    }
+    public RemoteObjectLightList() { }
     
-    public RemoteObjectLightList (BusinessObjectLightList list) {
+    public RemoteObjectLightList (List<BusinessObjectLight> list) {
         this.list = new ArrayList<>();
-        for (BusinessObjectLight item : list.getList())
+        for (BusinessObjectLight item : list)
             this.list.add(new RemoteObjectLight(item));
     }
     
-    public RemoteObjectLightList(List<RemoteObjectLight> list) {
-        this.list = list;
-    }
-    
-    public boolean add(RemoteObjectLight element) {
-        return list.add(element);
-    }
-    
-    public boolean addAll(Collection<? extends RemoteObjectLight> elements) {
-        return list.addAll(elements);
-    }
-    
-    public boolean remove(RemoteObjectLight element) {
-        return list.remove(element);
+    public RemoteObjectLightList (BusinessObjectLightList list) {
+        for (BusinessObjectLight item : list.getList())
+            this.list.add(new RemoteObjectLight(item));
     }
 
     public List<RemoteObjectLight> getList() {

@@ -42,19 +42,19 @@ public class ResourceFactory {
     /**
      * Default icon height (used in navigation trees)
      */
-    public static final int DEFAULT_SMALL_ICON_HEIGHT = 16;
+    public static final int DEFAULT_SMALL_ICON_HEIGHT = 12;
     /**
      * Default icon height (used in navigation trees)
      */
-    public static final int DEFAULT_SMALL_ICON_WIDTH = 16;
+    public static final int DEFAULT_SMALL_ICON_WIDTH = 12;
     /**
      * Default icon height (used in views)
      */
-    public static final int DEFAULT_ICON_HEIGHT = 32;
+    public static final int DEFAULT_ICON_HEIGHT = 24;
     /**
      * Default icon height (used in views)
      */
-    public static final int DEFAULT_ICON_WIDTH = 32;
+    public static final int DEFAULT_ICON_WIDTH = 24;
     /**
      * Default small icon (a black 16x16 px square)
      */
@@ -74,6 +74,10 @@ public class ResourceFactory {
      */
     private final HashMap<String, Resource> smallIcons;
     /**
+     * Colored icons cache
+     */
+    private final HashMap<Integer, Resource> coloredIcons;
+    /**
      * Singleton
      */
     private static ResourceFactory instance;
@@ -81,6 +85,7 @@ public class ResourceFactory {
     private ResourceFactory() { 
         this.icons = new HashMap<>();
         this.smallIcons = new HashMap<>();
+        this.coloredIcons = new HashMap<>();
     }
 
     public static ResourceFactory getInstance() {
@@ -141,6 +146,24 @@ public class ResourceFactory {
                 icons.put(classMetadata.getClassName(), icon);
                 return icon;
             }
+        }
+    }
+    
+    /**
+     * Creates (or retrieves a cached version) of a squared colored icon
+     * @param color The color of the icon
+     * @param width The width of the icon
+     * @param height The height of the icon
+     * @return The icon as a Resource object
+     */
+    public Resource getColoredIcon(Color color, int width, int height) {
+        int rgb = color.getRGB();
+        if (coloredIcons.containsKey(rgb))
+            return coloredIcons.get(rgb);
+        else {
+            Resource coloredIcon = buildIcon(createRectangleIcon(color, width, height), "colored_" + rgb + ".png" ); //NOI8N
+            coloredIcons.put(rgb, coloredIcon);
+            return coloredIcon;
         }
     }
     

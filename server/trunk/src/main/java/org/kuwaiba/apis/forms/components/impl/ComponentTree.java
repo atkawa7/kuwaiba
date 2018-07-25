@@ -22,7 +22,7 @@ import com.vaadin.ui.Tree;
 import com.vaadin.ui.Tree.ItemClickListener;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.navigation.AbstractNode;
-import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
+import org.kuwaiba.apis.web.gui.navigation.SimpleTree;
 import org.kuwaiba.apis.web.gui.navigation.InventoryObjectNode;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 /**
@@ -31,13 +31,13 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  */
 public class ComponentTree extends GraphicalComponent {
 
-    public ComponentTree(DynamicTree dynamicTree) {
+    public ComponentTree(SimpleTree dynamicTree) {
         super(dynamicTree);        
     }
     
     @Override
-    public DynamicTree getComponent() {
-        return (DynamicTree) super.getComponent();
+    public SimpleTree getComponent() {
+        return (SimpleTree) super.getComponent();
     }
 
     @Override

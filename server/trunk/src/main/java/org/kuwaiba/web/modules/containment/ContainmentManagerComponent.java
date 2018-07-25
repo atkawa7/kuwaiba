@@ -41,7 +41,7 @@ import org.kuwaiba.apis.web.gui.nodes.containment.ContainmentNode;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
-import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
+import org.kuwaiba.apis.web.gui.navigation.SimpleTree;
 import org.kuwaiba.beans.WebserviceBean;
 
 /**

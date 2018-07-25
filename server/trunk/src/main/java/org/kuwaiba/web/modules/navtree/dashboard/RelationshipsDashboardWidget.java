@@ -16,12 +16,21 @@
 
 package org.kuwaiba.web.modules.navtree.dashboard;
 
+import com.vaadin.server.Page;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
+import org.kuwaiba.apis.web.gui.navigation.InventoryObjectNode;
+import org.kuwaiba.apis.web.gui.navigation.RelationshipsTree;
+import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
 
 /**
  * A widget that mimics the old Relationship Explorer
@@ -64,23 +73,22 @@ public class RelationshipsDashboardWidget extends AbstractDashboardWidget {
 
     @Override
     public void createContent() {
-//        DynamicTree treeRelationships = new DynamicTree(selectedObject, new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
-//                    @Override
-//                    public List<RemoteObjectLight> getChildren(RemoteObjectLight parentObject) {
-//                        return new ArrayList<>();
-//                        try {
-//                            
-//                        } catch (ServerSideException ex) {
-//                            Notifications.showError(ex.getLocalizedMessage());
-//                            return new ArrayList<>();
-//                        }
-//                    }
-//                }, new SimpleIconGenerator(wsBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")));
+        VerticalLayout lytRelationships = new VerticalLayout();
+        try {
+            RemoteObjectSpecialRelationships specialAttributes = 
+                    wsBean.getSpecialAttributes(selectedObject.getClassName(), selectedObject.getId(),Page.getCurrent().getWebBrowser().getAddress(), 
+                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
 
-//        treeRelationships.expand(treeRelationships.getTreeData().getRootItems());
-//        VerticalLayout lytSpecialChildren = new VerticalLayout(treeRelationships);
-//        lytSpecialChildren.setWidth(100, Unit.PERCENTAGE);
+            RelationshipsTree treeRelationships = new RelationshipsTree(new InventoryObjectNode(selectedObject), 
+                                                    specialAttributes.asHashMap(), new SimpleIconGenerator(wsBean, (RemoteSession) UI.getCurrent().getSession().getAttribute("session")));
 
-        this.contentComponent = new Label("Not imlemented yet");
+            
+            lytRelationships.addComponent(treeRelationships);
+        } catch (ServerSideException ex) {
+            Notifications.showError(ex.getLocalizedMessage());
+        }
+        
+        lytRelationships.setWidth(100, Unit.PERCENTAGE);
+        this.contentComponent = lytRelationships;
     }
 }

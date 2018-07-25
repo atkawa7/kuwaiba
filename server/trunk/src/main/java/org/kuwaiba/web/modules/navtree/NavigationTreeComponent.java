@@ -42,7 +42,7 @@ import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.apis.web.gui.navigation.DynamicTree;
+import org.kuwaiba.apis.web.gui.navigation.SimpleTree;
 import org.kuwaiba.apis.web.gui.navigation.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -80,7 +80,7 @@ class NavigationTreeComponent extends AbstractTopComponent {
     /**
      * The tree
      */
-    private DynamicTree tree;
+    private SimpleTree tree;
 
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
@@ -156,7 +156,7 @@ class NavigationTreeComponent extends AbstractTopComponent {
         });
         btnSearch.setClickShortcut(ShortcutAction.KeyCode.ENTER);
 
-        this.tree = new DynamicTree(
+        this.tree = new SimpleTree(
                 new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
                         @Override
                         public List<RemoteObjectLight> getChildren(RemoteObjectLight c) {
