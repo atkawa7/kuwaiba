@@ -84,6 +84,7 @@ public class Constants {
         public static final String MODE = "mode"; //NOI18N
         public static final String PACKAGE = "package"; //NOI18N
         public static final String DESCRIPTION = "description"; //NOI18N
+        public static final String PATH = "path"; //NOI18N
                 
         public class DataType {
             public static final String REMOTE_OBJECT = "RemoteObject"; //NOI18N
@@ -94,6 +95,7 @@ public class Constants {
             public static final String STRING = "String"; //NOI18N
             public static final String EMAIL = "Email"; //NOI18N, Data type to use default validators
             public static final String DATE = "Date"; //NOI18N
+            public static final String ATTACHMENT = "Attachment"; //NOI18N
         }
         
         public class Mode {
@@ -141,5 +143,6 @@ public class Constants {
         public static final String HIDDEN = "hidden"; //NOI18N
         public static final String REPAINT = "repaint"; //NOI18N
         public static final String SELECTED_ROW = "selectedRow"; //NOI18N
+        public static final String CAPTION = "caption"; //NOI18N
     }
 }

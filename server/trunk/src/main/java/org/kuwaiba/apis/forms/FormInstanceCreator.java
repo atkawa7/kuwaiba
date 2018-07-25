@@ -24,6 +24,7 @@ import javax.xml.stream.XMLStreamException;
 import org.kuwaiba.apis.forms.elements.AbstractElementField;
 import org.kuwaiba.apis.forms.elements.AbstractFormInstanceCreator;
 import org.kuwaiba.apis.forms.elements.Constants;
+import org.kuwaiba.apis.forms.elements.FileInformation;
 import org.kuwaiba.apis.forms.elements.FormStructure;
 import org.kuwaiba.apis.forms.elements.XMLUtil;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -74,7 +75,16 @@ public class FormInstanceCreator extends AbstractFormInstanceCreator {
                     Notifications.showError(ex.getMessage());
                 }
             }
-            if (data instanceof String) {
+            else if(data instanceof FileInformation) {
+                
+                FileInformation fileInfo = (FileInformation) data;
+                
+                XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.DATA_TYPE, Constants.Attribute.DataType.ATTACHMENT);
+                XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.NAME, fileInfo.getName());
+                XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.PATH, fileInfo.getPath());
+                
+            }
+            else if (data instanceof String) {
                 XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.DATA_TYPE, Constants.Attribute.DataType.STRING);
             }
             xmlew.add(xmlef.createCharacters(data.toString()));
@@ -114,8 +124,24 @@ public class FormInstanceCreator extends AbstractFormInstanceCreator {
     }
     
     @Override
+    protected void addAttachment(XMLEventWriter xmlew, XMLEventFactory xmlef, Object object) throws XMLStreamException {
+        if (object instanceof FileInformation) {
+            
+            FileInformation fileInfo = (FileInformation) object;
+            
+            XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.NAME, fileInfo.getName());
+            XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.PATH, fileInfo.getPath());
+        }
+    }
+    
+    @Override
     protected boolean isRemoteObjectLight(Object object) {
         return object instanceof RemoteObjectLight;
+    }
+    
+    @Override
+    protected boolean isAttachment(Object object) {
+        return object instanceof FileInformation;
     }
     
     @Override
@@ -141,6 +167,23 @@ public class FormInstanceCreator extends AbstractFormInstanceCreator {
         } catch (ServerSideException ex) {
             return null;
         }
+    }
+    
+    @Override
+    protected HashMap<String, String> getAttachmentInformation(Object object) {
+        if (object instanceof FileInformation) {
+
+            FileInformation fileInfo = (FileInformation) object;
+
+            HashMap<String, String> info = new HashMap();
+
+            info.put(Constants.Attribute.DATA_TYPE, Constants.Attribute.DataType.ATTACHMENT);
+            info.put(Constants.Attribute.NAME, fileInfo.getName());
+            info.put(Constants.Attribute.PATH, fileInfo.getPath());
+            
+            return info;            
+        }
+        return null;
     }
     
 }

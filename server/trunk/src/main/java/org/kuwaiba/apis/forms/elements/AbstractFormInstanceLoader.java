@@ -33,14 +33,17 @@ import javax.xml.stream.XMLStreamReader;
  */
 public abstract class AbstractFormInstanceLoader {
     private String formid;
-    private HashMap<String, Object> values;
+    private final HashMap<String, Object> values;
+    private final HashMap<String, String> captions;
             
     public AbstractFormInstanceLoader() {
         values = new HashMap();
+        captions = new HashMap();
     }
     
     public abstract Object getRemoteObjectLight(long classId, long objectId);
     public abstract Object getClassInfoLight(long classId);
+    public abstract Object getAttachment(String name, String path);
     
     private Object getValue(XMLStreamReader reader, String dataType) {
         switch (dataType) {
@@ -79,6 +82,14 @@ public abstract class AbstractFormInstanceLoader {
                 if (objectName != null) {
                     //TODO: In the null case, load only the name, remenber make a instance of the expected data type
                 }
+            break;
+            case Constants.Attribute.DataType.ATTACHMENT:
+                
+                String fileName = reader.getAttributeValue(null, Constants.Attribute.NAME);
+                String filePath = reader.getAttributeValue(null, Constants.Attribute.PATH);
+                
+                if (fileName != null && filePath != null)
+                    return getAttachment(fileName, filePath);
             break;
             case Constants.Attribute.DataType.STRING:
                 
@@ -130,6 +141,10 @@ public abstract class AbstractFormInstanceLoader {
                             if (value != null)
                                 values.put(id, value);
                         }
+                        String caption = reader.getAttributeValue(null, Constants.Attribute.CAPTION);
+                        
+                        if (caption != null)
+                            captions.put(id, caption);
                         
                         if (reader.getName().equals(tagGrid)) {
                             
@@ -204,6 +219,9 @@ public abstract class AbstractFormInstanceLoader {
                     if (element instanceof AbstractElementField) {
                         ((AbstractElementField) element).setValue(values.get(id));
                         
+                        if (element instanceof ElementUpload)
+                            ((ElementUpload) element).setCaption(captions.get(id));
+                                                
                     } else if (element instanceof ElementGrid) {
                         ((ElementGrid) element).setRows((List<List<Object>>) values.get(id));
                         

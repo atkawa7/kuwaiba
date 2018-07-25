@@ -16,6 +16,7 @@ package org.kuwaiba.apis.forms;
 
 import com.vaadin.server.Page;
 import org.kuwaiba.apis.forms.elements.AbstractFormInstanceLoader;
+import org.kuwaiba.apis.forms.elements.FileInformation;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -55,6 +56,11 @@ public class FormInstanceLoader extends AbstractFormInstanceLoader {
             Notifications.showError(ex.getMessage());
         }
         return null;
+    }
+    
+    @Override
+    public Object getAttachment(String name, String path) {
+        return new FileInformation(name, path);
     }
         
 }

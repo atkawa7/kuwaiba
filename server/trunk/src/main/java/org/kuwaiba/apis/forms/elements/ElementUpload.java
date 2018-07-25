@@ -14,6 +14,8 @@
  */
 package org.kuwaiba.apis.forms.elements;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -50,4 +52,54 @@ public class ElementUpload extends AbstractElementField {
         caption = reader.getAttributeValue(null, Constants.Attribute.CAPTION);
     }
     
+    @Override
+    public void onComponentEvent(EventDescriptor event) {
+        if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+            if (Constants.Property.CAPTION.equals(event.getPropertyName())) {
+                
+                if (event.getNewValue() instanceof String) {
+                                        
+                    setCaption((String) event.getNewValue());
+                    firePropertyChangeEvent();
+                }
+            }
+        }
+        super.onComponentEvent(event);        
+    }
+    
+    private void loadValue(List<String> list) {
+        if (list != null && !list.isEmpty()) {
+
+            String functionName = list.get(0);
+
+            Runner runner = getFormStructure().getElementScript().getFunctionByName(functionName);
+
+            List parameters = new ArrayList();
+
+            for (int i = 1; i < list.size(); i += 1) {
+                AbstractElement anElement = getFormStructure().getElementById(list.get(i));
+                parameters.add(anElement != null ? anElement : list.get(i));
+            }
+
+            Object newValue = runner.run(parameters);
+
+            setCaption((String) newValue);
+
+            fireElementEvent(new EventDescriptor(
+                Constants.EventAttribute.ONPROPERTYCHANGE, 
+                Constants.Property.CAPTION, newValue, null));
+        }
+    }
+        
+    @Override
+    public void fireOnLoad() {
+        super.fireOnLoad(); 
+        
+        if (hasProperty(Constants.EventAttribute.ONLOAD, Constants.Property.CAPTION)) {
+            
+            List<String> list = getEvents().get(Constants.EventAttribute.ONLOAD).get(Constants.Property.CAPTION);
+            
+            loadValue(list);
+        }                        
+    }
 }

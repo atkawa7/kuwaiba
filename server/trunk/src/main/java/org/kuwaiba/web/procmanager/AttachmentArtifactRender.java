@@ -136,17 +136,10 @@ public class AttachmentArtifactRender extends ArtifactRenderer {
 
     @Override
     public byte[] getContent() throws Exception {
-//        if (file == null)
-//            throw new Exception("The process can not continue to next activity meanwhile the attachment is not uploaded");
         String strContent = "<artifact type=\"attachment\"><value>" + (file != null ? file.getAbsolutePath() : "") + "</value></artifact>";
         return strContent.getBytes();
     }
-
-////    @Override
-////    public List<StringPair> getSharedInformation() {
-////        return new ArrayList();
-////    }
-    
+        
     private class AttachmentArtifactUploader implements Upload.Receiver, Upload.SucceededListener {
         
         public AttachmentArtifactUploader() {

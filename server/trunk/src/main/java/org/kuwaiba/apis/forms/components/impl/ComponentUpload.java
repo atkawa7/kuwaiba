@@ -14,6 +14,11 @@
  */
 package org.kuwaiba.apis.forms.components.impl;
 
+import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.StreamResource;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Link;
+import com.vaadin.ui.Notification;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.Constants;
 import org.kuwaiba.apis.forms.elements.ElementUpload;
@@ -22,44 +27,64 @@ import com.vaadin.ui.Upload;
 import com.vaadin.ui.Upload.Receiver;
 import com.vaadin.ui.Upload.SucceededListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.kuwaiba.apis.forms.components.ComponentEventListener;
+import org.kuwaiba.util.i18n.I18N;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ComponentUpload extends GraphicalComponent {
+    private Upload upload;
+    private Link link;
     
     public ComponentUpload() {
-        super(new Upload());
+        super(new HorizontalLayout());
     }
     
     @Override
-    public Upload getComponent() {
-        return (Upload) super.getComponent();
+    public HorizontalLayout getComponent() {
+        return (HorizontalLayout) super.getComponent();
     }
     
     @Override
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementUpload) {
-            ElementUpload upload = (ElementUpload) element;
+            ElementUpload elementUpload = (ElementUpload) element;
             
-            getComponent().setCaption(upload.getCaption());
+            getComponent().addComponent(link = new Link());
+            link.setIcon(VaadinIcons.DOWNLOAD_ALT);
+            
+            getComponent().addComponent(upload = new Upload());
             
             Uploader uploader = new Uploader();
+            upload.setReceiver(uploader);
+            upload.addSucceededListener(uploader);
             
-            getComponent().setReceiver(uploader);
-            getComponent().addSucceededListener(uploader);
+            configureComponent(elementUpload);
         }
     }
 
     @Override
     public void onElementEvent(EventDescriptor event) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+            
+            if (Constants.Property.VALUE.equals(event.getPropertyName()) || 
+                Constants.Property.CAPTION.equals(event.getPropertyName())) {
+                
+                ComponentEventListener componentEventListener = getComponentEventListener();
+                                                
+                if (componentEventListener instanceof ElementUpload)
+                    configureComponent((ElementUpload) componentEventListener);
+            }
+        }
     }
     
     private class Uploader implements Receiver, SucceededListener {
@@ -72,8 +97,6 @@ public class ComponentUpload extends GraphicalComponent {
         public OutputStream receiveUpload(String filename, String mimeType) {
             FileOutputStream fileOutputStream = null;
             try {
-                //TODO:
-//                file = new File(Variable.FORM_FILES + "/" + filename);
                 file = new File("/data/attachments" + "/" + filename);
                 fileOutputStream = new FileOutputStream(file);
 
@@ -88,12 +111,56 @@ public class ComponentUpload extends GraphicalComponent {
             if (file != null) {
                 fireComponentEvent(new EventDescriptor(
                     Constants.EventAttribute.ONPROPERTYCHANGE, 
-                    Constants.Property.VALUE, file.getPath(), null));
+                    Constants.Property.CAPTION, file.getName(), null));
                 
-                getComponent().setCaption(file.getName());
-                getComponent().setButtonCaption("Change file");
+                fireComponentEvent(new EventDescriptor(
+                    Constants.EventAttribute.ONPROPERTYCHANGE, 
+                    Constants.Property.VALUE, file.getPath(), null));
+                                
+                ComponentEventListener componentEventListener = getComponentEventListener();
+                                
+                if (componentEventListener instanceof ElementUpload)
+                    configureComponent((ElementUpload) componentEventListener);
             }
         }
+    }
+    
+    private void configureComponent(ElementUpload elementUpload) {
+        
+        if (elementUpload != null) {
+            
+            if (elementUpload.getCaption() != null && elementUpload.getValue() != null) {
+                
+                link.setVisible(true);
+                link.setCaption(elementUpload.getCaption());
+                link.setResource(getStreamResource(elementUpload));
+                upload.setButtonCaption(I18N.gm("update_file"));
+            }
+            else {                
+                link.setVisible(false);
+                upload.setButtonCaption(I18N.gm("upload_file"));
+            }
+        }
+    }
+    
+    private StreamResource getStreamResource(ElementUpload elementUpload) {
+        StreamResource streamResource = new StreamResource(new StreamResource.StreamSource() {
+            
+            @Override
+            public InputStream getStream() {
+                try {
+                    File file = new File((String) elementUpload.getValue());
+                    return new FileInputStream(file);
+                } catch (FileNotFoundException ex) {
+                    Notification.show(I18N.gm("error"), "File cannot be found", Notification.Type.ERROR_MESSAGE);
+                    return null;
+                }
+            }
+        }, elementUpload.getCaption());
+                
+        streamResource.setCacheTime(0);
+                
+        return streamResource;
     }
     
 }
