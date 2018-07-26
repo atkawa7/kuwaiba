@@ -20,12 +20,15 @@ import com.vaadin.server.Page;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
-import org.kuwaiba.apis.web.gui.nodes.PropertyFactory;
-import org.kuwaiba.apis.web.gui.nodes.PropertySheet;
+import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
+import org.kuwaiba.apis.web.gui.navigation.trees.SimpleContainmentTree;
+import org.kuwaiba.apis.web.gui.properties.PropertyFactory;
+import org.kuwaiba.apis.web.gui.properties.PropertySheet;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -82,15 +85,24 @@ public class NavigationTreeExplorerDashboardWidget extends AbstractDashboardWidg
                     List<RemoteObjectLight> parents = wsBean.getParents(selectedObject.getClassName(), selectedObject.getId(),Page.getCurrent().getWebBrowser().getAddress(), 
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                     
-                    if (parents.size() == 1) //It's right under the dummy root
-                        Notifications.showMoreInfo("Navigation Tree Root");
+                    if (parents.isEmpty())
+                        Notifications.showMoreInfo("This object does not have a parent");
                     else {
-                        parents.remove(parents.get(parents.size() - 1)); //Ignore the dummy root
-
-                        Notifications.showMoreInfo(parents.stream().
-                                map(RemoteObjectLight::toString).collect(Collectors.joining("/")));
+                        if (parents.size() == 1) //It's right under the dummy root
+                            Notifications.showMoreInfo("Navigation Tree Root");
+                        else {
+                            parents.remove(parents.get(parents.size() - 1)); //Ignore the dummy root
+                            Collections.reverse(parents); //Reverse to 
+                            Window wdwParents = new Window(String.format("Containment Information of %s", selectedObject));
+                            wdwParents.setModal(true);
+                            SimpleContainmentTree treeParents = new SimpleContainmentTree(parents, 
+                                    new SimpleIconGenerator(wsBean, ((RemoteSession) UI.getCurrent().getSession().getAttribute("session"))));
+                            treeParents.expandAll();
+                            wdwParents.setContent(new VerticalLayout(treeParents));
+                            wdwParents.center();
+                            UI.getCurrent().addWindow(wdwParents);
+                        }
                     }
-                    
                 } catch (ServerSideException ex) {
                     Notifications.showError(ex.getLocalizedMessage());
                 }

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.apis.web.gui.navigation;
+package org.kuwaiba.apis.web.gui.navigation.nodes;
 
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import java.util.Objects;

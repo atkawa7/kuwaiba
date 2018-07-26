@@ -462,13 +462,21 @@ public class DefaultReports {
         
         if (theResult.get("tributaryLink").getList().isEmpty()) {
             title = "Error";
-            tributaryLinkUsageReportText = getHeader(title);
+            tributaryLinkUsageReportText = "<!DOCTYPE html>\n" +
+                    "<html lang=\"en\">\n" +
+                    "  <head>\n" +
+                    "    <meta charset=\"utf-8\">\n" +
+                    "    <title>" + title + "</title>\n</head>\n";
             tributaryLinkUsageReportText += "<div class=\"error\">No information about this tributary link could be found</div>";
         }
         else {
             theTributaryLink = theResult.get("tributaryLink").getList().get(0);
             title = "Tributary Link Details Report for " + theTributaryLink.getName();
-            tributaryLinkUsageReportText = getHeader(title);
+            tributaryLinkUsageReportText = "<!DOCTYPE html>\n" +
+                    "<html lang=\"en\">\n" +
+                    "  <head>\n" +
+                    "    <meta charset=\"utf-8\">\n" +
+                    "    <title>" + title + "</title>\n</head>\n";
             tributaryLinkUsageReportText += 
                                 "  <body><table><tr><td><h1>" + title + "</h1></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
             
@@ -541,7 +549,7 @@ public class DefaultReports {
 "            <div id=\"43749\" class=\"connectable important\"><div class=\"label\">France <br />(Paris TH2)</div></div>\n" +
 "            <div class=\"segment-text\" style=\"left:0\">Segment 1</div> \n" +
 "        </div>\n" +
-"    </div><br/> <br/> <br/> <br/><br/> <br/> <br/><br/> <br/> <br/><br/><br/> <br/><br/>\n";
+"    </div>\n";
             
             //Used resources
             List<BusinessObjectLight> container = bem.getSpecialAttribute(tributaryLinkClass, tributaryLinkId, SDHModule.RELATIONSHIP_SDHDELIVERS);

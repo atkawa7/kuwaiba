@@ -16,6 +16,7 @@
 
 package org.kuwaiba.web.modules.ipam;
 
+import org.kuwaiba.web.modules.ipam.dashboard.IPAddressManagerDashboard;
 import com.vaadin.cdi.CDIView;
 import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
@@ -37,6 +38,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import javax.inject.Inject;
+import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
@@ -45,6 +47,9 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.web.IndexUI;
+import org.kuwaiba.web.modules.ipam.actions.ShowMPLSTunnelExplorerAction;
+import org.kuwaiba.web.modules.ipam.actions.ShowServiceInstanceExplorerAction;
+import org.kuwaiba.web.modules.ipam.actions.ShowVLANExplorerAction;
 
 /**
  * The main view for the IP Address Manager module
@@ -172,9 +177,26 @@ public class IPAddressManagerComponent extends AbstractTopComponent {
         lytFilter.setWidth(100, Unit.PERCENTAGE);
         lytFilter.setMargin(true);
         
-        lytLeftPanel.addComponents(lytFilter, tblIps);
-        lytLeftPanel.setExpandRatio(tblIps, 9.5f);
+        MenuBar mnuOptions = new MenuBar();
+        
+        AbstractAction[] actions = new AbstractAction[] {
+                                        new ShowVLANExplorerAction(wsBean),
+                                        new ShowMPLSTunnelExplorerAction(wsBean),
+                                        new ShowServiceInstanceExplorerAction(wsBean)
+                                    };
+        
+        for (AbstractAction action : actions)
+            mnuOptions.addItem(action.getCaption(), new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    action.actionPerformed();
+                }
+            });
+        
+        lytLeftPanel.addComponents(mnuOptions, lytFilter, tblIps);
+        lytLeftPanel.setExpandRatio(tblIps, 9.0f);
         lytLeftPanel.setExpandRatio(lytFilter, 0.5f);
+        lytLeftPanel.setExpandRatio(mnuOptions, 0.5f);
         lytLeftPanel.setSizeFull();
         pnlMain.setFirstComponent(lytLeftPanel);
         

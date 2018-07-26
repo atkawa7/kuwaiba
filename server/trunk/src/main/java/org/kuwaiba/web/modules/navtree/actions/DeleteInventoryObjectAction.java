@@ -65,4 +65,9 @@ public class DeleteInventoryObjectAction extends AbstractAction {
 //            .withCancelButton();
 //        messageBox.open();
     }
+
+    @Override
+    public void actionPerformed() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

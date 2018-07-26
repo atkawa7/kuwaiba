@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.apis.web.gui.navigation;
+package org.kuwaiba.apis.web.gui.navigation.nodes;
 
 import java.util.ArrayList;
 import java.util.List;

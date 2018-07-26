@@ -15,13 +15,13 @@
 package org.kuwaiba.web.modules.servmanager.dashboard;
 
 import com.vaadin.ui.Component;
-import org.kuwaiba.apis.web.gui.dashboards.layouts.widgets.ReportsDashboardWidget;
-import org.kuwaiba.apis.web.gui.dashboards.layouts.widgets.DummyCoverDashboardWidget;
+import org.kuwaiba.apis.web.gui.dashboards.widgets.ReportsDashboardWidget;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 import org.kuwaiba.apis.web.gui.dashboards.layouts.TheaterDashboardLayout;
-import org.kuwaiba.apis.web.gui.dashboards.layouts.widgets.DummyContentDashboardWidget;
+import org.kuwaiba.apis.web.gui.dashboards.widgets.SimpleContentOnlyDashboardWidget;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.web.modules.navtree.dashboard.RelationshipsDashboardWidget;
 
 /**
  * The dashboard used to show the information related to a given service
@@ -31,12 +31,12 @@ public class ServiceManagerDashboard extends AbstractDashboard {
     
     public ServiceManagerDashboard(Component component, RemoteObjectLight customer, RemoteObjectLight service, WebserviceBean wsBean) {
         super(service.toString(), new TheaterDashboardLayout(3, 2));
-        ((TheaterDashboardLayout)getDashboardLayout()).setScreenWidget(new DummyContentDashboardWidget(service.toString()));
+        ((TheaterDashboardLayout)getDashboardLayout()).setScreenWidget(new SimpleContentOnlyDashboardWidget(service.toString(), String.format("Object Id: %s", service.getId())));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(0, 0, new ResourcesDashboardWidget(service, wsBean));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 0, new ContactsDashboardWidget(customer, wsBean));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 0, new ServiceViewsDashboardWidget(component, service, wsBean));
-        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(0, 1, new DummyCoverDashboardWidget(component, "Tickets", "dashboard_cover_widget-darkpurple"));
-        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 1, new DummyCoverDashboardWidget(component, "SLAs", "dashboard_cover_widget-darkpurple"));
-        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 1, new ReportsDashboardWidget(service, wsBean));
+        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(0, 1, new RelationshipsDashboardWidget(service, wsBean));
+        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 1, new ReportsDashboardWidget(service, wsBean));
+        //((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 1, new ReportsDashboardWidget(service, wsBean));
     }
 }

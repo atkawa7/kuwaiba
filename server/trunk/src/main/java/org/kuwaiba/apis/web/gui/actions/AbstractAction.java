@@ -17,14 +17,21 @@ package org.kuwaiba.apis.web.gui.actions;
 
 import com.vaadin.event.Action;
 import com.vaadin.server.Resource;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Root of all actions in the system
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
 public abstract class AbstractAction extends Action {
-    public AbstractAction(String caption) {
+    /**
+     * Reference to the backend bean
+     */
+    protected WebserviceBean wsBean;
+    
+    public AbstractAction(String caption, WebserviceBean wsBean) {
         super(caption);
+        this.wsBean = wsBean;
     }
     
     public AbstractAction(String caption, Resource icon) {
@@ -37,6 +44,10 @@ public abstract class AbstractAction extends Action {
      * @param targetObject The object related to the action (usually a node)
      */
     public abstract void actionPerformed (Object sourceComponent, Object targetObject);
+    /**
+     * What to do when the action has no context
+     */
+    public abstract void actionPerformed ();
     
     @Override
     public String toString() {

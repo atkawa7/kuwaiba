@@ -126,7 +126,6 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
     
     /**
      * Displays the contents of the content widget replacing the whole dashboard space
-     * @param parentComponent
      */
     public void swap() {
         if (contentComponent != null) {

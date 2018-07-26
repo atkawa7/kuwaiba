@@ -24,8 +24,8 @@ import org.kuwaiba.beans.WebserviceBean;
  */
 public class GetViewAction extends AbstractAction {
     
-    public GetViewAction() {
-        super("Get View");
+    public GetViewAction(WebserviceBean wsBean) {
+        super("Get View", wsBean);
     }
 
     @Override
@@ -60,5 +60,10 @@ public class GetViewAction extends AbstractAction {
 //        } catch (Exception ex) {
 //            Exceptions.printStackTrace(ex);
 //        }
+    }
+
+    @Override
+    public void actionPerformed() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

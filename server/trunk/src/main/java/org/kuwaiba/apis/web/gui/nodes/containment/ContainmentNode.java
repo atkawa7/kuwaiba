@@ -21,11 +21,11 @@ import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Notification;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.navigation.AbstractNode;
-import org.kuwaiba.apis.web.gui.nodes.properties.Sheet;
+import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
+//import org.kuwaiba.apis.web.gui.nodes.properties.Sheet;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
-import org.kuwaiba.apis.web.gui.navigation.SimpleTree;
+import org.kuwaiba.apis.web.gui.navigation.trees.SimpleTree;
 import org.kuwaiba.web.modules.containment.actions.ActionsFactory;
 
 /**

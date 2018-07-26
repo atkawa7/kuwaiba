@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,31 +13,25 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
-package org.kuwaiba.apis.web.gui.nodes;
+package org.kuwaiba.apis.web.gui.properties;
 
 import com.vaadin.ui.AbstractField;
 import com.vaadin.ui.Component;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.vaadin.ui.TextField;
 
 /**
- * Support for date-type properties
+ * Support for String like properties
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
-public class DateProperty extends AbstractProperty<Date>{
+public class StringProperty extends AbstractProperty<String>{
 
-    public DateProperty(String name, String displayName, String description, Date value) {
+    public StringProperty(String name, String displayName, String description, String value) {
         super(name, displayName, description, value);
-    }
-    
-    public DateProperty(String name, String displayName, String description, long value) {
-        super(name, displayName, description, new Date(value));
     }
 
     @Override
     public Component getAdvancedEditor() {
-        throw new UnsupportedOperationException("This property type does not support an advanced editor."); //To change body of generated methods, choose Tools | Templates.
+        return null;
     }
 
     @Override
@@ -47,13 +41,13 @@ public class DateProperty extends AbstractProperty<Date>{
 
     @Override
     public AbstractField getInplaceEditor() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        TextField txtPropertyEditor = new TextField();
+        txtPropertyEditor.setSizeFull();
+        return txtPropertyEditor;
     }
 
     @Override
     public String getAsString() {
-        SimpleDateFormat formatter = new SimpleDateFormat("MMMMM d, YYYY HH:mm:ss");
-        return formatter.format(getValue());
+        return getValue();
     }
-
 }

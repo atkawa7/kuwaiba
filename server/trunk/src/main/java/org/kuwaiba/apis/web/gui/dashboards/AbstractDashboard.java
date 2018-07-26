@@ -16,7 +16,9 @@
 package org.kuwaiba.apis.web.gui.dashboards;
 
 import com.vaadin.ui.AbstractOrderedLayout;
-import com.vaadin.ui.Panel;
+import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.VerticalLayout;
+import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 
 /**
  * Most Kuwaiba modules use master-detail views present information to the user. The master part is usually implemented 
@@ -25,7 +27,7 @@ import com.vaadin.ui.Panel;
  * with widgets displaying detailed information (charts, lists, etc)
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
-public class AbstractDashboard extends Panel {
+public class AbstractDashboard extends VerticalLayout {
     /**
      * The layout used by the panel. See some sample layouts in 
      * the package org.kuwaiba.apis.web.gui.dashboards.layouts
@@ -40,16 +42,35 @@ public class AbstractDashboard extends Panel {
      */
     public AbstractDashboard(String title, AbstractOrderedLayout dashboardLayout) {
         this.dashboardLayout = dashboardLayout;
-        this.setContent(dashboardLayout);
+        this.addComponent(dashboardLayout);
+        this.setSizeFull();
+    }
+
+    /**
+     * Alternate constructor
+     * @param title The title of the dashboard
+     * @param dashboardLayout The layout to be used. See some sample layouts in 
+     * the package org.kuwaiba.apis.web.gui.dashboards.layouts
+     * @param actions The actions to be placed in menu bar on top of the dashboard
+     */
+    public AbstractDashboard(String title, AbstractOrderedLayout dashboardLayout, AbstractAction[] actions) {
+        this.dashboardLayout = dashboardLayout;
+        
+        MenuBar mnuDashboard = new MenuBar();
+        
+        for (AbstractAction action : actions)
+            mnuDashboard.addItem(action.getCaption(), new MenuBar.Command() {
+                @Override
+                public void menuSelected(MenuBar.MenuItem selectedItem) {
+                    action.actionPerformed();
+                }
+            });
+        
+        this.addComponents(mnuDashboard, dashboardLayout);
         this.setSizeFull();
     }
 
     public AbstractOrderedLayout getDashboardLayout() {
         return dashboardLayout;
-    }
-
-    public void setDashboardLayout(AbstractOrderedLayout dashboardLayout) {
-        this.dashboardLayout = dashboardLayout;
-        setContent(dashboardLayout);
     }
 }

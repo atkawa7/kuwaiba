@@ -16,6 +16,9 @@
 
 package org.kuwaiba.apis.web.gui.navigation;
 
+import org.kuwaiba.apis.web.gui.navigation.nodes.InventoryObjectNode;
+import org.kuwaiba.apis.web.gui.navigation.nodes.ChildrenProvider;
+import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
 import com.vaadin.data.TreeData;
 import java.util.ArrayList;
 import java.util.List;

@@ -21,9 +21,9 @@ import org.kuwaiba.apis.forms.elements.EventDescriptor;
 import com.vaadin.ui.Tree;
 import com.vaadin.ui.Tree.ItemClickListener;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.navigation.AbstractNode;
-import org.kuwaiba.apis.web.gui.navigation.SimpleTree;
-import org.kuwaiba.apis.web.gui.navigation.InventoryObjectNode;
+import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
+import org.kuwaiba.apis.web.gui.navigation.trees.SimpleTree;
+import org.kuwaiba.apis.web.gui.navigation.nodes.InventoryObjectNode;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 /**
  *

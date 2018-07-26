@@ -13,12 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.apis.web.gui.navigation;
+package org.kuwaiba.apis.web.gui.navigation.trees;
 
+import org.kuwaiba.apis.web.gui.navigation.nodes.ChildrenProvider;
+import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
 import com.vaadin.data.provider.TreeDataProvider;
 import com.vaadin.ui.IconGenerator;
 import com.vaadin.ui.Tree;
 import java.util.List;
+import org.kuwaiba.apis.web.gui.navigation.InventoryObjectTreeData;
 
 /**
  * A tree that extends the features of the default one and makes use of the Nodes API

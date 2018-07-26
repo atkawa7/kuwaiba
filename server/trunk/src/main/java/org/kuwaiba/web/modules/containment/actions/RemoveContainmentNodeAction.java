@@ -19,10 +19,10 @@ import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Notification;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.navigation.AbstractNode;
+import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
-import org.kuwaiba.apis.web.gui.navigation.SimpleTree;
+import org.kuwaiba.apis.web.gui.navigation.trees.SimpleTree;
 
 /**
  *
@@ -59,5 +59,10 @@ public class RemoveContainmentNodeAction extends AbstractAction {
 //        } catch (ServerSideException ex) {
 //            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
 //        }
+    }
+
+    @Override
+    public void actionPerformed() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

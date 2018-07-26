@@ -16,6 +16,9 @@
 
 package org.kuwaiba.apis.web.gui.navigation;
 
+import org.kuwaiba.apis.web.gui.navigation.nodes.LabelNode;
+import org.kuwaiba.apis.web.gui.navigation.nodes.InventoryObjectNode;
+import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.server.Resource;

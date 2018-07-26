@@ -20,6 +20,7 @@ import com.vaadin.ui.ListSelect;
 import com.vaadin.ui.Notification;
 import de.steinwedel.messagebox.MessageBox;
 import java.util.List;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * An contextual action that has a submenu
@@ -27,8 +28,8 @@ import java.util.List;
  */
 public abstract class AbstractComposedAction extends AbstractAction {
     
-    public AbstractComposedAction(String caption) {
-        super(caption);
+    public AbstractComposedAction(String caption, WebserviceBean wsBean) {
+        super(caption, wsBean);
     }
     
     public AbstractComposedAction(String caption, Resource icon) {

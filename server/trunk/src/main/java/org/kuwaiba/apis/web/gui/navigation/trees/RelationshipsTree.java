@@ -14,8 +14,11 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.apis.web.gui.navigation;
+package org.kuwaiba.apis.web.gui.navigation.trees;
 
+import org.kuwaiba.apis.web.gui.navigation.nodes.LabelNode;
+import org.kuwaiba.apis.web.gui.navigation.nodes.InventoryObjectNode;
+import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
 import com.vaadin.data.TreeData;
 import com.vaadin.ui.IconGenerator;
 import com.vaadin.ui.Tree;

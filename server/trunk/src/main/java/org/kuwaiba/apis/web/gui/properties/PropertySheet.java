@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.kuwaiba.apis.web.gui.nodes;
+package org.kuwaiba.apis.web.gui.properties;
 
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;

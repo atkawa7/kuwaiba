@@ -14,12 +14,12 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.web.modules.ipam;
+package org.kuwaiba.web.modules.ipam.dashboard;
 
 import com.vaadin.server.Page;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 import org.kuwaiba.apis.web.gui.dashboards.layouts.ShelfDashboardLayout;
-import org.kuwaiba.apis.web.gui.dashboards.layouts.widgets.ReportsDashboardWidget;
+import org.kuwaiba.apis.web.gui.dashboards.widgets.ReportsDashboardWidget;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.modules.ltmanager.dashboard.IPAddressManagerExplorerDashboardWidget;

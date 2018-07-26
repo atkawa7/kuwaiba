@@ -16,6 +16,7 @@
 package org.kuwaiba.web.modules.osp.google.actions;
 
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
+import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.web.modules.osp.google.OSPTopComponent;
 import org.kuwaiba.web.modules.osp.google.overlays.ConnectionPolyline;
 import org.kuwaiba.web.modules.physicalconnections.windows.ConnectLinksWindow;
@@ -26,8 +27,8 @@ import org.kuwaiba.web.modules.physicalconnections.windows.ConnectLinksWindow;
  */
 public class ConnectLinksAction extends AbstractAction {
     
-    public ConnectLinksAction() {
-        super("Connect Links ...");
+    public ConnectLinksAction(WebserviceBean wsBean) {
+        super("Connect Links ...", wsBean);
     }
 
     @Override
@@ -38,6 +39,11 @@ public class ConnectLinksAction extends AbstractAction {
 //                map.getTopComponent(), 
 //                ((ConnectionPolyline) targetObject).getConnectionInfo()
 //        ));
+    }
+
+    @Override
+    public void actionPerformed() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }
