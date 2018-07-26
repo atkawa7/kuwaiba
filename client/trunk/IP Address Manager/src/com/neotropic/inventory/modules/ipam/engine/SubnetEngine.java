@@ -178,12 +178,12 @@ public class SubnetEngine {
     }
         
     public int calculateNumberOfHosts(){
-        int n = 32-maskBits;
+        int n = 32 - maskBits;
         return (int)(Math.pow(2, n)-2);
     }
     
     public int calculateNumberOfHostsIpV6(){
-        int n = 128-maskBits;
+        int n = 128 - maskBits;
         return (int)(Math.pow(2, n));
     }
     
@@ -240,7 +240,7 @@ public class SubnetEngine {
     
     /**
      * Uncompress an IPv6
-     * @param ip a compress IPv6 IP Address
+     * @param ip a compressed IP v6 Address
      * @return a complete IPv6
      */
     public static String[] completeIPv6(String ip){
@@ -338,14 +338,14 @@ public class SubnetEngine {
         createIPv6(temSubnets, complement);
     }
     
-    public String ipv6AsString(String[] ip){
+    private String ipv6AsString(String[] ip){
         String ipv6 = "";
         for (String segment : ip) 
             ipv6 += segment + ":";
         return ipv6.substring(0, ipv6.length()-1);
     }
     
-    public List<Integer> segmentAnIP(String ip) {
+    private List<Integer> segmentAnIP(String ip) {
         String segments[] = null;
         List<Integer>  theSegments= new ArrayList<>();
         if(ip.contains("."))
@@ -411,11 +411,9 @@ public class SubnetEngine {
         
         for (String string : complements)
             partialSubnets.add(ip+Integer.toString(Integer.parseInt(string, 2),16));               
-        
-        int size = 0;
+         
         String networkip = partialSubnets.get(0);
         String broadcastip = partialSubnets.get(partialSubnets.size()-1);
-        size = partialSubnets.size();
         String[] partialNetworkSplited = networkip.split(":");
         String[] partialBroadcastSplited = broadcastip.split(":");
         String n = "";
@@ -440,6 +438,11 @@ public class SubnetEngine {
         subnets.add(subnet.substring(0, subnet.length()-1));
     }
 
+    /**
+     * Checks if a given string is an ip address 
+     * @param ipAddress a possible ip address
+     * @return true if the string is an ip address
+     */
     public static boolean isIPAddress(String ipAddress){
         String ipv4Regex = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$";
         String ipv6Regex = "^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?s*";
@@ -450,6 +453,11 @@ public class SubnetEngine {
         return ipv4.matches() || ipv6.matches();
     }
     
+    /**
+     * Checks if a given string complies with CIDR format
+     * @param ipAddress a possible string with CIDR format
+     * @return true if the string has de CIDR format
+     */
     public static boolean isCIDRFormat(String ipAddress){
         String ipv4Regex = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\\/([0-9]|[1-2][0-9]|3[0-2]))$";
         String ipv6Regex = "^s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]d|1dd|[1-9]?d)(.(25[0-5]|2[0-4]d|1dd|[1-9]?d)){3}))|:)))(%.+)?s*(\\/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8]))?$";
@@ -636,7 +644,7 @@ public class SubnetEngine {
     }
     
     /**
-     * calculate if a given IP for a subnet is inside of another subnet 
+     * Calculate if a given IP for a subnet is inside of another subnet 
      * taking as parameters the broadcastIp an de networkIp
      * @param netwrokIp the network IP
      * @param broadcastIp the broadcast IP
@@ -676,18 +684,25 @@ public class SubnetEngine {
         return true;
     }
     
-    public boolean isSubnetofSubnet(String ipCIDR, String subnetFather){
-        String[] splitNewSubnet = ipCIDR.split("/");
-        String[] splitSubnetFather = subnetFather.split("/");
+    /**
+     * Checks if the broadcast ip and the network ip of a given new subnet 
+     * is inside of other subnet
+     * @param newSubnet a given new subnet in CIDR format
+     * @param allegedSubnetContainer the alleged subnet that could contains the new subnet
+     * @return true if contains completely the new subnet
+     */
+    public boolean isSubnetofSubnet(String newSubnet, String allegedSubnetContainer){
+        String[] splitNewSubnet = newSubnet.split("/");
+        String[] splitSubnetFather = allegedSubnetContainer.split("/");
         
         if(Integer.valueOf(splitNewSubnet[1]) < Integer.valueOf(splitSubnetFather[1]))
             return false;
         else{
-            calculateSubnets(ipCIDR);
+            calculateSubnets(newSubnet);
             String newSubnetBroadcastIp = subnets.get(subnets.size()-1);
             String newSubnetNetworkIp = subnets.get(0);
             
-            calculateSubnets(subnetFather);
+            calculateSubnets(allegedSubnetContainer);
             String subnetFatherNetworkIp = subnets.get(0);
             
             if(belongsTo(subnetFatherNetworkIp, newSubnetNetworkIp, Integer.valueOf(splitSubnetFather[1])))
@@ -697,6 +712,13 @@ public class SubnetEngine {
         }
     }
     
+    /**
+     * Checks if the broadcast ip and the network ip of a given new subnet 
+     * is inside of other subnet
+     * @param newSubnet a given new subnet in CIDR format
+     * @param allegedSubnetContainer the alleged subnet that could contains the new subnet
+     * @return true if contains completely the new subnet
+     */
     public boolean isSubnetofSubnetIPv6(String ipCIDR, String subnetFather){
         String[] splitNewSubnet = ipCIDR.split("/");
         String[] splitSubnetFather = subnetFather.split("/");

@@ -99,7 +99,7 @@ public class ReleaseEndPointFromIPAddresAction extends GenericObjectNodeAction i
     
     @Override
     public String[] appliesTo() {
-        return new String [] {Constants.CLASS_GENERICPORT};
+        return new String [] {Constants.CLASS_GENERICPORT, Constants.CLASS_MPLSTUNNEL};
     }
     
     @Override

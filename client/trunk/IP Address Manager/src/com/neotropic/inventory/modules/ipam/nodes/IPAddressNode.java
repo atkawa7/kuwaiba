@@ -57,6 +57,8 @@ public class IPAddressNode extends ObjectNode {
                 I18N.gm("creation_date"),
                 "",sp.getAttribute(Constants.PROPERTY_CREATIONDATE)));
         
+        generalPropertySet.put(new NotEditableProperty(Constants.PROPERTY_IP_MASK, String.class, 
+                I18N.gm("mask"), "", sp.getAttribute(Constants.PROPERTY_IP_MASK)));
         //List Type State
         List<LocalObjectListItem> list = com.getList(Constants.LIST_TYPE_OPERATIONAL_STATE, true, false);
         if (list == null) {
