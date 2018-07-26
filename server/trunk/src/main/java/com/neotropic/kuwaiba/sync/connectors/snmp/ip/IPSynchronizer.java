@@ -35,11 +35,9 @@ import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.beans.WebserviceBean;
-import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.openide.util.Exceptions;
 
@@ -57,17 +55,17 @@ public class IPSynchronizer {
      */
     private final long id;
     /**
-     * Current structure of the device
-     */
-    private final HashMap<Long, List<BusinessObjectLight>> currentObjectStructure;
-    /**
      * To load the structure of the actual device
      */
     private final List<BusinessObjectLight> currentVirtualPorts;
     /**
-     * The current first level children of the actual device
+     * The current map pf subnets and sub-subnets
      */
-    private List<BusinessObjectLight> currentFirstLevelChildren;
+    private final HashMap<BusinessObjectLight, List<BusinessObjectLight>> subnets;
+    /**
+     * The current subnets with its ips
+     */
+    private final HashMap<BusinessObjectLight, List<BusinessObjectLight>> ips;
     /**
      * The current ports in the device
      */
@@ -81,19 +79,22 @@ public class IPSynchronizer {
      */
     private final HashMap<String, List<String>> ifXTable;
     /**
+     * Reference to the root node of the IPv4 
+     */
+    private Pool ipv4Root;
+    /**
      * reference to the bem
      */
     private BusinessEntityManager bem;
     /**
-     * Reference to de aem
+     * Reference to the aem
      */
     private ApplicationEntityManager aem;
     /**
-     * Reference to de mem
+     * Reference to the mem
      */
     private MetadataEntityManager mem;
-    List<BusinessObjectLight> currentIps;
-
+    
     public IPSynchronizer(BusinessObjectLight obj, List<TableData> data) {
          try {
             PersistenceService persistenceService = PersistenceService.getInstance();
@@ -111,48 +112,114 @@ public class IPSynchronizer {
         this.id = obj.getId();
         ipAddrTable = (HashMap<String, List<String>>)data.get(0).getValue();
         ifXTable = (HashMap<String, List<String>>)data.get(1).getValue();
-        currentObjectStructure = new HashMap<>();
         currentPorts = new ArrayList<>();
-        currentFirstLevelChildren = new ArrayList<>();
+        subnets = new HashMap<>();
+        ips = new HashMap<>();
         currentVirtualPorts = new ArrayList<>();
-        currentIps = new ArrayList<>();
     }
     
-    
-    private void getCurrentIPAddress() throws MetadataObjectNotFoundException, 
-            BusinessObjectNotFoundException, 
-            BusinessObjectNotFoundException, InvalidArgumentException, InvalidArgumentException, OperationNotPermittedException, ApplicationObjectNotFoundException
+    /**
+     * Executes the synchronization of the ipAddrTable
+     * @return list of findings
+     * @throws OperationNotPermittedException
+     * @throws InvalidArgumentException
+     * @throws ApplicationObjectNotFoundException
+     * @throws ArraySizeMismatchException 
+     */
+    public List<SyncFinding> execute() throws OperationNotPermittedException, 
+            InvalidArgumentException, ApplicationObjectNotFoundException, 
+            ArraySizeMismatchException
     {
-        List<String> ipAddresses = ipAddrTable.get("ipAdEntAddr");
-        
-        long subnetId = 46282;
-        String subentClass = "SubnetIPv4";
-        BusinessObject subnet = bem.getObject(subentClass, subnetId);
-        
-        List<BusinessObjectLight> children = bem.getObjectSpecialChildren(subentClass, subnetId);
-        
-        for (BusinessObjectLight child : children) {
-            if(child.getClassName().equals(Constants.CLASS_IP_ADDRESS))
-                currentIps.add(child);
-        }
-    }
-    
-    public List<SyncFinding> execute() throws OperationNotPermittedException, InvalidArgumentException, ApplicationObjectNotFoundException{
         try {
             readCurrentStructure(bem.getObjectChildren(className, id, -1), 1);
             readCurrentStructure(bem.getObjectSpecialChildren(className, id), 2);
-            
-
-            getCurrentIPAddress();
+            //we get the rood nodes for the ipv4
+            List<Pool> ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
+            ipv4Root = ipv4RootPools.get(0);
+            readcurrentFolder(ipv4RootPools);
+            readCurrentSubnets(ipv4Root);
             associateIPAddress();
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
             Exceptions.printStackTrace(ex);
         }
         return null;
     }
+   
+    /**
+     * Search for a given IP address got it from the ipAddrTableMIB data
+     * if doesn't exists it will be created
+     * @param ipAddr the ip address
+     * @param mask the ip address mask
+     * @return the ip from kuwaiba
+     * @throws InvalidArgumentException
+     * @throws BusinessObjectNotFoundException
+     * @throws MetadataObjectNotFoundException
+     * @throws OperationNotPermittedException
+     * @throws ApplicationObjectNotFoundException
+     * @throws ArraySizeMismatchException 
+     */
+    private BusinessObjectLight searchIP(String ipAddr, String mask) 
+            throws InvalidArgumentException, BusinessObjectNotFoundException, 
+            MetadataObjectNotFoundException, OperationNotPermittedException, 
+            ApplicationObjectNotFoundException, ArraySizeMismatchException
+    {
+        //We will consider only a /24 subnet 
+        String []ipAddrSegments = ipAddr.split("\\.");
+        String newSubnet =  ipAddrSegments[0] + "." + ipAddrSegments[1] + "." + ipAddrSegments[2];
+        BusinessObjectLight currentSubnet = null;
+        //we look for the subnet
+        for(BusinessObjectLight subnet : subnets.keySet()){
+            if(subnet.getName().equals(newSubnet + ".0/24")){
+                currentSubnet = subnet;
+                break;
+            }
+        }//we create the subnet if doesn't exists
+        if(currentSubnet == null){
+            String [] attributeNames = {"name", "description", "networkIp", "broadcastIp", "hosts"};
+            String [] attributeValues = {newSubnet + ".0/24", "sync", newSubnet + ".0", newSubnet + ".255", "254"};
+            currentSubnet = bem.getObject(bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
+            //we must add the new subnet into the current subnets and ips
+            subnets.put(currentSubnet, new ArrayList<>()); 
+            ips.put(currentSubnet, new ArrayList<>());
+        }
+        //with the subnet found we must search the if the IP address exists
+        List<BusinessObjectLight> currentIps = subnets.get(currentSubnet);
+        if(currentIps != null){
+            for (BusinessObjectLight currentIp : currentIps) {
+                if(currentIp.getName().equals(ipAddr)){
+                    //we must check the mask if the IP already exists and updated if is need it
+                    BusinessObject ip = bem.getObject(currentIp.getId()); 
+                    if(!ip.getAttributes().get(Constants.PROPERTY_MASK).equals(mask)){
+                        ip.getAttributes().put(Constants.PROPERTY_MASK, mask);
+                        bem.updateObject(ip.getClassName(), ip.getId(), ip.getAttributes());
+                    }
+                    return currentIp;
+                }
+            }
+        }//we create the ip address if doesn't exists in subnet
+        HashMap<String, String> ipAttributes = new HashMap<>();
+        ipAttributes.put(Constants.PROPERTY_NAME, ipAddr);
+        ipAttributes.put(Constants.PROPERTY_MASK, mask);
+        long createdIp = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, currentSubnet.getClassName(), currentSubnet.getId(), ipAttributes, -1);
+        BusinessObject ip = bem.getObject(createdIp);
+        ips.get(currentSubnet).add(ip);
+        return ip;
+    }
     
+    
+    /**
+     * Reads the MIB data an associate IP addresses with ports
+     * @throws BusinessObjectNotFoundException
+     * @throws OperationNotPermittedException
+     * @throws MetadataObjectNotFoundException
+     * @throws InvalidArgumentException
+     * @throws ApplicationObjectNotFoundException
+     * @throws ArraySizeMismatchException 
+     */
     private void associateIPAddress() throws BusinessObjectNotFoundException, 
-            OperationNotPermittedException, MetadataObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException
+            OperationNotPermittedException, MetadataObjectNotFoundException, 
+            InvalidArgumentException, ApplicationObjectNotFoundException, 
+            ArraySizeMismatchException
     {
         List<String> ipAddresses = ipAddrTable.get("ipAdEntAddr");
         List<String> addrPortsIds = ipAddrTable.get("ipAdEntIfIndex");
@@ -162,51 +229,40 @@ public class IPSynchronizer {
         for(int i=0; i < addrPortsIds.size(); i++){
             String portId = addrPortsIds.get(i);
             String ipAddress = ipAddresses.get(i);
+            String mask = masks.get(i);
             //We search for the ip address
-            BusinessObjectLight currentIpAddress = searchIpAddress(ipAddress);
-            
-            //We create the ip address
-            long subnetId = 46282;
-            String subentClass = "SubnetIPv4";
-            BusinessObject subnet = bem.getObject(subentClass, subnetId);
+            BusinessObjectLight currentIpAddress = searchIP(ipAddress, mask);
 
-            if(subnet != null && ipAddress.contains("185")){
-                    if(currentIpAddress == null){
-                        HashMap<String, String> ipAttributes = new HashMap<>();
-                        ipAttributes.put(Constants.PROPERTY_NAME, ipAddress);
-                        long createSpecialObject = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnetId, ipAttributes, -1);
-                        currentIpAddress = bem.getObject(createSpecialObject);
-                    }
-                
-                    for(int j=0; j < ifportIds.size(); j++){
-                        if(ifportIds.get(j).equals(portId)){
-                            String portName = portNames.get(j);
-                            BusinessObjectLight currentPort = searchInCurrentStructure(portName);
-                            if(currentPort != null && currentIpAddress != null){
-                                List<BusinessObjectLight> currentRelatedIPAddresses = bem.getSpecialAttribute(
-                                        currentPort.getClassName(), 
-                                        currentPort.getId(), RELATIONSHIP_IPAMHASADDRESS);
-                                //We check if the port is already related with the ip
-                                boolean alreadyRelated = false;
-                                for (BusinessObjectLight currentRelatedIPAddress : currentRelatedIPAddresses) {
-                                    if(currentRelatedIPAddress.getName().equals(currentIpAddress.getName())){ 
-                                        alreadyRelated = true;
-                                        break;
-                                    }
-                                }
-                                if(!alreadyRelated)
-                                    bem.createSpecialRelationship(currentPort.getClassName(),currentPort.getId(), 
-                                        currentIpAddress.getClassName(), currentIpAddress.getId(), RELATIONSHIP_IPAMHASADDRESS, true);
+            for(int j=0; j < ifportIds.size(); j++){
+                if(ifportIds.get(j).equals(portId)){
+                    String portName = portNames.get(j);
+                    BusinessObjectLight currentPort = searchInCurrentStructure(portName);
+                    if(currentPort != null && currentIpAddress != null){
+                        List<BusinessObjectLight> currentRelatedIPAddresses = bem.getSpecialAttribute(
+                                currentPort.getClassName(), 
+                                currentPort.getId(), RELATIONSHIP_IPAMHASADDRESS);
+                        //We check if the interface is already related with the ip
+                        boolean alreadyRelated = false;
+                        for (BusinessObjectLight currentRelatedIPAddress : currentRelatedIPAddresses) {
+                            if(currentRelatedIPAddress.getName().equals(currentIpAddress.getName())){ 
+                                alreadyRelated = true;
+                                break;
                             }
-                        }
+                        }//If not related, we related interface with the ip
+                        if(!alreadyRelated)
+                            bem.createSpecialRelationship(currentPort.getClassName(),currentPort.getId(), 
+                                currentIpAddress.getClassName(), currentIpAddress.getId(), RELATIONSHIP_IPAMHASADDRESS, true);
                     }
+                    else
+                        System.out.println(String.format("sync the ifMIB, the port %s was not found", portName));
+                }
             }
         }
     }
     
     /**
-     * 
-     * @param children
+     * Reads the device's current structure (ports, and logical ports)
+     * @param children a given set of children
      * @param childrenType 1 children, 2 special children
      * @throws MetadataObjectNotFoundException
      * @throws BusinessObjectNotFoundException 
@@ -228,6 +284,70 @@ public class IPSynchronizer {
     }
     
     /**
+    * Reads the current folders in the IPAM 
+    * @param ifName a given name for port, virtual port or MPLS Tunnel
+    * @return the object, null doesn't exists in the current structure
+    */
+    private void readcurrentFolder(List<Pool> folders) 
+            throws ApplicationObjectNotFoundException, 
+            MetadataObjectNotFoundException, BusinessObjectNotFoundException
+    {
+        for (Pool folder : folders) {
+            if(!folders.isEmpty())
+                readcurrentFolder(aem.getPoolsInPool(folder.getId(), folder.getClassName()));
+            readCurrentSubnets(folder);
+        }
+    }
+    
+    /**
+     * Gets the subnets in a given the folder from the IPAM module
+     * @param folder a given folder from the IPAM
+     * @throws ApplicationObjectNotFoundException
+     * @throws MetadataObjectNotFoundException
+     * @throws BusinessObjectNotFoundException 
+     */
+    private void readCurrentSubnets(Pool folder) 
+            throws ApplicationObjectNotFoundException, 
+            MetadataObjectNotFoundException, BusinessObjectNotFoundException {
+        //we read the subnets of the folder
+        List<BusinessObjectLight> subnetsInFolder = aem.getPoolItems(folder.getId(), -1);
+        for (BusinessObjectLight subnet : subnetsInFolder) {
+            //we save the subnet
+            if(subnets.get(subnet) == null)
+                subnets.put(subnet, new ArrayList<>());
+            if(ips.get(subnet) == null)
+                ips.put(subnet, new ArrayList<>());
+            if(!subnetsInFolder.isEmpty())//we get the subnets inside folders
+                readCurrentSubnetChildren(subnet);
+        }
+    }
+    
+    /**
+     * Reads recursively the subnets its sub-subnets and its IPs addresses 
+     * @param subnet a given subnet
+     * @throws ApplicationObjectNotFoundException
+     * @throws MetadataObjectNotFoundException
+     * @throws BusinessObjectNotFoundException 
+     */
+    private void readCurrentSubnetChildren(BusinessObjectLight subnet) 
+        throws ApplicationObjectNotFoundException, 
+        MetadataObjectNotFoundException, BusinessObjectNotFoundException 
+    {
+        //we get the ips and the subnets inside subents
+        List<BusinessObjectLight> subnetChildren = bem.getObjectSpecialChildren(subnet.getClassName(), subnet.getId());
+        for (BusinessObjectLight subnetChild : subnetChildren) {
+            if(subnetChild.getClassName().equals(Constants.CLASS_SUBNET_IPV4) || 
+                subnetChild.getClassName().equals(Constants.CLASS_SUBNET_IPV6))
+                    subnets.get(subnet).add(subnetChild);
+            else
+                ips.get(subnet).add(subnetChild);
+            
+            if(!subnetChildren.isEmpty())
+                readCurrentSubnetChildren(subnetChild);
+        }
+    }
+    
+    /**
      * Checks if a given port exists in the current structure
      * @param ifName a given name for port, virtual port or MPLS Tunnel
      * @return the object, null doesn't exists in the current structure
@@ -242,13 +362,5 @@ public class IPSynchronizer {
                 return currentVirtualPort;
         }
         return null;
-    }
-    
-    private BusinessObjectLight searchIpAddress(String ipAddress){
-        for(BusinessObjectLight currentIpAddress : currentIps){
-            if(currentIpAddress.getName().equals(ipAddress))
-                return currentIpAddress;
-        }
-        return null;
-    }
+    }    
 }

@@ -36,12 +36,14 @@ import javax.json.Json;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.util.i18n.I18N;
+import org.openide.util.Exceptions;
 import org.snmp4j.smi.OID;
 
 /**
@@ -201,11 +203,11 @@ public class IPAddressesSyncProvider extends AbstractSyncProvider {
                 });
                 IPSynchronizer ipSync = new IPSynchronizer(entrySet.getKey(), mibTables);
                 findings.addAll(ipSync.execute());
-            } catch (OperationNotPermittedException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+            } catch (OperationNotPermittedException | InvalidArgumentException | ApplicationObjectNotFoundException | ArraySizeMismatchException ex) {
                 findings.add(new SyncFinding(SyncFinding.EVENT_ERROR, 
                         ex.getMessage(), 
                         Json.createObjectBuilder().add("type","ex").build().toString()));
-            }
+            } 
         }
         return findings;
     }

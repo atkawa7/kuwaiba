@@ -58,6 +58,12 @@ class WelcomeView extends VerticalLayout implements View {
             MenuBar mnuMain = ((IndexUI)getUI()).getMainMenu();
             
             addComponent(mnuMain);
+            VerticalLayout content = new VerticalLayout();
+            content.setId("container");
+            content.setSizeFull();
+            addComponent(content);
+            this.setExpandRatio(mnuMain, 0.5f);
+            this.setExpandRatio(content, 9.5f);
         }
     }
 }

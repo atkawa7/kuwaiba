@@ -303,6 +303,10 @@ public class Constants {
      */
     public static final String PROPERTY_ARTIFACTS_CONTENT = "artifactsContent";
     /**
+     * Process Definition Id
+     */
+    public static final String PROPERTY_MASK = "mask";
+    /**
      * Root for all business classes
      */
     public static final String CLASS_INVENTORYOBJECT = "InventoryObject"; //NOI18N ID 286

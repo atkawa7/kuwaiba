@@ -267,7 +267,6 @@ public class IPAMModule implements GenericCommercialModule{
             BusinessObjectNotFoundException, ApplicationObjectNotFoundException
     {
         try {
-            aem.getPool(parentId);
             return bem.createPoolItem(parentId, className, attributeNames, attributeValues, 0);
         } catch (ApplicationObjectNotFoundException ex) {
             
