@@ -51,13 +51,4 @@ public class Notifications {
         wdwInfo.setIcon(new ThemeResource("icons/icon_info.png")); //NOI18N
         wdwInfo.show(Page.getCurrent());
     }
-    
-    public static void showMoreInfo(String message) {
-        Notification wdwInfo = new Notification(message, Notification.Type.ASSISTIVE_NOTIFICATION);
-        wdwInfo.setPosition(Position.TOP_CENTER);
-        wdwInfo.setDelayMsec(POPUP_DELAY);
-        wdwInfo.setIcon(new ThemeResource("icons/icon_more_info.png")); //NOI18N
-        wdwInfo.setStyleName("gray"); //NOI18N
-        wdwInfo.show(Page.getCurrent());
-    }
 }

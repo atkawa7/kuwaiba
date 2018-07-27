@@ -86,10 +86,10 @@ public class NavigationTreeExplorerDashboardWidget extends AbstractDashboardWidg
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                     
                     if (parents.isEmpty())
-                        Notifications.showMoreInfo("This object does not have a parent");
+                        Notifications.showInfo("This object does not have a parent");
                     else {
                         if (parents.size() == 1) //It's right under the dummy root
-                            Notifications.showMoreInfo("Navigation Tree Root");
+                            Notifications.showInfo("Navigation Tree Root");
                         else {
                             parents.remove(parents.get(parents.size() - 1)); //Ignore the dummy root
                             Collections.reverse(parents); //Reverse to 

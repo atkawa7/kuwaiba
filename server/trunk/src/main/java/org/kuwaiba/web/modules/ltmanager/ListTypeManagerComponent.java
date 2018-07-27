@@ -69,8 +69,6 @@ public class ListTypeManagerComponent extends AbstractTopComponent {
     
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-        addStyleName("misc");
-        
         HorizontalSplitPanel pnlMain = new HorizontalSplitPanel();
         pnlMain.setSplitPosition(33, Unit.PERCENTAGE);
         MenuBar mnuMain = ((IndexUI)getUI()).getMainMenu();

@@ -52,7 +52,6 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-import org.kuwaiba.apis.web.gui.menus.RawContextMenu;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;

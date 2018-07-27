@@ -85,7 +85,6 @@ class NavigationTreeComponent extends AbstractTopComponent {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         setStyleName("dashboards");
-        addStyleName("misc");
         addStyleName("navtree");
         
         HorizontalSplitPanel pnlMain = new HorizontalSplitPanel();

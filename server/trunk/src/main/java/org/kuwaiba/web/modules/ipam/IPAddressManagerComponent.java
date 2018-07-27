@@ -23,7 +23,6 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
@@ -63,10 +62,6 @@ public class IPAddressManagerComponent extends AbstractTopComponent {
      */
     public static String VIEW_NAME = "ipam";
     /**
-     * Combo box containing the current customers
-     */
-    private ComboBox<RemoteObjectLight> cmbCustomers;
-    /**
      * Text field to filter the services
      */
     private AutocompleteTextField txtFilter;
@@ -91,7 +86,6 @@ public class IPAddressManagerComponent extends AbstractTopComponent {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         setStyleName("dashboards");
-        addStyleName("misc");
         
         HorizontalSplitPanel pnlMain = new HorizontalSplitPanel();
         pnlMain.setSplitPosition(33, Unit.PERCENTAGE);

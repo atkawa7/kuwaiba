@@ -16,9 +16,6 @@
 package org.kuwaiba.apis.web.gui.actions;
 
 import com.vaadin.server.Resource;
-import com.vaadin.ui.ListSelect;
-import com.vaadin.ui.Notification;
-import de.steinwedel.messagebox.MessageBox;
 import java.util.List;
 import org.kuwaiba.beans.WebserviceBean;
 
@@ -37,26 +34,12 @@ public abstract class AbstractComposedAction extends AbstractAction {
     }
     
     /**
-     * Actually shows a popup with the options. Handle the existence of items in the calling method (most probably actionPerformed) to customize the error message
+     * Shows a popup with the options. Handle the existence of items in the calling method (most probably actionPerformed) to customize the error message
      * @param sourceComponent The visual component this action is attached to.
      * @param targetObject The object related to the action (usually a node)
      * @param subMenuOptions The options in the submenu
      */
     public void showSubMenu(Object sourceComponent, Object targetObject, List<?> subMenuOptions) {
-        ListSelect lstOptions = new ListSelect("", subMenuOptions);
-        
-        MessageBox mbSelection = MessageBox.create()
-            .withCaption(getCaption())
-            .withMessage(lstOptions)
-            .withOkButton(() -> {
-                if (lstOptions.getValue() == null)
-                    Notification.show("Select a value from the list", Notification.Type.ERROR_MESSAGE);
-                else {
-                    finalActionPerformed(sourceComponent, targetObject, lstOptions.getValue());
-                }
-            })
-            .withCancelButton();
-        mbSelection.open();
     }
     
     /**

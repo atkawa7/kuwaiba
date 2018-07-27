@@ -15,14 +15,8 @@
  */
 package org.kuwaiba.web.modules.navtree.actions;
 
-import com.vaadin.server.Page;
 import com.vaadin.server.ThemeResource;
-import com.vaadin.ui.Notification;
-import de.steinwedel.messagebox.MessageBox;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
-//import org.kuwaiba.apis.web.gui.nodes.InventoryObjectNode;
-import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * Action to delete a inventory object

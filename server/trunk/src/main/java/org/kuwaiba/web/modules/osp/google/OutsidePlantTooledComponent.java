@@ -22,7 +22,6 @@ import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.Notification;
-import de.steinwedel.messagebox.MessageBox;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;

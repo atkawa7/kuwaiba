@@ -80,12 +80,11 @@ public class ServiceManagerComponent extends AbstractTopComponent {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         setStyleName("dashboards");
-        addStyleName("misc");
         
         pnlMain = new HorizontalSplitPanel();
         pnlMain.setSplitPosition(33, Unit.PERCENTAGE);
         MenuBar mnuMain = ((IndexUI)getUI()).getMainMenu();
-
+        
         addComponent(mnuMain);
         addComponent(pnlMain);
         setExpandRatio(mnuMain, 0.5f);

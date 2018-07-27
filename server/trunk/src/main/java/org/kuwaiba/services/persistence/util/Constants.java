@@ -311,6 +311,10 @@ public class Constants {
      */
     public static final String CLASS_INVENTORYOBJECT = "InventoryObject"; //NOI18N ID 286
     /**
+     * Root for all objects with a geographical location
+     */
+    public static final String CLASS_GENERICLOCATION = "GenericLocation"; //NOI18N ID 286
+    /**
      * Root for all list types class name
      */
     public static final String CLASS_GENERICOBJECTLIST = "GenericObjectList"; //NOI18N ID 27

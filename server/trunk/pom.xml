@@ -25,14 +25,8 @@
         <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
     </properties>
     
-    <dependencies>
-        <!--
-        <dependency>
-           <groupId>org.vaadin</groupId>
-           <artifactId>diagram-builder</artifactId>
-           <version>1.2</version>
-        </dependency>
-        -->        
+    <dependencies>   
+        <!-- Used to create flow charts in the Process Manager module -->
         <dependency>
            <groupId>com.vaadin.pontus</groupId>
            <artifactId>vizcomponent</artifactId>
@@ -44,67 +38,56 @@
            <artifactId>vaadin-context-menu</artifactId>
            <version>2.0.0</version>
         </dependency>
-        
-        <dependency>
-           <groupId>de.steinwedel.vaadin.addon</groupId>
-           <artifactId>messagebox</artifactId>
-           <version>3.0.19</version>
-        </dependency>
+                
+        <!-- Used in many modules to perform searches and offer suggestions -->
         <dependency>
             <groupId>eu.maxschuster</groupId>
             <artifactId>vaadin-autocompletetextfield</artifactId>
             <version>3.0-alpha-2</version>
         </dependency>
+        
+        <!-- Used to create interactive wizards, mainly while creating conections -->
         <dependency>
            <groupId>org.vaadin.addons</groupId>
            <artifactId>wizards-for-vaadin</artifactId>
            <version>1.1.0</version>
             <type>jar</type>
         </dependency>
-               
+        <!-- Used to support the EventBus implementation -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>12.0-rc2</version>
         </dependency>
         
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>customfield</artifactId>
-            <version>0.9.4</version>
-            <type>jar</type>
-        </dependency>
+        <!-- Java BCrypt algorithm implementation -->
         <dependency>
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>
             <version>0.4</version>
         </dependency>
+        
+        <!-- Used to support batch jobs (maily for the synchronization framework) -->
         <dependency>
             <groupId>javax.batch</groupId>
             <artifactId>javax.batch-api</artifactId>
             <version>1.0.1</version>
         </dependency>
-        <dependency>
-            <groupId>org.vaadin</groupId>
-            <artifactId>viritin</artifactId>
-            <version>2.4</version>
-            <type>jar</type>
-        </dependency>
+        
+        <!-- Used to display views, such as the object view or the end-to-end view -->
         <dependency>
             <groupId>com.neotropic</groupId>
             <artifactId>vaadin-lienzo</artifactId>
             <version>0.2</version>
         </dependency>
-<!--        <dependency>
-            <groupId>com.vaadin.tapio</groupId>
-            <artifactId>vaadin-googlemaps</artifactId>
-            <version>1.4.1-NEOTROPIC</version>
-        </dependency>-->
+        
+        <!-- Used by the default OSP maps provider -->
+                
+        <!-- Java EE support -->
         <dependency>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis</artifactId>
-            <version>1.4.01</version>
-            <type>jar</type>
+            <groupId>com.vaadin.tapio</groupId>
+            <artifactId>googlemaps</artifactId>
+            <version>2.1.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>javax</groupId>
@@ -166,28 +149,33 @@
             <exclusions>
                 <exclusion>
                     <groupId>org.neo4j</groupId>
-                    <artifactId>neo4j-udc</artifactId>
+                    <artifactId>neo4j-udc</artifactId> <!-- Don't let N4J to call home -->
                 </exclusion>
             </exclusions>
         </dependency>
+        
+        <!-- Support for the bolt protocol -->
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-bolt</artifactId>
             <version>3.3.3</version>
         </dependency>
         
+        <!-- Groovy is used to process scripts -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>2.4.7</version>
         </dependency>
         
+        <!-- Use to deal with Sync Data Source Configurations -->
         <dependency>
             <groupId>javax.json</groupId>
             <artifactId>javax.json-api</artifactId>
             <version>1.0</version>
         </dependency>
         
+        <!-- SNMP4J is used by many sync providers -->
         <dependency>
             <groupId>org.snmp4j</groupId>
             <artifactId>snmp4j</artifactId>

@@ -21,6 +21,7 @@ import com.vaadin.cdi.CDIUI;
 import com.vaadin.cdi.CDIViewProvider;
 import com.vaadin.cdi.server.VaadinCDIServlet;
 import com.vaadin.navigator.Navigator;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Page;
 import com.vaadin.server.SessionDestroyEvent;
 import com.vaadin.server.SessionDestroyListener;
@@ -77,6 +78,10 @@ public class IndexUI extends UI {
             this.mnuMain = new MenuBar();
             this.mnuMain.setStyleName("misc-main");
             this.mnuMain.setWidth("100%");
+            
+            this.mnuMain.addItem("", new ExternalResource("/img/company_logo_micro.png"), (selectedItem) -> {
+                getUI().getNavigator().navigateTo(WelcomeView.VIEW_NAME);
+            });
             
             // Navigation Tree Module
             NavigationTreeModule navTreeModule = new NavigationTreeModule(null, wsBean, 
