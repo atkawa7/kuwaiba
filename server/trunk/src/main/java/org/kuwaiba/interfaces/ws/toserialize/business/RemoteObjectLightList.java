@@ -45,6 +45,7 @@ public class RemoteObjectLightList implements  Serializable {
     }
     
     public RemoteObjectLightList (BusinessObjectLightList list) {
+        this.list = new ArrayList<>();
         for (BusinessObjectLight item : list.getList())
             this.list.add(new RemoteObjectLight(item));
     }

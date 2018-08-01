@@ -15,7 +15,9 @@
  */
 package org.kuwaiba.web.modules.servmanager.views;
 
+import com.vaadin.server.Page;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.UI;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
@@ -23,6 +25,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
  * This component implements the End to End view for SDH/MPLS services
@@ -30,19 +33,22 @@ import org.kuwaiba.exceptions.ServerSideException;
  */
 public final class EndToEndView extends Panel {
     
-    public EndToEndView(RemoteObjectLight service, WebserviceBean wsBean, String ipAddress, String sessionId) {
-        EndToEndViewScene scene = new EndToEndViewScene(service, wsBean, sessionId, ipAddress);
+    public EndToEndView(RemoteObjectLight service, WebserviceBean wsBean) {
+        RemoteSession session = ((RemoteSession) UI.getCurrent().getSession().getAttribute("session"));
+        EndToEndViewScene scene = new EndToEndViewScene(service, wsBean, session);
         
         try {
-            List<RemoteViewObjectLight> objectViews = wsBean.getObjectRelatedViews(service.getId(), service.getClassName(), 10, -1, ipAddress, sessionId);
+            List<RemoteViewObjectLight> objectViews = wsBean.getObjectRelatedViews(service.getId(), 
+                    service.getClassName(), 10, -1, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
             RemoteViewObject theSavedView = null;
             for (RemoteViewObjectLight serviceView : objectViews) {
                 if (EndToEndViewScene.VIEW_CLASS.equals(serviceView.getViewClassName())) {
-                    theSavedView = wsBean.getObjectRelatedView(service.getId(), service.getClassName(), serviceView.getId(), ipAddress, sessionId); 
+                    theSavedView = wsBean.getObjectRelatedView(service.getId(), 
+                            service.getClassName(), serviceView.getId(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId()); 
                     break;
                 }
             }
-            scene.render(service); //First we render the default view with all the resources associated to the service
+            scene.render(); //First we render the default view with all the resources associated to the service
             if (theSavedView != null) //if there's a saved view already, change the location of the nodes and connections created using the default render method
                 scene.render(theSavedView.getStructure());
             

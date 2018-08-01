@@ -27,15 +27,13 @@ import java.util.List;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.navigation.SimpleIconGenerator;
 import org.kuwaiba.apis.web.gui.navigation.trees.SimpleContainmentTree;
-import org.kuwaiba.apis.web.gui.properties.PropertyFactory;
 import org.kuwaiba.apis.web.gui.properties.PropertySheet;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
+import org.kuwaiba.apis.web.gui.properties.PropertyFactory;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 
 /**
  * The dashboard widget to be used as the main widget in the Navigation Tree dashboard
@@ -72,13 +70,7 @@ public class NavigationTreeExplorerDashboardWidget extends AbstractDashboardWidg
         lytContent.setMargin(true);
         lytContent.setSizeFull();
         try {
-            RemoteObject seletedItemDetails = wsBean.getObject(selectedObject.getClassName(), selectedObject.getId(), Page.getCurrent().getWebBrowser().getAddress(), 
-                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-
-            RemoteClassMetadata listTypeClassMetadata = wsBean.getClass(selectedObject.getClassName(),Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-
-            this.propertySheet = new PropertySheet(PropertyFactory.propertiesFromRemoteObject(seletedItemDetails, listTypeClassMetadata), title);
+            this.propertySheet = new PropertySheet(PropertyFactory.propertiesFromRemoteObject(selectedObject, wsBean), title);
             
             Button btnShowHierarchyInformation = new Button("Hierarchy Information...", (event) -> {
                 try {

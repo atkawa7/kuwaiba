@@ -19,7 +19,6 @@ import com.vaadin.cdi.CDIView;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.VerticalLayout;
 import javax.inject.Inject;
@@ -67,6 +66,8 @@ class WelcomeView extends VerticalLayout implements View {
                 Context context = new InitialContext();
                 String apiKey = (String)context.lookup("java:comp/env/googleMapsApiKey");
                 String language = (String)context.lookup("java:comp/env/mapLanguage");
+                
+                
                 GoogleMap mapMain = new GoogleMap(apiKey, null, language);
                 
                 mapMain.setSizeFull();
@@ -102,7 +103,26 @@ class WelcomeView extends VerticalLayout implements View {
                 mapMain.setCenter(new LatLon(12.8260721, 11.8399727));
                 mapMain.setZoom(3);
 
-                lytContent.addComponents(mapMain);
+                lytContent.addComponent(mapMain);
+
+ //                 OLMap map = new OLMap(new OLMapOptions().setShowOl3Logo(true).setInputProjection(Projections.EPSG4326));
+                // add layer to map
+//                OLOSMSourceOptions options = new OLOSMSourceOptions();
+//                OLOSMSource mapSource = new OLOSMSource();
+//
+//                OLBingSourceOptions options = new OLBingSourceOptions();
+//                options.setImageryType("Road");
+//                options.setCulture("en-us");
+//                options.setKey("AqYNJVHws6td2MxrvBpDNLt-NIMgWmI93hESK0E6nSU2oHIc2G8f-wFpgCwVttJq");
+//                OLBingSource mapSource = new OLBingSource(options);
+//
+//                OLTileLayer layer = new OLTileLayer(mapSource);
+//                map.addLayer(layer);
+//                
+//                map.setView(createView());
+//                
+//                map.setSizeFull();
+//                lytContent.addComponent(map);
 
             } catch (NamingException ex) {
                 Notifications.showError(String.format("Map configuration could not be retrieved: %s", ex.getLocalizedMessage()));
@@ -117,4 +137,13 @@ class WelcomeView extends VerticalLayout implements View {
             this.setSizeFull();
         }
     }
+    
+//    protected OLView createView(){
+//        OLViewOptions opts=new OLViewOptions();
+//        opts.setInputProjection(Projections.EPSG4326);
+//        OLView view=new OLView(opts);
+//        view.setZoom(1);
+//        view.setCenter(0,0);
+//        return view;
+//    }
 }

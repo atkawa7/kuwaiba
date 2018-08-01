@@ -111,8 +111,7 @@ public class ServiceViewsDashboardWidget extends AbstractDashboardWidget {
                  }
             });
 
-            contetLayout.addComponent(new EndToEndView(service, wsBean, Page.getCurrent().getWebBrowser().getAddress(), 
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()));
+            contetLayout.addComponent(new EndToEndView(service, wsBean));
             
             this.contentComponent = contetLayout;
         } catch (ServerSideException ex) {

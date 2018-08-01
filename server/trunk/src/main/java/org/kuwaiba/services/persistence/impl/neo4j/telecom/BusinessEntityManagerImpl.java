@@ -701,29 +701,64 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public String getAttributeValueAsString (String objectClass, long objectId, String attributeName) 
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
         ClassMetadata theClass = mem.getClass(objectClass);
-            AttributeMetadata theAttribute = theClass.getAttribute(attributeName);
-            
-            BusinessObject theObject = getObject(objectClass, objectId);
+        AttributeMetadata theAttribute = theClass.getAttribute(attributeName);
+
+        BusinessObject theObject = getObject(objectClass, objectId);
+        if (theObject.getAttributes().get(attributeName) == null)
+            return null;
+        else {
+
+            switch (theAttribute.getType()) {
+                case "String": //NOI18N
+                case "Boolean": //NOI18N
+                case "Integer": //NOI18N
+                case "Float": //NOI18N
+                case "Long": //NOI18N
+                    return theObject.getAttributes().get(attributeName);
+                case "Date": //NOI18N
+                case "Time": //NOI18N
+                case "Timestamp": //NOI18N
+                    return new Date(Long.valueOf(theObject.getAttributes().get(attributeName))).toString();
+                default: //It's (or at least should be) a list type
+                    return aem.getListTypeItem(theAttribute.getType(), Long.valueOf(theObject.getAttributes().get(attributeName))).getName();
+            }
+        }
+    }
+    
+    @Override
+    public HashMap<String, String> getAttributeValuesAsString (String objectClass, long objectId) 
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException {
+    
+        BusinessObject theObject = getObject(objectClass, objectId);
+        HashMap<String, String> res = new HashMap<>();
+        
+        for (String attributeName : theObject.getAttributes().keySet()) {
+            AttributeMetadata theAttribute = mem.getAttribute(objectClass, attributeName);
             if (theObject.getAttributes().get(attributeName) == null)
-                return null;
-            else {
-                
+                res.put(attributeName, "None");
+            else { 
                 switch (theAttribute.getType()) {
                     case "String": //NOI18N
                     case "Boolean": //NOI18N
                     case "Integer": //NOI18N
                     case "Float": //NOI18N
                     case "Long": //NOI18N
-                        return theObject.getAttributes().get(attributeName);
+                        res.put(attributeName, theObject.getAttributes().get(attributeName));
+                        break;
                     case "Date": //NOI18N
                     case "Time": //NOI18N
                     case "Timestamp": //NOI18N
-                        return new Date(Long.valueOf(theObject.getAttributes().get(attributeName))).toString();
+                        res.put(attributeName, new Date(Long.valueOf(theObject.getAttributes().get(attributeName))).toString());
+                        break;
                     default: //It's (or at least should be) a list type
-                        return aem.getListTypeItem(theAttribute.getType(), Long.valueOf(theObject.getAttributes().get(attributeName))).getName();
+                        res.put(attributeName, aem.getListTypeItem(theAttribute.getType(), Long.valueOf(theObject.getAttributes().get(attributeName))).getName());
                 }
             }
+        }
+        
+        return res;
     }
+    
     
     @Override
     public BusinessObjectLight getCommonParent(String aObjectClass, long aOid, String bObjectClass, long bOid)

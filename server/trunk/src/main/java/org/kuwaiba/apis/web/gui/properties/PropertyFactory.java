@@ -15,9 +15,15 @@
  */
 package org.kuwaiba.apis.web.gui.properties;
 
+import com.vaadin.server.Page;
+import com.vaadin.ui.UI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
+import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 
 /**
@@ -25,26 +31,27 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
 public class PropertyFactory {
-    public static List<AbstractProperty> propertiesFromRemoteObject(RemoteObject businessObject, RemoteClassMetadata classMetadata) {
-        ArrayList<AbstractProperty> propertySet = new ArrayList<>();
-        for (int i = 0; i < classMetadata.getAttributesNames().length; i++) {
-            switch (classMetadata.getAttributesTypes()[i]) {
-                case "Date":
-                    propertySet.add(new DateProperty(classMetadata.getAttributesNames()[i], 
-                        classMetadata.getAttributesDisplayNames()[i], 
-                        classMetadata.getAttributesDescriptions()[i], 
-                        Long.valueOf(businessObject.getAttribute(classMetadata.getAttributesNames()[i]))));
-                    break;
-                default:
-                    propertySet.add(new StringProperty(classMetadata.getAttributesNames()[i], 
-                        classMetadata.getAttributesDisplayNames()[i], 
-                        classMetadata.getAttributesDescriptions()[i], 
-                        businessObject.getAttribute(classMetadata.getAttributesNames()[i])));
-            }
+    /**
+     * Builds a property set from a given inventory object
+     * @param businessObject The business object
+     * @param wsBean A reference to the backend bean
+     * @return The set of properties ready to used in a property sheet component
+     * @throws org.kuwaiba.exceptions.ServerSideException if retrieving the class metadata or the attribute values raised an exception
+     */
+    public static List<AbstractProperty> propertiesFromRemoteObject(RemoteObjectLight businessObject, WebserviceBean wsBean) throws ServerSideException{
+        HashMap<String, String> objectAttributes = wsBean.getAttributeValuesAsString(businessObject.getClassName(), businessObject.getId(), Page.getCurrent().getWebBrowser().getAddress(), 
+                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+
+            RemoteClassMetadata classMetadata = wsBean.getClass(businessObject.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), 
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
             
+            ArrayList<AbstractProperty> objectProperties = new ArrayList<>();
             
-        }
+            for (int i = 0; i < classMetadata.getAttributesNames().length; i++)
+                objectProperties.add(new StringProperty(classMetadata.getAttributesNames()[i], 
+                        classMetadata.getAttributesDisplayNames()[i], classMetadata.getAttributesDescriptions()[i], 
+                        objectAttributes.get(classMetadata.getAttributesNames()[i])));
         
-        return propertySet;
+        return objectProperties;
     }
 }

@@ -21,6 +21,7 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.scheduling.BackgroundJob;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
+import java.util.HashMap;
 import java.util.List;
 import javax.ejb.Local;
 import org.kuwaiba.exceptions.NotAuthorizedException;
@@ -152,6 +153,8 @@ public interface WebserviceBean {
     public void removePossibleSpecialChildren(long parentClassId, long[] specialChildrenToBeRemoved, String ipAddress, String sessionId) throws ServerSideException;
 
     public String getAttributeValueAsString(String objectClass, long objectId, String attributeName, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public HashMap<String, String> getAttributeValuesAsString(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
 
     // </editor-fold>
 

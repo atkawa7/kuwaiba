@@ -32,9 +32,7 @@ import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.web.modules.ltmanager.actions.AddListTypeItemWindow;
 
@@ -99,14 +97,8 @@ public class ListTypeItemManagerDashboardWidget extends AbstractDashboardWidget 
                 
                 RemoteObjectLight selectedItem = this.tblListTypeItems.getLstListTypeItems().getSelectedItems().iterator().next();
                 
-                RemoteObject seletedItemDetails = wsBean.getObject(selectedItem.getClassName(), selectedItem.getId(), Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-                
-                RemoteClassMetadata listTypeClassMetadata = wsBean.getClass(listType.getClassName(),Page.getCurrent().getWebBrowser().getAddress(), 
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-                
                 this.propertySheet.setCaption(String.format("Properties in %s", selectedItem));
-                this.propertySheet.setItems(PropertyFactory.propertiesFromRemoteObject(seletedItemDetails, listTypeClassMetadata));
+                this.propertySheet.setItems(PropertyFactory.propertiesFromRemoteObject(selectedItem, wsBean));
                 
                 
             } catch (ServerSideException ex) {

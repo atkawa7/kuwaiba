@@ -403,6 +403,10 @@ public class Constants {
      */
     public static final String CLASS_MPLSTUNNEL = "MPLSTunnel";
     /**
+     * Class MPLS Link
+     */
+    public static final String CLASS_MPLSLINK = "MPLSLink";
+    /**
      * Class MPLS Tunnel
      */
     public static final String CLASS_BRIDGEDOMAININTERFACE = "BridgeDomainInterface";

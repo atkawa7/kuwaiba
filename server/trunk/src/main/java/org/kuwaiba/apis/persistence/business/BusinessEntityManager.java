@@ -250,6 +250,20 @@ public interface BusinessEntityManager {
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException;
     
     /**
+     * Fetches the attributes of an inventory object (and their values) and returns them as strings. This is useful mainly to display property sheets and reports, 
+     * so it's not necessary to always check if an attribute is a list type and retrieve its string representation
+     * @param objectClass The class of the object
+     * @param objectId The id of the object
+     * @return A dictionary with the name of the attributes and their values represented as strings
+     * @throws MetadataObjectNotFoundException If the class of the object could not be found
+     * @throws BusinessObjectNotFoundException If the object itself could not be found
+     * @throws InvalidArgumentException Check with the data model integrity, because this would mean that a the type of the attribute should be a list type, but it's not
+     * @throws ApplicationObjectNotFoundException Check with the data model integrity, because this would mean that a list type item related to the object is not an instance of the right list type class
+     */
+    public HashMap<String, String> getAttributeValuesAsString (String objectClass, long objectId) 
+            throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, InvalidArgumentException, ApplicationObjectNotFoundException;
+    
+    /**
      * Gets the common parent between an a object and b object
      * @param aObjectClass Object a class name
      * @param aOid Object a id

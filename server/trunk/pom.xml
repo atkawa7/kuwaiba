@@ -82,20 +82,20 @@
         </dependency>
         
         <!-- Used by the default OSP maps provider -->
-                
-        <!-- Java EE support -->
         <dependency>
            <groupId>com.vaadin.tapio</groupId>
            <artifactId>googlemaps</artifactId>
            <version>2.1.0</version>
-        </dependency>
+        </dependency> 
+               
+        <!-- Java EE support -->
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
             <version>7.0</version>
             <scope>provided</scope>
         </dependency>
-        
+        <!-- Vaadin itself -->
         <dependency>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-server</artifactId>
@@ -113,7 +113,8 @@
             <artifactId>vaadin-themes</artifactId>
             <version>${vaadin.version}</version>
         </dependency>
-                              
+                          
+        <!-- Vaadin's dependency injection support -->    
         <dependency>
            <groupId>com.vaadin</groupId>
            <artifactId>vaadin-cdi</artifactId>
@@ -185,6 +186,12 @@
         <dependency>
             <groupId>org.glassfish.maven.plugin</groupId>
             <artifactId>maven-glassfish-plugin</artifactId>
+            <version>2.1</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.vaadin.addon</groupId>
+            <artifactId>v-ol3</artifactId>
             <version>2.1</version>
         </dependency>
     </dependencies>

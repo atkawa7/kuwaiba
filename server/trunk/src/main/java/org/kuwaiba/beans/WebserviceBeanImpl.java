@@ -885,6 +885,18 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    
+    @Override
+    public HashMap<String, String> getAttributeValuesAsString(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getAttributeValuesAsString", ipAddress, sessionId);
+            return bem.getAttributeValuesAsString(objectClass, objectId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
 
     @Override
     public long createListTypeItem(String className, String name, String displayName, String ipAddress, String sessionId) throws ServerSideException{
