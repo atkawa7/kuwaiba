@@ -64,8 +64,16 @@ public class RemoteArtifactDefinition implements Serializable {
      * Script to verify postconditions to execute the Artifact
      */
     private byte[] postconditionsScript;  
+    /**
+     * Defines if the artifact can be printed
+     */
+    private Boolean printable = false;
+    /**
+     * Is the template used to print the artifact
+     */
+    private String printableTemplate;
 
-    public RemoteArtifactDefinition(long id, String name, String description, String version, int type, byte[] definition, byte[] preconditionsScript, byte[] postconditionsScript) {
+    public RemoteArtifactDefinition(long id, String name, String description, String version, int type, byte[] definition, byte[] preconditionsScript, byte[] postconditionsScript, Boolean printable, String printableTemplate) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -74,6 +82,8 @@ public class RemoteArtifactDefinition implements Serializable {
         this.definition = definition;
         this.preconditionsScript = preconditionsScript;
         this.postconditionsScript = postconditionsScript;
+        this.printable = printable;
+        this.printableTemplate = printableTemplate;
     }
 
     public long getId() {
@@ -146,6 +156,22 @@ public class RemoteArtifactDefinition implements Serializable {
     
     public byte[] getPostconditionsScript() {
         return postconditionsScript;
+    }
+    
+    public Boolean isPrintable() {
+        return printable;
+    }
+    
+    public void setPrintable(boolean printable) {
+        this.printable = printable;
+    }
+    
+    public String getPrintableTemplate() {
+        return printableTemplate;
+    }
+    
+    public void setPrintableTemplate(String printableTemplate) {
+        this.printableTemplate = printableTemplate;
     }
 
     @Override

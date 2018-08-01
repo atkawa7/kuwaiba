@@ -120,7 +120,19 @@ public class ElementButton extends AbstractElement {
 
                         if (ae instanceof AbstractElementField) {
                             AbstractElementField aef = (AbstractElementField) ae;
-                            rowValues.add(aef.getValue() != null ? aef.getValue() : new NullObject());
+                            if (aef instanceof ElementUpload) {
+                                ElementUpload elementUpload = (ElementUpload) aef;
+                                
+                                if (elementUpload.getCaption() != null && elementUpload.getValue() != null) {
+                                    
+                                    FileInformation fileInfo = new FileInformation(
+                                        elementUpload.getCaption(), 
+                                        (String) elementUpload.getValue());
+                                    
+                                    rowValues.add(fileInfo);                                
+                                }
+                            } else
+                                rowValues.add(aef.getValue() != null ? aef.getValue() : new NullObject());
                         } else
                             rowValues.add(new NullObject());
                     }

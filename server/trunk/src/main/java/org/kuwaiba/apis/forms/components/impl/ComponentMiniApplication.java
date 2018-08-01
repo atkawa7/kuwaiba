@@ -17,6 +17,8 @@ import org.kuwaiba.apis.forms.elements.Constants;
 import org.kuwaiba.apis.forms.elements.ElementMiniApplication;
 import org.kuwaiba.apis.forms.elements.EventDescriptor;
 import org.kuwaiba.apis.web.gui.miniapps.AbstractMiniApplication;
+import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.web.procmanager.AbstractComponentMiniApplication;
 import org.openide.util.Exceptions;
 
 /**
@@ -25,9 +27,11 @@ import org.openide.util.Exceptions;
  */
 public class ComponentMiniApplication extends GraphicalComponent {
     private Window window;
+    private final WebserviceBean webserviceBean;
 
-    public ComponentMiniApplication() {
+    public ComponentMiniApplication(WebserviceBean webserviceBean) {
         super(new Panel());
+        this.webserviceBean = webserviceBean;
     }
     
     @Override
@@ -47,16 +51,17 @@ public class ComponentMiniApplication extends GraphicalComponent {
                 Constructor<?> constructor = aClass.getConstructor(Properties.class);
                 Object object = constructor.newInstance(new Object[] { new Properties() });
                 
-                if (object instanceof AbstractMiniApplication) {
+                if (object instanceof AbstractComponentMiniApplication) {
                     
-                    AbstractMiniApplication ama = (AbstractMiniApplication) object;
+                    AbstractComponentMiniApplication acma = (AbstractComponentMiniApplication) object;
+                    acma.setWebserviceBean(webserviceBean);
                                         
                     Object content = null;
                     
                     if (Constants.Attribute.Mode.DETACHED.equals(miniApp.getMode()))
-                        content = ama.launchDetached();
+                        content = acma.launchDetached();
                     else if (Constants.Attribute.Mode.EMBEDDED.equals(miniApp.getMode()))
-                        content = ama.launchEmbedded();
+                        content = acma.launchEmbedded();
                     
                     if (content instanceof Component)
                         getComponent().setContent((Component) content);

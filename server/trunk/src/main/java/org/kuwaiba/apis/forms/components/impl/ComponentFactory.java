@@ -129,7 +129,7 @@ public class ComponentFactory {
         } else if (element instanceof ElementUpload) {
             graphicalComponent = new ComponentUpload();            
         } else if (element instanceof ElementMiniApplication) {
-            graphicalComponent = new ComponentMiniApplication();            
+            graphicalComponent = new ComponentMiniApplication(wsBean);            
         }
         
         if (graphicalComponent != null && element != null) {

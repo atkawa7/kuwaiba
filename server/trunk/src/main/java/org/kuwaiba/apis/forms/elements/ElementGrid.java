@@ -73,9 +73,14 @@ public class ElementGrid extends AbstractElement {
             
             List<Object> oldRow = rows.get((int) rowToEdit);
             
-            for (int i = 0; i < oldRow.size(); i += 1) {
+            int oldRowSize = oldRow.size();
+                    
+            for (int i = 0; i < newRow.size(); i += 1) {
                 
-                oldRow.set(i, newRow.get(i));
+                if (i < oldRowSize)
+                    oldRow.set(i, newRow.get(i));
+                else
+                    oldRow.add(newRow.get(i));
             }
             return true;
         }

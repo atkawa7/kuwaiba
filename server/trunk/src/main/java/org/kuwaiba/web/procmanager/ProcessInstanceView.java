@@ -19,6 +19,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -31,6 +32,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import java.util.HashMap;
 import java.util.List;
+import org.kuwaiba.apis.forms.components.impl.PrintWindow;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.notifications.MessageBox;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -368,6 +370,21 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
                 HorizontalLayout artifactTools = new HorizontalLayout();
                 artifactTools.setWidth(100, Unit.PERCENTAGE);
                 
+                if (artifactDefinition.isPrintable()) {
+                    Button btnPrint = new Button(I18N.gm("print"), VaadinIcons.PRINT);
+                    btnPrint.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
+                                        
+                    btnPrint.addClickListener(new ClickListener() {
+                        @Override
+                        public void buttonClick(Button.ClickEvent event) {
+                            getUI().addWindow(new PrintWindow(artifactDefinition.getPrintableTemplate()));
+                        }
+                    });
+                                        
+                    artifactTools.addComponent(btnPrint);
+                    artifactTools.setComponentAlignment(btnPrint, Alignment.MIDDLE_RIGHT);
+                }
+                
                 if (interruptedActivity)
                     artifactTools.addComponent(new Label("Interrupted Activity"));
                                 
@@ -384,13 +401,14 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
                     });
 
                     artifactTools.addComponent(chkIdleActivity);
+                    artifactTools.setComponentAlignment(chkIdleActivity, Alignment.MIDDLE_LEFT);
                 }
                 
                 artifactPanel.addComponent(artifactTools);
                 artifactPanel.addComponent(artifactContainer);
                 
-                artifactPanel.setExpandRatio(artifactTools, 0.1f);
-                artifactPanel.setExpandRatio(artifactContainer, 9.9f);
+                artifactPanel.setExpandRatio(artifactTools, 0.4f);
+                artifactPanel.setExpandRatio(artifactContainer, 9.6f);
                 
                 artifactWrapperLayout.addComponent(artifactPanel);
                 

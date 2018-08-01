@@ -28,7 +28,7 @@ import org.openide.util.Exceptions;
  */
 public class SceneExporter {
     
-    private static final String PATH = "../docroot/reports/imgs/paths/";
+    public static String PATH = "../docroot/reports/imgs/paths/";
     private static BusinessEntityManager bem;
     private static MetadataEntityManager mem;
     private static SceneExporter sceneExporter = null;

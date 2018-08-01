@@ -258,17 +258,20 @@ public class ProcessDefinitionLoader {
                                         }
                                         byte[] definition = null;
                                         if (type == ArtifactDefinition.TYPE_ATTACHMENT || type == ArtifactDefinition.TYPE_CONDITIONAL) {
-                                            definition = artifactParameters.get("definition").getBytes();
+                                            definition = artifactParameters.get("definition").getBytes(); //NOI18N
                                         } else if (type == ArtifactDefinition.TYPE_FORM) {
-                                            definition = getFormArtifactDefinition(artifactParameters.get("definition"));                                            
+                                            definition = getFormArtifactDefinition(artifactParameters.get("definition")); //NOI18N
                                         }
                                         ArtifactDefinition artifactDefinition = new ArtifactDefinition(
                                             artifactDefinitionId,
-                                            artifactParameters.get("name"), 
-                                            artifactParameters.get("description"), 
-                                            artifactParameters.get("version"), 
+                                            artifactParameters.get("name"), //NOI18N
+                                            artifactParameters.get("description"), //NOI18N
+                                            artifactParameters.get("version"), //NOI18N
                                             type, 
-                                            definition);
+                                            definition, 
+                                            Boolean.valueOf(artifactParameters.get("printable")), //NOI18N
+                                            artifactParameters.get("printableTemplate") //NOI18N
+                                        );
                                         
                                         artifactDefinition.setPreconditionsScript(artifactParameters.containsKey("preconditionsScript") ? artifactParameters.get("preconditionsScript").getBytes() : null);
                                         artifactDefinition.setPostconditionsScript(artifactParameters.containsKey("postconditionsScript") ? artifactParameters.get("postconditionsScript").getBytes() : null);

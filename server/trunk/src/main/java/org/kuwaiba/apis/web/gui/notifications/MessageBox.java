@@ -5,14 +5,17 @@
  */
 package org.kuwaiba.apis.web.gui.notifications;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.server.Sizeable;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.VerticalSplitPanel;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.ValoTheme;
+import org.kuwaiba.util.i18n.I18N;
 /**
  *
  * @author johnyortega
@@ -39,58 +42,56 @@ public class MessageBox {
     }
     
     public MessageBox showMessage(Component message) {
+        
         Window window = new Window();
-        window.setClosable(false);
-        window.setResizable(false);
-        window.setModal(true);
-//        window.setSizeUndefined();
-        window.setHeight("15%");
-        window.setWidth("25%");
-        
-        VerticalSplitPanel vsp = new VerticalSplitPanel();
-        vsp.setSplitPosition(85, Sizeable.Unit.PERCENTAGE);
-        vsp.setSizeFull();
-        //GridLayout main = new GridLayout();
                 
-        vsp.setFirstComponent(message);
+        GridLayout gridLayout = new GridLayout();
+        gridLayout.setMargin(true);
+        gridLayout.setSpacing(true);
+        gridLayout.setColumns(2);
+        gridLayout.setRows(2);
         
-        GridLayout gl = new GridLayout();
-        gl.setSizeFull();
-        gl.setColumns(2);
-        gl.setRows(1);
+        Button btnNo = new Button(I18N.gm("no"), VaadinIcons.CLOSE);
         
-        Button btnYes = new Button("Yes");
-        btnYes.addClickListener(new Button.ClickListener() {
+        btnNo.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                continues = true;     
+                continues = false;
                 window.close();
                 clickListener.buttonClick(event);
             }
         });
+        Button btnYes = new Button(I18N.gm("yes"), VaadinIcons.CHECK);
+        btnYes.addStyleName(ValoTheme.BUTTON_PRIMARY);
+        btnYes.addStyleName(ValoTheme.BUTTON_ICON_ALIGN_RIGHT);
         
-        Button btnNo = new Button("No");
-        btnNo.addClickListener(new Button.ClickListener() {
+        btnYes.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                continues = false;                
+                continues = true;                
                 window.close();
                 clickListener.buttonClick(event);
             }
         });
+        gridLayout.addComponent(message, 0, 0, 1, 0);
+        gridLayout.addComponent(btnNo, 0, 1);
+        gridLayout.addComponent(btnYes, 1, 1);
+                
+        gridLayout.setComponentAlignment(message, Alignment.MIDDLE_CENTER);
+        gridLayout.setComponentAlignment(btnNo, Alignment.MIDDLE_RIGHT);
+        gridLayout.setComponentAlignment(btnYes, Alignment.MIDDLE_LEFT);
         
-        gl.addComponent(btnYes);
-        gl.addComponent(btnNo);
+        window.setModal(true);
+        window.center();
         
-        gl.setComponentAlignment(btnYes, Alignment.MIDDLE_RIGHT);
-        gl.setComponentAlignment(btnNo, Alignment.MIDDLE_LEFT);
+        window.setHeight(20, Sizeable.Unit.PERCENTAGE);
+        window.setWidth(20, Sizeable.Unit.PERCENTAGE);        
+        gridLayout.setSizeFull();
         
-        vsp.setSecondComponent(gl);
-        
-        window.setContent(vsp);
+        window.setContent(gridLayout);
         
         Page.getCurrent().getUI().addWindow(window);
-        
+                
         return getInstance();
     }    
     

@@ -72,14 +72,24 @@ public class ArtifactDefinition {
      * instance and to other activity instances or the process instance.
      */
     private List<String> sharedInformation;
+    /**
+     * Defines if the artifact can be printed
+     */
+    private Boolean printable = false;
+    /**
+     * Is the template used to print the artifact
+     */
+    private String printableTemplate;
 
-    public ArtifactDefinition(long id, String name, String description, String version, int type, byte[] definition) {
+    public ArtifactDefinition(long id, String name, String description, String version, int type, byte[] definition, Boolean printable, String printableTemplate) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.version = version;
         this.type = type;
         this.definition = definition;
+        this.printable = printable;
+        this.printableTemplate = printableTemplate;
     }
 
     public long getId() {
@@ -152,6 +162,22 @@ public class ArtifactDefinition {
     
     public byte[] getPostconditionsScript() {
         return postconditionsScript;
+    }
+    
+    public Boolean isPrintable() {
+        return printable;
+    }
+    
+    public void setPrintable(boolean printable) {
+        this.printable = printable;
+    }
+    
+    public String getPrintableTemplate() {
+        return printableTemplate;
+    }
+    
+    public void setPrintableTemplate(String printableTemplate) {
+        this.printableTemplate = printableTemplate;
     }
 
     @Override
