@@ -25,6 +25,9 @@ import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
@@ -80,12 +83,21 @@ public class ServManagerFormCreator{
     /**
      * Form tables
      */
-    private Component divA;
+    private List<Component> divAs;
+    private List<Component> divAODFs;
     private Component divB;
-    private Component divC;
+    private List<Component> divCs;
     private Component divD;
     private Component divE;
-    private Component divF;
+    private List<Component> divFs;
+    private List<Component> divFODFs;
+    
+    
+    private HashMap<Long, Component> createdTables;   
+    private List<List<Component>> logicalCircuits; 
+    private List<Component> physicalSideA; 
+    private List<Component> physicalSideB; 
+    
     /**
      * Web service bean reference
      */
@@ -111,15 +123,21 @@ public class ServManagerFormCreator{
     public ServManagerFormCreator(RemoteObjectLight service, WebserviceBean wsBean, String ipAddress, String sessionId) throws ServerSideException {
         this.wsBean = wsBean;
         this.service = service;
-        divA = null;
+        divAs = new ArrayList<>();
+        divAODFs = new ArrayList<>();
         divB = null;
-        divC = null;
+        divCs = new ArrayList<>();
         divD = null;
         divE = null;
-        divF = null;
+        divFs = new ArrayList<>();
+        divFODFs = new ArrayList<>();
         hasMPLSLinks = false;
         this.ipAddress = ipAddress;
         this.sessionId = sessionId;
+        createdTables = new HashMap<>();
+        logicalCircuits = new ArrayList<>();
+        physicalSideA = new ArrayList<>();
+        physicalSideB = new ArrayList<>();
     }
     
     /**
@@ -142,37 +160,19 @@ public class ServManagerFormCreator{
                     if (wsBean.isSubclassOf(serviceResource.getClassName(), "GenericLogicalConnection", ipAddress, sessionId)) {
                         RemoteLogicalConnectionDetails logicalCircuitDetails = wsBean.getLogicalLinkDetails(
                                 serviceResource.getClassName(), serviceResource.getId(), ipAddress, sessionId);
-                        //Get connetcion details to create the provider's table
-                        //We need the Tributary link instead of the STM
-                        RemoteObjectLight sdhDelivers = wsBean.getSpecialAttribute(
-                                logicalCircuitDetails.getConnectionObject().getClassName(), 
-                                logicalCircuitDetails.getConnectionObject().getId(), "sdhDelivers", ipAddress, sessionId).get(0);
-
-                        RemoteObjectLight sdhTransportLink = wsBean.getSpecialAttribute(sdhDelivers.getClassName(), 
-                                sdhDelivers.getId(), "sdhTransports", ipAddress, sessionId).get(0);
-
-                        RemoteObject provider = wsBean.getObject(sdhTransportLink.getClassName(), sdhTransportLink.getId(), ipAddress, sessionId);
-                        String hop2NameId = provider.getAttribute("Hop2_name"); //type ProviderType
-                        if(hop2NameId != null){
-                            RemoteObject interLinkProvider = wsBean.getObject("ProviderType", Long.valueOf(hop2NameId), ipAddress, sessionId);
-                            if(interLinkProvider != null){
-                                String legalOwnerId = provider.getAttribute("Hop2LegalOwner"); //type Companies
-                                RemoteObject legalOwner = wsBean.getObject("Companies", Long.valueOf(legalOwnerId), ipAddress, sessionId);
-                                divC = createProviderTable(provider, legalOwner);
-                            }
-                        }
-
-                        String hop1NameId = provider.getAttribute("Hop1_name"); //listType ProviderType
-                        if(hop1NameId != null)
-                            divD = createProviderTableS(provider);
-
+                        
+                        List<Component> tempLogicalCircuit =  new ArrayList<>();
                         //Let's create the nodes corresponding to the endpoint A of the logical circuit
                         List<RemoteObjectLight> parentsUntilFirstComEquipmentA; 
                         if(wsBean.isSubclassOf(logicalCircuitDetails.getEndpointA().getClassName(), Constants.CLASS_GENERICLOGICALPORT, ipAddress, sessionId)){
                             List<RemoteObjectLight> parentsUntilFirstPhysicalPortA = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
                                 getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericPhysicalPort", ipAddress, sessionId);
 
-                            parentsUntilFirstComEquipmentA = wsBean.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortA.get(0).
+                            //This is only for pseudowire and will be removed once the MPLS sync has been finished, because vc ends in the device not a port
+                            if(wsBean.isSubclassOf(parentsUntilFirstPhysicalPortA.get(0).getClassName(), "GenericCommunicationsElement", ipAddress, sessionId))
+                                parentsUntilFirstComEquipmentA = Arrays.asList(parentsUntilFirstPhysicalPortA.get(0));
+                            else
+                                parentsUntilFirstComEquipmentA = wsBean.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortA.get(0).
                                 getClassName(), parentsUntilFirstPhysicalPortA.get(0).getId(), "GenericCommunicationsElement", ipAddress, sessionId);
                         }
                         else
@@ -180,22 +180,55 @@ public class ServManagerFormCreator{
                                 getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericCommunicationsElement", ipAddress, sessionId);
 
                         RemoteObjectLight aSideEquipmentLogical = parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1);
-                        if(wsBean.isSubclassOf(aSideEquipmentLogical.getClassName(), "GenericDataLinkElement", ipAddress, sessionId))
-                           divB = createADM(aSideEquipmentLogical, logicalCircuitDetails.getEndpointA(), logicalCircuitDetails.getPhysicalPathForEndpointA(), SIDE_A);
-                        else if (wsBean.isSubclassOf(aSideEquipmentLogical.getClassName(), "ExternalEquipment", ipAddress, sessionId))
-                           divB =  createExternalEquipment(aSideEquipmentLogical);
-                        else if (wsBean.isSubclassOf(aSideEquipmentLogical.getClassName(), "Cloud", ipAddress, sessionId))
-                           divB =  createPeering(aSideEquipmentLogical);
-                        else if (wsBean.isSubclassOf(aSideEquipmentLogical.getClassName(), "GenericNetworkElement", ipAddress, sessionId))
-                           divB = createRouter(aSideEquipmentLogical, logicalCircuitDetails.getEndpointA());
+                        Component tempDivB = createDeviceTable(aSideEquipmentLogical, 
+                                logicalCircuitDetails.getEndpointA(), 
+                                logicalCircuitDetails.getPhysicalPathForEndpointA(), SIDE_A);
+                        
+                        if(createdTables.get(aSideEquipmentLogical.getId()) == null){
+                            tempLogicalCircuit.add(tempDivB);
+                            createdTables.put(aSideEquipmentLogical.getId(), tempDivB);
+                        }
+                        
+                        //now we process the logical link(s)
+                        //MPLS
+                        if(serviceResource.getClassName().equals("MPLSLink")){
+                            ///divCs.add(createVC(serviceResource));
+                            Component tempDivC = createVC(serviceResource, logicalCircuitDetails.getEndpointA(), logicalCircuitDetails.getEndpointB());
+                            tempLogicalCircuit.add(tempDivC);
+                        }
+                        //SDH
+                        else{
+                            RemoteObject tirbutaryLink = wsBean.getObject(serviceResource.getClassName(), serviceResource.getId(), ipAddress, sessionId);
+                            if(tirbutaryLink != null){
+                                String hop2Name = wsBean.getAttributeValueAsString(tirbutaryLink.getClassName(), 
+                                        tirbutaryLink.getId(), "hop2Name", ipAddress, sessionId);
 
-                        //Now the other side
+                                String legalOwner = wsBean.getAttributeValueAsString(tirbutaryLink.getClassName(),
+                                            tirbutaryLink.getId(), "hop2LegalOwner", ipAddress, sessionId);
+
+                                String providerId = tirbutaryLink.getAttribute("hop2Id");
+                                if(hop2Name != null){    
+                                    //divCs.add(createProviderTable(hop2Name, providerId, legalOwner));
+                                    tempLogicalCircuit.add(createProviderTable(hop2Name, providerId, legalOwner));
+                                }
+                                String hop1NameId = tirbutaryLink.getAttribute("hop1Name"); //listType ProviderType
+                                if(hop1NameId != null){
+                                    //divD = createProviderTableS(tirbutaryLink);
+                                    tempLogicalCircuit.add(createProviderTableS(tirbutaryLink));
+                                }
+                            }
+                        }
+                        
+                        //Now the other side of the logical circuit
                         List<RemoteObjectLight> parentsUntilFirstComEquipmentB;
                         if(wsBean.isSubclassOf(logicalCircuitDetails.getEndpointB().getClassName(), Constants.CLASS_GENERICLOGICALPORT, ipAddress, sessionId)){
-                             List<RemoteObjectLight> parentsUntilFirstPhysicalPortB = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
-                                getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericPhysicalPort", ipAddress, sessionId);
-
-                            parentsUntilFirstComEquipmentB = wsBean.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortB.get(0).
+                             List<RemoteObjectLight> parentsUntilFirstPhysicalPortB = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
+                                getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericPhysicalPort", ipAddress, sessionId);
+                              //This is only for pseudowire and will be removed once the MPLS sync has been finished, because vc ends in the device not a port
+                            if(wsBean.isSubclassOf(parentsUntilFirstPhysicalPortB.get(0).getClassName(), "GenericCommunicationsElement", ipAddress, sessionId))
+                                parentsUntilFirstComEquipmentB = Arrays.asList(parentsUntilFirstPhysicalPortB.get(0)); 
+                            else 
+                                parentsUntilFirstComEquipmentB = wsBean.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortB.get(0).
                                 getClassName(), parentsUntilFirstPhysicalPortB.get(0).getId(), "GenericCommunicationsElement", ipAddress, sessionId);
                         }
                         else
@@ -203,14 +236,18 @@ public class ServManagerFormCreator{
                                 getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericCommunicationsElement", ipAddress, sessionId);
 
                         RemoteObjectLight bSideEquipmentLogical = parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1);
-                        if(wsBean.isSubclassOf(bSideEquipmentLogical.getClassName(), "GenericDataLinkElement", ipAddress, sessionId))
-                            divE = createADM(bSideEquipmentLogical, logicalCircuitDetails.getEndpointB(), logicalCircuitDetails.getPhysicalPathForEndpointB(), SIDE_B);
-                        else if (wsBean.isSubclassOf(bSideEquipmentLogical.getClassName(), "ExternalEquipment", ipAddress, sessionId))
-                            divE = createExternalEquipment(bSideEquipmentLogical);
-                        else if (wsBean.isSubclassOf(bSideEquipmentLogical.getClassName(), "Cloud", ipAddress, sessionId))
-                            divE = createPeering(bSideEquipmentLogical);
-                        else if (wsBean.isSubclassOf(bSideEquipmentLogical.getClassName(), "GenericNetworkElement", ipAddress, sessionId))
-                            divE = createRouter(bSideEquipmentLogical, logicalCircuitDetails.getEndpointB());
+                        Component tempDivE = createDeviceTable(bSideEquipmentLogical, 
+                                logicalCircuitDetails.getEndpointB(), 
+                                logicalCircuitDetails.getPhysicalPathForEndpointB(), SIDE_B);
+                        
+                        if(createdTables.get(bSideEquipmentLogical.getId()) ==  null){
+                            tempLogicalCircuit.add(tempDivE);
+                            createdTables.put(bSideEquipmentLogical.getId(), tempDivE);
+                        }
+                        
+                        logicalCircuits.add(new ArrayList<>(tempLogicalCircuit));
+                        
+                        //Now we render the physical part
                         //We start with the A side
                         if (!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()) {
                             int i = 2;
@@ -224,23 +261,20 @@ public class ServManagerFormCreator{
                                 RemoteObjectLight aSidePhysicalEquipment = wsBean.getFirstParentOfClass(nextPhysicalHop.getClassName(), 
                                         nextPhysicalHop.getId(), "ConfigurationItem", ipAddress, sessionId);
 
-                                if(aSidePhysicalEquipment != null && aSidePhysicalEquipment.getClassName().equals("ODF")){
-                                    Component odfTable = createODF(aSidePhysicalEquipment, nextPhysicalHop);
-                                    if(divB != null){
-                                        divA = divB; 
-                                        divB = odfTable;
-                                    }
-                                    else
-                                        divA = odfTable;
-                                }
-                                else if(aSidePhysicalEquipment != null && !aSidePhysicalEquipment.getClassName().equals("ODF")){
+                                if(aSidePhysicalEquipment != null && !aSidePhysicalEquipment.getClassName().equals("ODF"))
                                     aSidePhysicalEquipment = wsBean.getFirstParentOfClass(nextPhysicalHop.getClassName(), 
                                             nextPhysicalHop.getId(), "GenericCommunicationsElement", ipAddress, sessionId);
-                                    divA = createRouter(aSidePhysicalEquipment, nextPhysicalHop);
-                                }
 
-                                if(aSidePhysicalEquipment == null)
-                                    Notifications.showError("No communications equipment was found for this endpoint");
+                                if(aSidePhysicalEquipment != null){
+                                    if(aSidePhysicalEquipment.getClassName().equals("ODF")){
+                                        //divAODFs.add(createODF(aSidePhysicalEquipment, nextPhysicalHop));
+                                        divAODFs.add(createODF(aSidePhysicalEquipment, nextPhysicalHop));
+                                    }
+                                    else{
+                                        //divAs.add(createDeviceTable(aSidePhysicalEquipment, nextPhysicalHop, null, 0));
+                                        physicalSideA.add(createDeviceTable(aSidePhysicalEquipment, nextPhysicalHop, null, 0));
+                                    }
+                                }
                             }
                         }
                         //Now the b side
@@ -253,22 +287,21 @@ public class ServManagerFormCreator{
                                 RemoteObjectLight nextPhysicalHop = logicalCircuitDetails.getPhysicalPathForEndpointB().get(index);
                                 RemoteObjectLight bSideEquipmentPhysical = wsBean.getFirstParentOfClass(nextPhysicalHop.getClassName(), 
                                         nextPhysicalHop.getId(), "ConfigurationItem", ipAddress, sessionId);
-                                if(bSideEquipmentPhysical != null && bSideEquipmentPhysical.getClassName().equals("ODF")){
-                                   Component odfTable = createODF(bSideEquipmentPhysical, nextPhysicalHop);
-                                   if(divE != null){
-                                       divF = divE;
-                                       divE = odfTable;
-                                   }
+                                
+                                if(bSideEquipmentPhysical != null && !bSideEquipmentPhysical.getClassName().equals("ODF"))
+                                    bSideEquipmentPhysical = wsBean.getFirstParentOfClass(nextPhysicalHop.getClassName(), 
+                                            nextPhysicalHop.getId(), "GenericCommunicationsElement", ipAddress, sessionId);
+                                 
+                                if(bSideEquipmentPhysical != null){
+                                    if(bSideEquipmentPhysical.getClassName().equals("ODF")){
+                                        //divFODFs.add(createODF(bSideEquipmentPhysical, nextPhysicalHop));
+                                        divFODFs.add(createODF(bSideEquipmentPhysical, nextPhysicalHop));
+                                    }
+                                    else{
+                                        //divFs.add(createDeviceTable(bSideEquipmentPhysical, nextPhysicalHop, null, 0));
+                                        physicalSideB.add(createDeviceTable(bSideEquipmentPhysical, nextPhysicalHop, null, 0));
+                                    }
                                 }
-
-                                else if(bSideEquipmentPhysical != null && !bSideEquipmentPhysical.getClassName().equals("ODF")){
-                                    bSideEquipmentPhysical = wsBean.getFirstParentOfClass(nextPhysicalHop.getClassName(), nextPhysicalHop.getId(), 
-                                            "GenericCommunicationsElement", ipAddress, sessionId);
-                                    divF = createRouter(bSideEquipmentPhysical, nextPhysicalHop);
-                                }
-                                //If the equipemt physical is not a subclass of GenericCommunicationsElement, nothing will be shown.
-                                if(bSideEquipmentPhysical == null)
-                                    Notifications.showError("No communications equipment was found for this endpoint");
                             }
                         }
                     }
@@ -309,18 +342,42 @@ public class ServManagerFormCreator{
             //We add the tables
             lytContent.setSpacing(true);
             lytContent.setId("content");
-            if(divA != null)
-                lytContent.addComponent(divA);
-            if(divB != null)
-                lytContent.addComponent(divB);
-            if(divC != null)
-                lytContent.addComponent(divC);
-            if(divD != null)
-                lytContent.addComponent(divD);
-            if(divE != null)
-                lytContent.addComponent(divE);
-            if(divF != null)
-                lytContent.addComponent(divF);
+            if(!physicalSideA.isEmpty()){
+                physicalSideA.forEach(div -> {lytContent.addComponent(div); });
+            }
+            if(!divAODFs.isEmpty()){
+                divAODFs.forEach(div -> {lytContent.addComponent(div); });
+            }
+            if(!logicalCircuits.isEmpty()){
+                logicalCircuits.forEach(circuit -> {
+                    circuit.forEach(div -> {
+                        lytContent.addComponent(div);
+                    });
+                });
+            }
+            if(!divFODFs.isEmpty()){
+                divFODFs.forEach(div -> {lytContent.addComponent(div); });
+            }
+            if(!physicalSideB.isEmpty()){
+                physicalSideB.forEach(div -> {lytContent.addComponent(div); });
+            }
+//            if(!divAs.isEmpty())
+//                divAs.forEach(div -> { lytContent.addComponent(div); });
+//            if(!divAODFs.isEmpty())
+//                divAODFs.forEach(div -> {lytContent.addComponent(div);});   
+//            if(divB != null)
+//                lytContent.addComponent(divB);
+//            if(!divCs.isEmpty())
+//                divCs.forEach(divC -> { lytContent.addComponent(divC); });
+//            if(divD != null)
+//                lytContent.addComponent(divD);
+//            if(divE != null)
+//                lytContent.addComponent(divE);
+//            if(!divFODFs.isEmpty())
+//                    divFODFs.forEach(div -> { lytContent.addComponent(div); });
+//            if(!divFs.isEmpty())
+//                divFs.forEach(div -> { lytContent.addComponent(div); });
+            
             content.addComponent(lytContent);
             content.setId("container");
             //We create the foot
@@ -332,6 +389,29 @@ public class ServManagerFormCreator{
             Exceptions.printStackTrace(ex);
         }
         return content;
+    }
+    
+    /**
+     * Check which table should be draw according to the device className
+     * @param equipment the equipment
+     * @param port endPoint
+     * @param physicalPath the physical path of the end point 
+     * @param side if is side b or a
+     * @throws ServerSideException 
+     */
+    private Component createDeviceTable(RemoteObjectLight equipment, 
+            RemoteObjectLight port, List<RemoteObjectLight> physicalPath, int side) throws ServerSideException
+    {
+        if(wsBean.isSubclassOf(equipment.getClassName(), "GenericDataLinkElement", ipAddress, sessionId))
+            return createADM(equipment, port, physicalPath, side);
+        else if (wsBean.isSubclassOf(equipment.getClassName(), "ExternalEquipment", ipAddress, sessionId))
+            return createExternalEquipment(equipment);
+        else if (wsBean.isSubclassOf(equipment.getClassName(), "Cloud", ipAddress, sessionId))
+            return createPeering(equipment);
+        else if (wsBean.isSubclassOf(equipment.getClassName(), "GenericNetworkElement", ipAddress, sessionId))
+            return createRouter(equipment, port);
+        
+        return null;
     }
     
     /**
@@ -393,7 +473,7 @@ public class ServManagerFormCreator{
             case ROUTER: //Router
             path = "/icons/router.png"; break;
             case ADM: //ADM
-            path = "/icons/adm.png"; break;
+            path = "/icons/sdhmux.png"; break;
             case ODF: //ODF
             path = "/icons/odf.png"; break;
             case PEERING: //cloud
@@ -432,7 +512,7 @@ public class ServManagerFormCreator{
      * @param objLight the given object
      * @param port the port where the link ends
      * @return a grid layout with the router's information
-     * @throws oServerSideException if some attributes need it ot create the table couldn't be retrieved
+     * @throws ServerSideException if some attributes need it ot create the table couldn't be retrieved
      */
     public Component createRouter(RemoteObjectLight objLight, RemoteObjectLight port) throws ServerSideException{
         
@@ -570,7 +650,7 @@ public class ServManagerFormCreator{
         String portSpeed1 = port1.getAttribute("Speed_port");
         String portSpeed2 = port2.getAttribute("Speed_port");
         
-        GridLayout grdADM = new GridLayout(3, 16);
+        GridLayout grdADM = new GridLayout(3, 15);
         
         grdADM.addComponent(createTitle(objLight.getName(), ADM), 0, 0, 2, 0);
         
@@ -611,10 +691,8 @@ public class ServManagerFormCreator{
         grdADM.addComponent(createCell(rackPosition), 2, 12);
         grdADM.addComponent(createCell("RACK UNITS"), 0, 13, 1, 13);
         grdADM.addComponent(createCell(rackUnits), 2, 13);
-        grdADM.addComponent(createCell("MMR"), 0, 14, 1, 14);
-        grdADM.addComponent(createCell("xxx"), 2, 14);
-
-        grdADM.addComponent(createIcon(ADM), 0, 15, 2, 15);
+        
+        grdADM.addComponent(createIcon(ADM), 0, 14, 2, 14);
         return grdADM;
     }
     
@@ -634,43 +712,41 @@ public class ServManagerFormCreator{
         String rackPostion = odf.getAttribute("rackPosition");
         String rackUnits = odf.getAttribute("rackUnits");
         
-        GridLayout grdODF = new GridLayout(2, 9);
-        grdODF.addComponent(createTitle("ODF", ODF), 0, 0, 1, 0);
+        GridLayout grdODF = new GridLayout(2, 8);
+        grdODF.addComponent(createTitle(objLight.getName(), ODF), 0, 0, 1, 0);
         grdODF.addComponent(createCell("ODF-PORT"), 0, 1);
+        grdODF.addComponent(createCell(port.getName()), 1, 1);
         grdODF.addComponent(createCell(" "), 0, 2, 1, 2);
         grdODF.addComponent(createCell("RACK POSTION"), 0, 3);
-        grdODF.addComponent(createCell("RACK UNITS"), 0, 4);
-        grdODF.addComponent(createCell(" "), 0, 5, 1, 5);
-        grdODF.addComponent(createCell("DEVICE LOCATION"), 0, 6, 1, 6);
-        //values
-        grdODF.addComponent(createCell(port.getName()), 1, 1);
         grdODF.addComponent(createCell(rackPostion != null ? rackPostion : "Not Set"), 1, 3);
+        grdODF.addComponent(createCell("RACK UNITS"), 0, 4);
         grdODF.addComponent(createCell(rackUnits != null ? rackUnits : "Not Set"), 1, 4);
-
-        grdODF.addComponent(createCell(createLocation(objLight)), 0, 7, 1, 7);
-        
-        grdODF.addComponent(createIcon(ODF), 0, 8, 1, 8);
+        grdODF.addComponent(createCell(" "), 0, 5, 1, 5);
+        grdODF.addComponent(createCell("DEVICE LOCATION"), 0, 6);
+        grdODF.addComponent(createCell(getCityLocation(objLight)), 1, 6);
+        grdODF.addComponent(createIcon(ODF), 0, 7, 1, 7);
         return grdODF;
     }
     
     /**
      * Creates a table for a provider
-     * @param provider the given object
-     * @param legalOwner
+     * @param providerName the provider name
+     * @param providerId the provider id
+     * @param legalOwner the legal owner
      * @return a grid layout with the provider's information
      */
-    public Component createProviderTable(RemoteObject provider, RemoteObject legalOwner){
+    public Component createProviderTable(String providerName, String providerId, String legalOwner){
         
         GridLayout grdProvider = new GridLayout(2, 4);
-        grdProvider.addComponent(createTitle(provider.getName(), PROVIDER), 0, 0, 1, 0);
+        grdProvider.addComponent(createTitle(providerName, PROVIDER), 0, 0, 1, 0);
         //Titles
         grdProvider.addComponent(createCell("PROVIDER ID"), 0, 1);
         grdProvider.addComponent(createCell("LEGAL OWNER"), 0, 2);
         //values
-        grdProvider.addComponent(createCell(provider.getAttribute("Hop2id")), 1, 1);
-        grdProvider.addComponent(createCell(legalOwner != null ? legalOwner.getName() : ""), 1, 2);
+        grdProvider.addComponent(createCell(providerId), 1, 1);
+        grdProvider.addComponent(createCell(legalOwner), 1, 2);
 
-        grdProvider.addComponent(createIcon(selectLogo(provider.getName())), 0, 3, 1, 3);
+        grdProvider.addComponent(createIcon(selectLogo(providerName)), 0, 3, 1, 3);
         
         return grdProvider;
     }
@@ -708,42 +784,34 @@ public class ServManagerFormCreator{
      * @throws ServerSideException if some attributes need it to create the table could get retrieved
      */
     public Component createProviderTableS(RemoteObject provider) throws ServerSideException{
-        String segmentId, segment = "";
+        String segment = "";
         //EuropeanNode or euNode
-        String euNode = wsBean.getAttributeValueAsString(provider.getClassName(), provider.getId(), "EuropeanNode",
+        String euNode = wsBean.getAttributeValueAsString(provider.getClassName(), provider.getId(), "europeanNode",
                     Page.getCurrent().getWebBrowser().getAddress(), 
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());//Listtype NodeType
-                
         //EndNode
-        String endNode = wsBean.getAttributeValueAsString(provider.getClassName(), provider.getId(), "LandingPoint", 
+        String endNode = wsBean.getAttributeValueAsString(provider.getClassName(), provider.getId(), "landingPoint", 
                 Page.getCurrent().getWebBrowser().getAddress(), 
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());//Listtype NodeType
         
-        String hop1Name = wsBean.getAttributeValueAsString(provider.getClassName(), provider.getId(), "Hop1_name", 
+        String hop1Name = wsBean.getAttributeValueAsString(provider.getClassName(), provider.getId(), "hop1Name", 
                 Page.getCurrent().getWebBrowser().getAddress(), 
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
         
-        if(selectLogo(hop1Name) == ACE){
-            segmentId = provider.getAttribute("ACE_segment");
-            if(segmentId != null)
-                segment = wsBean.getObject("AceType", Long.valueOf(segmentId), Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).getName();
-        } else if(selectLogo(hop1Name) == WACS){
-            segmentId = provider.getAttribute("WACsSegment");
-            if(segmentId != null)
-                segment = wsBean.getObject("WacsegmentType", Long.valueOf(segmentId), Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).getName();
-        }
+        if(selectLogo(hop1Name) == ACE)
+            segment = wsBean.getAttributeValueAsString(provider.getClassName(), provider.getId(), "aceSegment", ipAddress, sessionId);
+        else if(selectLogo(hop1Name) == WACS)
+            segment = wsBean.getAttributeValueAsString(provider.getClassName(), provider.getId(), "WACsSegment", ipAddress, sessionId);
+            
+        String carfNumber = provider.getAttribute("hopCarf"); //listType ProviderType
+        String moreInformation = provider.getAttribute("moreInformation");
+        String hop1Id = provider.getAttribute("hop1Id");
         
-        String carfNumber = provider.getAttribute("HopCarf"); //listType ProviderType
-        String moreAttributes = provider.getAttribute("More_Information");
-        String hop1Id = provider.getAttribute("Hop1_id");
-        
-        String hop1LegalOwner = wsBean.getAttributeValueAsString(provider.getClassName(), provider.getId(), "Hop1LegalOwner", 
+        String hop1LegalOwner = wsBean.getAttributeValueAsString(provider.getClassName(), provider.getId(), "hop1LegalOwner", 
                 Page.getCurrent().getWebBrowser().getAddress(), 
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                             
-        GridLayout grdProviderSubmarineCable = new GridLayout(2, 9);
+        GridLayout grdProviderSubmarineCable = new GridLayout(2, 10);
         grdProviderSubmarineCable.addComponent(createTitle(hop1Name, PROVIDER), 0, 0, 1, 0);
         
         grdProviderSubmarineCable.addComponent(createCell("LEGAL OWNER"), 0, 1);
@@ -753,6 +821,7 @@ public class ServManagerFormCreator{
         grdProviderSubmarineCable.addComponent(createCell("EUROPEAN NODE"), 0, 5);
         grdProviderSubmarineCable.addComponent(createCell("LANDING NODE"), 0, 6);
         grdProviderSubmarineCable.addComponent(createCell("SEGMENT"), 0, 7);
+        grdProviderSubmarineCable.addComponent(createCell("MORE INFO"), 0, 8);
         
         grdProviderSubmarineCable.addComponent(createCell(hop1Id), 1, 1);
         grdProviderSubmarineCable.addComponent(createCell(hop1LegalOwner), 1, 2);
@@ -760,8 +829,9 @@ public class ServManagerFormCreator{
         grdProviderSubmarineCable.addComponent(createCell(euNode), 1, 5);
         grdProviderSubmarineCable.addComponent(createCell(endNode), 1, 6);
         grdProviderSubmarineCable.addComponent(createCell(segment), 1, 7);
+        grdProviderSubmarineCable.addComponent(createCell(moreInformation), 1, 8);
 
-        grdProviderSubmarineCable.addComponent(createIcon(selectLogo(hop1Name)), 0, 8, 1, 8);
+        grdProviderSubmarineCable.addComponent(createIcon(selectLogo(hop1Name)), 0, 9, 1, 9);
         
         return grdProviderSubmarineCable;
     }
@@ -769,21 +839,22 @@ public class ServManagerFormCreator{
     /**
      * Creates a table for a VC (MPLSLinks)
      * @param objLight the given object in this case a MPLSLink
+     * @param sideA virtual port side A
+     * @param sideB virtual port side B
      * @return a grid layout with the vc's information
-     * @throws org.kuwaiba.exceptions.ServerSideException cpuld not find the attribute
+     * @throws org.kuwaiba.exceptions.ServerSideException could not find the attribute
      */
-    public Component createVC(RemoteObjectLight objLight) throws ServerSideException{
+    public Component createVC(RemoteObjectLight objLight, RemoteObjectLight sideA, RemoteObjectLight sideB) throws ServerSideException{
         GridLayout grdVC = new GridLayout(2, 3);
-        grdVC.addComponent(createTitle("VC-ALGO", VC), 0, 0, 1, 0);
+        grdVC.addComponent(createTitle(objLight.getName(), VC), 0, 0, 1, 0);
         
         String ipSource = wsBean.getAttributeValueAsString(objLight.getClassName(), objLight.getId(), "ipSource", ipAddress, sessionId);
-        grdVC.addComponent(createCell("PW: xxxx"), 0, 1);
+        grdVC.addComponent(createCell("PW: " + sideA == null ? "" : sideA.toString()), 0, 1);
         grdVC.addComponent(createCell("IP: " + ipSource), 0, 2);
 
         
         String ipDestiny = wsBean.getAttributeValueAsString(objLight.getClassName(), objLight.getId(), "ipDestiny", ipAddress, sessionId);
-                
-        grdVC.addComponent(createCell("PW: xxxx"), 1, 1);
+        grdVC.addComponent(createCell("PW: " + sideB == null ? "" : sideB.toString()), 1, 1);
         grdVC.addComponent(createCell("IP: " + ipDestiny), 1, 2);
         return grdVC;
     }

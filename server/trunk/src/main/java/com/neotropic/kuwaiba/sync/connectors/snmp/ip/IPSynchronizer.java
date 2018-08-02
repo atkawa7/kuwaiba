@@ -183,8 +183,8 @@ public class IPSynchronizer {
             ips.put(currentSubnet, new ArrayList<>());
         }
         //with the subnet found we must search the if the IP address exists
-        List<BusinessObjectLight> currentIps = subnets.get(currentSubnet);
-        if(currentIps != null){
+        List<BusinessObjectLight> currentIps = ips.get(currentSubnet);
+        if(!currentIps.isEmpty()){
             for (BusinessObjectLight currentIp : currentIps) {
                 if(currentIp.getName().equals(ipAddr)){
                     //we must check the mask if the IP already exists and updated if is need it
@@ -197,6 +197,7 @@ public class IPSynchronizer {
                 }
             }
         }//we create the ip address if doesn't exists in subnet
+        
         HashMap<String, String> ipAttributes = new HashMap<>();
         ipAttributes.put(Constants.PROPERTY_NAME, ipAddr);
         ipAttributes.put(Constants.PROPERTY_MASK, mask);
@@ -232,29 +233,30 @@ public class IPSynchronizer {
             String mask = masks.get(i);
             //We search for the ip address
             BusinessObjectLight currentIpAddress = searchIP(ipAddress, mask);
-
-            for(int j=0; j < ifportIds.size(); j++){
-                if(ifportIds.get(j).equals(portId)){
-                    String portName = portNames.get(j);
-                    BusinessObjectLight currentPort = searchInCurrentStructure(portName);
-                    if(currentPort != null && currentIpAddress != null){
-                        List<BusinessObjectLight> currentRelatedIPAddresses = bem.getSpecialAttribute(
-                                currentPort.getClassName(), 
-                                currentPort.getId(), RELATIONSHIP_IPAMHASADDRESS);
-                        //We check if the interface is already related with the ip
-                        boolean alreadyRelated = false;
-                        for (BusinessObjectLight currentRelatedIPAddress : currentRelatedIPAddresses) {
-                            if(currentRelatedIPAddress.getName().equals(currentIpAddress.getName())){ 
-                                alreadyRelated = true;
-                                break;
-                            }
-                        }//If not related, we related interface with the ip
-                        if(!alreadyRelated)
-                            bem.createSpecialRelationship(currentPort.getClassName(),currentPort.getId(), 
-                                currentIpAddress.getClassName(), currentIpAddress.getId(), RELATIONSHIP_IPAMHASADDRESS, true);
+            if(currentIpAddress != null){
+                for(int j=0; j < ifportIds.size(); j++){
+                    if(ifportIds.get(j).equals(portId)){
+                        String portName = portNames.get(j);
+                        BusinessObjectLight currentPort = searchInCurrentStructure(portName);
+                        if(currentPort != null && currentIpAddress != null){
+                            List<BusinessObjectLight> currentRelatedIPAddresses = bem.getSpecialAttribute(
+                                    currentPort.getClassName(), 
+                                    currentPort.getId(), RELATIONSHIP_IPAMHASADDRESS);
+                            //We check if the interface is already related with the ip
+                            boolean alreadyRelated = false;
+                            for (BusinessObjectLight currentRelatedIPAddress : currentRelatedIPAddresses) {
+                                if(currentRelatedIPAddress.getName().equals(currentIpAddress.getName())){ 
+                                    alreadyRelated = true;
+                                    break;
+                                }
+                            }//If not related, we related interface with the ip
+                            if(!alreadyRelated)
+                                bem.createSpecialRelationship(currentPort.getClassName(),currentPort.getId(), 
+                                    currentIpAddress.getClassName(), currentIpAddress.getId(), RELATIONSHIP_IPAMHASADDRESS, true);
+                        }
+                        else
+                            System.out.println(String.format("sync the ifMIB, the port %s was not found", portName));
                     }
-                    else
-                        System.out.println(String.format("sync the ifMIB, the port %s was not found", portName));
                 }
             }
         }

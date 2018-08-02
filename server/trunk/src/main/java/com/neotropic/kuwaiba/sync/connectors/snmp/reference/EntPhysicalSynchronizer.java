@@ -152,7 +152,11 @@ public class EntPhysicalSynchronizer {
      * Helper used to read the actual structure recursively
      */
     private long k = 0;
-
+    /**
+    * debugMode
+    */
+    private boolean debugMode;
+    
     public EntPhysicalSynchronizer(BusinessObjectLight obj, List<TableData> data) {
         
         try {
@@ -182,6 +186,7 @@ public class EntPhysicalSynchronizer {
         currentMplsTunnels = new ArrayList<>();
         currentBridgeDomains = new ArrayList<>();
         currentVlans = new ArrayList<>();
+        debugMode = (boolean)aem.getConfiguration().get("debugMode");
     }
 
     public List<SyncFinding> sync() throws MetadataObjectNotFoundException,

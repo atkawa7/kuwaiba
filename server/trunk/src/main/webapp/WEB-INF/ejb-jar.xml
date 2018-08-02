@@ -137,7 +137,13 @@
            <env-entry-type>java.lang.Boolean</env-entry-type>
            <env-entry-value>false</env-entry-value>
         </env-entry>
-        
+        <!-- debug mode -->
+        <env-entry>
+           <description>Enable debug mode</description>
+           <env-entry-name>debugMode</env-entry-name>
+           <env-entry-type>java.lang.Boolean</env-entry-type>
+           <env-entry-value>false</env-entry-value>
+        </env-entry>
      </session>
 </enterprise-beans>
 </ejb-jar>

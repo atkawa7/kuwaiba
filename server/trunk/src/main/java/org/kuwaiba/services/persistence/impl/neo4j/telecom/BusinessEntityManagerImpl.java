@@ -2048,8 +2048,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         long logicalPortId = 0;
         if(mem.isSubClass(Constants.CLASS_GENERICLOGICALPORT, objectClass)){
             logicalPortId = objectId;
-            BusinessObjectLight firstPhysicalParentPort = getFirstParentOfClass(objectClass, objectId, Constants.CLASS_GENERICPHYSICALPORT);
-            objectId = firstPhysicalParentPort.getId();
+            //This should be deleted after the MPLS synchronization has been finished
+            if(objectClass.equals("Pseudowire"))
+                objectId = getFirstParentOfClass(objectClass, objectId, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT).getId();
+            else{    
+                BusinessObjectLight firstPhysicalParentPort = getFirstParentOfClass(objectClass, objectId, Constants.CLASS_GENERICPHYSICALPORT);
+                objectId = firstPhysicalParentPort.getId();
+            }
         }
         //The first part of the query will return many paths, the longest is the one we need. The others are
         //subsets of the longest

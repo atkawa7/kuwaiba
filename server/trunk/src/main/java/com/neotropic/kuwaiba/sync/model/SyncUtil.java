@@ -125,6 +125,8 @@ public class SyncUtil {
         if(currentPortName.toLowerCase().contains("fastethernet"))
             return currentPortName.toLowerCase().replace("fastethernet", "fa");
         //Te
+        if(currentPortName.toLowerCase().contains("tengigabitethernet"))
+            return currentPortName.toLowerCase().replace("tengigabitethernet", "te");  
         if(currentPortName.toLowerCase().contains("tengige"))
             return currentPortName.toLowerCase().replace("tengige", "te");
         if(currentPortName.toLowerCase().contains("tentigt"))
@@ -132,7 +134,8 @@ public class SyncUtil {
         if(currentPortName.toLowerCase().contains("tengig"))
             return currentPortName.toLowerCase().replace("tengig", "te");
         if(currentPortName.toLowerCase().contains("tengi"))
-            return currentPortName.toLowerCase().replace("tengi", "te");    
+            return currentPortName.toLowerCase().replace("tengi", "te");   
+         
         //POS and PO
         if(currentPortName.toLowerCase().contains("pos"))
             return currentPortName.toLowerCase().replace("pos", "pos");
@@ -201,6 +204,8 @@ public class SyncUtil {
                         newPart1 = newPart1.replace("tentigt", "tt");
                     else if(newPart1.contains("tengige")) //TenGigE
                         newPart1 = newPart1.replace("tengige", "te");
+                    else if(newPart1.contains("teabitethernet")) //TenGigE
+                        newPart1 = newPart1.replace("teabitethernet", "te");
                     else if(newPart1.contains("gigabitethernet"))
                         newPart1 = newPart1.replace("gigabitethernet", "ge");
                     else if(newPart1.contains("mgmteth"))

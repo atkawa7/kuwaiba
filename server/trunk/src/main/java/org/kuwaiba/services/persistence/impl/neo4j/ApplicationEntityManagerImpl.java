@@ -2054,6 +2054,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     }
                 }
             }
+            tx.success();
             return pools;
         }
     }
@@ -2173,6 +2174,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     }
                 }
             }
+            tx.success();
             return poolItems;
         }
     }

@@ -129,6 +129,13 @@ public class StartupBean {
                 System.out.println("[KUWAIBA] Error reading the formImagesPath configuration variable. Using the default value instead: " + ne.getMessage());
             }
             
+            try {
+                persistenceServiceProperties.put("debugMode", (boolean)context.lookup("java:comp/env/debugMode")); //NOI18N
+            }catch (NamingException ne) {
+                persistenceServiceProperties.put("debugMode", false); //NOI18N
+                System.out.println("[KUWAIBA] Error reading the debugMode configuration variable. Using the default value instead: " + ne.getMessage());
+            }
+            
             persistenceService.setConfiguration(persistenceServiceProperties);
             persistenceService.start();
         } catch (IllegalStateException | NamingException ex) {
