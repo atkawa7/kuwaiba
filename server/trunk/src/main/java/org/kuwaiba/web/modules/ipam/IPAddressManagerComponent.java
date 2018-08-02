@@ -27,6 +27,7 @@ import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.StyleGenerator;
 import com.vaadin.ui.VerticalLayout;
 import eu.maxschuster.vaadin.autocompletetextfield.AutocompleteQuery;
 import eu.maxschuster.vaadin.autocompletetextfield.AutocompleteSuggestion;
@@ -44,6 +45,7 @@ import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.web.IndexUI;
 import org.kuwaiba.web.modules.ipam.actions.ShowMPLSTunnelExplorerAction;
@@ -86,6 +88,7 @@ public class IPAddressManagerComponent extends AbstractTopComponent {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         setStyleName("dashboards");
+        addStyleName("ipam");
         
         HorizontalSplitPanel pnlMain = new HorizontalSplitPanel();
         pnlMain.setSplitPosition(33, Unit.PERCENTAGE);
@@ -155,8 +158,35 @@ public class IPAddressManagerComponent extends AbstractTopComponent {
         btnSearch.setClickShortcut(ShortcutAction.KeyCode.ENTER);
         
         this.tblIps = new Grid<>();
-        this.tblIps.addColumn(RemoteObjectLight::getName).setCaption("Name");
+        this.tblIps.addColumn(RemoteObjectLight::getName).setCaption("Name").setStyleGenerator(new StyleGenerator<RemoteObjectLight>() {
+            @Override
+            public String apply(RemoteObjectLight ipamItem) {
+                try {
+                    RemoteObjectSpecialRelationships ipamItemRelationships = wsBean.getSpecialAttributes(ipamItem.getClassName(), ipamItem.getId(), Page.getCurrent().getWebBrowser().getAddress(),
+                            session.getSessionId());
+                    
+                    if (ipamItemRelationships.getRelationships().contains("ipamHasIpAddress"))
+                        return "assigned"; //NOI18N
+                    
+                    if (ipamItemRelationships.getRelationships().contains("uses"))
+                        return "used"; //NOI18N
+                    
+                    String isManagementAddress = wsBean.getAttributeValueAsString(ipamItem.getClassName(), ipamItem.getId(), 
+                            "isManagementAddress", Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                    
+                    if (isManagementAddress != null && isManagementAddress.equals("true"))
+                        return "management";
+                    
+                    return "free"; //NOI18N
+                } catch (ServerSideException ex) {
+                    Notifications.showError(ex.getLocalizedMessage());
+                    return null; //NOI18N
+                }
+            }
+        });
         this.tblIps.addColumn(RemoteObjectLight::getClassName).setCaption("Type");
+        
+        
         this.tblIps.setSizeFull();
         
         this.tblIps.addSelectionListener((e) -> {

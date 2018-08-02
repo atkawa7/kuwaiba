@@ -15401,6 +15401,22 @@ div.v-layout.v-horizontal.v-widget {
 	background: white;
 }
 
+.nuqui .ipam .v-grid-cell.assigned {
+	color: darkorange;
+}
+
+.nuqui .ipam .v-grid-cell.used {
+	color: darkblue;
+}
+
+.nuqui .ipam .v-grid-cell.management {
+	color: purple;
+}
+
+.nuqui .ipam .v-grid-cell.free {
+	color: green;
+}
+
 .nuqui .misc .v-menubar-misc-main {
 	background: #008080;
 	color: white;

@@ -50,7 +50,7 @@ public class PropertyFactory {
             for (int i = 0; i < classMetadata.getAttributesNames().length; i++)
                 objectProperties.add(new StringProperty(classMetadata.getAttributesNames()[i], 
                         classMetadata.getAttributesDisplayNames()[i], classMetadata.getAttributesDescriptions()[i], 
-                        objectAttributes.get(classMetadata.getAttributesNames()[i])));
+                        objectAttributes.get(classMetadata.getAttributesNames()[i]) == null ? "<Not Set>" : objectAttributes.get(classMetadata.getAttributesNames()[i])));
         
         return objectProperties;
     }

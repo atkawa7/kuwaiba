@@ -735,7 +735,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         for (String attributeName : theObject.getAttributes().keySet()) {
             AttributeMetadata theAttribute = mem.getAttribute(objectClass, attributeName);
             if (theObject.getAttributes().get(attributeName) == null)
-                res.put(attributeName, "None");
+                res.put(attributeName, null);
             else { 
                 switch (theAttribute.getType()) {
                     case "String": //NOI18N

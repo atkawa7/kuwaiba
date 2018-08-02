@@ -484,6 +484,25 @@ $v-field-background-color: #ccffe6;
     .servmanager {
         
     }
+    
+    /*IP Address manager*/
+    .ipam {
+        .v-grid-cell.assigned {
+            color: darkorange;
+        }
+
+        .v-grid-cell.used {
+            color: darkblue;
+        }
+
+        .v-grid-cell.management {
+            color: purple;
+        }
+
+        .v-grid-cell.free {
+            color: green;
+        }
+    }
             
     .misc {
         .v-menubar-misc-main {
