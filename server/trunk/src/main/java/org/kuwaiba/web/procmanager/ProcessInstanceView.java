@@ -377,7 +377,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
                     btnPrint.addClickListener(new ClickListener() {
                         @Override
                         public void buttonClick(Button.ClickEvent event) {
-                            getUI().addWindow(new PrintWindow(artifactDefinition.getPrintableTemplate()));
+                            getUI().addWindow(new PrintWindow(artifactDefinition, artifact, wsBean, remoteSession, processInstance, artifactDefinition.getPrintableTemplate()));
                         }
                     });
                                         

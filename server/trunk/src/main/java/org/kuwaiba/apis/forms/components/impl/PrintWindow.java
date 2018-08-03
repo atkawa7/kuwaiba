@@ -18,7 +18,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
+import java.util.Scanner;
+import org.kuwaiba.apis.forms.FormRenderer;
+import org.kuwaiba.apis.forms.elements.AbstractElement;
+import org.kuwaiba.apis.forms.elements.AbstractElementField;
+import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.util.i18n.I18N;
+import org.kuwaiba.web.procmanager.FormArtifactRenderer;
 
 /**
  * Window to show a preview and confirm the print action
@@ -26,8 +39,19 @@ import org.kuwaiba.util.i18n.I18N;
  */
 public class PrintWindow extends Window {
     private final String templatePath;
+    private final RemoteArtifactDefinition remoteArtifactDefinition;
+    private final RemoteArtifact remoteArtifact;
+    private final WebserviceBean webserviceBean;
+    private final RemoteSession remoteSession;
+    private final RemoteProcessInstance remoteProcessInstance;
     
-    public PrintWindow(String templatePath) {
+    public PrintWindow(RemoteArtifactDefinition remoteArtifactDefinition, RemoteArtifact remoteArtifact, WebserviceBean webserviceBean, RemoteSession remoteSession, RemoteProcessInstance remoteProcessInstance, String templatePath) {
+        this.remoteArtifactDefinition = remoteArtifactDefinition;
+        this.remoteArtifact = remoteArtifact;
+        this.webserviceBean = webserviceBean;
+        this.remoteSession = remoteSession;
+        this.remoteProcessInstance = remoteProcessInstance;
+        
         this.templatePath = templatePath;
         init();        
     }    
@@ -90,14 +114,81 @@ public class PrintWindow extends Window {
         
         PrintLayout printLayout = null;
         try {
+            /*
             File file = new File(templatePath);
             printLayout = new PrintLayout(new FileInputStream(file));
+            */
+            File file = new File(templatePath);
+            
+            byte[] byteTemplate = getFileAsByteArray(file);
+            String stringTemplate = new String(byteTemplate);
+            
+            FormArtifactRenderer formArtifactRenderer = new FormArtifactRenderer(
+                remoteArtifactDefinition, 
+                remoteArtifact, webserviceBean, 
+                remoteSession, 
+                remoteProcessInstance);
+            
+            FormRenderer formRenderer = (FormRenderer) formArtifactRenderer.renderArtifact();
+            
+            List<AbstractElement> elements = formRenderer.getFormStructure().getElements();
+            for (AbstractElement element : elements) {
+                
+                if (element instanceof AbstractElementField) {
+                    AbstractElementField elementField = (AbstractElementField) element;
+                    
+                    if (elementField.getId() != null) {
+                        String id = element.getId();
+                        
+                        String value = "";
+                        
+                        if (elementField.getValue() != null) {
+                            if (elementField.getValue() instanceof RemoteObjectLight) {
+                                
+                                value = ((RemoteObjectLight) elementField.getValue()).getName();
+                            }
+                            else {
+                                
+                                value = elementField.getValue().toString();
+                            }
+                        }
+                        stringTemplate = stringTemplate.replace("${" + id + "}", value);
+                    }
+                }
+            }
+                        
+            PrintWriter templateInstance = new PrintWriter("/data/attachments/processengine.tmp");
+            templateInstance.println(stringTemplate);
+            templateInstance.close();
+                                                                        
+            printLayout = new PrintLayout(new FileInputStream(new File("/data/attachments/processengine.tmp")));
         } catch (FileNotFoundException ex) {
             //TODO:
         } catch (IOException ex) {
             //TODO:
         }
         return printLayout;        
+    }
+    
+    public static byte[] getFileAsByteArray(File file) {
+        try {
+            Scanner in = new Scanner(file);
+
+            String line = "";
+
+            while (in.hasNext())
+                line += in.nextLine();
+
+            byte [] structure = line.getBytes();
+
+            in.close();
+
+            return structure;
+
+        } catch (FileNotFoundException ex) {
+
+            return null;
+        }
     }
                     
 }

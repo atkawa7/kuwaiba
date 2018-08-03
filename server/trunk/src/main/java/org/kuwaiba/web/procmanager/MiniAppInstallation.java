@@ -8,9 +8,6 @@ package org.kuwaiba.web.procmanager;
 import com.neotropic.kuwaiba.modules.reporting.img.SceneExporter;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
-import com.vaadin.server.Sizeable;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Image;
@@ -23,6 +20,7 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
+import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,12 +32,10 @@ import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.web.gui.miniapps.AbstractMiniApplication;
-import org.kuwaiba.apis.web.gui.notifications.MessageBox;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.openide.util.Exceptions;
 
 /**
  * Wrapped to configure the instalation of a device
@@ -116,7 +112,11 @@ public class MiniAppInstallation extends AbstractComponentMiniApplication {
                 MaterialBean materialBean = (MaterialBean) event.getItem();
             }
         })).setCaption("Actions").setId(columnActionsId);
+        
+        Label lblMaterials = new Label("Materials");
+        lblMaterials.addStyleNames(ValoTheme.LABEL_H1);
 
+        verticalLayout.addComponent(lblMaterials);
         verticalLayout.addComponent(gridMaterials);
         
         Grid<PortBean> gridPort = new Grid<>();
@@ -193,6 +193,10 @@ public class MiniAppInstallation extends AbstractComponentMiniApplication {
             }
         })).setCaption("Actions").setId(columnPortActionsId);
         
+        Label lblPorts = new Label("Ports");
+        lblPorts.addStyleName(ValoTheme.LABEL_H1);
+        
+        verticalLayout.addComponent(lblPorts);
         verticalLayout.addComponent(gridPort);
                                             
         panel.setContent(verticalLayout);
