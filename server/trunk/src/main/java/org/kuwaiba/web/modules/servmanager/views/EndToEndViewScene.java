@@ -18,12 +18,8 @@ package org.kuwaiba.web.modules.servmanager.views;
 import com.neotropic.vaadin.lienzo.client.core.shape.Point;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
-import com.neotropic.vaadin.lienzo.client.events.EdgeWidgetClickListener;
-import com.neotropic.vaadin.lienzo.client.events.NodeWidgetClickListener;
 import com.vaadin.server.Page;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Window;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -43,10 +39,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
-import org.openide.util.Exceptions;
 
 /**
  * Shows an end-to-end view of a service by trying to match the endpoints of the logical circuits
