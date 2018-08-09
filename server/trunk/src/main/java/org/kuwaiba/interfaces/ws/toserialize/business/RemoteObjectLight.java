@@ -119,20 +119,32 @@ public class RemoteObjectLight implements Serializable, Comparable<RemoteObjectL
 
         return res;
     }
-
+    
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 83 * hash + (int) (this.id ^ (this.id >>> 32));
-        hash = 83 * hash + Objects.hashCode(this.name);
+        int hash = 3;
+        hash = 53 * hash + (int) (this.id ^ (this.id >>> 32));
         return hash;
     }
-    
+
     @Override
-    public boolean equals (Object obj) {
-        return obj instanceof RemoteObjectLight && ((RemoteObjectLight)obj).getId() == id;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final RemoteObjectLight other = (RemoteObjectLight) obj;
+        if (this.id != other.id) {
+            return false;
+        }
+        return true;
     }
-    
+        
     @Override
     public String toString() {
         return String.format("%s [%s]", name, className);

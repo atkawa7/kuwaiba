@@ -15,9 +15,12 @@
  */
 package com.neotropic.kuwaiba.modules.reporting.img.rackview;
 
+import com.vaadin.ui.Notification;
 import java.awt.Color;
-import org.kuwaiba.apis.persistence.business.BusinessObject;
+import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.LabelWidget;
@@ -55,15 +58,21 @@ public class EquipmentWidget extends NestedDeviceWidget {
         if (getRackViewScene().getShowConnections()) {
             super.paintNestedDeviceWidget();
         } else {
-            
-            //${TODO}setBackground(getLookup().lookup(LocalObject.class).getObjectMetadata().getColor());
-            setBackground(Color.CYAN);
+            RemoteObject remoteObject = (RemoteObject) getLookupReplace();            
+            try {
+                RemoteClassMetadata remoteClassMetadata = RackViewImage.getInstance().getWebserviceBean().getClass(
+                    remoteObject.getClassName(), 
+                    RackViewImage.getInstance().getIpAddress(), 
+                    RackViewImage.getInstance().getRemoteSession().getSessionId());
+                
+                setBackground(new Color(remoteClassMetadata.getColor()));
+            } catch (ServerSideException ex) {
+                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+            }
             setOpaque(true);
             setLayout(LayoutFactory.createVerticalFlowLayout(LayoutFactory.SerialAlignment.CENTER, 0));
-////            LabelWidget lblDeviceName = new LabelWidget(getRackViewScene(), getLookup().lookup(LocalObject.class).toString());
-            BusinessObject businessObject = (BusinessObject) getLookupReplace();
-            
-            LabelWidget lblDeviceName = new LabelWidget(getRackViewScene(), businessObject.toString());
+                        
+            LabelWidget lblDeviceName = new LabelWidget(getRackViewScene(), remoteObject.toString());
             
             int top, bottom;
             top = bottom = (getMinimumSize().height - rackWidget.getRackUnitHeight()) / 2;
@@ -72,8 +81,8 @@ public class EquipmentWidget extends NestedDeviceWidget {
             lblDeviceName.setForeground(Color.WHITE);
 
             LabelWidget lblDeviceInfo = new LabelWidget(getRackViewScene(), 
-                "Position: " + businessObject.getAttributes().get("position") + " U - " + 
-                "Size: " + businessObject.getAttributes().get("rackUnits") + " U");
+                "Position: " + remoteObject.getAttribute("position") + " U - " + 
+                "Size: " + remoteObject.getAttribute("rackUnits") + " U");
             lblDeviceInfo.setBorder(BorderFactory.createEmptyBorder(0, 0, bottom, 0));
             lblDeviceInfo.setForeground(Color.WHITE);
 

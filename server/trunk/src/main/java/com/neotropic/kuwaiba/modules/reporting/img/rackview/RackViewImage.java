@@ -1,10 +1,24 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ * 
+ *   Licensed under the EPL License, Version 1.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *        http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
  */
 package com.neotropic.kuwaiba.modules.reporting.img.rackview;
 
+import com.vaadin.ui.Notification;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -16,7 +30,7 @@ import org.openide.util.Exceptions;
 
 /**
  *
- * @author johnyortega
+ * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class RackViewImage {
     private static RackViewImage instance;
@@ -119,18 +133,148 @@ public class RackViewImage {
             int index = RackViewImage.stringArrayIndexOfValue(remoteClassMetadata.getAttributesNames(), attributeName);
             
             String attributeType = remoteClassMetadata.getAttributesTypes()[index];
-                        
+            
+            if (attributeValue != null) {
+                                    
             RemoteObject listTypeItem = RackViewImage.getInstance().getWebserviceBean().getObject(
                 attributeType, 
                 Long.valueOf(attributeValue), 
                 RackViewImage.getInstance().getIpAddress(), 
                 RackViewImage.getInstance().getRemoteSession().getSessionId());
             
-            return listTypeItem;
+                return listTypeItem;
+            }
             
         } catch (ServerSideException ex) {
             Exceptions.printStackTrace(ex);
+        }
+        return null;
+    }
+    
+    public List<RemoteObject> getDevices(RemoteObject rack) {
+        String message = "";
+        RemoteClassMetadata classCustomShape = null;
+
+        try {
+            classCustomShape = getWebserviceBean().getClass("CustomShape", getIpAddress(), getRemoteSession().getSessionId());
+        } catch (ServerSideException ex) {
+            //Exceptions.printStackTrace(ex);
+        }
+        
+        if (classCustomShape == null) {
+            Notification.show("This database seems outdated. Contact your administrator to apply the necessary patches to add the CustomShape class", 
+                Notification.Type.ERROR_MESSAGE);
             return null;
         }
+                
+        if (rack == null) {
+            
+        } else {
+            Integer rackUnits = Integer.valueOf(rack.getAttribute("rackUnits")); //NOI18N
+            if (rackUnits == null || rackUnits == 0) {
+                message += String.format("Attribute %s in rack %s does not exist or is not set correctly\n", "rackUnits", rack); //NOI18N                                                        
+            } else {
+                List<RemoteObjectLight> devicesLight = null;
+                try {
+                    devicesLight = getWebserviceBean().getObjectChildren(rack.getClassName(), rack.getId(), 0, getIpAddress(), getRemoteSession().getSessionId());
+                } catch (ServerSideException ex) {
+                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+                    //Exceptions.printStackTrace(ex);
+                }
+                if (devicesLight != null) {
+                    List<RemoteObject> devices = new ArrayList<>();
+                    
+                    for (RemoteObjectLight deviceLight : devicesLight) {
+                        RemoteObject device = null;
+                        try {
+                            device = getWebserviceBean().getObject(deviceLight.getClassName(), deviceLight.getId(), getIpAddress(), getRemoteSession().getSessionId());
+                        } catch (ServerSideException ex) {
+                            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+                            //Exceptions.printStackTrace(ex);
+                        }
+                        
+                        if (device != null) {
+                            RemoteClassMetadata lcm = null;
+                            try {
+                                lcm = getWebserviceBean().getClass(deviceLight.getClassName(), getIpAddress(), getRemoteSession().getSessionId());
+                            } catch (ServerSideException ex) {
+                                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+                                //Exceptions.printStackTrace(ex);
+                            }
+                            
+                            if (lcm == null) {
+                                return null;
+                            }
+                            
+                            if (!stringArrayhasValue(lcm.getAttributesNames(), "position")) //NOI18N
+                                message += String.format("The %s attribute does not exist in class %s\n", "position", lcm.toString());
+                            else {
+                                int index = stringArrayIndexOfValue(lcm.getAttributesNames(), "position"); //NOI18N
+                                                                
+                                if (index != -1 && !"Integer".equals(lcm.getAttributesTypes()[index])) //NOI18N
+                                    message += String.format("The %s attribute type in class %s must be an Integer\n", "position", lcm.toString());
+                            }
+                            if (!stringArrayhasValue(lcm.getAttributesNames(), "rackUnits")) //NOI18N
+                                message += String.format("The %s attribute does not exist in class %s\n", "rackUnits", lcm.toString());
+                            else {
+                                int index = stringArrayIndexOfValue(lcm.getAttributesNames(), "rackUnits"); //NOI18N
+                                
+                                if (index != -1 && !"Integer".equals(lcm.getAttributesTypes()[index])) //NOI18N
+                                    message += String.format("The %s attribute type in class %s must be an Integer\n", "rackUnits", lcm.toString());
+                            }
+                            if (!message.isEmpty())
+                                break;
+                            
+                            devices.add(device);
+
+                            int devicePosition = device.getAttribute("position") != null ? Integer.valueOf(device.getAttribute("position")) : 0; //NOI18N
+                            if (devicePosition <= 0)
+                                message += String.format("The %s in %s must be greater than or equal to zero\n", "position", device.toString());
+                            else {
+                                if (devicePosition > rackUnits)
+                                    message += String.format("The %s in %s is greater than the number of rack units\n", "position", device.toString());
+                            }
+                            int deviceRackUnits = device.getAttribute("rackUnits") != null ? Integer.valueOf(device.getAttribute("rackUnits")) : 0;
+
+                            if (deviceRackUnits <= 0)
+                                message += String.format("The %s in %s must be greater than or equal to zero\n", "rackUnits", device.toString());
+                            else {
+                                if (deviceRackUnits > rackUnits)
+                                    message += String.format("The %s in %s is greater than the number of rack units\n", "rackUnits", device.toString());
+                            }
+                        } else {
+                            return null;
+                        }
+                    }
+                    if (message.isEmpty()) {
+                        HashMap<Integer, RemoteObjectLight> rackUnitsMap = new HashMap();
+                        
+                        for (RemoteObject device : devices) {
+                            int devicePosition = Integer.valueOf(device.getAttribute("position"));
+                            int deviceRackUnits = Integer.valueOf(device.getAttribute("rackUnits"));
+                            
+                            for (int i = devicePosition; i < devicePosition + deviceRackUnits; i += 1) {
+                                
+                                if (!rackUnitsMap.containsKey(devicePosition))
+                                    rackUnitsMap.put(i, device);
+                                else {
+                                    RemoteObjectLight lol = rackUnitsMap.get(devicePosition);
+                                    
+                                    if (!lol.equals(device))
+                                        message += String.format("The Position %s set in the %s is used by the %s\n", i, device.toString(), lol.toString());
+                                }
+                            }
+                        }
+                    }
+                    if (message.isEmpty()) {
+                        return devices;
+                    }
+                } else {
+                    return null;
+                }
+            }
+        }
+        Notification.show(message, Notification.Type.ERROR_MESSAGE);
+        return null;
     }
 }

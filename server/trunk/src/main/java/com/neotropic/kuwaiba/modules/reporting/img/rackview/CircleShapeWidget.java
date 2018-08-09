@@ -20,17 +20,13 @@ import java.awt.Color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import org.netbeans.api.visual.widget.Scene;
-import org.openide.util.Lookup;
-import org.openide.util.lookup.Lookups;
 
 /**
  * Selectable circle widget
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class CircleShapeWidget extends CircleWidget implements PropertyChangeListener/*, SharedContentLookup*/ {
-////    private final ShapeNode shapeNode;
-////    private final Lookup lookup;
-
+public class CircleShapeWidget extends CircleWidget implements PropertyChangeListener {
+    
     public CircleShapeWidget(Scene scene, CircleShape circleShape) {
         super(scene);
         circleShape.addPropertyChangeListener(this);
@@ -38,34 +34,15 @@ public class CircleShapeWidget extends CircleWidget implements PropertyChangeLis
         setBackground(circleShape.getColor());        
         setEllipseColor(circleShape.getEllipseColor());
         setOvalColor(circleShape.getOvalColor());
-        
-////        lookup = Lookups.fixed(circleShape);
-////        shapeNode = new ShapeNode(circleShape);        
     }
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-////        Shape shape = lookup.lookup(Shape.class);
-////        if (shape == null)
-////            return;
-        
         if (CircleShape.PROPERTY_ELLIPSE_COLOR.equals(evt.getPropertyName())) {
             setEllipseColor((Color) evt.getNewValue());
         } else if (CircleShape.PROPERTY_OVAL_COLOR.equals(evt.getPropertyName())) {
             setOvalColor((Color) evt.getNewValue());
         }
-////        ShapeWidgetUtil.propertyChange(this, shape, evt);
     }
-
-////    @Override
-////    public Lookup fixLookup() {
-////        return ShapeWidgetUtil.fixLookup(shapeNode);
-////    }
-    
-////    @Override
-////    public Lookup getLookup() {
-////        fixLookup();
-////        return super.getLookup();
-////    }
 }
 

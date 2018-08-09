@@ -83,4 +83,23 @@ public class RemoteObject extends RemoteObjectLight implements Serializable {
         
         return res;
     }
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+        
+    @Override
+    public String toString() {
+        return super.toString();
+    }
+
+    @Override
+    public int compareTo(RemoteObjectLight o) {
+        return super.compareTo(o);
+    }
 }

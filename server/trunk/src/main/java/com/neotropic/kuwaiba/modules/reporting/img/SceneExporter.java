@@ -5,10 +5,14 @@
  */
 package com.neotropic.kuwaiba.modules.reporting.img;
 
+import com.neotropic.kuwaiba.modules.reporting.img.rackview.RackViewImage;
+import com.neotropic.kuwaiba.modules.reporting.img.rackview.RackViewScene;
+import com.neotropic.kuwaiba.modules.reporting.img.rackview.RackViewService;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import javax.ejb.ObjectNotFoundException;
+import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
@@ -16,6 +20,11 @@ import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
+import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.widget.ConnectionWidget;
@@ -35,13 +44,52 @@ public class SceneExporter {
 
     private SceneExporter() {}
     
-    public static SceneExporter getInstance(BusinessEntityManager bem, MetadataEntityManager mem) {
+    public static SceneExporter getInstance(/*BusinessEntityManager bem, MetadataEntityManager mem*/) {
         if(sceneExporter == null){
             sceneExporter = new SceneExporter();
-            SceneExporter.bem = bem;
-            SceneExporter.mem = mem;
+            SceneExporter.bem = PersistenceService.getInstance().getBusinessEntityManager();//bem;
+            SceneExporter.mem = PersistenceService.getInstance().getMetadataEntityManager();//mem;
         }
         return sceneExporter;
+    }
+    
+    public String buildRackView(
+        String ipAddress, RemoteSession remoteSession, WebserviceBean webserviceBean, 
+        String rackClassName, long rackId) {
+        
+        RackViewImage rackViewImage = RackViewImage.getInstance();
+        rackViewImage.setIpAddress(ipAddress);
+        rackViewImage.setRemoteSession(remoteSession);
+        rackViewImage.setWebserviceBean(webserviceBean);
+        
+        try {
+            RemoteObject rackObject = webserviceBean.getObject(rackClassName, rackId, ipAddress, remoteSession.getSessionId());
+            
+            RackViewScene rackViewScene = new RackViewScene(RackViewImage.getInstance().getDevices(rackObject));
+            rackViewScene.setShowConnections(true);
+            
+            RackViewService service = new RackViewService(rackViewScene, rackObject);
+            
+            service.shownRack();
+            
+            try {
+                org.netbeans.api.visual.export.SceneExporter.createImage(rackViewScene,
+                        new File(PATH + rackClassName + "_" + rackId +".png"),
+                        org.netbeans.api.visual.export.SceneExporter.ImageType.PNG,
+                        org.netbeans.api.visual.export.SceneExporter.ZoomType.ACTUAL_SIZE,
+                        false, false, 100,
+                        0,  //Not used
+                        0); //Not used
+                
+                return rackClassName + "_" + rackId;
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+            
+        } catch (ServerSideException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        return null;
     }
     
     public String buildPhysicalPathView(String portClassName, long portId) 

@@ -2424,7 +2424,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             environmentParameters.setVariable("classLabel", classLabel); //NOI18N
             environmentParameters.setVariable("defaultReports", defaultReports); //NOI18N
             
-            environmentParameters.setVariable("sceneExporter", SceneExporter.getInstance(this, mem));
+            environmentParameters.setVariable("sceneExporter", SceneExporter.getInstance(/*this, mem*/));
             
             //To keep backwards compatibility
             environmentParameters.setVariable("objectClassName", objectClassName); //NOI18N

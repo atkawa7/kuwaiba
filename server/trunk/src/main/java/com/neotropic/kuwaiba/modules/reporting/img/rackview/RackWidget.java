@@ -29,42 +29,13 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
-import org.kuwaiba.services.persistence.util.Constants;
 import org.netbeans.api.visual.border.Border;
 import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.layout.LayoutFactory;
 import org.netbeans.api.visual.widget.LabelWidget;
 import org.netbeans.api.visual.widget.LayerWidget;
 import org.netbeans.api.visual.widget.Widget;
-import org.openide.util.Exceptions;
-/*
-import org.inventory.views.rackview.scene.RackViewScene;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalClassMetadata;
-import org.inventory.communications.core.LocalObject;
-import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.services.i18n.I18N;
-import org.inventory.core.templates.layouts.DeviceLayoutRenderer;
-import org.inventory.core.templates.layouts.DeviceLayoutStructure;
-import org.inventory.views.rackview.RackViewService;
-import org.netbeans.api.visual.border.Border;
-import org.netbeans.api.visual.border.BorderFactory;
-import org.netbeans.api.visual.layout.LayoutFactory;
-import org.netbeans.api.visual.widget.LabelWidget;
-import org.netbeans.api.visual.widget.LayerWidget;
-import org.netbeans.api.visual.widget.Widget;
-*/
+
 /**
  * Is the graphical representation in the scene of a rack object
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
@@ -92,15 +63,8 @@ public class RackWidget extends SelectableRackViewWidget {
     private List<RemoteObject> localEquipments = new ArrayList<>();
     
     private DeviceLayoutStructure deviceLayoutStructure;
-    
-////    RemoteObject rackLight;
-    
-////    public RackViewScene getRackViewScene() {
-////        return (RackViewScene) getScene();
-////    }
-    
+        
     public RackWidget(RackViewScene scene, RemoteObjectLight remoteObjectLight, int rackUnitWidth, int rackUnitHeight, int rackUnitBottomMargin, List<RemoteObject> equipments) {
-////        super(scene, businessObject);
         super(scene, remoteObjectLight);
         this.rackUnitWidth = rackUnitWidth;
         this.rackUnitHeight = rackUnitHeight;
@@ -108,10 +72,7 @@ public class RackWidget extends SelectableRackViewWidget {
         
         mapRackUnits = new HashMap<>();
         localEquipments = new ArrayList<>();   
-        
-////        if (remoteObjectLight instanceof RemoteObject)
-////            rackLight = (RemoteObject) remoteObjectLight;
-        
+                
         if (scene.getShowConnections())
             deviceLayoutStructure = new DeviceLayoutStructure(remoteObjectLight);
         buildRack(equipments);
@@ -198,8 +159,6 @@ public class RackWidget extends SelectableRackViewWidget {
                 mapRackUnits.put(rackUnit, rackUnitWidget);
                 rackUnit = ascending ? rackUnit + 1 : rackUnit - 1;
             }
-////            RackViewService.switchToDeterminate(equipments.size());
-////            RackViewService.setProgress("Loading the devices");            
             
             setLayout(LayoutFactory.createVerticalFlowLayout());
             Widget top = new Widget(getRackViewScene());
@@ -271,7 +230,6 @@ public class RackWidget extends SelectableRackViewWidget {
                                     
             for (int i = 0; i < equipments.size(); i += 1) {
                 addEquipment(equipments.get(i));
-////                RackViewService.setProgress("Loading " + equipments.get(i).toString(),i + 1);
             }
             
             edgeLayer = new LayerWidget(getRackViewScene());
@@ -312,21 +270,14 @@ public class RackWidget extends SelectableRackViewWidget {
             
             return false;            
         }
-        
-        // public RemoteClassMetadata getClass(String className, String ipAddress, String sessionId) throws ServerSideException;
-////        LocalClassMetadata equipmentClass = equipment.getObjectMetadata();  
         String[] attributesNames = equipmentClass.getAttributesNames();
         String[] attributeTypes = equipmentClass.getAttributesTypes();
                         
         if (!RackViewImage.stringArrayhasValue(attributesNames, "position")) {
-////            NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
-////                NotificationUtil.WARNING_MESSAGE, String.format("%s: The %s attribute does not exist", equipment.toString(), "position"));
             Notification.show(String.format("%s: The %s attribute does not exist", equipment.toString(), "position"), Notification.Type.WARNING_MESSAGE);
             return false;
         }
         if (!RackViewImage.stringArrayhasValue(attributesNames, "rackUnits")) {
-////            NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
-////                NotificationUtil.WARNING_MESSAGE, String.format("%s: The %s attribute does not exist", equipment.toString(), "rackUnits"));
             Notification.show(String.format("%s: The %s attribute does not exist", equipment.toString(), "rackUnits"), Notification.Type.WARNING_MESSAGE);
             return false;
         }
@@ -335,17 +286,13 @@ public class RackWidget extends SelectableRackViewWidget {
         int index = RackViewImage.stringArrayIndexOfValue(attributesNames, "position");
         
         if (index != -1 && !"Integer".equals(attributeTypes[index])) { //NOI18N
-////            NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
-////                NotificationUtil.WARNING_MESSAGE, String.format("%s: The %s attribute must be an Integer", equipment.toString(), "position"));
             Notification.show(String.format("%s: The %s attribute must be an Integer", equipment.toString(), "position"), Notification.Type.WARNING_MESSAGE);
             return false;
         }
         
         index = RackViewImage.stringArrayIndexOfValue(attributesNames, "rackUnits");
-////        if (!"Integer".equals(equipmentClass.getTypeForAttribute("rackUnits"))) { //NOI18N
+        
         if (index != -1 && !"Integer".equals(attributeTypes[index])) {
-//            NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
-//                NotificationUtil.WARNING_MESSAGE, String.format("%s: The %s attribute must be an Integer", equipment.toString(), "rackUnits"));
             Notification.show(String.format("%s: The %s attribute must be an Integer", equipment.toString(), "rackUnits"), Notification.Type.WARNING_MESSAGE);
             return false;
         }
@@ -353,15 +300,11 @@ public class RackWidget extends SelectableRackViewWidget {
         int equipmentPosition = position == -1 ? (equipment.getAttribute("position") != null ? Integer.valueOf(equipment.getAttribute("position")) : -1) : position;
         
         if (!(equipmentPosition >= 0)) {
-////            NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
-////                NotificationUtil.WARNING_MESSAGE, String.format("%s: The position must be greater than or equal to zero", equipment.toString()));
             Notification.show(String.format("%s: The position must be greater than or equal to zero", equipment.toString()), Notification.Type.WARNING_MESSAGE);
             return false;
         }
         
         if (equipmentPosition > rackUnits) {
-////            NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
-////                NotificationUtil.WARNING_MESSAGE, String.format("%s: The position is greater than the number of rack units", equipment.toString()));
             Notification.show(String.format("%s: The position is greater than the number of rack units", equipment.toString()), Notification.Type.WARNING_MESSAGE);
             return false;
         }
@@ -371,8 +314,6 @@ public class RackWidget extends SelectableRackViewWidget {
         
         int equipmentRackUnits = equipment.getAttribute("rackUnits") != null ? Integer.valueOf(equipment.getAttribute("rackUnits")) : -1;
         if (!(equipmentRackUnits >= 0)) {
-////            NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
-////                NotificationUtil.WARNING_MESSAGE, String.format("%s: The number of rack units must be greater than or equal to zero", equipment.toString()));
             Notification.show(String.format("%s: The number of rack units must be greater than or equal to zero", equipment.toString()), Notification.Type.WARNING_MESSAGE);
             return false;
         }
@@ -383,14 +324,10 @@ public class RackWidget extends SelectableRackViewWidget {
         for (int i = 0; i < equipmentRackUnits; i += 1) {
             int idx = equipmentPosition + i;
             if (idx > rackUnits) {
-////                NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
-////                    NotificationUtil.WARNING_MESSAGE, String.format("%s: The equipment can not be located in the given %s position", equipment.toString(), equipmentPosition));
                 Notification.show(String.format("%s: The equipment can not be located in the given %s position", equipment.toString(), equipmentPosition), Notification.Type.WARNING_MESSAGE);
                 return false;
             }
             if (!mapRackUnits.get(idx).isAvailable()) {
-////                NotificationUtil.getInstance().showSimplePopup(I18N.gm("warning"), 
-////                    NotificationUtil.WARNING_MESSAGE, String.format("%s: The rack unit %s is not available", equipment.toString(), idx));
                 Notification.show(String.format("%s: The rack unit %s is not available", equipment.toString(), idx), Notification.Type.WARNING_MESSAGE);
                 return false;
             }            
@@ -486,12 +423,6 @@ public class RackWidget extends SelectableRackViewWidget {
                 getRackViewScene().setAddingNestedDevice(false);
             }
         }
-////        else {
-////            equipmentWidget.getLookup().lookup(LocalObject.class)
-////                .setAttribute("position", equipmentPosition);
-////            equipmentWidget.getLookup().lookup(LocalObject.class)
-////                .setAttribute("rackUnits", equipmentRackUnits);
-////        }
         int drawPosition = equipmentPosition;
         if (ascending)
             drawPosition -= 1;

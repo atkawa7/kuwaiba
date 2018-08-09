@@ -17,8 +17,6 @@
 package com.neotropic.kuwaiba.modules.reporting.img.rackview;
 
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-
 
 /**
  * Factory used to get instances of shapes, given a type of shape

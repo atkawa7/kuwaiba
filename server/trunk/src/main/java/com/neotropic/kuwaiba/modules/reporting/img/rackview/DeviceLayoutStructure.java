@@ -30,27 +30,7 @@ import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-/*
-package org.inventory.core.templates.layouts;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import javax.xml.bind.DatatypeConverter;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.core.LocalObjectListItem;
-import org.inventory.communications.core.views.LocalObjectView;
-import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.services.i18n.I18N;
-*/
 /**
  * Class used to storage device information like the device layout, hierarchy 
  * and nested devices layouts
@@ -75,18 +55,13 @@ public class DeviceLayoutStructure {
                 device.getClassName(), 
                 RackViewImage.getInstance().getIpAddress(), 
                 RackViewImage.getInstance().getRemoteSession().getSessionId());
-            //PersistenceService.getInstance().getApplicationEntityManager().getDeviceLayoutStructure(device.getId(), device.getClassName());
         } catch (ServerSideException ex) {
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
             return;
             //Exceptions.printStackTrace(ex);
         }
         
-////        byte[] structure = CommunicationsStub.getInstance().getDeviceLayoutStructure(device.getId(), device.getClassName());
-        
         if (structure == null) {
-////            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-////                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             return;
         }
         try {
@@ -129,7 +104,7 @@ public class DeviceLayoutStructure {
 
                                         if (event == XMLStreamConstants.START_ELEMENT) {
                                             if (xmlsr.getName().equals(tagView)) {
-                                                id = Long.valueOf(xmlsr.getAttributeValue(null, ""));
+                                                id = Long.valueOf(xmlsr.getAttributeValue(null, "id"));
                                                 className = xmlsr.getAttributeValue(null, "className");//NOI18N
                                                 
                                                 if (xmlsr.hasNext()) {
@@ -165,16 +140,29 @@ public class DeviceLayoutStructure {
             
             for (RemoteObjectLight child : devices.keySet()) {
                 
-                RemoteObjectLight dummyParent = new RemoteObjectLight(null, devices.get(child), null);
-                
-                hierarchy.get(dummyParent).add(child);
+                Long parentId = devices.get(child);                
+                if (parentId != null) {
+
+                    List<RemoteObjectLight> lst = null;
+
+                    for (RemoteObjectLight aParent : hierarchy.keySet()) {
+                        if (aParent.getId() == parentId)
+                            lst = hierarchy.get(aParent);
+                    }
+                                        
+                    if (lst != null)
+                        lst.add(child);
+                    else {
+                        int i = 0;
+                    }
+                } else {
+                    int i = 0;
+                }
             }
             
             xmlsr.close();
         } catch (XMLStreamException ex) {
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-////            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-////                NotificationUtil.ERROR_MESSAGE, "");
         }
     }
     

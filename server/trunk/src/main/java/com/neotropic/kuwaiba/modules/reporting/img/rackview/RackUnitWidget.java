@@ -17,28 +17,7 @@ package com.neotropic.kuwaiba.modules.reporting.img.rackview;
 
 import java.awt.Color;
 import java.awt.Dimension;
-/*
-import org.inventory.views.rackview.scene.RackViewScene;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalObject;
-import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.util.Constants;
-import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.services.i18n.I18N;
-import org.netbeans.api.visual.action.AcceptProvider;
-import org.netbeans.api.visual.action.ActionFactory;
-import org.netbeans.api.visual.action.ConnectorState;
-import org.netbeans.api.visual.action.WidgetAction;
-import org.netbeans.api.visual.widget.Widget;
-*/
+
 /**
  * Widget used to represent an empty rack unit which listen drop node actions 
  * when the user wants add an equipment in the rack view
@@ -56,7 +35,6 @@ public class RackUnitWidget extends RackViewWidget {
         setOpaque(true);
         setBackground(COLOR_RACKUNIT);                
         setMinimumSize(new Dimension(parentRack.getRackUnitWidth(), parentRack.getRackUnitHeight()));
-////        getActions().addAction(getAcceptAction());
     }
             
     public boolean isAvailable() {
@@ -70,61 +48,5 @@ public class RackUnitWidget extends RackViewWidget {
     public int getRackUnitIndex() {
         return rackUnitIndex;
     }
-    /*
-    public void setEquipmentPosition(Widget widget, LocalObjectLight equipmentLight) {
-        LocalObject equipment = CommunicationsStub.getInstance().
-            getObjectInfo(equipmentLight.getClassName(), equipmentLight.getId());
-
-        if (equipment == null) {
-            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            return;
-        }                        
-        RackWidget parentRackWidget = (RackWidget) ((RackUnitWidget) widget).getRackViewScene().findWidget(((RackUnitWidget) widget).getRackViewScene().getRack()); 
-        int position = ((RackUnitWidget) widget).getRackUnitIndex();
-        if (!parentRackWidget.isRackable(equipment, position))
-            return;
-
-        if (!parentRackWidget.containsEquipment(equipment)) {
-
-            LocalObjectLight parentRack = parentRackWidget.getLookup().lookup(LocalObjectLight.class);                            
-
-            LocalObjectLight equipmentParent = CommunicationsStub.getInstance().getParent(equipment.getClassName(), equipment.getId());                            
-            if (equipmentParent == null) {
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                return;
-            }
-            // Moves the equipment if it's not in the current rack
-            if (!equipmentParent.equals(parentRack)) {                                
-                if (!CommunicationsStub.getInstance().moveObjects(parentRack.getClassName(), parentRack.getId(), Arrays.asList((LocalObjectLight)equipment))) {
-                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                    return;
-                }                                
-            }                            
-            // Updates the position of the equipment
-            HashMap<String, Object> attributesToUpdate = new HashMap<>();
-            attributesToUpdate.put(Constants.PROPERTY_POSITION, position);
-
-            if(!CommunicationsStub.getInstance().updateObject(equipment.getClassName(), 
-                    equipment.getId(), attributesToUpdate)) {
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                return;
-            }
-            // Adds the equipment to the rack
-            equipment = CommunicationsStub.getInstance().getObjectInfo(equipmentLight.getClassName(), equipmentLight.getId());
-            if (equipment == null) {
-                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                return;
-            }
-            parentRackWidget.addEquipment(equipment);
-        } else {
-            NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
-                NotificationUtil.INFO_MESSAGE, "The equipment is already displayed in the rack");
-        }
-    }
-    */
+    
 }

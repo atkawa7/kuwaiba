@@ -28,22 +28,7 @@ import java.awt.geom.AffineTransform;
 import javax.swing.BorderFactory;
 import org.netbeans.api.visual.widget.Scene;
 import org.netbeans.api.visual.widget.Widget;
-/*
-package org.inventory.core.templates.layouts.widgets;
 
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Insets;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
-import java.awt.font.FontRenderContext;
-import java.awt.font.LineMetrics;
-import java.awt.geom.AffineTransform;
-import javax.swing.BorderFactory;
-import org.netbeans.api.visual.widget.Scene;
-import org.netbeans.api.visual.widget.Widget;
-*/
 /**
  * Class used to represent a label 
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>

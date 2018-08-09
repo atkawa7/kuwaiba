@@ -24,12 +24,11 @@ import org.netbeans.api.visual.widget.Widget;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class SelectableRackViewWidget extends Widget {
-    private Object lookupReplace;
+    private final Object lookupReplace;
 
     public SelectableRackViewWidget(RackViewScene scene, RemoteObjectLight remoteObjectLight) {
         super(scene);
         this.lookupReplace = remoteObjectLight;
-////        super(scene, businessObject);
     }
     
     public RackViewScene getRackViewScene() {

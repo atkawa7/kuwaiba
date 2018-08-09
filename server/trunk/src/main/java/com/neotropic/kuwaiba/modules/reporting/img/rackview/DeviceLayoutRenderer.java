@@ -13,56 +13,6 @@
  *   limitations under the License.
  * 
  */
-/*
-package org.inventory.core.templates.layouts;
-
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import javax.swing.JOptionPane;
-import javax.xml.namespace.QName;
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamConstants;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalClassMetadata;
-import org.inventory.communications.core.LocalObject;
-import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.core.LocalObjectListItem;
-import org.inventory.communications.core.views.LocalObjectView;
-import org.inventory.communications.util.Constants;
-import org.inventory.communications.util.Utils;
-import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.services.i18n.I18N;
-import org.inventory.core.visual.scene.AbstractScene;
-import org.inventory.core.templates.layouts.model.CircleShape;
-import org.inventory.core.templates.layouts.model.ContainerShape;
-import org.inventory.core.templates.layouts.model.CustomShape;
-import org.inventory.core.templates.layouts.model.LabelShape;
-import org.inventory.core.templates.layouts.model.PolygonShape;
-import org.inventory.core.templates.layouts.model.RectangleShape;
-import org.inventory.core.templates.layouts.model.Shape;
-import org.inventory.core.templates.layouts.model.ShapeFactory;
-import org.inventory.core.templates.layouts.widgets.CircleShapeWidget;
-import org.inventory.core.templates.layouts.widgets.PolygonShapeWidget;
-import org.inventory.core.templates.layouts.widgets.ResizableLabelWidget;
-import org.inventory.core.templates.layouts.widgets.ShapeWidgetUtil;
-import org.netbeans.api.visual.border.BorderFactory;
-import org.netbeans.api.visual.layout.LayoutFactory;
-import org.netbeans.api.visual.widget.LabelWidget;
-import org.netbeans.api.visual.widget.Widget;
-import org.openide.util.Exceptions;
-*/
 package com.neotropic.kuwaiba.modules.reporting.img.rackview;
 
 import com.vaadin.ui.Notification;
@@ -78,15 +28,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.JOptionPane;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.persistence.PersistenceService;
-import org.kuwaiba.apis.persistence.application.ViewObject;
-import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
@@ -218,13 +165,6 @@ public class DeviceLayoutRenderer {
             Exceptions.printStackTrace(ex);
             return null;
         }
-        
-////        if(CommunicationsStub.getInstance().getMetaForClass(Constants.CLASS_CUSTOMSHAPE, false) == null) {
-////            JOptionPane.showMessageDialog(null, 
-////                "This database seems outdated. Contact your administrator to apply the necessary patches to add the CustomShape class", 
-////                I18N.gm("error"), JOptionPane.ERROR_MESSAGE);
-////            return null;            
-////        }
         boolean hasDeviceLayout = false;
         
         try {
@@ -233,26 +173,6 @@ public class DeviceLayoutRenderer {
             errorMessage = ex.getMessage();
         }
         if (hasDeviceLayout) {
-            
-            try {
-                RemoteObject remoteObject = RackViewImage.getInstance().getWebserviceBean().getObject(
-                        deviceToRender.getClassName(),
-                        deviceToRender.getId(),
-                        RackViewImage.getInstance().getIpAddress(),
-                        RackViewImage.getInstance().getRemoteSession().getSessionId());
-                
-                
-            } catch (ServerSideException ex) {
-                Exceptions.printStackTrace(ex);
-            }
-            
-            
-////            LocalObject localObj = CommunicationsStub.getInstance().getObjectInfo(deviceToRender.getClassName(), deviceToRender.getId());
-////            if (localObj == null) {
-////                errorMessage = CommunicationsStub.getInstance().getError();
-////                return null;
-////            }
-////            LocalObjectListItem model = (LocalObjectListItem) localObj.getAttribute(Constants.ATTRIBUTE_MODEL);
             RemoteObject model = RackViewImage.getListTypeItemAttributeValue(deviceToRender.getClassName(), deviceToRender.getId(), "model"); //NOI18N
 
             if (model == null)
@@ -271,8 +191,11 @@ public class DeviceLayoutRenderer {
             return;
         
         if (structureRepository != null) {
-            if (structureRepository.containsKey(deviceModelValue))
-                deviceLayoutObjView = structureRepository.get(deviceModelValue);
+            for (RemoteObjectLight key : structureRepository.keySet()) {
+                
+                if (key.getId() == deviceModelValue.getId())
+                    deviceLayoutObjView = structureRepository.get(key);
+            }
         }
     }
     
@@ -314,22 +237,18 @@ public class DeviceLayoutRenderer {
                 Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
             }
             
-////            LocalClassMetadata deviceClass = CommunicationsStub.getInstance().getMetaForClass(device.getClassName(), false);
             if (deviceClass == null) {
                 deviceWidget.setBackground(Color.BLACK);
-                
-////                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-////                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-            } else
+            }
+            else
                 deviceWidget.setBackground(new Color(deviceClass.getColor()));
-////                deviceWidget.setBackground(deviceClass.getColor() == null ? Color.BLACK : deviceClass.getColor());
-
+            
             deviceWidget.setOpaque(true);
             deviceWidget.setToolTipText(device.getName());
 
             deviceWidget.revalidate();
             deviceWidget.getScene().validate();
-            deviceWidget.getScene().paint();
+            deviceWidget.getScene().repaint();
             // Sets the children of the device
             if (parentWidget.getChildren().size() >= 2 && device != deviceToRender)
                 parentWidget.getChildren().get(1).addChild(deviceWidget);
@@ -391,7 +310,7 @@ public class DeviceLayoutRenderer {
                         Widget portWidget = ((GraphScene) deviceWidget.getScene()).addNode(port);
 
                         deviceWidget.getScene().validate();
-                        deviceWidget.getScene().paint();
+                        deviceWidget.getScene().repaint();
 
                         portWidget.setPreferredLocation(new Point(x, y));
                         portWidget.setPreferredBounds(new Rectangle(0, 0, portWidth, portHeight));
@@ -409,11 +328,10 @@ public class DeviceLayoutRenderer {
                         //CommunicationsStub.getInstance().getMetaForClass(port.getClassName(), false);
                         if (portClass == null) {
                             portWidget.setBackground(Color.BLACK);
-////                            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-////                                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-                        } else
+                        }
+                        else
                             portWidget.setBackground(new Color(portClass.getColor()));
-////                            portWidget.setBackground(portClass.getColor() == null ? Color.BLACK : portClass.getColor());
+                        
                         portWidget.setOpaque(true);
                         portWidget.setToolTipText(port.getName());
                         
@@ -424,11 +342,23 @@ public class DeviceLayoutRenderer {
                 }
             }
             children.addChild(portsWidget);
-        }        
-        for (RemoteObjectLight child : nodes.get(device)) {
-            // Used to no make new calls to the ports added in the previous step
-            if (((GraphScene) deviceWidget.getScene()).findWidget(child) == null)
-                renderDefaultDeviceLayout(child, deviceWidget, children);
+        }    
+        List<RemoteObjectLight> lst = null;//nodes.get(device);
+        
+        for (RemoteObjectLight aNode : nodes.keySet()) {
+            
+            if (aNode.getId() == device.getId())
+                lst = nodes.get(aNode);
+        }
+        
+        if (lst != null) {
+            for (RemoteObjectLight child : lst) {
+                // Used to no make new calls to the ports added in the previous step
+                if (((GraphScene) deviceWidget.getScene()).findWidget(child) == null)
+                    renderDefaultDeviceLayout(child, deviceWidget, children);
+            }
+        } else {
+            int i = 0;
         }
     }
         
@@ -516,19 +446,20 @@ public class DeviceLayoutRenderer {
                         
                         if (CustomShape.SHAPE_TYPE.equals(shapeType)) {
                             long id = Long.valueOf(reader.getAttributeValue(null, "id"));
-                            String className= reader.getAttributeValue(null, "className");
+                            //String className= reader.getAttributeValue(null, "className");
                             
-                            if (structureRepository.containsKey(new RemoteObjectLight(className, id, null))) {
-                                for (RemoteObjectLight listItem : structureRepository.keySet()) {
-                                    if (listItem.getId() == id && listItem instanceof RemoteObject)
-                                        shape = ShapeFactory.getInstance().getCustomShape((RemoteObject) listItem);
+                            for (RemoteObjectLight listItem : structureRepository.keySet()) {
+                                if (listItem.getId() == id && listItem instanceof RemoteObject) {
+                                    shape = ShapeFactory.getInstance().getCustomShape((RemoteObject) listItem);
+                                    break;
                                 }
                             }
+                            
                             if (shape == null) {
                                 
                                 RemoteObject lol = null;
                                 try {
-                                    RemoteObject rol = RackViewImage.getInstance().getWebserviceBean().getObject(
+                                    lol = RackViewImage.getInstance().getWebserviceBean().getObject(
                                         "CustomShape",
                                         id,
                                         RackViewImage.getInstance().getIpAddress(),
@@ -538,18 +469,15 @@ public class DeviceLayoutRenderer {
                                     Exceptions.printStackTrace(ex);
                                     Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
                                 }
-                                //LocalObjectLight lol = CommuniCommunicationsStub.getInstance().getCustomShape(id, false);
                                 
                                 if (lol == null) {
-//                                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-//                                        NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                                 }
                                 else {
                                     RemoteObject listItem = null;
                                     try {
                                         listItem = RackViewImage.getInstance().getWebserviceBean().getObject(
-                                                "CustomShape",
-                                                id,
+                                                lol.getClassName(),
+                                                lol.getId(),
                                                 RackViewImage.getInstance().getIpAddress(),
                                                 RackViewImage.getInstance().getRemoteSession().getSessionId());
                                         
@@ -558,8 +486,6 @@ public class DeviceLayoutRenderer {
                                     } catch (ServerSideException ex) {
                                         Exceptions.printStackTrace(ex);
                                     }
-////                                    LocalObjectListItem listItem = new LocalObjectListItem(lol.getId(), lol.getClassName(), lol.getName());
-////                                    shape = ShapeFactory.getInstance().getCustomShape(listItem);
                                 }
                             }
                         } else
@@ -624,10 +550,6 @@ public class DeviceLayoutRenderer {
                                     Exceptions.printStackTrace(ex);                                    
                                 }
                                                                 
-
-////                                LocalObjectView layoutView = CommunicationsStub.getInstance()
-////                                    .getCustomShapeLayout(customShapeModel.getId(), false);
-                                
                                 if (layoutView != null) {
                                     byte [] customShapeStructure = layoutView.getStructure();
                                     if (customShapeStructure != null) {
@@ -690,10 +612,6 @@ public class DeviceLayoutRenderer {
             reader.close();
         } catch (XMLStreamException ex) {
             Notification.show("The view seems corrupted and could not be loaded", Notification.Type.ERROR_MESSAGE);
-////            NotificationUtil.getInstance().showSimplePopup("Load View", NotificationUtil.ERROR_MESSAGE, "The view seems corrupted and could not be loaded");
-            
-////            if (Constants.DEBUG_LEVEL == Constants.DEBUG_LEVEL_FINE)
-////            Exceptions.printStackTrace(ex);
         }
     }
     
@@ -716,7 +634,7 @@ public class DeviceLayoutRenderer {
                     widget.setOpaque(true);
                     deviceLayoutWidget.addChild(widget);
                     scene.validate();
-                    scene.paint();
+                    scene.repaint();
                     continue;
                 }
                 RemoteObjectLight node = nodesToShape.get(0);
@@ -724,8 +642,7 @@ public class DeviceLayoutRenderer {
                 if (scene.findWidget(node) == null) {
                     Widget widget = scene.addNode(node);
                     widget.getScene().validate();
-                    widget.getScene().paint();
-////                    if (CommunicationsStub.getInstance().isSubclassOf(node.getClassName(), Constants.CLASS_GENERICPORT))
+                    widget.getScene().repaint();
                     boolean isSubclassOf = false;
                     
                     try {
@@ -745,13 +662,13 @@ public class DeviceLayoutRenderer {
                     ShapeWidgetUtil.shapeToWidget(shape, widget, true);
                     deviceLayoutWidget.addChild(widget);
                     scene.validate();
-                    scene.paint();
+                    scene.repaint();
                     
                     if (shape instanceof RectangleShape) {
                         if (((RectangleShape) shape).isSlot()) {
                             renderSlot(node, widget);
                             scene.validate();
-                            scene.paint();
+                            scene.repaint();
                         }
                     }
                 } else {
@@ -761,7 +678,7 @@ public class DeviceLayoutRenderer {
                         ShapeWidgetUtil.shapeToWidget(shape, widget, true);
                         deviceLayoutWidget.addChild(widget);
                         scene.validate();
-                        scene.paint();
+                        scene.repaint();
                     }
                 }
             } else {
@@ -788,7 +705,7 @@ public class DeviceLayoutRenderer {
                     ((ResizableLabelWidget) widget).setLabel(((LabelShape) shape).getLabel());
                     ((ResizableLabelWidget) widget).setForeground(((LabelShape) shape).getTextColor());
                     scene.validate();
-                    scene.paint();
+                    scene.repaint();
                                         
                 } else if (CircleShape.SHAPE_TYPE.equals(type)) {
                     widget = new CircleShapeWidget(parentWidget.getScene(), (CircleShape) shape);                    
@@ -800,7 +717,7 @@ public class DeviceLayoutRenderer {
                         widget.setBorder(BorderFactory.createLineBorder(0, shape.getBorderColor()));
                     widget.setPreferredSize(new Dimension(shape.getWidth() - Shape.DEFAULT_BORDER_SIZE, shape.getHeight() - Shape.DEFAULT_BORDER_SIZE));
                     scene.validate();
-                    scene.paint();
+                    scene.repaint();
                     
                 } else if (PolygonShape.SHAPE_TYPE.equals(type)) {
                     widget = new PolygonShapeWidget(parentWidget.getScene(), (PolygonShape) shape);
@@ -813,7 +730,7 @@ public class DeviceLayoutRenderer {
                     
                     widget.setPreferredSize(new Dimension(shape.getWidth() - Shape.DEFAULT_BORDER_SIZE, shape.getHeight() - Shape.DEFAULT_BORDER_SIZE));
                     scene.validate();
-                    scene.paint();
+                    scene.repaint();
                 }
                 if (widget == null)
                     continue;
@@ -822,13 +739,21 @@ public class DeviceLayoutRenderer {
                 widget.repaint();
                 
                 scene.validate();
-                scene.paint();
+                scene.repaint();
             }
         }
     }
     
     public void renderSlot(RemoteObjectLight slotObj, Widget widget) {
-        List<RemoteObjectLight> children = nodes.get(slotObj);
+        List<RemoteObjectLight> children = null;
+        
+        for (RemoteObjectLight key : nodes.keySet()) {
+            
+            if (key.getId() == slotObj.getId()) {
+                children = nodes.get(key);
+                break;
+            }
+        }
         
         if (children == null)
             return;
@@ -844,16 +769,21 @@ public class DeviceLayoutRenderer {
         RemoteObjectLight object, 
         HashMap<RemoteObjectLight, List<RemoteObjectLight>> subHierarchy) {
         
-        if (hierarchy.containsKey(object)) {
-            List<RemoteObjectLight> children = hierarchy.get(object);
+        for (RemoteObjectLight key : hierarchy.keySet()) {
             
-            subHierarchy.put(object, children);
-            
-            for (RemoteObjectLight child : children)
-                getSubHierarchy(hierarchy, child, subHierarchy);
-        } else {
-            subHierarchy.put(object, new ArrayList());
+            if (object.getId() == key.getId()) {
+                
+                List<RemoteObjectLight> children = hierarchy.get(key);
+
+                subHierarchy.put(object, children);
+
+                for (RemoteObjectLight child : children)
+                    getSubHierarchy(hierarchy, child, subHierarchy);
+                
+                return;
+            }
         }
+        subHierarchy.put(object, new ArrayList());
     }
     
     /**
@@ -933,10 +863,21 @@ public class DeviceLayoutRenderer {
     
     private void findPortsEnabled(RemoteObjectLight device, List<RemoteObjectLight> result) {
         
-        for (RemoteObjectLight child : nodes.get(device)) {
-            
-            if (isPortEnabled(child))
-                result.add(child);                
+        List<RemoteObjectLight> lst = null;
+        
+        for (RemoteObjectLight aNode : nodes.keySet()) {
+                        
+            if (aNode.getId() == device.getId())
+                lst = nodes.get(aNode);                        
+        }
+                
+        if (lst != null) {
+        
+            for (RemoteObjectLight child :  lst) {
+
+                if (isPortEnabled(child))
+                    result.add(child);                
+            }
         }
     }
 }

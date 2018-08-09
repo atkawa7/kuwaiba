@@ -1,7 +1,16 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
+ * 
+ *   Licensed under the EPL License, Version 1.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *        http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
  */
 package org.kuwaiba.web.procmanager;
 
@@ -26,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import javax.ejb.ObjectNotFoundException;
-import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -36,6 +44,7 @@ import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.openide.util.Exceptions;
 
 /**
  * Wrapped to configure the instalation of a device
@@ -88,11 +97,12 @@ public class MiniAppInstallation extends AbstractComponentMiniApplication {
         
         Grid<MaterialBean> gridMaterials = new Grid<>();
         List<MaterialBean> materialBeans = new ArrayList();
-        String columnMaterialId = "columnMaterialId";
-        String columnCityId = "columnCityId";
-        String columnRackId = "columnRackId";
-        String columnActionsId = "columnActionsId";
-        
+        String columnMaterialId = "columnMaterialId"; //NOI18N
+        String columnCityId = "columnCityId"; //NOI18N
+        String columnRackId = "columnRackId"; //NOI18N
+        String columnViewRackId = "columnViewRackId"; //NOI18N
+        String columnSelectRackId = "columnSelectRackId"; //NOI18N
+                
         for (int i = 0; i < objectClasses.size(); i++) {
 
             MaterialBean materialBean = new MaterialBean(Long.valueOf(objectIds.get(i)), objectClasses.get(i), getWebserviceBean());
@@ -105,13 +115,57 @@ public class MiniAppInstallation extends AbstractComponentMiniApplication {
         gridMaterials.addColumn(MaterialBean::getMaterial).setCaption("Material").setId(columnMaterialId);
         gridMaterials.addColumn(MaterialBean::getCity).setCaption("City").setId(columnCityId);
         gridMaterials.addColumn(MaterialBean::getRack).setCaption("Rack").setId(columnRackId);
-        gridMaterials.addColumn(MaterialBean::getbtnSelectRack, new ButtonRenderer(new RendererClickListener<MaterialBean>() {
+        gridMaterials.addColumn(MaterialBean::getBtnRackView, new ButtonRenderer(new RendererClickListener<MaterialBean>() {
+            @Override
+            public void click(ClickableRenderer.RendererClickEvent<MaterialBean> event) {
+                
+                MaterialBean materialBean = (MaterialBean) event.getItem();
+                                
+                SceneExporter sceneExporter = SceneExporter.getInstance();
+                
+                String oldPath = SceneExporter.PATH;
+                String newPath = "/data/attachments/"; //NOI18N
+
+                SceneExporter.PATH = newPath;
+
+                String img = sceneExporter.buildRackView(
+                    Page.getCurrent().getWebBrowser().getAddress(), 
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")), //NOI18N
+                    getWebserviceBean(), 
+                    materialBean.getRackObject().getClassName(), 
+                    materialBean.getRackObject().getId());
+
+                SceneExporter.PATH = oldPath;
+                
+                Panel panel = new Panel();
+
+                FileResource resource = new FileResource(new File(newPath + img + ".png"));                    
+
+                Image image = new Image();
+                image.setSource(resource);
+                
+                image.setWidth("100%");
+                image.setHeightUndefined();
+                
+                panel.setSizeFull();
+                panel.setContent(image);
+                
+                Window window = new Window();
+                window.setWidth("90%");
+                window.setHeight("80%"); 
+                window.setContent(panel);
+                window.center();
+
+                UI.getCurrent().addWindow(window);
+            }
+        })).setCaption("Actions").setId(columnViewRackId);        
+        gridMaterials.addColumn(MaterialBean::getBtnSelectRack, new ButtonRenderer(new RendererClickListener<MaterialBean>() {
             @Override
             public void click(ClickableRenderer.RendererClickEvent<MaterialBean> event) {
                 
                 MaterialBean materialBean = (MaterialBean) event.getItem();
             }
-        })).setCaption("Actions").setId(columnActionsId);
+        })).setCaption("Actions").setId(columnSelectRackId);
         
         Label lblMaterials = new Label("Materials");
         lblMaterials.addStyleNames(ValoTheme.LABEL_H1);
@@ -121,8 +175,8 @@ public class MiniAppInstallation extends AbstractComponentMiniApplication {
         
         Grid<PortBean> gridPort = new Grid<>();
         List<PortBean> portBeans = new ArrayList();
-        String columnPortId = "columnPortId";
-        String columnPortActionsId = "columnPortActionsId";
+        String columnPortId = "columnPortId"; //NOI18N
+        String columnPortActionsId = "columnPortActionsId"; //NOI18N
         
         for (int i = 0; i < objectClasses.size(); i++) {
 
@@ -139,57 +193,42 @@ public class MiniAppInstallation extends AbstractComponentMiniApplication {
             public void click(ClickableRenderer.RendererClickEvent<PortBean> event) {
                 PortBean portBean = (PortBean) event.getItem();
                 
-                SceneExporter sceneExporter = SceneExporter.getInstance(
-                    PersistenceService.getInstance().getBusinessEntityManager(), 
-                    PersistenceService.getInstance().getMetadataEntityManager());
+                SceneExporter sceneExporter = SceneExporter.getInstance();
                 
+                String oldPath = SceneExporter.PATH;
+                String newPath = "/data/attachments/"; //NOI18N
+
+                SceneExporter.PATH = newPath;
                 try {
-                    String oldPath = SceneExporter.PATH;
-                    String newPath = "/data/attachments/";
-                    
-                    SceneExporter.PATH = newPath;
-                    
                     String img = sceneExporter.buildPhysicalPathView(portBean.getObjectClass(), portBean.getObjectId());
                     
-                    SceneExporter.PATH = oldPath;
-                                        
-//                    MessageBox messageBox = MessageBox.getInstance();
                     
+
                     Panel panel = new Panel();
-                    
+
                     FileResource resource = new FileResource(new File(newPath + img + ".png"));                    
-                    
+
                     Image image = new Image();
                     image.setSource(resource);
-                                        
-//                    VerticalLayout verticalLayout = new VerticalLayout();
-//                    verticalLayout.addComponent(image);
-                                                            
+
+                    image.setWidth("100%");
+                    image.setHeight("100%");
+
+                    panel.setSizeFull();
                     panel.setContent(image);
-//                    panel.setHeight(70, Sizeable.Unit.PERCENTAGE);
-//                    panel.setWidth(80, Sizeable.Unit.PERCENTAGE);
-                    
+
                     Window window = new Window();
+                    window.setWidth("90%");
+                    window.setHeight("80%"); 
                     window.setContent(panel);
                     window.center();
-                    
+
                     UI.getCurrent().addWindow(window);
-                    
-//                    messageBox.showMessage(panel);
-//                    
-//                    messageBox.addClickListener(new ClickListener() {
-//                        
-//                        @Override
-//                        public void buttonClick(Button.ClickEvent event) {
-//                        }
-//                    });
-                    
-                } catch (MetadataObjectNotFoundException | ObjectNotFoundException | 
-                        ApplicationObjectNotFoundException | InvalidArgumentException | 
-                        BusinessObjectNotFoundException ex) {
-                    
-                    Notification.show(ex.getMessage());
+                
+                } catch (MetadataObjectNotFoundException | ObjectNotFoundException | ApplicationObjectNotFoundException | InvalidArgumentException | BusinessObjectNotFoundException ex) {
+                    Exceptions.printStackTrace(ex);
                 }
+                SceneExporter.PATH = oldPath;
             }
         })).setCaption("Actions").setId(columnPortActionsId);
         
@@ -228,7 +267,7 @@ public class MiniAppInstallation extends AbstractComponentMiniApplication {
                     objectClass,
                     objectId,
                     Page.getCurrent().getWebBrowser().getAddress(),
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
                 
                 return material != null ? material.getName() : null;
             } catch (ServerSideException ex) {
@@ -242,9 +281,9 @@ public class MiniAppInstallation extends AbstractComponentMiniApplication {
                 city = webserviceBean.getFirstParentOfClass(
                         objectClass,
                         objectId,
-                        "City",
+                        "City", //NOI18N
                         Page.getCurrent().getWebBrowser().getAddress(),
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
                                 
                 return city != null ? city.getName() : null;
             } catch (ServerSideException ex) {
@@ -253,14 +292,19 @@ public class MiniAppInstallation extends AbstractComponentMiniApplication {
             return null;
         }
         
+        public RemoteObjectLight getRackObject() {
+            getRack();
+            return rack;
+        }
+        
         public String getRack() {
             try {
                 rack = webserviceBean.getFirstParentOfClass(
                         objectClass,
                         objectId,
-                        "Rack",
+                        "Rack", //NOI18N
                         Page.getCurrent().getWebBrowser().getAddress(),
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
                                 
                 return rack != null ? rack.getName() : null;
             } catch (ServerSideException ex) {
@@ -269,8 +313,12 @@ public class MiniAppInstallation extends AbstractComponentMiniApplication {
             return null;
         }
         
-        public String getbtnSelectRack() {
+        public String getBtnSelectRack() {
             return "Select Rack";
+        }
+        
+        public String getBtnRackView() {
+            return "Show Rack View";
         }
     }
     
@@ -299,7 +347,7 @@ public class MiniAppInstallation extends AbstractComponentMiniApplication {
                     objectClass,
                     objectId,
                     Page.getCurrent().getWebBrowser().getAddress(),
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
                 
                 return port;
             } catch (ServerSideException ex) {

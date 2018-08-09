@@ -26,20 +26,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-package org.inventory.core.templates.layouts.model;
-
-import java.awt.Color;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import org.inventory.communications.util.Constants;
-*/
 /**
  * Class used to represent a generic shape
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>

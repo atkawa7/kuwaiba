@@ -83,15 +83,15 @@ public class RackWidgetWrapper extends RackViewWidget {
             int rackUnits = rackWidget.getRackUnits();
             int rackUnitsCounter = rackWidget.getRackUnitsCounter();                        
             
-            String lblName = "Name: ";//ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NAME"); //NOI18N
-            String lblSerialNumber = "Serial Number: ";//ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_SERIAL_NUMBER"); //NOI18N
-            String lblVendor = "Vendor: ";//ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_VENDOR"); //NOI18N
-            String lblRackNumbering = "Numbering: ";//ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NUMBERING"); //NOI18N
+            String lblName = "Name: ";
+            String lblSerialNumber = "Serial Number: ";
+            String lblVendor = "Vendor: ";
+            String lblRackNumbering = "Numbering: ";
 
-            String lblAscending = "Ascending";//ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NUMBERING_ASCENDING"); //NOI18N
-            String lblDescending = "Descending";//ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_NUMBERING_DESCENDING"); //NOI18N
+            String lblAscending = "Ascending";
+            String lblDescending = "Descending";
 
-            String lblUsagePercentage = "Usage Percentage";//ResourceBundle.getBundle("org/inventory/views/rackview/Bundle").getString("LBL_RACK_USAGE_PERCENTAGE"); //NOI18N
+            String lblUsagePercentage = "Usage Percentage";
 
             String name = rack.getName();
             String serialNumber = rack.getAttribute("serialNumber") == null ? "" : rack.getAttribute("serialNumber"); //NOI18N

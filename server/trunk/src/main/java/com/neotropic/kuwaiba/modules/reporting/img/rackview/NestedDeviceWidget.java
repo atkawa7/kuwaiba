@@ -16,10 +16,6 @@
 package com.neotropic.kuwaiba.modules.reporting.img.rackview;
 
 import java.awt.Color;
-import org.kuwaiba.apis.persistence.PersistenceService;
-import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
-import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
@@ -46,19 +42,16 @@ public class NestedDeviceWidget extends SelectableRackViewWidget implements Nest
     private Color previousBackground;
     private boolean hasLayout;
     
-    public NestedDeviceWidget(RackViewScene scene, RemoteObjectLight businessObject, boolean hasLayout) {
-        super(scene, businessObject);
+    public NestedDeviceWidget(RackViewScene scene, RemoteObjectLight remoteObject, boolean hasLayout) {
+        super(scene, remoteObject);
         
         try {
-            nestedDeviceClass = RackViewImage.getInstance().getWebserviceBean().getClass(
-                businessObject.getClassName(), 
+            nestedDeviceClass = RackViewImage.getInstance().getWebserviceBean().getClass(remoteObject.getClassName(), 
                 RackViewImage.getInstance().getIpAddress(), 
                 RackViewImage.getInstance().getRemoteSession().getSessionId());
-            //PersistenceService.getInstance().getMetadataEntityManager().getClass(businessObject.getClassName());
         } catch (ServerSideException ex) {
             Exceptions.printStackTrace(ex);
         }
-////        nestedDeviceClass = CommunicationsStub.getInstance().getMetaForClass(businessObject.getClassName(), false);
         this.hasLayout = hasLayout;
     }
     
@@ -83,14 +76,15 @@ public class NestedDeviceWidget extends SelectableRackViewWidget implements Nest
     public void paintNestedDeviceWidget() {
         if (!hasLayout()) {
             setLayout(LayoutFactory.createVerticalFlowLayout());
-            Color backgroundColor = Color.CYAN;//nestedDeviceClass.getColor(); ${TODO}
-            setBackground(backgroundColor != null ? backgroundColor : Color.WHITE);
+            
+            Color backgroundColor = new Color(nestedDeviceClass.getColor());
+            setBackground(backgroundColor);
             setOpaque(true);
 
             lblName = new LabelWidget(getRackViewScene());
             lblName.setBorder(BorderFactory.createEmptyBorder(0, 5 ,0 , 5));
             
-            lblName.setLabel(((BusinessObjectLight) getLookupReplace()).getName());
+            lblName.setLabel(((RemoteObjectLight) getLookupReplace()).getName());
             lblName.setForeground(Color.WHITE);
 
             widgetToChildren = new RackViewWidget(getRackViewScene());

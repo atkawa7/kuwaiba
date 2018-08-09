@@ -25,22 +25,6 @@ import org.netbeans.api.visual.border.BorderFactory;
 import org.netbeans.api.visual.model.ObjectState;
 import org.netbeans.api.visual.widget.Widget;
 import org.openide.util.Exceptions;
-/*
-package org.inventory.views.rackview.widgets;
-
-import org.inventory.views.rackview.NestedDevice;
-import org.inventory.views.rackview.scene.RackViewScene;
-import java.awt.Color;
-import java.awt.Dimension;
-import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalClassMetadata;
-import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.core.services.api.notifications.NotificationUtil;
-import org.inventory.core.services.i18n.I18N;
-import org.netbeans.api.visual.border.BorderFactory;
-import org.netbeans.api.visual.model.ObjectState;
-import org.netbeans.api.visual.widget.Widget;
-*/
 /**
  * A widget to represent a port object which in the future will have actions like 
  * connect and disconnect or be a more complex representation
@@ -50,9 +34,9 @@ public class PortWidget extends SelectableRackViewWidget implements NestedDevice
     private boolean isNested = false;
     private NestedDeviceWidget parent;
     
-    private static final Color selectedColor = new Color(255, 255, 255, 230);
-    private static final Color colorGreen = new Color(144, 245, 0);
-    private static final Color colorRed = new Color(255, 62, 51);
+    private static final Color SELECTED_COLOR = new Color(255, 255, 255, 230);
+    private static final Color COLOR_GREEN = new Color(144, 245, 0);
+    private static final Color COLOR_RED = new Color(255, 62, 51);
     
     private boolean free;
     private final Widget innerWidget;
@@ -72,13 +56,7 @@ public class PortWidget extends SelectableRackViewWidget implements NestedDevice
         } catch (ServerSideException ex) {
             Exceptions.printStackTrace(ex);
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
-        }
-        
-////        portClass = CommunicationsStub.getInstance().getMetaForClass(portObject.getClassName(), false);
-////        if (portClass == null) {
-////            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
-////                NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
-////        }
+        }        
         free = true; 
         if (isNested) {
             innerWidget = new Widget(scene);
@@ -88,7 +66,7 @@ public class PortWidget extends SelectableRackViewWidget implements NestedDevice
             innerWidget.setOpaque(true);
 
             setOpaque(true);        
-            setBackground(colorGreen);
+            setBackground(COLOR_GREEN);
             setToolTipText(portObject.getName());
             setPreferredSize(new Dimension(25, 25));
 
@@ -114,9 +92,9 @@ public class PortWidget extends SelectableRackViewWidget implements NestedDevice
     public void setFree(boolean free) {
         this.free = free;
         if (free)
-            setBackground(colorGreen);
+            setBackground(COLOR_GREEN);
         else
-            setBackground(colorRed);            
+            setBackground(COLOR_RED);            
     }
     
     
@@ -131,10 +109,10 @@ public class PortWidget extends SelectableRackViewWidget implements NestedDevice
         }        
         if (state.isSelected()) {
             if (isNested)
-                innerWidget.setBackground(selectedColor);
+                innerWidget.setBackground(SELECTED_COLOR);
             else {
                 previousColor = new Color(((Color) this.getBackground()).getRGB());
-                setBackground(selectedColor);
+                setBackground(SELECTED_COLOR);
             }
         }
     }

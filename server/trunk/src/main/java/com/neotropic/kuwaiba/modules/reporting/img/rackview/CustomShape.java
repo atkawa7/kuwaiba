@@ -18,7 +18,6 @@ package com.neotropic.kuwaiba.modules.reporting.img.rackview;
 
 import java.awt.Image;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * A custom shape is a predefined shape used the custom shape tool
