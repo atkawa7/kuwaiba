@@ -179,18 +179,12 @@ class NavigationTreeComponent extends AbstractTopComponent {
                 });
         
         this.tree.addSelectionListener((e) -> {
-            if ((e.getAllSelectedItems().isEmpty() || e.getAllSelectedItems().size() > 1) && pnlMain.getSecondComponent() != null) 
-                    pnlMain.removeComponent(pnlMain.getSecondComponent());
-                
-            else {
-                if (e.getFirstSelectedItem().get() instanceof InventoryObjectNode)
-                    pnlMain.setSecondComponent(
-                            new NavigationTreeDashboard((RemoteObjectLight)e.getFirstSelectedItem().get().getObject(), wsBean));
-                else {
-                    if (pnlMain.getSecondComponent() != null)
-                        pnlMain.removeComponent(pnlMain.getSecondComponent());
-                }
-            }
+            if (e.getAllSelectedItems().isEmpty() || e.getAllSelectedItems().size() > 1 
+                    || !InventoryObjectNode.class.isInstance(e.getFirstSelectedItem().get()) /*It's a root node, for example*/) 
+                pnlMain.setSecondComponent(null);
+            else 
+                pnlMain.setSecondComponent(new NavigationTreeDashboard((RemoteObjectLight)e.getFirstSelectedItem().get().getObject(), wsBean));
+            
         });
         
         HorizontalLayout lytFilter = new HorizontalLayout(txtFilter, btnSearch);

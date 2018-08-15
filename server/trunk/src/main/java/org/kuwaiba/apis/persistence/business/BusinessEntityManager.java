@@ -596,7 +596,7 @@ public interface BusinessEntityManager {
     /**
      * Recursively gets all the light instances of given class
      * @param className Class name. It mist be a subclass of InventoryObject
-     * @param maxResults Max number of results. 0 to get all
+     * @param maxResults Max number of results. Use -1 to retrieve all
      * @return a list of instances 
      * @throws MetadataObjectNotFoundException if the class can not be found
      * @throws InvalidArgumentException If the class is not subclass of InventoryObject

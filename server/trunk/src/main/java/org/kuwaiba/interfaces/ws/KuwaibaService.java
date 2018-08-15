@@ -2528,7 +2528,7 @@ public class KuwaibaService {
     /**
      * Gets all objects of a given class
      * @param className Class name
-     * @param maxResults Max number of results. 0 to retriever all
+     * @param maxResults Max number of results. Use -1 to retrieve all
      * @param sessionId Session token
      * @return A list of instances of @className
      * @throws ServerSideException If the class can not be found
