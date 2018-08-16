@@ -1056,12 +1056,21 @@ public interface ApplicationEntityManager {
     
     /**
      * Updates script query parameters
-     * @param scriptQueryId The script query id
+     * @param scriptQueryId The Script Query id
      * @param parameters The script query parameters
      * @throws ApplicationObjectNotFoundException If the script query could not be found
      * @return The summary of the changes
      */
     public ChangeDescriptor updateScriptQueryParameters(long scriptQueryId, List<StringPair> parameters) throws ApplicationObjectNotFoundException;
+    
+    /**
+     * Updates script query parameters
+     * @param scriptQueryName The script Query Name
+     * @param parameters The script query parameters
+     * @throws ApplicationObjectNotFoundException If the script query could not be found
+     * @return The summary of the changes
+     */
+    public ChangeDescriptor updateScriptQueryParameters(String scriptQueryName, List<StringPair> parameters) throws ApplicationObjectNotFoundException;
     
     /**
      * Gets a script query
@@ -1092,6 +1101,15 @@ public interface ApplicationEntityManager {
      * @throws InvalidArgumentException If the script property can no be found
      */
     public ScriptQueryResult executeScriptQuery(long scriptQueryId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Executes a script query
+     * @param scriptQueryName The script query Name
+     * @return The script query result
+     * @throws ApplicationObjectNotFoundException If the script query could not be found
+     * @throws InvalidArgumentException If the script property can no be found
+     */
+    public ScriptQueryResult executeScriptQuery(String scriptQueryName) throws ApplicationObjectNotFoundException, InvalidArgumentException;
         
     /**
      * Creates a template.

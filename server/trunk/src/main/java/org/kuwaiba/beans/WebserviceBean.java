@@ -411,6 +411,7 @@ public interface WebserviceBean {
     public void updateScriptQueryProperties(long scriptQueryId, String propertyName, String propertyValue, String ipAddress, String sessionId) throws ServerSideException;
     
     public void updateScriptQueryParameters(long scriptQueryId, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
+    public void updateScriptQueryParameters(String scriptQueryName, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException;
     
     public RemoteScriptQuery getScriptQuery(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException;
     
@@ -419,7 +420,9 @@ public interface WebserviceBean {
     public void deleteScriptQuery(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException;
     
     public RemoteScriptQueryResult executeScriptQuery(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteScriptQueryResult executeScriptQuery(String scriptQueryName, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteScriptQueryResultCollection executeScriptQueryCollection(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteScriptQueryResultCollection executeScriptQueryCollection(String scriptQueryName, String ipAddress, String sessionId) throws ServerSideException;
     public long createContact(String contactClass, List<StringPair> properties, String customerClassName, long customerId, String ipAddress, String sessionId) throws  ServerSideException;
     public void updateContact(String contactClass, long contactId, List<StringPair> properties, String ipAddress, String sessionId) throws  ServerSideException;
     public void deleteContact(String contactClass, long contactId, String ipAddress, String sessionId) throws  ServerSideException;

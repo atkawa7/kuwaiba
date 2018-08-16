@@ -144,5 +144,7 @@ public class Constants {
         public static final String REPAINT = "repaint"; //NOI18N
         public static final String SELECTED_ROW = "selectedRow"; //NOI18N
         public static final String CAPTION = "caption"; //NOI18N
+        public static final String INPUT_PARAMETERS = "inputParameters"; //NOI18N
+        public static final String OUTPUT_PARAMETERS = "outputParameters"; //NOI18N
     }
 }

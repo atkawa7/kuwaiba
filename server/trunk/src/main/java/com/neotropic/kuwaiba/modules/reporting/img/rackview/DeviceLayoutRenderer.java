@@ -55,7 +55,7 @@ public class DeviceLayoutRenderer {
     /**
      * List of classes that has a default device layout
      */
-    private static final String[] CLASSES_WITH_DEFAULT_DEVICE_LAYOUT = new String [] {"GenericDistributionFrame", "GenericBoard", "GenericCommunicationsElement", "Slot"};
+    private static final String[] CLASSES_WITH_DEFAULT_DEVICE_LAYOUT = new String [] {"GenericDistributionFrame", "GenericBoard", "GenericCommunicationsElement", "Slot", "CableManager"};
     /**
      * List of classes of ports that can be shown in the layout
      */

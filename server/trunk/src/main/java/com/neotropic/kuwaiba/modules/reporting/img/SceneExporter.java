@@ -5,9 +5,13 @@
  */
 package com.neotropic.kuwaiba.modules.reporting.img;
 
+import com.neotropic.kuwaiba.modules.reporting.img.rackview.DeviceLayoutRenderer;
+import com.neotropic.kuwaiba.modules.reporting.img.rackview.DeviceLayoutScene;
 import com.neotropic.kuwaiba.modules.reporting.img.rackview.RackViewImage;
 import com.neotropic.kuwaiba.modules.reporting.img.rackview.RackViewScene;
 import com.neotropic.kuwaiba.modules.reporting.img.rackview.RackViewService;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -24,8 +28,8 @@ import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.services.persistence.util.Constants;
+import org.kuwaiba.web.procmanager.rackview.ComponentRackView;
 import org.netbeans.api.visual.anchor.AnchorFactory;
 import org.netbeans.api.visual.widget.ConnectionWidget;
 import org.netbeans.api.visual.widget.Widget;
@@ -91,7 +95,48 @@ public class SceneExporter {
         }
         return null;
     }
-    
+        
+    public String buildDeviceLayout(String deviceClassName, long deviceId, WebserviceBean webserviceBean, String ipAddress, RemoteSession remoteSession) {
+        try {
+            RackViewImage rackViewImage = RackViewImage.getInstance();
+            rackViewImage.setIpAddress(ipAddress);
+            rackViewImage.setRemoteSession(remoteSession);
+            rackViewImage.setWebserviceBean(webserviceBean);
+            
+            RemoteObject remoteObject = webserviceBean.getObject(deviceClassName, deviceId, ipAddress, remoteSession.getSessionId());
+            
+            int rackUnits = remoteObject.getAttribute("rackUnits") != null ? Integer.valueOf(remoteObject.getAttribute("rackUnits")) : 1;
+            
+            int rackUnitWidth = (int) ComponentRackView.RACK_UNIT_WIDTH_PX;
+            int rackUnitHeight = (int) ComponentRackView.RACK_UNIT_HEIGHT_PX * rackUnits;
+                        
+            DeviceLayoutScene deviceLayoutScene = new DeviceLayoutScene();
+            DeviceLayoutRenderer deviceLayoutRenderer = new DeviceLayoutRenderer(
+                remoteObject, deviceLayoutScene, 
+                new Point(0, 0), new Rectangle(0, 0, rackUnitWidth, rackUnitHeight), 
+                null, null);
+            deviceLayoutRenderer.render();
+            deviceLayoutScene.setPreferredBounds(new Rectangle(0, 0, rackUnitWidth, rackUnitHeight));
+            deviceLayoutScene.revalidate();
+            deviceLayoutScene.repaint();
+            
+            org.netbeans.api.visual.export.SceneExporter.createImage(deviceLayoutScene,
+                new File(PATH + remoteObject.getClassName() + "_" + remoteObject.getId() +".png"),
+                org.netbeans.api.visual.export.SceneExporter.ImageType.PNG,
+                org.netbeans.api.visual.export.SceneExporter.ZoomType.ACTUAL_SIZE,
+                false, false, 100,
+                0,  //Not used
+                0); //Not used
+
+            return remoteObject.getClassName() + "_" + remoteObject.getId();
+            
+        } catch (ServerSideException | IOException ex) {
+            Exceptions.printStackTrace(ex);
+            
+        }
+        return null;
+    }
+        
     public String buildPhysicalPathView(String portClassName, long portId) 
             throws MetadataObjectNotFoundException, ObjectNotFoundException,
             ApplicationObjectNotFoundException, InvalidArgumentException, BusinessObjectNotFoundException

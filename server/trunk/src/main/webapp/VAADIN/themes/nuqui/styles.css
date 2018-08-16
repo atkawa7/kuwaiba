@@ -15560,3 +15560,42 @@ div.v-layout.v-horizontal.v-widget {
 	width: 100%;
 	text-align: center;
 }
+
+.nuqui .selector .v-verticallayout-deviceeven {
+	background: seashell;
+}
+
+.nuqui .selector .v-verticallayout-selected {
+	background: lightsteelblue;
+}
+
+.nuqui .rackview * {
+	margin: 0px;
+	padding: 0px;
+}
+
+.nuqui .rackview .v-verticallayout {
+	background: lightsteelblue;
+}
+
+.nuqui .rackview .v-verticallayout-rackunit {
+	background: silver;
+	border-style: solid;
+	border-width: thin;
+	border-color: #000000;
+	border-bottom: 0px;
+}
+
+.nuqui .rackview .v-image {
+	background: silver;
+	border-style: solid;
+	border-width: thin;
+	border-color: #000000;
+	border-bottom: 0px;
+}
+
+.nuqui .rackview .v-label {
+	display: block;
+	vertical-align: middle;
+	text-align: center !important;
+}

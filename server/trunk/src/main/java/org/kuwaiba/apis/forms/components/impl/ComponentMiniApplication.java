@@ -16,18 +16,19 @@ import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.Constants;
 import org.kuwaiba.apis.forms.elements.ElementMiniApplication;
 import org.kuwaiba.apis.forms.elements.EventDescriptor;
-import org.kuwaiba.apis.web.gui.miniapps.AbstractMiniApplication;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.web.procmanager.AbstractComponentMiniApplication;
 import org.openide.util.Exceptions;
 
 /**
- *
+ * 
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ComponentMiniApplication extends GraphicalComponent {
     private Window window;
     private final WebserviceBean webserviceBean;
+    private AbstractComponentMiniApplication acma;
+    private ElementMiniApplication miniApp;
 
     public ComponentMiniApplication(WebserviceBean webserviceBean) {
         super(new Panel());
@@ -43,7 +44,7 @@ public class ComponentMiniApplication extends GraphicalComponent {
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementMiniApplication) {
             try {
-                ElementMiniApplication miniApp = (ElementMiniApplication) element;
+                miniApp = (ElementMiniApplication) element;
                 
                 String className = miniApp.getClassPackage() + "." + miniApp.getClassName();
                                                 
@@ -53,18 +54,22 @@ public class ComponentMiniApplication extends GraphicalComponent {
                 
                 if (object instanceof AbstractComponentMiniApplication) {
                     
-                    AbstractComponentMiniApplication acma = (AbstractComponentMiniApplication) object;
+                    acma = (AbstractComponentMiniApplication) object;
+                    /*
                     acma.setWebserviceBean(webserviceBean);
                                         
                     Object content = null;
+                    
+//                    miniApp.fireOnLoad();
                     
                     if (Constants.Attribute.Mode.DETACHED.equals(miniApp.getMode()))
                         content = acma.launchDetached();
                     else if (Constants.Attribute.Mode.EMBEDDED.equals(miniApp.getMode()))
                         content = acma.launchEmbedded();
                     
-                    if (content instanceof Component)
+                    if (content instanceof Component) 
                         getComponent().setContent((Component) content);
+                    */
                 }
                 
             } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
@@ -92,6 +97,37 @@ public class ComponentMiniApplication extends GraphicalComponent {
                     window.close();
             } else if (Constants.Function.CLEAN.equals(event.getPropertyName())) {
                                                 
+            }
+        }
+        /*
+        public void onElementEvent(EventDescriptor event) {
+            if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+
+                if (Constants.Property.ROWS.equals(event.getPropertyName())) {
+                    ElementGrid grid = (ElementGrid) getComponentEventListener();
+                    updateRows(grid);
+                }
+            }
+        }
+        */
+        if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+            
+            if (Constants.Property.INPUT_PARAMETERS.equals(event.getPropertyName())) {
+                if (event.getNewValue() instanceof Properties) {
+                    acma.setInputParameters((Properties) event.getNewValue());
+                                        
+                    acma.setWebserviceBean(webserviceBean);
+                                        
+                    Object content = null;
+                                        
+                    if (Constants.Attribute.Mode.DETACHED.equals(miniApp.getMode()))
+                        content = acma.launchDetached();
+                    else if (Constants.Attribute.Mode.EMBEDDED.equals(miniApp.getMode()))
+                        content = acma.launchEmbedded();
+                    
+                    if (content instanceof Component) 
+                        getComponent().setContent((Component) content);
+                }
             }
         }
     }

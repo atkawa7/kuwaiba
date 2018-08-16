@@ -3548,6 +3548,24 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
     
+    public void updateScriptQueryParameters(String scriptQueryName, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("updateScriptQueryParameters", ipAddress, sessionId);
+            
+            ChangeDescriptor changeDescriptor = aem.updateScriptQueryParameters(scriptQueryName, parameters);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                changeDescriptor);
+            
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
     @Override    
     public long createForm(String name, String description, byte[] structure, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
@@ -3768,6 +3786,20 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
+    public RemoteScriptQueryResult executeScriptQuery(String scriptQueryName, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("executeScriptQuery", ipAddress, sessionId);            
+            return new RemoteScriptQueryResult(aem.executeScriptQuery(scriptQueryName).getResult());
+                        
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
     public RemoteScriptQueryResultCollection executeScriptQueryCollection(long scriptQueryId, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -3776,6 +3808,65 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.validateWebServiceCall("executeScriptQueryCollection", ipAddress, sessionId);
             
             List collection = (List) aem.executeScriptQuery(scriptQueryId).getResult();
+            
+            if (collection != null && !collection.isEmpty()) {
+                
+                if (collection.get(0) instanceof BusinessObject) {
+                    
+                    List<RemoteObject> result = new ArrayList();                    
+                    
+                    for (Object item : collection)
+                        result.add(new RemoteObject((BusinessObject) item));
+                                        
+                    return new RemoteScriptQueryResultCollection(result);
+                    
+                }
+                else if (collection.get(0) instanceof BusinessObjectLight) {
+                    
+                    List<RemoteObjectLight> result = new ArrayList();                    
+                    
+                    for (Object item : collection)
+                        result.add(new RemoteObjectLight((BusinessObjectLight) item));
+                    
+                    return new RemoteScriptQueryResultCollection(result);
+                    
+                }
+                else if (collection.get(0) instanceof ClassMetadataLight) {
+                    
+                    List<RemoteClassMetadataLight> result = new ArrayList();
+                    
+                    for (Object item : collection) {
+                        ClassMetadataLight classMetadataLight = (ClassMetadataLight) item;
+                        
+                        List<Validator> validators = new ArrayList();
+                        
+                        for (String mapping : bre.getSubclassOfValidators().keySet()) {
+                            
+                            if (mem.isSubClass(mapping, classMetadataLight.getName()))
+                                validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
+                        }
+                        result.add(new RemoteClassMetadataLight(classMetadataLight, validators.toArray(new Validator[0])));
+                    }
+                    return new RemoteScriptQueryResultCollection(result);
+                    
+                }
+            }
+            return new RemoteScriptQueryResultCollection(collection);
+                        
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemoteScriptQueryResultCollection executeScriptQueryCollection(String scriptQueryName, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("executeScriptQueryCollection", ipAddress, sessionId);
+            
+            List collection = (List) aem.executeScriptQuery(scriptQueryName).getResult();
             
             if (collection != null && !collection.isEmpty()) {
                 

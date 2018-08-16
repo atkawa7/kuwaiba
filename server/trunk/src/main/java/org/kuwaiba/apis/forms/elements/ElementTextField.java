@@ -23,10 +23,10 @@ public class ElementTextField extends AbstractElementField {
     public ElementTextField() {
     }
     
-    @Override
-    public String getValue() {
-        return (String) super.getValue();
-    }
+//    @Override
+//    public String getValue() {
+//        return (String) super.getValue();
+//    }
     
     @Override
     public String getTagName() {

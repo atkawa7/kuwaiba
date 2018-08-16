@@ -1233,4 +1233,21 @@ public class Util {
             return node.hasNext() ? node.next() : null;
         }
     }
+    
+    public static Node findNodeByLabelAndName(Label label, String name) {
+        GraphDatabaseService graphDb = (GraphDatabaseService) PersistenceService.getInstance().getConnectionManager().getConnectionHandler();
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            String cypherQuery = "MATCH (node:" + label.name() + ") " +
+                                 "WHERE node.name = \"" + name + "\" " +
+                                 "RETURN node";
+            
+            Result result = graphDb.execute(cypherQuery);
+            ResourceIterator<Node> node = result.columnAs("node");
+            
+            tx.success();
+            return node.hasNext() ? node.next() : null;
+        }
+    }
 }

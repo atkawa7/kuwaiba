@@ -389,7 +389,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
                     artifactTools.addComponent(new Label("Interrupted Activity"));
                                 
                 if (currentActivity.isIdling()) {
-                    CheckBox chkIdleActivity = new CheckBox("Idle Activity");
+                    CheckBox chkIdleActivity = new CheckBox("Complete Activity Confirmation");
                     
                     chkIdleActivity.setValue(idleActivity);
 

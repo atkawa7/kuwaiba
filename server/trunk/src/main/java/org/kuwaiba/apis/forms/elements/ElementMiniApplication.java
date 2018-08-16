@@ -5,6 +5,9 @@
  */
 package org.kuwaiba.apis.forms.elements;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -16,9 +19,27 @@ public class ElementMiniApplication extends AbstractElement {
     private String mode;
     private String classPackage;
     private String className;
-        
+    private Properties inputParameters;
+    private Properties outputParameters;
+                    
     public ElementMiniApplication() {
-                                                
+        
+    }
+    
+    public Properties getInputParameters() {
+        return inputParameters;
+    }
+    
+    public void setInputParameters(Properties inputParameters) {
+        this.inputParameters = inputParameters;
+    }
+    
+    public Properties getOutputParameters() {
+        return outputParameters;
+    }
+        
+    public void setOutputParameters(Properties outputParameters) {
+        this.outputParameters = outputParameters;
     }
     
     @Override
@@ -70,5 +91,40 @@ public class ElementMiniApplication extends AbstractElement {
     public void setClassName(XMLStreamReader reader) {
         className = reader.getAttributeValue(null, Constants.Attribute.CLASS_NAME);
     }
-        
+    
+    @Override
+    public void fireOnLoad() {
+        super.fireOnLoad();
+        if (hasProperty(Constants.EventAttribute.ONLOAD, Constants.Property.INPUT_PARAMETERS)) {
+            
+            List<String> list = getEvents().get(Constants.EventAttribute.ONLOAD).get(Constants.Property.INPUT_PARAMETERS);
+            
+            if (list != null && !list.isEmpty()) {
+                Properties oldInputParameters = getInputParameters();
+                
+                String functionName = list.get(0);
+
+                Runner runner = getFormStructure().getElementScript().getFunctionByName(functionName);
+
+                List parameters = new ArrayList();
+
+                for (int i = 1; i < list.size(); i += 1) {
+                    AbstractElement anElement = getFormStructure().getElementById(list.get(i));
+                    parameters.add(anElement != null ? anElement : list.get(i));
+                }
+
+                Object newValue = runner.run(parameters);
+
+                if (newValue != null) {
+                    setInputParameters((Properties) newValue);
+                    
+                    fireElementEvent(new EventDescriptor(
+                        Constants.EventAttribute.ONPROPERTYCHANGE, 
+                        Constants.Property.INPUT_PARAMETERS, 
+                        getInputParameters(), 
+                        oldInputParameters));
+                }                
+            }
+        }
+    }        
 }

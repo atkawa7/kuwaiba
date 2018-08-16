@@ -633,4 +633,51 @@ $v-field-background-color: #ccffe6;
         text-align: center;
     }
     //END of end to end View forms
+    //Start Rack View
+    .selector {
+        .v-verticallayout-deviceeven {
+            background: seashell;
+        }
+        
+        .v-verticallayout-selected {
+            background: lightsteelblue;
+        }
+    }
+    
+    .rackview {
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+        
+        .v-verticallayout {
+            background: lightsteelblue;
+        }
+                
+        .v-verticallayout-rackunit {
+            background: silver;
+            border-style: solid;
+            border-width: thin;
+            border-color:#000000;
+            border-bottom: 0px;
+        }
+
+        .v-horizontallayout {
+        }
+
+        .v-image {
+            background: silver;
+            border-style: solid;
+            border-width: thin;
+            border-color:#000000;
+            border-bottom: 0px;
+        }
+
+        .v-label {
+            display: block;
+            vertical-align:middle;
+            text-align: center ! important;
+        }
+    }
+    //End Rack View
 }

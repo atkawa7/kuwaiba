@@ -42,7 +42,7 @@ public class ComponentTextField extends GraphicalComponent {
         if (element instanceof ElementTextField) {
             ElementTextField textField = (ElementTextField) element;
             
-            getComponent().setValue(textField.getValue() != null ? textField.getValue() : "");
+            getComponent().setValue(textField.getValue() != null ? (String) textField.getValue() : "");
             getComponent().setEnabled(textField.isEnabled());
             
             getComponent().addValueChangeListener(new ValueChangeListener() {

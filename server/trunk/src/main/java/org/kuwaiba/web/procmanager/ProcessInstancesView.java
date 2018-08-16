@@ -35,6 +35,7 @@ import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
+import com.vaadin.ui.themes.ValoTheme;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -109,62 +110,67 @@ public class ProcessInstancesView extends VerticalLayout {
         String columnCurrentActivityId = "columnCurrentActivity"; //NOI18N
         String columnActorId = "columnActor"; //NOI18N
         String columnStatusId = "columnStatus"; //NOI18N        
+        String columnViewId = "columnView"; //NOI18N
         
         grid.setItems(beans);
-        grid.addColumn(ProcessInstanceBean::getOrderNumber).setCaption("Order Number").setId(columnOrderNumberId);
-        grid.addColumn(ProcessInstanceBean::getServiceCode).setCaption("Service Code").setId(columnServiceCodeId);
+        
+        final String NEW_SERVICE = "New Service"; //NOI18N
+        HeaderRow headerRow = grid.appendHeaderRow();
+        
+        if (processDefinition.getName().equals(NEW_SERVICE)) {
+            grid.addColumn(ProcessInstanceBean::getOrderNumber).setCaption("Order Number").setId(columnOrderNumberId);
+            grid.addColumn(ProcessInstanceBean::getServiceCode).setCaption("Service Code").setId(columnServiceCodeId);
+            
+            // Filter to Order Number                
+            HeaderCell orderNumberHeaderCell = headerRow.getCell(columnOrderNumberId);
+
+            TextField txtOrderNumber = new TextField();
+            orderNumberHeaderCell.setComponent(txtOrderNumber);
+
+            txtOrderNumber.addValueChangeListener(new ValueChangeListener<String>() {
+
+                @Override
+                public void valueChange(HasValue.ValueChangeEvent<String> event) {
+                    Iterator<ProcessInstanceBean> iterator = beans.iterator();
+
+                    List<ProcessInstanceBean> filteredItems = new ArrayList();
+
+                    while (iterator.hasNext()) {
+                        ProcessInstanceBean element = iterator.next();
+
+                        if (captionFilter.test(element != null ? element.getOrderNumber() : null, event.getValue()))
+                            filteredItems.add(element);
+                    }
+                    grid.setItems(filteredItems);
+                }
+            });
+            // Filter to Service Code
+            HeaderCell serviceCodeHeaderCell = headerRow.getCell(columnServiceCodeId);
+
+            TextField txtServiceCode = new TextField();
+            serviceCodeHeaderCell.setComponent(txtServiceCode);
+
+            txtServiceCode.addValueChangeListener(new ValueChangeListener<String>() {
+
+                @Override
+                public void valueChange(HasValue.ValueChangeEvent<String> event) {
+                    Iterator<ProcessInstanceBean> iterator = beans.iterator();
+
+                    List<ProcessInstanceBean> filteredItems = new ArrayList();
+
+                    while (iterator.hasNext()) {
+                        ProcessInstanceBean element = iterator.next();
+
+                        if (captionFilter.test(element != null ? element.getServiceCode() : null, event.getValue()))
+                            filteredItems.add(element);
+                    }
+                    grid.setItems(filteredItems);
+                }
+            });
+        }
         grid.addColumn(ProcessInstanceBean::getCurrentActivity).setCaption("Current Activity").setId(columnCurrentActivityId);
         grid.addColumn(ProcessInstanceBean::getCurrentActivityActor).setCaption("Actor").setId(columnActorId);
-        
-        HeaderRow headerRow = grid.appendHeaderRow();
-        // Filter to Order Number                
-        HeaderCell orderNumberHeaderCell = headerRow.getCell(columnOrderNumberId);
-        
-        TextField txtOrderNumber = new TextField();
-        orderNumberHeaderCell.setComponent(txtOrderNumber);
-        
-        txtOrderNumber.addValueChangeListener(new ValueChangeListener<String>() {
-            
-            @Override
-            public void valueChange(HasValue.ValueChangeEvent<String> event) {
-                Iterator<ProcessInstanceBean> iterator = beans.iterator();
                 
-                List<ProcessInstanceBean> filteredItems = new ArrayList();
-                
-                while (iterator.hasNext()) {
-                    ProcessInstanceBean element = iterator.next();
-
-                    if (captionFilter.test(element != null ? element.getOrderNumber() : null, event.getValue()))
-                        filteredItems.add(element);
-                }
-                grid.setItems(filteredItems);
-            }
-        });
-        // Filter to Service Code
-        HeaderCell serviceCodeHeaderCell = headerRow.getCell(columnServiceCodeId);
-        
-        TextField txtServiceCode = new TextField();
-        serviceCodeHeaderCell.setComponent(txtServiceCode);
-        
-        txtServiceCode.addValueChangeListener(new ValueChangeListener<String>() {
-            
-            @Override
-            public void valueChange(HasValue.ValueChangeEvent<String> event) {
-                Iterator<ProcessInstanceBean> iterator = beans.iterator();
-                
-                List<ProcessInstanceBean> filteredItems = new ArrayList();
-                
-                while (iterator.hasNext()) {
-                    ProcessInstanceBean element = iterator.next();
-
-                    if (captionFilter.test(element != null ? element.getServiceCode() : null, event.getValue()))
-                        filteredItems.add(element);
-                }
-                grid.setItems(filteredItems);
-            }
-        });
-        
-        
         ButtonRenderer buttonContinuar = new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
             @Override
             public void click(ClickableRenderer.RendererClickEvent event) {
@@ -184,8 +190,7 @@ public class ProcessInstancesView extends VerticalLayout {
                 ((ProcessManagerComponent) ui.getContent()).addComponent(processInstanceView);
                 ((ProcessManagerComponent) ui.getContent()).setExpandRatio(processInstanceView, 9.5f);
             }
-        });
-        
+        });        
         ButtonRenderer buttonView = new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
             @Override
             public void click(ClickableRenderer.RendererClickEvent event) {
@@ -205,8 +210,8 @@ public class ProcessInstancesView extends VerticalLayout {
             }
         });
                 
-        grid.addColumn(ProcessInstanceBean::getEditButtonCaption, buttonContinuar).setCaption("Status").setId("columnStatus");
-        grid.addColumn(ProcessInstanceBean::getViewButtonCaption, buttonView).setCaption("View");        
+        grid.addColumn(ProcessInstanceBean::getEditButtonCaption, buttonContinuar).setCaption("Status").setId(columnStatusId);
+        grid.addColumn(ProcessInstanceBean::getViewButtonCaption, buttonView).setCaption("View").setId(columnViewId);        
         grid.addColumn(ProcessInstanceBean::getDeleteButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
             @Override
             public void click(ClickableRenderer.RendererClickEvent event) {
@@ -328,10 +333,12 @@ public class ProcessInstancesView extends VerticalLayout {
             }
         });
                 
-        Label lbl = new Label("Services");
+        Label lblProcessDefinitionName = new Label((processDefinition.getName() != null ? processDefinition.getName() : "") + " Processes");
+        lblProcessDefinitionName.addStyleNames(ValoTheme.LABEL_LARGE, ValoTheme.LABEL_BOLD);
                 
-        wrapper.addComponent(lbl);
-        wrapper.setComponentAlignment(lbl, Alignment.TOP_CENTER);
+        wrapper.addComponent(lblProcessDefinitionName);
+        
+        wrapper.setComponentAlignment(lblProcessDefinitionName, Alignment.TOP_CENTER);
                                 
         tools.addComponent(btnCreateProcessInstance);
         
@@ -339,7 +346,9 @@ public class ProcessInstancesView extends VerticalLayout {
         wrapper.addComponent(tools);
         wrapper.addComponent(grid);
         
+        setSpacing(false);
         addComponent(wrapper);
+        setComponentAlignment(wrapper, Alignment.TOP_CENTER);
     }
     
     public static void createProcessInstance(RemoteProcessDefinition processDef, WebserviceBean webserviceBean, RemoteSession remoteSession) {

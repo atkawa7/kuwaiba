@@ -2980,12 +2980,38 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public ChangeDescriptor updateScriptQueryParameters(long scriptQueryId, List<StringPair> parameters) 
         throws ApplicationObjectNotFoundException {
         
+        Node scriptQueryNode = Util.findNodeByLabelAndId(scriptQueryLabel, scriptQueryId);
+
+        if (scriptQueryNode == null)
+            throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", scriptQueryId));
+        
+        return updateScriptQueryParameters(scriptQueryNode, parameters);
+    }
+    
+    @Override    
+    public ChangeDescriptor updateScriptQueryParameters(String scriptQueryName, List<StringPair> parameters) 
+        throws ApplicationObjectNotFoundException {
+        
+        Node scriptQueryNode = Util.findNodeByLabelAndName(scriptQueryLabel, scriptQueryName);
+
+        if (scriptQueryNode == null)
+            throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", scriptQueryName));
+        
+        return updateScriptQueryParameters(scriptQueryNode, parameters);
+    }
+    
+    /**
+     * Updates the Parameters of a Script Query given the Node in the database
+     */        
+    private ChangeDescriptor updateScriptQueryParameters(Node scriptQueryNode, List<StringPair> parameters) 
+        throws ApplicationObjectNotFoundException {
+        
         try (Transaction tx = graphDb.beginTx()) {
             
-            Node scriptQueryNode = Util.findNodeByLabelAndId(scriptQueryLabel, scriptQueryId);
-            
-            if (scriptQueryNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", scriptQueryId));
+////            Node scriptQueryNode = Util.findNodeByLabelAndId(scriptQueryLabel, scriptQueryId);
+////            
+////            if (scriptQueryNode == null)
+////                throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", scriptQueryId));
             
             String affectedProperties = "";
             String oldValues = "";
@@ -3015,10 +3041,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             tx.success();
             
             return new ChangeDescriptor(affectedProperties, oldValues, newValues, 
-                String.format("Updated parameters in Script Query with name %s and id %s ", scriptQueryName, scriptQueryId));
+                String.format("Updated parameters in Script Query with name %s and id %s ", scriptQueryName, scriptQueryNode.getId()));
         }
     }
-    
+        
     @Override
     public ScriptQuery getScriptQuery(long scriptQueryId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
@@ -3062,14 +3088,37 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public ScriptQueryResult executeScriptQuery(long scriptQueryId) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        Node scriptQueryNode = Util.findNodeByLabelAndId(scriptQueryLabel, scriptQueryId);
+        
+        if (scriptQueryNode == null)
+            throw new ApplicationObjectNotFoundException(String.format("A Script Query with id %s could not be found", scriptQueryId));
+        
+        return executeScriptQuery(scriptQueryNode);
+    }
+    
+    @Override
+    public ScriptQueryResult executeScriptQuery(String scriptQueryName) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        Node scriptQueryNode = Util.findNodeByLabelAndName(scriptQueryLabel, scriptQueryName);
+        
+        if (scriptQueryNode == null)
+            throw new ApplicationObjectNotFoundException(String.format("A Script Query with id %s could not be found", scriptQueryName));
+        
+        return executeScriptQuery(scriptQueryNode);
+    }
+    
+////    @Override
+    /**
+     * Executes a Script Query given the Node in the database
+     */
+    private ScriptQueryResult executeScriptQuery(Node scriptQueryNode) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         
         try (Transaction tx = graphDb.beginTx()) {
-            Node scriptQueryNode = Util.findNodeByLabelAndId(scriptQueryLabel, scriptQueryId);
+////            Node scriptQueryNode = Util.findNodeByLabelAndId(scriptQueryLabel, scriptQueryId);
             
-            if (scriptQueryNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("A Script Query with id %s could not be found", scriptQueryId));
+////            if (scriptQueryNode == null)
+////                throw new ApplicationObjectNotFoundException(String.format("A Script Query with id %s could not be found", scriptQueryId));
             if (!scriptQueryNode.hasProperty(Constants.PROPERTY_SCRIPT))
-                throw new InvalidArgumentException(String.format("The Script Query with id %s does not have a script", scriptQueryId));
+                throw new InvalidArgumentException(String.format("The Script Query with id %s does not have a script", scriptQueryNode.getId()));
                         
             String script = (String) scriptQueryNode.getProperty(Constants.PROPERTY_SCRIPT);
                         

@@ -20,7 +20,8 @@ import org.kuwaiba.apis.web.gui.miniapps.AbstractMiniApplication;
 import org.kuwaiba.beans.WebserviceBean;
 
 /**
- *
+ * A Component Mini Application is a graphical element to be added to a Vaadin
+ * Graphical Application
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public abstract class AbstractComponentMiniApplication extends AbstractMiniApplication<Component, Component> {
@@ -36,5 +37,21 @@ public abstract class AbstractComponentMiniApplication extends AbstractMiniAppli
     
     public void setWebserviceBean(WebserviceBean webserviceBean) {
         this.webserviceBean = webserviceBean;                
+    }
+    
+    public Properties getInputParameters() {
+        return inputParameters;
+    }
+    
+    public void setInputParameters(Properties inputParameters) {
+        this.inputParameters = inputParameters;        
+    }
+    
+    public Properties getOutputParameters() {
+        return miniApplicationData;
+    }
+    
+    public void setOutputParameters(Properties outputParameters) {
+        this.miniApplicationData = outputParameters;
     }
 }
