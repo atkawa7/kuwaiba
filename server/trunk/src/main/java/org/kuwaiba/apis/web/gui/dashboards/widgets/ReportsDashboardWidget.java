@@ -16,16 +16,16 @@
 package org.kuwaiba.apis.web.gui.dashboards.widgets;
 
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
-import com.vaadin.server.FileDownloader;
 import com.vaadin.server.Page;
+import com.vaadin.server.ResourceReference;
 import com.vaadin.server.StreamResource;
 import com.vaadin.shared.MouseEventDetails;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.themes.ValoTheme;
 import java.util.Calendar;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
@@ -88,33 +88,35 @@ public class ReportsDashboardWidget extends AbstractDashboardWidget {
                 VerticalLayout lytReports = new VerticalLayout();
                 Grid<RemoteReportLight> tblReports = new Grid<>();
                 tblReports.setItems(classLevelReports);
-                tblReports.addColumn(RemoteReportLight::getName).setCaption("Name");
-                tblReports.addColumn(RemoteReportLight::getDescription).setCaption("Description");
-                tblReports.setSizeFull();
-                
-                Button btnDownload = new Button("Download Report");
-                btnDownload.setEnabled(false);
-                
-                tblReports.addItemClickListener((e) -> {
-                    if (e.getMouseEventDetails().isDoubleClick()) {
+                tblReports.addComponentColumn((source) -> {
+                    Button btnReport = new Button(source.getName());
+                    btnReport.setStyleName(ValoTheme.BUTTON_LINK);
+                    btnReport.addClickListener((event) -> {
                         try {
+
                             byte[] reportBody = wsBean.executeClassLevelReport(businessObject.getClassName(), 
-                                    businessObject.getId(), e.getItem().getId(), Page.getCurrent().getWebBrowser().getAddress(),
+                                    businessObject.getId(), source.getId(), Page.getCurrent().getWebBrowser().getAddress(),
                                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-                            
+
                             StreamResource fileStream = ResourceFactory.getFileStream(reportBody, businessObject.getClassName() + "_" + Calendar.getInstance().getTimeInMillis() + ".html");
-                            FileDownloader fileDownloader = new FileDownloader(fileStream);
-                            fileDownloader.extend(btnDownload);
-                            btnDownload.setEnabled(true);
+                            fileStream.setMIMEType("text/html"); //NOI18N
+                            setResource(String.valueOf(source.getId()), fileStream);
+                            ResourceReference rr = ResourceReference.create(fileStream, this, String.valueOf(source.getId()));
+                            Page.getCurrent().open(rr.getURL(), "Download Report", true);
                         } catch (ServerSideException ex) {
                             Notifications.showError(ex.getLocalizedMessage());
                         }
-                    }
+                    });
+                    
+                    
+                    
+                    return btnReport; 
                 });
+                tblReports.addColumn(RemoteReportLight::getDescription).setCaption("Description");
+                tblReports.setSizeFull();
                 
-                lytReports.addComponents(new Label("Double click on a report to generate a download link"), tblReports, btnDownload);
+                lytReports.addComponent(tblReports);
                 lytReports.setWidth(100, Unit.PERCENTAGE);
-                lytReports.setComponentAlignment(btnDownload, Alignment.BOTTOM_CENTER);
                 this.contentComponent = lytReports;
             }
         } catch (ServerSideException ex) {
