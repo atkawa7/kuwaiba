@@ -19,6 +19,7 @@ package org.kuwaiba.web.modules.navtree.dashboard;
 import com.vaadin.server.Page;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 import org.kuwaiba.apis.web.gui.dashboards.layouts.ShelfDashboardLayout;
+import org.kuwaiba.apis.web.gui.dashboards.widgets.AttachedFilesDashboardWidget;
 import org.kuwaiba.apis.web.gui.dashboards.widgets.ReportsDashboardWidget;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
@@ -34,6 +35,7 @@ public class NavigationTreeDashboard extends AbstractDashboard {
         ((ShelfDashboardLayout)getDashboardLayout()).addToPile(new RelationshipsDashboardWidget(selectedObject, wsBean));
         ((ShelfDashboardLayout)getDashboardLayout()).addToPile(new SpecialChildrenDashboardWidget(selectedObject, wsBean));
         ((ShelfDashboardLayout)getDashboardLayout()).addToPile(new ReportsDashboardWidget(selectedObject, wsBean));
+        ((ShelfDashboardLayout)getDashboardLayout()).addToPile(new AttachedFilesDashboardWidget(selectedObject, wsBean));
         
         Page.getCurrent().setTitle(String.format("Kuwaiba Open Network Inventory - Exploring %s", selectedObject));
     }

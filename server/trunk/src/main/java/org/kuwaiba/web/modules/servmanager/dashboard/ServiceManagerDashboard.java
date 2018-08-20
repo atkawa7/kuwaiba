@@ -18,6 +18,7 @@ import com.vaadin.ui.Component;
 import org.kuwaiba.apis.web.gui.dashboards.widgets.ReportsDashboardWidget;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 import org.kuwaiba.apis.web.gui.dashboards.layouts.TheaterDashboardLayout;
+import org.kuwaiba.apis.web.gui.dashboards.widgets.AttachedFilesDashboardWidget;
 import org.kuwaiba.apis.web.gui.dashboards.widgets.SimpleContentOnlyDashboardWidget;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.beans.WebserviceBean;
@@ -37,5 +38,6 @@ public class ServiceManagerDashboard extends AbstractDashboard {
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 0, new ServiceViewsDashboardWidget(component, service, wsBean));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(0, 1, new RelationshipsDashboardWidget(service, wsBean));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 1, new ReportsDashboardWidget(service, wsBean));
+        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 1, new AttachedFilesDashboardWidget(service, wsBean));
     }
 }

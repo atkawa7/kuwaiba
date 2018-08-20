@@ -15390,6 +15390,15 @@ div.v-layout.v-horizontal.v-widget {
 	min-height: 150px;
 }
 
+.nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkpink {
+	background: #C74B98;
+	color: white;
+	font-size: x-large;
+	position: relative;
+	font-family: ubuntu-l;
+	min-height: 150px;
+}
+
 .nuqui .dashboards .v-label-text-bottomright {
 	position: absolute;
 	bottom: 0;

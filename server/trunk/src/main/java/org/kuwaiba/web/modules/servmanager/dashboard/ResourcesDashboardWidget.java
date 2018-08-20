@@ -63,7 +63,7 @@ public class ResourcesDashboardWidget extends AbstractDashboardWidget {
         
         lytResourcesWidgetCover.addComponent(lblText);
         lytResourcesWidgetCover.setSizeFull();
-        lytResourcesWidgetCover.setStyleName("dashboard_cover_widget-darkgreen");
+        lytResourcesWidgetCover.setStyleName("dashboard_cover_widget-darkpink");
         this.coverComponent = lytResourcesWidgetCover;
         addComponent(coverComponent);       
      }

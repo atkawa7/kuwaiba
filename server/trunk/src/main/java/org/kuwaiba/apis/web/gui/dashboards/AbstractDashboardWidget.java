@@ -16,8 +16,10 @@
 package org.kuwaiba.apis.web.gui.dashboards;
 
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
@@ -144,8 +146,26 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
     
     /**
      * Creates the cover component. Note that implementors must set the coverComponent attribute and manage the respective events
+     * The default implementation creates a colored rectangle displaying the title of the widget without any style. For simple widgets it's recommended to use 
+     * this implementation (that is, call super.createCover()) and set a style afterwards. 
      */
-    public abstract void createCover();
+    public void createCover() { 
+        VerticalLayout lytContactsWidgetCover = new VerticalLayout();
+        Label lblText = new Label(title);
+        lblText.setStyleName("text-bottomright");
+        lytContactsWidgetCover.addLayoutClickListener((event) -> {
+            if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
+                this.createContent();
+                launch();
+            }
+        });
+        
+        lytContactsWidgetCover.addComponent(lblText);
+        lytContactsWidgetCover.setSizeFull();
+        
+        this.coverComponent = lytContactsWidgetCover;
+        addComponent(coverComponent);
+    }
     public abstract void createContent();
     
     public enum ActiveContent {

@@ -88,6 +88,7 @@ public class ReportsDashboardWidget extends AbstractDashboardWidget {
                 VerticalLayout lytReports = new VerticalLayout();
                 Grid<RemoteReportLight> tblReports = new Grid<>();
                 tblReports.setItems(classLevelReports);
+                tblReports.setHeaderVisible(false);
                 tblReports.addComponentColumn((source) -> {
                     Button btnReport = new Button(source.getName());
                     btnReport.setStyleName(ValoTheme.BUTTON_LINK);
@@ -107,9 +108,7 @@ public class ReportsDashboardWidget extends AbstractDashboardWidget {
                             Notifications.showError(ex.getLocalizedMessage());
                         }
                     });
-                    
-                    
-                    
+                                        
                     return btnReport; 
                 });
                 tblReports.addColumn(RemoteReportLight::getDescription).setCaption("Description");
