@@ -15,7 +15,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <vaadin.version>8.3.1</vaadin.version>
         <vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
-        <deltaspike.version>1.8.1</deltaspike.version>
                 
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>        
         <project.source.version>1.8</project.source.version>
@@ -81,12 +80,21 @@
             <version>0.2</version>
         </dependency>
         
-        <!-- Used by the default OSP maps provider -->
+        <!-- Ooutside Plant module maps providers -->
         <dependency>
            <groupId>com.vaadin.tapio</groupId>
            <artifactId>googlemaps</artifactId>
            <version>2.1.0</version>
         </dependency> 
+        
+        <!--
+        Open Layers
+        <dependency>
+            <groupId>org.vaadin.addon</groupId>
+            <artifactId>v-ol3</artifactId>
+            <version>2.1</version>
+        </dependency> 
+        -->
                
         <!-- Java EE support -->
         <dependency>
@@ -114,27 +122,13 @@
             <version>${vaadin.version}</version>
         </dependency>
                           
-        <!-- Vaadin's dependency injection support -->    
+        <!-- Dependency injection support -->
         <dependency>
            <groupId>com.vaadin</groupId>
            <artifactId>vaadin-cdi</artifactId>
-           <version>3.0.0</version>
+           <version>3.0.1</version>
         </dependency>
-                
-        <dependency>
-            <groupId>org.apache.deltaspike.core</groupId>
-            <artifactId>deltaspike-core-api</artifactId>
-            <version>${deltaspike.version}</version>
-            <scope>compile</scope>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.apache.deltaspike.core</groupId>
-            <artifactId>deltaspike-core-impl</artifactId>
-            <version>${deltaspike.version}</version>
-            <scope>runtime</scope>
-        </dependency>
-        
+
         <!-- Visual API for reporting purposes -->
         <dependency>
             <groupId>org.codeartisans.thirdparties.swing</groupId>
@@ -186,12 +180,6 @@
         <dependency>
             <groupId>org.glassfish.maven.plugin</groupId>
             <artifactId>maven-glassfish-plugin</artifactId>
-            <version>2.1</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>org.vaadin.addon</groupId>
-            <artifactId>v-ol3</artifactId>
             <version>2.1</version>
         </dependency>
     </dependencies>
@@ -272,7 +260,7 @@
                     <compileReport>true</compileReport>
                     <strict>true</strict>
                     <style>OBF</style>
-                    <runTarget>http://localhost:8080/</runTarget>
+                    <runTarget>http://localhost:8080/kuwaiba</runTarget>
                     <persistentunitcachedir>${project.build.directory}</persistentunitcachedir>
                     <deploy>${project.build.directory}/gwt-deploy</deploy>
                 </configuration>
@@ -283,7 +271,6 @@
                             <goal>update-widgetset</goal>
                             <goal>compile</goal>
                             <goal>update-theme</goal>
-                            <!-- Comment out compile-theme goal to use on-the-fly theme compilation -->
                             <goal>compile-theme</goal>
                         </goals>
                     </execution>

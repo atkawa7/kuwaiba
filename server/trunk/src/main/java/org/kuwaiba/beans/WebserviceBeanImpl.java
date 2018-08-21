@@ -80,7 +80,6 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.sync.SyncManager;
 import org.kuwaiba.util.ChangeDescriptor;
-import org.kuwaiba.util.bre.TempBusinessRulesEngine;
 import org.kuwaiba.util.i18n.I18N;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.interfaces.ws.todeserialize.TransientQuery;
@@ -163,10 +162,6 @@ public class WebserviceBeanImpl implements WebserviceBean {
      */
     private ApplicationEntityManager aem;
     /**
-     * Business rules engine reference
-     */
-    private TempBusinessRulesEngine bre;
-    /**
      * Sync/load data reference
      */
     private SyncManager sync;
@@ -174,7 +169,6 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     public WebserviceBeanImpl() {
         super();
-        bre = new TempBusinessRulesEngine();
         sync = new SyncManager();
         connect();
     }
@@ -256,12 +250,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("getClass", ipAddress, sessionId);
             ClassMetadata myClass = mem.getClass(className);
-            List<Validator> validators = new ArrayList<>();
-            for (String mapping : bre.getSubclassOfValidators().keySet()){
-                if (mem.isSubClass(mapping, className))
-                    validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
-            }
-            return new RemoteClassMetadata(myClass, validators.toArray(new Validator[0]));
+            return new RemoteClassMetadata(myClass, new Validator[0]);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -274,13 +263,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("getClass", ipAddress, sessionId);
             ClassMetadata myClass = mem.getClass(classId);
-            List<Validator> validators = new ArrayList<>();
-            for (String mapping : bre.getSubclassOfValidators().keySet()){
-                if (mem.isSubClass(mapping, myClass.getName())){
-                    validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
-                }
-            }
-            return new RemoteClassMetadata(myClass, validators.toArray(new Validator[0]));
+         
+            return new RemoteClassMetadata(myClass, new Validator[0]);
 
          } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -296,14 +280,9 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<RemoteClassMetadataLight> cml = new ArrayList<>();
             List<ClassMetadataLight> classLightMetadata = mem.getAllClassesLight(includeListTypes, false);
 
-            for (ClassMetadataLight classMetadataLight : classLightMetadata){
-                List<Validator> validators = new ArrayList<>();
-                for (String mapping : bre.getSubclassOfValidators().keySet()){
-                    if (mem.isSubClass(mapping, classMetadataLight.getName()))
-                        validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
-                }
-                cml.add(new RemoteClassMetadataLight(classMetadataLight, validators.toArray(new Validator[0])));
-            }
+            for (ClassMetadataLight classMetadataLight : classLightMetadata)
+                cml.add(new RemoteClassMetadataLight(classMetadataLight, new Validator[0]));
+            
             return cml;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -319,15 +298,9 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<RemoteClassMetadataLight> cml = new ArrayList<>();
             List<ClassMetadataLight> classLightMetadata = mem.getSubClassesLight(className, includeAbstractClasses, includeSelf);
 
-            for (ClassMetadataLight classMetadataLight : classLightMetadata){
-                List<Validator> validators = new ArrayList<>();
-                for (String mapping : bre.getSubclassOfValidators().keySet()){
-                    if (mem.isSubClass(mapping, classMetadataLight.getName())){
-                        validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
-                    }
-                }
-                cml.add(new RemoteClassMetadataLight(classMetadataLight, validators.toArray(new Validator[0])));
-            }
+            for (ClassMetadataLight classMetadataLight : classLightMetadata)
+                cml.add(new RemoteClassMetadataLight(classMetadataLight, new Validator[0]));
+            
             return cml;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -343,15 +316,9 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<RemoteClassMetadataLight> cml = new ArrayList<>();
             List<ClassMetadataLight> classLightMetadata = mem.getSubClassesLightNoRecursive(className, includeAbstractClasses, includeSelf);
 
-            for (ClassMetadataLight classMetadataLight : classLightMetadata){
-                List<Validator> validators = new ArrayList<>();
-                for (String mapping : bre.getSubclassOfValidators().keySet()){
-                    if (mem.isSubClass(mapping, classMetadataLight.getName())){
-                        validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
-                    }
-                }
-                cml.add(new RemoteClassMetadataLight(classMetadataLight, validators.toArray(new Validator[0])));
-            }
+            for (ClassMetadataLight classMetadataLight : classLightMetadata)
+                cml.add(new RemoteClassMetadataLight(classMetadataLight, new Validator[0]));
+
             return cml;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -379,15 +346,9 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<RemoteClassMetadata> cml = new ArrayList<>();
             List<ClassMetadata> classMetadataList = mem.getAllClasses(includeListTypes, false);
 
-            for (ClassMetadata classMetadata : classMetadataList){
-                List<Validator> validators = new ArrayList<>();
-                for (String mapping : bre.getSubclassOfValidators().keySet()){
-                    if (mem.isSubClass(mapping, classMetadata.getName())){
-                        validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
-                    }
-                }
-                cml.add(new RemoteClassMetadata(classMetadata, validators.toArray(new Validator[0])));
-            }
+            for (ClassMetadata classMetadata : classMetadataList)
+                cml.add(new RemoteClassMetadata(classMetadata, new Validator[0]));
+            
             return cml;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -3548,6 +3509,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
     
+    @Override
     public void updateScriptQueryParameters(String scriptQueryName, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
@@ -3837,15 +3799,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                     
                     for (Object item : collection) {
                         ClassMetadataLight classMetadataLight = (ClassMetadataLight) item;
-                        
-                        List<Validator> validators = new ArrayList();
-                        
-                        for (String mapping : bre.getSubclassOfValidators().keySet()) {
-                            
-                            if (mem.isSubClass(mapping, classMetadataLight.getName()))
-                                validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
-                        }
-                        result.add(new RemoteClassMetadataLight(classMetadataLight, validators.toArray(new Validator[0])));
+                        result.add(new RemoteClassMetadataLight(classMetadataLight, new Validator[0]));
                     }
                     return new RemoteScriptQueryResultCollection(result);
                     
@@ -3896,16 +3850,9 @@ public class WebserviceBeanImpl implements WebserviceBean {
                     
                     for (Object item : collection) {
                         ClassMetadataLight classMetadataLight = (ClassMetadataLight) item;
-                        
-                        List<Validator> validators = new ArrayList();
-                        
-                        for (String mapping : bre.getSubclassOfValidators().keySet()) {
-                            
-                            if (mem.isSubClass(mapping, classMetadataLight.getName()))
-                                validators.add(new Validator(bre.getSubclassOfValidators().get(mapping), 1));
-                        }
-                        result.add(new RemoteClassMetadataLight(classMetadataLight, validators.toArray(new Validator[0])));
+                        result.add(new RemoteClassMetadataLight(classMetadataLight, new Validator[0]));
                     }
+                    
                     return new RemoteScriptQueryResultCollection(result);
                     
                 }

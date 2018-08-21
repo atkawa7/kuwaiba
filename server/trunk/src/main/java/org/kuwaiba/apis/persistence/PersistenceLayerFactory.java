@@ -95,22 +95,22 @@ public class PersistenceLayerFactory{
     }
     
     /**
-     * Dynamically creates a business entity manager
-     * @param connectionManager
-     * @param aem
-     * @param mem Metadata Entity Manager reference
-     * @return The manager
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws NoSuchMethodException
-     * @throws IllegalArgumentException
-     * @throws InvocationTargetException 
+     * Dynamically creates a business entity manager instance
+     * @param connectionManager The Connection Manager to be used inside the BEM instance
+     * @param aem A reference to the Application Entity Manager instance  to be used inside the BEM
+     * @param mem A reference to the Metadata Entity Manager instance  to be used inside the BEM
+     * @return A Business Entity Manager Instance
+     * @throws InstantiationException If the manager could not be instantiated due to class path issues)
+     * @throws IllegalAccessException If the manager could not be instantiated due to problems accessing the class
+     * @throws NoSuchMethodException If the default constructor could not be found
+     * @throws IllegalArgumentException If the constructor is called with wrong arguments
+     * @throws InvocationTargetException If while instantiating the manager, a run time issue appears
      */
     public BusinessEntityManager createBusinessEntityManager(ConnectionManager connectionManager, ApplicationEntityManager aem, MetadataEntityManager mem) 
             throws InstantiationException, IllegalAccessException, NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
         try {
             Class myClass = (Class) Class.forName(
-                    "org.kuwaiba.services.persistence.impl.neo4j.telecom.BusinessEntityManagerImpl");
+                    "org.kuwaiba.services.persistence.impl.neo4j.BusinessEntityManagerImpl"); //NOI18N
             
             Constructor bemConstructor = myClass.getConstructor(ConnectionManager.class, ApplicationEntityManager.class, MetadataEntityManager.class);
             return (BusinessEntityManager)bemConstructor.newInstance(connectionManager, aem, mem);

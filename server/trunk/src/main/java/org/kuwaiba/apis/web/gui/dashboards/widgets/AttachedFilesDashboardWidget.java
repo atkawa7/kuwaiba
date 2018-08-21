@@ -36,7 +36,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
- * Widget that allows 
+ * Widget that allows to manage the files attached to an inventory object
  * @author Charles Bedon <charles.bedon@kuwaiba.org>
  */
 public class AttachedFilesDashboardWidget extends AbstractDashboardWidget {

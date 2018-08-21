@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.services.persistence.impl.neo4j.telecom;
+package org.kuwaiba.services.persistence.impl.neo4j;
 
 import com.neotropic.kuwaiba.modules.reporting.defaults.DefaultReports;
 import com.neotropic.kuwaiba.modules.reporting.InventoryReport;
