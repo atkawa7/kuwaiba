@@ -689,4 +689,16 @@ $v-field-background-color: #ccffe6;
         }
     }
     //End Rack View
+    //Start Dynamic Component
+    .dynamiccomponent {
+      * {
+          margin: 0px;
+          padding: 0px;
+      }
+
+      .left {
+          background: whitesmoke;
+      }
+    }
+    //End Dynamic Component
 }

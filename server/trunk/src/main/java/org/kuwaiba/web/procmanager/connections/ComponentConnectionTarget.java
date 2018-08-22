@@ -18,6 +18,7 @@ import com.vaadin.event.ShortcutAction;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -40,7 +41,6 @@ import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
 import org.kuwaiba.apis.web.gui.navigation.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.services.persistence.util.Constants;
 /**
  *
@@ -52,7 +52,7 @@ public class ComponentConnectionTarget extends VerticalLayout {
     private AutocompleteTextField txtFilter;
     private RemoteObjectLight selectedTargetDevice;
     private RemoteObjectLight root;
-    
+        
     public ComponentConnectionTarget(RemoteObjectLight root, WebserviceBean webserviceBean) {
         this.webserviceBean = webserviceBean;
         this.root = root;
@@ -61,6 +61,18 @@ public class ComponentConnectionTarget extends VerticalLayout {
     
     public RemoteObjectLight getSelectedTargetDevice() {
         return selectedTargetDevice;
+    }
+    
+    public List<RemoteObjectLight> getSelectItems() {
+        List<RemoteObjectLight> selectedItems = new ArrayList();
+        
+        if (tree != null && tree.getSelectedItems() != null) {
+            for (Object selectedItem : tree.getSelectedItems()) {
+                if (selectedItem instanceof InventoryObjectNode)
+                    selectedItems.add(((InventoryObjectNode) selectedItem).getObject());
+            }
+        }
+        return selectedItems;
     }
     
     private void initializeComponent() {                
@@ -151,11 +163,16 @@ public class ComponentConnectionTarget extends VerticalLayout {
                         public void refresh(boolean recursive) { }
                 });
         
+        tree.setSelectionMode(Grid.SelectionMode.MULTI);
+        /*
         tree.addSelectionListener((e) -> {
-                        
-            if (e.getFirstSelectedItem().get() instanceof InventoryObjectNode)
-                selectedTargetDevice = (RemoteObjectLight)e.getFirstSelectedItem().get().getObject();
-        });        
+            
+            int i = 0;  
+            selectItems = new ArrayList();
+//            if (e.getFirstSelectedItem().get() instanceof InventoryObjectNode)
+//                selectedTargetDevice = (RemoteObjectLight)e.getFirstSelectedItem().get().getObject();
+        });
+        */
         
         HorizontalLayout lytFilter = new HorizontalLayout(txtFilter, btnSearch);
         lytFilter.setMargin(true);

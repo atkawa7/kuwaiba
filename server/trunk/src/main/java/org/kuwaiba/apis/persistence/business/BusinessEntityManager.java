@@ -50,7 +50,7 @@ public interface BusinessEntityManager {
      * @param attributes Attributes to be set by default in the new object. It's a HashMap where the keys are the attribute names and the values, the values for such attributes.
      * Note that binary type attributes can't be set here.
      * @param template Template id to be used to create the current object. Template values can be
-     * overridden if "attributeValues" is not empty
+     * overridden if "attributeValues" is not empty, -1 if do not use a Template
      * @return The object's id
      * @throws MetadataObjectNotFoundException Thrown if the object's class can't be found
      * @throws BusinessObjectNotFoundException Thrown if the parent id is not found

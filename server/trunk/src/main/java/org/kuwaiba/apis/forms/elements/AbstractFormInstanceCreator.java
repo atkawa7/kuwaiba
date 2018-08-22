@@ -89,8 +89,28 @@ public abstract class AbstractFormInstanceCreator {
                 
                 if (elementField.isShared()) {
                     
-                    if (elementField.getId() != null && elementField.getValue() != null)
-                        sharedInformation.put(elementField.getId(), elementField.getValue().toString());
+                    if (elementField.getId() != null && elementField.getValue() != null) {
+                        
+                        if (isRemoteObjectLight(elementField.getValue())) {
+
+                            HashMap<String, String> info = getRemoteObjectLightInformation(elementField.getValue());
+
+                            sharedInformation.put(elementField.getId() + Constants.Attribute.DATA_TYPE, info.get(Constants.Attribute.DATA_TYPE));
+                            sharedInformation.put(elementField.getId() + Constants.Attribute.OBJECT_NAME, info.get(Constants.Attribute.OBJECT_NAME));
+                            sharedInformation.put(elementField.getId() + Constants.Attribute.OBJECT_ID, info.get(Constants.Attribute.OBJECT_ID));
+                            sharedInformation.put(elementField.getId() + Constants.Attribute.CLASS_ID, info.get(Constants.Attribute.CLASS_ID));
+                            sharedInformation.put(elementField.getId() + Constants.Attribute.CLASS_NAME, info.get(Constants.Attribute.CLASS_NAME));
+
+                        } else if (isAttachment(elementField.getValue())) {
+                            HashMap<String, String> info = getRemoteObjectLightInformation(elementField.getValue());
+
+                            sharedInformation.put(elementField.getId() + Constants.Attribute.DATA_TYPE, info.get(Constants.Attribute.DATA_TYPE));                                        
+                            sharedInformation.put(elementField.getId() + Constants.Attribute.NAME, info.get(Constants.Attribute.NAME));
+                            sharedInformation.put(elementField.getId() + Constants.Attribute.PATH, info.get(Constants.Attribute.PATH));
+                        } else {
+                            sharedInformation.put(elementField.getId(), elementField.getValue().toString());
+                        }
+                    }
                 }
                 if (elementField instanceof ElementUpload)
                     XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.CAPTION, ((ElementUpload) elementField).getCaption());
@@ -132,6 +152,7 @@ public abstract class AbstractFormInstanceCreator {
                                         sharedInformation.put(elementGrid.getId() + i + j + Constants.Attribute.OBJECT_NAME, info.get(Constants.Attribute.OBJECT_NAME));
                                         sharedInformation.put(elementGrid.getId() + i + j + Constants.Attribute.OBJECT_ID, info.get(Constants.Attribute.OBJECT_ID));
                                         sharedInformation.put(elementGrid.getId() + i + j + Constants.Attribute.CLASS_ID, info.get(Constants.Attribute.CLASS_ID));
+                                        sharedInformation.put(elementGrid.getId() + i + j + Constants.Attribute.CLASS_NAME, info.get(Constants.Attribute.CLASS_NAME));
                                                                                 
                                     } else if (isAttachment(data)) {
                                         HashMap<String, String> info = getRemoteObjectLightInformation(data);

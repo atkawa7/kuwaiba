@@ -77,6 +77,33 @@ public class ProcessInstanceBean {
         }
         return null;
     }
+    
+    private boolean deleteEnable() {
+        
+        RemoteProcessDefinition processDefinition = getProcessDefinition();
+        
+        if (processDefinition != null) {
+            try {
+                
+                List<RemoteActivityDefinition> path = wsBean.getProcessInstanceActivitiesPath(
+                    processInstance.getId(), 
+                    Page.getCurrent().getWebBrowser().getAddress(), 
+                    session.getSessionId());
+                
+                if (path != null) {
+                    for (RemoteActivityDefinition activityDef : path) {
+                                                                        
+                        if (processDefinition.getId() == 1 && activityDef.getId() == 3)
+                            return false;
+                    }
+                }
+                
+            } catch (ServerSideException ex) {                
+                Notifications.showError(ex.getMessage());
+            }
+        }
+        return true;
+    }
         
     public String getCurrentActivity() {
         RemoteActivityDefinition currentActivityDefinition = getCurrentActivityDefinition();
@@ -163,7 +190,7 @@ public class ProcessInstanceBean {
     }
     
     public String getDeleteButtonCaption() {
-        return "Delete";
+        return deleteEnable() ? "Delete" : "";
     }
     
     public String getEditButtonCaption() {

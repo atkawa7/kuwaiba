@@ -53,7 +53,7 @@ import org.kuwaiba.util.i18n.I18N;
  * Render the current activity and all activities of a process instance
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class ProcessInstanceView extends HorizontalSplitPanel {
+public class ProcessInstanceView extends DynamicComponent {
     private final RemoteProcessDefinition processDefinition;
     private RemoteProcessInstance processInstance;
     private final HashMap<RemoteActivityDefinition, Button> activities;
@@ -79,7 +79,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
         this.processInstance = processInstance;
         activities = new HashMap();
                         
-        setSplitPosition(20, Unit.PERCENTAGE);
+////        setSplitPosition(20, Unit.PERCENTAGE);
         initView();
     }
     
@@ -345,7 +345,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
             artifactContainer.setExpandRatio(pnlArtifact, 9f);
             artifactContainer.setExpandRatio(secondHorizontalLayout, 1f);
             
-            boolean idleActivity = false;
+            boolean idleActivity = true;
             boolean interruptedActivity = false;
 
             if (artifact != null) {
@@ -390,13 +390,16 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
                                 
                 if (currentActivity.isIdling()) {
                     CheckBox chkIdleActivity = new CheckBox("Complete Activity Confirmation");
+                    /*
+                    chkIdleActivity.setValue(!idleActivity);
                     
-                    chkIdleActivity.setValue(idleActivity);
-
+                    chkIdleActivity.setEnabled(idleActivity);
+                    btnSave.setEnabled(idleActivity);
+                    */
                     chkIdleActivity.addValueChangeListener(new HasValue.ValueChangeListener() {
                         @Override
                         public void valueChange(HasValue.ValueChangeEvent event) {
-                            artifactView.getArtifactRenderer().getSharedMap().put("__idle__", event.getValue().toString());
+                            artifactView.getArtifactRenderer().getSharedMap().put("__idle__", String.valueOf(!((Boolean) event.getValue())));
                         }
                     });
 
@@ -417,7 +420,7 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
                 artifactWrapperLayout.addComponent(artifactContainer);                
             }
             
-            ProcessInstanceView.this.setSecondComponent(artifactWrapperLayout);
+            setComponentCenter(artifactWrapperLayout);
         } else {
             Notifications.showError("His Role does not allow to start this activity");
         }
@@ -433,7 +436,8 @@ public class ProcessInstanceView extends HorizontalSplitPanel {
         wrapper.addComponent(activitiesLayout);
         
         updateActivities();
-        setFirstComponent(wrapper);
+        setComponentLeft(wrapper);
+        initializeComponent();
     }
     
     private void updateActivities() {

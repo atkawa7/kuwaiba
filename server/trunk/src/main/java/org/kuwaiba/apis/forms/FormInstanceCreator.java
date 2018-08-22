@@ -173,6 +173,7 @@ public class FormInstanceCreator extends AbstractFormInstanceCreator {
                 info.put(Constants.Attribute.OBJECT_NAME, rol.getName());
                 info.put(Constants.Attribute.OBJECT_ID, String.valueOf(rol.getId()));
                 info.put(Constants.Attribute.CLASS_ID, String.valueOf(classInfo.getId()));
+                info.put(Constants.Attribute.CLASS_NAME, String.valueOf(classInfo.getClassName()));
                 
                 return info;            
             }

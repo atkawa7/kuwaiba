@@ -14,12 +14,12 @@
  */
 package org.kuwaiba.web.procmanager.connections;
 
-import com.vaadin.event.LayoutEvents;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.shared.ui.dnd.DropEffect;
 import com.vaadin.ui.AbstractComponent;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
+import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
@@ -28,10 +28,13 @@ import com.vaadin.ui.dnd.DropTargetExtension;
 import com.vaadin.ui.dnd.event.DropEvent;
 import com.vaadin.ui.dnd.event.DropListener;
 import com.vaadin.ui.themes.ValoTheme;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.web.procmanager.DynamicComponent;
 import org.kuwaiba.web.procmanager.rackview.ComponentDevice;
 
 /**
@@ -39,22 +42,21 @@ import org.kuwaiba.web.procmanager.rackview.ComponentDevice;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ComponentConnectionCreator extends VerticalLayout {
-    private WebserviceBean webserviceBean;
+    private final WebserviceBean webserviceBean;
     
     public ComponentConnectionCreator(
-        ComponentConnectionSource componentConnectionSource, WebserviceBean webserviceBean/*, 
-        ComponentConnectionTarget componentConnectionTarget*/) {
+        ComponentConnectionSource componentConnectionSource, WebserviceBean webserviceBean) {
         this.webserviceBean = webserviceBean;        
-////        setWidth(100, Unit.PERCENTAGE);
-////        setHeightUndefined();
         setSizeFull();
-//        setSpacing(false);
-        initializeComponent(componentConnectionSource/*, componentConnectionTarget*/);                        
+        initializeComponent(componentConnectionSource);                        
+    }
+    
+    @Override
+    public final void setSizeFull() {
+        super.setSizeFull();
     }
         
-    private void initializeComponent(
-        ComponentConnectionSource componentConnectionSource/*, 
-        ComponentConnectionTarget componentConnectionTarget*/) {
+    private void initializeComponent(ComponentConnectionSource componentConnectionSource) {
         
         VerticalLayout verticalLayout = new VerticalLayout();
         
@@ -110,7 +112,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
         rightPanel.setContent(rightVerticalLayout);
         rightPanel.setSizeFull();
         
-        Panel topRightPanel = new Panel("Source Device");
+        Panel topRightPanel = new Panel("Drag an element from Devices to set the Endpoint A");
         topRightPanel.setSizeFull();
         
         DropTargetExtension<Panel> topDropTarget = new DropTargetExtension<>(topRightPanel);
@@ -129,10 +131,10 @@ public class ComponentConnectionCreator extends VerticalLayout {
                         webserviceBean));
                 }
             }
-        });
+        });        
         topRightPanel.setContent(new ComponentConnectionTarget(null, webserviceBean));
                 
-        Panel bottomRightPanel = new Panel("Target Device");
+        Panel bottomRightPanel = new Panel("Drag an element from Devices to set the Endpoint B");
         bottomRightPanel.setSizeFull();
         
         DropTargetExtension<Panel> bottomDropTarget = new DropTargetExtension<>(bottomRightPanel);
@@ -159,17 +161,79 @@ public class ComponentConnectionCreator extends VerticalLayout {
         rightVerticalLayout.setExpandRatio(topRightPanel, 0.50f);
         rightVerticalLayout.setExpandRatio(bottomRightPanel, 0.50f);
                         
-        horizontalLayout.addComponent(leftPanel);
-        horizontalLayout.addComponent(rightPanel);
+////        horizontalLayout.addComponent(leftPanel);
+////        horizontalLayout.addComponent(rightPanel);
+
+////        horizontalLayout.setExpandRatio(leftPanel, 0.50f);
+////        horizontalLayout.setExpandRatio(rightPanel, 0.50f);
+        //Start Connections
+        Panel pnl = new Panel("Connections");
+        pnl.setSizeFull();
         
-        horizontalLayout.setExpandRatio(leftPanel, 0.50f);
-        horizontalLayout.setExpandRatio(rightPanel, 0.50f);
+        VerticalLayout lytConnection = new VerticalLayout();
+        lytConnection.setWidth(100, Unit.PERCENTAGE);
+        lytConnection.setHeightUndefined();
+        
+        Button btnAddEndpoints = new Button("Add Enpoints");
+        
+        lytConnection.addComponent(btnAddEndpoints);
+        lytConnection.setComponentAlignment(btnAddEndpoints, Alignment.MIDDLE_CENTER);
+        
+        Grid<EndpointBean> grdEndpoints = new Grid();
+        
+        grdEndpoints.addColumn(EndpointBean::getEndpointA).setCaption("Endpoint A");
+        grdEndpoints.addColumn(EndpointBean::getEndpointB).setCaption("Endpoint B");
+        
+        btnAddEndpoints.addClickListener(new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                List<RemoteObjectLight> endpoitsA = ((ComponentConnectionTarget) topRightPanel.getContent()).getSelectItems();
+                List<RemoteObjectLight> endpoitsB = ((ComponentConnectionTarget) bottomRightPanel.getContent()).getSelectItems();
+                
+                if (endpoitsA.size() == endpoitsB.size()) {
+                
+                    int size = endpoitsA.size();
+
+                    List<EndpointBean> endpoints = new ArrayList();
+
+                    for (int i = 0; i < size; i += 1) {
+                        endpoints.add(new EndpointBean(endpoitsA.get(i), endpoitsB.get(i)));
+                    }
+                    grdEndpoints.setItems(endpoints);
+                } 
+                else {
+                    Notification.show("The endpoints no has the same size", Notification.Type.ERROR_MESSAGE);
+                }
+            }
+        });
+        
+        lytConnection.addComponent(grdEndpoints);
+        lytConnection.setComponentAlignment(grdEndpoints, Alignment.MIDDLE_CENTER);
+                        
+        pnl.setContent(lytConnection);
+        //End Connections
         
         
-        addComponent(horizontalLayout);
+        
+        topRightPanel.addStyleName(ValoTheme.PANEL_WELL);
+        bottomRightPanel.addStyleName(ValoTheme.PANEL_WELL);
+        
+////        horizontalLayout.addComponent(leftPanel);
+        horizontalLayout.addComponent(topRightPanel);
+        horizontalLayout.addComponent(pnl);
+        horizontalLayout.addComponent(bottomRightPanel);        
+        
+////        horizontalLayout.setExpandRatio(leftPanel, 0.30f);        
+        horizontalLayout.setExpandRatio(topRightPanel, 0.30f);
+        horizontalLayout.setExpandRatio(pnl, 0.40f);        
+        horizontalLayout.setExpandRatio(bottomRightPanel, 0.30f);
+        
+        DynamicComponent dynamicComponent = new DynamicComponent(leftPanel, horizontalLayout);
+                
+        addComponent(dynamicComponent);
         addComponent(verticalLayout);
         
-        setExpandRatio(horizontalLayout, 0.95f);
+        setExpandRatio(dynamicComponent, 0.95f);
         setExpandRatio(verticalLayout, 0.05f);
         
     }

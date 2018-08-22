@@ -39,12 +39,14 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.openide.util.Exceptions;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActor;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConditionalActivityDefinition;
@@ -211,47 +213,55 @@ public class ProcessInstancesView extends VerticalLayout {
         });
                 
         grid.addColumn(ProcessInstanceBean::getEditButtonCaption, buttonContinuar).setCaption("Status").setId(columnStatusId);
-        grid.addColumn(ProcessInstanceBean::getViewButtonCaption, buttonView).setCaption("View").setId(columnViewId);        
-        grid.addColumn(ProcessInstanceBean::getDeleteButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
-            @Override
-            public void click(ClickableRenderer.RendererClickEvent event) {
-                ProcessInstanceBean processInstanceBean = (ProcessInstanceBean) event.getItem();
-                
-                MessageBox.getInstance().showMessage(new Label("Delete an instance of the process")).addClickListener(new Button.ClickListener() {
-                    @Override
-                    public void buttonClick(Button.ClickEvent event) {
-                                                
-                        if (MessageBox.getInstance().continues()) {
-                            try {
-                                String address = Page.getCurrent().getWebBrowser().getAddress();
-                                String sesionId = ((RemoteSession) getSession().getAttribute("session")).getSessionId();
-                                
-                                wsBean.deleteProcessInstance(
-                                    processInstanceBean.getProcessInstance().getId(),
-                                    address,
-                                    sesionId);
-                                // Updating the rows in the grid
-                                processes.clear();
-                                beans.clear();
-                                
-                                processes = wsBean.getProcessInstances(
-                                    processDefinition.getId(), 
-                                    address, 
-                                    sesionId);
-                                                                
-                                for (RemoteProcessInstance process : processes)
-                                    beans.add(new ProcessInstanceBean(process, wsBean, session));
-                                
-                                grid.setItems(beans);
-                                                                                                                                
-                            } catch (ServerSideException ex) {
-                                Exceptions.printStackTrace(ex);
+        grid.addColumn(ProcessInstanceBean::getViewButtonCaption, buttonView).setCaption("View").setId(columnViewId);  
+        
+        if (canDelete()) {
+            
+            grid.addColumn(ProcessInstanceBean::getDeleteButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
+                @Override
+                public void click(ClickableRenderer.RendererClickEvent event) {
+                    ProcessInstanceBean processInstanceBean = (ProcessInstanceBean) event.getItem();
+                    
+                    if ("".equals(processInstanceBean.getDeleteButtonCaption()))
+                        return;
+
+                    MessageBox.getInstance().showMessage(new Label("Delete an instance of the process")).addClickListener(new Button.ClickListener() {
+                        @Override
+                        public void buttonClick(Button.ClickEvent event) {
+                            event.getButton().getCaption();
+
+                            if (MessageBox.getInstance().continues()) {
+                                try {
+                                    String address = Page.getCurrent().getWebBrowser().getAddress();
+                                    String sesionId = ((RemoteSession) getSession().getAttribute("session")).getSessionId();
+
+                                    wsBean.deleteProcessInstance(
+                                        processInstanceBean.getProcessInstance().getId(),
+                                        address,
+                                        sesionId);
+                                    // Updating the rows in the grid
+                                    processes.clear();
+                                    beans.clear();
+
+                                    processes = wsBean.getProcessInstances(
+                                        processDefinition.getId(), 
+                                        address, 
+                                        sesionId);
+
+                                    for (RemoteProcessInstance process : processes)
+                                        beans.add(new ProcessInstanceBean(process, wsBean, session));
+
+                                    grid.setItems(beans);
+
+                                } catch (ServerSideException ex) {
+                                    Exceptions.printStackTrace(ex);
+                                }
                             }
                         }
-                    }
-                });
-            }
-        })).setCaption("Delete");        
+                    });
+                }
+            })).setCaption("Delete");    
+        }
         // Filter To Status
         HeaderCell statusHeaderCell = headerRow.getCell(columnStatusId);
         
@@ -349,6 +359,28 @@ public class ProcessInstancesView extends VerticalLayout {
         setSpacing(false);
         addComponent(wrapper);
         setComponentAlignment(wrapper, Alignment.TOP_CENTER);
+    }
+    
+    private boolean canDelete() {
+        try {
+            List<GroupInfoLight> groups = wsBean.getGroupsForUser(
+                session.getUserId(),
+                Page.getCurrent().getWebBrowser().getAddress(),
+                session.getSessionId());
+            
+            for (GroupInfoLight group : groups) {
+
+                if ("Commercial".equals(group.getName())) //NOI18N
+                    return true;
+            }
+            
+            return false;
+            
+        } catch (ServerSideException ex) {
+            Notifications.showError(ex.getMessage());
+                        
+            return false;
+        }
     }
     
     public static void createProcessInstance(RemoteProcessDefinition processDef, WebserviceBean webserviceBean, RemoteSession remoteSession) {

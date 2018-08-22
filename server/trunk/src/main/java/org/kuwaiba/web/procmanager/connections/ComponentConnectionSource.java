@@ -16,16 +16,13 @@ package org.kuwaiba.web.procmanager.connections;
 
 import com.vaadin.event.LayoutEvents;
 import com.vaadin.shared.ui.dnd.EffectAllowed;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.dnd.DragSourceExtension;
-import com.vaadin.ui.themes.ValoTheme;
 import java.util.List;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.web.procmanager.rackview.ComponentDevice;
-import org.kuwaiba.web.procmanager.rackview.ComponentRackView;
 
 /**
  *
@@ -83,41 +80,4 @@ public class ComponentConnectionSource extends VerticalLayout {
         }
                 
     }
-    /*
-    public class ComponentDevice extends VerticalLayout {
-        private Label lblDevice;
-        private Image imgDevice;
-        private final RemoteObject device;
-        
-        public ComponentDevice(RemoteObject device) {
-            this.device = device;
-            initializeComponent();
-        }
-        
-        private void initializeComponent() {
-            lblDevice = new Label(device.getName() + " [" + device.getClassName() + "]");
-            lblDevice.addStyleName(ValoTheme.LABEL_LARGE);
-            lblDevice.addStyleName(ValoTheme.LABEL_BOLD);
-                                
-            addComponent(lblDevice);
-            
-            int rackUnits = device.getAttribute("rackUnits") != null ? Integer.valueOf(device.getAttribute("rackUnits")) : 0;
-            
-            if (rackUnits > 0) {
-                imgDevice = ComponentRackView.getImage(device, rackUnits, webserviceBean);
-                
-                if (imgDevice != null)
-                    addComponent(imgDevice);
-            }
-        }
-        
-        public Image getImgDevice() {
-            return imgDevice;
-        }
-        
-        public RemoteObject getDevice() {
-            return device;
-        }
-    }
-    */
 }

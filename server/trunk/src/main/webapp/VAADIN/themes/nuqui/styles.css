@@ -15608,3 +15608,12 @@ div.v-layout.v-horizontal.v-widget {
 	vertical-align: middle;
 	text-align: center !important;
 }
+
+.nuqui .dynamiccomponent * {
+	margin: 0px;
+	padding: 0px;
+}
+
+.nuqui .dynamiccomponent .left {
+	background: whitesmoke;
+}
