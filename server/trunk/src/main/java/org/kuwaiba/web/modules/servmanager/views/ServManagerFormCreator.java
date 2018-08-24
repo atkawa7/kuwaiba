@@ -18,6 +18,7 @@ package org.kuwaiba.web.modules.servmanager.views;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
@@ -27,6 +28,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
@@ -84,7 +86,7 @@ public class ServManagerFormCreator{
     /**
      * Form tables
      */
-    private final List<FormStructure> tables;
+    private final LinkedList<FormStructure> tables;
     
     /**
      * Web service bean reference
@@ -100,16 +102,16 @@ public class ServManagerFormCreator{
      */
     private final String ipAddress;
     /**
-     * Session id referecne
+     * Session id reference
      */
     private final String sessionId;
-    
+                
     public ServManagerFormCreator(RemoteObjectLight service, WebserviceBean wsBean, String ipAddress, String sessionId) throws ServerSideException {
         this.wsBean = wsBean;
         this.service = service;
         this.ipAddress = ipAddress;
         this.sessionId = sessionId;
-        tables = new ArrayList<>();
+        tables = new LinkedList<>();
     }
     
     /**
@@ -124,10 +126,36 @@ public class ServManagerFormCreator{
             else {
                 for (RemoteObjectLight serviceResource : serviceResources) {
                     FormStructure tempForm = new FormStructure();
+                    boolean isSideAPeering = false;
+                    boolean isSideBPeering = false;
                     if (wsBean.isSubclassOf(serviceResource.getClassName(), "GenericLogicalConnection", ipAddress, sessionId)) {
                         RemoteLogicalConnectionDetails logicalCircuitDetails = wsBean.getLogicalLinkDetails(
                                 serviceResource.getClassName(), serviceResource.getId(), ipAddress, sessionId);
-                       
+                        RemoteObjectLight stm = null;
+                        //now we process the logical link(s)
+                        //MPLS
+                        if(serviceResource.getClassName().equals("MPLSLink")){
+                            Component tempDivC = createVC(serviceResource, logicalCircuitDetails.getEndpointA(), logicalCircuitDetails.getEndpointB());
+                            tempForm.getLogicalConnctions().add(tempDivC);
+                        }//SDH
+                        else{
+                            RemoteObject tirbutaryLink = wsBean.getObject(serviceResource.getClassName(), serviceResource.getId(), ipAddress, sessionId);
+                            if(tirbutaryLink != null){
+                                String hop2Name = wsBean.getAttributeValueAsString(tirbutaryLink.getClassName(), 
+                                        tirbutaryLink.getId(), "hop2Name", ipAddress, sessionId);
+
+                                String legalOwner = wsBean.getAttributeValueAsString(tirbutaryLink.getClassName(),
+                                            tirbutaryLink.getId(), "hop2LegalOwner", ipAddress, sessionId);
+
+                                String providerId = tirbutaryLink.getAttribute("hop2Id");
+                                if(hop2Name != null)    
+                                    tempForm.getLogicalConnctions().add(createProviderTable(hop2Name, providerId, legalOwner));
+                                if(tirbutaryLink.getAttribute("hop1Name") != null)
+                                    tempForm.getLogicalConnctions().add(createProviderTableS(tirbutaryLink));
+                                RemoteObjectLight container = wsBean.getSpecialAttribute(tirbutaryLink.getClassName(), tirbutaryLink.getId(), "sdhDelivers", ipAddress, sessionId).get(0);
+                                stm = wsBean.getSpecialAttribute(container.getClassName(), container.getId(), "sdhTransports", ipAddress, sessionId).get(0);
+                            }
+                        }
                         //Let's create the nodes corresponding to the endpoint A of the logical circuit
                         List<RemoteObjectLight> parentsUntilFirstComEquipmentA; 
                         if(wsBean.isSubclassOf(logicalCircuitDetails.getEndpointA().getClassName(), Constants.CLASS_GENERICLOGICALPORT, ipAddress, sessionId)){
@@ -145,37 +173,18 @@ public class ServManagerFormCreator{
                             parentsUntilFirstComEquipmentA = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
                                 getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericCommunicationsElement", ipAddress, sessionId);
 
-                        RemoteObjectLight aSideEquipmentLogical = parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1);
-                        Component logicalA = createDeviceTable(aSideEquipmentLogical, 
-                                logicalCircuitDetails.getEndpointA());
-                        logicalA.setId(Long.toString(aSideEquipmentLogical.getId()));
-                        tempForm.setLogicalPartA(logicalA);
                         
-                        //now we process the logical link(s)
-                        //MPLS
-                        if(serviceResource.getClassName().equals("MPLSLink")){
-                            ///divCs.add(createVC(serviceResource));
-                            Component tempDivC = createVC(serviceResource, logicalCircuitDetails.getEndpointA(), logicalCircuitDetails.getEndpointB());
-                            tempForm.getLogicalConnctions().add(tempDivC);
-                        }
-                        //SDH
-                        else{
-                            RemoteObject tirbutaryLink = wsBean.getObject(serviceResource.getClassName(), serviceResource.getId(), ipAddress, sessionId);
-                            if(tirbutaryLink != null){
-                                String hop2Name = wsBean.getAttributeValueAsString(tirbutaryLink.getClassName(), 
-                                        tirbutaryLink.getId(), "hop2Name", ipAddress, sessionId);
-
-                                String legalOwner = wsBean.getAttributeValueAsString(tirbutaryLink.getClassName(),
-                                            tirbutaryLink.getId(), "hop2LegalOwner", ipAddress, sessionId);
-
-                                String providerId = tirbutaryLink.getAttribute("hop2Id");
-                                if(tirbutaryLink.getAttribute("hop1Name") != null)
-                                    tempForm.getLogicalConnctions().add(createProviderTableS(tirbutaryLink));
+                        
                                 
-                                if(hop2Name != null)    
-                                    tempForm.getLogicalConnctions().add(createProviderTable(hop2Name, providerId, legalOwner));
-                            }
-                        }
+                        RemoteObjectLight aSideEquipmentLogical = parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1);
+                        RemoteObjectLight stmEndPointA = wsBean.getSpecialAttribute(stm.getClassName(), stm.getId(), "sdhTLEndpointA", ipAddress, sessionId).get(0);
+                        Component logicalA = createDeviceTable(aSideEquipmentLogical, 
+                                logicalCircuitDetails.getEndpointA(), stmEndPointA);
+                        logicalA.setId(Long.toString(aSideEquipmentLogical.getId()));
+                        tempForm.setLogicalPartA(logicalA);                        
+                        //This only applies if there is a peering, the peering should always be in side B
+                        if(aSideEquipmentLogical.getClassName().toLowerCase().contains("cloud"))
+                            isSideAPeering = true;
                         
                         //Now the other side of the logical circuit
                         List<RemoteObjectLight> parentsUntilFirstComEquipmentB;
@@ -188,16 +197,20 @@ public class ServManagerFormCreator{
                             else 
                                 parentsUntilFirstComEquipmentB = wsBean.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortB.get(0).
                                 getClassName(), parentsUntilFirstPhysicalPortB.get(0).getId(), "GenericCommunicationsElement", ipAddress, sessionId);
-                        }
-                        else
+                        }else
                             parentsUntilFirstComEquipmentB = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
                                 getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericCommunicationsElement", ipAddress, sessionId);
 
                         RemoteObjectLight bSideEquipmentLogical = parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1);
+                        //We must do this becuase we need the end points of the snmp
+                        RemoteObjectLight stmEndPointB = wsBean.getSpecialAttribute(stm.getClassName(), stm.getId(), "sdhTLEndpointB", ipAddress, sessionId).get(0);
                         Component logicalB = createDeviceTable(bSideEquipmentLogical, 
-                                logicalCircuitDetails.getEndpointB());
+                                logicalCircuitDetails.getEndpointB(), stmEndPointB);
                         logicalB.setId(Long.toString(bSideEquipmentLogical.getId()));
                         tempForm.setLogicalPartB(logicalB);
+                        //This only applies if there is a peering, the peering should always be in side B
+                        if(aSideEquipmentLogical.getClassName().toLowerCase().contains("cloud"))
+                            isSideAPeering = true;
                         
                         //Now we render the physical part
                         //We start with the A side
@@ -221,11 +234,10 @@ public class ServManagerFormCreator{
                                     if(aSidePhysicalEquipment.getClassName().equals("ODF"))
                                         tempForm.setOdfsA(createODF(aSidePhysicalEquipment, nextPhysicalHop));
                                     else
-                                        tempForm.setPhysicalPartA(createDeviceTable(aSidePhysicalEquipment, nextPhysicalHop));
+                                        tempForm.setPhysicalPartA(createDeviceTable(aSidePhysicalEquipment, nextPhysicalHop, null));
                                 }
                             }
-                        }
-                        //Now the b side
+                        }//Now the b side
                         if (!logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty()) {
                             int i = 2;
                             if (wsBean.isSubclassOf(logicalCircuitDetails.getPhysicalPathForEndpointB().get(0).getClassName(), 
@@ -244,12 +256,25 @@ public class ServManagerFormCreator{
                                     if(bSideEquipmentPhysical.getClassName().equals("ODF"))
                                         tempForm.setOdfsB(createODF(bSideEquipmentPhysical, nextPhysicalHop));
                                     else
-                                        tempForm.setPhysicalPartB(createDeviceTable(bSideEquipmentPhysical, nextPhysicalHop));
+                                        tempForm.setPhysicalPartB(createDeviceTable(bSideEquipmentPhysical, nextPhysicalHop, null));
                                 }
                             }
                         }
                     }
-                    tables.add(tempForm);
+                    //This is only for peering, we must reorder an set the peering always in side B
+                    if(isSideAPeering && !isSideBPeering){
+                        Component tempComponent = tempForm.getLogicalPartB();
+                        tempForm.setLogicalPartB(tempForm.getLogicalPartA());
+                        tempForm.setLogicalPartA(tempComponent);
+                        tempComponent = tempForm.getOdfsB();
+                        tempForm.setOdfsB(tempForm.getOdfsA());
+                        tempForm.setOdfsA(tempComponent);
+                        tempComponent = tempForm.getPhysicalPartB();
+                        tempForm.setPhysicalPartB(tempForm.getPhysicalPartA());
+                        tempForm.setPhysicalPartA(tempComponent);
+                    }
+                    
+                    tables.addFirst(tempForm);
                 }//end for
             }
         } catch (ServerSideException ex) {
@@ -267,7 +292,7 @@ public class ServManagerFormCreator{
         try {        
             //We create the fom title and the state
             Label lblTitle = new Label(service.getName());
-            lblTitle.setId("title");
+            lblTitle.setId("report-forms-title");
             RemoteObject obj = wsBean.getObject(service.getClassName(), service.getId(),
                     Page.getCurrent().getWebBrowser().getAddress(),
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
@@ -278,88 +303,185 @@ public class ServManagerFormCreator{
             
             String bandwidth = obj.getAttribute("Bandwidth"); 
             Label lblServStatus = new Label(String.format("Status: %s - Bandwidth: %s" , status != null ? status : " ", bandwidth != null ? bandwidth : " "));
-            lblServStatus.setId("properties");
+            lblServStatus.setId("report-forms-properties");
             //we set the form header
             VerticalLayout lytHeader = new VerticalLayout(lblTitle, lblServStatus);
-            lytHeader.setId("header");
+            lytHeader.setId("report-forms-header");
             content.addComponent(lytHeader);
             HorizontalLayout lytContent = new HorizontalLayout();
             //We add the tables
             lytContent.setSpacing(true);
-            lytContent.setId("content");
+            lytContent.setId("report-forms-content");
             boolean isPhysicalSideASet = false, isPhysicalSideBSet = false;
-            boolean isLogicalSideASet = false, isLogicalSideBSet = false;
-            boolean isMPLSLinkSet;
             boolean isODFASet = false, isODFBSet = false;
             List<String> addedDevices = new ArrayList<>();
             if(!tables.isEmpty()){
+                if(tables.size() > 1) 
+                    orderTables();
+                
                 for(FormStructure table : tables) {
-                    isMPLSLinkSet = false;
+                    //We add the side A - physical part
                     if(table.getPhysicalPartA()!= null && !isPhysicalSideASet){
                         lytContent.addComponent(table.getPhysicalPartA());
                         isPhysicalSideASet = true;
                     }
-                    
-                    if(table.getOdfsA() != null && !isODFASet){
-                        lytContent.addComponent(table.getOdfsA());
-                        isODFASet = true;
-                    }
-                    
-                    //If the side B is already added so we need de side A we must add the MPLS Link
-                    if(addedDevices.contains(table.getLogicalPartB().getId())){
-                        table.getLogicalConnctions().forEach(linkTable -> { lytContent.addComponent(linkTable); });
-                        isMPLSLinkSet = true;
-                    }
-                   
-                    if(!addedDevices.contains(table.getLogicalPartA().getId())){
+                    //we add the side A - logical part
+                    if(table.getLogicalPartA() != null && 
+                            !addedDevices.contains(table.getLogicalPartA().getId()))
+                    {
                         lytContent.addComponent(table.getLogicalPartA());
                         addedDevices.add(table.getLogicalPartA().getId());
-                        isLogicalSideASet = true;
-                    }
-                    
-                    if(!isMPLSLinkSet)
-                        table.getLogicalConnctions().forEach(linkTable -> { lytContent.addComponent(linkTable); });
-                    
-                    if(!addedDevices.contains(table.getLogicalPartB().getId())){
+                        //We add the ODF side A
+                        if(table.getOdfsA() != null && !isODFASet){
+                            lytContent.addComponent(table.getOdfsA());
+                            isODFASet = true;
+                        }
+                    } 
+                    //L I N K  We add the link tables
+                    table.getLogicalConnctions().forEach(linkTable -> { lytContent.addComponent(linkTable); });
+                    //we add the logical side B
+                    if(table.getLogicalPartB() != null && !addedDevices.contains(table.getLogicalPartB().getId())){
+                        //we add the ODF side B
+                        if(table.getOdfsB() != null && !isODFBSet && !addedDevices.contains(table.getLogicalPartB().getId())){
+                            lytContent.addComponent(table.getOdfsB());
+                            isODFBSet = true;
+                        }
                         lytContent.addComponent(table.getLogicalPartB());
                         addedDevices.add(table.getLogicalPartB().getId());
-                        isLogicalSideBSet = true;
-                    }
-                    
-                    //PHYSICAL check here the odf order
-                    if(table.getOdfsB() != null && !isODFBSet && (isLogicalSideASet || isLogicalSideBSet)){
-                        lytContent.addComponent(table.getOdfsB());
-                        isODFBSet = true;
-                    }
-                    
-//                    else if(table.getOdfsA() != null && !isODFASet && (isLogicalSideASet || isLogicalSideBSet)){
-//                        lytContent.addComponent(table.getOdfsA());
-//                        isODFASet = true;
-//                    }
-                    
-                    if(table.getPhysicalPartB()!= null && !isPhysicalSideBSet){
-                        lytContent.addComponent(table.getPhysicalPartB());
-                        isPhysicalSideBSet = true;
-                    }
-                    
-                    else if(table.getPhysicalPartA()!= null && isPhysicalSideASet){
-                        lytContent.addComponent(table.getPhysicalPartA());
-                        isPhysicalSideASet = true;
+                        //We add the physical side B
+                        if(table.getPhysicalPartB()!= null && !isPhysicalSideBSet){
+                            lytContent.addComponent(table.getPhysicalPartB());
+                            isPhysicalSideBSet = true;
+                        }
                     }
                 }
             }
-            
             content.addComponent(lytContent);
-            content.setId("container");
+            content.setId("report-forms-container");
+            content.addStyleName("report-forms");
             //We create the foot
             HorizontalLayout lytFoot = new HorizontalLayout(new Label("This report is powered by <a href=\"http://www.kuwaiba.org\">Kuwaiba Open Network Inventory</a>", ContentMode.HTML));
-            lytFoot.addStyleName("foot");
             content.addComponent(lytFoot);
+            content.setComponentAlignment(lytFoot, Alignment.BOTTOM_CENTER);
             
         } catch (ServerSideException ex) {
             Exceptions.printStackTrace(ex);
         }
         return content;
+    }
+    
+    private int[] search(long id){
+        int[] result = new int[2];
+        for(int i=1; i< tables.size(); i++){
+            if(tables.get(i).getLogicalPartA().getId().equals(Long.toString(id))){
+                result[0] = SIDE_A;
+                result[1] = i;
+            }
+            else if(tables.get(i).getLogicalPartB().getId().equals(Long.toString(id)))
+                result[0] = SIDE_B;
+                result[1] = i;
+        }
+        result[0] = 0;
+        result[1] = -1;
+        return result;
+    }
+    
+    /**
+     * Reads the list of tables, (every side) to order 
+     */
+    private void orderTables(){
+        int i = 0;
+        boolean isSideAChecked = false, isSideBChecked = false; 
+        int[] location = {0, -1};
+        
+        while(i < tables.size()){
+            location[0] = 0; location[1] = -1;
+            if(tables.get(i).getLogicalPartA() != null && !isSideAChecked){
+                location = search(Long.valueOf(tables.get(i).getLogicalPartA().getId()));
+                if(location[0] != 0 && location[1] != -1)
+                    moveRouter(SIDE_A, i, location[0], location[1]);
+                else if(location[0] == 0 && location[1] == -1)
+                    isSideAChecked = true;
+            }
+            else if(tables.get(i).getLogicalPartA() == null)
+                isSideAChecked = true;
+            
+            if(tables.get(i).getLogicalPartB() != null && isSideAChecked && !isSideBChecked){
+                location = search(Long.valueOf(tables.get(i).getLogicalPartB().getId()));
+                if(location[0] != 0 && location[1] != -1)
+                    moveRouter(SIDE_B, i, location[0], location[1]);
+                else if(location[0] == 0 && location[1] == -1)
+                    isSideBChecked = true;
+            }
+            else if(tables.get(i).getLogicalPartB() == null)
+                isSideBChecked = true;
+            
+            else if(location[0] == 0 && location[1] == -1 && isSideAChecked && isSideBChecked){
+                i++;
+                isSideAChecked = false;
+                isSideBChecked = false;
+            }
+        }
+    }
+    
+    /**
+     * Reorder the list of tables, removing the repeated routers and 
+     * put them in the right place
+     * e.g.
+     * Table before: [R2-R3][R4-R1][R1-R2] start with R2, (first iteration) i=0 from:A pos: 2 side:B
+     * (second iteration)[R1-][R2-R3][R4-R1] i=0 from:A pos:2 side:B
+     * (third iteration) [R4-][R1-][R2-R3] from:A pos:-1 side: 0
+     * 
+     * Same routers, with the same order but with opposite sides.
+     * [R2-R3][R4-R1][R2-R1] R2, i=0 from:A pos:2 side:A change
+     * [R1-][R2-R3][R4-R1] i=0 from:A pos:2 side:B
+     * [R4-][R1-][R2-R3] from:A pos:-1 side:0
+     * -----
+     * Same routers, with the same order but with opposite sides.
+     * [R3-R2][R4-R1][R1-R2] i=0 from:B pos:2 side:B change
+     * [R3-R2][-R1][R4-R1] i=1 from:B pos:2 side:B
+     * [R3-R2][-R1][-R4]
+     *
+     * Same routers, with the same order but with opposite sides.
+     * [R3-R2][R4-R1][R2-R1] i=0 from:B pos:2 side:A
+     * [R3-R2][-R1][R4-R1] i=1 from:B pos:2 side:B
+     * [R3-R2][-R1][-R4]
+     * @param sourceSide the side of the current evaluated router
+     * @param sourceIndex the current evaluated router
+     * @param side the side if the router was found as repeat
+     * @param index the index if the router was found as repeat
+     */
+    private void moveRouter(int sourceSide, int sourceIndex, int side, int index){
+        if(sourceSide == SIDE_A){
+            if(side == SIDE_B){
+                tables.get(index).setLogicalPartB(null);
+                FormStructure tableToMove = tables.get(index);
+                tables.remove(index);
+                tables.add(sourceIndex, tableToMove);
+            }
+            else if(side == SIDE_A){
+                tables.get(index).setLogicalPartA(tables.get(index).getLogicalPartB());
+                tables.get(index).setLogicalPartB(null);
+                FormStructure tableToMove = tables.get(index);
+                tables.remove(index);
+                tables.add(sourceIndex, tableToMove);
+            }
+        }
+        else if(sourceSide == SIDE_B){
+            if(side == SIDE_B){
+                tables.get(index).setLogicalPartB(tables.get(index).getLogicalPartA());
+                tables.get(index).setLogicalPartA(null);     
+                FormStructure tableToMove = tables.get(index);
+                tables.remove(index);
+                tables.add(tables.size() == sourceIndex ? sourceIndex : sourceIndex + 1, tableToMove);
+            }
+            else if(side == SIDE_A){
+                tables.get(index).setLogicalPartA(null);
+                FormStructure tableToMove = tables.get(index);
+                tables.remove(index);
+                tables.add(tables.size() == sourceIndex ? sourceIndex : sourceIndex + 1, tableToMove);
+            }
+        }
     }
     
     /**
@@ -371,16 +493,18 @@ public class ServManagerFormCreator{
      * @throws ServerSideException 
      */
     private Component createDeviceTable(RemoteObjectLight equipment, 
-            RemoteObjectLight port) throws ServerSideException
+            RemoteObjectLight port, RemoteObjectLight stm) throws ServerSideException
     {
         if(wsBean.isSubclassOf(equipment.getClassName(), "GenericDataLinkElement", ipAddress, sessionId))
-            return createADM(equipment, port);
+            return createADM(equipment, port, stm);
         else if (wsBean.isSubclassOf(equipment.getClassName(), "ExternalEquipment", ipAddress, sessionId))
             return createExternalEquipment(equipment);
         else if (wsBean.isSubclassOf(equipment.getClassName(), "Cloud", ipAddress, sessionId))
             return createPeering(equipment);
-        else if (wsBean.isSubclassOf(equipment.getClassName(), "GenericNetworkElement", ipAddress, sessionId))
+        else if (equipment.getClassName().toLowerCase().contains("router"))
             return createRouter(equipment, port);
+        else if (equipment.getClassName().toLowerCase().contains("switch"))
+            return createSwitch(equipment, port);
         
         return null;
     }
@@ -393,6 +517,7 @@ public class ServManagerFormCreator{
      */
     private Component createTitle(String text, int type){
         HorizontalLayout lytTitle = new HorizontalLayout(new Label(text));
+        lytTitle.addStyleName("device-title");
         lytTitle.addStyleName("device-title");
         switch(type){
             case ROUTER:
@@ -426,9 +551,19 @@ public class ServManagerFormCreator{
      * @param value value to put in the cell
      * @return a formating layout ton insert in the grid layout cell
      */
-    private Component createCell(String value){
+    private Component createCell(String value, boolean bold, boolean topBorder, boolean rightBorder, boolean noBottom){
         HorizontalLayout lytCell = new HorizontalLayout();
-        lytCell.addStyleName("cell-with-border");
+        lytCell.addStyleNames("cell-with-border-bottom");
+        if(bold)
+            lytCell.addStyleName("cell-with-bold-text");
+        if(rightBorder)    
+            lytCell.addStyleName("cell-with-border-right");
+        if(topBorder)
+            lytCell.addStyleName("cell-with-border-top");
+        if(noBottom){
+            lytCell.removeStyleName("cell-with-border-bottom");
+            lytCell.addStyleName("cell-with-border-temp");
+        }
         lytCell.addComponent(new Label(value, ContentMode.HTML));
         return lytCell;
     }
@@ -472,8 +607,9 @@ public class ServManagerFormCreator{
         }
         Image image = new Image("", new ExternalResource(path));
         image.setWidth("100px");
+        image.addStyleNames("device-img");
         HorizontalLayout lytCell = new HorizontalLayout();
-        lytCell.addStyleName("cell-with-border-img");
+        lytCell.addStyleNames("cell-with-img");
         lytCell.addComponent(image);
         return lytCell;
     }
@@ -505,41 +641,46 @@ public class ServManagerFormCreator{
         
         //We create the table with a grid layout
         GridLayout grdRouter = new GridLayout(2, 16);
+        grdRouter.addStyleName("report-forms-box");
+        
         grdRouter.addComponent(createTitle(objLight.getName(), ROUTER), 0, 0, 1, 0);
         
-        grdRouter.addComponent(createCell("CARD"), 0, 1);
-        grdRouter.addComponent(createCell("PORT"), 1, 1);
+        grdRouter.addComponent(createCell("CARD", true, true, true, false), 0, 1);
+        grdRouter.addComponent(createCell("PORT", true, true, false, false), 1, 1);
         
-        grdRouter.addComponent(createCell(card), 0, 2);
-        grdRouter.addComponent(createCell(port.getName()), 1, 2);
+        grdRouter.addComponent(createCell(card, false, false, true, false), 0, 2);
+        grdRouter.addComponent(createCell(port.getName(), false, false, false, false), 1, 2);
         
-        grdRouter.addComponent(createCell(" "), 0, 3, 1, 3);
-        grdRouter.addComponent(createCell("DEVICE LOCATION"), 0, 4);
-        grdRouter.addComponent(createCell(getCityLocation(objLight)), 1, 4);
-        grdRouter.addComponent(createCell("DEVICE HOSTER"), 0, 5);
-        grdRouter.addComponent(createCell(getHoster(networkDevice)), 1, 5);
-        grdRouter.addComponent(createCell("DEVICE OWNER"), 0, 6);
-        grdRouter.addComponent(createCell(getOwner(networkDevice)), 1, 6);
-        grdRouter.addComponent(createCell("DEVICE H&E"), 0, 7);
-        grdRouter.addComponent(createCell(getHandE(networkDevice)), 1, 7);
+        grdRouter.addComponent(createCell(" ", false, false, false, false), 0, 3, 1, 3);
+        grdRouter.addComponent(createCell("DEVICE LOCATION", true, false, true, false), 0, 4);
+        grdRouter.addComponent(createCell(getCityLocation(objLight), false, false, false, false), 1, 4);
+        grdRouter.addComponent(createCell("DEVICE HOSTER", true, false, true, false), 0, 5);
+        grdRouter.addComponent(createCell(getHoster(networkDevice), false, false, false, false), 1, 5);
+        grdRouter.addComponent(createCell("DEVICE OWNER", true, false, true, false), 0, 6);
+        grdRouter.addComponent(createCell(getOwner(networkDevice), false, false, false, false), 1, 6);
+        grdRouter.addComponent(createCell("DEVICE H&E", true, false, true, false), 0, 7);
+        grdRouter.addComponent(createCell(getHandE(networkDevice), false, false, false, false), 1, 7);
+        grdRouter.addComponent(createCell(" ", false, false, false, false), 0, 8, 1, 8);
         
-        grdRouter.addComponent(createCell(" "), 0, 8, 1, 8);
-        
-        grdRouter.addComponent(createCell("RACK POSITION"), 0, 9);
-        grdRouter.addComponent(createCell(rackPosition), 1, 9);
-        grdRouter.addComponent(createCell("RACK UNITS"), 0, 10);
-        grdRouter.addComponent(createCell(rackUnits), 1, 10);
+        if(rackPosition != null && isNumeric(rackPosition) && Integer.valueOf(rackPosition) > 0){
+            grdRouter.addComponent(createCell("RACK POSITION", true, false, true, false), 0, 9);
+            grdRouter.addComponent(createCell(rackPosition, false, false, false, false), 1, 9);
+        }
+        if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0){
+            grdRouter.addComponent(createCell("RACK UNITS", true, false, true, false), 0, 10);
+            grdRouter.addComponent(createCell(rackUnits, false, false, false, false), 1, 10);
+        }
         if(mmr != null && !mmr.isEmpty()){
-            grdRouter.addComponent(createCell("MMR"), 0, 11);
-            grdRouter.addComponent(createCell(mmr), 1, 11);
+            grdRouter.addComponent(createCell("MMR", true, false, true, false), 0, 11);
+            grdRouter.addComponent(createCell(mmr, false, false, false, false), 1, 11);
         }
         if(rmmr != null && !rmmr.isEmpty()){
-            grdRouter.addComponent(createCell("RMMR"), 0, 12);
-            grdRouter.addComponent(createCell(rmmr), 1, 12);
+            grdRouter.addComponent(createCell("RMMR", true, false, true, false), 0, 12);
+            grdRouter.addComponent(createCell(rmmr, false, false, false, false), 1, 12);
         }
         if(moreInformation != null && !moreInformation.isEmpty()){
-            grdRouter.addComponent(createCell("MORE INFO"), 0, 13, 1, 13);
-            grdRouter.addComponent(createCell(moreInformation), 0, 14, 1, 14);
+            grdRouter.addComponent(createCell("MORE INFO", true, false, true, false), 0, 13, 1, 13);
+            grdRouter.addComponent(createCell(moreInformation, false, false, false, false), 0, 14, 1, 14);
         }
         grdRouter.addComponent(createIcon(ROUTER), 0, 15, 1, 15);
         return grdRouter;
@@ -552,7 +693,6 @@ public class ServManagerFormCreator{
      * @throws ServerSideException if some attributes need it ot create the table couldn't be retrieved
      */
     public Component createPeering(RemoteObjectLight objLight) throws ServerSideException{
-
         RemoteObject obj = wsBean.getObject(objLight.getClassName(), objLight.getId(),
                 Page.getCurrent().getWebBrowser().getAddress(),
                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
@@ -563,16 +703,17 @@ public class ServManagerFormCreator{
         String providerCircuitID = obj.getAttribute("ProviderCircuitID");
         
         GridLayout grdPeering = new GridLayout(2, 7);
+        grdPeering.addStyleName("report-forms-box");
         grdPeering.addComponent(createTitle(objLight.getName(), PEERING), 0, 0, 1, 0);
-        grdPeering.addComponent(createCell("IP PEERING"), 0, 1);
-        grdPeering.addComponent(createCell(peeringIp != null ? peeringIp : " "), 1, 1);
-        grdPeering.addComponent(createCell(" "), 0, 2, 1, 2);
-        grdPeering.addComponent(createCell("CIRCUIT ID"), 0, 3);     
-        grdPeering.addComponent(createCell(circuitID != null ? circuitID : " "), 1, 3);        
-        grdPeering.addComponent(createCell("INTERNAL ID"), 0, 4);
-        grdPeering.addComponent(createCell(providerCircuitID != null ? providerCircuitID : " "), 1, 4);
-        grdPeering.addComponent(createCell("ASN NUMBER"), 0, 5);
-        grdPeering.addComponent(createCell(providerASN != null ? providerASN : " "), 1, 5);
+        grdPeering.addComponent(createCell("IP PEERING", true, true, true, false), 0, 1);
+        grdPeering.addComponent(createCell(peeringIp != null ? peeringIp : " ", false, true, false, false), 1, 1);
+        grdPeering.addComponent(createCell(" ", false, false, false, false), 0, 2, 1, 2);
+        grdPeering.addComponent(createCell("CIRCUIT ID", true, false, true, false), 0, 3);     
+        grdPeering.addComponent(createCell(circuitID != null ? circuitID : " ", false, false, false, false), 1, 3);        
+        grdPeering.addComponent(createCell("INTERNAL ID", true, false, true, false), 0, 4);
+        grdPeering.addComponent(createCell(providerCircuitID != null ? providerCircuitID : " ", false, false, false, false), 1, 4);
+        grdPeering.addComponent(createCell("ASN NUMBER", true, false, true, false), 0, 5);
+        grdPeering.addComponent(createCell(providerASN != null ? providerASN : " ", false, false, false, false), 1, 5);
         
         grdPeering.addComponent(createIcon(PEERING), 0, 6, 1, 6);
         return grdPeering;
@@ -581,12 +722,12 @@ public class ServManagerFormCreator{
     /**
      * Creates a table for an ADM
      * @param objLight the given object
-     * @param port the port where the link ends
+     * @param port the port where the link endsstmEndPoint@param stm used to calculate the cross connection
+     * @param stmEndPoint
      * @return a grid layout with the ADM's information
-     * @throws ServerSideException if one attribute need it to create the table coulnd't be retrieved 
+     * @throws ServerSideException if one attribute need it to create the table couldn't be retrieved 
      */
-    public Component createADM(RemoteObjectLight objLight, 
-            RemoteObjectLight port) throws ServerSideException{
+    public Component createADM(RemoteObjectLight objLight, RemoteObjectLight port, RemoteObjectLight stmEndPoint) throws ServerSideException{
         RemoteObject obj = wsBean.getObject(objLight.getClassName(), objLight.getId(),
                 Page.getCurrent().getWebBrowser().getAddress(),
                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
@@ -597,32 +738,29 @@ public class ServManagerFormCreator{
         
         RemoteObjectSpecialRelationships specialAttributes = wsBean.getSpecialAttributes(port.getClassName(), port.getId(), ipAddress, sessionId);
         List<String> relationships = specialAttributes.getRelationships();
-        List<RemoteObjectLightList> relatedObjects = specialAttributes.getRelatedObjects();
         for(int i=0; i<relationships.size(); i++){
             if(relationships.get(i).equals("endpointA") || relationships.get(i).equals("endpointB")){
-                RemoteObjectLight link = relatedObjects.get(i).getList().get(0);
-                if(relationships.get(i).equals("endpointA")){ //side A
-                    port2 = port;
-                    card2 = wsBean.getParentsUntilFirstOfClass(port.getClassName(), 
+                if(relationships.get(i).equals("endpointA")){
+                    port1 = port;
+                    card1 = wsBean.getParentsUntilFirstOfClass(port1.getClassName(), 
                             port.getId(), "IpBoard", 
                             Page.getCurrent().getWebBrowser().getAddress(),
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).get(0);
                     
-                    port1 = wsBean.getSpecialAttribute(link.getClassName(), link.getId(), "endpointB", ipAddress, sessionId).get(0);
-                    card1 = wsBean.getParentsUntilFirstOfClass(port1.getClassName(), port1.getId(), "IpBoard", 
+                    port2 = stmEndPoint;
+                    card2 = wsBean.getParentsUntilFirstOfClass(port2.getClassName(), port2.getId(), "IpBoard", 
                             Page.getCurrent().getWebBrowser().getAddress(),
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).get(0);
                 }
             
                 else if(relationships.get(i).equals("endpointB")){
-                    port1 = port;
-                    card1 = wsBean.getParentsUntilFirstOfClass(port1.getClassName(), port1.getId(), "IpBoard", 
+                    port2 = port;
+                    card2 = wsBean.getParentsUntilFirstOfClass(port2.getClassName(), port2.getId(), "IpBoard", 
                             Page.getCurrent().getWebBrowser().getAddress(),
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).get(0);
                 
-                    port2 = wsBean.getSpecialAttribute(link.getClassName(), link.getId(), "endpointA", ipAddress, sessionId).get(0);
-                    card2 = wsBean.getParentsUntilFirstOfClass(port2.getClassName(), 
-                            port2.getId(), "IpBoard", 
+                    port1 = stmEndPoint;
+                    card1 = wsBean.getParentsUntilFirstOfClass(port1.getClassName(), port1.getId(), "IpBoard", 
                             Page.getCurrent().getWebBrowser().getAddress(),
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).get(0);
                 }
@@ -637,62 +775,76 @@ public class ServManagerFormCreator{
         String rmmr2 = wsBean.getAttributeValueAsString(port2.getClassName(), port2.getId(), "remotemeetmeroom", ipAddress, sessionId);
         
         GridLayout grdADM = new GridLayout(2, 20);
-        
+        grdADM.addStyleName("report-forms-box");
         grdADM.addComponent(createTitle(objLight.getName(), ADM), 0, 0, 1, 0);
         
-        grdADM.addComponent(createCell("CARD 1"), 0, 1);
-        grdADM.addComponent(createCell("PORT 1"), 0, 3);
+        grdADM.addComponent(createCell("CARD 1", true, true, true, false), 0, 1);
+        grdADM.addComponent(createCell("PORT 1", true, false, true, false), 0, 3);
         
         //values
-        grdADM.addComponent(createCell(card1 != null ? card1.getName() : ""), 0, 2);
-        grdADM.addComponent(createCell(port1.getName()), 0, 4);
+        grdADM.addComponent(createCell(card1 != null ? card1.getName() : "", false, false, true, false), 0, 2);
+        grdADM.addComponent(createCell(port1.getName(), false, false, true, false), 0, 4);
         if(portSpeed1 != null && !portSpeed1.isEmpty()){
-            grdADM.addComponent(createCell("SPEED 1"), 0, 5);
-            grdADM.addComponent(createCell(portSpeed1), 0, 6);
+            grdADM.addComponent(createCell("SPEED 1", true, false, true, false), 0, 5);
+            grdADM.addComponent(createCell(portSpeed1, false, false, true, false), 0, 6);
         }
         if(mmr != null && !mmr.isEmpty()){
-            grdADM.addComponent(createCell("MMR"), 0, 7);
-            grdADM.addComponent(createCell(!mmr.isEmpty() ? mmr : ""), 0, 8);
+            grdADM.addComponent(createCell("MMR", true, false, true, false), 0, 7);
+            grdADM.addComponent(createCell(!mmr.isEmpty() ? mmr : "", false, false, true, false), 0, 8);
         }
         if(rmmr != null && !rmmr.isEmpty()){
-            grdADM.addComponent(createCell("RMMR"), 0, 9);
-            grdADM.addComponent(createCell(!rmmr.isEmpty() ? rmmr : ""), 0, 10);
+            grdADM.addComponent(createCell("RMMR", true, false, true, false), 0, 9);
+            grdADM.addComponent(createCell(!rmmr.isEmpty() ? rmmr : "", false, false, false, false), 0, 10);
         }
-        grdADM.addComponent(createCell("CARD 2"), 1, 1);
-        grdADM.addComponent(createCell("PORT 2"), 1, 3);
+        grdADM.addComponent(createCell("CARD 2", true, true, false, false), 1, 1);
+        grdADM.addComponent(createCell("PORT 2", true, false, false, false), 1, 3);
         //values
-        grdADM.addComponent(createCell(card2 != null ? card2.getName() : ""), 1, 2);
-        grdADM.addComponent(createCell(port2.getName()), 1, 4);
+        grdADM.addComponent(createCell(card2 != null ? card2.getName() : "", false, false, false, false), 1, 2);
+        grdADM.addComponent(createCell(port2.getName(), false, false, false, false), 1, 4);
         if(portSpeed2 != null && !portSpeed2.isEmpty()){
-            grdADM.addComponent(createCell(!portSpeed2.isEmpty() ? portSpeed2 : ""), 1, 6);
-            grdADM.addComponent(createCell("SPEED 2"), 1, 5);
+            grdADM.addComponent(createCell(!portSpeed2.isEmpty() ? portSpeed2 : "", false, false, false, false), 1, 6);
+            grdADM.addComponent(createCell("SPEED 2", true, false, true, false), 1, 5);
         }
-        if(mmr2 != null && !mmr2.isEmpty()){
-            grdADM.addComponent(createCell(mmr2), 1, 8);
-            grdADM.addComponent(createCell("MMR"), 1, 7);
-        }
+        
         if(rmmr2 != null && !rmmr2.isEmpty()){
-            grdADM.addComponent(createCell("RMMR"), 1, 9);
-            grdADM.addComponent(createCell(!rmmr2.isEmpty() ? rmmr2 : ""), 1, 10);
+            grdADM.addComponent(createCell("RMMR", true, false, true, false), 1, 9);
+            grdADM.addComponent(createCell(!rmmr2.isEmpty() ? rmmr2 : "", false, false, true, false), 1, 10);
+            
+            if(mmr2 != null && !mmr2.isEmpty()){
+                grdADM.addComponent(createCell(mmr2, false, false, false, false), 1, 8);
+                grdADM.addComponent(createCell("MMR", true, false, false, false), 1, 7);
+            }
         }
-        grdADM.addComponent(createCell(" "), 0, 11, 1, 11);
+        else if(mmr2 != null && !mmr2.isEmpty()){
+            grdADM.addComponent(createCell(" ", true, false, true, true), 0, 8);
+            grdADM.addComponent(createCell(" ", false, false, true, true), 0, 7);
+            
+            grdADM.addComponent(createCell(mmr2, false, false, false, false), 1, 8);
+            grdADM.addComponent(createCell("MMR", true, false, false, false), 1, 7);
+            
+        }
+            
         
-        grdADM.addComponent(createCell("DEVICE LOCATION"), 0, 12);
-        grdADM.addComponent(createCell(getCityLocation(objLight)), 1, 12);
-        grdADM.addComponent(createCell("DEVICE HOSTER"), 0, 13);
-        grdADM.addComponent(createCell(getHoster(obj)), 1, 13);
-        grdADM.addComponent(createCell("DEVICE OWNER"), 0, 14);
-        grdADM.addComponent(createCell(getOwner(obj)), 1, 14);
-        grdADM.addComponent(createCell("DEVICE H&E"), 0, 15);
-        grdADM.addComponent(createCell(getHandE(obj)), 1, 15);
+        grdADM.addComponent(createCell(" ", false, false, false, false), 0, 11, 1, 11);
         
-        grdADM.addComponent(createCell(" "), 0, 16, 1, 16);
+        grdADM.addComponent(createCell("DEVICE LOCATION", true, false, true, false), 0, 12);
+        grdADM.addComponent(createCell(getCityLocation(objLight), false, false, false, false), 1, 12);
+        grdADM.addComponent(createCell("DEVICE HOSTER", true, false, true, false), 0, 13);
+        grdADM.addComponent(createCell(getHoster(obj), false, false, false, false), 1, 13);
+        grdADM.addComponent(createCell("DEVICE OWNER", true, false, true, false), 0, 14);
+        grdADM.addComponent(createCell(getOwner(obj), false, false, false, false), 1, 14);
+        grdADM.addComponent(createCell("DEVICE H&E", true, false, true, false), 0, 15);
+        grdADM.addComponent(createCell(getHandE(obj), false, false, false, false), 1, 15);
         
-        grdADM.addComponent(createCell("RACK POSITION"), 0, 17);
-        grdADM.addComponent(createCell(rackPosition), 1, 17);
-        grdADM.addComponent(createCell("RACK UNITS"), 0, 18);
-        grdADM.addComponent(createCell(rackUnits), 1, 18);
-        
+        grdADM.addComponent(createCell(" ", false, false, false, false), 0, 16, 1, 16);
+        if(rackPosition != null && isNumeric(rackPosition) && Integer.valueOf(rackPosition) > 0){
+            grdADM.addComponent(createCell("RACK POSITION", true, false, true, false), 0, 17);
+            grdADM.addComponent(createCell(rackPosition, false, false, false, false), 1, 17);
+        }
+        if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0){
+            grdADM.addComponent(createCell("RACK UNITS", true, false, true, false), 0, 18);
+            grdADM.addComponent(createCell(rackUnits, false, false, false, false), 1, 18);
+        }
         grdADM.addComponent(createIcon(ADM), 0, 19, 1, 19);
         return grdADM;
     }
@@ -714,17 +866,22 @@ public class ServManagerFormCreator{
         String rackUnits = odf.getAttribute("rackUnits");
         
         GridLayout grdODF = new GridLayout(2, 8);
+        grdODF.addStyleName("report-forms-box");
         grdODF.addComponent(createTitle(objLight.getName(), ODF), 0, 0, 1, 0);
-        grdODF.addComponent(createCell("ODF-PORT"), 0, 1);
-        grdODF.addComponent(createCell(port.getName()), 1, 1);
-        grdODF.addComponent(createCell(" "), 0, 2, 1, 2);
-        grdODF.addComponent(createCell("RACK POSTION"), 0, 3);
-        grdODF.addComponent(createCell(rackPostion != null ? rackPostion : "Not Set"), 1, 3);
-        grdODF.addComponent(createCell("RACK UNITS"), 0, 4);
-        grdODF.addComponent(createCell(rackUnits != null ? rackUnits : "Not Set"), 1, 4);
-        grdODF.addComponent(createCell(" "), 0, 5, 1, 5);
-        grdODF.addComponent(createCell("DEVICE LOCATION"), 0, 6);
-        grdODF.addComponent(createCell(getCityLocation(objLight)), 1, 6);
+        grdODF.addComponent(createCell("ODF-PORT", true, true, true, false), 0, 1);
+        grdODF.addComponent(createCell(port.getName(), false, true, false, false), 1, 1);
+        grdODF.addComponent(createCell(" ", false, false, false, false), 0, 2, 1, 2);
+        if(rackPostion != null && isNumeric(rackPostion) && Integer.valueOf(rackPostion) > 0){
+            grdODF.addComponent(createCell("RACK POSTION", true, false, true, false), 0, 3);
+            grdODF.addComponent(createCell(rackPostion, false, false, false, false), 1, 3);
+        }
+        if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0){
+            grdODF.addComponent(createCell("RACK UNITS", true, false, true, false), 0, 4);
+            grdODF.addComponent(createCell(rackUnits, false, false, false, false), 1, 4);
+        }
+        grdODF.addComponent(createCell(" ", false, false, false, false), 0, 5, 1, 5);
+        grdODF.addComponent(createCell("DEVICE LOCATION", true, false, true, false), 0, 6);
+        grdODF.addComponent(createCell(getCityLocation(objLight), false, false, false, false), 1, 6);
         grdODF.addComponent(createIcon(ODF), 0, 7, 1, 7);
         return grdODF;
     }
@@ -740,12 +897,13 @@ public class ServManagerFormCreator{
         
         GridLayout grdProvider = new GridLayout(2, 4);
         grdProvider.addComponent(createTitle(providerName, PROVIDER), 0, 0, 1, 0);
+        grdProvider.addStyleName("report-forms-box");
         //Titles
-        grdProvider.addComponent(createCell("PROVIDER ID"), 0, 1);
-        grdProvider.addComponent(createCell("LEGAL OWNER"), 0, 2);
+        grdProvider.addComponent(createCell("PROVIDER ID", true, true, true, false), 0, 1);
+        grdProvider.addComponent(createCell("LEGAL OWNER", true, false, true, false), 0, 2);
         //values
-        grdProvider.addComponent(createCell(providerId), 1, 1);
-        grdProvider.addComponent(createCell(legalOwner), 1, 2);
+        grdProvider.addComponent(createCell(providerId, false, true, false, false), 1, 1);
+        grdProvider.addComponent(createCell(legalOwner, false, false, false, false), 1, 2);
 
         grdProvider.addComponent(createIcon(selectLogo(providerName)), 0, 3, 1, 3);
         
@@ -813,53 +971,75 @@ public class ServManagerFormCreator{
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                             
         GridLayout grdProviderSubmarineCable = new GridLayout(2, 10);
+        grdProviderSubmarineCable.addStyleName("report-forms-box");
         grdProviderSubmarineCable.addComponent(createTitle(hop1Name, PROVIDER), 0, 0, 1, 0);
+        grdProviderSubmarineCable.addComponent(createCell("LEGAL OWNER", true, true, true, false), 0, 1);
+        grdProviderSubmarineCable.addComponent(createCell("PROVIDER ID", true, false, true, false), 0, 2);
+        grdProviderSubmarineCable.addComponent(createCell(" ", false, false, false, false), 0, 4, 1, 4);
+        grdProviderSubmarineCable.addComponent(createCell("EUROPEAN NODE", true, false, true, false), 0, 5);
+        grdProviderSubmarineCable.addComponent(createCell("LANDING NODE", true, false, true, false), 0, 6);
+        grdProviderSubmarineCable.addComponent(createCell("SEGMENT", true, false, true, false), 0, 7);
         
-        grdProviderSubmarineCable.addComponent(createCell("LEGAL OWNER"), 0, 1);
-        grdProviderSubmarineCable.addComponent(createCell("PROVIDER ID"), 0, 2);
-        grdProviderSubmarineCable.addComponent(createCell(" "), 0, 4, 1, 4);
-        grdProviderSubmarineCable.addComponent(createCell("EUROPEAN NODE"), 0, 5);
-        grdProviderSubmarineCable.addComponent(createCell("LANDING NODE"), 0, 6);
-        grdProviderSubmarineCable.addComponent(createCell("SEGMENT"), 0, 7);
-        
-        grdProviderSubmarineCable.addComponent(createCell(hop1Id), 1, 1);
-        grdProviderSubmarineCable.addComponent(createCell(hop1LegalOwner), 1, 2);
+        grdProviderSubmarineCable.addComponent(createCell(hop1LegalOwner, false, true, false, false), 1, 1);
+        grdProviderSubmarineCable.addComponent(createCell(hop1Id, false, false, false, false), 1, 2);
         if(carfNumber != null && !carfNumber.isEmpty()){
-            grdProviderSubmarineCable.addComponent(createCell("CARF NUMBER"), 0, 3);
-            grdProviderSubmarineCable.addComponent(createCell(carfNumber), 1, 3);
+            grdProviderSubmarineCable.addComponent(createCell("CARF NUMBER", true, false, true, false), 0, 3);
+            grdProviderSubmarineCable.addComponent(createCell(carfNumber, false, false, false, false), 1, 3);
         }
-        grdProviderSubmarineCable.addComponent(createCell(euNode), 1, 5);
-        grdProviderSubmarineCable.addComponent(createCell(endNode), 1, 6);
-        grdProviderSubmarineCable.addComponent(createCell(segment), 1, 7);
+        grdProviderSubmarineCable.addComponent(createCell(euNode, false, false, false, false), 1, 5);
+        grdProviderSubmarineCable.addComponent(createCell(endNode, false, false, false, false), 1, 6);
+        grdProviderSubmarineCable.addComponent(createCell(segment, false, false, false, false), 1, 7);
         if(moreInformation != null && !moreInformation.isEmpty()){
-            grdProviderSubmarineCable.addComponent(createCell("MORE INFO"), 0, 8);
-            grdProviderSubmarineCable.addComponent(createCell(moreInformation), 1, 8);
+            grdProviderSubmarineCable.addComponent(createCell("MORE INFO", true, false, true, false), 0, 8);
+            grdProviderSubmarineCable.addComponent(createCell(moreInformation, false, false, false, false), 1, 8);
         }
         grdProviderSubmarineCable.addComponent(createIcon(selectLogo(hop1Name)), 0, 9, 1, 9);
         
         return grdProviderSubmarineCable;
     }
     
+    public Component createVC(RemoteObjectLight vcMplsLink) throws ServerSideException{
+        RemoteObjectLight sideA = wsBean.getSpecialAttribute(vcMplsLink.getClassName(), vcMplsLink.getId(), "mplsEndpointA", ipAddress, sessionId).get(0);
+        RemoteObjectLight sideB = wsBean.getSpecialAttribute(vcMplsLink.getClassName(), vcMplsLink.getId(), "mplsEndpointB", ipAddress, sessionId).get(0);
+        if(sideA != null && sideB != null)
+            return createVC(vcMplsLink, sideA, sideB);
+        else 
+            throw new ServerSideException("Could not determine the end point of the MPLS Link");
+    }
     /**
      * Creates a table for a VC (MPLSLinks)
-     * @param objLight the given object in this case a MPLSLink
+     * @param vcMPLSLink the given object in this case a MPLSLink
      * @param sideA virtual port side A
      * @param sideB virtual port side B
      * @return a grid layout with the vc's information
      * @throws org.kuwaiba.exceptions.ServerSideException could not find the attribute
      */
-    public Component createVC(RemoteObjectLight objLight, RemoteObjectLight sideA, RemoteObjectLight sideB) throws ServerSideException{
-        GridLayout grdVC = new GridLayout(2, 3);
-        grdVC.addComponent(createTitle(objLight.getName(), VC), 0, 0, 1, 0);
+    public Component createVC(RemoteObjectLight vcMPLSLink, RemoteObjectLight sideA, RemoteObjectLight sideB) throws ServerSideException{
+        GridLayout grdVC = new GridLayout(4, 3);
+        grdVC.addStyleName("report-forms-box");
+        grdVC.addComponent(createTitle(vcMPLSLink.getName(), VC), 0, 0, 3, 0);
         
-        String ipSource = wsBean.getAttributeValueAsString(objLight.getClassName(), objLight.getId(), "ipSource", ipAddress, sessionId);
-        grdVC.addComponent(createCell("PW: " + sideA == null ? "" : sideA.toString()), 0, 1);
-        grdVC.addComponent(createCell("IP: " + ipSource), 0, 2);
+        String ipSource = wsBean.getAttributeValueAsString(vcMPLSLink.getClassName(), vcMPLSLink.getId(), "ipSource", ipAddress, sessionId);
+        if(sideA != null){
+            grdVC.addComponent(createCell("PW", true, true, true, false), 0, 1);
+            grdVC.addComponent(createCell(sideA.getName(), false, true, true, false), 1, 1);
+            grdVC.addComponent(createCell("IP", true, false, true, false), 0, 2);
+        }
+        else
+            grdVC.addComponent(createCell("IP", true, true, true, false), 0, 2);   
+        grdVC.addComponent(createCell(ipSource, false, false, true, false), 1, 2);
 
         
-        String ipDestiny = wsBean.getAttributeValueAsString(objLight.getClassName(), objLight.getId(), "ipDestiny", ipAddress, sessionId);
-        grdVC.addComponent(createCell("PW: " + sideB == null ? "" : sideB.toString()), 1, 1);
-        grdVC.addComponent(createCell("IP: " + ipDestiny), 1, 2);
+        String ipDestiny = wsBean.getAttributeValueAsString(vcMPLSLink.getClassName(), vcMPLSLink.getId(), "ipDestiny", ipAddress, sessionId);
+        if(sideB != null){
+            grdVC.addComponent(createCell("PW", true, true, false, false), 2, 1);
+            grdVC.addComponent(createCell(sideB.getName(), false, true, false, false), 3, 1);
+            
+            grdVC.addComponent(createCell("IP", true, false, true, false), 2, 2);
+        }
+        else
+            grdVC.addComponent(createCell("IP", true, true, true, false), 2, 2);
+        grdVC.addComponent(createCell(ipDestiny, false, false, false, false), 3, 2);
         return grdVC;
     }
     
@@ -867,33 +1047,46 @@ public class ServManagerFormCreator{
      * Creates a table for a Switch
      * @param objLight the given object
      * @return a grid layout with the switch's information
+     * @throws org.kuwaiba.exceptions.ServerSideException
      */
-    public Component createSwitch(RemoteObjectLight objLight){
-        GridLayout grdSwitch = new GridLayout(2, 12);
-        grdSwitch.addComponent(createTitle("SWITCH", SWITCH), 0, 0, 1, 0);
-        grdSwitch.addComponent(createCell("CARD"), 0, 1);
-        grdSwitch.addComponent(createCell("PORT"), 1, 1);
+    public Component createSwitch(RemoteObjectLight objLight, RemoteObjectLight port) throws ServerSideException{
         
-        grdSwitch.addComponent(createCell("CARD XX"), 0, 2);
-        grdSwitch.addComponent(createCell("PORT XX"), 1, 2);
+         RemoteObject switch_ = wsBean.getObject(objLight.getClassName(), objLight.getId(),
+                Page.getCurrent().getWebBrowser().getAddress(),
+                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+        
+        String rackPostion = switch_.getAttribute("position");
+        String rackUnits = switch_.getAttribute("rackUnits");
+        
+        GridLayout grdSwitch = new GridLayout(2, 12);
+        grdSwitch.addStyleName("report-forms-box");
+        grdSwitch.addComponent(createTitle(objLight.getName(), SWITCH), 0, 0, 1, 0);
+        grdSwitch.addComponent(createCell("CARD", true, true, true, false), 0, 1);
+        grdSwitch.addComponent(createCell("PORT", true, false, true, false), 1, 1);
+        
+        grdSwitch.addComponent(createCell("CARD XX", false, false, false, false), 0, 2);
+        grdSwitch.addComponent(createCell("PORT XX", false, false, false, false), 1, 2);
 
-        grdSwitch.addComponent(createCell(" "), 0, 3, 1, 3);
+        grdSwitch.addComponent(createCell(" ", false, false, false, false), 0, 3, 1, 3);
           
-        grdSwitch.addComponent(createCell("DEVICE LOCATION"), 0, 4);
-        grdSwitch.addComponent(createCell("LONDON"), 1, 4);
-        grdSwitch.addComponent(createCell("DEVICE HOSTER"), 0, 5);
-        grdSwitch.addComponent(createCell("HOSTER"), 1, 5);
-        grdSwitch.addComponent(createCell("DEVICE OWNER"), 0, 6);
-        grdSwitch.addComponent(createCell("OWNER"), 1, 6);
-        grdSwitch.addComponent(createCell("DEVICE H&E"), 0, 7);
-        grdSwitch.addComponent(createCell("H&E"), 1, 7);
-
-        grdSwitch.addComponent(createCell("RACK POSITION"), 0, 8);
-        grdSwitch.addComponent(createCell("11"), 1, 8);
-        grdSwitch.addComponent(createCell("RACK UNITS"), 0, 9);
-        grdSwitch.addComponent(createCell("2"), 1, 9);
-        grdSwitch.addComponent(createCell("MMR"), 0, 10);
-        grdSwitch.addComponent(createCell("xxx"), 1, 10);
+        grdSwitch.addComponent(createCell("DEVICE LOCATION", true, false, true, false), 0, 4);
+        grdSwitch.addComponent(createCell(getCityLocation(objLight), false, false, false, false), 1, 4);
+        grdSwitch.addComponent(createCell("DEVICE HOSTER", true, false, true, false), 0, 5);
+        grdSwitch.addComponent(createCell(getHoster(objLight), false, false, false, false), 1, 5);
+        grdSwitch.addComponent(createCell("DEVICE OWNER", true, false, true, false), 0, 6);
+        grdSwitch.addComponent(createCell(getHoster(objLight), false, false, false, false), 1, 6);
+        grdSwitch.addComponent(createCell("DEVICE H&E", true, false, true, false), 0, 7);
+        grdSwitch.addComponent(createCell(getHandE(objLight), true, false, false, false), 1, 7);
+        if(rackPostion != null && isNumeric(rackPostion) && Integer.valueOf(rackPostion) > 0){
+            grdSwitch.addComponent(createCell("RACK POSITION", true, false, true, false), 0, 8);
+            grdSwitch.addComponent(createCell(rackPostion, false, false, false, false), 1, 8);
+        }
+        if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0){
+            grdSwitch.addComponent(createCell("RACK UNITS", true, false, true, false), 0, 9);
+            grdSwitch.addComponent(createCell(rackUnits, false, false, false, false), 1, 9);
+        }
+        grdSwitch.addComponent(createCell("MMR", true, false, true, false), 0, 10);
+        grdSwitch.addComponent(createCell("xxx", false, false, false, false), 1, 10);
         
         grdSwitch.addComponent(createIcon(SWITCH), 0, 11, 1, 11);
         return grdSwitch;
@@ -908,11 +1101,15 @@ public class ServManagerFormCreator{
     public Component createExternalEquipment(RemoteObjectLight objLight) throws ServerSideException{
         
         GridLayout grdExternalEquipment = new GridLayout(2, 4);
+        grdExternalEquipment.addStyleName("report-forms-box");
         grdExternalEquipment.addComponent(createTitle(objLight.getName(), EXTERNAL_EQUIPMENT), 0, 0, 1, 0);
-        grdExternalEquipment.addComponent(createCell("DEVICE LOCATION"), 0, 1);
-        grdExternalEquipment.addComponent(createCell("DEVICE OWNER"), 0, 2);
-        grdExternalEquipment.addComponent(createCell(getCityLocation(objLight)), 1, 1);
-        grdExternalEquipment.addComponent(createCell(getOwner(objLight)), 1, 2);
+        grdExternalEquipment.addComponent(createCell("DEVICE LOCATION", true, true, true, false), 0, 1);
+        grdExternalEquipment.addComponent(createCell(getCityLocation(objLight), false, true, false, false), 1, 1);
+        String owner = getOwner(objLight);
+        if(owner != null && !owner.isEmpty()){
+            grdExternalEquipment.addComponent(createCell("DEVICE OWNER", true, false, true, false), 0, 2);
+            grdExternalEquipment.addComponent(createCell(owner, false, false, false, false), 1, 2);
+        }
         grdExternalEquipment.addComponent(createIcon(EXTERNAL_EQUIPMENT), 0, 3, 1, 3);
 
         return grdExternalEquipment;
@@ -923,7 +1120,7 @@ public class ServManagerFormCreator{
      * @return a string with the location
      * @throws ServerSideException if the parents could no be calculated
      */
-    private String createLocation(RemoteObjectLight objLight) throws ServerSideException{
+    private String createWholeLocation(RemoteObjectLight objLight) throws ServerSideException{
         String location = "";
         List<RemoteObjectLight> parents = wsBean.getParentsUntilFirstOfClass(objLight.getClassName(), objLight.getId(), "City",
                 Page.getCurrent().getWebBrowser().getAddress(),
@@ -964,5 +1161,14 @@ public class ServManagerFormCreator{
                 Page.getCurrent().getWebBrowser().getAddress(),
                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
     }
-     
+    
+    public static boolean isNumeric(String str){  
+        try {  
+            Double.parseDouble(str);  
+        }catch(NumberFormatException ex){  
+          return false;  
+        }  
+        return true;  
+    }
+    
 }

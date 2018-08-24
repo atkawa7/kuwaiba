@@ -18,8 +18,13 @@ package org.kuwaiba.web.modules.servmanager.views;
 import com.neotropic.vaadin.lienzo.client.core.shape.Point;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
+import com.neotropic.vaadin.lienzo.client.events.EdgeWidgetClickListener;
+import com.neotropic.vaadin.lienzo.client.events.NodeWidgetClickListener;
 import com.vaadin.server.Page;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Window;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
@@ -39,7 +44,10 @@ import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
+import org.openide.util.Exceptions;
 
 /**
  * Shows an end-to-end view of a service by trying to match the endpoints of the logical circuits
@@ -60,7 +68,100 @@ public class EndToEndViewScene extends AbstractScene {
         super (wsBean, session);
         this.service = service;
         
+        lienzoComponent.addNodeWidgetClickListener(nodeWidgetClickListener);
+        lienzoComponent.addEdgeWidgetClickListener(edgeWidgetClickListener);
     }
+    
+    EdgeWidgetClickListener edgeWidgetClickListener = new EdgeWidgetClickListener() {
+
+        @Override
+        public void edgeWidgetClicked(long id) {
+            SrvEdgeWidget srvEdge = lienzoComponent.getEdge(id);
+            Window tableInfo = new Window(" ");
+            tableInfo.addStyleName("v-window-center");
+            try {
+                ServManagerFormCreator formView = new ServManagerFormCreator(service, wsBean, 
+                        Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+
+                for (RemoteObjectLight edge : edges.keySet()) {
+                    if(edge.getId() == id && edge.getClassName().equals(Constants.CLASS_MPLSTUNNEL)){
+                        Component x = formView.createVC(edge);
+                        tableInfo.setContent(x);
+                        closeWindows();
+                        getUI().addWindow(tableInfo);
+                    }
+                }
+            lienzoComponent.updateEdgeWidget(srvEdge.getId());
+            } catch (ServerSideException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
+    };
+    
+    NodeWidgetClickListener nodeWidgetClickListener = new NodeWidgetClickListener() {
+
+        @Override
+        public void nodeWidgetClicked(long id) {
+            SrvNodeWidget srvNode = lienzoComponent.getNodeWidget(id);
+            Window tableInfo = new Window(" ");
+            tableInfo.setId("report-forms-container");
+            tableInfo.addStyleName("report-forms");
+            try {
+                Component x = null;
+                for (RemoteObjectLight device : nodes.keySet()) {
+                    if (device.getId() == id){
+                        ServManagerFormCreator formView = new ServManagerFormCreator(service, wsBean, 
+                                Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                        
+                        List<SrvEdgeWidget> connectedEdgeWidgets = lienzoComponent.getNodeEdgeWidgets(srvNode);
+                        for(SrvEdgeWidget edge : connectedEdgeWidgets){
+                            RemoteObjectLight foundEdge = findEdge(edge.getId());
+                            RemoteObjectSpecialRelationships specialAttributes = wsBean.getSpecialAttributes(foundEdge.getClassName(), 
+                                    foundEdge.getId(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                            List<RemoteObjectLightList> relatedObjects = specialAttributes.getRelatedObjects();
+                            List<String> relationships = specialAttributes.getRelationships();
+                            for(int i = 0; i < relationships.size(); i++){
+                                String relationShipName = relationships.get(i);
+                                if(relationShipName.toLowerCase().contains("endpoint")){
+                                    RemoteObjectLightList get = relatedObjects.get(i);
+                                    RemoteObjectLight port = get.getList().get(0);
+                                    if(port.getClassName().toLowerCase().contains("port")){
+                                        List<RemoteObjectLight> parentsUntilFirstOfClass = 
+                                                wsBean.getParentsUntilFirstOfClass(port.getClassName(), port.getId(), 
+                                                        device.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                                        if(parentsUntilFirstOfClass.contains(device)){
+                                            if(device.getClassName().toLowerCase().contains("router"))
+                                                x = formView.createRouter(device, port);
+                                            else if(device.getClassName().equals("ODF"))
+                                                x = formView.createODF(device, port);
+                                            else if(device.getClassName().toLowerCase().contains("external"))
+                                                x = formView.createExternalEquipment(device);
+                                            else if(device.getClassName().equals("Cloud"))
+                                                x = formView.createPeering(device);
+                                            tableInfo.setCaption(device.toString());
+                                            tableInfo.center();
+                                            HorizontalLayout lytContent = new HorizontalLayout();
+                                            lytContent.setSpacing(true);
+                                            lytContent.setId("report-forms-content");
+                                            lytContent.addComponent(x);
+                                            tableInfo.setContent(lytContent);
+                                            //We close if there are any open window
+                                            closeWindows();
+                                            getUI().addWindow(tableInfo);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+            } catch (ServerSideException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+            lienzoComponent.updateNodeWidget(id);
+        }
+    };
     
     @Override
     public void render(byte[] structure) throws IllegalArgumentException { 
@@ -351,6 +452,12 @@ public class EndToEndViewScene extends AbstractScene {
                 return edge;
         }
         return null;
+    }
+    
+    private void closeWindows(){
+        getUI().getWindows().forEach(currentOpenWindow -> {
+            getUI().removeWindow(currentOpenWindow);
+        });
     }
   
 }

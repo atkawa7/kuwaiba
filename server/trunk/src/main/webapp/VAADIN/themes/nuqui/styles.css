@@ -15457,25 +15457,33 @@ div.v-layout.v-horizontal.v-widget {
 	z-index: 2;
 }
 
-.nuqui #header {
+.nuqui #report-forms-header {
 	text-align: left;
 }
 
-.nuqui #title {
+.nuqui #report-forms-title {
 	font-size: 1.8em;
 	color: #548235;
 }
 
-.nuqui #properties {
+.nuqui #report-forms-properties {
 	font-size: 1.4em;
 }
 
-.nuqui #content {
+.nuqui #report-forms-content {
 	text-align: center;
 	width: 100%;
+	min-height: 420px;
+	overflow-y: auto;
+	padding-top: 20px;
 }
 
-.nuqui #container:after {
+.nuqui #report-forms-content .v-gridlayout-report-forms-box {
+	min-height: 450px;
+	border: solid 1px black;
+}
+
+.nuqui #report-forms-container:after {
 	content: url("/img/company_logo.png");
 	filter: alpha(opacity=10);
 	filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0.1);
@@ -15500,7 +15508,7 @@ div.v-layout.v-horizontal.v-widget {
 	-o-user-select: no;
 }
 
-.nuqui .device-title {
+.nuqui .report-forms .device-title {
 	border-top-right-radius: 8px;
 	border-top-left-radius: 8px;
 	border-bottom-right-radius: 8px;
@@ -15517,53 +15525,75 @@ div.v-layout.v-horizontal.v-widget {
 	line-height: 50px;
 }
 
-.nuqui .peering {
+.nuqui .report-forms .peering {
 	background: #00cc99;
 }
 
-.nuqui .router {
+.nuqui .report-forms .router {
 	background: #66ff66;
 }
 
-.nuqui .adm {
+.nuqui .report-forms .adm {
 	background: #33cc33;
 }
 
-.nuqui .odf {
+.nuqui .report-forms .odf {
 	background: #aae600;
 }
 
-.nuqui .provider {
+.nuqui .report-forms .provider {
 	background: #008000;
 }
 
-.nuqui .external_equipment {
+.nuqui .report-forms .external_equipment {
 	background: #a6a6a6;
 }
 
-.nuqui .vc {
+.nuqui .report-forms .vc {
 	background: #ffcc00;
 }
 
-.nuqui .v-window-center {
+.nuqui .report-forms .v-window-center {
 	text-align: center;
 }
 
-.nuqui .cell-with-border {
-	border: solid 1px black;
-	padding-left: 5px;
+.nuqui .report-forms .cell-with-border-bottom {
+	border-bottom: solid 1px black;
 	text-align: left !important;
 	width: 100%;
+	min-width: 125px;
+	padding: 0 2px 0 2px;
 }
 
-.nuqui .cell-with-border-img {
+.nuqui .report-forms .cell-with-border-right {
+	border-right: solid 1px black;
+}
+
+.nuqui .report-forms .cell-with-border-top {
+	border-top: solid 1px black;
+}
+
+.nuqui .report-forms .cell-with-border-temp {
+	border-left: solid 1px black;
+	min-width: 125px;
+	width: 100%;
+	padding: 0 2px 0 2px;
+}
+
+.nuqui .report-forms .cell-with-bold-text {
+	font-weight: bolder;
+}
+
+.nuqui .report-forms .cell-with-img {
 	text-align: center;
-	border: solid 1px black;
 	width: 100%;
 }
 
-.nuqui .v-slot-foot {
-	position: fixed;
+.nuqui .report-forms .device-img {
+	bottom: 0;
+}
+
+.nuqui .report-forms .v-slot-foot {
 	left: 0;
 	bottom: 0;
 	width: 100%;

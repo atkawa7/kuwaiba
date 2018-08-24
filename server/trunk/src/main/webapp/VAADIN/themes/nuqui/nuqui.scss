@@ -544,21 +544,27 @@ $v-field-background-color: #ccffe6;
 	border-left-width: 0;
 	border-bottom-width: 0;
 	z-index: 2;
-}
-    
-    
+    }
     //START of end to end view forms
-    #header{ text-align: left;}
+    #report-forms-header{ text-align: left;}
 
-    #title{ font-size: 1.8em; color: #548235; }
-    #properties{ font-size: 1.4em; }
+    #report-forms-title{ font-size: 1.8em; color: #548235; }
+    #report-forms-properties{ font-size: 1.4em; }
     
-    #content{
+    #report-forms-content{
         text-align: center;
         width: 100%;
+        min-height: 420px;
+        overflow-y: auto;
+        padding-top: 20px;
+        
+        .v-gridlayout-report-forms-box{
+            min-height: 450px;
+            border: solid 1px black;
+        }
     }
     
-    #container:after{
+    #report-forms-container:after{
         content: url("/img/company_logo.png");
         filter:alpha(opacity=10);
         filter: progid:DXImageTransform.Microsoft.Alpha(opacity=0.1);
@@ -586,60 +592,68 @@ $v-field-background-color: #ccffe6;
         -o-user-select: no
     }
 
-    .device-title{
-        border-top-right-radius: 8px; 
-        border-top-left-radius: 8px; 
-        border-bottom-right-radius: 8px; 
-        border-bottom-left-radius: 8px;
-        color: #ffffff; 
-        top:-10px; 
-        position: relative;
-        z-index:6;
-        font-size: 16px;
-        text-align: center;
-        width: 100%;
-        padding: 0;
-        height: 50px;
-        line-height: 50px; 
-    }
+    .report-forms{
+        .device-title{
+            border-top-right-radius: 8px; 
+            border-top-left-radius: 8px; 
+            border-bottom-right-radius: 8px; 
+            border-bottom-left-radius: 8px;
+            color: #ffffff; 
+            top:-10px; 
+            position: relative;
+            z-index:6;
+            font-size: 16px;
+            text-align: center;
+            width: 100%;
+            padding: 0;
+            height: 50px;
+            line-height: 50px; 
+        }
 
-    .peering{ background: #00cc99; }
+        .peering{ background: #00cc99; }
 
-    .router{ background: #66ff66; }
+        .router{ background: #66ff66; }
 
-    .adm{ background: #33cc33; }
+        .adm{ background: #33cc33; }
 
-    .odf{ background: #aae600; }
+        .odf{ background: #aae600; }
 
-    .provider{ background: #008000; }
+        .provider{ background: #008000; }
 
-    .external_equipment{ background: #a6a6a6; }
+        .external_equipment{ background: #a6a6a6; }
 
-    .vc{ background: #ffcc00; }
+        .vc{ background: #ffcc00; }
 
-    .v-window-center{
-        text-align: center;
-    }
+        .v-window-center{
+            text-align: center;
+        }
     
-    .cell-with-border{
-        border: solid 1px black;
-        padding-left: 5px;
-        text-align: left !important;
-        width: 100%;
-    }
+        .cell-with-border-bottom{
+            border-bottom: solid 1px black;
+            text-align: left !important;
+            width: 100%;
+            min-width: 125px;
+            padding: 0 2px 0 2px;
+        }
+        
+        .cell-with-border-right{ border-right: solid 1px black;}
+        .cell-with-border-top{border-top: solid 1px black;}
+        .cell-with-border-temp{border-left: solid 1px black; min-width: 125px; width: 100%; padding: 0 2px 0 2px;}
+        .cell-with-bold-text{font-weight: bolder;}
+        
+        .cell-with-img{
+            text-align: center;
+            width: 100%;
+        }
+        .device-img{ bottom:0; }
 
-    .cell-with-border-img{
-        text-align: center;
-        border: solid 1px black;
-        width: 100%;
-    }
-
-    .v-slot-foot {
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        text-align: center;
+        .v-slot-foot {
+            //position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            text-align: center;
+        }
     }
     //END of end to end View forms
     //Start Rack View

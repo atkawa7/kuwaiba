@@ -107,12 +107,12 @@ public class CiscoSynchronizer {
      * the result finding list
      */
     private List<SyncFinding> findings = new ArrayList<>();
+
     /**
      * Helper used to read the actual structure recursively
      * @param obj
      * @param data
      */
-
     public CiscoSynchronizer(BusinessObjectLight obj, List<TableData> data) {
         try {
             PersistenceService persistenceService = PersistenceService.getInstance();

@@ -43,7 +43,6 @@ import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.util.i18n.I18N;
-import org.openide.util.Exceptions;
 import org.snmp4j.smi.OID;
 
 /**

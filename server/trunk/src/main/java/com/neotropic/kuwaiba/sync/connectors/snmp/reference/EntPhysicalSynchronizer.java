@@ -519,7 +519,7 @@ public class EntPhysicalSynchronizer {
                         entityData.get("entPhysicalClass").get(i), 
                         objectName, entityData.get("entPhysicalDescr").get(i)); //NOI18N
                 //We standarized the port names
-                if(SyncUtil.isSynchronizable(objectName) && mappedClass.toLowerCase().contains("port") && !objectName.contains("Power") && !mappedClass.contains("Power"))
+                if(!className.equals(mappedClass) && SyncUtil.isSynchronizable(objectName) && mappedClass.toLowerCase().contains("port") && !objectName.contains("Power") && !mappedClass.contains("Power"))
                     objectName = SyncUtil.wrapPortName(objectName);
                                 
                 if(mappedClass == null) //it was impossible to parse the SNMP class into kuwaiba's class
@@ -1020,7 +1020,7 @@ public class EntPhysicalSynchronizer {
                
         String objectName = entityData.get("entPhysicalName").get(index);//NOI18N
         //We standarized the port names
-        if(SyncUtil.isSynchronizable(objectName) && mappedClass.toLowerCase().contains("port") && !objectName.contains("Power") && !mappedClass.contains("Power"))
+        if(!className.equals(mappedClass) && SyncUtil.isSynchronizable(objectName) && mappedClass.toLowerCase().contains("port") && !objectName.contains("Power") && !mappedClass.contains("Power"))
             objectName = SyncUtil.wrapPortName(objectName);
         
         attributes.put("name", objectName);//NOI18N
@@ -1471,7 +1471,7 @@ public class EntPhysicalSynchronizer {
                     found = true;
                     status = "[Virtual Port] Created";
                 }//Bridge domains                
-                else if(currrentInterface == null && ifName.toLowerCase().contains("bd") || ifName.toLowerCase().contains("br")){
+                else if(currrentInterface == null && (ifName.toLowerCase().contains("bd") || ifName.toLowerCase().contains("br"))){
                     createdId = bem.createSpecialObject(Constants.CLASS_BRIDGEDOMAININTERFACE, className, id, attributes, -1);
                     currentBridgeDomains.add(new BusinessObject(createdId, ifName, Constants.CLASS_BRIDGEDOMAININTERFACE));
                     createdClassName = "BridgeDomainInterface";

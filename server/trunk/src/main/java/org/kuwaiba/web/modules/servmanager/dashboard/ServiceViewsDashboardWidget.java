@@ -98,17 +98,16 @@ public class ServiceViewsDashboardWidget extends AbstractDashboardWidget {
 
             btnFormTable.addClickListener(click ->{
                 Window formWindow = new Window(" ");
-                formWindow.addStyleName("v-window-center");
-                 try {
+                try {
                     ServManagerFormCreator servManagerFormCreator = new ServManagerFormCreator(service, wsBean, Page.getCurrent().getWebBrowser().getAddress(),
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                     formWindow.setContent(servManagerFormCreator.createForm());
                     formWindow.center();
                     parentComponent.getUI().addWindow(formWindow);
                     
-                 } catch (ServerSideException ex) {
-                     Exceptions.printStackTrace(ex);
-                 }
+                } catch (ServerSideException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
             });
 
             contetLayout.addComponent(new EndToEndView(service, wsBean));

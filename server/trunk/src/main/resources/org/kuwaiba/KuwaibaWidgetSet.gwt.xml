@@ -25,5 +25,5 @@
 
     <inherits name="com.vaadin.tapio.googlemaps.Widgetset" />
 
-    <inherits name="org.vaadin.addon.vol3.WidgetSet" />
+    
 </module>

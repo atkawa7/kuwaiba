@@ -13,10 +13,10 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package com.neotropic.kuwaiba.sync.connectors.snmp.cisco;
+package com.neotropic.kuwaiba.sync.connectors.snmp.cisco.vlans;
 
 import com.neotropic.kuwaiba.sync.connectors.snmp.SnmpManager;
-import com.neotropic.kuwaiba.sync.connectors.snmp.reference.ReferenceSnmpSyncProvider;
+import com.neotropic.kuwaiba.sync.connectors.snmp.reference.SnmpifXTableResocurceDefinition;
 import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
 import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
 import com.neotropic.kuwaiba.sync.model.PollResult;
@@ -33,27 +33,32 @@ import java.util.Map;
 import javax.json.Json;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
+import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
+import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
+import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.util.i18n.I18N;
+import org.openide.util.Exceptions;
 import org.snmp4j.smi.OID;
 
 /**
- * 
+ *
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class SnmpCiscoSyncProvider extends AbstractSyncProvider {
-
+public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
+    
     @Override
     public String getName() {
-        return "Cisco SNMP Synchronization Provider";
+        return "Cisco - vlanTrunkPortTable SNMP Synchronization Provider";
     }
 
     @Override
     public String getId() {
-        return ReferenceSnmpSyncProvider.class.getName();
+        return SnmpCiscoVlansSyncProvider.class.getName();
     }
     
     @Override
@@ -147,42 +152,42 @@ public class SnmpCiscoSyncProvider extends AbstractSyncProvider {
                         snmpManager.setPrivacyPass(agent.getParameters().get(Constants.PROPERTY_PRIVACY_PASS));
                     }
                     
-                    SnmpCpwVcTableMibResourceDefinition mplsMibTable = new SnmpCpwVcTableMibResourceDefinition();
-                    List<List<String>> mplsMibTableAsString = snmpManager.getTableAsString(mplsMibTable.values().toArray(new OID[0]));
+                    SnmpVlanTrunkPortsTableResourceDefinition VlanTrunkPortsTable = new SnmpVlanTrunkPortsTableResourceDefinition();
+                    List<List<String>> vlansMibTableAsString = snmpManager.getTableAsString(VlanTrunkPortsTable.values().toArray(new OID[0]));
                     
-                    if (mplsMibTableAsString == null) {
+                    if (vlansMibTableAsString == null) {
                         pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
                             new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString())));
                         return pollResult;
                     }
                     pollResult.getResult().put(mappedObjLight, new ArrayList<>());
                     pollResult.getResult().get(mappedObjLight).add(
-                            new TableData("mplsMibTable", SyncUtil.parseMibTable("instance", mplsMibTable, mplsMibTableAsString))); //NOI18N
+                            new TableData("vlansMibTable", SyncUtil.parseMibTable("instance", VlanTrunkPortsTable, vlansMibTableAsString))); //NOI18N
                     
-                    SnmpCpwVcMplsTeMappingTableResourceDefinition teMibTable = new SnmpCpwVcMplsTeMappingTableResourceDefinition();
-                    List<List<String>> teMibTableAsString = snmpManager.getTableAsString(teMibTable.values().toArray(new OID[0]));
+                    SnmpifXTableResocurceDefinition ifXTable = new SnmpifXTableResocurceDefinition();
+                    List<List<String>> ifXTableAsString = snmpManager.getTableAsString(ifXTable.values().toArray(new OID[0]));
                     
-                    if (teMibTableAsString == null) {
+                    if (ifXTableAsString == null) {
                         pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
                             new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString())));
                         return pollResult;
                     }
                     
                     pollResult.getResult().get(mappedObjLight).add(
-                            new TableData("teMibTable", SyncUtil.parseMibTable("instance", teMibTable, teMibTableAsString))); //NOI18N
+                            new TableData("ifXTable", SyncUtil.parseMibTable("instance", ifXTable, ifXTableAsString))); //NOI18N
                     
+                    SnmpVtpVlanTableResourceDefinition vlanInfo = new SnmpVtpVlanTableResourceDefinition();
+                    List<List<String>> vlanInfoAsString = snmpManager.getTableAsString(vlanInfo.values().toArray(new OID[0]));
                     
-                    SnmpCiscoCpwVcMplsInboundTableResourceDefinition inboundMibTable = new SnmpCiscoCpwVcMplsInboundTableResourceDefinition();
-                    List<List<String>> inboundMibTableAsString = snmpManager.getTableAsString(inboundMibTable.values().toArray(new OID[0]));
-                    
-                    if (inboundMibTableAsString == null) {
+                    if (vlanInfoAsString == null) {
                         pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
                             new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString())));
                         return pollResult;
                     }
                     
                     pollResult.getResult().get(mappedObjLight).add(
-                            new TableData("inboundMibTable", SyncUtil.parseMibTable("instance", inboundMibTable, inboundMibTableAsString))); //NOI18N
+                            new TableData("vlanInfo", SyncUtil.parseMibTable("instance", vlanInfo, vlanInfoAsString))); //NOI18N
+                    
                 }
             }
         }
@@ -205,8 +210,12 @@ public class SnmpCiscoSyncProvider extends AbstractSyncProvider {
             entrySet.getValue().forEach((value) -> {
                 mibTables.add((TableData)value);
             });
-            CiscoSynchronizer ciscoSync = new CiscoSynchronizer(entrySet.getKey(), mibTables);
-            findings.addAll(ciscoSync.execute());
+            CiscoVlansSinchronizer ciscoSync = new CiscoVlansSinchronizer(entrySet.getKey(), mibTables);
+            try {
+                findings.addAll(ciscoSync.execute());
+            } catch (BusinessObjectNotFoundException | OperationNotPermittedException | MetadataObjectNotFoundException | InvalidArgumentException | ApplicationObjectNotFoundException ex) {
+                Exceptions.printStackTrace(ex);
+            }
         }
         return findings;
     }
