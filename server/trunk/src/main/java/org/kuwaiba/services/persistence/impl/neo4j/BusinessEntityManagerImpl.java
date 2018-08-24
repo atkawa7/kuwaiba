@@ -1438,18 +1438,32 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 throw new MetadataObjectNotFoundException(className);
 
             List<BusinessObjectLight> instances = new ArrayList<>();
-
-            TraversalDescription traversal = graphDb.traversalDescription().breadthFirst().relationships(RelTypes.EXTENDS, Direction.INCOMING);
             int counter = 0;
-            for(Path p : traversal.traverse(classMetadataNode)){
-                for (Relationship rel : p.endNode().getRelationships(RelTypes.INSTANCE_OF)){
-                    if (maxResults > 0){
-                        if (counter < maxResults)
-                            counter ++;
-                        else break;
-                    }
-                    instances.add(Util.createRemoteObjectLightFromNode(rel.getStartNode()));
+            
+            boolean isAbstract = (Boolean) classMetadataNode.getProperty(Constants.PROPERTY_ABSTRACT);
+            
+            String cypherQuery = null;
+            
+            if (isAbstract) {
+                cypherQuery = "match (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) "
+                            + "where class.name=\"" + className + "\" "
+                            + "return instance;";                
+            } else {
+                cypherQuery = "match (class:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) "
+                            + "where class.name=\"" + className + "\" "
+                            + "return instance;";
+            }
+            Result result = graphDb.execute(cypherQuery);
+            ResourceIterator<Node> instanceColumn = result.columnAs("instance");
+            List<Node> lstInstanceColumn = Iterators.asList(instanceColumn);
+            
+            for (Node instance : lstInstanceColumn) {
+                if (maxResults > 0){
+                    if (counter < maxResults)
+                        counter ++;
+                    else break;
                 }
+                instances.add(Util.createRemoteObjectLightFromNode(instance));                                                                                
             }
             
             Collections.sort(instances);
@@ -1460,25 +1474,40 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     @Override
     public List<BusinessObject> getObjectsOfClass(String className, int maxResults)
             throws MetadataObjectNotFoundException, InvalidArgumentException {
+                
         try(Transaction tx = graphDb.beginTx()) {
             Node classMetadataNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, className);
             
             if (classMetadataNode == null)
                 throw new MetadataObjectNotFoundException(className);
-
+                                                
             List<BusinessObject> instances = new ArrayList<>();
-
-            TraversalDescription traversal = graphDb.traversalDescription().breadthFirst().relationships(RelTypes.EXTENDS, Direction.INCOMING);
             int counter = 0;
-            for(Path p : traversal.traverse(classMetadataNode)){
-                for (Relationship rel : p.endNode().getRelationships(RelTypes.INSTANCE_OF)){
-                    if (maxResults > 0){
-                        if (counter < maxResults)
-                            counter ++;
-                        else break;
-                    }
-                    instances.add(Util.createRemoteObjectFromNode(rel.getStartNode()));
+            
+            boolean isAbstract = (Boolean) classMetadataNode.getProperty(Constants.PROPERTY_ABSTRACT);
+            
+            String cypherQuery = null;
+            
+            if (isAbstract) {
+                cypherQuery = "match (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) "
+                            + "where class.name=\"" + className + "\" "
+                            + "return instance;";                
+            } else {
+                cypherQuery = "match (class:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) "
+                            + "where class.name=\"" + className + "\" "
+                            + "return instance;";
+            }
+            Result result = graphDb.execute(cypherQuery);
+            ResourceIterator<Node> instanceColumn = result.columnAs("instance");
+            List<Node> lstInstanceColumn = Iterators.asList(instanceColumn);
+            
+            for (Node instance : lstInstanceColumn) {
+                if (maxResults > 0){
+                    if (counter < maxResults)
+                        counter ++;
+                    else break;
                 }
+                instances.add(Util.createRemoteObjectFromNode(instance));                                                                                
             }
             
             Collections.sort(instances);
