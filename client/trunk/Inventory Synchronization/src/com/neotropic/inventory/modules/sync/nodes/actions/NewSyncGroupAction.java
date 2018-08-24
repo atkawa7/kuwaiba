@@ -40,7 +40,8 @@ class NewSyncGroupAction extends GenericInventoryAction {
     
     private final static String PROVIDER_ENTITY_IF_MIB = "entity/ifXTable";
     private final static String PROVIDER_CISCO_MPLS_MIB = "cisco-mpls";
-    private final static String PROVIDER_IP_MIB = "ipAddrTableMib";
+    private final static String PROVIDER_IP_MIB = "ipAddrTable";
+    private final static String PROVIDER_VLAN_MIB = "vlanTrunkPortTable";
     
     public NewSyncGroupAction() {
         putValue(NAME, "New Sync Group");
@@ -64,6 +65,7 @@ class NewSyncGroupAction extends GenericInventoryAction {
         cboProviders.addItem(PROVIDER_ENTITY_IF_MIB);
         cboProviders.addItem(PROVIDER_CISCO_MPLS_MIB);
         cboProviders.addItem(PROVIDER_IP_MIB);
+        cboProviders.addItem(PROVIDER_VLAN_MIB);
         
         JComplexDialogPanel pnlPoolProperties = new JComplexDialogPanel(
             new String[] {I18N.gm("sync_group_name"), I18N.gm("sync_provider")}, 
@@ -82,6 +84,9 @@ class NewSyncGroupAction extends GenericInventoryAction {
                 case PROVIDER_IP_MIB:
                     provider = "com.neotropic.kuwaiba.sync.connectors.snmp.ip.IPAddressesSyncProvider";
                     break; 
+                case PROVIDER_VLAN_MIB:
+                    provider = "com.neotropic.kuwaiba.sync.connectors.snmp.cisco.vlans.SnmpCiscoVlansSyncProvider";
+                    break;     
             }
             
             LocalSyncGroup newSyncGroup = CommunicationsStub.getInstance().createSyncGroup(
