@@ -14,6 +14,7 @@
  */
 package org.kuwaiba.apis.forms.components.impl;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import org.kuwaiba.apis.forms.elements.EventDescriptor;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
@@ -21,6 +22,7 @@ import org.kuwaiba.apis.forms.elements.Constants;
 import org.kuwaiba.apis.forms.elements.ElementButton;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.themes.ValoTheme;
 import java.util.Date;
 import org.kuwaiba.apis.forms.FormInstanceCreator;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -50,6 +52,29 @@ public class ComponentButton extends GraphicalComponent {
             ElementButton button = (ElementButton) element;
             
             getComponent().setCaption(button.getCaption());
+            
+            if (button.getStyleName() != null) {
+                
+                switch(button.getStyleName()) {
+
+                    case Constants.Attribute.StyleName.BUTTON_CLOSE_ICON:
+                        getComponent().setIcon(VaadinIcons.CLOSE);
+                    break;
+                    case Constants.Attribute.StyleName.BUTTON_PENCIL_ICON:
+                        getComponent().setIcon(VaadinIcons.PENCIL);
+                    break;
+                    case Constants.Attribute.StyleName.BUTTON_PLUS_ICON:
+                        getComponent().setIcon(VaadinIcons.PLUS);
+                    break;
+                    case Constants.Attribute.StyleName.BUTTON_COGS_ICON:
+                        getComponent().setIcon(VaadinIcons.COGS);
+                    break;
+                    case Constants.Attribute.StyleName.BUTTON_PLUS_ICON_ONLY:
+                        getComponent().setIcon(VaadinIcons.PLUS);
+                        getComponent().addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+                    break;
+                }
+            }
             
             getComponent().addClickListener(new Button.ClickListener() {
                 

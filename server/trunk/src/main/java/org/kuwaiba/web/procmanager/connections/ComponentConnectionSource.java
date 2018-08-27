@@ -31,15 +31,20 @@ import org.kuwaiba.web.procmanager.rackview.ComponentDevice;
 public class ComponentConnectionSource extends VerticalLayout {
     private final WebserviceBean webserviceBean;
     private RemoteObject selectedSourceDevice;
+    List<RemoteObject> deviceList;
     
     public ComponentConnectionSource(List<RemoteObject> deviceList, WebserviceBean webserviceBean) {
         this.webserviceBean = webserviceBean;
-        
+        this.deviceList = deviceList;
         setWidth(100, Unit.PERCENTAGE);
         setHeightUndefined();
         setStyleName("selector");
         initializeComponent(deviceList);
     }   
+    
+    public List<RemoteObject> getDeviceList() {
+        return deviceList;
+    }
     
     public RemoteObject getSelectedSourceDevice() {
         return selectedSourceDevice;

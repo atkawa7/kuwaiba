@@ -15,7 +15,8 @@
 package org.kuwaiba.apis.forms.elements;
 
 /**
- *
+ * Contains some values that are used in a form definition, like tags, 
+ * attributes, functions, styles
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class Constants {
@@ -50,6 +51,7 @@ public class Constants {
         public static final String ROW = "row"; //NOI18N
         public static final String DATA = "data"; //NOI18N
         public static final String MINI_APPLICATION = "miniApplication"; //NOI18N
+        public static final String CHECK_BOX = "checkBox"; //NOI18N
     }
     
     public class Attribute {
@@ -96,11 +98,22 @@ public class Constants {
             public static final String EMAIL = "Email"; //NOI18N, Data type to use default validators
             public static final String DATE = "Date"; //NOI18N
             public static final String ATTACHMENT = "Attachment"; //NOI18N
+            public static final String BOOLEAN = "Boolean"; //NOI18N
         }
         
         public class Mode {
             public static final String DETACHED = "detached";
             public static final String EMBEDDED = "embedded";
+        }
+        
+        public class StyleName {
+            public static final String BOLD = "bold";
+            public static final String BUTTON_PLUS_ICON_ONLY="buttonPlusCircleIconOnly";
+            public static final String BUTTON_CLOSE_ICON="buttonCloseIcon";
+            public static final String BUTTON_PENCIL_ICON="buttonPencilIcon";
+            public static final String BUTTON_PLUS_ICON="buttonPlusIcon";
+            public static final String BUTTON_COGS_ICON="buttonCogsIcon";
+                        
         }
     }
     

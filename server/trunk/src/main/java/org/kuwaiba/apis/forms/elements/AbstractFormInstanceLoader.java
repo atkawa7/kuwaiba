@@ -105,6 +105,13 @@ public abstract class AbstractFormInstanceLoader {
                 if (value != null)
                     return LocalDate.parse(value);
             break;
+            case Constants.Attribute.DataType.BOOLEAN:
+                
+                value = reader.getAttributeValue(null, Constants.Attribute.VALUE);
+                
+                if (value != null)
+                    return Boolean.valueOf(value);
+            break;
             default:
                 return null;
         }

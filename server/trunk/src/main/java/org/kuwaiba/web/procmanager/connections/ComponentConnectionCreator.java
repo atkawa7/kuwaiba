@@ -21,6 +21,7 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
@@ -57,6 +58,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
     }
         
     private void initializeComponent(ComponentConnectionSource componentConnectionSource) {
+        List<RemoteObject> deviceList = componentConnectionSource.getDeviceList();
         
         VerticalLayout verticalLayout = new VerticalLayout();
         
@@ -90,9 +92,9 @@ public class ComponentConnectionCreator extends VerticalLayout {
         
         horizontalLayout.setSizeFull();
                 
-        Panel leftPanel = new Panel("Devices");
+////        Panel leftPanel = new Panel("Devices");
                 
-        leftPanel.setContent(componentConnectionSource);
+////        leftPanel.setContent(componentConnectionSource);
         
 ////        componentConnectionSource.addLayoutClickListener(new LayoutEvents.LayoutClickListener() {
 ////            @Override
@@ -102,7 +104,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
 ////            }
 ////        });
                 
-        leftPanel.setSizeFull();
+////        leftPanel.setSizeFull();
         
         Panel rightPanel = new Panel();
         
@@ -112,7 +114,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
         rightPanel.setContent(rightVerticalLayout);
         rightPanel.setSizeFull();
         
-        Panel topRightPanel = new Panel("Drag an element from Devices to set the Endpoint A");
+        Panel topRightPanel = new Panel();
         topRightPanel.setSizeFull();
         
         DropTargetExtension<Panel> topDropTarget = new DropTargetExtension<>(topRightPanel);
@@ -134,7 +136,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
         });        
         topRightPanel.setContent(new ComponentConnectionTarget(null, webserviceBean));
                 
-        Panel bottomRightPanel = new Panel("Drag an element from Devices to set the Endpoint B");
+        Panel bottomRightPanel = new Panel();
         bottomRightPanel.setSizeFull();
         
         DropTargetExtension<Panel> bottomDropTarget = new DropTargetExtension<>(bottomRightPanel);
@@ -217,23 +219,82 @@ public class ComponentConnectionCreator extends VerticalLayout {
         
         topRightPanel.addStyleName(ValoTheme.PANEL_WELL);
         bottomRightPanel.addStyleName(ValoTheme.PANEL_WELL);
+        // Source Side
+        VerticalLayout sourceLayout = new VerticalLayout();
+        sourceLayout.setSizeFull();
         
+        Panel pnlSourceDevices = new Panel("Select a device to set the Endpoint A");
+        pnlSourceDevices.setSizeFull();
+        
+        VerticalLayout vlySourceDevices = new VerticalLayout();
+        vlySourceDevices.setWidth(100, Unit.PERCENTAGE);
+        vlySourceDevices.setHeightUndefined();
+        
+        for (RemoteObject device : deviceList) {
+            vlySourceDevices.addComponent(new Label(device.toString()));
+        }
+        pnlSourceDevices.setContent(vlySourceDevices);
+                
+        Button btnResetSource = new Button("Reset Tree");
+        btnResetSource.setIcon(VaadinIcons.REPLY);
+        
+        sourceLayout.addComponent(pnlSourceDevices);
+        sourceLayout.addComponent(btnResetSource);
+        sourceLayout.addComponent(topRightPanel);
+                
+        sourceLayout.setExpandRatio(pnlSourceDevices, 0.30f);
+        sourceLayout.setExpandRatio(topRightPanel, 0.65f);
+        sourceLayout.setExpandRatio(btnResetSource, 0.05f);
+                
+        sourceLayout.setComponentAlignment(pnlSourceDevices, Alignment.MIDDLE_CENTER);
+        sourceLayout.setComponentAlignment(topRightPanel, Alignment.MIDDLE_CENTER);
+        sourceLayout.setComponentAlignment(btnResetSource, Alignment.MIDDLE_RIGHT);
+        // Target Side
+        VerticalLayout targetLayout = new VerticalLayout();
+        targetLayout.setSizeFull();
+        
+        Panel pnlTargetDevices = new Panel("Select a device to set the Endpoint B");
+        pnlTargetDevices.setSizeFull();
+        
+        VerticalLayout vlyTargetDevices = new VerticalLayout();
+        vlyTargetDevices.setWidth(100, Unit.PERCENTAGE);
+        vlyTargetDevices.setHeightUndefined();
+        
+        for (RemoteObject device : deviceList) {
+            vlyTargetDevices.addComponent(new Label(device.toString()));
+        }
+        pnlTargetDevices.setContent(vlyTargetDevices);
+        
+        Button btnResetTarget = new Button("Reset Tree");
+        btnResetTarget.setIcon(VaadinIcons.REPLY);
+        
+        targetLayout.addComponent(pnlTargetDevices);
+        targetLayout.addComponent(btnResetTarget);
+        targetLayout.addComponent(bottomRightPanel);
+                
+        targetLayout.setExpandRatio(pnlTargetDevices, 0.30f);
+        targetLayout.setExpandRatio(bottomRightPanel, 0.65f);
+        targetLayout.setExpandRatio(btnResetTarget, 0.05f);
+        
+        targetLayout.setComponentAlignment(pnlTargetDevices, Alignment.MIDDLE_CENTER);
+        targetLayout.setComponentAlignment(bottomRightPanel, Alignment.MIDDLE_CENTER);
+        targetLayout.setComponentAlignment(btnResetTarget, Alignment.MIDDLE_RIGHT);
 ////        horizontalLayout.addComponent(leftPanel);
-        horizontalLayout.addComponent(topRightPanel);
+        horizontalLayout.addComponent(sourceLayout);
         horizontalLayout.addComponent(pnl);
-        horizontalLayout.addComponent(bottomRightPanel);        
+        horizontalLayout.addComponent(targetLayout);        
         
 ////        horizontalLayout.setExpandRatio(leftPanel, 0.30f);        
-        horizontalLayout.setExpandRatio(topRightPanel, 0.30f);
+        horizontalLayout.setExpandRatio(sourceLayout, 0.30f);
         horizontalLayout.setExpandRatio(pnl, 0.40f);        
-        horizontalLayout.setExpandRatio(bottomRightPanel, 0.30f);
+        horizontalLayout.setExpandRatio(targetLayout, 0.30f);
         
-        DynamicComponent dynamicComponent = new DynamicComponent(leftPanel, horizontalLayout);
+////        DynamicComponent dynamicComponent = new DynamicComponent(leftPanel, horizontalLayout);
                 
-        addComponent(dynamicComponent);
+        addComponent(horizontalLayout);
         addComponent(verticalLayout);
         
-        setExpandRatio(dynamicComponent, 0.95f);
+        setExpandRatio(horizontalLayout, 0.95f);
         setExpandRatio(verticalLayout, 0.05f);
         
     }

@@ -54,6 +54,7 @@ public class FormDefinitionLoader {
     public static final QName TAG_LIST_SELECT_FILTER = new QName(Constants.Tag.LIST_SELECT_FILTER);
     public static final QName TAG_UPLOAD = new QName(Constants.Tag.UPLOAD);
     public static final QName TAG_MINI_APPLICATION = new QName(Constants.Tag.MINI_APPLICATION);
+    public static final QName TAG_CHECK_BOX = new QName(Constants.Tag.CHECK_BOX);
     
     private final List<QName> containers;
     
@@ -158,6 +159,9 @@ public class FormDefinitionLoader {
                 }
                 else if (reader.getName().equals(TAG_MINI_APPLICATION)) {
                     child = new ElementMiniApplication();
+                }
+                else if (reader.getName().equals(TAG_CHECK_BOX)) {
+                    child = new ElementCheckBox();
                 }
                 else if (reader.getName().equals(TAG_I18N)) {
                     return event;

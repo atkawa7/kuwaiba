@@ -242,6 +242,10 @@ public abstract class AbstractFormInstanceCreator {
                     XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.VALUE, localDate.toString());
                 }
             break;
+            case Constants.Attribute.DataType.BOOLEAN:
+                if (element.getValue() instanceof Boolean)
+                    XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.VALUE, String.valueOf(element.getValue()));
+            break;
         }
     }
     

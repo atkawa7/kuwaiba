@@ -17,25 +17,35 @@ package org.kuwaiba.web.procmanager;
 import com.vaadin.data.HasValue;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
+import com.vaadin.server.ResourceReference;
+import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import org.kuwaiba.apis.forms.FormRenderer;
 import org.kuwaiba.apis.forms.components.impl.PrintWindow;
+import org.kuwaiba.apis.forms.elements.AbstractElement;
+import org.kuwaiba.apis.forms.elements.AbstractElementField;
+import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.notifications.MessageBox;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
+import org.kuwaiba.apis.web.gui.resources.ResourceFactory;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
@@ -47,7 +57,9 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConditionalActivityDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.util.i18n.I18N;
+import org.openide.util.Exceptions;
 
 /**
  * Render the current activity and all activities of a process instance
@@ -68,7 +80,13 @@ public class ProcessInstanceView extends DynamicComponent {
     
     private VerticalLayout activitiesLayout = new VerticalLayout();
     
+    public static Boolean debugMode;
+    
+    
     public ProcessInstanceView(RemoteProcessInstance processInstance, RemoteProcessDefinition processDefinition, WebserviceBean wsBean, RemoteSession remoteSession) {
+        
+        debugMode = Boolean.valueOf(String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("debugMode")));
+        
         setStyleName("processmanager");
         addStyleName("activitylist");
         setSizeFull();
@@ -377,7 +395,66 @@ public class ProcessInstanceView extends DynamicComponent {
                     btnPrint.addClickListener(new ClickListener() {
                         @Override
                         public void buttonClick(Button.ClickEvent event) {
-                            getUI().addWindow(new PrintWindow(artifactDefinition, artifact, wsBean, remoteSession, processInstance, artifactDefinition.getPrintableTemplate()));
+                            
+                            File file = new File(artifactDefinition.getPrintableTemplate());
+
+                            byte[] byteTemplate = PrintWindow.getFileAsByteArray(file);
+                            String stringTemplate = new String(byteTemplate);
+
+                            FormArtifactRenderer formArtifactRenderer = new FormArtifactRenderer(
+                                artifactDefinition, 
+                                artifact, 
+                                wsBean, 
+                                remoteSession, 
+                                processInstance);
+
+                            FormRenderer formRenderer = (FormRenderer) formArtifactRenderer.renderArtifact();
+
+                            List<AbstractElement> elements = formRenderer.getFormStructure().getElements();
+                            for (AbstractElement element : elements) {
+
+                                if (element instanceof AbstractElementField) {
+                                    AbstractElementField elementField = (AbstractElementField) element;
+
+                                    if (elementField.getId() != null) {
+                                        String id = element.getId();
+
+                                        String value = "";
+
+                                        if (elementField.getValue() != null) {
+                                            if (elementField.getValue() instanceof RemoteObjectLight) {
+
+                                                value = ((RemoteObjectLight) elementField.getValue()).getName();
+                                            }
+                                            else {
+
+                                                value = elementField.getValue().toString();
+                                            }
+                                        }
+                                        stringTemplate = stringTemplate.replace("${" + id + "}", value);
+                                    }
+                                }
+                            }
+                            final String TMP_FILE_PATH = "/data/attachments/processengine.tmp";
+                            try {
+                                
+                                PrintWriter templateInstance;
+                                templateInstance = new PrintWriter(TMP_FILE_PATH);
+                                templateInstance.println(stringTemplate);
+                                templateInstance.close();
+                                
+                            } catch (FileNotFoundException ex) {
+                                Exceptions.printStackTrace(ex);
+                            }
+                            File tmpFile = new File(TMP_FILE_PATH);                            
+
+                            byte[] tmpByteTemplate = PrintWindow.getFileAsByteArray(tmpFile);
+                            
+                            StreamResource fileStream = ResourceFactory.getFileStream(tmpByteTemplate, currentActivity.getName() + "_" + Calendar.getInstance().getTimeInMillis() + ".html");
+                            fileStream.setMIMEType("text/html"); //NOI18N
+                            setResource(String.valueOf(processInstance.getId()), fileStream);
+                            ResourceReference rr = ResourceReference.create(fileStream, ProcessInstanceView.this, String.valueOf(processInstance.getId()));
+                            Page.getCurrent().open(rr.getURL(), "Download Report", true);
                         }
                     });
                                         
@@ -390,12 +467,14 @@ public class ProcessInstanceView extends DynamicComponent {
                                 
                 if (currentActivity.isIdling()) {
                     CheckBox chkIdleActivity = new CheckBox("Complete Activity Confirmation");
-                    /*
-                    chkIdleActivity.setValue(!idleActivity);
                     
-                    chkIdleActivity.setEnabled(idleActivity);
-                    btnSave.setEnabled(idleActivity);
-                    */
+                    if (!debugMode) {
+                        
+                        chkIdleActivity.setValue(!idleActivity);
+
+                        chkIdleActivity.setEnabled(idleActivity);
+                        btnSave.setEnabled(idleActivity);
+                    }
                     chkIdleActivity.addValueChangeListener(new HasValue.ValueChangeListener() {
                         @Override
                         public void valueChange(HasValue.ValueChangeEvent event) {
@@ -464,5 +543,5 @@ public class ProcessInstanceView extends DynamicComponent {
             Notifications.showError(ex.getMessage());
         }
     }
-    
+       
 }

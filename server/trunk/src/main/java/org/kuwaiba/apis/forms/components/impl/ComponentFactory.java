@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.ElementButton;
+import org.kuwaiba.apis.forms.elements.ElementCheckBox;
 import org.kuwaiba.apis.forms.elements.ElementComboBox;
 import org.kuwaiba.apis.forms.elements.ElementDateField;
 import org.kuwaiba.apis.forms.elements.ElementGrid;
@@ -130,6 +131,8 @@ public class ComponentFactory {
             graphicalComponent = new ComponentUpload();            
         } else if (element instanceof ElementMiniApplication) {
             graphicalComponent = new ComponentMiniApplication(wsBean);            
+        } else if (element instanceof ElementCheckBox) {
+            graphicalComponent = new ComponentCheckBox();                                    
         }
         
         if (graphicalComponent != null && element != null) {
