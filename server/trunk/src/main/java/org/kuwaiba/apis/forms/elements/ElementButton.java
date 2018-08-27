@@ -203,6 +203,21 @@ public class ElementButton extends AbstractElement {
 ////                        Logger.getLogger(ElementButton.class.getName()).log(Level.SEVERE, null, ex);
 ////                    }
                     fireElementEvent(new EventDescriptor(Constants.EventAttribute.ONCLICK, Constants.Function.SAVE));
+                } else {
+                    Runner runner = getFormStructure().getElementScript().getFunctionByName(key);
+                                        
+                    if (runner != null) {
+                        
+                        List<String> parameterValues = getEvents().get(Constants.EventAttribute.ONCLICK).get(key);
+                        
+                        List parameters = new ArrayList();
+
+                        for (String parameterValue : parameterValues) {
+                            AbstractElement anElement = getFormStructure().getElementById(parameterValue);
+                            parameters.add(anElement != null ? anElement : parameterValue);
+                        }
+                        runner.run(parameters);
+                    }
                 }
             }
         }
