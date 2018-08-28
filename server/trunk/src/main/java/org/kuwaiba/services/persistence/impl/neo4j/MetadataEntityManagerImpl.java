@@ -1633,8 +1633,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     
     @Override
     public List<AttributeMetadata> getMandatoryAttributesInClass(String className) 
-            throws MetadataObjectNotFoundException
-    {
+            throws MetadataObjectNotFoundException{
         List<AttributeMetadata> classAttributes = new ArrayList<>(getClass(className).getAttributes());
         List<AttributeMetadata> mandatoryAttributes = new ArrayList<>();
         classAttributes.forEach(attribute -> { 
