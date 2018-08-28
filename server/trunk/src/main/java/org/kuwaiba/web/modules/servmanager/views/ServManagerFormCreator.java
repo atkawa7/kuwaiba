@@ -37,7 +37,6 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteLogicalConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.openide.util.Exceptions;
@@ -173,11 +172,10 @@ public class ServManagerFormCreator{
                             parentsUntilFirstComEquipmentA = wsBean.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
                                 getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericCommunicationsElement", ipAddress, sessionId);
 
-                        
-                        
-                                
                         RemoteObjectLight aSideEquipmentLogical = parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1);
-                        RemoteObjectLight stmEndPointA = wsBean.getSpecialAttribute(stm.getClassName(), stm.getId(), "sdhTLEndpointA", ipAddress, sessionId).get(0);
+                        RemoteObjectLight stmEndPointA = null;
+                        if(stm != null)
+                            stmEndPointA = wsBean.getSpecialAttribute(stm.getClassName(), stm.getId(), "sdhTLEndpointA", ipAddress, sessionId).get(0);
                         Component logicalA = createDeviceTable(aSideEquipmentLogical, 
                                 logicalCircuitDetails.getEndpointA(), stmEndPointA);
                         logicalA.setId(Long.toString(aSideEquipmentLogical.getId()));
@@ -203,7 +201,10 @@ public class ServManagerFormCreator{
 
                         RemoteObjectLight bSideEquipmentLogical = parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1);
                         //We must do this becuase we need the end points of the snmp
-                        RemoteObjectLight stmEndPointB = wsBean.getSpecialAttribute(stm.getClassName(), stm.getId(), "sdhTLEndpointB", ipAddress, sessionId).get(0);
+                        RemoteObjectLight stmEndPointB = null;
+                        if(stm != null)
+                            stmEndPointB = wsBean.getSpecialAttribute(stm.getClassName(), stm.getId(), "sdhTLEndpointB", ipAddress, sessionId).get(0);
+                        
                         Component logicalB = createDeviceTable(bSideEquipmentLogical, 
                                 logicalCircuitDetails.getEndpointB(), stmEndPointB);
                         logicalB.setId(Long.toString(bSideEquipmentLogical.getId()));

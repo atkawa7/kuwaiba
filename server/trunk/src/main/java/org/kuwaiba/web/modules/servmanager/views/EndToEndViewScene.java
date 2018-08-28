@@ -27,6 +27,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Window;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -166,11 +167,11 @@ public class EndToEndViewScene extends AbstractScene {
     @Override
     public void render(byte[] structure) throws IllegalArgumentException { 
        //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
-//        try {
-//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end_to_end_view_.xml");
-//            fos.write(structure);
-//            fos.close();
-//        } catch(Exception e) {}
+        try {
+            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end_to_end_view_.xml");
+            fos.write(structure);
+            fos.close();
+        } catch(Exception e) {}
         //</editor-fold>
         try {
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -407,9 +408,11 @@ public class EndToEndViewScene extends AbstractScene {
     }
     
     public SrvNodeWidget findNodeWidget(long nodeId) {
-        for (RemoteObjectLight aNode : nodes.keySet()) {
-            if (aNode.getId() == nodeId)
-                return nodes.get(aNode);
+        if(nodes != null){
+            for (RemoteObjectLight aNode : nodes.keySet()) {
+                if (aNode.getId() == nodeId)
+                    return nodes.get(aNode);
+            }
         }
         return null;
     }
@@ -419,11 +422,12 @@ public class EndToEndViewScene extends AbstractScene {
     }
     
     public SrvEdgeWidget findEdgeWidget(long edgeId) {
-        for (RemoteObjectLight anEdge : edges.keySet()) {
-            if (anEdge.getId() == edgeId)
-                return edges.get(anEdge);
+        if(edges != null){
+            for (RemoteObjectLight anEdge : edges.keySet()) {
+                if (anEdge.getId() == edgeId)
+                    return edges.get(anEdge);
+            }
         }
-        
         return null;
     }
     

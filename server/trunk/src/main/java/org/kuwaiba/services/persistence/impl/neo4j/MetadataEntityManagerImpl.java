@@ -1635,12 +1635,12 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     public List<AttributeMetadata> getMandatoryAttributesInClass(String className) 
             throws MetadataObjectNotFoundException
     {
-        
-        ClassMetadata aClass = getClass(className);
-        List<AttributeMetadata> mandatoryAttributes = new ArrayList<>(aClass.getAttributes());
-        
-        mandatoryAttributes.stream().filter(att -> att.isMandatory());
-        
+        List<AttributeMetadata> classAttributes = new ArrayList<>(getClass(className).getAttributes());
+        List<AttributeMetadata> mandatoryAttributes = new ArrayList<>();
+        classAttributes.forEach(attribute -> { 
+            if(attribute.isMandatory())
+                mandatoryAttributes.add(attribute); 
+        });
         return mandatoryAttributes;
     }
     
