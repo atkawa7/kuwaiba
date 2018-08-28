@@ -17,7 +17,7 @@ import org.kuwaiba.apis.forms.elements.Constants;
 import org.kuwaiba.apis.forms.elements.ElementMiniApplication;
 import org.kuwaiba.apis.forms.elements.EventDescriptor;
 import org.kuwaiba.beans.WebserviceBean;
-import org.kuwaiba.web.procmanager.AbstractComponentMiniApplication;
+import org.kuwaiba.apis.forms.components.impl.miniapps.AbstractComponentMiniApplication;
 import org.openide.util.Exceptions;
 
 /**

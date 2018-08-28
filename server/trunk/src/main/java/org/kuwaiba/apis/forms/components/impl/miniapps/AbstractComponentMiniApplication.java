@@ -12,7 +12,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.kuwaiba.web.procmanager;
+package org.kuwaiba.apis.forms.components.impl.miniapps;
 
 import com.vaadin.ui.Component;
 import java.util.Properties;

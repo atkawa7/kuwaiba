@@ -14,6 +14,7 @@
  */
 package org.kuwaiba.web.procmanager;
 
+import org.kuwaiba.apis.forms.components.impl.miniapps.AbstractComponentMiniApplication;
 import com.neotropic.kuwaiba.modules.reporting.img.SceneExporter;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
