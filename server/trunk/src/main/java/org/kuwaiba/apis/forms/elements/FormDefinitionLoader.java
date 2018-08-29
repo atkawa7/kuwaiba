@@ -272,8 +272,28 @@ public class FormDefinitionLoader {
         for (Runner runner : elementScript.getFunctions().values())
             runner.setScriptQueryExecutor(scriptQueryExecutor);
         
-        for (AbstractElement element : elements)
-            element.fireOnLoad();
+        List<AbstractElement> subformsChildren = new ArrayList();
+                
+        for (AbstractElement element : elements) {
+            if (element instanceof ElementSubform) {
+                ElementSubform subform = (ElementSubform) element;
+                
+                List<AbstractElement> subformChildren = subform.getChildren();
+                                                
+                if (subformChildren != null) {
+                    for (AbstractElement subformChild : subformChildren) {
+                        if (!(subformChild instanceof ElementSubform))
+                            subformsChildren.add(subformChild);
+                    }
+                }
+            }
+        }
+        
+        
+        for (AbstractElement element : elements) {
+            if (!subformsChildren.contains(element))
+                element.fireOnLoad();
+        }
     }
     
 }
