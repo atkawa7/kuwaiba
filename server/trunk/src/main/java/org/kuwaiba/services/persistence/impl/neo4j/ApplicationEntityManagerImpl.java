@@ -818,7 +818,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
             while(relationships.hasNext()){
                 Node child = relationships.next().getStartNode();
-                children.add(new BusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME), className));
+                children.add(new BusinessObjectLight(className, child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME)));
             }
             tx.success();
         }
@@ -845,7 +845,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 Node child = childRel.getStartNode();
                 if (child.getId() == listTypeItemId) { 
                     tx.success();
-                    return new BusinessObjectLight(child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME), listTypeClassName);
+                    return new BusinessObjectLight(listTypeClassName, child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME));
                 }
                 
             }
@@ -870,7 +870,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 Node child = childRel.getStartNode();
                 if (child.hasProperty(Constants.PROPERTY_NAME) && child.getProperty(Constants.PROPERTY_NAME).equals(listTypeItemName)) {
                     tx.success();
-                    return new BusinessObjectLight(child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME), listTypeClassName);
+                    return new BusinessObjectLight(listTypeClassName, child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME));
                 }
                 
             }
@@ -2166,9 +2166,8 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                         Node temp = Util.findNodeByLabelAndId(poolLabel, item.getId());
                         if(temp == null) //if is not a pool
                         {
-                            BusinessObjectLight rbol = new BusinessObjectLight(item.getId(), 
-                                                item.hasProperty(Constants.PROPERTY_NAME) ? (String)item.getProperty(Constants.PROPERTY_NAME) : null,
-                                                Util.getClassName(item));
+                            BusinessObjectLight rbol = new BusinessObjectLight(Util.getClassName(item), item.getId(), 
+                                                item.hasProperty(Constants.PROPERTY_NAME) ? (String)item.getProperty(Constants.PROPERTY_NAME) : null);
                             poolItems.add(rbol);
                         }
                     }
@@ -4042,10 +4041,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 }
                 Node bookmarkItem = relationship.getStartNode();
                 
-                BusinessObjectLight rbol = new BusinessObjectLight(
+                BusinessObjectLight rbol = new BusinessObjectLight(Util.getClassName(bookmarkItem),
                     bookmarkItem.getId(), 
-                    bookmarkItem.hasProperty(Constants.PROPERTY_NAME) ? (String) bookmarkItem.getProperty(Constants.PROPERTY_NAME) : null, 
-                    Util.getClassName(bookmarkItem));
+                    bookmarkItem.hasProperty(Constants.PROPERTY_NAME) ? (String) bookmarkItem.getProperty(Constants.PROPERTY_NAME) : null);
                 
                 bookmarkItems.add(rbol);
             }

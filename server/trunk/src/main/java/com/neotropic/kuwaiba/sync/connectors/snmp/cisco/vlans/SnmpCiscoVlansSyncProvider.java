@@ -23,6 +23,7 @@ import com.neotropic.kuwaiba.sync.model.PollResult;
 import com.neotropic.kuwaiba.sync.model.SyncAction;
 import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
+import com.neotropic.kuwaiba.sync.model.SyncResult;
 import com.neotropic.kuwaiba.sync.model.SyncUtil;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import com.neotropic.kuwaiba.sync.model.TableData;
@@ -52,7 +53,7 @@ import org.snmp4j.smi.OID;
 public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
     
     @Override
-    public String getName() {
+    public String getDisplayName() {
         return "Cisco - vlanTrunkPortTable SNMP Synchronization Provider";
     }
 
@@ -195,7 +196,7 @@ public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
     }
     
     @Override
-    public List<SyncFinding> sync(PollResult pollResult){
+    public List<SyncFinding> supervisedSync(PollResult pollResult){
         HashMap<BusinessObjectLight, List<AbstractDataEntity>> originalData = pollResult.getResult();
         List<SyncFinding> findings = new ArrayList<>();
         // Adding to findings list the not blocking execution exception found during the mapped poll
@@ -221,8 +222,18 @@ public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
     }
 
     @Override
-    public List<SyncFinding> sync(List<AbstractDataEntity> originalData) {
+    public List<SyncFinding> supervisedSync(List<AbstractDataEntity> originalData) {
         throw new UnsupportedOperationException("This provider does not support unmapped polling");
+    }
+    
+    @Override
+    public List<SyncResult> automatedSync(List<AbstractDataEntity> originalData) {
+        throw new UnsupportedOperationException("This provider does not support supervised sync for unmapped pollings");
+    }
+
+    @Override
+    public List<SyncResult> automatedSync(PollResult pollResult) {
+        throw new UnsupportedOperationException("This provider does not support automated sync");
     }
 
     @Override

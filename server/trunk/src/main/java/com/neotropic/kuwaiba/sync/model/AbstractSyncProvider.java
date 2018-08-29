@@ -18,7 +18,6 @@ package com.neotropic.kuwaiba.sync.model;
 
 import java.io.Serializable;
 import java.util.List;
-import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
  * This class describes the generic behavior of all the synchronization providers. 
@@ -40,12 +39,12 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
  * </ul>
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public abstract class AbstractSyncProvider implements Serializable{
+public abstract class AbstractSyncProvider implements Serializable {
     /**
      * Display name/description of what the providers does
      * @return The configured name/description (typically a hard-coded string)
      */
-    public abstract String getName();
+    public abstract String getDisplayName();
     /**
      * A string that uniquely identifies the current sync provider
      * @return 
@@ -78,22 +77,37 @@ public abstract class AbstractSyncProvider implements Serializable{
      */        
     public abstract PollResult mappedPoll(SynchronizationGroup syncGroup);
     /**
-     * Implement this method if the synchronization process will be associated to an object in the inventory, for example, 
+     * Implement this method if the supervised synchronization process will be associated to an object in the inventory, for example, 
      * you will retrieve the hardware information about a network element and find what has changed overnight.
      * @param pollResult A set of high-level representations of the info coming from the sync data source and the corresponding inventory object it should be mapped against
      * (for example, a Java matrix representing an SNMP table)
      * @return A set of results (e.g. new board on slot xxx, different serial number found for router yyyy)
-     * @throws InvalidArgumentException
      */
-    public abstract List<SyncFinding> sync(PollResult pollResult);
+    public abstract List<SyncFinding> supervisedSync(PollResult pollResult);
     /**
-     * Implement this method if the synchronization process won't be associated to a single object in the inventory, for example, 
+     * Implement this method if the supervised synchronization process won't be associated to a single object in the inventory, for example, 
      * if you want to see what virtual circuits were re-routed after switching to a backup link during a network failure 
      * @param originalData A set of high-level representations of the info coming from the sync data source 
      * (for example, a Java list representing the hops of a virtual circuits)
      * @return A set of results (circuit YYY has a new route zzzz)
      */
-    public abstract List<SyncFinding> sync(List<AbstractDataEntity> originalData);
+    public abstract List<SyncFinding> supervisedSync(List<AbstractDataEntity> originalData);
+    /**
+     * Implement this method if the supervised synchronization process won't be associated to a single object in the inventory, for example, 
+     * if you want to see what virtual circuits were re-routed after switching to a backup link during a network failure 
+     * @param originalData A set of high-level representations of the info coming from the sync data source 
+     * (for example, a Java list representing the hops of a virtual circuits)
+     * @return A set of results (e.g. circuit YYY was re-routed to zzzz)
+     */
+    public abstract List<SyncResult> automatedSync(List<AbstractDataEntity> originalData);
+    /**
+     * Implement this method if the supervised synchronization process will be associated to an object in the inventory, for example, 
+     * you will retrieve the hardware information about a network element and find what has changed overnight.
+     * @param pollResult A set of high-level representations of the info coming from the sync data source and the corresponding inventory object it should be mapped against
+     * (for example, a Java matrix representing an SNMP table)
+     * @return A set of results (e.g. new board on slot xxx was created, different serial number was set to router yyyy)
+     */
+    public abstract List<SyncResult> automatedSync(PollResult pollResult);
     /**
      * Performs the actual actions 
      * @param actions

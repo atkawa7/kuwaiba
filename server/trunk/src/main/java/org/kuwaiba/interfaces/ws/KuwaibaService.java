@@ -31,7 +31,6 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.WebServiceContext;
-import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.util.Constants;
@@ -6019,7 +6018,7 @@ public class KuwaibaService {
     
     //<editor-fold desc="Synchronization Framework methods" defaultstate="collapsed">
     /**
-     * Executes an synchronization job, which consist on connecting to the sync data source 
+     * Executes a supervised synchronization job, which consist on connecting to the sync data source 
      * using the configuration attached to the given sync group and finding the differences 
      * between the information currently in the inventory platform and what's in the sync data source. 
      * A supervised sync job needs a human to review the differences and decide what to do,
@@ -6029,11 +6028,10 @@ public class KuwaibaService {
      * @param sessionId The session token
      * @return A list of differences that require the authorization of a user to be resolved
      * @throws ServerSideException If the sync group could not be found or if
-     * @throws InterruptedException
      */
     @WebMethod(operationName = "launchSupervisedSynchronizationTask")
     public List<SyncFinding> launchSupervisedSynchronizationTask(@WebParam(name = "syncGroupId") long syncGroupId, 
-            @WebParam(name = "sessionId") String sessionId) throws ServerSideException, InterruptedException, Exception {
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
             BackgroundJob managedJob = wsBean.launchSupervisedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);                      
             int retries = 0;
@@ -6049,12 +6047,14 @@ public class KuwaibaService {
                         if (exceptionThrownByTheJob != null) {
                             if (exceptionThrownByTheJob instanceof InventoryException)
                                 throw new ServerSideException(managedJob.getExceptionThrownByTheJob().getMessage());
-                            else
-                                throw exceptionThrownByTheJob;
+                            else {
+                                System.out.println("[KUWAIBA] An unexpected error occurred in launchSupervisedSynchronizationTask: " + exceptionThrownByTheJob.getMessage());
+                                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                            }
                         }
                     }
                     Thread.sleep(2000);
-                }catch (InterruptedException | InvalidArgumentException ex) {
+                }catch (Exception ex) {
                     throw new RuntimeException(ex.getMessage());
                 }
                 retries ++;
@@ -6074,7 +6074,7 @@ public class KuwaibaService {
         }
     }
     /**
-     * Executes an synchronization job, which consist on connecting to the sync data source 
+     * Executes an automated synchronization job, which consist on connecting to the sync data source 
      * using the configuration attached to the given sync group and finding the differences 
      * between the information currently in the inventory platform and what's in the sync data source. 
      * An automated sync job does not need human intervention it automatically decides what to do based 
@@ -6088,9 +6088,38 @@ public class KuwaibaService {
     public List<SyncResult> launchAutomatedSynchronizationTask(@WebParam(name = "syncGroupId") long syncGroupId, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            BackgroundJob managedJob = wsBean.launchAutomatedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);
-            return null;
-        } catch(Exception e){
+            BackgroundJob managedJob = wsBean.launchAutomatedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);                      
+            int retries = 0;
+            while (!managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.FINISHED) && retries < 20) {
+                try {                
+                    //For some reason (probably thread-concurrency related), the initial "managedJob" instance is different from the one
+                    //updated in the SyncProcessor/Writer, so we have to constantly fetch it again.
+                    managedJob = JobManager.getInstance().getJob(managedJob.getId());
+
+                    if (managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.ABORTED)) {
+                        Exception exceptionThrownByTheJob = managedJob.getExceptionThrownByTheJob();
+
+                        if (exceptionThrownByTheJob != null) {
+                            if (exceptionThrownByTheJob instanceof InventoryException)
+                                throw new ServerSideException(managedJob.getExceptionThrownByTheJob().getMessage());
+                            else {
+                                System.out.println("[KUWAIBA] An unexpected error occurred in launchAutomatedSynchronizationTask: " + exceptionThrownByTheJob.getMessage());
+                                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                            }
+                        }
+                    }
+                    Thread.sleep(2000);
+                }catch (Exception ex) {
+                    throw new RuntimeException(ex.getMessage());
+                }
+                retries ++;
+            }
+            if (retries == 20)
+                throw new ServerSideException("The automated synchronization task can no be excecuted");
+                
+            return (List<SyncResult>)managedJob.getJobResult();
+            
+        } catch(ServerSideException | RuntimeException e){
             if (e instanceof ServerSideException)
                 throw e;
             else {

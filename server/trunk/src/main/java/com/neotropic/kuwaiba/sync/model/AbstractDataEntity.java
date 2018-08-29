@@ -27,10 +27,6 @@ public abstract class AbstractDataEntity {
      */
     protected String name;
     /**
-     * The data type represented by this entity. See DATA_TYPE enumeration for all possible values
-     */
-    protected DATA_TYPE type;
-    /**
      * The actual value. Mapped to a Java type using the <b>type</b> attribute.
      */
     protected Object value;
@@ -43,13 +39,7 @@ public abstract class AbstractDataEntity {
         this.name = name;
     }
 
-    public DATA_TYPE getType() {
-        return type;
-    }
-
-    public void setType(DATA_TYPE type) {
-        this.type = type;
-    }
+    public abstract DATA_TYPE getType();
 
     public Object getValue() {
         return value;
@@ -64,6 +54,7 @@ public abstract class AbstractDataEntity {
         INTEGER,
         FLOAT,
         BOOLEAN,
-        TABLE
+        TABLE,
+        JAVA_OBJECT
     }
 }

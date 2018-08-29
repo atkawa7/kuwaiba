@@ -31,12 +31,12 @@ public class BusinessObject extends BusinessObjectLight {
      */
     private HashMap <String, String> attributes;
 
-    public BusinessObject(long id, String name, String className) {
-        super(id, name, className);
+    public BusinessObject(String className, long id, String name) {
+        super(className, id, name);
     }
 
     public BusinessObject(String className, long id, String name, HashMap<String, String> attributes) {
-        super(id, name, className);
+        super(className, id, name);
         this.attributes = attributes;
     }
 

@@ -23,7 +23,11 @@ package com.neotropic.kuwaiba.sync.model;
 public class TableData extends AbstractDataEntity {
     public TableData(String name, Object value) {
         this.name = name;
-        this.type = DATA_TYPE.TABLE;
         this.value = value;
+    }
+
+    @Override
+    public DATA_TYPE getType() {
+        return DATA_TYPE.TABLE;
     }
 }

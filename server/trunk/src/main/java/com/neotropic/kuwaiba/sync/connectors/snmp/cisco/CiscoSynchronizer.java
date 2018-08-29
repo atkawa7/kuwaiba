@@ -216,10 +216,10 @@ public class CiscoSynchronizer {
                             MPLSLINK, newMplsLinkId, RELATIONSHIP_MPLSLINK, false); 
                     
                     byte[] createMplsView = SyncUtil.createMplsView(//devices
-                            Arrays.asList(syncEquipment, new BusinessObjectLight(-1l, "- unknown wating for sync -", className)), 
-                            new BusinessObject(newMplsLinkId, vcID, MPLSLINK));
+                            Arrays.asList(syncEquipment, new BusinessObjectLight(className, -1, "- waiting to be synced -")), 
+                            new BusinessObject(MPLSLINK, newMplsLinkId, vcID));
 
-                    aem.createGeneralView(MPLSVIEW, vcID, "Synchroniced", createMplsView, null);
+                    aem.createGeneralView(MPLSVIEW, vcID, "Synchronized", createMplsView, null);
                 }
                 
                 jsonResults.add((Json.createObjectBuilder()
@@ -263,7 +263,7 @@ public class CiscoSynchronizer {
                         long currentBSideId = Long.valueOf(reader.getAttributeValue(null, "bside"));
                         //we check the classname of the link
                         if(!reader.getAttributeValue(null,"class").equals(MPLSLINK))
-                            throw new InvalidArgumentException(String.format("The view is corrupted, a %s is been used instead of a MPLSLink", reader.getAttributeValue(null,"class")));
+                            throw new InvalidArgumentException(String.format("The view is corrupted, a %s is being used instead of a MPLSLink", reader.getAttributeValue(null,"class")));
 
                         BusinessObject mplsLink = bem.getObject(MPLSLINK, Long.valueOf(reader.getAttributeValue(null, "id")));
                          //The MPLS link has no been created an the sides are not connected

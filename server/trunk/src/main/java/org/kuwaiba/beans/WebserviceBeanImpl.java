@@ -5256,7 +5256,12 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("launchAutomatedSynchronizationTask", ipAddress, sessionId);
-            return null; //To be implemented
+            Properties parameters = new Properties();
+            parameters.put("syncGroupId", Long.toString(syncGroupId)); //NOI18N                   
+            
+            BackgroundJob backgroundJob = new BackgroundJob("DefaultSyncJob", false, parameters); //NOI18N
+            JobManager.getInstance().launch(backgroundJob);
+            return backgroundJob;
 
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());

@@ -25,11 +25,11 @@ import java.util.List;
  * provided when the query was executed
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ResultRecord extends BusinessObjectLight{
+public class ResultRecord extends BusinessObjectLight {
     private List<String> extraColumns;
 
-    public ResultRecord(long id, String name, String className) {
-        super(id,name, className);
+    public ResultRecord(String className, long id, String name) {
+        super(className, id, name);
     }
 
     public List<String> getExtraColumns() {

@@ -1459,28 +1459,28 @@ public class EntPhysicalSynchronizer {
                 else if(currrentInterface == null && ifName.toLowerCase().contains("tu")){
                     attributes.put("ifAlias", ifAlias);
                     createdId = bem.createSpecialObject(Constants.CLASS_MPLSTUNNEL, className, id, attributes, -1); 
-                    currentMplsTunnels.add(new BusinessObject(createdId, ifName, Constants.CLASS_MPLSTUNNEL));
+                    currentMplsTunnels.add(new BusinessObject(Constants.CLASS_MPLSTUNNEL, createdId, ifName));
                     createdClassName = Constants.CLASS_MPLSTUNNEL;
                     found = true;
                     status = Constants.CLASS_MPLSTUNNEL + " Created";
                 }//LoopBacks
                 else if(currrentInterface == null && ifName.toLowerCase().contains("lo")){
                     createdId = bem.createSpecialObject(Constants.CLASS_VIRTUALPORT, className, id, attributes, -1);
-                    currentVirtualPorts.add(new BusinessObject(createdId, ifName, Constants.CLASS_VIRTUALPORT));
+                    currentVirtualPorts.add(new BusinessObject(Constants.CLASS_VIRTUALPORT, createdId, ifName));
                     createdClassName = "VirtualPort";
                     found = true;
                     status = "[Virtual Port] Created";
                 }//Bridge domains                
                 else if(currrentInterface == null && (ifName.toLowerCase().contains("bd") || ifName.toLowerCase().contains("br"))){
                     createdId = bem.createSpecialObject(Constants.CLASS_BRIDGEDOMAININTERFACE, className, id, attributes, -1);
-                    currentBridgeDomains.add(new BusinessObject(createdId, ifName, Constants.CLASS_BRIDGEDOMAININTERFACE));
+                    currentBridgeDomains.add(new BusinessObject(Constants.CLASS_BRIDGEDOMAININTERFACE, createdId, ifName));
                     createdClassName = "BridgeDomainInterface";
                     found = true;
                     status = "[BridgeDomainInterface] Created";
                 }
                 else if (currrentInterface == null && ifName.toLowerCase().contains("vlan") || ifName.toLowerCase().contains("vl")){
                     createdId = bem.createSpecialObject(Constants.CLASS_VLAN, className, id, attributes, -1);
-                    currentVlans.add(new BusinessObject(createdId, ifName, Constants.CLASS_VLAN));
+                    currentVlans.add(new BusinessObject(Constants.CLASS_VLAN, createdId, ifName));
                     createdClassName = Constants.CLASS_VLAN;
                     found = true;
                     status = "[VLAN] Created";

@@ -410,23 +410,22 @@ public class Util {
     }
     
     public static BusinessObjectLight createRemoteObjectLightFromPoolNode (Node instance) {
-        return new BusinessObjectLight(instance.getId(), 
-                (String)instance.getProperty(Constants.PROPERTY_NAME), 
-                String.format("%s of %s", Constants.CLASS_POOL, instance.getProperty(Constants.PROPERTY_CLASS_NAME)));
+        return new BusinessObjectLight(String.format("Pool of %s", instance.getProperty(Constants.PROPERTY_CLASS_NAME)), instance.getId(), 
+                (String)instance.getProperty(Constants.PROPERTY_NAME));
     }
     
     public static BusinessObjectLight createRemoteObjectLightFromNode (Node instance) {
         Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
         
-        return new BusinessObjectLight(instance.getId(), 
-            (String)instance.getProperty(Constants.PROPERTY_NAME), (String)classNode.getProperty(Constants.PROPERTY_NAME));
+        return new BusinessObjectLight((String)classNode.getProperty(Constants.PROPERTY_NAME), instance.getId(), 
+            (String)instance.getProperty(Constants.PROPERTY_NAME));
     }
     
     public static BusinessObjectLight createTemplateElementLightFromNode (Node instance) {
         Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode();
         
-        return new BusinessObjectLight(instance.getId(), 
-            (String)instance.getProperty(Constants.PROPERTY_NAME), (String)classNode.getProperty(Constants.PROPERTY_NAME));
+        return new BusinessObjectLight((String)classNode.getProperty(Constants.PROPERTY_NAME), instance.getId(), 
+            (String)instance.getProperty(Constants.PROPERTY_NAME));
     }
     
     public static BusinessObject createRemoteObjectFromNode (Node instance) throws InvalidArgumentException {

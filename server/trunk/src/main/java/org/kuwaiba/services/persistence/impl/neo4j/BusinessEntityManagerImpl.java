@@ -56,7 +56,6 @@ import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.services.persistence.cache.CacheManager;
-import org.kuwaiba.services.persistence.impl.neo4j.RelTypes;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.services.persistence.util.Util;
 import org.kuwaiba.util.ChangeDescriptor;
@@ -66,12 +65,10 @@ import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.Node;
-import org.neo4j.graphdb.Path;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.ResourceIterator;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.traversal.TraversalDescription;
 import org.neo4j.helpers.collection.Iterators;
 
 /**
@@ -610,9 +607,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 Node instance = instances.next().getStartNode();
                 if (instance.getId() == oid) {
                     tx.success();
-                    return new BusinessObjectLight(oid,
-                            (String) instance.getProperty(Constants.PROPERTY_NAME),
-                            className);
+                    return new BusinessObjectLight(className, oid,
+                            (String) instance.getProperty(Constants.PROPERTY_NAME));
                 }
             }
             throw new BusinessObjectNotFoundException(className, oid);
@@ -660,9 +656,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             while (queryResult.hasNext()) {
                 Map<String, Object> row = queryResult.next();
-                res.add(new BusinessObjectLight((long)row.get("oid"), 
-                        (String)row.get("oname"), 
-                        (String)row.get("cname")));
+                res.add(new BusinessObjectLight((String)row.get("cname"), (long)row.get("oid"), 
+                        (String)row.get("oname")));
             }
             
             tx.success();
@@ -687,9 +682,8 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             while (queryResult.hasNext()) {
                 Map<String, Object> row = queryResult.next();
-                res.add(new BusinessObjectLight((long)row.get("oid"), 
-                        (String)row.get("oname"), 
-                        (String)row.get("cname")));
+                res.add(new BusinessObjectLight((String)row.get("cname"), (long)row.get("oid"), 
+                        (String)row.get("oname")));
             }
             
             tx.success();
@@ -806,7 +800,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
                 //If the direct parent is DummyRoot, return a dummy RemoteBusinessObject with oid = -1
                 if (parentNode.hasProperty(Constants.PROPERTY_NAME) && Constants.NODE_DUMMYROOT.equals(parentNode.getProperty(Constants.PROPERTY_NAME)) )
-                    return new BusinessObject(-1L, Constants.NODE_DUMMYROOT, Constants.NODE_DUMMYROOT);
+                    return new BusinessObject(Constants.NODE_DUMMYROOT, -1, Constants.NODE_DUMMYROOT);
                 else    
                     return Util.createRemoteObjectLightFromNode(parentNode);
             }
@@ -816,7 +810,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     return Util.createRemoteObjectLightFromNode(parentNode);
                 } else {
                     // Use the dummy root like parent to services, contracts, projects poolNode...
-                    return new BusinessObject(-1L, Constants.NODE_DUMMYROOT, Constants.NODE_DUMMYROOT);
+                    return new BusinessObject(Constants.NODE_DUMMYROOT, -1, Constants.NODE_DUMMYROOT);
                 }
             }
             throw new InvalidArgumentException(String.format("The parent of object with id %s could be found", oid));
@@ -839,7 +833,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             for (Node node : Iterators.asIterable(column)){  
                 if (node.hasProperty(Constants.PROPERTY_NAME)) {
                     if (node.getProperty(Constants.PROPERTY_NAME).equals(Constants.NODE_DUMMYROOT)) {
-                        parents.add(new BusinessObjectLight((long)-1, Constants.NODE_DUMMYROOT, Constants.NODE_DUMMYROOT));
+                        parents.add(new BusinessObjectLight(Constants.NODE_DUMMYROOT, -1, Constants.NODE_DUMMYROOT));
                         continue;
                     }
                 }
@@ -1353,12 +1347,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 while(children.iterator().hasNext() && (counter < maxResults)){
                     counter++;
                     Node child = children.iterator().next().getStartNode();
-                    res.add(new BusinessObjectLight(child.getId(),(String)child.getProperty(Constants.PROPERTY_NAME), Util.getClassName(child)));
+                    res.add(new BusinessObjectLight(Util.getClassName(child), child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME)));
                 }
             }else{
                 while(instances.hasNext()){
                     Node child = instances.next().getStartNode();
-                    res.add(new BusinessObjectLight(child.getId(),(String)child.getProperty(Constants.PROPERTY_NAME), Util.getClassName(child)));
+                    res.add(new BusinessObjectLight(Util.getClassName(child), child.getId(),(String)child.getProperty(Constants.PROPERTY_NAME)));
                 }
             }
             
@@ -1385,12 +1379,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 while(children.hasNext() && (counter < maxResults)){
                     counter++;
                     Node child = children.next().getStartNode();
-                    res.add(new BusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME), Util.getClassName(child)));
+                    res.add(new BusinessObjectLight(Util.getClassName(child), child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME)));
                 }
             }else{
                 while(children.hasNext()){
                     Node child = children.next().getStartNode();
-                    res.add(new BusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME), Util.getClassName(child)));
+                    res.add(new BusinessObjectLight(Util.getClassName(child), child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME)));
                 }
             }
             return res;
@@ -1422,7 +1416,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if (child.getId() == oid)
                     continue;
                 
-                res.add(new BusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME), Util.getClassName(child)));
+                res.add(new BusinessObjectLight(Util.getClassName(child), child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME)));
             }
             return res;
         }
@@ -1489,11 +1483,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             String cypherQuery = null;
             
             if (isAbstract) {
-                cypherQuery = "match (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) "
+                cypherQuery = "MATCH (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) "
                             + "where class.name=\"" + className + "\" "
                             + "return instance;";                
             } else {
-                cypherQuery = "match (class:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) "
+                cypherQuery = "MATCH (class:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) "
                             + "where class.name=\"" + className + "\" "
                             + "return instance;";
             }
@@ -1511,6 +1505,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
             
             Collections.sort(instances);
+            tx.success();
             return instances;
         }
     }
@@ -1567,6 +1562,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                             break;
                 }
             }
+            tx.success();
             return res;
         }
     }
@@ -1633,11 +1629,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 Node child = children.iterator().next().getStartNode();
 
                 if (!child.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
-                    throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found",child.getId()));
+                    throw new MetadataObjectNotFoundException(String.format("Class for object with ids %s could not be found",child.getId()));
 
                 String className = Util.getClassName(child);
                 if (mem.isSubClass(classToFilter, className)){
-                    res.add(new BusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME),className));
+                    res.add(new BusinessObjectLight(className, child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME)));
                     if (maxResults > 0){
                         if (++counter == maxResults)
                             break;
@@ -1660,7 +1656,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 String className = Util.getClassName(child);
 
                 if (mem.isSubClass(classToFilter, className)){
-                    res.add(new BusinessObjectLight(child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME),className));
+                    res.add(new BusinessObjectLight(className, child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME)));
                     if (maxResults > 0){
                         if (++counter == maxResults)
                             break;
@@ -2891,7 +2887,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found", child.getId()));
 
             if (mem.isSubClass(classToFilter, childClassName)) {
-                res.add(new BusinessObjectLight(child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME), childClassName));
+                res.add(new BusinessObjectLight(childClassName, child.getId(), (String) child.getProperty(Constants.PROPERTY_NAME)));
 
                 if (maxResults > 0 && res.size() == maxResults)
                     break;
@@ -2919,7 +2915,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found", specialChild.getId()));
 
                 if (mem.isSubClass(classToFilter, specialChildClassName)) {
-                    res.add(new BusinessObjectLight(specialChild.getId(), (String) specialChild.getProperty(Constants.PROPERTY_NAME), specialChildClassName));
+                    res.add(new BusinessObjectLight(specialChildClassName, specialChild.getId(), (String) specialChild.getProperty(Constants.PROPERTY_NAME)));
 
                     if (maxResults > 0 && res.size() == maxResults)
                         break;

@@ -57,7 +57,7 @@ public class JobManager {
     }
     
     /**
-     * Launches a job, previously configure with a set of parameters
+     * Launches a job, previously configured with a set of parameters
      * @param job The job to be executed
      * @throws InvalidArgumentException If the requested job is already running and does not support concurrence
      * @throws OperationNotPermittedException If the max number of running jobs has been already reached

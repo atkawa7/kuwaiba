@@ -37,9 +37,7 @@ public class BusinessObjectLight implements Serializable, Comparable<BusinessObj
      */
     private String className;
 
-    protected BusinessObjectLight() {}
-
-    public BusinessObjectLight(Long id, String name, String className) {
+    public BusinessObjectLight(String className, long id, String name) {
         this.id = id;
         this.name = name;
         this.className = className;

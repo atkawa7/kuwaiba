@@ -31,15 +31,20 @@ public final class RemoteSynchronizationProvider implements Serializable {
      */
     private String id;
     /**
-     * Provider name
+     * Provider display name
      */
-    private String name;
+    private String displayName;
+    /**
+     * If the provider is automated or supervised
+     */
+    private boolean automated;
 
     public RemoteSynchronizationProvider() { }
     
-    public RemoteSynchronizationProvider(String id, String name) {
+    public RemoteSynchronizationProvider(String id, String displatName, boolean automated) {
         this.id = id;
-        this.name = name;
+        this.displayName = displatName;
+        this.automated = automated;
     }
 
     public String getId() {
@@ -50,11 +55,19 @@ public final class RemoteSynchronizationProvider implements Serializable {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getDisplayName() {
+        return displayName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setDisplayName(String name) {
+        this.displayName = name;
+    }
+
+    public boolean isAutomated() {
+        return automated;
+    }
+
+    public void setAutomated(boolean automated) {
+        this.automated = automated;
     }
 }

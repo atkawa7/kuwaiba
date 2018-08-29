@@ -47,7 +47,8 @@ public final class RemoteSynchronizationGroup implements Serializable {
     public RemoteSynchronizationGroup(SynchronizationGroup syncGroup) {
         this.id = syncGroup.getId();
         this.name = syncGroup.getName();
-        this.provider = new RemoteSynchronizationProvider(syncGroup.getProvider().getId(), syncGroup.getProvider().getName());
+        this.provider = new RemoteSynchronizationProvider(syncGroup.getProvider().getId(), 
+                syncGroup.getProvider().getDisplayName(), syncGroup.getProvider().isAutomated());
     }
     
     public RemoteSynchronizationGroup(long id, String name, RemoteSynchronizationProvider provider) {
@@ -84,7 +85,8 @@ public final class RemoteSynchronizationGroup implements Serializable {
         List<RemoteSynchronizationGroup> res = new ArrayList<>();
         for (SynchronizationGroup syncGroup : syncGroups)
             res.add(new RemoteSynchronizationGroup(syncGroup.getId(), syncGroup.getName(), 
-                    new RemoteSynchronizationProvider(syncGroup.getProvider().getId(), syncGroup.getProvider().getName())));
+                    new RemoteSynchronizationProvider(syncGroup.getProvider().getId(), 
+                            syncGroup.getProvider().getDisplayName(), syncGroup.getProvider().isAutomated())));
         
         return res;
     }

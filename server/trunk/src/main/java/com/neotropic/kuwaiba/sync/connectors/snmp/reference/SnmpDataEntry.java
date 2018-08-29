@@ -27,7 +27,11 @@ public class SnmpDataEntry extends AbstractDataEntity {
     
     public SnmpDataEntry(String name, HashMap<String, List<String>> value) {
         this.name = name;
-        this.type = DATA_TYPE.TABLE;
         this.value = value;
+    }
+
+    @Override
+    public DATA_TYPE getType() {
+        return DATA_TYPE.TABLE;
     }
 }

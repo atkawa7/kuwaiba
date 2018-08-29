@@ -287,7 +287,7 @@ public class CypherQueryBuilder {
      * Read the results
      * @param queryResult
      */
-    public void readResult(Result queryResult){//<Map<String, Object>> columnsIterator){
+    public void readResult(Result queryResult) {
         List<ResultRecord> onlyResults =  new ArrayList<>();
         ResultRecord rr;
         List<String> vissibleAttibutesTitles = new ArrayList<>();
@@ -303,7 +303,7 @@ public class CypherQueryBuilder {
             List<String> extraColumns = new ArrayList<>();
             //create the class
             Node instanceNode = (Node)column.get(split[0]);
-            rr = new ResultRecord(instanceNode.getId(), Util.getAttributeFromNode(instanceNode, Constants.PROPERTY_NAME) ,Util.getClassName(instanceNode));
+            rr = new ResultRecord(Util.getClassName(instanceNode), instanceNode.getId(), Util.getAttributeFromNode(instanceNode, Constants.PROPERTY_NAME));
             //iterates by column
             for(int lu=  0; lu <split.length; lu++){
                 for(String va: (List<String>)visibleAttributes.get(split[lu])){
@@ -319,7 +319,7 @@ public class CypherQueryBuilder {
             rr.setExtraColumns(extraColumns);
             onlyResults.add(rr);
         }
-        ResultRecord resltRcrdHeader = new ResultRecord(0, null, null);
+        ResultRecord resltRcrdHeader = new ResultRecord(null, 0, null);
         resltRcrdHeader.setExtraColumns(vissibleAttibutesTitles);
         resultList.add(resltRcrdHeader);
 

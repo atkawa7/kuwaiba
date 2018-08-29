@@ -21,11 +21,17 @@ import java.util.List;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 
 /**
- *
+ * The result of polling a given sync data source
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class PollResult {
+    /**
+     * A hashmap with the result of polling the device provided
+     */
     private final HashMap<BusinessObjectLight, List<AbstractDataEntity>> result;
+    /**
+     * A hashmap that contains the list of exceptions per sync configuration 
+     */
     private final HashMap<SyncDataSourceConfiguration, List<Exception>> exceptions;
     
     public PollResult() {
