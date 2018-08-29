@@ -15,13 +15,13 @@
  */
 package com.neotropic.inventory.modules.sync.nodes.actions;
 
-import com.neotropic.inventory.modules.sync.nodes.SyncConfigurationNode;
+import com.neotropic.inventory.modules.sync.nodes.SyncDataSourceConfigurationNode;
 import com.neotropic.inventory.modules.sync.nodes.SyncGroupNode.SyncGroupNodeChildren;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalSyncDataSourceConfiguration;
+import com.neotropic.inventory.modules.sync.LocalSyncDataSourceConfiguration;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.openide.util.Utilities;
@@ -46,7 +46,7 @@ public class DeleteSyncDataSourceConfigurationAction extends AbstractAction {
         if (JOptionPane.showConfirmDialog(null, I18N.gm("want_to_delete_sync_data_src_config"), 
             I18N.gm("warning"), JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
             
-            SyncConfigurationNode syncConfigNode = Utilities.actionsGlobalContext().lookup(SyncConfigurationNode.class);
+            SyncDataSourceConfigurationNode syncConfigNode = Utilities.actionsGlobalContext().lookup(SyncDataSourceConfigurationNode.class);
             LocalSyncDataSourceConfiguration localSyncDataSrcConfig = Utilities.actionsGlobalContext().lookup(LocalSyncDataSourceConfiguration.class);
             
             if (localSyncDataSrcConfig != null) {

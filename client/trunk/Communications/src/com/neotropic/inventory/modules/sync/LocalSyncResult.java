@@ -12,7 +12,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.inventory.communications.core;
+package com.neotropic.inventory.modules.sync;
 
 /**
  * Represents a inform about the results of a synchronization process

@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="sharedInformation" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="preconditionsScript" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
  *         &lt;element name="postconditionsScript" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
+ *         &lt;element name="printable" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;element name="printableTemplate" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -46,7 +48,9 @@ import javax.xml.bind.annotation.XmlType;
     "definition",
     "sharedInformation",
     "preconditionsScript",
-    "postconditionsScript"
+    "postconditionsScript",
+    "printable",
+    "printableTemplate"
 })
 public class RemoteArtifactDefinition {
 
@@ -60,6 +64,8 @@ public class RemoteArtifactDefinition {
     protected List<String> sharedInformation;
     protected byte[] preconditionsScript;
     protected byte[] postconditionsScript;
+    protected Boolean printable;
+    protected String printableTemplate;
 
     /**
      * Gets the value of the id property.
@@ -258,6 +264,54 @@ public class RemoteArtifactDefinition {
      */
     public void setPostconditionsScript(byte[] value) {
         this.postconditionsScript = value;
+    }
+
+    /**
+     * Gets the value of the printable property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public Boolean isPrintable() {
+        return printable;
+    }
+
+    /**
+     * Sets the value of the printable property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setPrintable(Boolean value) {
+        this.printable = value;
+    }
+
+    /**
+     * Gets the value of the printableTemplate property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getPrintableTemplate() {
+        return printableTemplate;
+    }
+
+    /**
+     * Sets the value of the printableTemplate property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setPrintableTemplate(String value) {
+        this.printableTemplate = value;
     }
 
 }

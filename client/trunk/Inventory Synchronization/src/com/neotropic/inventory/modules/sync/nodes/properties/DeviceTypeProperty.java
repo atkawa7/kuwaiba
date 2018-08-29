@@ -15,13 +15,13 @@
  */
 package com.neotropic.inventory.modules.sync.nodes.properties;
 
-import com.neotropic.inventory.modules.sync.nodes.SyncConfigurationNode;
+import com.neotropic.inventory.modules.sync.nodes.SyncDataSourceConfigurationNode;
 import java.beans.PropertyEditor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.core.LocalSyncDataSourceConfiguration;
+import com.neotropic.inventory.modules.sync.LocalSyncDataSourceConfiguration;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.openide.nodes.PropertySupport;
@@ -31,11 +31,11 @@ import org.openide.nodes.PropertySupport;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class DeviceTypeProperty extends PropertySupport.ReadWrite<LocalObjectLight> {
-    private final SyncConfigurationNode syncConfigNode;
+    private final SyncDataSourceConfigurationNode syncConfigNode;
     private LocalObjectLight value;
     private final PropertySupport propertyDeviceId;
 
-    public DeviceTypeProperty(SyncConfigurationNode syncConfigNode, LocalObjectLight value, PropertySupport propertyDeviceId) {
+    public DeviceTypeProperty(SyncDataSourceConfigurationNode syncConfigNode, LocalObjectLight value, PropertySupport propertyDeviceId) {
         super("device", LocalObjectLight.class, "device", "device"); //NOI18N
         this.syncConfigNode = syncConfigNode;
         this.value = value;

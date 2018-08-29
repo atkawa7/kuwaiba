@@ -56,10 +56,10 @@ import org.inventory.communications.core.LocalReport;
 import org.inventory.communications.core.LocalReportLight;
 import org.inventory.communications.core.LocalScriptQuery;
 import org.inventory.communications.core.LocalScriptQueryResult;
-import org.inventory.communications.core.LocalSyncDataSourceConfiguration;
-import org.inventory.communications.core.LocalSyncFinding;
-import org.inventory.communications.core.LocalSyncGroup;
-import org.inventory.communications.core.LocalSyncResult;
+import com.neotropic.inventory.modules.sync.LocalSyncDataSourceConfiguration;
+import com.neotropic.inventory.modules.sync.LocalSyncFinding;
+import com.neotropic.inventory.modules.sync.LocalSyncGroup;
+import com.neotropic.inventory.modules.sync.LocalSyncResult;
 import org.inventory.communications.core.LocalTaskResultMessage;
 import org.inventory.communications.core.LocalTask;
 import org.inventory.communications.core.LocalTaskNotificationDescriptor;
@@ -76,7 +76,9 @@ import org.inventory.communications.core.queries.LocalResultRecord;
 import org.inventory.communications.core.queries.LocalTransientQuery;
 import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
-import org.inventory.communications.runnable.AbstractSyncRunnable;
+import com.neotropic.inventory.modules.sync.AbstractRunnableSyncFindingsManager;
+import com.neotropic.inventory.modules.sync.AbstractRunnableSyncResultsManager;
+import com.neotropic.inventory.modules.sync.LocalSyncProvider;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.wsclient.ApplicationLogEntry;
 import org.inventory.communications.wsclient.RemoteAttributeMetadata;
@@ -87,6 +89,7 @@ import org.inventory.communications.wsclient.GetSpecialAttributesResponse;
 import org.inventory.communications.wsclient.GroupInfo;
 import org.inventory.communications.wsclient.KuwaibaService;
 import org.inventory.communications.wsclient.KuwaibaService_Service;
+import org.inventory.communications.wsclient.LaunchAutomatedSynchronizationTaskResponse;
 import org.inventory.communications.wsclient.LaunchSupervisedSynchronizationTaskResponse;
 import org.inventory.communications.wsclient.PrivilegeInfo;
 import org.inventory.communications.wsclient.RemoteBackgroundJob;
@@ -5301,13 +5304,13 @@ public class CommunicationsStub {
     /**
      * Create a Sync Group
      * @param syncGroupName The name of the Sync group
-     * @param providerName the name of the provider that will e use i.e. SNMPProvider
+     * @param provider The provider that will be used
      * @return The local representation of the Favorites folder
      */        
-    public LocalSyncGroup createSyncGroup(String syncGroupName, String providerName) {
+    public LocalSyncGroup createSyncGroup(String syncGroupName, LocalSyncProvider provider) {
         try {
-            long id = service.createSynchronizationGroup(syncGroupName, providerName, session.getSessionId());
-            return new LocalSyncGroup(id, syncGroupName, providerName);
+            long id = service.createSynchronizationGroup(syncGroupName, provider.getId(), session.getSessionId());
+            return new LocalSyncGroup(id, syncGroupName, provider);
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -5424,7 +5427,8 @@ public class CommunicationsStub {
             for (RemoteSynchronizationGroup remoteSyncGroup : remoteSyncGroups) {
                 localSyncGroups.add(new LocalSyncGroup(remoteSyncGroup.getId(), 
                     remoteSyncGroup.getName(), 
-                    remoteSyncGroup.getProvider().getName()));
+                    new LocalSyncProvider(remoteSyncGroup.getProvider().getId(), remoteSyncGroup.getProvider().getDisplayName(), 
+                            remoteSyncGroup.getProvider().isAutomated())));
             }
             return localSyncGroups;
         } catch (Exception ex) {
@@ -5534,7 +5538,8 @@ public class CommunicationsStub {
             for (RemoteSynchronizationGroup synchronizationGroup : synchronizationGroups) {
                 localSyncGroup.add(new LocalSyncGroup(synchronizationGroup.getId(), 
                         synchronizationGroup.getName(),
-                        synchronizationGroup.getProvider().getName()));
+                        new LocalSyncProvider(synchronizationGroup.getProvider().getId(), 
+                                synchronizationGroup.getProvider().getDisplayName(), synchronizationGroup.getProvider().isAutomated())));
             }
             return localSyncGroup;
             
@@ -5571,32 +5576,32 @@ public class CommunicationsStub {
     }
     
     
-    public void launchSynchronizationTask(final LocalSyncGroup syncGroup, final AbstractSyncRunnable progress) {
+    public void launchAutomatedSynchronizationTask(final LocalSyncGroup syncGroup, final AbstractRunnableSyncResultsManager progress) {
         try {
-            service.launchSupervisedSynchronizationTaskAsync(syncGroup.getId(), session.getSessionId(), 
-            new AsyncHandler<LaunchSupervisedSynchronizationTaskResponse>(){
+            service.launchAutomatedSynchronizationTaskAsync(syncGroup.getId(), session.getSessionId(), 
+            new AsyncHandler<LaunchAutomatedSynchronizationTaskResponse>() {
                 @Override
-                public void handleResponse(Response<LaunchSupervisedSynchronizationTaskResponse> res) {
+                public void handleResponse(Response<LaunchAutomatedSynchronizationTaskResponse> res) {
                     try {
-                        LaunchSupervisedSynchronizationTaskResponse get = res.get();
+                        LaunchAutomatedSynchronizationTaskResponse get = res.get();
                         
-                        List<LocalSyncFinding> syncFindings = new ArrayList<>();
-                        for (SyncFinding syncFinding : get.getReturn())
-                            syncFindings.add(new LocalSyncFinding(syncFinding.getType(), syncFinding.getDescription(), syncFinding.getExtraInformation()));
+                        List<LocalSyncResult> syncResults = new ArrayList<>();
+                        for (SyncResult syncResult : get.getReturn())
+                            syncResults.add(new LocalSyncResult(syncResult.getType(), syncResult.getActionDescription(), syncResult.getResult()));
                         
                         progress.setLocalSyncGroup(syncGroup);
-                        progress.setFindings(syncFindings);
+                        progress.setSyncResults(syncResults);
                         progress.getProgressHandle().finish();
-                        progress.runSync();                        
+                        progress.handleSyncResults();                        
                     } catch (InterruptedException | ExecutionException ex) {
                         String message = ex.getMessage();
                         int idxOfSpace = message.indexOf(": ");
                         String kindMessage = message.substring(idxOfSpace + 1);
                         
                         CommunicationsStub.this.error = kindMessage;
-                        progress.setFindings(null);
+                        progress.setSyncResults(null);
                         progress.getProgressHandle().finish();                        
-                        progress.runSync();
+                        progress.handleSyncResults();
                     }
                 }
             });
@@ -5614,7 +5619,7 @@ public class CommunicationsStub {
      * @param syncGroup The sync group associated to the requested task
      * @param progress a handler that waits until the synchronization task ends and send the results
      */
-    public void launchSupervisedSynchronizationTask(final LocalSyncGroup syncGroup, final AbstractSyncRunnable progress) {
+    public void launchSupervisedSynchronizationTask(final LocalSyncGroup syncGroup, final AbstractRunnableSyncFindingsManager progress) {
         try {
             service.launchSupervisedSynchronizationTaskAsync(syncGroup.getId(), session.getSessionId(), 
             new AsyncHandler<LaunchSupervisedSynchronizationTaskResponse>(){
@@ -5630,7 +5635,7 @@ public class CommunicationsStub {
                         progress.setLocalSyncGroup(syncGroup);
                         progress.setFindings(syncFindings);
                         progress.getProgressHandle().finish();
-                        progress.runSync();                        
+                        progress.handleSyncFindings();
                     } catch (InterruptedException | ExecutionException ex) {
                         String message = ex.getMessage();
                         int idxOfSpace = message.indexOf(": ");
@@ -5639,7 +5644,7 @@ public class CommunicationsStub {
                         CommunicationsStub.this.error = kindMessage;
                         progress.setFindings(null);
                         progress.getProgressHandle().finish();                        
-                        progress.runSync();
+                        progress.handleSyncFindings();
                         
                     }
                 }

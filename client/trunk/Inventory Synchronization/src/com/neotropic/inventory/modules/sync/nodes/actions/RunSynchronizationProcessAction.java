@@ -23,9 +23,12 @@ import java.util.List;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.communications.core.LocalSyncFinding;
-import org.inventory.communications.core.LocalSyncGroup;
-import org.inventory.communications.runnable.AbstractSyncRunnable;
+import com.neotropic.inventory.modules.sync.LocalSyncFinding;
+import com.neotropic.inventory.modules.sync.LocalSyncGroup;
+import com.neotropic.inventory.modules.sync.AbstractRunnableSyncFindingsManager;
+import com.neotropic.inventory.modules.sync.AbstractRunnableSyncResultsManager;
+import com.neotropic.inventory.modules.sync.LocalSyncResult;
+import com.neotropic.inventory.modules.sync.nodes.actions.windows.SyncResultsFrame;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
@@ -81,11 +84,12 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
                 }
             }
             */
-            SyncRunnable myRun = new SyncRunnable();
             LocalSyncGroup localSyncGroup = selectedNode.getLookup().lookup(LocalSyncGroup.class);
-            String provider = localSyncGroup.getProvider();
             
-            CommunicationsStub.getInstance().launchSupervisedSynchronizationTask(selectedNode.getLookup().lookup(LocalSyncGroup.class), myRun);
+            if (localSyncGroup.getProvider().isAutomated())
+                CommunicationsStub.getInstance().launchAutomatedSynchronizationTask(localSyncGroup, new DefaultSyncResultsManager());
+            else
+                CommunicationsStub.getInstance().launchSupervisedSynchronizationTask(localSyncGroup, new DefaultSyncFindingsManager());
         }
     }
 
@@ -97,9 +101,9 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
     /**
      * Gets the list of findings and shows a dialog to allow the user to choose what actions will be performed
      */
-    private class SyncRunnable extends AbstractSyncRunnable {
+    private class DefaultSyncFindingsManager extends AbstractRunnableSyncFindingsManager {
 
-        public SyncRunnable() {
+        public DefaultSyncFindingsManager() {
             setProgressHandle(ProgressHandleFactory.createHandle(
                 String.format(I18N.gm("running_sync_process"), 
                 selectedNode.getName())));
@@ -107,7 +111,7 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
         }
         
         @Override
-        public void runSync() {
+        public void handleSyncFindings() {
             List<LocalSyncFinding> findings = getFindings();
             if (findings == null)//can't connect to the router
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
@@ -118,6 +122,31 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
                 else{
                     SyncActionsFrame syncWizard = new SyncActionsFrame(selectedNode.getLookup().lookup(LocalSyncGroup.class), findings);
                     syncWizard.setVisible(true);
+                }
+            }
+        }
+    }
+    
+    private class DefaultSyncResultsManager extends AbstractRunnableSyncResultsManager {
+        public DefaultSyncResultsManager() {
+            setProgressHandle(ProgressHandleFactory.createHandle(
+                String.format(I18N.gm("running_sync_process"), 
+                selectedNode.getName())));
+            RequestProcessor.getDefault().post(this);
+        }
+
+        @Override
+        public void handleSyncResults() {
+            List<LocalSyncResult> results = getSyncResults();
+            if (results == null)//can't connect to the device
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
+                    NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            else {
+                if(results.isEmpty())
+                    JOptionPane.showMessageDialog(null, I18N.gm("sync_no_findings"), I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
+                else{
+                    SyncResultsFrame frmSyncResults = new SyncResultsFrame(selectedNode.getLookup().lookup(LocalSyncGroup.class), results);
+                    frmSyncResults.setVisible(true);
                 }
             }
         }

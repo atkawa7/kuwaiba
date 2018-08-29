@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.communications.core;
+package com.neotropic.inventory.modules.sync;
 
 /**
  * Represents a single finding from comparing the info from a sync data 

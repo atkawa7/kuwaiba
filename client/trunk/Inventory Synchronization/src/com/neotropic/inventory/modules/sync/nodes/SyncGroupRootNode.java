@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalSyncGroup;
+import com.neotropic.inventory.modules.sync.LocalSyncGroup;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.openide.actions.PasteAction;

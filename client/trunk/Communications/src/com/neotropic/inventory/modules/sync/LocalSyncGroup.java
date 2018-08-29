@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.communications.core;
+package com.neotropic.inventory.modules.sync;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
@@ -30,10 +30,10 @@ public class LocalSyncGroup implements Transferable, Comparable<LocalSyncGroup> 
     
     private long id;
     private String name;
-    private String provider;
+    private LocalSyncProvider provider;
     private List<LocalSyncDataSourceConfiguration> dataSourceConfig;
 
-    public LocalSyncGroup(long id, String name, String provider) {
+    public LocalSyncGroup(long id, String name, LocalSyncProvider provider) {
         this.id = id;
         this.name = name;
         this.provider = provider;
@@ -55,11 +55,11 @@ public class LocalSyncGroup implements Transferable, Comparable<LocalSyncGroup> 
         this.name = name;
     }
 
-    public String getProvider() {
+    public LocalSyncProvider getProvider() {
         return provider;
     }
 
-    public void setProvider(String provider) {
+    public void setProvider(LocalSyncProvider provider) {
         this.provider = provider;
     }
 

@@ -27,7 +27,8 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.communications.core.LocalPrivilege;
-import org.inventory.communications.core.LocalSyncGroup;
+import com.neotropic.inventory.modules.sync.LocalSyncGroup;
+import com.neotropic.inventory.modules.sync.LocalSyncProvider;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.i18n.I18N;
 import org.openide.util.Utilities;
@@ -37,11 +38,6 @@ import org.openide.util.Utilities;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 class NewSyncGroupAction extends GenericInventoryAction {
-    
-    private final static String PROVIDER_ENTITY_IF_MIB = "entity/ifXTable";
-    private final static String PROVIDER_CISCO_MPLS_MIB = "cisco-mpls";
-    private final static String PROVIDER_IP_MIB = "ipAddrTable";
-    private final static String PROVIDER_VLAN_MIB = "vlanTrunkPortTable";
     
     public NewSyncGroupAction() {
         putValue(NAME, "New Sync Group");
@@ -60,38 +56,22 @@ class NewSyncGroupAction extends GenericInventoryAction {
         JTextField txtSyncGroupName = new JTextField();
         txtSyncGroupName.setName("txtSyncGroupName");
         txtSyncGroupName.setColumns(10);
-        JComboBox<String> cboProviders = new JComboBox<>();
-        cboProviders.setName("txtSyncProviderName");
-        cboProviders.addItem(PROVIDER_ENTITY_IF_MIB);
-        cboProviders.addItem(PROVIDER_CISCO_MPLS_MIB);
-        cboProviders.addItem(PROVIDER_IP_MIB);
-        cboProviders.addItem(PROVIDER_VLAN_MIB);
+        JComboBox<LocalSyncProvider> cmbProviders = new JComboBox<>();
+        cmbProviders.setName("cmbProviders");
+        cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.reference.ReferenceSnmpSyncProvider", "Hardware from entityMIB", false));
+        cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.cisco.SnmpCiscoSyncProvider", "Genera MPLS Information", false));
+        cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.ssh.bdi.BridgeDomainSyncProvider", "Bridge Domains", true));
+
         
         JComplexDialogPanel pnlPoolProperties = new JComplexDialogPanel(
             new String[] {I18N.gm("sync_group_name"), I18N.gm("sync_provider")}, 
-            new JComponent[] {txtSyncGroupName, cboProviders});
+            new JComponent[] {txtSyncGroupName, cmbProviders});
         
         if (JOptionPane.showConfirmDialog(null, pnlPoolProperties, I18N.gm("new_sync_group"), 
             JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-            String provider = "";
-            switch((String)((JComboBox) pnlPoolProperties.getComponent("txtSyncProviderName")).getSelectedItem()){
-                case PROVIDER_ENTITY_IF_MIB:
-                    provider = "com.neotropic.kuwaiba.sync.connectors.snmp.reference.ReferenceSnmpSyncProvider";
-                    break;
-                case PROVIDER_CISCO_MPLS_MIB:
-                    provider = "com.neotropic.kuwaiba.sync.connectors.snmp.cisco.SnmpCiscoSyncProvider";
-                    break; 
-                case PROVIDER_IP_MIB:
-                    provider = "com.neotropic.kuwaiba.sync.connectors.snmp.ip.IPAddressesSyncProvider";
-                    break; 
-                case PROVIDER_VLAN_MIB:
-                    provider = "com.neotropic.kuwaiba.sync.connectors.snmp.cisco.vlans.SnmpCiscoVlansSyncProvider";
-                    break;     
-            }
             
             LocalSyncGroup newSyncGroup = CommunicationsStub.getInstance().createSyncGroup(
-                ((JTextField) pnlPoolProperties.getComponent("txtSyncGroupName")).getText(),
-                provider);
+                ((JTextField) pnlPoolProperties.getComponent("txtSyncGroupName")).getText(),(LocalSyncProvider)cmbProviders.getSelectedItem());
             
             if (newSyncGroup == null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 

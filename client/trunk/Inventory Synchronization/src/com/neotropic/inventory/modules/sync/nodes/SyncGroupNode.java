@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Objects;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
-import org.inventory.communications.core.LocalSyncDataSourceConfiguration;
-import org.inventory.communications.core.LocalSyncGroup;
+import com.neotropic.inventory.modules.sync.LocalSyncDataSourceConfiguration;
+import com.neotropic.inventory.modules.sync.LocalSyncGroup;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
@@ -139,7 +139,7 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
             return null;
         
         //The clipboard does not contain a SyncConfigurationNode
-        if (!(dropNode instanceof SyncConfigurationNode))
+        if (!(dropNode instanceof SyncDataSourceConfigurationNode))
             return null;
                         
         //Can't move to the same parent, only copy
@@ -273,7 +273,7 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
         
         @Override
         protected Node[] createNodes(LocalSyncDataSourceConfiguration key) {
-            return new Node [] { new SyncConfigurationNode(key) };
+            return new Node [] { new SyncDataSourceConfigurationNode(key) };
         }
     }
 }

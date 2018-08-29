@@ -13,7 +13,7 @@
  *   limitations under the License.
  * 
  */
-package org.inventory.communications.core;
+package com.neotropic.inventory.modules.sync;
 
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;

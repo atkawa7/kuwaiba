@@ -29,7 +29,7 @@ import java.util.HashMap;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
-import org.inventory.communications.core.LocalSyncDataSourceConfiguration;
+import com.neotropic.inventory.modules.sync.LocalSyncDataSourceConfiguration;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
@@ -48,21 +48,21 @@ import org.openide.util.lookup.Lookups;
  * Represents a sync data source configuration object
  * Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
-public class SyncConfigurationNode extends AbstractNode implements PropertyChangeListener {
-    private static final Image icon = ImageUtilities.loadImage("com/neotropic/inventory/modules/sync/res/sync_config.png");
+public class SyncDataSourceConfigurationNode extends AbstractNode implements PropertyChangeListener {
+    private static final Image NODE_ICON = ImageUtilities.loadImage("com/neotropic/inventory/modules/sync/res/sync_config.png");
 
-    public SyncConfigurationNode(LocalSyncDataSourceConfiguration syncConfig) {
+    public SyncDataSourceConfigurationNode(LocalSyncDataSourceConfiguration syncConfig) {
         super(Children.LEAF, Lookups.singleton(syncConfig));
     }
     
     @Override
     public Image getOpenedIcon(int type) {
-        return icon;
+        return NODE_ICON;
     }
 
     @Override
     public Image getIcon(int type) {
-        return icon;
+        return NODE_ICON;
     }
     
     @Override
@@ -102,7 +102,8 @@ public class SyncConfigurationNode extends AbstractNode implements PropertyChang
         Sheet sheet = Sheet.createDefault();
         Set generalPropertySet = Sheet.createPropertiesSet(); // General attributes category
         Set snmpVersion2cPropertySet = Sheet.createPropertiesSet(); // SNMP Version 2c attributes category
-        Set snmpVersion3generalPropertySet = Sheet.createPropertiesSet(); // SNMP Version 3 attributes category
+        Set snmpVersion3GeneralPropertySet = Sheet.createPropertiesSet(); // SNMP Version 3 attributes category
+        Set sshGeneralPropertySet = Sheet.createPropertiesSet(); // SNMP Version 3 attributes category
         
         LocalSyncDataSourceConfiguration localsyncDataSrcConfig = getLookup().lookup(LocalSyncDataSourceConfiguration.class);
                 
@@ -169,13 +170,13 @@ public class SyncConfigurationNode extends AbstractNode implements PropertyChang
         
         snmpVersion2cPropertySet.put(propertyCommunity);
         
-        snmpVersion3generalPropertySet.put(propertyAuthenticationProtocol);
-        snmpVersion3generalPropertySet.put(propertyAuthenticationProtocolPassPhrase);
-        snmpVersion3generalPropertySet.put(propertySecurityLevel);
-        snmpVersion3generalPropertySet.put(propertyContextName);
-        snmpVersion3generalPropertySet.put(propertySecurityName);
-        snmpVersion3generalPropertySet.put(propertyPrivacyProtocol);
-        snmpVersion3generalPropertySet.put(propertyPrivacyProtocolPassPhrase);
+        snmpVersion3GeneralPropertySet.put(propertyAuthenticationProtocol);
+        snmpVersion3GeneralPropertySet.put(propertyAuthenticationProtocolPassPhrase);
+        snmpVersion3GeneralPropertySet.put(propertySecurityLevel);
+        snmpVersion3GeneralPropertySet.put(propertyContextName);
+        snmpVersion3GeneralPropertySet.put(propertySecurityName);
+        snmpVersion3GeneralPropertySet.put(propertyPrivacyProtocol);
+        snmpVersion3GeneralPropertySet.put(propertyPrivacyProtocolPassPhrase);
         
         generalPropertySet.setName(I18N.gm("general_information"));
         generalPropertySet.setDisplayName(I18N.gm("general_attributes"));
@@ -183,12 +184,12 @@ public class SyncConfigurationNode extends AbstractNode implements PropertyChang
         snmpVersion2cPropertySet.setName(I18N.gm("snmp_version_2c_info"));
         snmpVersion2cPropertySet.setDisplayName(I18N.gm("snmp_version_2c_attr"));
         
-        snmpVersion3generalPropertySet.setName(I18N.gm("snmp_version_3_info"));
-        snmpVersion3generalPropertySet.setDisplayName(I18N.gm("snmp_version_3_attr"));
+        snmpVersion3GeneralPropertySet.setName(I18N.gm("snmp_version_3_info"));
+        snmpVersion3GeneralPropertySet.setDisplayName(I18N.gm("snmp_version_3_attr"));
         
         sheet.put(generalPropertySet);
         sheet.put(snmpVersion2cPropertySet);
-        sheet.put(snmpVersion3generalPropertySet);
+        sheet.put(snmpVersion3GeneralPropertySet);
         return sheet;        
     }
     
