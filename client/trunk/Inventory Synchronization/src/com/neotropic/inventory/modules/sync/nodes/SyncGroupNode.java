@@ -203,8 +203,8 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
         generalPropertySet.put(propertyName);
         generalPropertySet.put(propertySyncProvider);
         
-        generalPropertySet.setName(I18N.gm("general_information"));
-        generalPropertySet.setDisplayName(I18N.gm("general_attributes"));
+        generalPropertySet.setName(I18N.gm("general_properties"));
+        generalPropertySet.setDisplayName(I18N.gm("general_properties"));
         
         sheet.put(generalPropertySet);
         return sheet;    

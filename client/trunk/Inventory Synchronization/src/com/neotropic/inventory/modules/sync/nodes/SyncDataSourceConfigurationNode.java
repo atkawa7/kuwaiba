@@ -103,7 +103,7 @@ public class SyncDataSourceConfigurationNode extends AbstractNode implements Pro
         Set generalPropertySet = Sheet.createPropertiesSet(); // General attributes category
         Set snmpVersion2cPropertySet = Sheet.createPropertiesSet(); // SNMP Version 2c attributes category
         Set snmpVersion3GeneralPropertySet = Sheet.createPropertiesSet(); // SNMP Version 3 attributes category
-        Set sshGeneralPropertySet = Sheet.createPropertiesSet(); // SNMP Version 3 attributes category
+        Set sshGeneralPropertySet = Sheet.createPropertiesSet(); // Set of properties used in SSH connections
         
         LocalSyncDataSourceConfiguration localsyncDataSrcConfig = getLookup().lookup(LocalSyncDataSourceConfiguration.class);
                 
@@ -143,7 +143,14 @@ public class SyncDataSourceConfigurationNode extends AbstractNode implements Pro
         
         PropertySupport.ReadWrite propertyPrivacyProtocolPassPhrase = new SyncConfigurationNativeTypeProperty(Constants.PROPERTY_PRIVACY_PASS, String.class, Constants.PROPERTY_PRIVACY_PASS, I18N.gm("snmp_version_3_privacy_pass"), this, 
             !parameters.containsKey(Constants.PROPERTY_PRIVACY_PASS) ? null : parameters.get(Constants.PROPERTY_PRIVACY_PASS));
-                
+        
+        /*SSH Properties*/
+        PropertySupport.ReadWrite propertySshUser = new SyncConfigurationNativeTypeProperty("user", String.class, I18N.gm("ssh_user"), I18N.gm("ssh_user"), this, 
+            !parameters.containsKey("user") ? null : parameters.get("user"));
+        PropertySupport.ReadWrite propertySshPassword = new SyncConfigurationNativeTypeProperty("password", String.class, I18N.gm("ssh_password"), I18N.gm("ssh_password"), this, 
+            !parameters.containsKey("password") ? null : parameters.get("password"));
+        /*End SSH Properties*/
+        
         Long deviceId = parameters.containsKey("deviceId") ? Long.valueOf(parameters.get("deviceId")) : null;
         String deviceClass = parameters.containsKey("deviceClass") ? parameters.get("deviceClass") : null;
         
@@ -163,12 +170,15 @@ public class SyncDataSourceConfigurationNode extends AbstractNode implements Pro
         }
         generalPropertySet.put(propertyDevice);
         generalPropertySet.put(propertyDeviceId);
-        
         generalPropertySet.put(propertyIpAddress);
         generalPropertySet.put(propertyPort);
-        generalPropertySet.put(propertyVersion);
+        generalPropertySet.setName(I18N.gm("general_properties"));
+        generalPropertySet.setDisplayName(I18N.gm("general_properties"));
         
+        snmpVersion2cPropertySet.put(propertyVersion);
         snmpVersion2cPropertySet.put(propertyCommunity);
+        snmpVersion2cPropertySet.setName(I18N.gm("snmp_version_2c_properties"));
+        snmpVersion2cPropertySet.setDisplayName(I18N.gm("snmp_version_2c_properties"));
         
         snmpVersion3GeneralPropertySet.put(propertyAuthenticationProtocol);
         snmpVersion3GeneralPropertySet.put(propertyAuthenticationProtocolPassPhrase);
@@ -177,19 +187,18 @@ public class SyncDataSourceConfigurationNode extends AbstractNode implements Pro
         snmpVersion3GeneralPropertySet.put(propertySecurityName);
         snmpVersion3GeneralPropertySet.put(propertyPrivacyProtocol);
         snmpVersion3GeneralPropertySet.put(propertyPrivacyProtocolPassPhrase);
+        snmpVersion3GeneralPropertySet.setName(I18N.gm("snmp_version_3_properties"));
+        snmpVersion3GeneralPropertySet.setDisplayName(I18N.gm("snmp_version_3_properties"));
         
-        generalPropertySet.setName(I18N.gm("general_information"));
-        generalPropertySet.setDisplayName(I18N.gm("general_attributes"));
-        
-        snmpVersion2cPropertySet.setName(I18N.gm("snmp_version_2c_info"));
-        snmpVersion2cPropertySet.setDisplayName(I18N.gm("snmp_version_2c_attr"));
-        
-        snmpVersion3GeneralPropertySet.setName(I18N.gm("snmp_version_3_info"));
-        snmpVersion3GeneralPropertySet.setDisplayName(I18N.gm("snmp_version_3_attr"));
+        sshGeneralPropertySet.put(propertySshUser);
+        sshGeneralPropertySet.put(propertySshPassword);
+        sshGeneralPropertySet.setName(I18N.gm("ssh_properties"));
+        sshGeneralPropertySet.setDisplayName(I18N.gm("ssh_properties"));
         
         sheet.put(generalPropertySet);
         sheet.put(snmpVersion2cPropertySet);
         sheet.put(snmpVersion3GeneralPropertySet);
+        
         return sheet;        
     }
     

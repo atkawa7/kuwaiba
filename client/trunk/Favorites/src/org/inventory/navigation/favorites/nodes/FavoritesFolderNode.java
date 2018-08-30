@@ -55,7 +55,7 @@ import org.openide.util.lookup.Lookups;
  */
 public class FavoritesFolderNode extends AbstractNode implements PropertyChangeListener {
     public static final String ICON_PATH = "org/inventory/navigation/favorites/res/icon.png";
-    private static final Image icon = ImageUtilities.loadImage(ICON_PATH);
+    private static final Image NODE_ICON = ImageUtilities.loadImage(ICON_PATH);
     
     private LocalFavoritesFolder localFavoritesFolder;
     protected Sheet sheet;
@@ -102,7 +102,7 @@ public class FavoritesFolderNode extends AbstractNode implements PropertyChangeL
         
     @Override
     public Image getIcon(int i) {
-        return icon;
+        return NODE_ICON;
     }
     
     @Override
@@ -218,8 +218,8 @@ public class FavoritesFolderNode extends AbstractNode implements PropertyChangeL
                 Constants.PROPERTY_NAME, this, lb.getName());
         generalPropertySet.put(propertyName);
         
-        generalPropertySet.setName(I18N.gm("general_information"));
-        generalPropertySet.setDisplayName(I18N.gm("general_attributes"));
+        generalPropertySet.setName(I18N.gm("general_properties"));
+        generalPropertySet.setDisplayName(I18N.gm("general_properties"));
         sheet.put(generalPropertySet);
         return sheet;
     }
