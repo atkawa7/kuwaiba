@@ -82,6 +82,8 @@ public class ServManagerFormCreator{
     private static final int SAT = 612;
     private static final int PCCW = 613;
     private static final int INTER = 614;
+    private static final int SKYTIC = 615;
+    private static final int MOBILE = 617;
     /**
      * Form tables
      */
@@ -235,7 +237,7 @@ public class ServManagerFormCreator{
                                     if(aSidePhysicalEquipment.getClassName().equals("ODF"))
                                         tempForm.setOdfsA(createODF(aSidePhysicalEquipment, nextPhysicalHop));
                                     else
-                                        tempForm.setPhysicalPartA(createDeviceTable(aSidePhysicalEquipment, nextPhysicalHop, null));
+                                        tempForm.getPhysicalPartA().add(createDeviceTable(aSidePhysicalEquipment, nextPhysicalHop, null));
                                 }
                             }
                         }//Now the b side
@@ -257,22 +259,23 @@ public class ServManagerFormCreator{
                                     if(bSideEquipmentPhysical.getClassName().equals("ODF"))
                                         tempForm.setOdfsB(createODF(bSideEquipmentPhysical, nextPhysicalHop));
                                     else
-                                        tempForm.setPhysicalPartB(createDeviceTable(bSideEquipmentPhysical, nextPhysicalHop, null));
+                                        tempForm.getPhysicalPartB().add(createDeviceTable(bSideEquipmentPhysical, nextPhysicalHop, null));
                                 }
                             }
                         }
                     }
                     //This is only for peering, we must reorder an set the peering always in side B
                     if(isSideAPeering && !isSideBPeering){
+                        
                         Component tempComponent = tempForm.getLogicalPartB();
                         tempForm.setLogicalPartB(tempForm.getLogicalPartA());
                         tempForm.setLogicalPartA(tempComponent);
                         tempComponent = tempForm.getOdfsB();
                         tempForm.setOdfsB(tempForm.getOdfsA());
                         tempForm.setOdfsA(tempComponent);
-                        tempComponent = tempForm.getPhysicalPartB();
+                        List<Component> listTempComponent = tempForm.getPhysicalPartB();
                         tempForm.setPhysicalPartB(tempForm.getPhysicalPartA());
-                        tempForm.setPhysicalPartA(tempComponent);
+                        tempForm.setPhysicalPartA(listTempComponent);
                     }
                     
                     tables.addFirst(tempForm);
@@ -322,8 +325,10 @@ public class ServManagerFormCreator{
                 
                 for(FormStructure table : tables) {
                     //We add the side A - physical part
-                    if(table.getPhysicalPartA()!= null && !isPhysicalSideASet){
-                        lytContent.addComponent(table.getPhysicalPartA());
+                    if(!table.getPhysicalPartA().isEmpty() && !isPhysicalSideASet){
+                        table.getPhysicalPartA().forEach(physicalTable -> {
+                            lytContent.addComponent(physicalTable);  
+                        });
                         isPhysicalSideASet = true;
                     }
                     //we add the side A - logical part
@@ -350,8 +355,10 @@ public class ServManagerFormCreator{
                         lytContent.addComponent(table.getLogicalPartB());
                         addedDevices.add(table.getLogicalPartB().getId());
                         //We add the physical side B
-                        if(table.getPhysicalPartB()!= null && !isPhysicalSideBSet){
-                            lytContent.addComponent(table.getPhysicalPartB());
+                        if(!table.getPhysicalPartB().isEmpty() && !isPhysicalSideBSet){
+                            table.getPhysicalPartB().forEach(physicalTable -> {
+                                lytContent.addComponent(physicalTable);
+                            });
                             isPhysicalSideBSet = true;
                         }
                     }
@@ -545,6 +552,27 @@ public class ServManagerFormCreator{
         }
         return lytTitle;
     }
+    /**
+     * Create a cell with a a short width
+     * @param cell a cell
+     * @return a cell with the right style sheets 
+     */
+    private Component createShortCell(Component cell){
+        cell.removeStyleName("cell-with-border-normal-width");
+        cell.addStyleName("cell-with-border-short-width");
+        return cell; 
+    }
+    
+    /**
+     * Create a cell with a double width
+     * @param cell a cell
+     * @return a cell with the right style sheets 
+     */
+    private Component createExtraWidthCell(Component cell){
+        cell.removeStyleName("cell-with-border-normal-width");
+        cell.addStyleName("cell-with-border-long-width");
+        return cell; 
+    }
     
     /**
      * Creates a cell for the tables, because the cell in grid layout 
@@ -554,6 +582,8 @@ public class ServManagerFormCreator{
      */
     private Component createCell(String value, boolean bold, boolean topBorder, boolean rightBorder, boolean noBottom){
         HorizontalLayout lytCell = new HorizontalLayout();
+        lytCell.addStyleNames("cell-with-border");
+        lytCell.addStyleNames("cell-with-border-normal-width");
         lytCell.addStyleNames("cell-with-border-bottom");
         if(bold)
             lytCell.addStyleName("cell-with-bold-text");
@@ -563,9 +593,10 @@ public class ServManagerFormCreator{
             lytCell.addStyleName("cell-with-border-top");
         if(noBottom){
             lytCell.removeStyleName("cell-with-border-bottom");
-            lytCell.addStyleName("cell-with-border-temp");
+            lytCell.addStyleName("cell-with-border-left");
         }
-        lytCell.addComponent(new Label(value, ContentMode.HTML));
+        
+        lytCell.addComponent(new Label(value.replace("\n", "<br>"), ContentMode.HTML));
         return lytCell;
     }
     
@@ -578,33 +609,37 @@ public class ServManagerFormCreator{
         String path;
         switch(icon) {
             case ROUTER: //Router
-            path = "/icons/router.png"; break;
+                path = "/icons/router.png"; break;
             case ADM: //ADM
-            path = "/icons/sdhmux.png"; break;
+                path = "/icons/sdhmux.png"; break;
             case ODF: //ODF
-            path = "/icons/odf.png"; break;
+                path = "/icons/odf.png"; break;
             case PEERING: //cloud
-            path = "/icons/cloud.png"; break;
+                path = "/icons/cloud.png"; break;
             case EXTERNAL_EQUIPMENT: //External equipment
-            path = "/icons/externalequipment.png"; break;
+                path = "/icons/externalequipment.png"; break;
             case WACS: //WACS
-            path = "/icons/logo_wacs.png"; break;
+                path = "/icons/logo_wacs.png"; break;
             case ORANGE: //Orange
-            path = "/icons/logo_orange.png"; break;
+                path = "/icons/logo_orange.png"; break;
             case PTC: //PTC
-            path = "/icons/logo_ptc.png"; break;
+                path = "/icons/logo_ptc.png"; break;
             case ACE: //ACE
-            path = "/icons/logo_ace.png"; break;
+                path = "/icons/logo_ace.png"; break;
             case TATA: //TATA
-            path = "/icons/logo_tata.png"; break;
+                path = "/icons/logo_tata.png"; break;
             case SAT: //3SAT
-            path = "/icons/logo_3sat.png"; break;
+                path = "/icons/logo_3sat.png"; break;
             case PCCW: //PCCW
-            path = "/icons/logo_pccw.png"; break;
+                path = "/icons/logo_pccw.png"; break;
+            case SKYTIC: //SKY TIC
+                path = "/icons/logo_skytic.png"; break;
+            case MOBILE: //9 Movile
+                path = "/icons/logo_mobile.png"; break;
             case INTER: //INTERROUTE
-            path = "/icons/logo_interoute.png"; break;
+                path = "/icons/logo_interoute.png"; break;
             default:
-            path = "/icons/no.png"; break;
+                path = "/icons/no.png"; break;
         }
         Image image = new Image("", new ExternalResource(path));
         image.setWidth("100px");
@@ -641,7 +676,7 @@ public class ServManagerFormCreator{
         String moreInformation = networkDevice.getAttribute("moreinformation");
         
         //We create the table with a grid layout
-        GridLayout grdRouter = new GridLayout(2, 16);
+        GridLayout grdRouter = new GridLayout(2, 18);
         grdRouter.addStyleName("report-forms-box");
         
         grdRouter.addComponent(createTitle(objLight.getName(), ROUTER), 0, 0, 1, 0);
@@ -653,37 +688,47 @@ public class ServManagerFormCreator{
         grdRouter.addComponent(createCell(port.getName(), false, false, false, false), 1, 2);
         
         grdRouter.addComponent(createCell(" ", false, false, false, false), 0, 3, 1, 3);
-        grdRouter.addComponent(createCell("DEVICE LOCATION", true, false, true, false), 0, 4);
-        grdRouter.addComponent(createCell(getCityLocation(objLight), false, false, false, false), 1, 4);
-        grdRouter.addComponent(createCell("DEVICE HOSTER", true, false, true, false), 0, 5);
-        grdRouter.addComponent(createCell(getHoster(networkDevice), false, false, false, false), 1, 5);
-        grdRouter.addComponent(createCell("DEVICE OWNER", true, false, true, false), 0, 6);
-        grdRouter.addComponent(createCell(getOwner(networkDevice), false, false, false, false), 1, 6);
-        grdRouter.addComponent(createCell("DEVICE H&E", true, false, true, false), 0, 7);
-        grdRouter.addComponent(createCell(getHandE(networkDevice), false, false, false, false), 1, 7);
-        grdRouter.addComponent(createCell(" ", false, false, false, false), 0, 8, 1, 8);
+        String hoster = getHoster(networkDevice);
+        if(hoster != null && !hoster.isEmpty()){
+            grdRouter.addComponent(createCell("DEVICE HOSTER", true, false, true, false), 0, 5);
+            grdRouter.addComponent(createCell(hoster , false, false, false, false), 1, 5);
+        }
+        String owner = getOwner(networkDevice);
+        if(owner != null && !owner.isEmpty()){
+            grdRouter.addComponent(createCell("DEVICE OWNER", true, false, true, false), 0, 6);
+            grdRouter.addComponent(createCell(owner, false, false, false, false), 1, 6);
+        }
+        String he = getHandE(networkDevice);
+        if(he != null && !he.isEmpty()){
+            grdRouter.addComponent(createCell("DEVICE H&E", true, false, true, false), 0, 7);
+            grdRouter.addComponent(createCell(he, false, false, false, false), 1, 7);
+        }
+        grdRouter.addComponent(createCell("DEVICE LOCATION", true, false, false, false), 0, 8, 1, 8);
+        grdRouter.addComponent(createCell(getLocation(objLight), false, false, false, false), 0, 9, 1, 9);
+        
+        grdRouter.addComponent(createCell(" ", false, false, false, false), 0, 10, 1, 10);
         
         if(rackPosition != null && isNumeric(rackPosition) && Integer.valueOf(rackPosition) > 0){
-            grdRouter.addComponent(createCell("RACK POSITION", true, false, true, false), 0, 9);
-            grdRouter.addComponent(createCell(rackPosition, false, false, false, false), 1, 9);
+            grdRouter.addComponent(createCell("RACK POSITION", true, false, true, false), 0, 11);
+            grdRouter.addComponent(createCell(rackPosition, false, false, false, false), 1, 11);
         }
         if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0){
-            grdRouter.addComponent(createCell("RACK UNITS", true, false, true, false), 0, 10);
-            grdRouter.addComponent(createCell(rackUnits, false, false, false, false), 1, 10);
+            grdRouter.addComponent(createCell("RACK UNITS", true, false, true, false), 0, 12);
+            grdRouter.addComponent(createCell(rackUnits, false, false, false, false), 1, 12);
         }
         if(mmr != null && !mmr.isEmpty()){
-            grdRouter.addComponent(createCell("MMR", true, false, true, false), 0, 11);
-            grdRouter.addComponent(createCell(mmr, false, false, false, false), 1, 11);
+            grdRouter.addComponent(createCell("MMR", true, false, true, false), 0, 13);
+            grdRouter.addComponent(createCell(mmr, false, false, false, false), 1, 13);
         }
         if(rmmr != null && !rmmr.isEmpty()){
-            grdRouter.addComponent(createCell("RMMR", true, false, true, false), 0, 12);
-            grdRouter.addComponent(createCell(rmmr, false, false, false, false), 1, 12);
+            grdRouter.addComponent(createCell("RMMR", true, false, true, false), 0, 14);
+            grdRouter.addComponent(createCell(rmmr, false, false, false, false), 1, 14);
         }
         if(moreInformation != null && !moreInformation.isEmpty()){
-            grdRouter.addComponent(createCell("MORE INFO", true, false, true, false), 0, 13, 1, 13);
-            grdRouter.addComponent(createCell(moreInformation, false, false, false, false), 0, 14, 1, 14);
+            grdRouter.addComponent(createCell("MORE INFO", true, false, false, false), 0, 15, 1, 15);
+            grdRouter.addComponent(createCell(moreInformation, false, false, false, false), 0, 16, 1, 16);
         }
-        grdRouter.addComponent(createIcon(ROUTER), 0, 15, 1, 15);
+        grdRouter.addComponent(createIcon(ROUTER), 0, 17, 1, 17);
         return grdRouter;
     }
     
@@ -706,16 +751,24 @@ public class ServManagerFormCreator{
         GridLayout grdPeering = new GridLayout(2, 7);
         grdPeering.addStyleName("report-forms-box");
         grdPeering.addComponent(createTitle(objLight.getName(), PEERING), 0, 0, 1, 0);
-        grdPeering.addComponent(createCell("IP PEERING", true, true, true, false), 0, 1);
-        grdPeering.addComponent(createCell(peeringIp != null ? peeringIp : " ", false, true, false, false), 1, 1);
-        grdPeering.addComponent(createCell(" ", false, false, false, false), 0, 2, 1, 2);
-        grdPeering.addComponent(createCell("CIRCUIT ID", true, false, true, false), 0, 3);     
-        grdPeering.addComponent(createCell(circuitID != null ? circuitID : " ", false, false, false, false), 1, 3);        
-        grdPeering.addComponent(createCell("INTERNAL ID", true, false, true, false), 0, 4);
-        grdPeering.addComponent(createCell(providerCircuitID != null ? providerCircuitID : " ", false, false, false, false), 1, 4);
-        grdPeering.addComponent(createCell("ASN NUMBER", true, false, true, false), 0, 5);
-        grdPeering.addComponent(createCell(providerASN != null ? providerASN : " ", false, false, false, false), 1, 5);
         
+        if(peeringIp != null && !peeringIp.isEmpty()){
+            grdPeering.addComponent(createCell("IP PEERING", true, true, true, false), 0, 1);
+            grdPeering.addComponent(createCell(peeringIp, false, true, false, false), 1, 1);
+        }
+        grdPeering.addComponent(createCell(" ", false, false, false, false), 0, 2, 1, 2);
+        if(circuitID != null){
+            grdPeering.addComponent(createCell("CIRCUIT ID", true, false, true, false), 0, 3);     
+            grdPeering.addComponent(createCell(circuitID, false, false, false, false), 1, 3);        
+        }
+        if(providerCircuitID != null){
+            grdPeering.addComponent(createCell("INTERNAL ID", true, false, true, false), 0, 4);
+            grdPeering.addComponent(createCell(providerCircuitID, false, false, false, false), 1, 4);
+        }
+        if(providerASN != null){
+            grdPeering.addComponent(createCell("ASN NUMBER", true, false, true, false), 0, 5);
+            grdPeering.addComponent(createCell(providerASN, false, false, false, false), 1, 5);
+        }
         grdPeering.addComponent(createIcon(PEERING), 0, 6, 1, 6);
         return grdPeering;
     }
@@ -775,7 +828,7 @@ public class ServManagerFormCreator{
         String mmr2 = wsBean.getAttributeValueAsString(port2.getClassName(), port2.getId(), "meetmeroom", ipAddress, sessionId);
         String rmmr2 = wsBean.getAttributeValueAsString(port2.getClassName(), port2.getId(), "remotemeetmeroom", ipAddress, sessionId);
         
-        GridLayout grdADM = new GridLayout(2, 20);
+        GridLayout grdADM = new GridLayout(2, 21);
         grdADM.addStyleName("report-forms-box");
         grdADM.addComponent(createTitle(objLight.getName(), ADM), 0, 0, 1, 0);
         
@@ -822,31 +875,38 @@ public class ServManagerFormCreator{
             
             grdADM.addComponent(createCell(mmr2, false, false, false, false), 1, 8);
             grdADM.addComponent(createCell("MMR", true, false, false, false), 1, 7);
-            
         }
             
-        
         grdADM.addComponent(createCell(" ", false, false, false, false), 0, 11, 1, 11);
+        String hoster = getHoster(obj);
+        if(hoster != null && !hoster.isEmpty()){
+            grdADM.addComponent(createCell("DEVICE HOSTER", true, false, true, false), 0, 12);
+            grdADM.addComponent(createCell(hoster, false, false, false, false), 1, 12);
+        }
+        String owner = getOwner(obj);
+        if(owner != null && !owner.isEmpty()){
+            grdADM.addComponent(createCell("DEVICE OWNER", true, false, true, false), 0, 13);
+            grdADM.addComponent(createCell(owner, false, false, false, false), 1, 13);
+        }
+        String he = getHandE(obj);
+        if(he != null && !he.isEmpty()){
+            grdADM.addComponent(createCell("DEVICE H&E", true, false, true, false), 0, 14);
+            grdADM.addComponent(createCell(getHandE(obj), false, false, false, false), 1, 14);
+        }
         
-        grdADM.addComponent(createCell("DEVICE LOCATION", true, false, true, false), 0, 12);
-        grdADM.addComponent(createCell(getCityLocation(objLight), false, false, false, false), 1, 12);
-        grdADM.addComponent(createCell("DEVICE HOSTER", true, false, true, false), 0, 13);
-        grdADM.addComponent(createCell(getHoster(obj), false, false, false, false), 1, 13);
-        grdADM.addComponent(createCell("DEVICE OWNER", true, false, true, false), 0, 14);
-        grdADM.addComponent(createCell(getOwner(obj), false, false, false, false), 1, 14);
-        grdADM.addComponent(createCell("DEVICE H&E", true, false, true, false), 0, 15);
-        grdADM.addComponent(createCell(getHandE(obj), false, false, false, false), 1, 15);
+        grdADM.addComponent(createCell("DEVICE LOCATION", true, false, false, false), 0, 15, 1, 15);
+        grdADM.addComponent(createCell(getLocation(objLight), false, false, false, false), 0, 16, 1, 16);
         
-        grdADM.addComponent(createCell(" ", false, false, false, false), 0, 16, 1, 16);
+        grdADM.addComponent(createCell(" ", false, false, false, false), 0, 17, 1, 17);
         if(rackPosition != null && isNumeric(rackPosition) && Integer.valueOf(rackPosition) > 0){
-            grdADM.addComponent(createCell("RACK POSITION", true, false, true, false), 0, 17);
-            grdADM.addComponent(createCell(rackPosition, false, false, false, false), 1, 17);
+            grdADM.addComponent(createCell("RACK POSITION", true, false, true, false), 0, 18);
+            grdADM.addComponent(createCell(rackPosition, false, false, false, false), 1, 18);
         }
         if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0){
-            grdADM.addComponent(createCell("RACK UNITS", true, false, true, false), 0, 18);
-            grdADM.addComponent(createCell(rackUnits, false, false, false, false), 1, 18);
+            grdADM.addComponent(createCell("RACK UNITS", true, false, true, false), 0, 19);
+            grdADM.addComponent(createCell(rackUnits, false, false, false, false), 1, 19);
         }
-        grdADM.addComponent(createIcon(ADM), 0, 19, 1, 19);
+        grdADM.addComponent(createIcon(ADM), 0, 20, 1, 20);
         return grdADM;
     }
     
@@ -866,7 +926,7 @@ public class ServManagerFormCreator{
         String rackPostion = odf.getAttribute("position");
         String rackUnits = odf.getAttribute("rackUnits");
         
-        GridLayout grdODF = new GridLayout(2, 8);
+        GridLayout grdODF = new GridLayout(2, 9);
         grdODF.addStyleName("report-forms-box");
         grdODF.addComponent(createTitle(objLight.getName(), ODF), 0, 0, 1, 0);
         grdODF.addComponent(createCell("ODF-PORT", true, true, true, false), 0, 1);
@@ -881,9 +941,9 @@ public class ServManagerFormCreator{
             grdODF.addComponent(createCell(rackUnits, false, false, false, false), 1, 4);
         }
         grdODF.addComponent(createCell(" ", false, false, false, false), 0, 5, 1, 5);
-        grdODF.addComponent(createCell("DEVICE LOCATION", true, false, true, false), 0, 6);
-        grdODF.addComponent(createCell(getCityLocation(objLight), false, false, false, false), 1, 6);
-        grdODF.addComponent(createIcon(ODF), 0, 7, 1, 7);
+        grdODF.addComponent(createCell("DEVICE LOCATION", true, false, false, false), 0, 6, 1, 6);
+        grdODF.addComponent(createCell(getLocation(objLight), false, false, false, false), 0, 7, 1, 7);
+        grdODF.addComponent(createIcon(ODF), 0, 8, 1, 8);
         return grdODF;
     }
     
@@ -932,7 +992,11 @@ public class ServManagerFormCreator{
         else if(providerName.toLowerCase().contains("pccw"))  
             return PCCW;
         else if(providerName.toLowerCase().contains("interoute"))  
-            return INTER;             
+            return INTER;
+        else if(providerName.toLowerCase().contains("skytic"))  
+            return SKYTIC;   
+        else if(providerName.toLowerCase().contains("9mobile"))  
+            return MOBILE;   
         else
             return -1;     
     }
@@ -1022,25 +1086,32 @@ public class ServManagerFormCreator{
         
         String ipSource = wsBean.getAttributeValueAsString(vcMPLSLink.getClassName(), vcMPLSLink.getId(), "ipSource", ipAddress, sessionId);
         if(sideA != null){
-            grdVC.addComponent(createCell("PW", true, true, true, false), 0, 1);
+            grdVC.addComponent(createShortCell(createCell("PW", true, true, true, false)), 0, 1);
             grdVC.addComponent(createCell(sideA.getName(), false, true, true, false), 1, 1);
-            grdVC.addComponent(createCell("IP", true, false, true, false), 0, 2);
+            
+            if(ipSource != null)
+                grdVC.addComponent(createShortCell(createCell("IP", true, false, true, false)), 0, 2);
         }
-        else
-            grdVC.addComponent(createCell("IP", true, true, true, false), 0, 2);   
-        grdVC.addComponent(createCell(ipSource, false, false, true, false), 1, 2);
-
+        else{
+            if(ipSource != null && !ipSource.isEmpty()){
+                grdVC.addComponent(createShortCell(createCell("IP", true, true, true, false)), 0, 2);   
+                grdVC.addComponent(createCell(ipSource, false, false, true, false), 1, 2);
+            }
+        }
         
         String ipDestiny = wsBean.getAttributeValueAsString(vcMPLSLink.getClassName(), vcMPLSLink.getId(), "ipDestiny", ipAddress, sessionId);
         if(sideB != null){
-            grdVC.addComponent(createCell("PW", true, true, false, false), 2, 1);
+            grdVC.addComponent(createShortCell(createCell("PW", true, true, true, false)), 2, 1);
             grdVC.addComponent(createCell(sideB.getName(), false, true, false, false), 3, 1);
-            
-            grdVC.addComponent(createCell("IP", true, false, true, false), 2, 2);
+            if(ipDestiny != null)
+                grdVC.addComponent(createShortCell(createCell("IP", true, false, true, false)), 2, 2);
         }
-        else
-            grdVC.addComponent(createCell("IP", true, true, true, false), 2, 2);
-        grdVC.addComponent(createCell(ipDestiny, false, false, false, false), 3, 2);
+        else{
+            if(ipDestiny != null && !ipDestiny.isEmpty()){  
+                grdVC.addComponent(createShortCell(createCell("IP", true, true, true, false)), 2, 2);
+                grdVC.addComponent(createCell(ipDestiny, false, false, false, false), 3, 2);
+            }
+        }
         return grdVC;
     }
     
@@ -1101,17 +1172,19 @@ public class ServManagerFormCreator{
      */
     public Component createExternalEquipment(RemoteObjectLight objLight) throws ServerSideException{
         
-        GridLayout grdExternalEquipment = new GridLayout(2, 4);
+        GridLayout grdExternalEquipment = new GridLayout(2, 5);
         grdExternalEquipment.addStyleName("report-forms-box");
         grdExternalEquipment.addComponent(createTitle(objLight.getName(), EXTERNAL_EQUIPMENT), 0, 0, 1, 0);
-        grdExternalEquipment.addComponent(createCell("DEVICE LOCATION", true, true, true, false), 0, 1);
-        grdExternalEquipment.addComponent(createCell(getCityLocation(objLight), false, true, false, false), 1, 1);
+        grdExternalEquipment.addComponent(createCell(getLocation(objLight), false, false, false, false), 0, 2, 1, 2);
         String owner = getOwner(objLight);
         if(owner != null && !owner.isEmpty()){
-            grdExternalEquipment.addComponent(createCell("DEVICE OWNER", true, false, true, false), 0, 2);
-            grdExternalEquipment.addComponent(createCell(owner, false, false, false, false), 1, 2);
+            grdExternalEquipment.addComponent(createCell("DEVICE LOCATION", true, true, false, false), 0, 1, 1, 1);
+            grdExternalEquipment.addComponent(createCell("DEVICE OWNER", true, false, true, false), 0, 3);
+            grdExternalEquipment.addComponent(createCell(owner, false, false, false, false), 1, 3);
         }
-        grdExternalEquipment.addComponent(createIcon(EXTERNAL_EQUIPMENT), 0, 3, 1, 3);
+        else
+            grdExternalEquipment.addComponent(createExtraWidthCell(createCell("DEVICE LOCATION", true, true, false, false)), 0, 1, 1, 1);
+        grdExternalEquipment.addComponent(createIcon(EXTERNAL_EQUIPMENT), 0, 4, 1, 4);
 
         return grdExternalEquipment;
     }
@@ -1121,15 +1194,16 @@ public class ServManagerFormCreator{
      * @return a string with the location
      * @throws ServerSideException if the parents could no be calculated
      */
-    private String createWholeLocation(RemoteObjectLight objLight) throws ServerSideException{
+    private String getLocation(RemoteObjectLight objLight) throws ServerSideException{
         String location = "";
         List<RemoteObjectLight> parents = wsBean.getParentsUntilFirstOfClass(objLight.getClassName(), objLight.getId(), "City",
                 Page.getCurrent().getWebBrowser().getAddress(),
                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-        
-        for (RemoteObjectLight parent : parents)
-            location += parent.getName() + "<br>";
-        
+        String x = ">";
+        for (RemoteObjectLight parent : parents){
+            location +=  x + parent.getName() + "<br>";
+            x += ">";
+        }
         return location;
     }
     /**
@@ -1171,5 +1245,4 @@ public class ServManagerFormCreator{
         }  
         return true;  
     }
-    
 }
