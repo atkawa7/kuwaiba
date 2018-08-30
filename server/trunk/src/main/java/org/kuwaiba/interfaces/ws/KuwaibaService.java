@@ -6060,7 +6060,7 @@ public class KuwaibaService {
                 retries ++;
             }
             if (retries == 20)
-                throw new ServerSideException("The supervised synchronization task can no be excecuted");
+                throw new ServerSideException("The supervised synchronization task can no be executed");
                 
             return (List<SyncFinding>)managedJob.getJobResult();
             
@@ -6115,7 +6115,7 @@ public class KuwaibaService {
                 retries ++;
             }
             if (retries == 20)
-                throw new ServerSideException("The automated synchronization task can no be excecuted");
+                throw new ServerSideException("The automated synchronization task can no be executed");
                 
             return (List<SyncResult>)managedJob.getJobResult();
             

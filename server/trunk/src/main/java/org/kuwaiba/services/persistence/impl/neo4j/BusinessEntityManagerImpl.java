@@ -1620,41 +1620,17 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         
         try (Transaction tx = graphDb.beginTx()) {
             Node parentNode = getInstanceOfClass(parentClass, parentOid);
-            Iterable<Relationship> children = parentNode.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING);
             List<BusinessObjectLight> res = new ArrayList<>();
 
             int counter = 0;
 
-            while(children.iterator().hasNext()){
-                Node child = children.iterator().next().getStartNode();
+            for (Relationship childOfRelationship : parentNode.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL)) {
+                Node child = childOfRelationship.getStartNode();
 
                 if (!child.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
                     throw new MetadataObjectNotFoundException(String.format("Class for object with ids %s could not be found",child.getId()));
 
                 String className = Util.getClassName(child);
-                if (mem.isSubClass(classToFilter, className)){
-                    res.add(new BusinessObjectLight(className, child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME)));
-                    if (maxResults > 0){
-                        if (++counter == maxResults)
-                            break;
-                    }
-                }
-            }
-
-            if (maxResults > 0 && counter == maxResults)
-                return res;
-
-            Iterable<Relationship> iterableSpecialChildren = parentNode.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING);
-            Iterator<Relationship> specialChildren = iterableSpecialChildren.iterator();
-
-            while(specialChildren.hasNext()){
-                Node child = specialChildren.next().getStartNode();
-
-                if (!child.getRelationships(RelTypes.INSTANCE_OF).iterator().hasNext())
-                    throw new MetadataObjectNotFoundException(String.format("Class for object with oid %s could not be found",child.getId()));
-
-                String className = Util.getClassName(child);
-
                 if (mem.isSubClass(classToFilter, className)){
                     res.add(new BusinessObjectLight(className, child.getId(), (String)child.getProperty(Constants.PROPERTY_NAME)));
                     if (maxResults > 0){

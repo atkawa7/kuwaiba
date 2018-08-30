@@ -40,6 +40,10 @@ public class BridgeDomainsASR920Parser {
         List<AbstractDataEntity> bridgeDomains = new ArrayList<>();
         for (String line : lines) {
             String[] lineTokens = line.trim().split(" ");
+            
+            if (lineTokens[0].isEmpty())
+                continue;
+            
             if (lineTokens.length > 2  && lineTokens[0].equals("Bridge-domain")) { //NOI18N
                 currentBridgeDomain = new BridgeDomain(lineTokens[1]);
                 bridgeDomains.add(currentBridgeDomain);
@@ -56,13 +60,18 @@ public class BridgeDomainsASR920Parser {
                         state = ParsingState.END;
                     }
                     else {
-                        int type;
-                        if (lineTokens[0].startsWith("BDI")) type = NetworkInterface.TYPE_BDI;
-                        else if (lineTokens[0].startsWith("vfi")) type = NetworkInterface.TYPE_VFI;
-                        else if (lineTokens[0].contains("service instance")) type = NetworkInterface.TYPE_SERVICE_INSTANCE;
-                        else type = NetworkInterface.TYPE_PHYSICAL;
+                        if (lineTokens[0].startsWith("BDI"))
+                            currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(lineTokens[0], NetworkInterface.TYPE_BDI));
                         
-                        currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(lineTokens[0], type));
+                        else if (lineTokens[0].startsWith("vfi")) 
+                            currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(lineTokens[1], NetworkInterface.TYPE_VFI));
+                        
+                        else if (line.contains("service instance")) 
+                            currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(lineTokens[0] + " " + lineTokens[1] + " " + lineTokens[2] + " " + lineTokens[3], NetworkInterface.TYPE_SERVICE_INSTANCE));
+                        
+                        
+                        else 
+                            currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(line, NetworkInterface.TYPE_PHYSICAL));
                     }
                 }
             }
