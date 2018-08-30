@@ -198,6 +198,7 @@ public class SyncDataSourceConfigurationNode extends AbstractNode implements Pro
         sheet.put(generalPropertySet);
         sheet.put(snmpVersion2cPropertySet);
         sheet.put(snmpVersion3GeneralPropertySet);
+        sheet.put(sshGeneralPropertySet);
         
         return sheet;        
     }

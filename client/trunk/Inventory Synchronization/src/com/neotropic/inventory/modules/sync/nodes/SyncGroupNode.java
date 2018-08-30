@@ -55,7 +55,7 @@ import org.openide.util.lookup.Lookups;
  * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class SyncGroupNode extends AbstractNode implements PropertyChangeListener {
-    private static final Image icon = ImageUtilities.loadImage("com/neotropic/inventory/modules/sync/res/sync_group.png");
+    private static final Image NODE_ICON = ImageUtilities.loadImage("com/neotropic/inventory/modules/sync/res/sync_group.png");
         
     public SyncGroupNode(LocalSyncGroup localSyncGroup) {
         super(new SyncGroupNodeChildren(), Lookups.singleton(localSyncGroup));
@@ -182,12 +182,12 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
     
     @Override
     public Image getIcon(int i) {
-        return icon;
+        return NODE_ICON;
     }
     
     @Override
     public Image getOpenedIcon(int i) {
-        return getIcon(i);
+        return NODE_ICON;
     }
     
     @Override
