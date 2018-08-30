@@ -106,13 +106,18 @@ public class ServManagerFormCreator{
      * Session id reference
      */
     private final String sessionId;
-                
+    /**
+     * to keep a track if the view is has Mpls links
+     */
+    private boolean isMplsView;
+    
     public ServManagerFormCreator(RemoteObjectLight service, WebserviceBean wsBean, String ipAddress, String sessionId) throws ServerSideException {
         this.wsBean = wsBean;
         this.service = service;
         this.ipAddress = ipAddress;
         this.sessionId = sessionId;
         tables = new LinkedList<>();
+        isMplsView = false;
     }
     
     /**
@@ -138,6 +143,7 @@ public class ServManagerFormCreator{
                         if(serviceResource.getClassName().equals("MPLSLink")){
                             Component tempDivC = createVC(serviceResource, logicalCircuitDetails.getEndpointA(), logicalCircuitDetails.getEndpointB());
                             tempForm.getLogicalConnctions().add(tempDivC);
+                            isMplsView = true;
                         }//SDH
                         else{
                             RemoteObject tirbutaryLink = wsBean.getObject(serviceResource.getClassName(), serviceResource.getId(), ipAddress, sessionId);
@@ -309,7 +315,7 @@ public class ServManagerFormCreator{
             Label lblServStatus = new Label(String.format("Status: %s - Bandwidth: %s" , status != null ? status : " ", bandwidth != null ? bandwidth : " "));
             lblServStatus.setId("report-forms-properties");
             //we set the form header
-            VerticalLayout lytHeader = new VerticalLayout(lblTitle, lblServStatus);
+            HorizontalLayout lytHeader = new HorizontalLayout(lblTitle, lblServStatus);
             lytHeader.setId("report-forms-header");
             content.addComponent(lytHeader);
             HorizontalLayout lytContent = new HorizontalLayout();
@@ -331,6 +337,11 @@ public class ServManagerFormCreator{
                         });
                         isPhysicalSideASet = true;
                     }
+                    //If the view has Mpls links the ODFs should go between the physical and the logical devices
+                    if(table.getOdfsA() != null && !isODFASet && isMplsView){
+                            lytContent.addComponent(table.getOdfsA());
+                            isODFASet = true;
+                    }
                     //we add the side A - logical part
                     if(table.getLogicalPartA() != null && 
                             !addedDevices.contains(table.getLogicalPartA().getId()))
@@ -338,17 +349,24 @@ public class ServManagerFormCreator{
                         lytContent.addComponent(table.getLogicalPartA());
                         addedDevices.add(table.getLogicalPartA().getId());
                         //We add the ODF side A
-                        if(table.getOdfsA() != null && !isODFASet){
+                        if(table.getOdfsA() != null && !isODFASet && !isMplsView){
                             lytContent.addComponent(table.getOdfsA());
                             isODFASet = true;
                         }
                     } 
                     //L I N K  We add the link tables
                     table.getLogicalConnctions().forEach(linkTable -> { lytContent.addComponent(linkTable); });
+                    
+                    //If the view has Mpls links the ODFs should go between the physical and the logical devices
+                    if(table.getOdfsB() != null && !isODFBSet && isMplsView){
+                        lytContent.addComponent(table.getOdfsB());
+                        isODFBSet = true;
+                    }
+                    
                     //we add the logical side B
                     if(table.getLogicalPartB() != null && !addedDevices.contains(table.getLogicalPartB().getId())){
                         //we add the ODF side B
-                        if(table.getOdfsB() != null && !isODFBSet && !addedDevices.contains(table.getLogicalPartB().getId())){
+                        if(table.getOdfsB() != null && !isODFBSet && !addedDevices.contains(table.getLogicalPartB().getId()) && !isMplsView){
                             lytContent.addComponent(table.getOdfsB());
                             isODFBSet = true;
                         }
@@ -821,92 +839,85 @@ public class ServManagerFormCreator{
             }
         }
         
-        String portSpeed1 = wsBean.getAttributeValueAsString(port1.getClassName(), port1.getId(), "Speed_port", ipAddress, sessionId);
-        String portSpeed2 = wsBean.getAttributeValueAsString(port2.getClassName(), port2.getId(), "Speed_port", ipAddress, sessionId);
         String mmr = wsBean.getAttributeValueAsString(port1.getClassName(), port1.getId(), "meetmeroom", ipAddress, sessionId);
         String rmmr = wsBean.getAttributeValueAsString(port1.getClassName(), port1.getId(), "remotemeetmeroom", ipAddress, sessionId);
         String mmr2 = wsBean.getAttributeValueAsString(port2.getClassName(), port2.getId(), "meetmeroom", ipAddress, sessionId);
         String rmmr2 = wsBean.getAttributeValueAsString(port2.getClassName(), port2.getId(), "remotemeetmeroom", ipAddress, sessionId);
         
-        GridLayout grdADM = new GridLayout(2, 21);
+        GridLayout grdADM = new GridLayout(2, 20);
         grdADM.addStyleName("report-forms-box");
         grdADM.addComponent(createTitle(objLight.getName(), ADM), 0, 0, 1, 0);
-        
+        //Column 1
         grdADM.addComponent(createCell("CARD 1", true, true, true, false), 0, 1);
         grdADM.addComponent(createCell("PORT 1", true, false, true, false), 0, 3);
         
         //values
         grdADM.addComponent(createCell(card1 != null ? card1.getName() : "", false, false, true, false), 0, 2);
         grdADM.addComponent(createCell(port1.getName(), false, false, true, false), 0, 4);
-        if(portSpeed1 != null && !portSpeed1.isEmpty()){
-            grdADM.addComponent(createCell("SPEED 1", true, false, true, false), 0, 5);
-            grdADM.addComponent(createCell(portSpeed1, false, false, true, false), 0, 6);
-        }
+
         if(mmr != null && !mmr.isEmpty()){
-            grdADM.addComponent(createCell("MMR", true, false, true, false), 0, 7);
-            grdADM.addComponent(createCell(!mmr.isEmpty() ? mmr : "", false, false, true, false), 0, 8);
+            grdADM.addComponent(createCell("MMR", true, false, true, false), 0, 5);
+            grdADM.addComponent(createCell(!mmr.isEmpty() ? mmr : "", false, false, true, false), 0, 6);
         }
         if(rmmr != null && !rmmr.isEmpty()){
-            grdADM.addComponent(createCell("RMMR", true, false, true, false), 0, 9);
-            grdADM.addComponent(createCell(!rmmr.isEmpty() ? rmmr : "", false, false, false, false), 0, 10);
+            grdADM.addComponent(createCell("RMMR", true, false, true, false), 0, 7);
+            grdADM.addComponent(createCell(!rmmr.isEmpty() ? rmmr : "", false, false, false, false), 0, 8);
         }
+        //Column 2
         grdADM.addComponent(createCell("CARD 2", true, true, false, false), 1, 1);
         grdADM.addComponent(createCell("PORT 2", true, false, false, false), 1, 3);
         //values
         grdADM.addComponent(createCell(card2 != null ? card2.getName() : "", false, false, false, false), 1, 2);
         grdADM.addComponent(createCell(port2.getName(), false, false, false, false), 1, 4);
-        if(portSpeed2 != null && !portSpeed2.isEmpty()){
-            grdADM.addComponent(createCell(!portSpeed2.isEmpty() ? portSpeed2 : "", false, false, false, false), 1, 6);
-            grdADM.addComponent(createCell("SPEED 2", true, false, true, false), 1, 5);
-        }
         
         if(rmmr2 != null && !rmmr2.isEmpty()){
-            grdADM.addComponent(createCell("RMMR", true, false, true, false), 1, 9);
-            grdADM.addComponent(createCell(!rmmr2.isEmpty() ? rmmr2 : "", false, false, true, false), 1, 10);
+            grdADM.addComponent(createCell("RMMR", true, false, true, false), 1, 5);
+            grdADM.addComponent(createCell(!rmmr2.isEmpty() ? rmmr2 : "", false, false, true, false), 1, 6);
             
             if(mmr2 != null && !mmr2.isEmpty()){
                 grdADM.addComponent(createCell(mmr2, false, false, false, false), 1, 8);
                 grdADM.addComponent(createCell("MMR", true, false, false, false), 1, 7);
             }
         }
+        //the right column has values, but left are empty
         else if(mmr2 != null && !mmr2.isEmpty()){
-            grdADM.addComponent(createCell(" ", true, false, true, true), 0, 8);
-            grdADM.addComponent(createCell(" ", false, false, true, true), 0, 7);
+            grdADM.addComponent(createCell(" ", true, false, true, false), 0, 8);
+            grdADM.addComponent(createCell(" ", false, false, true, false), 0, 7);
             
             grdADM.addComponent(createCell(mmr2, false, false, false, false), 1, 8);
             grdADM.addComponent(createCell("MMR", true, false, false, false), 1, 7);
         }
             
-        grdADM.addComponent(createCell(" ", false, false, false, false), 0, 11, 1, 11);
+        grdADM.addComponent(createCell(" ", false, false, false, false), 0, 9, 1, 9);
         String hoster = getHoster(obj);
         if(hoster != null && !hoster.isEmpty()){
-            grdADM.addComponent(createCell("DEVICE HOSTER", true, false, true, false), 0, 12);
-            grdADM.addComponent(createCell(hoster, false, false, false, false), 1, 12);
+            grdADM.addComponent(createCell("DEVICE HOSTER", true, false, true, false), 0, 10);
+            grdADM.addComponent(createCell(hoster, false, false, false, false), 1, 10);
         }
         String owner = getOwner(obj);
         if(owner != null && !owner.isEmpty()){
-            grdADM.addComponent(createCell("DEVICE OWNER", true, false, true, false), 0, 13);
-            grdADM.addComponent(createCell(owner, false, false, false, false), 1, 13);
+            grdADM.addComponent(createCell("DEVICE OWNER", true, false, true, false), 0, 11);
+            grdADM.addComponent(createCell(owner, false, false, false, false), 1, 11);
         }
         String he = getHandE(obj);
         if(he != null && !he.isEmpty()){
-            grdADM.addComponent(createCell("DEVICE H&E", true, false, true, false), 0, 14);
-            grdADM.addComponent(createCell(getHandE(obj), false, false, false, false), 1, 14);
+            grdADM.addComponent(createCell("DEVICE H&E", true, false, true, false), 0, 12);
+            grdADM.addComponent(createCell(getHandE(obj), false, false, false, false), 1, 12);
         }
         
-        grdADM.addComponent(createCell("DEVICE LOCATION", true, false, false, false), 0, 15, 1, 15);
-        grdADM.addComponent(createCell(getLocation(objLight), false, false, false, false), 0, 16, 1, 16);
+        grdADM.addComponent(createCell("DEVICE LOCATION", true, false, false, false), 0, 14, 1, 14);
+        grdADM.addComponent(createCell(getLocation(objLight), false, false, false, false), 0, 15, 1, 15);
         
-        grdADM.addComponent(createCell(" ", false, false, false, false), 0, 17, 1, 17);
+        grdADM.addComponent(createCell(" ", false, false, false, false), 0, 16, 1, 16);
         if(rackPosition != null && isNumeric(rackPosition) && Integer.valueOf(rackPosition) > 0){
-            grdADM.addComponent(createCell("RACK POSITION", true, false, true, false), 0, 18);
-            grdADM.addComponent(createCell(rackPosition, false, false, false, false), 1, 18);
+            grdADM.addComponent(createCell("RACK POSITION", true, false, true, false), 0, 17);
+            grdADM.addComponent(createCell(rackPosition, false, false, false, false), 1, 17);
         }
         if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0){
-            grdADM.addComponent(createCell("RACK UNITS", true, false, true, false), 0, 19);
-            grdADM.addComponent(createCell(rackUnits, false, false, false, false), 1, 19);
+            grdADM.addComponent(createCell("RACK UNITS", true, false, true, false), 0, 18);
+            grdADM.addComponent(createCell(rackUnits, false, false, false, false), 1, 18);
         }
-        grdADM.addComponent(createIcon(ADM), 0, 20, 1, 20);
+        grdADM.addComponent(createIcon(ADM), 0, 19, 1, 19);
         return grdADM;
     }
     

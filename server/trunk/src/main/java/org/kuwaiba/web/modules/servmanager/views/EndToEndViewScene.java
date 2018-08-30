@@ -231,7 +231,6 @@ public class EndToEndViewScene extends AbstractScene {
             if (serviceResources.isEmpty())
                 addComponent(new Label(String.format("%s does not have any resources associated to it", service)));
             else {
-                
                 this.nodes = new HashMap<>();
                 this.edges = new HashMap<>();
                 for (RemoteObjectLight serviceResource : serviceResources) {
