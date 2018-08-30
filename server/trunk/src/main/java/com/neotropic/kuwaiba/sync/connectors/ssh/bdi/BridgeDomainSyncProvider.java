@@ -93,11 +93,11 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                 continue;
             }
             
-            if (dataSourceConfiguration.getParameters().containsKey("host")) //NOI18N
+            if (dataSourceConfiguration.getParameters().containsKey("ipAddress")) //NOI18N
                 host = dataSourceConfiguration.getParameters().get("host"); //NOI18N
             else {
                 res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
-                    new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "host", syncGroup.getName()))); //NOI18N
+                    new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "ipAddress", syncGroup.getName()))); //NOI18N
                 continue;
             }
             
