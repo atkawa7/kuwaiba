@@ -48,6 +48,7 @@ public class SyncResultsFrame extends JFrame {
     private static final ImageIcon ICON_ERROR = ImageUtilities.loadImageIcon("com/neotropic/inventory/modules/sync/res/error.png", false);
     private static final ImageIcon ICON_WARNING = ImageUtilities.loadImageIcon("com/neotropic/inventory/modules/sync/res/warning.png", false);
     private static final ImageIcon ICON_SUCCESS = ImageUtilities.loadImageIcon("com/neotropic/inventory/modules/sync/res/success.png", false);
+    private static final ImageIcon ICON_INFORMATION = ImageUtilities.loadImageIcon("com/neotropic/inventory/modules/sync/res/information.png", false);
     
     private JScrollPane pnlScrollMain;
     private SyncResultsList<LocalSyncResult> lstSyncResults;
@@ -96,14 +97,17 @@ public class SyncResultsFrame extends JFrame {
             lblResultEntry.setOpaque(true);
             lblResultEntry.setBackground(Color.WHITE);
             switch (value.getType()) {
-                case LocalSyncResult.ERROR:
+                case LocalSyncResult.TYPE_ERROR:
                     lblResultEntry.setIcon(ICON_ERROR);
                     break;
-                case LocalSyncResult.WARNING:
+                case LocalSyncResult.TYPE_WARNING:
                     lblResultEntry.setIcon(ICON_WARNING);
                     break;
-                default:
+                case LocalSyncResult.TYPE_SUCCESS:
                     lblResultEntry.setIcon(ICON_SUCCESS);
+                    break;
+                case LocalSyncResult.TYPE_INFORMATION:
+                    lblResultEntry.setIcon(ICON_INFORMATION);
             }
             return lblResultEntry;
         }

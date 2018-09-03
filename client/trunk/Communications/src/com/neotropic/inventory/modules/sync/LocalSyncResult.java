@@ -22,15 +22,19 @@ public class LocalSyncResult {
     /**
      * An unexpected error was found while execute the sync action
      */
-    public static final int ERROR = 0;
+    public static final int TYPE_ERROR = 0;
     /**
      * The sync action was executed successfully
      */
-    public static final int SUCCESS = 1;
+    public static final int TYPE_SUCCESS = 1;
     /**
      * The sync action was executed with warnings
      */
-    public static final int WARNING = 2;
+    public static final int TYPE_WARNING = 2;
+    /**
+     * The sync action was executed and an information message was generated
+     */
+    public static final int TYPE_INFORMATION = 3;
     /**
      * The description of the action that was performed
      */
@@ -40,8 +44,7 @@ public class LocalSyncResult {
      */
     private String result;
     /**
-     * The type of result. Gives a feedback of the status of the executed action:
-     * ERROR, SUCCESS, WARNING
+     * The type of result. Gives feedback of the status of the executed action. See TYPE_* for possible values
      */
     private int type;
    
