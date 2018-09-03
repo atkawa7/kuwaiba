@@ -29,18 +29,21 @@ public class SyncResult {
     /**
      * An unexpected error was found while execute the sync action
      */
-    public static int ERROR = 0;
+    public static int TYPE_ERROR = 0;
     /**
      * The sync action was executed successfully
      */
-    public static int SUCCESS = 1;
+    public static int TYPE_SUCCESS = 1;
     /**
      * The sync action was executed with warnings
      */
-    public static int WARNING = 2;    
+    public static int TYPE_WARNING = 2;
     /**
-     * The type of result. Gives a feedback of the status of the executed action:
-     * ERROR, SUCCESS, WARNING
+     * The sync action was executed and an information message was generated
+     */
+    public static int TYPE_INFORMATION = 3;
+    /**
+     * The type of result. Gives feedback of the status of the executed action. See TYPE_* for possible values
      */
     private int type;
     /**

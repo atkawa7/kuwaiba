@@ -110,7 +110,7 @@ public class SyncAction {
                         deleteOldStructure(jsonObj, finding);
                         break;
                     case "object_port_no_match":
-                        results.add(new SyncResult(SyncResult.WARNING, String.format(ACTION_PORT_NO_MATCH, jsonObj.toString()), " There is nothing kuwaiba could do with this port, its name has no match with the data got it from SNMP, please check manually in order to move it or delete it"));
+                        results.add(new SyncResult(SyncResult.TYPE_WARNING, String.format(ACTION_PORT_NO_MATCH, jsonObj.toString()), " There is nothing kuwaiba could do with this port, its name has no match with the data got it from SNMP, please check manually in order to move it or delete it"));
                         break;
                     case "object_port_no_match_new":
                         createNewPorts(jsonObj, finding);
@@ -133,7 +133,7 @@ public class SyncAction {
                                         if(child.getJsonObject("result").get("related-service") != null)
                                             serviceStatus = child.getJsonObject("result").getString("related-service");
                                         
-                                        results.add(new SyncResult(SyncResult.SUCCESS, 
+                                        results.add(new SyncResult(SyncResult.TYPE_SUCCESS, 
                                                 String.format("Interface: %s, %s", ifName, status) + (!ifalias.isEmpty() ? String.format(" - Service: %s, %s", ifalias, serviceStatus) : "")
                                                 , "Info"));
                                     }                                
@@ -154,7 +154,7 @@ public class SyncAction {
                                         String destinyPort = child.getJsonObject("result").getString("destinyPort");
                                         String device = child.getJsonObject("result").getString("device");
                                         String service = child.getJsonObject("result").getString("service");
-                                        results.add(new SyncResult(SyncResult.SUCCESS, 
+                                        results.add(new SyncResult(SyncResult.TYPE_SUCCESS, 
                                                 String.format("In divice: %s was created the VcID: %s, sourcePort: %s, destinyPort: %s, service name: %s", device, vcid, sourcePort, destinyPort, service)
                                                 , "Info"));
                                     }                                
@@ -175,8 +175,8 @@ public class SyncAction {
                                         String ipSource = child.getJsonObject("result").getString("ipSource");
                                         String ipDestiny = child.getJsonObject("result").getString("ipDestiny");
                                         String description = child.getJsonObject("result").getString("description");
-                                        results.add(new SyncResult(SyncResult.SUCCESS, 
-                                                String.format("The tunnel: %s was related with VcID: %s, ipSource: %s - ipDestiny: %s, service: %s", tunnel, vcid, ipSource, ipDestiny, description)
+                                        results.add(new SyncResult(SyncResult.TYPE_SUCCESS, 
+                                                String.format("The tunnel %s was related to VCID: %s, Source IP: %s - Destination IP: %s, service: %s", tunnel, vcid, ipSource, ipDestiny, description)
                                                 , "Info"));
                                     }                                
                                 }
@@ -186,7 +186,7 @@ public class SyncAction {
                 }
             } else {
                 if (finding.getType() == SyncFinding.EVENT_ERROR)
-                    results.add(new SyncResult(SyncResult.ERROR, finding.getDescription(), I18N.gm("error")));
+                    results.add(new SyncResult(SyncResult.TYPE_ERROR, finding.getDescription(), I18N.gm("error")));
             }
         }
         return results;
@@ -233,15 +233,15 @@ public class SyncAction {
                 List<String> possibleChildrenToAdd = entrySet.getValue();
 
                     mem.addPossibleChildren(key, possibleChildrenToAdd.toArray(new String[possibleChildrenToAdd.size()]));
-                    results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_CONTAINMENT_HIERARCHY, key, possibleChildrenToAdd), ACTION_UPDATED));
+                    results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_CONTAINMENT_HIERARCHY, key, possibleChildrenToAdd), ACTION_UPDATED));
             }
         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
-            results.add(new SyncResult(SyncResult.ERROR, "Updating the class hierarchy", "Possible cause: " + ex.getMessage() + "Please check and run the sync again"));
+            results.add(new SyncResult(SyncResult.TYPE_ERROR, "Updating the class hierarchy", "Possible cause: " + ex.getMessage() + ". Please check and run the sync process again"));
         }
     }
     
     private void createMissingListTypes(JsonObject jo){
-        results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_LISTTYPE_CREATED, jo.getString("name")), ACTION_CREATED));
+        results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_LISTTYPE_CREATED, jo.getString("name")), ACTION_CREATED));
     }
     
     private void manageDevices(JsonObject device, SyncFinding find){
@@ -268,9 +268,9 @@ public class SyncAction {
                     name = bem.getObject(deviceId).getAttributes().get("name");
                 else
                     name = attributes.get("name");
-                results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_UPDATED, name, deviceClassName, Long.toString(deviceId)), ACTION_UPDATED));
+                results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_UPDATED, name, deviceClassName, Long.toString(deviceId)), ACTION_UPDATED));
             } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-                results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), "Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
+                results.add(new SyncResult(SyncResult.TYPE_ERROR, find.getDescription(), "Possible cause: " + ex.getMessage() + ". Please check and run the sync again"));
             }
         }
     }
@@ -329,11 +329,11 @@ public class SyncAction {
                             if(!className.contains("Port") || attributes.get("name").contains("Power") || className.contains("PowerPort")){
                                 long createdObjectId = bem.createObject(className, parentClassName, parentId, attributes, -1);
                                 createdIdsToMap.put(childId, createdObjectId);
-                                results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), ACTION_CREATED));
+                                results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), ACTION_CREATED));
                             }
                            
                         } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-                            results.add(new SyncResult(SyncResult.ERROR, find.getDescription(), "Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
+                            results.add(new SyncResult(SyncResult.TYPE_ERROR, find.getDescription(), "Possible cause: " + ex.getMessage() + ". Please check and run the sync again"));
                             break;
                         }
                     }
@@ -373,7 +373,7 @@ public class SyncAction {
                 //move the old port into the new location
                 bem.updateObject(className, childId, newAttributes);
                 bem.moveObjects(parentClassName, parentId, objectsToMove);
-                results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_UPDATED, jsnPrtAttrs.get("name"), className, Long.toString(childId)), ACTION_UPDATED));
+                results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_UPDATED, jsnPrtAttrs.get("name"), className, Long.toString(childId)), ACTION_UPDATED));
                 parentId = childId; //the port id
                 
                 for(StringPair port : nameOfCreatedPorts) {
@@ -407,16 +407,16 @@ public class SyncAction {
                                                             
                                 long createdObjectId = bem.createObject(className, parentClassName, parentId, attributes, -1);
                                 createdIdsToMap.put(childId, createdObjectId);
-                                results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), ACTION_CREATED));
+                                results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), ACTION_CREATED));
                             }
                         }
                     }
                 }
             }
             else
-                results.add(new SyncResult(SyncResult.WARNING, find.getDescription(), "Kuwaiba was not able to find the new parent to move the old port, please move it manually"));
+                results.add(new SyncResult(SyncResult.TYPE_WARNING, find.getDescription(), "Kuwaiba was not able to find the new parent to move the old port, please move it manually"));
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | OperationNotPermittedException ex) {
-            results.add(new SyncResult(SyncResult.ERROR, find.getDescription()," Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
+            results.add(new SyncResult(SyncResult.TYPE_ERROR, find.getDescription()," Possible cause: " + ex.getMessage() + ". Please check and run the sync again"));
         } catch (InvalidArgumentException ex) {
             Logger.getLogger(SyncAction.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -446,14 +446,14 @@ public class SyncAction {
         else
             parentId = createdIdsToMap.get(tempParentId);
         if(parentId == null){
-                results.add(new SyncResult(SyncResult.WARNING, find.getDescription(),  
+                results.add(new SyncResult(SyncResult.TYPE_WARNING, find.getDescription(),  
                     "The port could not be created because the parent doesn't "
-                            + "exists, please check if there is an error than "
-                            + "prevented the creation of some elements in the "
-                            + "synchronization process, maybe some attributes "
+                            + "exist. Please check if there is an error tha "
+                            + "prevented the creation of some elements during the "
+                            + "synchronization process. Maybe some attributes "
                             + "are missing in the classes your are tryng to "
-                            + "load, please check the list of results and runs "
-                            + "the synchornization again. Please check and runs the sync again"));
+                            + "load. Check the list of results and run "
+                            + "the synchronization again."));
         }
         else{
             List<String> toCreate = newCreatedPortsToCreate.get(childId);
@@ -484,9 +484,9 @@ public class SyncAction {
                             parentId = createdIdsToMap.get(tempParentId);
                         long createdObjectId = bem.createObject(className, parentClassName, parentId, attributes, -1);
                         createdIdsToMap.put(childId, createdObjectId);
-                        results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), ACTION_CREATED));
+                        results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), ACTION_CREATED));
                     } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-                        results.add(new SyncResult(SyncResult.WARNING, find.getDescription(), " Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
+                        results.add(new SyncResult(SyncResult.TYPE_WARNING, find.getDescription(), " Possible cause: " + ex.getMessage() + ". Please check and run the sync again"));
                     }
                 }
             }
@@ -494,9 +494,9 @@ public class SyncAction {
                 try{
                     long createdObjectId = bem.createObject(className, parentClassName, parentId, attributes, -1);
                     createdIdsToMap.put(childId, createdObjectId);
-                    results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), ACTION_CREATED));
+                    results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), ACTION_CREATED));
                 } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-                    results.add(new SyncResult(SyncResult.WARNING, find.getDescription(), "Possible cause: " + ex.getMessage()));
+                    results.add(new SyncResult(SyncResult.TYPE_WARNING, find.getDescription(), "Possible cause: " + ex.getMessage()));
                 }
             }
         }
@@ -507,12 +507,12 @@ public class SyncAction {
         String className = jdevice.getString("deviceClassName");
         try {
             bem.deleteObject(className, Long.valueOf(jdevice.getString("deviceId")), false);
-            results.add(new SyncResult(SyncResult.SUCCESS, String.format(ACTION_OBJECT_DELETED, jdevice.get("deviceName"), className, jdevice.getString("deviceId")), ACTION_DELETED));
+            results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_DELETED, jdevice.get("deviceName"), className, jdevice.getString("deviceId")), ACTION_DELETED));
 
         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-            results.add(new SyncResult(SyncResult.WARNING, find.getDescription(), 
-                                        ex.getMessage() + "T his structure could not be deleted, because some elements has relationships (services, IP, links, etc), please check this structure and migrate ports manually.\n" +
-                    "Remeber kuwaiba is able to move the ports if they have a similiar name in the current navigation tree and the data got from the SNMP, otherwise is not possible to move the ports. Please check and run the sync again"));
+            results.add(new SyncResult(SyncResult.TYPE_WARNING, find.getDescription(), 
+                                        ex.getMessage() + "This structure could not be deleted because some elements have relationships (services, IP addresses, links, etc). Please check this structure and migrate the ports manually if necessary.\n" +
+                    "Remeber that Kuwaiba is able to move the ports when they have a similiar name in the current navigation tree and that retrived from the SNMP agent, otherwise is not possible to perform any operation."));
         }
         
     }
