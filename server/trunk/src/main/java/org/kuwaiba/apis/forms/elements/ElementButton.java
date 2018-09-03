@@ -203,7 +203,40 @@ public class ElementButton extends AbstractElement {
 ////                        Logger.getLogger(ElementButton.class.getName()).log(Level.SEVERE, null, ex);
 ////                    }
                     fireElementEvent(new EventDescriptor(Constants.EventAttribute.ONCLICK, Constants.Function.SAVE));
-                } else {
+                } 
+                else if (Constants.Function.PROPERTY_CHANGE.equals(key)) {
+                    List<String> propertyChangeLine = getEvents().get(Constants.EventAttribute.ONCLICK).get(key);
+                    
+                    if (propertyChangeLine != null && propertyChangeLine.size() >= 3) {
+                        
+                        String elementId = propertyChangeLine.get(0);
+                        String propertyName = propertyChangeLine.get(1);
+                        String functionName = propertyChangeLine.get(2);
+                        
+                        AbstractElement element = getFormStructure().getElementById(elementId);
+                        Runner runner = getFormStructure().getElementScript().getFunctionByName(functionName);
+                                                
+                        if (element != null && runner != null && element.hasProperty(propertyName)) {
+                            
+                            List parameterValues = new ArrayList();
+
+                            for (int i = 3; i < propertyChangeLine.size(); i += 1) {
+                                AbstractElement anElement = getFormStructure().getElementById(propertyChangeLine.get(i));
+                                parameterValues.add(anElement != null ? anElement : propertyChangeLine.get(i));
+                            }
+                            Object result = runner.run(parameterValues);
+                                                                                                                                            
+                            element.fireElementEvent(new EventDescriptor(
+                                Constants.EventAttribute.ONPROPERTYCHANGE, 
+                                propertyName, 
+                                result, 
+                                element.getPropertyValue(propertyName)
+                            ));
+                            element.firePropertyChangeEvent();
+                        }
+                    }
+                }
+                else {
                     Runner runner = getFormStructure().getElementScript().getFunctionByName(key);
                                         
                     if (runner != null) {

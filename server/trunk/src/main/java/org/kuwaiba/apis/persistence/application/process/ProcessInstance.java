@@ -45,7 +45,7 @@ public class ProcessInstance {
      * A XML Structure that storage the content of the artifacts to this process instance
      */
     private byte[] artifactsContent;
-
+        
     public ProcessInstance(long id, String name, String description, long currentActivity, long processDefinition) {
         this.id = id;
         this.name = name;

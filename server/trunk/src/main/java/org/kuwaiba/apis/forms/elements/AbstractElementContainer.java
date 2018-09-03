@@ -120,4 +120,24 @@ public abstract class AbstractElementContainer extends AbstractElement {
         }
         super.propertyChange();        
     }
+    
+    @Override
+    public boolean hasProperty(String propertyName) {
+        switch (propertyName) {
+            case Constants.Property.REPAINT:
+                return true;
+            default:
+                return super.hasProperty(propertyName);
+        }
+    }
+    
+    @Override
+    public Object getPropertyValue(String propertyName) {
+        switch (propertyName) {
+            case Constants.Property.REPAINT:
+                return repaint();
+            default:
+                return super.getPropertyValue(propertyName);
+        }
+    }
 }

@@ -204,5 +204,24 @@ public abstract class AbstractElementField extends AbstractElement {
         }
         super.propertyChange();
     }
-        
+    
+    @Override
+    public boolean hasProperty(String propertyName) {
+        switch (propertyName) {
+            case Constants.Property.VALUE:
+                return true;
+            default:
+                return super.hasProperty(propertyName);
+        }
+    }
+    
+    @Override
+    public Object getPropertyValue(String propertyName) {
+        switch (propertyName) {
+            case Constants.Property.VALUE:
+                return getValue();
+            default:
+                return super.getPropertyValue(propertyName);
+        }
+    }       
 }

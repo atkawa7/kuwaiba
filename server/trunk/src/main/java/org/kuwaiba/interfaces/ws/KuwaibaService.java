@@ -7653,7 +7653,7 @@ public class KuwaibaService {
                 if (ex instanceof ServerSideException)
                     throw ex;
                 else {
-                    System.out.println("[KUWAIBA] An unexpected error occurred in createSynchronizationGroup: " + ex.getMessage());
+                    System.out.println("[KUWAIBA] An unexpected error occurred in updateSynchronizationGroup: " + ex.getMessage());
                     throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
                 }
             } 
@@ -7746,7 +7746,7 @@ public class KuwaibaService {
                 if (ex instanceof ServerSideException)
                     throw ex;
                 else {
-                    System.out.println("[KUWAIBA] An unexpected error occurred in createSynchronizationDataSourceConfig: " + ex.getMessage());
+                    System.out.println("[KUWAIBA] An unexpected error occurred in updateSyncDataSourceConfiguration: " + ex.getMessage());
                     throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
                 }
             } 

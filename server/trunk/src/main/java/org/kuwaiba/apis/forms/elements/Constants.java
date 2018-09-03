@@ -137,6 +137,7 @@ public class Constants {
         public static final String EDIT_GRID_ROW = "editgridrow"; //NOI18N
         public static final String DELETE_GRID_ROW = "deletegridrow"; //NOI18N
         public static final String SAVE="save"; //NOI18N
+        public static final String PROPERTY_CHANGE = "propertyChange"; //NOI18N
         
         public class Type {
             public static final String FUNCTION = "function";

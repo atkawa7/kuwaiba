@@ -78,4 +78,24 @@ public abstract class AbstractElementSelector extends AbstractElementField {
             loadItems(list);
         }
     }
+    
+    @Override
+    public boolean hasProperty(String propertyName) {
+        switch (propertyName) {
+            case Constants.Property.ITEMS:
+                return true;
+            default:
+                return super.hasProperty(propertyName);
+        }
+    }
+    
+    @Override
+    public Object getPropertyValue(String propertyName) {
+        switch (propertyName) {
+            case Constants.Property.ITEMS:
+                return getItems();
+            default:
+                return super.getPropertyValue(propertyName);
+        }
+    }  
 }

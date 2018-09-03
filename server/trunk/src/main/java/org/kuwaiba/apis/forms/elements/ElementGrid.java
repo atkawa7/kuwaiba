@@ -228,4 +228,24 @@ public class ElementGrid extends AbstractElement {
         }
     }
     
+    @Override
+    public boolean hasProperty(String propertyName) {
+        switch (propertyName) {
+            case Constants.Property.ROWS:
+                return true;
+            default:
+                return super.hasProperty(propertyName);
+        }
+    }
+    
+    @Override
+    public Object getPropertyValue(String propertyName) {
+        switch (propertyName) {
+            case Constants.Property.ROWS:
+                return getRows();
+            default:
+                return super.getPropertyValue(propertyName);
+        }
+    }  
+    
 }

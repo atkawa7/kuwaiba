@@ -364,4 +364,25 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
                getEvents().get(eventAttribute).containsKey(propertyName);
     }
     
+    public boolean hasProperty(String propertyName) {
+        
+        switch (propertyName) {
+            case Constants.Property.HIDDEN:
+                return true;
+            case Constants.Property.ENABLED:
+                return true;
+        }
+        return false;                                        
+    }
+        
+    public Object getPropertyValue(String propertyName) {
+        
+        switch (propertyName) {
+            case Constants.Property.HIDDEN:
+                return isHidden();
+            case Constants.Property.ENABLED:
+                return isEnabled();
+        }
+        return null;
+    }
 }
