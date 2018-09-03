@@ -151,7 +151,8 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                 
                 switch (modelString) { //The model of the device is taken from its name. Alternatively, this could be taken from its actual model
                     case "ASR920":
-                        Session.Command cmd = session.exec("sh bridge-domain"); //NOI18N
+                        //Session.Command cmd = session.exec("sh bridge-domain"); //NOI18N
+                        Session.Command cmd = session.exec("/home/lulita/bridge-domain.sh"); //NOI18N
                         
                         BridgeDomainsASR920Parser parser = new BridgeDomainsASR920Parser();               
 
@@ -163,7 +164,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                                     parser.parse(IOUtils.readFully(cmd.getInputStream()).toString()));
                         break;
                     default:
-                        res.getExceptions().put(dataSourceConfiguration, Arrays.asList(new InvalidArgumentException(String.format("Model %s is not supported or known", modelString))));
+                        res.getExceptions().put(dataSourceConfiguration, Arrays.asList(new InvalidArgumentException(String.format("Model %s is not supported. Check your naming conventions, as an hyphen is expected as separator", modelString))));
                 }
             } catch (Exception ex) {
                 res.getExceptions().put(dataSourceConfiguration, Arrays.asList(ex));
@@ -183,6 +184,12 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
         List<SyncResult> res = new ArrayList<>();
         BusinessEntityManager bem = PersistenceService.getInstance().getBusinessEntityManager();
         ApplicationEntityManager aem = PersistenceService.getInstance().getApplicationEntityManager();
+        
+        //First, we inject the unexpected errors
+        for (SyncDataSourceConfiguration dsConfig : pollResult.getExceptions().keySet()) {
+            for (Exception ex : pollResult.getExceptions().get(dsConfig))
+            res.add(new SyncResult(SyncResult.TYPE_ERROR, String.format("Severe error while processing data source configuration %s", dsConfig.getName()), ex.getLocalizedMessage()));
+        }
         
         for (BusinessObjectLight relatedOject : pollResult.getResult().keySet()) {
             try {
@@ -235,7 +242,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                             for (BusinessObjectLight bridgeDomainInterface : bridgeDomainInterfaces) {
                                 if (bridgeDomainInterface.getName().equals(networkInterface.getName())) {
                                     matchingBridgeDomainInterface = bridgeDomainInterface;
-                                    res.add(new SyncResult(SyncResult.TYPE_INFORMATION, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
+                                    res.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
                                         String.format("BDI %s already exists. No changes were made", networkInterface.getName())));
                                     break;
                                 }

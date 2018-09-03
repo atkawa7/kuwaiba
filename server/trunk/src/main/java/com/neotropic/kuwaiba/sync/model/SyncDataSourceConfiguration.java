@@ -68,4 +68,16 @@ public class SyncDataSourceConfiguration implements Serializable {
     public void setParameters(HashMap<String, String> parameters) {
         this.parameters = parameters;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (int) (this.id ^ (this.id >>> 32));
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof SyncDataSourceConfiguration ? ((SyncDataSourceConfiguration)obj).getId() == id : false;
+    }
 }
