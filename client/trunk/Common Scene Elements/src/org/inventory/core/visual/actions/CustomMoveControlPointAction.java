@@ -41,7 +41,7 @@
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
  *
- * Modified by Charles Bedon for project Kuwaiba 2014
+ * Modified by Charles Edward Bedon Cortazar for project Kuwaiba 2014
  */
 
 package org.inventory.core.visual.actions;

@@ -15,8 +15,8 @@
 package com.neotropic.inventory.modules.sync;
 
 /**
- * Represents a inform about the results of a synchronization process
- * @author adrian
+ * A local representation of a RemoteSyncResult
+ * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
 public class LocalSyncResult {
     /**
@@ -48,8 +48,6 @@ public class LocalSyncResult {
      */
     private int type;
    
-    public LocalSyncResult() { }
-
     public LocalSyncResult(int type, String actionDescription, String result) {
         this.type = type;
         this.actionDescription = actionDescription;

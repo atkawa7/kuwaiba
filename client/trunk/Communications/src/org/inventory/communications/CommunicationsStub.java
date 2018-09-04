@@ -144,11 +144,11 @@ public class CommunicationsStub {
     private LocalSession session;
     
     private static String[] classesWithCustomDeleteActions = new String[] {"ElectricalLink", "RadioLink", "OpticalLink", "MPLSLink",
-                                                                    "VC4", "VC4-04", "VC4-16", "VC4TributaryLink", "VC12TributaryLink", "VC3TributaryLink",
+                                                                    "VC4", "VC4-04", "VC4-16", "VC4-07", "VC4-64", "VC4TributaryLink", "VC12TributaryLink", "VC3TributaryLink",
                                                                     "STM1", "STM4", "STM16", "STM64", "STM256",
                                                                     "WireContainer", "WirelessContainer",
                                                                     "CorporateCustomer", "TelecomOperator", "Provider", "HomeCustomer",
-                                                                    "Subnet", "ExecutiveContact", "TechnicalContact", "CommercialContact" };
+                                                                    "Subnet", "BillingContact", "TechnicalContact", "CommercialContact", "BridgeDomain" };
     
     private CommunicationsStub() {
         cache = Cache.getInstace();
@@ -2019,14 +2019,15 @@ public class CommunicationsStub {
     }
 
     /**
-     * Deletes a single object
+     * Deletes a single object safely 
      * @param className Object class
      * @param oid Object Id
+     * @param releaseRelationships Should this method check if there are existing relationships and stop the operation if any?
      * @return  True if the operation was successful, an exception if not
      */
-    public boolean deleteObject(String className, long oid){
+    public boolean deleteObject(String className, long oid, boolean releaseRelationships) {
         try {
-            service.deleteObject(className, oid, false, this.session.getSessionId());
+            service.deleteObject(className, oid, releaseRelationships, this.session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error = ex.getMessage();

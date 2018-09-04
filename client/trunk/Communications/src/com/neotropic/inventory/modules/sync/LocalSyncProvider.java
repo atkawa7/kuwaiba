@@ -18,7 +18,7 @@ package com.neotropic.inventory.modules.sync;
 
 /**
  * Local representation of a Synchronization Provider
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class LocalSyncProvider {
     /**

@@ -138,7 +138,7 @@ class RunSynchronizationProcessAction extends GenericInventoryAction {
         @Override
         public void handleSyncResults() {
             List<LocalSyncResult> results = getSyncResults();
-            if (results == null)//can't connect to the device
+            if (results == null) //Can't connect to the device
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else {

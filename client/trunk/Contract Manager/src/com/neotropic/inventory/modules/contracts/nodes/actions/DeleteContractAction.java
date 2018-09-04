@@ -62,7 +62,7 @@ public class DeleteContractAction extends GenericInventoryAction implements Pres
 
             ContractNode selectedNode = selectedNodes.next();
 
-            if (CommunicationsStub.getInstance().deleteObject(selectedNode.getObject().getClassName(), selectedNode.getObject().getId())) {
+            if (CommunicationsStub.getInstance().deleteObject(selectedNode.getObject().getClassName(), selectedNode.getObject().getId(), false)) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, I18N.gm("contract_was_deleted"));
                 ((ContractPoolNode.ContractPoolChildren)selectedNode.getParentNode().getChildren()).addNotify();
             }

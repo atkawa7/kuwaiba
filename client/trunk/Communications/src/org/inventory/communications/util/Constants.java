@@ -192,6 +192,10 @@ public class Constants {
      */
     public static final String CLASS_VIEWABLEOBJECT = "ViewableObject";
     /**
+     * Class BridgeDomain
+     */
+    public static final String CLASS_BRIDGEDOMAIN = "BridgeDomain";
+    /**
      * Class BridgeDomainInterface
      */
     public static final String CLASS_BRIDGEDOMAININTERFACE = "BridgeDomainInterface";

@@ -91,7 +91,7 @@ public class SyncResultsFrame extends JFrame {
         @Override
         public Component getListCellRendererComponent(JList<? extends LocalSyncResult> list, 
                 LocalSyncResult value, int index, boolean isSelected, boolean cellHasFocus) {
-            JLabel lblResultEntry = new JLabel("<html><b>Description: </b>" + value.getActionDescription() 
+            JLabel lblResultEntry = new JLabel("<html><b>Action: </b>" + value.getActionDescription() 
                                             + "<br/><b>Result: </b>" +value.getResult()+ "<html>");
             lblResultEntry.setBorder(new EmptyBorder(5, 5, 5, 0));
             lblResultEntry.setOpaque(true);
