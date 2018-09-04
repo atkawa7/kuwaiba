@@ -25,7 +25,7 @@ import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
  * A big screen at the top, and the chairs are a bunch of small rectangles below. This layout 
  * is aimed to present the information with a big dashboard widget on top (usually used to display charts) and small ones below.
  * functionality of regular layouts
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class TheaterDashboardLayout extends VerticalLayout {
     /**

@@ -38,7 +38,7 @@ import org.kuwaiba.web.modules.ltmanager.actions.AddListTypeItemWindow;
 
 /**
  * A dashboard widget that allows to manage the list type items associated to a given list type
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ListTypeItemManagerDashboardWidget extends AbstractDashboardWidget {
     /**

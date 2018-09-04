@@ -20,13 +20,13 @@ import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
 
 /**
  * An entity class that represents a network interface that can be used in a bridge domain
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class NetworkInterface extends AbstractDataEntity {
     /**
-     * If the interface is a physical interface
+     * If it's not possible to determine the type of interface associated to the bridge domain
      */
-    public static final int TYPE_PHYSICAL = 1;
+    public static final int TYPE_UNKNOWN = 1;
     /**
      * If the interface is a bridge domain interface
      */

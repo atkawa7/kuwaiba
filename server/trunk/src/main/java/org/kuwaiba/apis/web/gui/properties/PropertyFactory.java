@@ -28,7 +28,7 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 
 /**
  * A factory class that builds property sets given business objects
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class PropertyFactory {
     /**

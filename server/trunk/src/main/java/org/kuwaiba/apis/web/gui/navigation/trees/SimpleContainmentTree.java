@@ -26,7 +26,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * An utility tree that can display a containment chain (example Europe -> Germany -> Berlin -> Building A). It's used in the "Hierarchy Information" option. 
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class SimpleContainmentTree extends Tree<AbstractNode> {
 

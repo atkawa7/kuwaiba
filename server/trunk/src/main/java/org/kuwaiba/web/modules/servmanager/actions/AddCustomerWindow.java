@@ -38,7 +38,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * A simple window to create a customer
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class AddCustomerWindow extends Window {
     /**

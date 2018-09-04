@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * An embeddable property sheet 
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class PropertySheet extends Grid<AbstractProperty> {
 

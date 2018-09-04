@@ -26,7 +26,7 @@ import org.kuwaiba.web.modules.navtree.dashboard.RelationshipsDashboardWidget;
 
 /**
  * The dashboard used to show the information related to a given service
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ServiceManagerDashboard extends AbstractDashboard {
     

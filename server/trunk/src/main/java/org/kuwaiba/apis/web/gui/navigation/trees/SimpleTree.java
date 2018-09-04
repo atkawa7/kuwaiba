@@ -25,7 +25,7 @@ import org.kuwaiba.apis.web.gui.navigation.InventoryObjectTreeData;
 
 /**
  * A tree that extends the features of the default one and makes use of the Nodes API
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class SimpleTree extends Tree<AbstractNode> {
 

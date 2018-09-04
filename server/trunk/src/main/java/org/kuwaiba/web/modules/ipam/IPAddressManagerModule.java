@@ -26,7 +26,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
  * A module that manages IP addresses, subnets and their relationships with other inventory resources
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class IPAddressManagerModule extends AbstractModule {
 

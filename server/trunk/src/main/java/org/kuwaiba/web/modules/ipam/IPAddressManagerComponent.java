@@ -54,7 +54,7 @@ import org.kuwaiba.web.modules.ipam.actions.ShowVLANExplorerAction;
 
 /**
  * The main view for the IP Address Manager module
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @CDIView("ipam")
 public class IPAddressManagerComponent extends AbstractTopComponent {

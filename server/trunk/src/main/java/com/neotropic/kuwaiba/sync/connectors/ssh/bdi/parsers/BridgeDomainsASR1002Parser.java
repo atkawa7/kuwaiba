@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A parser for the output of the command "sh bridge-domain" in the Cisco ASR920 router series
+ * A parser for the output of the command "sh bridge-domain" in the Cisco ASR1002 router series
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class BridgeDomainsASR920Parser {
+public class BridgeDomainsASR1002Parser {
     /**
      * Parses the raw input
      * @param input The raw input that corresponds to the output of the command
@@ -46,17 +46,20 @@ public class BridgeDomainsASR920Parser {
                 bridgeDomains.add(currentBridgeDomain);
                 state = ParsingState.BRIDGE_DOMAIN;
             } else {
-                if (state.equals(ParsingState.BRIDGE_DOMAIN) && lineTokens.length == 4  && lineTokens[0].equals("Maximum")) {
-                    state = ParsingState.MAXIMUM_ADDRESS_LIMIT;
+                if (state.equals(ParsingState.BRIDGE_DOMAIN) && lineTokens.length == 3  && lineTokens[0].equals("Aging-Timer:")) { //NOI18N
+                    state = ParsingState.AGING_TIMER;
                     continue;
                 }
                 
-                if (state.equals(ParsingState.MAXIMUM_ADDRESS_LIMIT)) {
-                    if (lineTokens[0].isEmpty()) { //an empty line
+                if (state.equals(ParsingState.AGING_TIMER)) {
+                    
+                    if (lineTokens[0].equals("AED")) {
                         bridgeDomains.add(currentBridgeDomain);
-                        state = ParsingState.END;
-                    }
-                    else {
+                        state = ParsingState.AED;
+                    } else {
+                        if (line.contains("ports belonging"))
+                            continue;
+                        
                         if (lineTokens[0].startsWith("BDI"))
                             currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(lineTokens[0], NetworkInterface.TYPE_BDI));
                         
@@ -64,11 +67,11 @@ public class BridgeDomainsASR920Parser {
                             currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(lineTokens[1], NetworkInterface.TYPE_VFI));
                         
                         else if (line.contains("service instance")) 
-                            currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(line.trim(), NetworkInterface.TYPE_SERVICE_INSTANCE));
+                            currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(lineTokens[0] + " " + lineTokens[1] + " " + 
+                                    lineTokens[2] + " " + lineTokens[3], NetworkInterface.TYPE_SERVICE_INSTANCE));
                         
-                        
-                        else 
-                            currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(line.trim(), NetworkInterface.TYPE_UNKNOWN));
+                            else 
+                                currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(line, NetworkInterface.TYPE_UNKNOWN));
                     }
                 }
             }
@@ -89,9 +92,13 @@ public class BridgeDomainsASR920Parser {
          */
         BRIDGE_DOMAIN,
         /**
-         * Right after the "Maximum address limit: MMMM" section
+         * Right after the "Aging-Timer: SSSS second(s)" section
          */
-        MAXIMUM_ADDRESS_LIMIT,
+        AGING_TIMER,
+        /**
+         * The header of the table that looks like : AED MAC address    Policy  Tag       Age  Pseudoport
+         */
+        AED, 
         /**
          * After the empty line after listing the interfaces associated to the bridge domain
          */

@@ -33,7 +33,7 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 
 /**
  * A simple IconGenerator implementation to be used in trees displaying inventory object nodes
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class SimpleIconGenerator implements IconGenerator<AbstractNode> {
     /**

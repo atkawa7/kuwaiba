@@ -26,7 +26,7 @@ import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
  * This layout resembles a shelf. It will split the dashboard in two (horizontally). The left side is intended
  * to show a single widget, while the one on the right will display a pile of tiles with unflipped widgets
  * 
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ShelfDashboardLayout extends VerticalLayout {
     /**

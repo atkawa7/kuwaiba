@@ -36,7 +36,7 @@ import org.openide.util.Exceptions;
 
 /**
  * A simple dashboard widget that shows the available views for a particular service
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ServiceViewsDashboardWidget extends AbstractDashboardWidget {
     /**

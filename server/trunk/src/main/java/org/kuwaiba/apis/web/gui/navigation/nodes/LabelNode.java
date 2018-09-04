@@ -22,7 +22,7 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 
 /**
  * String a node that displays a simple text string
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class LabelNode extends AbstractNode<String>{
     /** 

@@ -45,7 +45,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * This action allows the user to explore the existing Tunnels and the objects related to them
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ShowMPLSTunnelExplorerAction extends AbstractAction {
     

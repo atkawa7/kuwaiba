@@ -20,7 +20,7 @@ import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 
 /**
  * A coverless dashboard widget that displays the details of an IP address
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class SubnetDetailsDashboardWidget extends AbstractDashboardWidget {
 

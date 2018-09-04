@@ -18,6 +18,8 @@ package com.neotropic.kuwaiba.sync.connectors.ssh.bdi;
 
 import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.entities.BridgeDomain;
 import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.entities.NetworkInterface;
+import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.parsers.BridgeDomainsASR1002Parser;
+import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.parsers.BridgeDomainsASR9001Parser;
 import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.parsers.BridgeDomainsASR920Parser;
 import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
 import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
@@ -26,6 +28,7 @@ import com.neotropic.kuwaiba.sync.model.SyncAction;
 import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
+import com.neotropic.kuwaiba.sync.model.SyncUtil;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,7 +52,7 @@ import org.kuwaiba.util.i18n.I18N;
 /**
  * This provider connects to Cisco routers via SSH, retrieves the bridge domain configuration, and creates/updates the relationships between
  * the bridge domains and the logical/physical 
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class BridgeDomainSyncProvider extends AbstractSyncProvider {
 
@@ -84,62 +87,59 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
         
         for (SyncDataSourceConfiguration dataSourceConfiguration : syncDataSourceConfigurations) {
             Session session = null;
-            long deviceId;
-            int port;
-            String className, host, user, password;
-            
-            if (dataSourceConfiguration.getParameters().containsKey("deviceId")) //NOI18N
-                deviceId = Long.valueOf(dataSourceConfiguration.getParameters().get("deviceId")); //NOI18N
-            else {
-                res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
-                    new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "deviceId", syncGroup.getName())));
-                continue;
-            }
-            
-            if (dataSourceConfiguration.getParameters().containsKey("deviceClass")) //NOI18N
-                className = dataSourceConfiguration.getParameters().get("deviceClass"); //NOI18N
-            else {
-                res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
-                    new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "deviceClass", syncGroup.getName()))); //NOI18N
-                continue;
-            }
-            
-            if (dataSourceConfiguration.getParameters().containsKey("ipAddress")) //NOI18N
-                host = dataSourceConfiguration.getParameters().get("ipAddress"); //NOI18N
-            else {
-                res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
-                    new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "ipAddress", syncGroup.getName()))); //NOI18N
-                continue;
-            }
-            
-            if (dataSourceConfiguration.getParameters().containsKey("port")) //NOI18N
-                port = Integer.valueOf(dataSourceConfiguration.getParameters().get("port")); //NOI18N
-            else {
-                res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
-                    new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "port", syncGroup.getName())));
-                continue;
-            }
-            
-            if (dataSourceConfiguration.getParameters().containsKey("user")) //NOI18N
-                user = dataSourceConfiguration.getParameters().get("user"); //NOI18N
-            else {
-                res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
-                    new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "user", syncGroup.getName()))); //NOI18N
-                continue;
-            }
-            
-            if (dataSourceConfiguration.getParameters().containsKey("password")) //NOI18N
-                password = dataSourceConfiguration.getParameters().get("password"); //NOI18N
-            else {
-                res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
-                    new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "password", syncGroup.getName()))); //NOI18N
-                continue;
-            }
-            
-            
-            
             try {
-                
+                long deviceId;
+                int port;
+                String className, host, user, password;
+
+                if (dataSourceConfiguration.getParameters().containsKey("deviceId")) //NOI18N
+                    deviceId = Long.valueOf(dataSourceConfiguration.getParameters().get("deviceId")); //NOI18N
+                else {
+                    res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
+                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "deviceId", syncGroup.getName())));
+                    continue;
+                }
+
+                if (dataSourceConfiguration.getParameters().containsKey("deviceClass")) //NOI18N
+                    className = dataSourceConfiguration.getParameters().get("deviceClass"); //NOI18N
+                else {
+                    res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
+                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "deviceClass", syncGroup.getName()))); //NOI18N
+                    continue;
+                }
+
+                if (dataSourceConfiguration.getParameters().containsKey("ipAddress")) //NOI18N
+                    host = dataSourceConfiguration.getParameters().get("ipAddress"); //NOI18N
+                else {
+                    res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
+                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "ipAddress", syncGroup.getName()))); //NOI18N
+                    continue;
+                }
+
+                if (dataSourceConfiguration.getParameters().containsKey("port")) //NOI18N
+                    port = Integer.valueOf(dataSourceConfiguration.getParameters().get("port")); //NOI18N
+                else {
+                    res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
+                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "port", syncGroup.getName())));
+                    continue;
+                }
+
+                if (dataSourceConfiguration.getParameters().containsKey("user")) //NOI18N
+                    user = dataSourceConfiguration.getParameters().get("user"); //NOI18N
+                else {
+                    res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
+                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "user", syncGroup.getName()))); //NOI18N
+                    continue;
+                }
+
+                if (dataSourceConfiguration.getParameters().containsKey("password")) //NOI18N
+                    password = dataSourceConfiguration.getParameters().get("password"); //NOI18N
+                else {
+                    res.getSyncDataSourceConfigurationExceptions(dataSourceConfiguration).add(
+                        new InvalidArgumentException(String.format(I18N.gm("parameter_not_defined"), "password", syncGroup.getName()))); //NOI18N
+                    continue;
+                }
+    
                 BusinessObjectLight currentObject = bem.getObjectLight(className, deviceId);
                 
                 ssh.loadKnownHosts();
@@ -150,11 +150,23 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                 String modelString = currentObject.getName().split("-")[0];
                 
                 switch (modelString) { //The model of the device is taken from its name. Alternatively, this could be taken from its actual model
-                    case "ASR920":
-                        //Session.Command cmd = session.exec("sh bridge-domain"); //NOI18N
-                        Session.Command cmd = session.exec("/home/lulita/bridge-domain.sh"); //NOI18N
+                    case "ASR920": {
+                        Session.Command cmd = session.exec("sh bridge-domain"); //NOI18N
                         
                         BridgeDomainsASR920Parser parser = new BridgeDomainsASR920Parser();               
+
+                        cmd.join(5, TimeUnit.SECONDS);
+                        if (cmd.getExitStatus() != 0) 
+                            res.getExceptions().put(dataSourceConfiguration, Arrays.asList(new InvalidArgumentException("The command to retrieve the bridge domain information could not be retrieved. Check the syntax and the firmware version")));
+                        else 
+                            res.getResult().put(currentObject, 
+                                    parser.parse(IOUtils.readFully(cmd.getInputStream()).toString()));
+                        break;
+                    }
+                    case "ASR1002": {
+                        Session.Command cmd = session.exec("sh bridge-domain"); //NOI18N
+                        
+                        BridgeDomainsASR1002Parser parser = new BridgeDomainsASR1002Parser();               
 
                         cmd.join(5, TimeUnit.SECONDS);
                         if (cmd.getExitStatus() != 0) 
@@ -163,6 +175,20 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                             res.getResult().put(currentObject, 
                                     parser.parse(IOUtils.readFully(cmd.getInputStream()).toString()));
                         break;
+                    }
+                    case "ASR9001": {
+                        //Session.Command cmd = session.exec("l2vpn bridge-domain"); //NOI18N
+                        Session.Command cmd = session.exec("/home/lulita/bridge-domain.sh"); //NOI18N
+                        BridgeDomainsASR9001Parser parser = new BridgeDomainsASR9001Parser();               
+
+                        cmd.join(5, TimeUnit.SECONDS);
+                        if (cmd.getExitStatus() != 0) 
+                            res.getExceptions().put(dataSourceConfiguration, Arrays.asList(new InvalidArgumentException(cmd.getExitErrorMessage())));
+                        else 
+                            res.getResult().put(currentObject, 
+                                    parser.parse(IOUtils.readFully(cmd.getInputStream()).toString()));
+                        break;
+                    }
                     default:
                         res.getExceptions().put(dataSourceConfiguration, Arrays.asList(new InvalidArgumentException(String.format("Model %s is not supported. Check your naming conventions, as an hyphen is expected as separator", modelString))));
                 }
@@ -188,7 +214,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
         //First, we inject the unexpected errors
         for (SyncDataSourceConfiguration dsConfig : pollResult.getExceptions().keySet()) {
             for (Exception ex : pollResult.getExceptions().get(dsConfig))
-            res.add(new SyncResult(SyncResult.TYPE_ERROR, String.format("Severe error while processing data source configuration %s", dsConfig.getName()), ex.getLocalizedMessage()));
+                res.add(new SyncResult(SyncResult.TYPE_ERROR, String.format("Severe error while processing data source configuration %s", dsConfig.getName()), ex.getLocalizedMessage()));
         }
         
         for (BusinessObjectLight relatedOject : pollResult.getResult().keySet()) {
@@ -205,7 +231,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                     
                     for (BusinessObjectLight existingBridgeDomain : existingBridgeDomains) {
                         if (existingBridgeDomain.getName().equals(((BridgeDomain)bridgeDomainInDevice).getName())) {
-                            res.add(new SyncResult(SyncResult.TYPE_WARNING, String.format("Check if Bridge Domain %s exists within %s", existingBridgeDomain, relatedOject), 
+                            res.add(new SyncResult(SyncResult.TYPE_INFORMATION, String.format("Check if Bridge Domain %s exists within %s", existingBridgeDomain, relatedOject), 
                                     "The Bridge Domain exists and was not modified"));
                             matchingBridgeDomain = existingBridgeDomain;
                             break;
@@ -221,7 +247,6 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                                     "The Bridge Domain did not exist and was created successfully"));
                         matchingBridgeDomain = new BusinessObjectLight("BridgeDomain", newBridgeDomain, bridgeDomainInDevice.getName());
                         bridgeDomainInterfaces = new ArrayList<>();
-                        physicalInterfaces = new ArrayList<>();
                     }
                     
                     //Now we check if the network interfaces exist and relate them if necessary
@@ -242,7 +267,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                             for (BusinessObjectLight bridgeDomainInterface : bridgeDomainInterfaces) {
                                 if (bridgeDomainInterface.getName().equals(networkInterface.getName())) {
                                     matchingBridgeDomainInterface = bridgeDomainInterface;
-                                    res.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
+                                    res.add(new SyncResult(SyncResult.TYPE_INFORMATION, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
                                         String.format("BDI %s already exists. No changes were made", networkInterface.getName())));
                                     break;
                                 }
@@ -252,7 +277,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                                 HashMap<String, String> defaultAttributes = new HashMap<>();
                                 defaultAttributes.put(Constants.PROPERTY_NAME, networkInterface.getName());
                                 long newBridgeDomainInterface = bem.createSpecialObject("BridgeDomainInterface", "BridgeDomain", matchingBridgeDomain.getId(), defaultAttributes, -1);
-                                res.add(new SyncResult(SyncResult.TYPE_INFORMATION, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
+                                res.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
                                         String.format("The BDI %s did not exist and was created.", networkInterface.getName())));
                                 aem.createGeneralActivityLogEntry("sync", ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, 
                                         String.format("%s [BridgeDomainInterface] (id:%s)", networkInterface.getName(), newBridgeDomainInterface));
@@ -262,15 +287,17 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                         }
                         
                         if (networkInterface.getNetworkInterfaceType() == NetworkInterface.TYPE_SERVICE_INSTANCE) {
-                            String[] interfaceNameTokens = networkInterface.getName().split(" "); //The interface name would look like this: GigabitEthernet0/0/2 service instance 10
-                            
+                            String[] interfaceNameTokens = networkInterface.getName().replace(" (split-horizon)", "").split(" "); //The interface name would look like this: GigabitEthernet0/0/2 service instance 10
+                                                                                                                                  //Some entries have an extra " (split-horizon)" at the end that can be discarded
                             if (physicalInterfaces == null)
                                 physicalInterfaces = bem.getChildrenOfClassLightRecursive(relatedOject.getId(), 
                                         relatedOject.getClassName(), "GenericCommunicationsPort", -1);
                             
                             BusinessObjectLight matchingPhysicalInterface = null;
+                            String standardName = SyncUtil.wrapPortName(interfaceNameTokens[0]);
                             for (BusinessObjectLight physicalInterface : physicalInterfaces) {
-                                if (physicalInterface.getName().equals(interfaceNameTokens[0])) {
+                                
+                                if (physicalInterface.getName().equals(standardName)) { //Checks for the extended and the condensed interface name formats (GigabitEthernetXXX vs GiXXXX)
                                     matchingPhysicalInterface = physicalInterface;
                                     break;
                                 }
@@ -278,7 +305,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                             
                             if (matchingPhysicalInterface == null) 
                                 res.add(new SyncResult(SyncResult.TYPE_ERROR, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
-                                        String.format("The physical interface %s was not found. The subinterface %s will not be created nor related to the bridge domain", interfaceNameTokens[0], networkInterface.getName())));
+                                        String.format("The physical interface %s was not found. The subinterface %s will not be created nor related to the bridge domain", standardName, networkInterface.getName())));
                             else {
                                 List<BusinessObjectLight> serviceInstances = bem.getChildrenOfClassLight(matchingPhysicalInterface.getId(), 
                                         matchingPhysicalInterface.getClassName(), Constants.CLASS_SERVICE_INSTANCE, -1);
@@ -298,12 +325,12 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                                             defaultAttributes, -1);
                                     
                                     res.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
-                                        String.format("The Service Instance %s did not exist and was created.", networkInterface.getName())));
+                                        String.format("Service Instance %s did not exist and was created.", networkInterface.getName())));
                                     
                                     matchingServiceInstance = new BusinessObjectLight(Constants.CLASS_SERVICE_INSTANCE, newServiceInstance, interfaceNameTokens[interfaceNameTokens.length - 1]);
                                 } else
                                     res.add(new SyncResult(SyncResult.TYPE_INFORMATION, String.format("Checking network interfaces related to Bridge Domain %s in router %s", bridgeDomainInDevice.getName(), relatedOject), 
-                                        String.format("The Service Instance %s already existed. No changes were made.", networkInterface.getName())));
+                                        String.format("Service Instance %s already exists. No changes were made.", matchingServiceInstance.getName())));
                                 
                                 List<BusinessObjectLight> relatedBridgeDomain = bem.getSpecialAttribute(matchingServiceInstance.getClassName(), matchingServiceInstance.getId(), "networkBridgesInterface");
                                 if (relatedBridgeDomain.isEmpty()) {

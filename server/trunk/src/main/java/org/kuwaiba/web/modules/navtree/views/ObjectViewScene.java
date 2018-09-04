@@ -23,7 +23,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * The scene in the ObjectView component
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ObjectViewScene extends AbstractScene {
     /**

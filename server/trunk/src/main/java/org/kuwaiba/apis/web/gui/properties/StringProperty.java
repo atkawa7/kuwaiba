@@ -21,7 +21,7 @@ import com.vaadin.ui.TextField;
 
 /**
  * Support for String like properties
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class StringProperty extends AbstractProperty<String>{
 

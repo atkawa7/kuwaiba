@@ -26,7 +26,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * The dashboard for the Navigation Tree module
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class NavigationTreeDashboard extends AbstractDashboard {
     public NavigationTreeDashboard(RemoteObjectLight selectedObject, WebserviceBean wsBean) {

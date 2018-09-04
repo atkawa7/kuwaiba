@@ -21,7 +21,7 @@ import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Root of all actions in the system
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public abstract class AbstractAction extends Action {
     /**

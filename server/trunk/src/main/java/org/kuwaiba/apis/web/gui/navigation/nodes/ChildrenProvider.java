@@ -21,7 +21,7 @@ import java.util.List;
 /**
  * A factory interface that will fetch the children of a given object in a tree structure. These children are not
  * necessarily children as in the containment hierarchy, they're just the children as in a hierarchical representation
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  * @param <P> The type of the parent object
  * @param <C> The type of the children object
  */

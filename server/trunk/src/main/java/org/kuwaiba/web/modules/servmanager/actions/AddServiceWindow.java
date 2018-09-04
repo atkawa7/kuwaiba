@@ -38,7 +38,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * A simple window that allows to create a new service
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class AddServiceWindow extends Window {
     /**

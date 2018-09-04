@@ -28,7 +28,7 @@ import org.kuwaiba.web.modules.servmanager.views.EndToEndViewScene;
 
 /**
  * TThe embeddable component that displays an object view.
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ObjectView extends Panel {
     public ObjectView(RemoteObjectLight businessObject, WebserviceBean wsBean) {

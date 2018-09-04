@@ -42,7 +42,7 @@ import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Login form
- * @author Charles Bedon <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @CDIView("")
 public class LoginView extends CustomComponent implements View {
