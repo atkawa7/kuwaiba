@@ -79,6 +79,7 @@ import org.inventory.communications.core.views.LocalObjectViewLight;
 import com.neotropic.inventory.modules.sync.AbstractRunnableSyncFindingsManager;
 import com.neotropic.inventory.modules.sync.AbstractRunnableSyncResultsManager;
 import com.neotropic.inventory.modules.sync.LocalSyncProvider;
+import com.neotropic.inventory.modules.sync.LocalSyncAction;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.wsclient.ApplicationLogEntry;
 import org.inventory.communications.wsclient.RemoteAttributeMetadata;
@@ -129,6 +130,7 @@ import org.inventory.communications.wsclient.UserInfoLight;
 import org.inventory.communications.wsclient.Validator;
 import org.inventory.communications.wsclient.RemoteViewObject;
 import org.inventory.communications.wsclient.RemoteViewObjectLight;
+import org.inventory.communications.wsclient.SyncAction;
 
 /**
  * Singleton class that provides communication and caching services to the rest of the modules
@@ -5658,21 +5660,30 @@ public class CommunicationsStub {
     }
     
      /**
-     * Executes the actions that the user has chosen after synchronization findings
-     * @param localFindings the findings
-     * @return The list of results after executes the actions
-     */
-    public List<LocalSyncResult> executeSyncActions(List<LocalSyncFinding> localFindings){
+      * Executes the actions that the user has chosen after synchronization findings
+      * @param syncGroupId
+      * @param LocalActions
+      * @return The list of results after executes the actions
+      */
+    public List<LocalSyncResult> executeSyncActions(long syncGroupId, 
+            List<LocalSyncAction> LocalActions)
+    {
         try {
-            List<SyncFinding> remoteFindings = new ArrayList<>();
-            for (LocalSyncFinding locaFinding : localFindings) {
+            List<SyncAction> remoteActions = new ArrayList<>();
+            for (LocalSyncAction localSyncAction : LocalActions) {
+                
                 SyncFinding finding = new SyncFinding();
-                finding.setDescription(locaFinding.getDescription());
-                finding.setExtraInformation(locaFinding.getExtraInformation());
-                finding.setType(locaFinding.getType());
-                remoteFindings.add(finding);
+                finding.setDescription(localSyncAction.getFinding().getDescription());
+                finding.setExtraInformation(localSyncAction.getFinding().getExtraInformation());
+                finding.setType(localSyncAction.getFinding().getType());
+                
+                SyncAction action = new SyncAction();
+                action.setFinding(finding);
+                action.setType(localSyncAction.getType());
+                remoteActions.add(action);
             }
-            List<SyncResult> results = service.executeSyncActions(remoteFindings, session.getSessionId());
+            
+            List<SyncResult> results = service.executeSyncActions(syncGroupId, remoteActions, session.getSessionId());
             
             List<LocalSyncResult> localResults = new ArrayList<>();
             for(SyncResult result : results)
