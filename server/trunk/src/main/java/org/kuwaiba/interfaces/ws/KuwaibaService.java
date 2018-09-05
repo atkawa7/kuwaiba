@@ -20,8 +20,10 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.scheduling.BackgroundJob;
 import com.neotropic.kuwaiba.scheduling.JobManager;
+import com.neotropic.kuwaiba.sync.model.SyncAction;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
+import java.util.HashMap;
 import java.util.List;
 import javax.annotation.Resource;
 import javax.ejb.EJB;
@@ -6131,17 +6133,19 @@ public class KuwaibaService {
     
     /**
      * Executes the synchronization actions that the user selected after check the  list of findings
-     * @param findings the list findings
+     * @param syncGroupId the sync groupId
+     * @param actions the list findings to be processed
      * @param sessionId the session token
      * @return the list of results after the actions were executed
      * @throws ServerSideException 
      */
     @WebMethod(operationName = "executeSyncActions")
     public List<SyncResult> executeSyncActions(
-            @WebParam(name = "findings") List<SyncFinding> findings,
+            @WebParam(name = "syncGroupId") long syncGroupId,
+            @WebParam(name = "actions") List<SyncAction> actions,
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            return wsBean.executeSyncActions(findings, getIPAddress(), sessionId);
+            return wsBean.executeSyncActions(syncGroupId, actions, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;

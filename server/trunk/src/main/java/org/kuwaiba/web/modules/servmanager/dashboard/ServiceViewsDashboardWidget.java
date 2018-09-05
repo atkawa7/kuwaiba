@@ -53,6 +53,7 @@ public class ServiceViewsDashboardWidget extends AbstractDashboardWidget {
         this.service = service;
         this.wsBean = wsBean;
         this.createCover();
+        System.out.println(String.format("[debug] on service: %s", service));
     }
     
     @Override
@@ -99,6 +100,7 @@ public class ServiceViewsDashboardWidget extends AbstractDashboardWidget {
             btnFormTable.addClickListener(click ->{
                 Window formWindow = new Window(" ");
                 try {
+                    System.out.println(String.format("[debug] on forms for service: %s", service));
                     ServManagerFormCreator servManagerFormCreator = new ServManagerFormCreator(service, wsBean, Page.getCurrent().getWebBrowser().getAddress(),
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                     formWindow.setContent(servManagerFormCreator.createForm());

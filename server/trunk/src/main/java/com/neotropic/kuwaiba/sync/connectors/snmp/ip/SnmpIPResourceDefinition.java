@@ -13,15 +13,21 @@
  *   limitations under the License.
  * 
  */
-package com.neotropic.kuwaiba.sync.connectors.snmp.reference;
+package com.neotropic.kuwaiba.sync.connectors.snmp.ip;
 
 import java.util.HashMap;
 import org.snmp4j.smi.OID;
 
 /**
- * This class contains the oids that will be retrieved from the agent for this reference implementation. 
- * In this case, the oids correspond to columns in the tables  entPhysicalTable (branch 1.3.6.1.2.1.47.1.1.1.)
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * This class contains the oids that will be retrieved from the agent 
+ * for the IP addresses synchronization.
+ * In this case, the oids correspond to columns in the table 
+ * mgmt
+ *   └─mib-2
+ *     └─ip
+ *       └─ipAddrTable oid(1.3.6.1.2.1.4.20)
+ * 
+ * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
  */
 public class SnmpIPResourceDefinition extends HashMap<String, OID>{
 

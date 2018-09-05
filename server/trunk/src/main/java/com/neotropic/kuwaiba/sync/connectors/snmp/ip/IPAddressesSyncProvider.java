@@ -17,7 +17,6 @@
 package com.neotropic.kuwaiba.sync.connectors.snmp.ip;
 
 import com.neotropic.kuwaiba.sync.connectors.snmp.SnmpManager;
-import com.neotropic.kuwaiba.sync.connectors.snmp.reference.SnmpIPResourceDefinition;
 import com.neotropic.kuwaiba.sync.connectors.snmp.reference.SnmpifXTableResocurceDefinition;
 import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
 import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
@@ -186,30 +185,7 @@ public class IPAddressesSyncProvider extends AbstractSyncProvider {
 
     @Override
     public List<SyncFinding> supervisedSync(PollResult pollResult){
-        HashMap<BusinessObjectLight, List<AbstractDataEntity>> originalData = pollResult.getResult();
-        List<SyncFinding> findings = new ArrayList<>();
-        // Adding to findings list the not blocking execution exception found during the mapped poll
-        for (SyncDataSourceConfiguration agent : pollResult.getExceptions().keySet()) {
-            for (Exception exception : pollResult.getExceptions().get(agent))
-                findings.add(new SyncFinding(SyncFinding.EVENT_ERROR, 
-                        exception.getMessage(), 
-                        Json.createObjectBuilder().add("type","ex").build().toString()));
-        }
-        for (Map.Entry<BusinessObjectLight, List<AbstractDataEntity>> entrySet : originalData.entrySet()) {
-            try {
-                List<TableData> mibTables = new ArrayList<>();
-                entrySet.getValue().forEach((value) -> {
-                    mibTables.add((TableData)value);
-                });
-                IPSynchronizer ipSync = new IPSynchronizer(entrySet.getKey(), mibTables);
-                findings.addAll(ipSync.execute());
-            } catch (OperationNotPermittedException | InvalidArgumentException | ApplicationObjectNotFoundException | ArraySizeMismatchException ex) {
-                findings.add(new SyncFinding(SyncFinding.EVENT_ERROR, 
-                        ex.getMessage(), 
-                        Json.createObjectBuilder().add("type","ex").build().toString()));
-            } 
-        }
-        return findings;
+        throw new UnsupportedOperationException("This provider does not support supervised sync for unmapped pollings");
     }
 
     @Override
@@ -219,16 +195,31 @@ public class IPAddressesSyncProvider extends AbstractSyncProvider {
     
     @Override
     public List<SyncResult> automatedSync(List<AbstractDataEntity> originalData) {
-        throw new UnsupportedOperationException("This provider does not support supervised sync for unmapped pollings");
-    }
-
-    @Override
-    public List<SyncResult> automatedSync(PollResult pollResult) {
         throw new UnsupportedOperationException("This provider does not support automated sync");
     }
 
     @Override
-    public List<String> finalize(List<SyncAction> actions) {
+    public List<SyncResult> automatedSync(PollResult pollResult) {
+        HashMap<BusinessObjectLight, List<AbstractDataEntity>> originalData = pollResult.getResult();
+        List<SyncResult> res = new ArrayList<>();
+        // Adding to findings list the not blocking execution exception found during the mapped poll
+        for (SyncDataSourceConfiguration agent : pollResult.getExceptions().keySet()) {
+            for (Exception ex : pollResult.getExceptions().get(agent))
+                res.add(new SyncResult(SyncFinding.EVENT_ERROR, String.format("Severe error while processing data source configuration %s", agent.getName()), ex.getLocalizedMessage()));
+        }
+        for (Map.Entry<BusinessObjectLight, List<AbstractDataEntity>> entrySet : originalData.entrySet()) {
+            List<TableData> mibTables = new ArrayList<>();
+            entrySet.getValue().forEach((value) -> {
+                mibTables.add((TableData)value);
+            });
+            IPSynchronizer ipSync = new IPSynchronizer(entrySet.getKey(), mibTables);
+            res.addAll(ipSync.execute());
+        }
+        return res;
+    }
+
+    @Override
+    public List<SyncResult> finalize(List<SyncAction> actions) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

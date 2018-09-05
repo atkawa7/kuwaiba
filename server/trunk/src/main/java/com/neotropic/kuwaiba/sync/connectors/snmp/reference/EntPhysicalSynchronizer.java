@@ -16,6 +16,7 @@
 package com.neotropic.kuwaiba.sync.connectors.snmp.reference;
 
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
+import com.neotropic.kuwaiba.sync.model.SyncResult;
 import com.neotropic.kuwaiba.sync.model.SyncUtil;
 import com.neotropic.kuwaiba.sync.model.TableData;
 import java.util.ArrayList;
@@ -912,12 +913,8 @@ public class EntPhysicalSynchronizer {
         for (BusinessObjectLight child : children) {
             if (child.getClassName().equals(Constants.CLASS_MPLSTUNNEL))
                 currentMplsTunnels.add(child);
-            else if (child.getClassName().equals(Constants.CLASS_BRIDGEDOMAININTERFACE))
-                currentBridgeDomains.add(child);
             else if (child.getClassName().equals(Constants.CLASS_VIRTUALPORT))
                 currentVirtualPorts.add(child);
-            else if (child.getClassName().equals(Constants.CLASS_VLAN))
-                currentVlans.add(child);
             readCurrentSpecialStructure(bem.getObjectSpecialChildren(child.getClassName(), child.getId()));
         }
     }
@@ -1413,28 +1410,20 @@ public class EntPhysicalSynchronizer {
             boolean wasHighSpeedUpdated = false;
             attributes.put(Constants.PROPERTY_NAME, ifName);
             attributes.put("highSpeed", portSpeed);  
-            //attributes.put("ifAlias", ifAlias);  
-            //Mngmnt, virtualPorts, and Loopbacks
+            //We must create the Mngmnt Port, virtualPorts, tunnels and Loopbacks
             if(SyncUtil.isSynchronizable(ifName)){
                 BusinessObjectLight currrentInterface;
                 //First we search if the port is the current virtual ports
                 if(ifName.contains("."))
                     currrentInterface = searchInCurrentStructure(ifName, 2);
-                //We search for posx/x/x ports, because posx/x/x ports has no s in the if mib
                 else if(ifName.toLowerCase().contains("lo")) //NOI18N
                     currrentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), 2);
-                //We search for posx/x/x ports, because posx/x/x ports has no s in the if mib
+                //We must add the s when we look for po ports because posx/x/x ports has no s in the if mib
                 else if(ifName.toLowerCase().contains("po")) //NOI18N
                     currrentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), 1);
-                //We search for MPLS Tunnel
+                //MPLS Tunnel
                 else if(ifName.toLowerCase().contains("tu")) //NOI18N
                     currrentInterface = searchInCurrentStructure(ifName, 3);
-                //We search for bridge domain interface
-                else if(ifName.toLowerCase().contains("bd") || ifName.toLowerCase().contains("br")) //NOI18N
-                    currrentInterface = searchInCurrentStructure(ifName, 4);
-                //We search for bridge domain interface
-                else if(ifName.toLowerCase().contains("vlan") || ifName.toLowerCase().contains("vl")) //NOI18N
-                    currrentInterface = searchInCurrentStructure(ifName, 5);
                 else 
                     currrentInterface = searchInCurrentStructure(ifName, 1);
                 
@@ -1470,20 +1459,6 @@ public class EntPhysicalSynchronizer {
                     createdClassName = "VirtualPort";
                     found = true;
                     status = "[Virtual Port] Created";
-                }//Bridge domains                
-                else if(currrentInterface == null && (ifName.toLowerCase().contains("bd") || ifName.toLowerCase().contains("br"))){
-                    createdId = bem.createSpecialObject(Constants.CLASS_BRIDGEDOMAININTERFACE, className, id, attributes, -1);
-                    currentBridgeDomains.add(new BusinessObject(Constants.CLASS_BRIDGEDOMAININTERFACE, createdId, ifName));
-                    createdClassName = "BridgeDomainInterface";
-                    found = true;
-                    status = "[BridgeDomainInterface] Created";
-                }
-                else if (currrentInterface == null && ifName.toLowerCase().contains("vlan") || ifName.toLowerCase().contains("vl")){
-                    createdId = bem.createSpecialObject(Constants.CLASS_VLAN, className, id, attributes, -1);
-                    currentVlans.add(new BusinessObject(Constants.CLASS_VLAN, createdId, ifName));
-                    createdClassName = Constants.CLASS_VLAN;
-                    found = true;
-                    status = "[VLAN] Created";
                 }else if (currrentInterface == null && ifName.toLowerCase().contains("se")){
                     bem.createObject(Constants.CLASS_SERIALPORT, className, id, attributes, -1);
                     createdClassName = Constants.CLASS_SERIALPORT;
@@ -1528,7 +1503,7 @@ public class EntPhysicalSynchronizer {
             ifMibSyncResult = SyncUtil.jArrayBuilder(ifMibSyncResult).add(Json.createObjectBuilder().add("result", jo)).build();
         
         ifMibj = SyncUtil.joBuilder(ifMibj).add("type", "ifbmib").add("ifmibsync", ifMibSyncResult).build();
-        findings.add(new SyncFinding(SyncFinding.EVENT_INFO, 
+        findings.add(new SyncFinding(SyncResult.TYPE_INFORMATION, 
                            "if-mib synchronization result", ifMibj.toString()));
     }
     
@@ -1574,9 +1549,8 @@ public class EntPhysicalSynchronizer {
                 return "Related successfully with the interface";
             }
         }
-        return "No created as service in kuwaiba";
+        return "The service in kuwaiba";
     }
-    
     
     /**
      * Checks if a given port exists in the current structure
@@ -1603,18 +1577,6 @@ public class EntPhysicalSynchronizer {
                     if(currentMPLSTunnel.getName().toLowerCase().equals(ifName.toLowerCase()))
                         return currentMPLSTunnel;
                 }
-                break;
-            case 4:
-                for(BusinessObjectLight bdi: currentBridgeDomains){
-                    if(bdi.getName().toLowerCase().equals(ifName.toLowerCase()))
-                        return bdi;
-                }
-                break;
-            case 5:
-                for(BusinessObjectLight vlan: currentVlans){
-                    if(vlan.getName().toLowerCase().equals(ifName.toLowerCase()))
-                        return vlan;
-                }    
                 break;
         }
         return null;

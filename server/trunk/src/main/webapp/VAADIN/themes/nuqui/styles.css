@@ -15557,12 +15557,28 @@ div.v-layout.v-horizontal.v-widget {
 	text-align: center;
 }
 
-.nuqui .report-forms .cell-with-border-bottom {
-	border-bottom: solid 1px black;
+.nuqui .report-forms .cell-with-border {
 	text-align: left !important;
+	padding: 0 2px 0 2px;
+}
+
+.nuqui .report-forms .cell-with-border-short-width {
+	width: 100%;
+	min-width: 25px;
+}
+
+.nuqui .report-forms .cell-with-border-normal-width {
 	width: 100%;
 	min-width: 125px;
-	padding: 0 2px 0 2px;
+}
+
+.nuqui .report-forms .cell-with-border-long-width {
+	width: 100%;
+	min-width: 250px;
+}
+
+.nuqui .report-forms .cell-with-border-bottom {
+	border-bottom: solid 1px black;
 }
 
 .nuqui .report-forms .cell-with-border-right {
@@ -15573,11 +15589,8 @@ div.v-layout.v-horizontal.v-widget {
 	border-top: solid 1px black;
 }
 
-.nuqui .report-forms .cell-with-border-temp {
+.nuqui .report-forms .cell-with-border-left {
 	border-left: solid 1px black;
-	min-width: 125px;
-	width: 100%;
-	padding: 0 2px 0 2px;
 }
 
 .nuqui .report-forms .cell-with-bold-text {

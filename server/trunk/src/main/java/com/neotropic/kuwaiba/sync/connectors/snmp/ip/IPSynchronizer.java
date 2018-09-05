@@ -16,7 +16,7 @@
 package com.neotropic.kuwaiba.sync.connectors.snmp.ip;
 
 import static com.neotropic.kuwaiba.modules.ipam.IPAMModule.RELATIONSHIP_IPAMHASADDRESS;
-import com.neotropic.kuwaiba.sync.model.SyncFinding;
+import com.neotropic.kuwaiba.sync.model.SyncResult;
 import com.neotropic.kuwaiba.sync.model.SyncUtil;
 import com.neotropic.kuwaiba.sync.model.TableData;
 import java.util.ArrayList;
@@ -39,6 +39,7 @@ import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.services.persistence.util.Constants;
+import org.kuwaiba.util.i18n.I18N;
 import org.openide.util.Exceptions;
 
 /**
@@ -94,9 +95,13 @@ public class IPSynchronizer {
      * Reference to the mem
      */
     private MetadataEntityManager mem;
+    /**
+     * 
+     */
+    private List<SyncResult> res;
     
     public IPSynchronizer(BusinessObjectLight obj, List<TableData> data) {
-         try {
+        try {
             PersistenceService persistenceService = PersistenceService.getInstance();
             bem = persistenceService.getBusinessEntityManager();
             aem = persistenceService.getApplicationEntityManager();
@@ -108,6 +113,7 @@ public class IPSynchronizer {
             aem = null;
             mem = null;
         }
+        res = new ArrayList<>();
         this.className = obj.getClassName();
         this.id = obj.getId();
         ipAddrTable = (HashMap<String, List<String>>)data.get(0).getValue();
@@ -119,25 +125,25 @@ public class IPSynchronizer {
     }
     
     /**
-     * Executes the synchronization of the ipAddrTable
+     * Executes the synchronization to associate the interfaces get it 
+     * from the ifmib table with the Ip addresses get it from the ipAddrTable
      * @return list of findings
-     * @throws OperationNotPermittedException
-     * @throws InvalidArgumentException
-     * @throws ApplicationObjectNotFoundException
-     * @throws ArraySizeMismatchException 
      */
-    public List<SyncFinding> execute() throws OperationNotPermittedException, 
-            InvalidArgumentException, ApplicationObjectNotFoundException, 
-            ArraySizeMismatchException
-    {
+    public List<SyncResult> execute() {
         try {
             readCurrentStructure(bem.getObjectChildren(className, id, -1), 1);
             readCurrentStructure(bem.getObjectSpecialChildren(className, id), 2);
             //we get the rood nodes for the ipv4
             List<Pool> ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
             ipv4Root = ipv4RootPools.get(0);
-            readcurrentFolder(ipv4RootPools);
-            readCurrentSubnets(ipv4Root);
+            try {
+                readcurrentFolder(ipv4RootPools);
+                readCurrentSubnets(ipv4Root);
+            } catch (ApplicationObjectNotFoundException ex) {
+                res.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                        String.format(I18N.gm("sync.reading-current-structure.error")), 
+                        ex.getLocalizedMessage()));
+            }
             associateIPAddress();
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
             Exceptions.printStackTrace(ex);
@@ -149,20 +155,11 @@ public class IPSynchronizer {
      * Search for a given IP address got it from the ipAddrTableMIB data
      * if doesn't exists it will be created
      * @param ipAddr the ip address
-     * @param mask the ip address mask
-     * @return the ip from kuwaiba
-     * @throws InvalidArgumentException
-     * @throws BusinessObjectNotFoundException
-     * @throws MetadataObjectNotFoundException
-     * @throws OperationNotPermittedException
-     * @throws ApplicationObjectNotFoundException
-     * @throws ArraySizeMismatchException 
+     * @param syncMask the ip address mask from sync
+     * @return an IP address created in kuwaiba
      */
-    private BusinessObjectLight searchIP(String ipAddr, String mask) 
-            throws InvalidArgumentException, BusinessObjectNotFoundException, 
-            MetadataObjectNotFoundException, OperationNotPermittedException, 
-            ApplicationObjectNotFoundException, ArraySizeMismatchException
-    {
+    private BusinessObjectLight syncSubentsEtIpAddresses(String ipAddr, String syncMask){
+        BusinessObject ip = null;
         //We will consider only a /24 subnet 
         String []ipAddrSegments = ipAddr.split("\\.");
         String newSubnet =  ipAddrSegments[0] + "." + ipAddrSegments[1] + "." + ipAddrSegments[2];
@@ -177,32 +174,49 @@ public class IPSynchronizer {
         if(currentSubnet == null){
             String [] attributeNames = {"name", "description", "networkIp", "broadcastIp", "hosts"};
             String [] attributeValues = {newSubnet + ".0/24", "sync", newSubnet + ".0", newSubnet + ".255", "254"};
-            currentSubnet = bem.getObject(bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
-            //we must add the new subnet into the current subnets and ips
+            try {
+                currentSubnet = bem.getObject(bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
+            } catch (ApplicationObjectNotFoundException | ArraySizeMismatchException | BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException ex) {
+                res.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                        String.format(I18N.gm("sync.ip.subnet.create.error"), newSubnet + ".0/24"), 
+                        ex.getLocalizedMessage()));
+            }//we must add the new subnet into the current subnets and ips
             subnets.put(currentSubnet, new ArrayList<>()); 
             ips.put(currentSubnet, new ArrayList<>());
-        }
-        //with the subnet found we must search the if the IP address exists
-        List<BusinessObjectLight> currentIps = ips.get(currentSubnet);
-        if(!currentIps.isEmpty()){
-            for (BusinessObjectLight currentIp : currentIps) {
-                if(currentIp.getName().equals(ipAddr)){
-                    //we must check the mask if the IP already exists and updated if is need it
-                    BusinessObject ip = bem.getObject(currentIp.getId()); 
-                    if(!ip.getAttributes().get(Constants.PROPERTY_MASK).equals(mask)){
-                        ip.getAttributes().put(Constants.PROPERTY_MASK, mask);
-                        bem.updateObject(ip.getClassName(), ip.getId(), ip.getAttributes());
+        }else{//with the subnet found we must search if the IP address exists
+            List<BusinessObjectLight> currentIps = ips.get(currentSubnet);
+            if(!currentIps.isEmpty()){
+                for (BusinessObjectLight currentIpLight : currentIps) {
+                    if(currentIpLight.getName().equals(ipAddr)){
+                        try {//we must check the mask if the IP already exists and if its attributes are updated
+                            BusinessObject currentIp = bem.getObject(currentIpLight.getId());
+                            String oldMask = currentIp.getAttributes().get(Constants.PROPERTY_MASK);
+                            if(!oldMask.equals(syncMask)){
+                                currentIp.getAttributes().put(Constants.PROPERTY_MASK, syncMask);
+                                bem.updateObject(currentIp.getClassName(), currentIp.getId(), currentIp.getAttributes());
+                                res.add(new SyncResult(SyncResult.TYPE_SUCCESS, 
+                                    String.format(I18N.gm("sync.ip.mask.updating"), currentIp),
+                                    String.format(I18N.gm("sync.attribute.updated"), oldMask, syncMask)));
+                            }
+                            return currentIpLight;
+                        } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
+                            res.add(new SyncResult(SyncResult.TYPE_ERROR,  String.format(I18N.gm("sync.ip.mask.updating"), currentIpLight), ex.getLocalizedMessage()));
+                        }
                     }
-                    return currentIp;
                 }
+            }//we create the ip address if doesn't exists in the current subnet
+            HashMap<String, String> ipAttributes = new HashMap<>();
+            ipAttributes.put(Constants.PROPERTY_NAME, ipAddr);
+            ipAttributes.put(Constants.PROPERTY_MASK, syncMask);
+            try {
+                long createdIpId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, currentSubnet.getClassName(), currentSubnet.getId(), ipAttributes, -1);
+                ip = bem.getObject(createdIpId);
+                res.add(new SyncResult(SyncResult.TYPE_SUCCESS, "", String.format(I18N.gm("%s was add to %s successfully"), ipAddr, currentSubnet)));
+            } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
+                res.add(new SyncResult(SyncResult.TYPE_ERROR, String.format(I18N.gm("%s wasn't added to %s"), ipAddr, currentSubnet), ex.getLocalizedMessage()));
             }
-        }//we create the ip address if doesn't exists in subnet
-        
-        HashMap<String, String> ipAttributes = new HashMap<>();
-        ipAttributes.put(Constants.PROPERTY_NAME, ipAddr);
-        ipAttributes.put(Constants.PROPERTY_MASK, mask);
-        long createdIp = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, currentSubnet.getClassName(), currentSubnet.getId(), ipAttributes, -1);
-        BusinessObject ip = bem.getObject(createdIp);
+            
+        }
         ips.get(currentSubnet).add(ip);
         return ip;
     }
@@ -210,18 +224,8 @@ public class IPSynchronizer {
     
     /**
      * Reads the MIB data an associate IP addresses with ports
-     * @throws BusinessObjectNotFoundException
-     * @throws OperationNotPermittedException
-     * @throws MetadataObjectNotFoundException
-     * @throws InvalidArgumentException
-     * @throws ApplicationObjectNotFoundException
-     * @throws ArraySizeMismatchException 
      */
-    private void associateIPAddress() throws BusinessObjectNotFoundException, 
-            OperationNotPermittedException, MetadataObjectNotFoundException, 
-            InvalidArgumentException, ApplicationObjectNotFoundException, 
-            ArraySizeMismatchException
-    {
+    private void associateIPAddress(){
         List<String> ipAddresses = ipAddrTable.get("ipAdEntAddr");
         List<String> addrPortsIds = ipAddrTable.get("ipAdEntIfIndex");
         List<String> masks = ipAddrTable.get("ipAdEntNetMask");
@@ -232,30 +236,45 @@ public class IPSynchronizer {
             String ipAddress = ipAddresses.get(i);
             String mask = masks.get(i);
             //We search for the ip address
-            BusinessObjectLight currentIpAddress = searchIP(ipAddress, mask);
+            BusinessObjectLight currentIpAddress = syncSubentsEtIpAddresses(ipAddress, mask);
             if(currentIpAddress != null){
                 for(int j=0; j < ifportIds.size(); j++){
                     if(ifportIds.get(j).equals(portId)){
                         String portName = portNames.get(j);
                         BusinessObjectLight currentPort = searchInCurrentStructure(portName);
-                        if(currentPort != null && currentIpAddress != null){
-                            List<BusinessObjectLight> currentRelatedIPAddresses = bem.getSpecialAttribute(
-                                    currentPort.getClassName(), 
-                                    currentPort.getId(), RELATIONSHIP_IPAMHASADDRESS);
-                            //We check if the interface is already related with the ip
-                            boolean alreadyRelated = false;
-                            for (BusinessObjectLight currentRelatedIPAddress : currentRelatedIPAddresses) {
-                                if(currentRelatedIPAddress.getName().equals(currentIpAddress.getName())){ 
-                                    alreadyRelated = true;
-                                    break;
+                        if(currentPort != null){
+                            List<BusinessObjectLight> currentRelatedIPAddresses;
+                            try {
+                                currentRelatedIPAddresses = bem.getSpecialAttribute(
+                                        currentPort.getClassName(),
+                                        currentPort.getId(), RELATIONSHIP_IPAMHASADDRESS);
+                                                       //We check if the interface is already related with the ip
+                                boolean alreadyRelated = false;
+                                for (BusinessObjectLight currentRelatedIPAddress : currentRelatedIPAddresses) {
+                                    if(currentRelatedIPAddress.getName().equals(currentIpAddress.getName())){ 
+                                        alreadyRelated = true;
+                                        res.add(new SyncResult(SyncResult.TYPE_INFORMATION, "",
+                                            String.format(I18N.gm("sync.port.related"), currentRelatedIPAddress, currentPort)));
+                                        break;
+                                    }
+                                }//If not related, we related interface with the ip
+                                if(!alreadyRelated){
+                                    bem.createSpecialRelationship(currentPort.getClassName(),currentPort.getId(),
+                                                currentIpAddress.getClassName(), currentIpAddress.getId(), RELATIONSHIP_IPAMHASADDRESS, true);
+                                    
+                                    res.add(new SyncResult(SyncResult.TYPE_SUCCESS, "",
+                                            String.format(I18N.gm("sync.port.associated"), currentIpAddress, currentPort)));
                                 }
-                            }//If not related, we related interface with the ip
-                            if(!alreadyRelated)
-                                bem.createSpecialRelationship(currentPort.getClassName(),currentPort.getId(), 
-                                    currentIpAddress.getClassName(), currentIpAddress.getId(), RELATIONSHIP_IPAMHASADDRESS, true);
+                            } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException |OperationNotPermittedException ex) {
+                                res.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                                        String.format("tryn to relate %s with %s", currentIpAddress, currentPort),
+                                        ex.getLocalizedMessage()));
+                            }
                         }
                         else
-                            System.out.println(String.format("sync the ifMIB, the port %s was not found", portName));
+                            res.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                                    I18N.gm("sync.vlans.searching"),
+                                    String.format(I18N.gm("sync.port.not-found"), portName)));
                     }
                 }
             }

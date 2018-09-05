@@ -378,8 +378,8 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
     }
 
     @Override
-    public List<String> finalize(List<SyncAction> actions) {
-        return new ArrayList<>();
+    public List<SyncResult> finalize(List<SyncAction> actions) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

@@ -19,6 +19,7 @@ package org.kuwaiba.beans;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReport;
 import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.scheduling.BackgroundJob;
+import com.neotropic.kuwaiba.sync.model.SyncAction;
 import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
 import java.util.HashMap;
@@ -623,7 +624,7 @@ public interface WebserviceBean {
         public List<RemoteSynchronizationConfiguration> getSyncDataSourceConfigurations(long syncGroupId, String ipAddress, String sessionId)throws ServerSideException;
         public void deleteSynchronizationGroup(long syncGroupId, String ipAddress, String sessionId)throws ServerSideException;
         public void deleteSynchronizationDataSourceConfig(long syncDataSourceConfigId, String ipAddress, String sessionId)throws ServerSideException;
-        public List<SyncResult> executeSyncActions(List<SyncFinding> findings, String ipAddress, String sessionId)throws ServerSideException;
+        public List<SyncResult> executeSyncActions(long syncGroupId, List<SyncAction> actions, String ipAddress, String sessionId)throws ServerSideException;
         public List<RemoteSynchronizationGroup> copySyncGroup(long[] syncGroupIds, String ipAddress, String sessionId) throws ServerSideException;
         public List<RemoteSynchronizationConfiguration> copySyncDataSourceConfiguration(long syncGroupId, long[] syncDataSourceConfigurationIds, String ipAddress, String sessionId) throws ServerSideException;
         public void moveSyncDataSourceConfiguration(long syncGroupId, long[] syncDataSourceConfigurationIds, String ipAddress, String sessionId) throws ServerSideException;

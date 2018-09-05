@@ -5275,7 +5275,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("launchSupervisedSynchronizationTask", ipAddress, sessionId);
             Properties parameters = new Properties();
-            parameters.put("syncGroupId", Long.toString(syncGroupId)); //NOI18N                   
+            parameters.put("syncGroupId", Long.toString(syncGroupId)); //NOI18N  
+            parameters.put("sessionId", sessionId); //NOI18N  
             
             BackgroundJob backgroundJob = new BackgroundJob("DefaultSyncJob", false, parameters); //NOI18N
             JobManager.getInstance().launch(backgroundJob);
@@ -5286,13 +5287,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }        
     
     @Override
-    public List<SyncResult> executeSyncActions(List<SyncFinding> findings, String ipAddress, String sessionId)throws ServerSideException{
+    public List<SyncResult> executeSyncActions(long syncGroupId, List<SyncAction> actions, String ipAddress, String sessionId)throws ServerSideException{
         if (aem == null || bem == null || mem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("executeSyncActions", ipAddress, sessionId);
-            SyncAction syncActions = new SyncAction(findings);
-            return  syncActions.execute();
+            SynchronizationGroup syncGroup = PersistenceService.getInstance().getApplicationEntityManager().getSyncGroup(syncGroupId);
+            return syncGroup.getProvider().finalize(actions);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

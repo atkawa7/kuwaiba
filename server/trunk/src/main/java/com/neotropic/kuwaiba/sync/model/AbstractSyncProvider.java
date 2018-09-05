@@ -113,5 +113,5 @@ public abstract class AbstractSyncProvider implements Serializable {
      * @param actions
      * @return 
      */
-    public abstract List<String> finalize (List<SyncAction> actions);
+    public abstract List<SyncResult> finalize (List<SyncAction> actions);
 }
