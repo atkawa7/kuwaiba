@@ -38,6 +38,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.forms.components.impl.ComponentUpload;
+import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
 
@@ -150,7 +151,8 @@ public class AttachmentArtifactRender extends ArtifactRenderer {
             FileOutputStream fileOutputStream = null;
             try {
                 //TODO:
-                file = new File("/data/attachments" + "/" + filename);
+                String processesPath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processesPath"));
+                file = new File(processesPath + "/" + filename);
                 fileOutputStream = new FileOutputStream(file);
 
             } catch (FileNotFoundException ex) {
