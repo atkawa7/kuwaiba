@@ -28,6 +28,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.application.process.Artifact;
 import org.kuwaiba.apis.persistence.application.process.ArtifactDefinition;
@@ -111,7 +112,8 @@ public final class ProcessCache {
     }
     
     public ProcessCache updateArtifacts() throws InventoryException {     
-        File processDefDir = new File("/data/processDefinition");
+        String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
+        File processDefDir = new File(processEnginePath + "/process/definitions"); //NOI18N
         File [] files = processDefDir.listFiles();
         if (files != null) {
             for (int i = 0; i < files.length; i += 1) {

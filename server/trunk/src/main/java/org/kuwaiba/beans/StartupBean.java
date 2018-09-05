@@ -114,21 +114,7 @@ public class StartupBean {
                 persistenceServiceProperties.put("enableSecurityManager", false);
                 System.out.println("[KUWAIBA] Error reading the enableSecurityManager configuration variable. Using the default value instead: " + ne.getMessage());
             }
-            
-            try {
-                persistenceServiceProperties.put("formFilesPath", (String)context.lookup("java:comp/env/formFilesPath")); //NOI18N
-            }catch (NamingException ne) {
-                persistenceServiceProperties.put("formFilesPath", "/data/files/forms"); //NOI18N
-                System.out.println("[KUWAIBA] Error reading the formFilesPath configuration variable. Using the default value instead: " + ne.getMessage());
-            }
-            
-            try {
-                persistenceServiceProperties.put("formImagesPath", (String)context.lookup("java:comp/env/formImagesPath")); //NOI18N
-            }catch (NamingException ne) {
-                persistenceServiceProperties.put("formImagesPath", "/data/img/forms"); //NOI18N
-                System.out.println("[KUWAIBA] Error reading the formImagesPath configuration variable. Using the default value instead: " + ne.getMessage());
-            }
-            
+                        
             try {
                 persistenceServiceProperties.put("debugMode", (boolean)context.lookup("java:comp/env/debugMode")); //NOI18N
             }catch (NamingException ne) {
@@ -136,6 +122,20 @@ public class StartupBean {
                 System.out.println("[KUWAIBA] Error reading the debugMode configuration variable. Using the default value instead: " + ne.getMessage());
             }
             
+            try {
+                persistenceServiceProperties.put("processEnginePath", (String)context.lookup("java:comp/env/processEnginePath")); //NOI18N
+            }catch (NamingException ne) {
+                persistenceServiceProperties.put("processEnginePath", "/data/processEngine"); //NOI18N
+                System.out.println("[KUWAIBA] Error reading the processEnginePath configuration variable. Using the default value instead: " + ne.getMessage());
+            }
+            
+            try {
+                persistenceServiceProperties.put("processesPath", (String)context.lookup("java:comp/env/processesPath")); //NOI18N
+            }catch (NamingException ne) {
+                persistenceServiceProperties.put("processesPath", "/data/files/processes"); //NOI18N
+                System.out.println("[KUWAIBA] Error reading the processesPath configuration variable. Using the default value instead: " + ne.getMessage());
+            }
+                        
             persistenceService.setConfiguration(persistenceServiceProperties);
             persistenceService.start();
         } catch (IllegalStateException | NamingException ex) {

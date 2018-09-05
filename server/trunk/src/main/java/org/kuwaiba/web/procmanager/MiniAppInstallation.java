@@ -38,6 +38,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.web.gui.miniapps.AbstractMiniApplication;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -196,7 +197,8 @@ public class MiniAppInstallation extends AbstractComponentMiniApplication {
                 SceneExporter sceneExporter = SceneExporter.getInstance();
                 
                 String oldPath = SceneExporter.PATH;
-                String newPath = "/data/attachments/"; //NOI18N
+                String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
+                String newPath = processEnginePath + "/temp/"; //NOI18N
 
                 SceneExporter.PATH = newPath;
 

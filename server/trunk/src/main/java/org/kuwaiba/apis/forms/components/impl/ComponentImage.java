@@ -20,6 +20,7 @@ import org.kuwaiba.apis.forms.elements.ElementImage;
 import com.vaadin.server.FileResource;
 import com.vaadin.ui.Image;
 import java.io.File;
+import org.kuwaiba.apis.persistence.PersistenceService;
 
 /**
  *
@@ -40,9 +41,9 @@ public class ComponentImage extends GraphicalComponent {
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementImage) {
             ElementImage image = (ElementImage) element;
-            //TODO:
-//            FileResource resource = new FileResource(new File(Variable.FORM_RESOURCE_IMAGES + "/" + image.getValue()));
-            FileResource resource = new FileResource(new File("/data/form_resources" + "/images" + "/" + image.getValue()));
+                                                            
+            String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
+            FileResource resource = new FileResource(new File(processEnginePath + "/form/img/" + image.getValue()));
                         
             getComponent().setSource(resource);
             

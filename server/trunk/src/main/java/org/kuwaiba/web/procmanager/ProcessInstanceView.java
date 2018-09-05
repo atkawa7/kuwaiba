@@ -435,7 +435,8 @@ public class ProcessInstanceView extends DynamicComponent {
                                     }
                                 }
                             }
-                            final String TMP_FILE_PATH = "/data/attachments/processengine.tmp";
+                            String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
+                            final String TMP_FILE_PATH = processEnginePath + "/temp/processengine.tmp"; //NOI18N
                             try {
                                 
                                 PrintWriter templateInstance;

@@ -25,6 +25,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.process.ProcessDefinitionLoader;
 
 /**
@@ -186,31 +187,38 @@ public class FormDefinitionLoader {
         return event;
     }    
     
-    private void loadExternalScript(String src) {
-        if (src != null) {
+    private void loadExternalScript(String srcs) {
+        if (srcs != null) {
             
-            File file = new File(src);
-            byte [] externalScript = ProcessDefinitionLoader.getFileAsByteArray(file);
+            String[] arraySrcs = srcs.split(" ");
             
-            if (externalScript != null) {
-                
-                try {
-                    XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-                    ByteArrayInputStream bais = new ByteArrayInputStream(externalScript);
-                    XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+            for (String src : arraySrcs) {
+            
+                String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
 
-                    while (reader.hasNext()) {
-                        
-                        int event = reader.next();
-                        
-                        if (event == XMLStreamConstants.START_ELEMENT) {
+                File file = new File(processEnginePath + "/form/scripts/" + src);
+                byte [] externalScript = ProcessDefinitionLoader.getFileAsByteArray(file);
 
-                            if (reader.getName().equals(TAG_SCRIPT))
-                                elementScript.initFromXML(reader);
+                if (externalScript != null) {
+
+                    try {
+                        XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+                        ByteArrayInputStream bais = new ByteArrayInputStream(externalScript);
+                        XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+
+                        while (reader.hasNext()) {
+
+                            int event = reader.next();
+
+                            if (event == XMLStreamConstants.START_ELEMENT) {
+
+                                if (reader.getName().equals(TAG_SCRIPT))
+                                    elementScript.initFromXML(reader);
+                            }
                         }
-                    }
 
-                } catch (XMLStreamException ex) {
+                    } catch (XMLStreamException ex) {
+                    }
                 }
             }
         }

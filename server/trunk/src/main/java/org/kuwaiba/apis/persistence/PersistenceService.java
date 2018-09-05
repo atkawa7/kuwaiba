@@ -91,9 +91,9 @@ public class PersistenceService {
             applicationConfiguration.put("corporateLogo", configuration.get("corporateLogo"));
             applicationConfiguration.put("enforceBusinessRules", configuration.get("enforceBusinessRules"));
             applicationConfiguration.put("maxRoutes", configuration.get("maxRoutes"));
-            applicationConfiguration.put("formFilesPath", configuration.get("formFilesPath"));
-            applicationConfiguration.put("formImagesPath", configuration.get("formImagesPath"));
             applicationConfiguration.put("debugMode", configuration.get("debugMode"));
+            applicationConfiguration.put("processEnginePath", configuration.get("processEnginePath"));
+            applicationConfiguration.put("processesPath", configuration.get("processesPath"));
             aem.setConfiguration(applicationConfiguration);
             
             Properties businessConfiguration = new Properties();

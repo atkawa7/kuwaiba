@@ -24,6 +24,7 @@ import java.util.Scanner;
 import org.kuwaiba.apis.forms.FormRenderer;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.AbstractElementField;
+import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
@@ -156,12 +157,13 @@ public class PrintWindow extends Window {
                     }
                 }
             }
+            String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
                         
-            PrintWriter templateInstance = new PrintWriter("/data/attachments/processengine.tmp");
+            PrintWriter templateInstance = new PrintWriter(processEnginePath + "/temp/processengine.tmp");
             templateInstance.println(stringTemplate);
             templateInstance.close();
                                                                         
-            printLayout = new PrintLayout(new FileInputStream(new File("/data/attachments/processengine.tmp")));
+            printLayout = new PrintLayout(new FileInputStream(new File(processEnginePath + "/temp/processengine.tmp")));
         } catch (FileNotFoundException ex) {
             //TODO:
         } catch (IOException ex) {

@@ -26,6 +26,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.kuwaiba.apis.persistence.PersistenceService;
 
 /**
  *
@@ -260,7 +261,7 @@ public class ProcessDefinitionLoader {
                                         if (type == ArtifactDefinition.TYPE_ATTACHMENT || type == ArtifactDefinition.TYPE_CONDITIONAL) {
                                             definition = artifactParameters.get("definition").getBytes(); //NOI18N
                                         } else if (type == ArtifactDefinition.TYPE_FORM) {
-                                            definition = getFormArtifactDefinition(artifactParameters.get("definition")); //NOI18N
+                                            definition = getFormArtifactDefinition(processDefinitionId, artifactParameters.get("definition")); //NOI18N
                                         }
                                         ArtifactDefinition artifactDefinition = new ArtifactDefinition(
                                             artifactDefinitionId,
@@ -367,8 +368,10 @@ public class ProcessDefinitionLoader {
         return processDefinition;
     }
     
-    private byte[] getFormArtifactDefinition(String artifactDefinitionId) {
-        File file = new File(artifactDefinitionId);
+    private byte[] getFormArtifactDefinition(long processDefinitionId, String artifactDefinitionId) {
+        String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
+        
+        File file = new File(processEnginePath + "/form/definitions/" + processDefinitionId + "/" + artifactDefinitionId);
         return getFileAsByteArray(file);
     }
     

@@ -35,6 +35,7 @@ import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.forms.components.ComponentEventListener;
+import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.util.i18n.I18N;
 
 /**
@@ -97,7 +98,9 @@ public class ComponentUpload extends GraphicalComponent {
         public OutputStream receiveUpload(String filename, String mimeType) {
             FileOutputStream fileOutputStream = null;
             try {
-                file = new File("/data/attachments" + "/" + filename);
+                String processesPath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processesPath"));
+                
+                file = new File(processesPath + "/" + filename);
                 fileOutputStream = new FileOutputStream(file);
 
             } catch (FileNotFoundException ex) {

@@ -90,22 +90,22 @@
            <env-entry-value>/data/img/backgrounds</env-entry-value>
         </env-entry>
         <env-entry>
-            <description>Path of the folder where images used in forms are stored</description>
-            <env-entry-name>formImagesPath</env-entry-name>
-            <env-entry-type>java.lang.String</env-entry-type>
-            <env-entry-value>/data/img/forms</env-entry-value>
-        </env-entry>
-        <env-entry>
            <description>Path of the folder where files attached to inventory objects are stored</description>
            <env-entry-name>attachmentsPath</env-entry-name>
            <env-entry-type>java.lang.String</env-entry-type>
            <env-entry-value>/data/files/attachments</env-entry-value>
         </env-entry>
         <env-entry>
-            <description>Path of the folder where files included in forms are stored</description>
-            <env-entry-name>formFilesPath</env-entry-name>
+            <description>Process Engine Files Path</description>
+            <env-entry-name>processEnginePath</env-entry-name>
             <env-entry-type>java.lang.String</env-entry-type>
-            <env-entry-value>/data/files/forms</env-entry-value>
+            <env-entry-value>/data/processEngine</env-entry-value>            
+        </env-entry>
+        <env-entry>
+            <description>Path of the folder where files attached to process instances are stored</description>
+            <env-entry-name>processesPath</env-entry-name>
+            <env-entry-type>java.lang.String</env-entry-type>
+            <env-entry-value>/data/files/processes</env-entry-value>            
         </env-entry>
         <env-entry>
            <description>Max number size in MB of the attachments</description>

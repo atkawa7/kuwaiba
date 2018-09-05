@@ -23,18 +23,17 @@ import com.vaadin.ui.Alignment;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.dnd.DropTargetExtension;
 import com.vaadin.ui.dnd.event.DropEvent;
 import com.vaadin.ui.dnd.event.DropListener;
-import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -79,7 +78,9 @@ public class ComponentRackView extends VerticalLayout {
             SceneExporter sceneExporter = SceneExporter.getInstance();
 
             String oldPath = SceneExporter.PATH;
-            String newPath = "/data/attachments/"; //NOI18N
+            
+            String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
+            String newPath = processEnginePath + "/temp/"; //NOI18N
 
             SceneExporter.PATH = newPath;
 
