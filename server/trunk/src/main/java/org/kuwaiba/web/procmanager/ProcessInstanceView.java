@@ -395,8 +395,9 @@ public class ProcessInstanceView extends DynamicComponent {
                     btnPrint.addClickListener(new ClickListener() {
                         @Override
                         public void buttonClick(Button.ClickEvent event) {
+                            String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
                             
-                            File file = new File(artifactDefinition.getPrintableTemplate());
+                            File file = new File(processEnginePath + "/form/templates/" + artifactDefinition.getPrintableTemplate());
 
                             byte[] byteTemplate = PrintWindow.getFileAsByteArray(file);
                             String stringTemplate = new String(byteTemplate);
@@ -435,7 +436,7 @@ public class ProcessInstanceView extends DynamicComponent {
                                     }
                                 }
                             }
-                            String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
+                            
                             final String TMP_FILE_PATH = processEnginePath + "/temp/processengine.tmp"; //NOI18N
                             try {
                                 
