@@ -15,6 +15,7 @@
 
 package com.neotropic.inventory.modules.sync.nodes.actions.windows;
 
+import com.neotropic.inventory.modules.sync.LocalSyncAction;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -48,6 +49,7 @@ import org.inventory.communications.core.LocalObjectListItem;
 import com.neotropic.inventory.modules.sync.LocalSyncFinding;
 import com.neotropic.inventory.modules.sync.LocalSyncGroup;
 import com.neotropic.inventory.modules.sync.LocalSyncResult;
+
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.i18n.I18N;
 import org.netbeans.api.progress.ProgressHandle;
@@ -67,7 +69,7 @@ public class SyncActionsFrame extends JFrame {
     /**
      * Sync group associated to this sync process
      */
-    private LocalSyncGroup syncGroup;
+    private final LocalSyncGroup syncGroup;
     /**
      * Label that displays the finding's textual description
      */
@@ -77,7 +79,7 @@ public class SyncActionsFrame extends JFrame {
     private JButton btnClose;
     private JButton btnSkip;
     private List<LocalSyncFinding> allFindings;
-    private List<LocalSyncFinding> findingsToBeProcessed;
+    private List<LocalSyncAction> findingsToBeProcessed;
     private static final Border BORDER_NORMAL = new EmptyBorder(2, 2, 2, 2);
     private static final Border BORDER_ALARM = new LineBorder(Color.RED, 1);
     
@@ -87,7 +89,7 @@ public class SyncActionsFrame extends JFrame {
      * @param findings The list of findings to be displayed
      * @param listener The callback object that will listen for 
      */
-    public SyncActionsFrame(LocalSyncGroup syncGroup, final List<LocalSyncFinding> findings) throws IllegalArgumentException {
+    public SyncActionsFrame(final LocalSyncGroup syncGroup, final List<LocalSyncFinding> findings) throws IllegalArgumentException {
         this.allFindings = findings;
         this.syncGroup = syncGroup;
         this.findingsToBeProcessed = new ArrayList<>();
@@ -137,26 +139,25 @@ public class SyncActionsFrame extends JFrame {
                     JOptionPane.showMessageDialog(SyncActionsFrame.this, "You have reviewed all the synchronization findings. The selected actions will be performed now", "Information", JOptionPane.INFORMATION_MESSAGE);
                     dispose();
                     if(allFindings.get(currentFinding).getType() == LocalSyncFinding.EVENT_INFO)
-                        findingsToBeProcessed.add(allFindings.get(currentFinding));
-                
-                    
+                        findingsToBeProcessed.add(new LocalSyncAction(allFindings.get(currentFinding), LocalSyncAction.ACTION_SKIP));
+                        
                     final ProgressHandle progr = ProgressHandleFactory.createHandle(String.format("Executing sync actions for %s", SyncActionsFrame.this.syncGroup.getName()));
                     Runnable executeSyncActions = new Runnable() {
-                        
                         @Override
                         public void run() {
-                            List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(findingsToBeProcessed);
+                            List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(syncGroup.getId(), findingsToBeProcessed);
                             SyncResultsFrame syncResultFrame = new SyncResultsFrame(SyncActionsFrame.this.syncGroup, executSyncActions);
                             syncResultFrame.setVisible(true);
                             progr.finish();
                         }
-
                     };
+
                     RequestProcessor.getDefault().post(executeSyncActions);
                     progr.start();
-                } else {
+                }else {
                     if(allFindings.get(currentFinding).getType() == LocalSyncFinding.EVENT_INFO)
-                        findingsToBeProcessed.add(allFindings.get(currentFinding));
+                        findingsToBeProcessed.add(new LocalSyncAction(allFindings.get(currentFinding), LocalSyncAction.ACTION_SKIP));
+                    
                     currentFinding++;
                     renderCurrentFinding();
                 }
@@ -167,7 +168,7 @@ public class SyncActionsFrame extends JFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                findingsToBeProcessed.add(allFindings.get(currentFinding));
+                findingsToBeProcessed.add(new LocalSyncAction(allFindings.get(currentFinding), LocalSyncAction.ACTION_EXECUTE));
                 
                 if (currentFinding == allFindings.size() - 1) {
                     if (findingsToBeProcessed.isEmpty())
@@ -176,7 +177,7 @@ public class SyncActionsFrame extends JFrame {
                     else {
                         JOptionPane.showMessageDialog(SyncActionsFrame.this, 
                                 "You have reviewed all the synchronization findings. The selected actions will be performed now", "Information", JOptionPane.INFORMATION_MESSAGE);
-                        List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(findingsToBeProcessed);
+                        List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(syncGroup.getId(), findingsToBeProcessed);
                         SyncResultsFrame syncResultFrame = new SyncResultsFrame(SyncActionsFrame.this.syncGroup, executSyncActions);
                         syncResultFrame.setVisible(true);
                     }
