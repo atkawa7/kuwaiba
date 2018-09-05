@@ -21,6 +21,7 @@ import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.entities.NetworkInterface;
 import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.parsers.BridgeDomainsASR1002Parser;
 import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.parsers.BridgeDomainsASR9001Parser;
 import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.parsers.BridgeDomainsASR920Parser;
+import com.neotropic.kuwaiba.sync.connectors.ssh.bdi.parsers.BridgeDomainsME3600Parser;
 import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
 import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
 import com.neotropic.kuwaiba.sync.model.PollResult;
@@ -188,6 +189,19 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                                     parser.parse(IOUtils.readFully(cmd.getInputStream()).toString()));
                         break;
                     }
+                    case "ME3600": {
+                        Session.Command cmd = session.exec("sh bridge-domain"); //NOI18N
+                        BridgeDomainsME3600Parser parser = new BridgeDomainsME3600Parser();               
+
+                        cmd.join(5, TimeUnit.SECONDS);
+                        if (cmd.getExitStatus() != 0) 
+                            res.getExceptions().put(dataSourceConfiguration, Arrays.asList(new InvalidArgumentException(cmd.getExitErrorMessage())));
+                        else 
+                            res.getResult().put(currentObject, 
+                                    parser.parse(IOUtils.readFully(cmd.getInputStream()).toString()));
+                        break;
+                    }
+                    
                     default:
                         res.getExceptions().put(dataSourceConfiguration, Arrays.asList(new InvalidArgumentException(String.format("Model %s is not supported. Check your naming conventions, as an hyphen is expected as separator", modelString))));
                 }

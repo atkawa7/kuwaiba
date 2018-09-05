@@ -23,10 +23,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A parser for the output of the command "sh bridge-domain" in the Cisco ASR920 router series
+ * A parser for the output of the command "sh bridge-domain" in the Cisco ME3600 router series
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class BridgeDomainsASR920Parser {
+public class BridgeDomainsME3600Parser {
     /**
      * Parses the raw input
      * @param input The raw input that corresponds to the output of the command
@@ -57,6 +57,10 @@ public class BridgeDomainsASR920Parser {
                         state = ParsingState.END;
                     }
                     else {
+                        
+                        if (line.contains("ports belonging"))
+                            continue;
+                        
                         if (lineTokens[0].startsWith("BDI"))
                             currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(lineTokens[0], NetworkInterface.TYPE_BDI));
                         
