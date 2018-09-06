@@ -107,6 +107,19 @@ public class ElementGrid extends AbstractElement {
         this.shared = shared;        
     }
     
+    public List<Object> getRow() {
+        return getRow(Integer.getInteger(String.valueOf(selectedRow)));
+    }    
+    
+    public List<Object> getRow(int idRow) {
+        if (rows != null) {
+            
+            if (idRow >= 0 && idRow < rows.size())
+                return rows.get(idRow);
+        }
+        return null;
+    }
+    
     public Object getData(int idRow, int idColumn) {
         if (rows != null) {
             

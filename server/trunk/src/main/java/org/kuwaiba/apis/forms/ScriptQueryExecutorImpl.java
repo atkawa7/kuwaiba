@@ -17,7 +17,11 @@ package org.kuwaiba.apis.forms;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
+import org.kuwaiba.apis.forms.elements.Constants;
+import org.kuwaiba.apis.forms.elements.FileInformation;
 import org.kuwaiba.apis.forms.elements.ScriptQueryExecutor;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -30,6 +34,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
+import org.openide.util.Exceptions;
 
 /**
  * An Implementation of Script Query Executor to the Web Client of Kuwaiba
@@ -68,11 +73,14 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                 return String.valueOf(processInstance.getId());
             
             if (parameterValues.size() == 2) {
-                            
+                                                
+                long activityId = Long.valueOf(paramValue0);
+                String sharedId = parameterValues.get(1);
+                                
+                RemoteArtifact remoteArtifact = null;
+                
                 try {
-                    long activityId = Long.valueOf(paramValue0);
-                    String sharedId = parameterValues.get(1);
-
+                    
                     List<RemoteActivityDefinition> path = wsBean.getProcessInstanceActivitiesPath(
                         processInstance.getId(), 
                         Page.getCurrent().getWebBrowser().getAddress(), 
@@ -82,30 +90,63 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
 
                         if (activity.getId() == activityId) {
 
-                            RemoteArtifact remoteArtifact = wsBean.getArtifactForActivity(
+                            remoteArtifact = wsBean.getArtifactForActivity(
                                 processInstance.getId(), 
                                 activity.getId(), 
                                 Page.getCurrent().getWebBrowser().getAddress(), 
                                 session.getSessionId());
-
-                            List<StringPair> sharedInformation = remoteArtifact.getSharedInformation();
-
-                            if (sharedInformation != null) {
-
-                                for (StringPair pair : sharedInformation) {
-
-                                    if (sharedId.equals(pair.getKey()))
-                                        return pair.getValue();
-                                }
-                            }
                             break;
                         }
                     }
-                    return null;
-
                 } catch (ServerSideException ex) {
                     Notifications.showError(ex.getMessage());
                     return null;
+                }
+                if (remoteArtifact != null) {
+                    
+                    List<StringPair> sharedInformation = remoteArtifact.getSharedInformation();
+
+                    if (sharedInformation != null) {
+                        Properties sharedInfo = new Properties();
+
+                        for (StringPair pair : sharedInformation)
+                            sharedInfo.setProperty(pair.getKey(), pair.getValue());
+
+                        if (sharedInfo.containsKey(sharedId)) {
+                            return sharedInfo.getProperty(sharedId);
+
+                        } else if (sharedInfo.containsKey(sharedId + Constants.Attribute.DATA_TYPE)) {
+                            if (Constants.Attribute.DataType.REMOTE_OBJECT_LIGTH.equals(sharedInfo.getProperty(sharedId + Constants.Attribute.DATA_TYPE))) {
+                                                                                                
+                                if (sharedInfo.containsKey(sharedId + Constants.Attribute.CLASS_NAME) && 
+                                    sharedInfo.containsKey(sharedId + Constants.Attribute.OBJECT_ID) && 
+                                    sharedInfo.containsKey(sharedId + Constants.Attribute.OBJECT_NAME)) {
+                                    
+                                    String objClassName = sharedInfo.getProperty(sharedId + Constants.Attribute.CLASS_NAME);
+                                    long objId = Long.valueOf(sharedInfo.getProperty(sharedId + Constants.Attribute.OBJECT_ID));
+                                    
+                                    try {                                    
+                                        return wsBean.getObjectLight(objClassName, objId, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                                        
+                                    } catch (ServerSideException ex) {
+                                        
+                                        Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);                                        
+                                        return sharedInfo.get(sharedId + Constants.Attribute.OBJECT_NAME);
+                                    }
+                                }
+                            }
+                            if (Constants.Attribute.DataType.ATTACHMENT.equals(sharedInfo.getProperty(sharedId + Constants.Attribute.DATA_TYPE))) {
+                                if (sharedInfo.containsKey(sharedId + Constants.Attribute.NAME) && 
+                                    sharedInfo.containsKey(sharedId + Constants.Attribute.PATH)) {
+                                    
+                                    return new FileInformation(
+                                        sharedInfo.getProperty(sharedId + Constants.Attribute.NAME), 
+                                        sharedInfo.getProperty(sharedId + Constants.Attribute.PATH)
+                                    );
+                                }
+                            }
+                        }
+                    }
                 }
             }
             return null;
