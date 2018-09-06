@@ -145,8 +145,8 @@ public class SyncActionsFrame extends JFrame {
                     Runnable executeSyncActions = new Runnable() {
                         @Override
                         public void run() {
-                            List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(syncGroup.getId(), findingsToBeProcessed);
-                            SyncResultsFrame syncResultFrame = new SyncResultsFrame(SyncActionsFrame.this.syncGroup, executSyncActions);
+                            List<LocalSyncResult> executedSyncActions = CommunicationsStub.getInstance().executeSyncActions(syncGroup.getId(), findingsToBeProcessed);
+                            SyncResultsFrame syncResultFrame = new SyncResultsFrame(SyncActionsFrame.this.syncGroup, executedSyncActions);
                             syncResultFrame.setVisible(true);
                             progr.finish();
                         }
