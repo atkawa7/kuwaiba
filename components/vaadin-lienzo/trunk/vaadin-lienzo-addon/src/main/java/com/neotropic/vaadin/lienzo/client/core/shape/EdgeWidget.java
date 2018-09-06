@@ -46,7 +46,7 @@ public class EdgeWidget {
     
     private String caption;
     private String strokeColor = "BLACK";
-    private double strokeWidth = 3;
+    private double strokeWidth = 2;
     
     private Layer edgeLayer;
     private PolyLine polyLine;
