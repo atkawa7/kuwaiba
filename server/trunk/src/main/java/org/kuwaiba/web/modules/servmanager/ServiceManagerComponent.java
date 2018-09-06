@@ -133,7 +133,7 @@ public class ServiceManagerComponent extends AbstractTopComponent {
             tblServices.addSelectionListener(selectionEvent -> {
                 if (!selectionEvent.getAllSelectedItems().isEmpty()) {
                     Optional<RemoteObjectLight> selectedService = selectionEvent.getFirstSelectedItem();
-                    ServiceManagerDashboard secondComponent = new ServiceManagerDashboard(this, cmbCustomers.getSelectedItem().get(), selectedService.get(), wsBean);
+                    ServiceManagerDashboard secondComponent = new ServiceManagerDashboard(cmbCustomers.getSelectedItem().get(), selectedService.get(), wsBean);
                     pnlMain.setSecondComponent(secondComponent);
                 }
             });

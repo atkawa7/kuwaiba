@@ -23,7 +23,6 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
-import org.kuwaiba.web.modules.servmanager.ServiceManagerComponent;
 
 /**
  * A small embeddable component that can be inserted into an AbstractDashboard. A DashboardWidget has two "faces": 
@@ -55,7 +54,7 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
     /**
      * the component where this dashboard its been displayed
      */
-    protected Component parentComponent;
+    protected AbstractDashboard parentDashboard;
     /**
      * Dashboard widget title
      */
@@ -68,11 +67,11 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
         this.setMargin(true);
     }
     
-    public AbstractDashboardWidget(String title, Component parentComponent) {
+    public AbstractDashboardWidget(String title, AbstractDashboard parentDashboard) {
         this.colSpan = 1;
         this.rowSpan = 1;
         this.title = title;
-        this.parentComponent = parentComponent;
+        this.parentDashboard = parentDashboard;
         this.activeContent = ActiveContent.CONTENT_COVER;
         this.setMargin(true);
     }
@@ -123,25 +122,27 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
             wnwContent.setModal(true);
             wnwContent.setContent(contentComponent);
             getUI().addWindow(wnwContent);
-        }
+        } else 
+            getUI().addWindow(new Window("Error", new Label("The content component has not been set. Please check your createContent method")));
     }
     
     /**
      * Displays the contents of the content widget replacing the whole dashboard space
      */
     public void swap() {
-        if (contentComponent != null) {
-            Component oldContent = ((ServiceManagerComponent)parentComponent).getPnlMain().getSecondComponent();
+        if (contentComponent != null && parentDashboard != null) {
+            Component formerContent = parentDashboard.getContent();
         
             Button btnBack = new Button(VaadinIcons.CHEVRON_LEFT, click -> {
-                    ((ServiceManagerComponent)parentComponent).getPnlMain().setSecondComponent(oldContent);
+                    parentDashboard.setContent(formerContent);
                 });
             btnBack.setCaption(title);
             btnBack.addStyleNames(ValoTheme.BUTTON_BORDERLESS , "v-button-borderless-back");
 
             VerticalLayout content =  new VerticalLayout(btnBack, contentComponent);
-            ((ServiceManagerComponent)parentComponent).getPnlMain().setSecondComponent(content);
-        }
+            parentDashboard.setContent(content);
+        }else 
+            getUI().addWindow(new Window("Error", new Label("The parent or content components has not been set. Please check your scene constructor or the createContent method")));
     }
     
     /**

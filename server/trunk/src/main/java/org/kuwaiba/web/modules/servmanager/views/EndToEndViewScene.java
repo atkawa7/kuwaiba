@@ -27,10 +27,8 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Window;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -167,11 +165,11 @@ public class EndToEndViewScene extends AbstractScene {
     @Override
     public void render(byte[] structure) throws IllegalArgumentException { 
        //<editor-fold defaultstate="collapsed" desc="uncomment this for debugging purposes, write the XML view into a file">
-        try {
-            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end_to_end_view_.xml");
-            fos.write(structure);
-            fos.close();
-        } catch(Exception e) {}
+//        try {
+//            FileOutputStream fos = new FileOutputStream(System.getProperty("user.home") + "/end_to_end_view_.xml");
+//            fos.write(structure);
+//            fos.close();
+//        } catch(Exception e) {}
         //</editor-fold>
         try {
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -231,8 +229,6 @@ public class EndToEndViewScene extends AbstractScene {
             if (serviceResources.isEmpty())
                 addComponent(new Label(String.format("%s does not have any resources associated to it", service)));
             else {
-                this.nodes = new HashMap<>();
-                this.edges = new HashMap<>();
                 for (RemoteObjectLight serviceResource : serviceResources) {
                     if (wsBean.isSubclassOf(serviceResource.getClassName(), "GenericLogicalConnection", 
                             Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId())) {
@@ -379,10 +375,8 @@ public class EndToEndViewScene extends AbstractScene {
         SrvNodeWidget newNode = new SrvNodeWidget(node.getId());
         lienzoComponent.addNodeWidget(newNode);
             
-        newNode.setUrlIcon("/icons/" + node.getClassName().toLowerCase() + ".png");
+        newNode.setUrlIcon("/icons/" + node.getClassName() + ".png");
 
-        newNode.setHeight(32);
-        newNode.setWidth(32);
         newNode.setCaption(node.toString());
         newNode.setX(nodes.size() * 200);
         newNode.setY((nodes.size() % 2) * 200 );
@@ -404,57 +398,6 @@ public class EndToEndViewScene extends AbstractScene {
         } catch (ServerSideException ex) {
             return new SrvEdgeWidget(323927373);
         }
-    }
-    
-    public SrvNodeWidget findNodeWidget(long nodeId) {
-        if(nodes != null){
-            for (RemoteObjectLight aNode : nodes.keySet()) {
-                if (aNode.getId() == nodeId)
-                    return nodes.get(aNode);
-            }
-        }
-        return null;
-    }
-    
-    public SrvNodeWidget findNodeWidget(RemoteObjectLight node) {
-        return nodes.get(node);
-    }
-    
-    public SrvEdgeWidget findEdgeWidget(long edgeId) {
-        if(edges != null){
-            for (RemoteObjectLight anEdge : edges.keySet()) {
-                if (anEdge.getId() == edgeId)
-                    return edges.get(anEdge);
-            }
-        }
-        return null;
-    }
-    
-    public SrvEdgeWidget findEdgeWidget(RemoteObjectLight edge) {
-        return edges.get(edge);
-    }
-    
-    public static String toHexString(Color c) {
-        StringBuilder sb = new StringBuilder("#");
-
-        if (c.getRed() < 16) sb.append('0');
-        sb.append(Integer.toHexString(c.getRed()));
-
-        if (c.getGreen() < 16) sb.append('0');
-        sb.append(Integer.toHexString(c.getGreen()));
-
-        if (c.getBlue() < 16) sb.append('0');
-        sb.append(Integer.toHexString(c.getBlue()));
-
-        return sb.toString();
-    }
-    
-    public RemoteObjectLight findEdge(long id){
-        for (RemoteObjectLight edge : edges.keySet()) {
-            if(edge.getId() == id)
-                return edge;
-        }
-        return null;
     }
     
     private void closeWindows(){

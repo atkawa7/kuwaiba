@@ -34,6 +34,7 @@ public class NavigationTreeDashboard extends AbstractDashboard {
         ((ShelfDashboardLayout)getDashboardLayout()).setMainDashboardWidget(new NavigationTreeExplorerDashboardWidget(selectedObject, wsBean));
         ((ShelfDashboardLayout)getDashboardLayout()).addToPile(new RelationshipsDashboardWidget(selectedObject, wsBean));
         ((ShelfDashboardLayout)getDashboardLayout()).addToPile(new SpecialChildrenDashboardWidget(selectedObject, wsBean));
+        ((ShelfDashboardLayout)getDashboardLayout()).addToPile(new ObjectViewDashboardWidget(this, selectedObject, wsBean));
         ((ShelfDashboardLayout)getDashboardLayout()).addToPile(new ReportsDashboardWidget(selectedObject, wsBean));
         ((ShelfDashboardLayout)getDashboardLayout()).addToPile(new AttachedFilesDashboardWidget(selectedObject, wsBean));
         

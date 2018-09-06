@@ -447,6 +447,10 @@ public class Constants {
      */
     public static final String CLASS_GENERICPHYSICALCONTAINER = "GenericPhysicalContainer"; //NOI18N
     /**
+     * Class GenericPhysicalConnection
+     */
+    public static final String CLASS_GENERICPHYSICALCONNECTION = "GenericPhysicalConnection"; //NOI18N
+    /**
      * Class Generic Physical Link
      */
     public static final String CLASS_GENERICPHYSICALLINK = "GenericPhysicalLink"; //NOI18N

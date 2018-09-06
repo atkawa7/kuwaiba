@@ -19,9 +19,11 @@ package org.kuwaiba.web.modules.navtree.dashboard;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
+import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.web.modules.navtree.views.ObjectView;
 
 /**
  * Implements an object view. That is, a view that show the direct children of an object that the connections between them
@@ -36,8 +38,8 @@ public class ObjectViewDashboardWidget extends AbstractDashboardWidget {
      * Reference to the backend bean
      */
     private WebserviceBean wsBean;
-    public ObjectViewDashboardWidget(RemoteObjectLight selectedObject, WebserviceBean wsBean) {
-        super(String.format("Object View of %s", selectedObject));
+    public ObjectViewDashboardWidget(AbstractDashboard parentDashboard, RemoteObjectLight selectedObject, WebserviceBean wsBean) {
+        super(String.format("Object View of %s", selectedObject), parentDashboard);
         this.wsBean = wsBean;
         this.selectedObject = selectedObject;
         this.createCover();
@@ -51,20 +53,22 @@ public class ObjectViewDashboardWidget extends AbstractDashboardWidget {
         lytSpecialChildrenWidgetCover.addLayoutClickListener((event) -> {
             if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
                 this.createContent();
-                launch();
+                swap();
             }
         });
         
         lytSpecialChildrenWidgetCover.addComponent(lblText);
         lytSpecialChildrenWidgetCover.setSizeFull();
-        lytSpecialChildrenWidgetCover.setStyleName("dashboard_cover_widget-darkred");
+        lytSpecialChildrenWidgetCover.setStyleName("dashboard_cover_widget-darkpink");
         this.coverComponent = lytSpecialChildrenWidgetCover;
         addComponent(coverComponent);
     }
 
     @Override
     public void createContent() {
-        
+        VerticalLayout lytContent = new VerticalLayout();
+        lytContent.addComponent(new ObjectView(selectedObject, wsBean));
+        this.contentComponent = lytContent;
     }
 
 }

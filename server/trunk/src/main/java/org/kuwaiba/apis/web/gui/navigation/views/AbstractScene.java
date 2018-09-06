@@ -20,6 +20,7 @@ import com.neotropic.vaadin.lienzo.LienzoComponent;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvEdgeWidget;
 import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
 import com.vaadin.ui.VerticalLayout;
+import java.awt.Color;
 import java.util.HashMap;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -55,9 +56,57 @@ public abstract class AbstractScene extends VerticalLayout {
         this.wsBean = wsBean;
         this.session = session;
         this.lienzoComponent = new LienzoComponent();
+        this.nodes = new HashMap<>();
+        this.edges = new HashMap<>();
     }
     
+    public SrvNodeWidget findNodeWidget(RemoteObjectLight node) {
+        return nodes.get(node);
+    }
     
+    public SrvEdgeWidget findEdgeWidget(long edgeId) {
+        for (RemoteObjectLight anEdge : edges.keySet()) {
+            if (anEdge.getId() == edgeId)
+                return edges.get(anEdge);
+        }
+        
+        return null;
+    }
+    
+    public SrvEdgeWidget findEdgeWidget(RemoteObjectLight edge) {
+        return edges.get(edge);
+    }
+    
+    public SrvNodeWidget findNodeWidget(long nodeId) {
+        for (RemoteObjectLight aNode : nodes.keySet()) {
+            if (aNode.getId() == nodeId)
+                return nodes.get(aNode);
+        }
+        return null;
+    }
+    
+    public RemoteObjectLight findEdge(long id){
+        for (RemoteObjectLight edge : edges.keySet()) {
+            if(edge.getId() == id)
+                return edge;
+        }
+        return null;
+    }
+    
+    public static String toHexString(Color c) {
+        StringBuilder sb = new StringBuilder("#");
+
+        if (c.getRed() < 16) sb.append('0');
+        sb.append(Integer.toHexString(c.getRed()));
+
+        if (c.getGreen() < 16) sb.append('0');
+        sb.append(Integer.toHexString(c.getGreen()));
+
+        if (c.getBlue() < 16) sb.append('0');
+        sb.append(Integer.toHexString(c.getBlue()));
+
+        return sb.toString();
+    }
     
     /**
      * Renders the view from an XML document (most likely a saved view). 

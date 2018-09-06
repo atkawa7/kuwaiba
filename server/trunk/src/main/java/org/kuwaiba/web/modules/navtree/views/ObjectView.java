@@ -16,15 +16,17 @@
 
 package org.kuwaiba.web.modules.navtree.views;
 
+import com.vaadin.server.Page;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.UI;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.web.modules.servmanager.views.EndToEndViewScene;
 
 /**
  * TThe embeddable component that displays an object view.
@@ -32,25 +34,26 @@ import org.kuwaiba.web.modules.servmanager.views.EndToEndViewScene;
  */
 public class ObjectView extends Panel {
     public ObjectView(RemoteObjectLight businessObject, WebserviceBean wsBean) {
-//        ObjectViewScene scene = new ObjectViewScene(businessObject, wsBean);
-//        
-//        try {
-//            List<RemoteViewObjectLight> objectViews = wsBean.getObjectRelatedViews(service.getId(), service.getClassName(), 10, -1, ipAddress, sessionId);
-//            RemoteViewObject theSavedView = null;
-//            for (RemoteViewObjectLight serviceView : objectViews) {
-//                if (EndToEndViewScene.VIEW_CLASS.equals(serviceView.getViewClassName())) {
-//                    theSavedView = wsBean.getObjectRelatedView(service.getId(), service.getClassName(), serviceView.getId(), ipAddress, sessionId); 
-//                    break;
-//                }
-//            }
-//            scene.render(service); //First we render the default view with all the resources associated to the service
-//            if (theSavedView != null) //if there's a saved view already, change the location of the nodes and connections created using the default render method
-//                scene.render(theSavedView.getStructure());
-//            
-//        } catch (ServerSideException ex) {
-//            Notifications.showError(ex.getMessage());
-//        }
-//        
-//        this.setContent(scene);
+        RemoteSession session = ((RemoteSession) UI.getCurrent().getSession().getAttribute("session"));
+        ObjectViewScene scene = new ObjectViewScene(businessObject, wsBean, session);
+        
+        try {
+            List<RemoteViewObjectLight> objectViews = wsBean.getObjectRelatedViews(businessObject.getId(), 
+                    businessObject.getClassName(), 10, -1, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+            
+            RemoteViewObject theSavedView = null;
+            if (!objectViews.isEmpty())
+                theSavedView = wsBean.getObjectRelatedView(businessObject.getId(), businessObject.getClassName(), objectViews.get(0).getId(), 
+                        Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId()); 
+            
+            scene.render(); //First we render the default view with all the direct children of the selected object
+            if (theSavedView != null) //if there's a saved view already, change the location of the nodes and connections created using the default render method
+                scene.render(theSavedView.getStructure());
+            
+        } catch (ServerSideException ex) {
+            Notifications.showError(ex.getMessage());
+        }
+        
+        this.setContent(scene);
     }
 }

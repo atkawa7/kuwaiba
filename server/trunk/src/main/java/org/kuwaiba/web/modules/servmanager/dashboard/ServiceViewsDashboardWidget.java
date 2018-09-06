@@ -19,12 +19,12 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
@@ -48,12 +48,11 @@ public class ServiceViewsDashboardWidget extends AbstractDashboardWidget {
      */
     private WebserviceBean wsBean;
     
-    public ServiceViewsDashboardWidget(Component parent, RemoteObjectLight service, WebserviceBean wsBean) {
-        super("End to End View", parent);
+    public ServiceViewsDashboardWidget(AbstractDashboard rootComponent, RemoteObjectLight service, WebserviceBean wsBean) {
+        super("End to End View", rootComponent);
         this.service = service;
         this.wsBean = wsBean;
         this.createCover();
-        System.out.println(String.format("[debug] on service: %s", service));
     }
     
     @Override
@@ -77,7 +76,7 @@ public class ServiceViewsDashboardWidget extends AbstractDashboardWidget {
 
     @Override
     public void createContent() {
-        VerticalLayout contetLayout = new VerticalLayout();
+        VerticalLayout lytContent = new VerticalLayout();
         try {
              String status = wsBean.getAttributeValueAsString(service.getClassName(), service.getId(), "Status", 
                     Page.getCurrent().getWebBrowser().getAddress(),
@@ -90,31 +89,30 @@ public class ServiceViewsDashboardWidget extends AbstractDashboardWidget {
             Label lblTitle = new Label(service.getName());
             lblTitle.addStyleNames("header", "title");
         
-            Label info = new Label(String.format("Status: %s - Bandwidth: %s" , status != null ? status : " ", bandwidth != null ? bandwidth : " "));
+            Label info = new Label(String.format("Status: %s - Bandwidth: %s" , status != null ? status : "<Not Set>", bandwidth != null ? bandwidth : "<Not Set>"));
             
-            contetLayout.addComponent(new HorizontalLayout(lblTitle, info));
+            lytContent.addComponent(new HorizontalLayout(lblTitle, info));
         
             Button btnFormTable = new Button("Show Form", VaadinIcons.GRID_H);
-            contetLayout.addComponent(btnFormTable);
+            lytContent.addComponent(btnFormTable);
 
             btnFormTable.addClickListener(click ->{
                 Window formWindow = new Window(" ");
                 try {
-                    System.out.println(String.format("[debug] on forms for service: %s", service));
                     ServManagerFormCreator servManagerFormCreator = new ServManagerFormCreator(service, wsBean, Page.getCurrent().getWebBrowser().getAddress(),
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                     formWindow.setContent(servManagerFormCreator.createForm());
                     formWindow.center();
-                    parentComponent.getUI().addWindow(formWindow);
+                    UI.getCurrent().addWindow(formWindow);
                     
                 } catch (ServerSideException ex) {
                     Exceptions.printStackTrace(ex);
                 }
             });
 
-            contetLayout.addComponent(new EndToEndView(service, wsBean));
+            lytContent.addComponent(new EndToEndView(service, wsBean));
             
-            this.contentComponent = contetLayout;
+            this.contentComponent = lytContent;
         } catch (ServerSideException ex) {
             Exceptions.printStackTrace(ex);
         }

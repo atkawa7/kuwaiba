@@ -17,6 +17,7 @@ package org.kuwaiba.apis.web.gui.dashboards;
 
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 
@@ -27,7 +28,7 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
  * with widgets displaying detailed information (charts, lists, etc)
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class AbstractDashboard extends VerticalLayout {
+public class AbstractDashboard extends Panel {
     /**
      * The layout used by the panel. See some sample layouts in 
      * the package org.kuwaiba.apis.web.gui.dashboards.layouts
@@ -42,7 +43,8 @@ public class AbstractDashboard extends VerticalLayout {
      */
     public AbstractDashboard(String title, AbstractOrderedLayout dashboardLayout) {
         this.dashboardLayout = dashboardLayout;
-        this.addComponent(dashboardLayout);
+        //this.addComponent(dashboardLayout);
+        setContent(dashboardLayout);
         this.setSizeFull();
     }
 
@@ -66,7 +68,7 @@ public class AbstractDashboard extends VerticalLayout {
                 }
             });
         
-        this.addComponents(mnuDashboard, dashboardLayout);
+        this.setContent(new VerticalLayout(mnuDashboard, dashboardLayout));
         this.setSizeFull();
     }
 
