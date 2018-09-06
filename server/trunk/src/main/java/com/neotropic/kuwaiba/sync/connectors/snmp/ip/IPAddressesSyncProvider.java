@@ -63,7 +63,7 @@ public class IPAddressesSyncProvider extends AbstractSyncProvider {
 
     @Override
     public boolean isAutomated() {
-        return false;
+        return true;
     }
 
     @Override

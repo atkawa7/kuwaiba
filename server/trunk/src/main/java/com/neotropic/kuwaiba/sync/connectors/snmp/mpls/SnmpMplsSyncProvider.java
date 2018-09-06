@@ -202,29 +202,29 @@ public class SnmpMplsSyncProvider extends AbstractSyncProvider {
     
     @Override
     public List<SyncResult> automatedSync(List<AbstractDataEntity> originalData) {
-//        HashMap<BusinessObjectLight, List<AbstractDataEntity>> originalData = pollResult.getResult();
-//        List<SyncFinding> findings = new ArrayList<>();
-//        // Adding to findings list the not blocking execution exception found during the mapped poll
-//        for (SyncDataSourceConfiguration agent : pollResult.getExceptions().keySet()) {
-//            for (Exception exception : pollResult.getExceptions().get(agent))
-//                findings.add(new SyncFinding(SyncFinding.EVENT_ERROR, 
-//                        exception.getMessage(), 
-//                        Json.createObjectBuilder().add("type","ex").build().toString()));
-//        }
-//        for (Map.Entry<BusinessObjectLight, List<AbstractDataEntity>> entrySet : originalData.entrySet()) {
-//            List<TableData> mibTables = new ArrayList<>();
-//            entrySet.getValue().forEach((value) -> {
-//                mibTables.add((TableData)value);
-//            });
-//            CiscoCpwVcMplsSynchronizer ciscoSync = new CiscoCpwVcMplsSynchronizer(entrySet.getKey(), mibTables);
-//            findings.addAll(ciscoSync.execute());
-//        }
-        return null;
+       throw new UnsupportedOperationException("This provider does not support automated sync");
     }
 
     @Override
     public List<SyncResult> automatedSync(PollResult pollResult) {
-        throw new UnsupportedOperationException("This provider does not support automated sync");
+        HashMap<BusinessObjectLight, List<AbstractDataEntity>> originalData = pollResult.getResult();
+        List<SyncResult> res = new ArrayList<>();
+        // Adding to findings list the not blocking execution exception found during the mapped poll
+        for (SyncDataSourceConfiguration agent : pollResult.getExceptions().keySet()) {
+            for (Exception exception : pollResult.getExceptions().get(agent))
+                res.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                        exception.getMessage(), 
+                        Json.createObjectBuilder().add("type","ex").build().toString()));
+        }
+        for (Map.Entry<BusinessObjectLight, List<AbstractDataEntity>> entrySet : originalData.entrySet()) {
+            List<TableData> mibTables = new ArrayList<>();
+            entrySet.getValue().forEach((value) -> {
+                mibTables.add((TableData)value);
+            });
+            CpwVcMplsSynchronizer ciscoSync = new CpwVcMplsSynchronizer(entrySet.getKey(), mibTables);
+            res.addAll(ciscoSync.execute());
+        }
+        return res;
     }
 
     @Override

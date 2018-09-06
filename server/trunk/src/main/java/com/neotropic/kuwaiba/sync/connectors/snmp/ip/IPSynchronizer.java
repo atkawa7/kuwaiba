@@ -39,7 +39,6 @@ import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.services.persistence.util.Constants;
-import org.kuwaiba.util.i18n.I18N;
 import org.openide.util.Exceptions;
 
 /**
@@ -141,14 +140,14 @@ public class IPSynchronizer {
                 readCurrentSubnets(ipv4Root);
             } catch (ApplicationObjectNotFoundException ex) {
                 res.add(new SyncResult(SyncResult.TYPE_ERROR, 
-                        String.format(I18N.gm("sync.reading-current-structure.error")), 
+                        "Unexpected error reading current structure", 
                         ex.getLocalizedMessage()));
             }
             associateIPAddress();
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
             Exceptions.printStackTrace(ex);
         }
-        return null;
+        return res;
     }
    
     /**
@@ -178,7 +177,7 @@ public class IPSynchronizer {
                 currentSubnet = bem.getObject(bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
             } catch (ApplicationObjectNotFoundException | ArraySizeMismatchException | BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException ex) {
                 res.add(new SyncResult(SyncResult.TYPE_ERROR, 
-                        String.format(I18N.gm("sync.ip.subnet.create.error"), newSubnet + ".0/24"), 
+                        String.format("%s [Subnet] can't be created", newSubnet + ".0/24"), 
                         ex.getLocalizedMessage()));
             }//we must add the new subnet into the current subnets and ips
             subnets.put(currentSubnet, new ArrayList<>()); 
@@ -195,12 +194,12 @@ public class IPSynchronizer {
                                 currentIp.getAttributes().put(Constants.PROPERTY_MASK, syncMask);
                                 bem.updateObject(currentIp.getClassName(), currentIp.getId(), currentIp.getAttributes());
                                 res.add(new SyncResult(SyncResult.TYPE_SUCCESS, 
-                                    String.format(I18N.gm("sync.ip.mask.updating"), currentIp),
-                                    String.format(I18N.gm("sync.attribute.updated"), oldMask, syncMask)));
+                                    String.format("Update the mask of %s", currentIp),
+                                    String.format("From: %s to: %s", oldMask, syncMask)));
                             }
                             return currentIpLight;
                         } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-                            res.add(new SyncResult(SyncResult.TYPE_ERROR,  String.format(I18N.gm("sync.ip.mask.updating"), currentIpLight), ex.getLocalizedMessage()));
+                            res.add(new SyncResult(SyncResult.TYPE_ERROR,  String.format("Update the mask of %s", currentIpLight), ex.getLocalizedMessage()));
                         }
                     }
                 }
@@ -211,11 +210,10 @@ public class IPSynchronizer {
             try {
                 long createdIpId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, currentSubnet.getClassName(), currentSubnet.getId(), ipAttributes, -1);
                 ip = bem.getObject(createdIpId);
-                res.add(new SyncResult(SyncResult.TYPE_SUCCESS, "", String.format(I18N.gm("%s was add to %s successfully"), ipAddr, currentSubnet)));
+                res.add(new SyncResult(SyncResult.TYPE_SUCCESS, "Add IP to Subnet", String.format("%s was added to %s successfully", ipAddr, currentSubnet)));
             } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-                res.add(new SyncResult(SyncResult.TYPE_ERROR, String.format(I18N.gm("%s wasn't added to %s"), ipAddr, currentSubnet), ex.getLocalizedMessage()));
+                res.add(new SyncResult(SyncResult.TYPE_ERROR, String.format("%s was not added to %s", ipAddr, currentSubnet), ex.getLocalizedMessage()));
             }
-            
         }
         ips.get(currentSubnet).add(ip);
         return ip;
@@ -253,8 +251,8 @@ public class IPSynchronizer {
                                 for (BusinessObjectLight currentRelatedIPAddress : currentRelatedIPAddresses) {
                                     if(currentRelatedIPAddress.getName().equals(currentIpAddress.getName())){ 
                                         alreadyRelated = true;
-                                        res.add(new SyncResult(SyncResult.TYPE_INFORMATION, "",
-                                            String.format(I18N.gm("sync.port.related"), currentRelatedIPAddress, currentPort)));
+                                        res.add(new SyncResult(SyncResult.TYPE_INFORMATION, "Relate interface - IP address",
+                                            String.format("%s and %s are related", currentRelatedIPAddress, currentPort)));
                                         break;
                                     }
                                 }//If not related, we related interface with the ip
@@ -262,19 +260,19 @@ public class IPSynchronizer {
                                     bem.createSpecialRelationship(currentPort.getClassName(),currentPort.getId(),
                                                 currentIpAddress.getClassName(), currentIpAddress.getId(), RELATIONSHIP_IPAMHASADDRESS, true);
                                     
-                                    res.add(new SyncResult(SyncResult.TYPE_SUCCESS, "",
-                                            String.format(I18N.gm("sync.port.associated"), currentIpAddress, currentPort)));
+                                    res.add(new SyncResult(SyncResult.TYPE_SUCCESS, "Relate interface - IP address",
+                                            String.format("%s and %s were related successfully ", currentIpAddress, currentPort)));
                                 }
                             } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException |OperationNotPermittedException ex) {
                                 res.add(new SyncResult(SyncResult.TYPE_ERROR, 
-                                        String.format("tryn to relate %s with %s", currentIpAddress, currentPort),
+                                        String.format("trying to relate %s with %s", currentIpAddress, currentPort),
                                         ex.getLocalizedMessage()));
                             }
                         }
                         else
                             res.add(new SyncResult(SyncResult.TYPE_ERROR, 
-                                    I18N.gm("sync.vlans.searching"),
-                                    String.format(I18N.gm("sync.port.not-found"), portName)));
+                                    "Search in the current structure",
+                                    String.format("%s not found ", portName)));
                     }
                 }
             }

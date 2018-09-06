@@ -364,7 +364,6 @@ public class EndToEndViewScene extends AbstractScene {
             clear();
             Notifications.showError(ex.getMessage());
         }
-        
     }
     
     public void clear() {

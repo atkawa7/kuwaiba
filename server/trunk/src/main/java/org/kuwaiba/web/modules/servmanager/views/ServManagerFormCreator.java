@@ -84,6 +84,7 @@ public class ServManagerFormCreator{
     private static final int INTER = 614;
     private static final int SKYTIC = 615;
     private static final int MOBILE = 617;
+    private static final int BICS = 618;
     /**
      * Form tables
      */
@@ -654,6 +655,8 @@ public class ServManagerFormCreator{
                 path = "/icons/logo_skytic.png"; break;
             case MOBILE: //9 Movile
                 path = "/icons/logo_mobile.png"; break;
+            case BICS: //9 Movile
+                path = "/icons/logo_bics.png"; break;    
             case INTER: //INTERROUTE
                 path = "/icons/logo_interoute.png"; break;
             default:
@@ -1007,7 +1010,9 @@ public class ServManagerFormCreator{
         else if(providerName.toLowerCase().contains("skytic"))  
             return SKYTIC;   
         else if(providerName.toLowerCase().contains("9mobile"))  
-            return MOBILE;   
+            return MOBILE; 
+        else if(providerName.toLowerCase().contains("bics"))  
+            return BICS; 
         else
             return -1;     
     }

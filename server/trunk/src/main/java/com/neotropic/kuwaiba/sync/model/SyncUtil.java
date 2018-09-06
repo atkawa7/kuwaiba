@@ -119,7 +119,7 @@ public class SyncUtil {
      */
     public static String wrapPortName(String currentPortName){
         currentPortName = currentPortName.toLowerCase().replace("_", "/");
-        if(currentPortName.toLowerCase().contains("lo") && currentPortName.length() < 6)
+        if(currentPortName.toLowerCase().startsWith("lo") && currentPortName.length() < 6)
             return currentPortName.toLowerCase().replace("lo", "loopback");
         //Fastethernet
         if(currentPortName.toLowerCase().contains("fastethernet"))
@@ -146,8 +146,12 @@ public class SyncUtil {
             return currentPortName.toLowerCase().replace("gigabitethernet", "gi");
         if(currentPortName.toLowerCase().contains("gi"))
             return currentPortName.toLowerCase().replace("gi", "gi");
-        if(currentPortName.contains("ge"))
+        if(currentPortName.toLowerCase().startsWith("ge "))
+            return currentPortName.toLowerCase().replace("ge ", "gi");
+        if(currentPortName.toLowerCase().startsWith("ge"))
             return currentPortName.toLowerCase().replace("ge", "gi");
+        if(currentPortName.startsWith("G"))
+            return currentPortName.toLowerCase().replace("g", "gi");
         //Serial Port
         if(currentPortName.toLowerCase().contains("se"))
             return currentPortName.toLowerCase().replace("se", "se");

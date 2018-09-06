@@ -325,10 +325,50 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                                             status = child.getJsonObject("result").getString("status");
                                         if(child.getJsonObject("result").get("related-service") != null)
                                             serviceStatus = child.getJsonObject("result").getString("related-service");
-                                        
-                                        results.add(new SyncResult(SyncResult.TYPE_SUCCESS, 
-                                                String.format("Interface: %s, %s", ifName, status) + (!ifalias.isEmpty() ? String.format(" - Service: %s, %s", ifalias, serviceStatus) : "")
-                                                , "Info"));
+                                        //This means that something was done with the interface
+                                        if((!status.isEmpty() && Integer.valueOf(status) != -2) || (!serviceStatus.isEmpty() && Integer.valueOf(serviceStatus) > -1)){
+                                            String service = "";
+                                            String m = "";
+                                            if(!ifalias.isEmpty() && !serviceStatus.isEmpty()){
+                                                if(null != Integer.valueOf(serviceStatus))
+                                                    switch (Integer.valueOf(serviceStatus)) {
+                                                    case 0:
+                                                        m = "successfully related with the interface";
+                                                        break;
+                                                    case 1:
+                                                        m = "is already related with the interface";
+                                                        break;
+                                                    case -1:
+                                                        m = "doesn't exists in kuwaiba";
+                                                        break;
+                                                    default:
+                                                        break;
+                                                }
+                                                
+                                                service = String.format(" - the service %s, %s", ifalias, m);
+                                            } 
+                                            String s =  "";
+                                            if(null != Integer.valueOf(status))
+                                                switch (Integer.valueOf(status)) {
+                                                case -1:
+                                                    s = "not found";
+                                                    break;
+                                                case 1:
+                                                    s = "created";
+                                                    break;
+                                                case 2:
+                                                    s = "attribute highSpeed, updated";
+                                                    break;
+                                                case 3:
+                                                    s = "attribute name, updated";
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                            results.add(new SyncResult(SyncResult.TYPE_SUCCESS, 
+                                                "ifmib Synchronization",
+                                                String.format("The interface: %s, %s", ifName, s) + service));
+                                        }
                                     }                                
                                 }
                             }
@@ -382,7 +422,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                     results.add(new SyncResult(SyncResult.TYPE_ERROR, action.getFinding().getDescription(), I18N.gm("error")));
             }
         }
-        return null;
+        return results;
     }
     
     /**

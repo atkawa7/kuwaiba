@@ -1398,7 +1398,7 @@ public class EntPhysicalSynchronizer {
         
         JsonObject ifMibj = Json.createObjectBuilder().build();
         
-        String status = "", serviceStatus = "";
+        int status = -2, serviceStatus = -1;
         List<JsonObject> jsonResults = new ArrayList<>();
         for(String ifName : portNames){
             HashMap<String, String> attributes = new HashMap<>();
@@ -1406,16 +1406,15 @@ public class EntPhysicalSynchronizer {
             String portSpeed = portSpeeds.get(portNames.indexOf(ifName));
             String createdClassName = "";
             long createdId = 0; 
-            boolean found = false;
             boolean wasHighSpeedUpdated = false;
-            attributes.put(Constants.PROPERTY_NAME, ifName);
+            attributes.put(Constants.PROPERTY_NAME, SyncUtil.wrapPortName(ifName));
             attributes.put("highSpeed", portSpeed);  
             //We must create the Mngmnt Port, virtualPorts, tunnels and Loopbacks
             if(SyncUtil.isSynchronizable(ifName)){
                 BusinessObjectLight currrentInterface;
                 //First we search if the port is the current virtual ports
                 if(ifName.contains("."))
-                    currrentInterface = searchInCurrentStructure(ifName, 2);
+                    currrentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), 2);
                 else if(ifName.toLowerCase().contains("lo")) //NOI18N
                     currrentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), 2);
                 //We must add the s when we look for po ports because posx/x/x ports has no s in the if mib
@@ -1434,39 +1433,42 @@ public class EntPhysicalSynchronizer {
                     if(currrentInterface != null && currrentInterface.getName().equals(SyncUtil.wrapPortName(ifName.split("\\.")[0]))){
                         createdId = bem.createObject(Constants.CLASS_VIRTUALPORT, currrentInterface.getClassName(), currrentInterface.getId(), attributes, -1);
                         createdClassName = "VirtualPort";
-                        found = true;
-                        status = "[VirtualPort] Created";
+                        status = 1;
                     }
                     else
-                        status = String.format(I18N.gm("sync.virtual_port_not_created_physical_port_not_found"), ifAlias);
+                        status = -1;
                     
                 }//We create the Mngmnt port
                 else if(currrentInterface == null && ifName.toLowerCase().equals("gi0")){ 
                     createdId = bem.createObject(Constants.CLASS_ELECTRICALPORT, className, id, attributes, -1);
-                    status = "Management port Created";
+                    status = 1;
                 }//MPLS Tunnel
                 else if(currrentInterface == null && ifName.toLowerCase().contains("tu")){
                     attributes.put("ifAlias", ifAlias);
                     createdId = bem.createSpecialObject(Constants.CLASS_MPLSTUNNEL, className, id, attributes, -1); 
                     currentMplsTunnels.add(new BusinessObject(Constants.CLASS_MPLSTUNNEL, createdId, ifName));
                     createdClassName = Constants.CLASS_MPLSTUNNEL;
-                    found = true;
-                    status = Constants.CLASS_MPLSTUNNEL + " Created";
+                    status = 1;
                 }//LoopBacks
                 else if(currrentInterface == null && ifName.toLowerCase().contains("lo")){
                     createdId = bem.createSpecialObject(Constants.CLASS_VIRTUALPORT, className, id, attributes, -1);
                     currentVirtualPorts.add(new BusinessObject(Constants.CLASS_VIRTUALPORT, createdId, ifName));
                     createdClassName = "VirtualPort";
-                    found = true;
-                    status = "[Virtual Port] Created";
+                    status = 1;
                 }else if (currrentInterface == null && ifName.toLowerCase().contains("se")){
                     bem.createObject(Constants.CLASS_SERIALPORT, className, id, attributes, -1);
                     createdClassName = Constants.CLASS_SERIALPORT;
-                    found = true;
-                    status = Constants.CLASS_SERIALPORT + " Created";
+                    status = 1;
                 }//we Update attributes, for now only high speed
                 else if(currrentInterface != null){ 
+                    //status = 0;
                     attributes = bem.getObject(currrentInterface.getId()).getAttributes();
+                    //The name should be in lowercase
+                    if(!attributes.get(Constants.PROPERTY_NAME).toLowerCase().equals(attributes.get(Constants.PROPERTY_NAME))){
+                        attributes.put(Constants.PROPERTY_NAME, SyncUtil.wrapPortName(attributes.get(Constants.PROPERTY_NAME)));
+                        bem.updateObject(currrentInterface.getClassName(), currrentInterface.getId(), attributes);
+                        status = 3;
+                    }
                     if(!ifName.toLowerCase().contains("tu")){
                         String currenthighSpeed = attributes.get("highSpeed");
                         if(currenthighSpeed != null && !currenthighSpeed.equals(portSpeed)){
@@ -1480,31 +1482,31 @@ public class EntPhysicalSynchronizer {
                         bem.updateObject(currrentInterface.getClassName(), currrentInterface.getId(), attributes);
                         createdClassName = currrentInterface.getClassName();
                         createdId = currrentInterface.getId();
-                        status = "attribute: highSpeed updated";
-                        found = true;
+                        status = 2;
                     }
                 }
-                else
-                    status = String.format(I18N.gm("sync.no_match"), ifName);
             }
-            if(found)
-                serviceStatus = checkServices(ifAlias, createdId, createdClassName);
-            
-            jsonResults.add(Json.createObjectBuilder()
+            if(status != -2){
+                if(!createdClassName.isEmpty())
+                    serviceStatus = checkServices(ifAlias, createdId, createdClassName);
+                
+                jsonResults.add(Json.createObjectBuilder()
                             .add("ifName", SyncUtil.wrapPortName(ifName))
                             .add("ifAlias", ifAlias)
-                            .add("status", status)
-                            .add("related - service", serviceStatus)
+                            .add("status", Integer.toString(status))
+                            .add("related-service", Integer.toString(serviceStatus))
                             .build());
+            }
         }//end for ifNames
                         
         JsonArray ifMibSyncResult = Json.createArrayBuilder().build();
         for (JsonObject jo : jsonResults) 
             ifMibSyncResult = SyncUtil.jArrayBuilder(ifMibSyncResult).add(Json.createObjectBuilder().add("result", jo)).build();
-        
+        if(!jsonResults.isEmpty()){
         ifMibj = SyncUtil.joBuilder(ifMibj).add("type", "ifbmib").add("ifmibsync", ifMibSyncResult).build();
-        findings.add(new SyncFinding(SyncResult.TYPE_INFORMATION, 
+            findings.add(new SyncFinding(SyncResult.TYPE_INFORMATION, 
                            "if-mib synchronization result", ifMibj.toString()));
+        }
     }
     
     /**
@@ -1519,7 +1521,7 @@ public class EntPhysicalSynchronizer {
      * @throws InvalidArgumentException
      * @throws OperationNotPermittedException 
      */
-    private String checkServices(String serviceName, long portId, String portClassName) throws ApplicationObjectNotFoundException, BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException {
+    private int checkServices(String serviceName, long portId, String portClassName) throws ApplicationObjectNotFoundException, BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException {
         List<BusinessObjectLight> servicesCreatedInKuwaiba = new ArrayList<>();
         //We get the services created in kuwaiba
         List<Pool> serviceRoot = aem.getRootPools("GenericCustomer", 2, false);
@@ -1543,13 +1545,13 @@ public class EntPhysicalSynchronizer {
                 List<BusinessObjectLight> serviceResources = bem.getSpecialAttribute(currentService.getClassName(), currentService.getId(), "uses");
                 for (BusinessObjectLight resource : serviceResources) {
                     if(resource.getId() == portId) //The port is already a resource of the service
-                        return "Service is already related with the interface";
+                        return 1; //"Service is already related with the interface";
                 }
                 bem.createSpecialRelationship(currentService.getClassName(), currentService.getId(), portClassName, portId, "uses", true);
-                return "Related successfully with the interface";
+                return 0; //"Related successfully with the interface";
             }
         }
-        return "The service in kuwaiba";
+        return -1; //doesn't exists
     }
     
     /**
