@@ -389,11 +389,12 @@ public class EndToEndViewScene extends AbstractScene {
             SrvEdgeWidget newEdge = new SrvEdgeWidget(edge.getId());
             newEdge.setSource(sourceNode);
             newEdge.setTarget(targetNode);
-            lienzoComponent.addEdgeWidget(newEdge);
+            
             RemoteClassMetadata classMetadata = wsBean.getClass(edge.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
             newEdge.setColor(toHexString(new Color(classMetadata.getColor())));
             newEdge.setCaption(edge.toString());
             edges.put(edge, newEdge);
+            lienzoComponent.addEdgeWidget(newEdge);
             return newEdge; 
         } catch (ServerSideException ex) {
             return new SrvEdgeWidget(323927373);

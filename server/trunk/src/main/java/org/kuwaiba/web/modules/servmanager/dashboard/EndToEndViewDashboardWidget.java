@@ -38,7 +38,7 @@ import org.openide.util.Exceptions;
  * A simple dashboard widget that shows the available views for a particular service
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ServiceViewsDashboardWidget extends AbstractDashboardWidget {
+public class EndToEndViewDashboardWidget extends AbstractDashboardWidget {
     /**
      * The service we want the resources from
      */
@@ -48,7 +48,7 @@ public class ServiceViewsDashboardWidget extends AbstractDashboardWidget {
      */
     private WebserviceBean wsBean;
     
-    public ServiceViewsDashboardWidget(AbstractDashboard rootComponent, RemoteObjectLight service, WebserviceBean wsBean) {
+    public EndToEndViewDashboardWidget(AbstractDashboard rootComponent, RemoteObjectLight service, WebserviceBean wsBean) {
         super("End to End View", rootComponent);
         this.service = service;
         this.wsBean = wsBean;

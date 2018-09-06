@@ -21,7 +21,15 @@ import com.neotropic.vaadin.lienzo.client.core.shape.SrvNodeWidget;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Label;
 import java.awt.Color;
+import com.neotropic.vaadin.lienzo.client.core.shape.Point;
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.List;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.web.gui.navigation.views.AbstractScene;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
@@ -48,7 +56,64 @@ public class ObjectViewScene extends AbstractScene {
 
     @Override
     public void render(byte[] structure) throws IllegalArgumentException {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+            QName qZoom = new QName("zoom"); //NOI18N
+            QName qCenter = new QName("center"); //NOI18N
+            QName qNode = new QName("node"); //NOI18N
+            QName qEdge = new QName("edge"); //NOI18N
+            QName qLabel = new QName("label"); //NOI18N
+            QName qControlPoint = new QName("controlpoint"); //NOI18N
+
+            ByteArrayInputStream bais = new ByteArrayInputStream(structure);
+            XMLStreamReader reader = inputFactory.createXMLStreamReader(bais);
+
+            while (reader.hasNext()) {
+                int event = reader.next();
+                if (event == XMLStreamConstants.START_ELEMENT) {
+                    if (reader.getName().equals(qNode)) {
+                        int xCoordinate = Double.valueOf(reader.getAttributeValue(null,"x")).intValue(); //NOI18N
+                        int yCoordinate = Double.valueOf(reader.getAttributeValue(null,"y")).intValue(); //NOI18N
+                        long objectId = Long.valueOf(reader.getElementText());
+                        
+                        SrvNodeWidget nodeWidget = findNodeWidget(objectId);
+                        
+                        if (nodeWidget != null) {
+                            nodeWidget.setX(xCoordinate);
+                            nodeWidget.setY(yCoordinate);
+                        }
+                    } else {
+                        if (reader.getName().equals(qEdge)) {
+                            long objectId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
+
+                            //long aSide = Long.valueOf(reader.getAttributeValue(null, "aside")); //NOI18N
+                            //long bSide = Long.valueOf(reader.getAttributeValue(null, "bside")); //NOI18N
+
+                            SrvEdgeWidget edgeWidget = findEdgeWidget(objectId);
+                            
+                            if (edgeWidget != null) {
+                                while(true) {
+                                    reader.nextTag();
+                                    List<Point> controlPoints = new ArrayList<>();
+                                    
+                                    if (reader.getName().equals(qControlPoint)) {
+                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
+                                            controlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
+                                    } else {
+                                        edgeWidget.setControlPoints(controlPoints);
+                                        break;
+                                    }
+                                }
+                            }
+                            
+                        } 
+                    }
+                }
+            }
+            reader.close();
+        } catch (XMLStreamException ex) {
+            Notifications.showError("There was an unexpected error parsing the view structure");
+        }
     }
 
     @Override
