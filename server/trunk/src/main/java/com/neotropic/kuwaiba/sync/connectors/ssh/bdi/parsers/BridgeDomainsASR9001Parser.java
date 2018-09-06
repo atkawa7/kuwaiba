@@ -52,9 +52,9 @@ public class BridgeDomainsASR9001Parser {
                     if (lineTokens[0].startsWith("BV"))
                         currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(lineTokens[0], NetworkInterface.TYPE_BDI));
 
-                    else if (lineTokens[0].contains(".")) { //The dot separates the physical interface name and the service instance id . Remember that split receives a regular expression, and we have to escape the dot as it is a reserved character
-                            String[] serviceInstanceTokens = lineTokens[0].split("\\.");
-                            currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(serviceInstanceTokens[0] + " " + serviceInstanceTokens[1], NetworkInterface.TYPE_SERVICE_INSTANCE));
+                    else if (lineTokens[0].contains(".")) { //The dot separates the physical interface name and the sub interface id . Remember that split receives a regular expression, and we have to escape the dot as it is a reserved character
+                            String[] subinterfaceTokens = lineTokens[0].split("\\.");
+                            currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(subinterfaceTokens[0] + " " + subinterfaceTokens[1], NetworkInterface.TYPE_GENERIC_SUBINTERFACE));
                         }
                         else 
                             currentBridgeDomain.getNetworkInterfaces().add(new NetworkInterface(line, NetworkInterface.TYPE_UNKNOWN));
@@ -74,7 +74,6 @@ public class BridgeDomainsASR9001Parser {
                 
                 if (lineTokens[0].equals("List of VFIs:")) { //NOI18N
                     state = ParsingState.LIST_VFIS;
-                    continue;
                 }
             }
         }

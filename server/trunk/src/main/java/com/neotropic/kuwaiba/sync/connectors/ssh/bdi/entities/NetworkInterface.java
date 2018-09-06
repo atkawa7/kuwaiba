@@ -40,6 +40,10 @@ public class NetworkInterface extends AbstractDataEntity {
      */
     public static final int TYPE_VFI = 4;
     /**
+     * If the interface is a generic subinterface (mapped as a VirtualPort)
+     */
+    public static final int TYPE_GENERIC_SUBINTERFACE = 5;
+    /**
      * Interface type. See possible values in TYPE_*
      */
     private int networkInterfaceType;
