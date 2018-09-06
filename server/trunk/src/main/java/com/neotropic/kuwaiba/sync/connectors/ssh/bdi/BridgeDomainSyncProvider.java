@@ -178,7 +178,7 @@ public class BridgeDomainSyncProvider extends AbstractSyncProvider {
                         break;
                     }
                     case "ASR9001": {
-                        Session.Command cmd = session.exec("l2vpn bridge-domain"); //NOI18N
+                        Session.Command cmd = session.exec("sh l2vpn bridge-domain"); //NOI18N
                         BridgeDomainsASR9001Parser parser = new BridgeDomainsASR9001Parser();               
 
                         cmd.join(5, TimeUnit.SECONDS);
