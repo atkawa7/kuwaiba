@@ -23,9 +23,9 @@ public class ConditionalActivityDefinition extends ActivityDefinition {
     private ActivityDefinition nextActivityIfFalse;
     
     public ConditionalActivityDefinition(long id, String name, String description, 
-        int type, boolean confirm, ArtifactDefinition arfifact, Actor actor) {
+        int type, boolean confirm, String color, ArtifactDefinition arfifact, Actor actor) {
         
-        super(id, name, description, type, arfifact, actor, false, confirm);
+        super(id, name, description, type, arfifact, actor, false, confirm, color);
     }
     
     @Override

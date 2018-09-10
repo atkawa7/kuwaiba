@@ -54,6 +54,10 @@ public class RemoteActivityDefinition implements Serializable {
      */
     private boolean confirm;
     /**
+     * Define the activity color
+     */
+    private String color;
+    /**
      * Artifact associated to the activity definition
      */
     private RemoteArtifactDefinition arfifact;
@@ -67,7 +71,7 @@ public class RemoteActivityDefinition implements Serializable {
     private RemoteActivityDefinition nextActivity;
 
     public RemoteActivityDefinition(long id, String name, String description, 
-            int type, RemoteArtifactDefinition arfifact, RemoteActor actor, boolean idling, boolean confirm) {
+            int type, RemoteArtifactDefinition arfifact, RemoteActor actor, boolean idling, boolean confirm, String color) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -76,6 +80,7 @@ public class RemoteActivityDefinition implements Serializable {
         this.actor = actor;
         this.idling = idling;
         this.confirm = confirm;
+        this.color = color;
     }
 
     public long getId() {
@@ -150,6 +155,14 @@ public class RemoteActivityDefinition implements Serializable {
         this.confirm = confirm;        
     }
     
+    public String getColor() {
+        return color;
+    }
+    
+    public void setColor(String color) {
+        this.color = color;
+    }
+    
     public static RemoteActivityDefinition asRemoteActivityDefinition(ActivityDefinition activityDefinition) {
         RemoteActivityDefinition res = null;
         
@@ -158,7 +171,8 @@ public class RemoteActivityDefinition implements Serializable {
                 activityDefinition.getDescription(), activityDefinition.getType(), 
                 new RemoteArtifactDefinition(activityDefinition.getArfifact().getId(), activityDefinition.getArfifact().getName(), activityDefinition.getArfifact().getDescription(), activityDefinition.getArfifact().getVersion(), activityDefinition.getArfifact().getType(), activityDefinition.getArfifact().getDefinition(), activityDefinition.getArfifact().getPreconditionsScript(), activityDefinition.getArfifact().getPostconditionsScript(), activityDefinition.getArfifact().isPrintable(), activityDefinition.getArfifact().getPrintableTemplate()), 
                 new RemoteActor(activityDefinition.getActor().getId(), activityDefinition.getActor().getName(), activityDefinition.getActor().getType()),
-                activityDefinition.confirm());
+                activityDefinition.confirm(), 
+                activityDefinition.getColor());
             
             if (((ConditionalActivityDefinition) activityDefinition).getNextActivityIfTrue() != null) 
                 ((RemoteConditionalActivityDefinition) res).setNextActivityIfTrue(RemoteActivityDefinition.asRemoteActivityDefinition(((ConditionalActivityDefinition) activityDefinition).getNextActivityIfTrue()));
@@ -172,7 +186,8 @@ public class RemoteActivityDefinition implements Serializable {
                 new RemoteArtifactDefinition(activityDefinition.getArfifact().getId(), activityDefinition.getArfifact().getName(), activityDefinition.getArfifact().getDescription(), activityDefinition.getArfifact().getVersion(), activityDefinition.getArfifact().getType(), activityDefinition.getArfifact().getDefinition(), activityDefinition.getArfifact().getPreconditionsScript(), activityDefinition.getArfifact().getPostconditionsScript(), activityDefinition.getArfifact().isPrintable(), activityDefinition.getArfifact().getPrintableTemplate()), 
                 new RemoteActor(activityDefinition.getActor().getId(), activityDefinition.getActor().getName(), activityDefinition.getActor().getType()),
                 activityDefinition.isIdling(),
-                activityDefinition.confirm());
+                activityDefinition.confirm(), 
+                activityDefinition.getColor());
             
             if (activityDefinition.getNextActivity() != null) 
                 res.setNextActivity(RemoteActivityDefinition.asRemoteActivityDefinition(activityDefinition.getNextActivity()));

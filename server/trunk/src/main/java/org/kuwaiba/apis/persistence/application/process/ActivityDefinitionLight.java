@@ -66,12 +66,16 @@ public class ActivityDefinitionLight {
      */
     private boolean confirm;
     /**
+     * Define the activity color
+     */
+    private String color;
+    /**
      * Artifact associated to the activity definition
      */
     private ArtifactDefinition arfifact;
     
     public ActivityDefinitionLight(long id, String name, String description, 
-            int type, ArtifactDefinition arfifact, boolean idling, boolean confirm) {
+            int type, ArtifactDefinition arfifact, boolean idling, boolean confirm, String color) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -79,6 +83,7 @@ public class ActivityDefinitionLight {
         this.arfifact = arfifact;
         this.idling = idling;
         this.confirm = confirm;
+        this.color = color;
     }
 
     public long getId() {
@@ -135,6 +140,14 @@ public class ActivityDefinitionLight {
         
     public void setConfirm(boolean confirm) {
         this.confirm = confirm;        
+    }
+    
+    public String getColor() {
+        return color;
+    }
+    
+    public void setColor(String color) {
+        this.color = color;
     }
             
     @Override

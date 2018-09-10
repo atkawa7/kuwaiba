@@ -86,7 +86,7 @@ public class Constants {
         public static final String MODE = "mode"; //NOI18N
         public static final String PACKAGE = "package"; //NOI18N
         public static final String DESCRIPTION = "description"; //NOI18N
-        public static final String PATH = "path"; //NOI18N
+        public static final String PATH = "path"; //NOI18N       
                 
         public class DataType {
             public static final String REMOTE_OBJECT = "RemoteObject"; //NOI18N
@@ -160,5 +160,6 @@ public class Constants {
         public static final String CAPTION = "caption"; //NOI18N
         public static final String INPUT_PARAMETERS = "inputParameters"; //NOI18N
         public static final String OUTPUT_PARAMETERS = "outputParameters"; //NOI18N
+        public static final String SAVE = "save"; //NOI18N
     }
 }

@@ -46,6 +46,8 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
     private String height;
     
     private boolean hidden = false;
+    
+    private boolean save = true;
     /**
      * event->function->parameters
      */    
@@ -119,6 +121,14 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
         
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
+    }
+    
+    public boolean isSave() {
+        return save;
+    }
+    
+    public void setSave(boolean save) {
+        this.save = save;
     }
     
     public void addPropertyChangeListener(String propertyChangeListener) {
@@ -247,6 +257,7 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
         setHeight(reader);
         setWidth(reader);
         setHidden(reader);
+        setSave(reader);
     }
     
     public void setId(XMLStreamReader reader) {
@@ -346,6 +357,10 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
     
     public void setHidden(XMLStreamReader reader) {
         hidden = Boolean.valueOf(reader.getAttributeValue(null, Constants.Property.HIDDEN));
+    }
+    
+    public void setSave(XMLStreamReader reader) {
+        hidden = Boolean.valueOf(reader.getAttributeValue(null, Constants.Property.SAVE));
     }
     
     public void fireOnLoad() {

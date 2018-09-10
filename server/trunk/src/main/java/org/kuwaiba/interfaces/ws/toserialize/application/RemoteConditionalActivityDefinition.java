@@ -29,9 +29,9 @@ public class RemoteConditionalActivityDefinition extends RemoteActivityDefinitio
     private RemoteActivityDefinition nextActivityIfFalse;
         
     public RemoteConditionalActivityDefinition(long id, String name, String description, 
-        int type, RemoteArtifactDefinition arfifact, RemoteActor actor, boolean confirm) {
+        int type, RemoteArtifactDefinition arfifact, RemoteActor actor, boolean confirm, String color) {
         
-        super(id, name, description, type, arfifact, actor, false, confirm);
+        super(id, name, description, type, arfifact, actor, false, confirm, color);
     }
     
     @Override

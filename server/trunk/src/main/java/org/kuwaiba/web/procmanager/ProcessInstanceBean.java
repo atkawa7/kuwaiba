@@ -14,6 +14,7 @@
  */
 package org.kuwaiba.web.procmanager;
 
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
@@ -108,7 +109,20 @@ public class ProcessInstanceBean {
     public String getCurrentActivity() {
         RemoteActivityDefinition currentActivityDefinition = getCurrentActivityDefinition();
         
-        return currentActivityDefinition != null ? currentActivityDefinition.getName() : null;
+        String result = "";
+        
+        if (currentActivityDefinition != null) {
+            
+            result = "<span class=\"v-icon\" style=\"font-family: "
+                    + VaadinIcons.STOP.getFontFamily() + ";color:" + (currentActivityDefinition.getColor() == null ? "black" : currentActivityDefinition.getColor())
+                    + "\">&#x"
+                    + Integer.toHexString(VaadinIcons.STOP.getCodepoint())
+                    + ";</span>";
+            
+            result += " " + currentActivityDefinition.getName();
+        }
+        return currentActivityDefinition != null ? result : null;
+        
     }
     
     public String getCurrentActivityActor() {

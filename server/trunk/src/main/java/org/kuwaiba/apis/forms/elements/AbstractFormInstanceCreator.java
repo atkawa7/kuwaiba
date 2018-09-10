@@ -76,7 +76,10 @@ public abstract class AbstractFormInstanceCreator {
                 tagName = Constants.Tag.FORM_INSTANCE;
                         
             QName tag = new QName(tagName);
-                        
+            
+            if (!parent.isSave())
+                return;
+                                                
             xmlew.add(xmlef.createStartElement(tag, null, null));
             XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.ID, parent.getId());
             

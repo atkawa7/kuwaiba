@@ -32,8 +32,8 @@ public class ActivityDefinition extends ActivityDefinitionLight {
     private ActivityDefinition nextActivity;
     
     public ActivityDefinition(long id, String name, String description, 
-            int type, ArtifactDefinition arfifact, Actor actor, boolean idling, boolean confirm) {
-        super(id, name, description, type, arfifact, idling, confirm);
+            int type, ArtifactDefinition arfifact, Actor actor, boolean idling, boolean confirm,String color) {
+        super(id, name, description, type, arfifact, idling, confirm, color);
         this.actor = actor;
     }
     public Actor getActor() {

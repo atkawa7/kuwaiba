@@ -62,6 +62,7 @@ public class ProcessDefinitionLoader {
         public static final String ACTOR_ID = "actorId"; //NOI18N
         public static final String IDLING = "idling"; //NOI18N
         public static final String CONFIRM = "confirm"; //NOI18N
+        public static final String COLOR = "color"; //NOI18N
     }
     public class XMLProcessDefinitionException extends Exception {
         
@@ -166,6 +167,7 @@ public class ProcessDefinitionLoader {
                                         reader.getAttributeValue(null, Attribute.DESCRIPTION), 
                                         activityDefinitionType, 
                                         Boolean.valueOf(reader.getAttributeValue(null, Attribute.CONFIRM)), 
+                                        reader.getAttributeValue(null, Attribute.COLOR),
                                         null, 
                                         null);
                                     
@@ -179,7 +181,8 @@ public class ProcessDefinitionLoader {
                                         null, 
                                         null, 
                                         Boolean.valueOf(reader.getAttributeValue(null, Attribute.IDLING)),
-                                        Boolean.valueOf(reader.getAttributeValue(null, Attribute.CONFIRM)));
+                                        Boolean.valueOf(reader.getAttributeValue(null, Attribute.CONFIRM)), 
+                                        reader.getAttributeValue(null, Attribute.COLOR));
                                 }
                                 activityDefinitions.put(activityDefinitionId, activityDefinition);
                                 activityactor.put(activityDefinitionId, Long.valueOf(reader.getAttributeValue(null, Attribute.ACTOR_ID)));

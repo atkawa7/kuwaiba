@@ -28,8 +28,8 @@ public class ElementLabel extends AbstractElementField {
     }
     
     @Override
-    public String getValue() {
-        return (String) super.getValue();
+    public String getValue() {        
+        return super.getValue() != null ? super.getValue().toString() : null;
     }
                 
     @Override

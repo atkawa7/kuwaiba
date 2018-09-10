@@ -108,7 +108,7 @@ public class ElementGrid extends AbstractElement {
     }
     
     public List<Object> getRow() {
-        return getRow(Integer.getInteger(String.valueOf(selectedRow)));
+        return getRow(Integer.valueOf(String.valueOf(selectedRow)));
     }    
     
     public List<Object> getRow(int idRow) {
