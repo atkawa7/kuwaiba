@@ -661,7 +661,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                             devices.add(device);
 
                             int devicePosition = device.getAttribute(Constants.PROPERTY_POSITION) != null ? (int) device.getAttribute(Constants.PROPERTY_POSITION) : 0;
-                            if (devicePosition <= 0)
+                            if (devicePosition < 0)
                                 message += String.format("The %s in %s must be greater than or equal to zero\n", Constants.PROPERTY_POSITION, device.toString());
                             else {
                                 if (devicePosition > rackUnits)
@@ -669,7 +669,7 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                             }
                             int deviceRackUnits = device.getAttribute(Constants.PROPERTY_RACK_UNITS) != null ? (int) device.getAttribute(Constants.PROPERTY_RACK_UNITS) : 0;
 
-                            if (deviceRackUnits <= 0)
+                            if (deviceRackUnits < 0)
                                 message += String.format("The %s in %s must be greater than or equal to zero\n", Constants.PROPERTY_RACK_UNITS, device.toString());
                             else {
                                 if (deviceRackUnits > rackUnits)
