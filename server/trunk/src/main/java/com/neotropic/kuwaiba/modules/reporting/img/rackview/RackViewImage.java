@@ -228,7 +228,7 @@ public class RackViewImage {
                             devices.add(device);
 
                             int devicePosition = device.getAttribute("position") != null ? Integer.valueOf(device.getAttribute("position")) : 0; //NOI18N
-                            if (devicePosition <= 0)
+                            if (devicePosition < 0)
                                 message += String.format("The %s in %s must be greater than or equal to zero\n", "position", device.toString());
                             else {
                                 if (devicePosition > rackUnits)
@@ -236,7 +236,7 @@ public class RackViewImage {
                             }
                             int deviceRackUnits = device.getAttribute("rackUnits") != null ? Integer.valueOf(device.getAttribute("rackUnits")) : 0;
 
-                            if (deviceRackUnits <= 0)
+                            if (deviceRackUnits < 0)
                                 message += String.format("The %s in %s must be greater than or equal to zero\n", "rackUnits", device.toString());
                             else {
                                 if (deviceRackUnits > rackUnits)
