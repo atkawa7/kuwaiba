@@ -360,7 +360,11 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
     }
     
     public void setSave(XMLStreamReader reader) {
-        save = Boolean.valueOf(reader.getAttributeValue(null, Constants.Property.SAVE));
+        String strSave = reader.getAttributeValue(null, Constants.Property.SAVE);
+        if (strSave == null)
+            save = true;
+        else
+            save = Boolean.valueOf(reader.getAttributeValue(null, Constants.Property.SAVE));
     }
     
     public void fireOnLoad() {
