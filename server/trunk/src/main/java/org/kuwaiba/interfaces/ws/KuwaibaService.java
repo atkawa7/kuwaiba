@@ -2537,7 +2537,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "getObjectsWithFilterLight")
     public List<RemoteObjectLight> getObjectsWithFilterLight(@WebParam(name = "className") String className,
             @WebParam(name = "filterName") String filterName,
-            @WebParam(name = "filterName") String filterValue,
+            @WebParam(name = "filterValue") String filterValue,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getObjectsWithFilterLight(className, filterName, filterValue, getIPAddress(), sessionId);
@@ -2564,7 +2564,7 @@ public class KuwaibaService {
     @WebMethod(operationName = "getObjectsWithFilter")
     public List<RemoteObject> getObjectsWithFilter(@WebParam(name = "className") String className,
             @WebParam(name = "filterName") String filterName,
-            @WebParam(name = "filterName") String filterValue,
+            @WebParam(name = "filterValue") String filterValue,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
         try{
             return wsBean.getObjectsWithFilter(className, filterName, filterValue, getIPAddress(), sessionId);
