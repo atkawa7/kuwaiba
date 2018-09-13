@@ -638,6 +638,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             if (classNode == null)
                 throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", className));
             
+            tx.success();
             return getObjectsWithFilter(classNode, filterName, filterValue);
         }
     }
