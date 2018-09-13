@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="idling" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="confirm" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
+ *         &lt;element name="color" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="arfifact" type="{http://ws.interfaces.kuwaiba.org/}remoteArtifactDefinition" minOccurs="0"/>
  *         &lt;element name="actor" type="{http://ws.interfaces.kuwaiba.org/}remoteActor" minOccurs="0"/>
  *         &lt;element name="nextActivity" type="{http://ws.interfaces.kuwaiba.org/}remoteActivityDefinition" minOccurs="0"/>
@@ -41,6 +42,7 @@ import javax.xml.bind.annotation.XmlType;
     "type",
     "idling",
     "confirm",
+    "color",
     "arfifact",
     "actor",
     "nextActivity"
@@ -53,6 +55,7 @@ public class RemoteActivityDefinition {
     protected int type;
     protected boolean idling;
     protected boolean confirm;
+    protected String color;
     protected RemoteArtifactDefinition arfifact;
     protected RemoteActor actor;
     protected RemoteActivityDefinition nextActivity;
@@ -167,6 +170,30 @@ public class RemoteActivityDefinition {
      */
     public void setConfirm(boolean value) {
         this.confirm = value;
+    }
+
+    /**
+     * Gets the value of the color property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getColor() {
+        return color;
+    }
+
+    /**
+     * Sets the value of the color property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setColor(String value) {
+        this.color = value;
     }
 
     /**
