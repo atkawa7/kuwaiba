@@ -52,7 +52,7 @@ public class ComponentComboBox extends GraphicalComponent {
             if (comboBox.getValue() != null)
                 getComponent().setValue(comboBox.getValue());
             
-            getComponent().setPageLength(7);
+            getComponent().setPageLength(10);
             
             getComponent().setRequiredIndicatorVisible(comboBox.isMandatory());
             

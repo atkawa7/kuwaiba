@@ -24,8 +24,10 @@ import javax.xml.stream.XMLStreamReader;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ElementUpload extends AbstractElementField {
+    public static final String ELEMENT_UPLOAD_URL = "elementUploadUrl";
     private String caption;
-    
+    private String elementUploadUrl;
+        
     public ElementUpload() {
     }
     
@@ -35,6 +37,10 @@ public class ElementUpload extends AbstractElementField {
     
     public void setCaption(String caption) {
         this.caption = caption;        
+    }
+    
+    public String getElementUploadUrl() {
+        return elementUploadUrl;
     }
     
     @Override
@@ -60,6 +66,13 @@ public class ElementUpload extends AbstractElementField {
                 if (event.getNewValue() instanceof String) {
                                         
                     setCaption((String) event.getNewValue());
+                    firePropertyChangeEvent();
+                }
+            }
+            if (ELEMENT_UPLOAD_URL.equals(event.getPropertyName())) {
+                
+                if (event.getNewValue() instanceof String) {
+                    elementUploadUrl = (String) event.getNewValue();
                     firePropertyChangeEvent();
                 }
             }

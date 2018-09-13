@@ -15,10 +15,12 @@
 package org.kuwaiba.apis.forms.components.impl;
 
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.server.AbstractClientConnector;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Link;
 import com.vaadin.ui.Notification;
+import com.vaadin.ui.UI;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.Constants;
 import org.kuwaiba.apis.forms.elements.ElementUpload;
@@ -136,14 +138,32 @@ public class ComponentUpload extends GraphicalComponent {
                 
                 link.setVisible(true);
                 link.setCaption(elementUpload.getCaption());
-                link.setResource(getStreamResource(elementUpload));
-                upload.setButtonCaption(I18N.gm("update_file"));
+                StreamResource streamResource = getStreamResource(elementUpload);
+                link.setResource(streamResource);
+                upload.setButtonCaption(I18N.gm("update_file")); 
+                
+                String anUrl = getResourceURL(link, streamResource);
+                
+                fireComponentEvent(new EventDescriptor(
+                    Constants.EventAttribute.ONPROPERTYCHANGE, 
+                    ElementUpload.ELEMENT_UPLOAD_URL, anUrl, null));
             }
             else {                
                 link.setVisible(false);
                 upload.setButtonCaption(I18N.gm("upload_file"));
             }
         }
+    }
+    
+    String getResourceURL(AbstractClientConnector connector,StreamResource resource){
+        String path = UI.getCurrent().getPage().getLocation().getPath();
+        String protocol = UI.getCurrent().getPage().getLocation().getScheme();
+        String currentUrl = UI.getCurrent().getPage().getLocation().getAuthority();
+        String cid = connector.getConnectorId();
+        Integer uiId = connector.getUI().getUIId();
+        String filename = resource.getFilename();
+
+        return protocol+"://"+currentUrl + path +"/APP/connector/"+uiId+"/"+cid+"/href/"+filename;
     }
     
     private StreamResource getStreamResource(ElementUpload elementUpload) {

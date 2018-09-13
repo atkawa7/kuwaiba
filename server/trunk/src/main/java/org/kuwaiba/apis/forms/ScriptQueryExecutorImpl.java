@@ -17,7 +17,6 @@ package org.kuwaiba.apis.forms;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Notification;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import org.kuwaiba.apis.forms.elements.Constants;
@@ -34,7 +33,6 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
-import org.openide.util.Exceptions;
 
 /**
  * An Implementation of Script Query Executor to the Web Client of Kuwaiba

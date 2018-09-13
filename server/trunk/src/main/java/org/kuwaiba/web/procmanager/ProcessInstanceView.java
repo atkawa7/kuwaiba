@@ -401,17 +401,10 @@ public class ProcessInstanceView extends DynamicComponent {
 
                             byte[] byteTemplate = PrintWindow.getFileAsByteArray(file);
                             String stringTemplate = new String(byteTemplate);
-
-                            FormArtifactRenderer formArtifactRenderer = new FormArtifactRenderer(
-                                artifactDefinition, 
-                                artifact, 
-                                wsBean, 
-                                remoteSession, 
-                                processInstance);
-
-                            FormRenderer formRenderer = (FormRenderer) formArtifactRenderer.renderArtifact();
-
-                            List<AbstractElement> elements = formRenderer.getFormStructure().getElements();
+                                                        
+                            List<AbstractElement> elements = ((FormRenderer) artifactView.getContent()).getFormStructure().getElements();
+                            
+                            
                             for (AbstractElement element : elements) {
 
                                 if (element instanceof AbstractElementField) {
