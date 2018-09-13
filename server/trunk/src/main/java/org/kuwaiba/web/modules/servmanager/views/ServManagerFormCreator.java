@@ -443,7 +443,7 @@ public class ServManagerFormCreator{
             else if(tables.get(i).getLogicalPartB() == null)
                 isSideBChecked = true;
             
-            else if(location[0] == 0 && location[1] == -1 && isSideAChecked && isSideBChecked){
+            if(location[0] == 0 && location[1] == -1 && isSideAChecked && isSideBChecked){
                 i++;
                 isSideAChecked = false;
                 isSideBChecked = false;
