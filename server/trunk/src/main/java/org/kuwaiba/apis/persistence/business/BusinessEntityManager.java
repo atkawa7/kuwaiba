@@ -195,22 +195,22 @@ public interface BusinessEntityManager {
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
     
     /**
-     * Retrieves a list of instances of a given class
+     * Retrieves a list of light instances of a given class given a simple filter. This method will search for all objects with a string-based attribute (filterName) whose value matches a value provided (filterValue)
      * @param className Class name. This method only works with non-abstract classes for now
      * @param filterName The attribute to be used as filter. This will work <b>only</b> with String-type attributes. Example: serialNumber
      * @param filterValue The value to be use to match the instances. Example "Serial-12345"
-     * @return The list of instances that meet the filterName/filterValue criteria
+     * @return The list of instances that matches the filterName/filterValue criteria
      * @throws MetadataObjectNotFoundException If the class provided could not be found
      */
     public List<BusinessObjectLight> getObjectsWithFilterLight (String className, 
             String filterName, String filterValue) throws MetadataObjectNotFoundException;
     
     /**
-     * Same as <code>getObjectsWithFilterLight</code>, but returns the full information about the objects involved
+     * Same as {@link #getObjectsWithFilterLight(java.lang.String, java.lang.String, java.lang.String) }, but returns the full information about the objects involved
      * @param className Class name. This method only works with non-abstract classes for now
      * @param filterName The attribute to be used as filter. This will work <b>only</b> with String-type attributes. Example: serialNumber
      * @param filterValue The value to be use to match the instances. Example "Serial-12345"
-     * @return The list of instances that meet the filterName/filterValue criteria
+     * @return The list of instances that matches the filterName/filterValue criteria
      * @throws MetadataObjectNotFoundException If the class provided could not be found
      * @throws InvalidArgumentException If it's not possible to construct the RemoteBusinessObjects from the information in the database
      */

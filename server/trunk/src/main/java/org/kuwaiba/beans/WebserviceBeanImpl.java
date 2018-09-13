@@ -29,7 +29,6 @@ import com.neotropic.kuwaiba.scheduling.BackgroundJob;
 import com.neotropic.kuwaiba.scheduling.JobManager;
 import com.neotropic.kuwaiba.sync.model.SyncAction;
 import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
-import com.neotropic.kuwaiba.sync.model.SyncFinding;
 import com.neotropic.kuwaiba.sync.model.SyncResult;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.io.IOException;
@@ -1150,6 +1149,32 @@ public class WebserviceBeanImpl implements WebserviceBean {
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
+    }
+    
+    @Override
+    public List<RemoteObjectLight> getObjectsWithFilterLight (String className, String filterName, String filterValue, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getObjectsWithFilterLight", ipAddress, sessionId);
+            return RemoteObjectLight.toRemoteObjectLightArray(bem.getObjectsWithFilterLight(className, filterName, filterValue));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+        
+    }
+    
+    @Override
+    public List<RemoteObject> getObjectsWithFilter (String className, String filterName, String filterValue, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getObjectsWithFilter", ipAddress, sessionId);
+            return RemoteObject.toRemoteObjectArray(bem.getObjectsWithFilter(className, filterName, filterValue));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+        
     }
 
     @Override
