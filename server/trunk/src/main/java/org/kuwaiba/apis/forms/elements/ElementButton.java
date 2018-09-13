@@ -222,6 +222,22 @@ public class ElementButton extends AbstractElement {
 
                             for (int i = 3; i < propertyChangeLine.size(); i += 1) {
                                 AbstractElement anElement = getFormStructure().getElementById(propertyChangeLine.get(i));
+
+                                if (anElement == null) {
+                                    if (getFormStructure().getElementScript() != null && 
+                                        getFormStructure().getElementScript().getFunctions() != null) {
+
+                                        if (getFormStructure().getElementScript().getFunctions().containsKey(propertyChangeLine.get(i))) {
+
+                                            Runner paramRunner = getFormStructure().getElementScript().getFunctions().get(propertyChangeLine.get(i));
+
+                                            if (paramRunner != null) {
+                                                parameterValues.add(paramRunner);
+                                                continue;
+                                            }
+                                        }
+                                    }
+                                }
                                 parameterValues.add(anElement != null ? anElement : propertyChangeLine.get(i));
                             }
                             Object result = runner.run(parameterValues);
@@ -247,6 +263,22 @@ public class ElementButton extends AbstractElement {
 
                         for (String parameterValue : parameterValues) {
                             AbstractElement anElement = getFormStructure().getElementById(parameterValue);
+                            
+                            if (anElement == null) {
+                                if (getFormStructure().getElementScript() != null && 
+                                    getFormStructure().getElementScript().getFunctions() != null) {
+
+                                    if (getFormStructure().getElementScript().getFunctions().containsKey(parameterValue)) {
+
+                                        Runner paramRunner = getFormStructure().getElementScript().getFunctions().get(parameterValue);
+
+                                        if (paramRunner != null) {
+                                            parameters.add(paramRunner);
+                                            continue;
+                                        }
+                                    }
+                                }
+                            } 
                             parameters.add(anElement != null ? anElement : parameterValue);
                         }
                         runner.run(parameters);

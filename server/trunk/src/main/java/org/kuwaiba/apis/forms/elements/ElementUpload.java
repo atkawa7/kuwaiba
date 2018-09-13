@@ -91,9 +91,23 @@ public class ElementUpload extends AbstractElementField {
 
             for (int i = 1; i < list.size(); i += 1) {
                 AbstractElement anElement = getFormStructure().getElementById(list.get(i));
+                if (anElement == null) {
+                    if (getFormStructure().getElementScript() != null && 
+                        getFormStructure().getElementScript().getFunctions() != null) {
+
+                        if (getFormStructure().getElementScript().getFunctions().containsKey(list.get(i))) {
+
+                            Runner paramRunner = getFormStructure().getElementScript().getFunctions().get(list.get(i));
+
+                            if (paramRunner != null) {
+                                parameters.add(paramRunner);
+                                continue;
+                            }
+                        }
+                    }
+                }
                 parameters.add(anElement != null ? anElement : list.get(i));
             }
-
             Object newValue = runner.run(parameters);
 
             setCaption((String) newValue);
