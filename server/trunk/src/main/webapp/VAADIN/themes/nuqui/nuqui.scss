@@ -733,4 +733,20 @@ $v-field-background-color: #ccffe6;
       }
     }
     //End Dynamic Component
+    .subformpopup  {
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+        
+        .v-verticallayout {
+            margin: auto;
+            padding: 5px;
+        }
+                
+        .v-datefield .v-filterselect, .v-label, .v-textfield, .v-button {
+            margin: 5px;
+            padding: 5px;
+        }
+    }
 }

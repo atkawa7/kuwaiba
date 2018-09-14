@@ -48,6 +48,8 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
     private boolean hidden = false;
     
     private boolean save = true;
+    
+    private String alignment;
     /**
      * event->function->parameters
      */    
@@ -129,6 +131,14 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
     
     public void setSave(boolean save) {
         this.save = save;
+    }
+            
+    public String getAlignment() {
+        return alignment;
+    }
+            
+    public void setAlignment(String alignment) {
+        this.alignment = alignment;
     }
     
     public void addPropertyChangeListener(String propertyChangeListener) {
@@ -274,6 +284,7 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
         setWidth(reader);
         setHidden(reader);
         setSave(reader);
+        setAlignment(reader);
     }
     
     public void setId(XMLStreamReader reader) {
@@ -381,6 +392,10 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
             save = true;
         else
             save = Boolean.valueOf(reader.getAttributeValue(null, Constants.Property.SAVE));
+    }
+    
+    public void setAlignment(XMLStreamReader reader) {
+        alignment = reader.getAttributeValue(null, Constants.Property.ALIGNMENT);
     }
     
     public void fireOnLoad() {

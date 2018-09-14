@@ -15669,3 +15669,18 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .dynamiccomponent .left {
 	background: whitesmoke;
 }
+
+.nuqui .subformpopup * {
+	margin: 0px;
+	padding: 0px;
+}
+
+.nuqui .subformpopup .v-verticallayout {
+	margin: auto;
+	padding: 5px;
+}
+
+.nuqui .subformpopup .v-datefield .v-filterselect, .nuqui .subformpopup .v-label, .nuqui .subformpopup .v-textfield, .nuqui .subformpopup .v-button {
+	margin: 5px;
+	padding: 5px;
+}

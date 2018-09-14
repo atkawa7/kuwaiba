@@ -142,6 +142,12 @@ public class ComponentFactory {
             if (element.getId() != null)
                 graphicalComponent.getComponent().setId(element.getId());
             
+            if (element.getWidth() != null)
+                graphicalComponent.getComponent().setWidth(element.getWidth());
+            
+            if (element.getHeight() != null)
+                graphicalComponent.getComponent().setHeight(element.getHeight());
+            
             element.setElementEventListener(graphicalComponent);
             graphicalComponent.setComponentEventListener(element);
         }

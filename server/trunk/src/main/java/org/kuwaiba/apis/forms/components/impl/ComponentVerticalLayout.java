@@ -42,6 +42,7 @@ public class ComponentVerticalLayout extends GraphicalComponent implements Compo
     @Override
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementVerticalLayout) {
+            getComponent().setSpacing(false);
         }
     }
     

@@ -42,7 +42,7 @@ public class ComponentHorizontalLayout extends GraphicalComponent implements Com
     @Override
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementHorizontalLayout) {
-            
+            getComponent().setSpacing(false);            
         }
     }
     

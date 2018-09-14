@@ -55,24 +55,32 @@ public class ComponentButton extends GraphicalComponent {
             
             if (button.getStyleName() != null) {
                 
-                switch(button.getStyleName()) {
+                String[] styleNames = button.getStyleName().split(";");
+                
+                for (int i = 0; i < styleNames.length; i += 1) {
+                    
+                    switch(styleNames[i]) {
 
-                    case Constants.Attribute.StyleName.BUTTON_CLOSE_ICON:
-                        getComponent().setIcon(VaadinIcons.CLOSE);
-                    break;
-                    case Constants.Attribute.StyleName.BUTTON_PENCIL_ICON:
-                        getComponent().setIcon(VaadinIcons.PENCIL);
-                    break;
-                    case Constants.Attribute.StyleName.BUTTON_PLUS_ICON:
-                        getComponent().setIcon(VaadinIcons.PLUS);
-                    break;
-                    case Constants.Attribute.StyleName.BUTTON_COGS_ICON:
-                        getComponent().setIcon(VaadinIcons.COGS);
-                    break;
-                    case Constants.Attribute.StyleName.BUTTON_PLUS_ICON_ONLY:
-                        getComponent().setIcon(VaadinIcons.PLUS);
-                        getComponent().addStyleName(ValoTheme.BUTTON_ICON_ONLY);
-                    break;
+                        case Constants.Attribute.StyleName.BUTTON_CLOSE_ICON:
+                            getComponent().setIcon(VaadinIcons.CLOSE);
+                        break;
+                        case Constants.Attribute.StyleName.BUTTON_PENCIL_ICON:
+                            getComponent().setIcon(VaadinIcons.PENCIL);
+                        break;
+                        case Constants.Attribute.StyleName.BUTTON_PLUS_ICON:
+                            getComponent().setIcon(VaadinIcons.PLUS);
+                        break;
+                        case Constants.Attribute.StyleName.BUTTON_COGS_ICON:
+                            getComponent().setIcon(VaadinIcons.COGS);
+                        break;
+                        case Constants.Attribute.StyleName.BUTTON_PLUS_ICON_ONLY:
+                            getComponent().setIcon(VaadinIcons.PLUS);
+                            getComponent().addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+                        break;
+                        case Constants.Attribute.StyleName.BUTTON_PRIMARY:
+                            getComponent().addStyleName(ValoTheme.BUTTON_PRIMARY);
+                        break;
+                    }
                 }
             }
             

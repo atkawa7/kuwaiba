@@ -14,6 +14,8 @@
  */
 package org.kuwaiba.apis.forms.components.impl;
 
+import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.ui.Alignment;
 import org.kuwaiba.apis.forms.components.ComponentContainer;
 import org.kuwaiba.apis.forms.elements.EventDescriptor;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
@@ -46,6 +48,7 @@ public class ComponentSubform extends GraphicalComponent implements ComponentCon
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementSubform) {
             element.setElementEventListener(this);
+            getComponent().setSpacing(false);
         }
     }
         
@@ -54,13 +57,23 @@ public class ComponentSubform extends GraphicalComponent implements ComponentCon
         if (Constants.EventAttribute.ONCLICK.equals(event.getEventName())) {
             if (Constants.Function.OPEN.equals(event.getPropertyName())) {
                 if (UI.getCurrent() != null) {
-                    if (window == null)
-                        window = new Window();
-                                        
-                    window.setModal(true);
-                    window.setContent(getComponent());
-                    window.center();
-
+                    if (window == null) {
+                        window = new Window();                        
+                        window.setStyleName("subformpopup"); //NOI18N
+                        
+                        VerticalLayout verticalLayout = new VerticalLayout();
+                        verticalLayout.setWidth(100, Unit.PERCENTAGE);
+                        verticalLayout.setHeightUndefined();
+                        verticalLayout.setSpacing(false);
+                        
+                        verticalLayout.addComponent(getComponent());
+                        verticalLayout.setComponentAlignment(getComponent(), Alignment.MIDDLE_CENTER);
+                        
+                        window.setContent(verticalLayout);
+                        
+                        window.setModal(true);
+                        window.center();
+                    }                                       
                     UI.getCurrent().addWindow(window);
                 }
             } else if (Constants.Function.CLOSE.equals(event.getPropertyName())) {

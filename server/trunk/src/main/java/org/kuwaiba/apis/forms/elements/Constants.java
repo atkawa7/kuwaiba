@@ -108,11 +108,12 @@ public class Constants {
         
         public class StyleName {
             public static final String BOLD = "bold";
-            public static final String BUTTON_PLUS_ICON_ONLY="buttonPlusCircleIconOnly";
-            public static final String BUTTON_CLOSE_ICON="buttonCloseIcon";
-            public static final String BUTTON_PENCIL_ICON="buttonPencilIcon";
-            public static final String BUTTON_PLUS_ICON="buttonPlusIcon";
-            public static final String BUTTON_COGS_ICON="buttonCogsIcon";
+            public static final String BUTTON_PLUS_ICON_ONLY = "buttonPlusCircleIconOnly";
+            public static final String BUTTON_CLOSE_ICON = "buttonCloseIcon";
+            public static final String BUTTON_PENCIL_ICON = "buttonPencilIcon";
+            public static final String BUTTON_PLUS_ICON = "buttonPlusIcon";
+            public static final String BUTTON_COGS_ICON = "buttonCogsIcon";
+            public static final String BUTTON_PRIMARY = "buttonPrimary";
                         
         }
     }
@@ -161,5 +162,18 @@ public class Constants {
         public static final String INPUT_PARAMETERS = "inputParameters"; //NOI18N
         public static final String OUTPUT_PARAMETERS = "outputParameters"; //NOI18N
         public static final String SAVE = "save"; //NOI18N
+        public static final String ALIGNMENT = "alignment"; //NOI18N
+        
+        public class Alignment {
+            public static final String TOP_RIGHT = "topRight";            
+            public static final String TOP_LEFT = "topLeft";
+            public static final String TOP_CENTER = "topCenter";
+            public static final String MIDDLE_RIGHT = "middleRight";
+            public static final String MIDDLE_LEFT = "middleLeft";
+            public static final String MIDDLE_CENTER = "middleCenter";
+            public static final String BOTTOM_RIGHT = "bottomRight";
+            public static final String BOTTOM_LEFT = "bottomLeft";
+            public static final String BOTTOM_CENTER = "bottomCenter";
+        }
     }
 }

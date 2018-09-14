@@ -77,7 +77,7 @@ public class ElementButton extends AbstractElement {
                             AbstractElementField aef = (AbstractElementField) ae;
                             rowValues.add(aef.getValue() != null ? aef.getValue() : new NullObject());
                         } else
-                            rowValues.add(new NullObject());
+                            rowValues.add(functionParams.get(i));
                     }
                     AbstractElement anElement = getFormStructure().getElementById(elementId);
 
@@ -134,7 +134,7 @@ public class ElementButton extends AbstractElement {
                             } else
                                 rowValues.add(aef.getValue() != null ? aef.getValue() : new NullObject());
                         } else
-                            rowValues.add(new NullObject());
+                            rowValues.add(functionParams.get(i));
                     }
                     AbstractElement anElement = getFormStructure().getElementById(elementId);
 

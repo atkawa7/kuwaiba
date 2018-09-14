@@ -47,6 +47,7 @@ public class ComponentGridLayout extends GraphicalComponent implements Component
             
             getComponent().setColumns(gridLayout.getColumns());
             getComponent().setRows(gridLayout.getRows());
+            getComponent().setSpacing(false);
         }
     }
     

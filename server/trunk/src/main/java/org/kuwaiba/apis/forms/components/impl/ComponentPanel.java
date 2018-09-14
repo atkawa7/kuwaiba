@@ -43,12 +43,6 @@ public class ComponentPanel extends GraphicalComponent implements ComponentConta
     public void initFromElement(AbstractElement element) {
         if (element instanceof ElementPanel) {
             ElementPanel panel = (ElementPanel) element;
-            
-            if (panel.getHeight() != null)
-                getComponent().setHeight(panel.getHeight());
-            
-            if (panel.getWidth() != null)
-                getComponent().setWidth(panel.getWidth());
         }
     }
 
