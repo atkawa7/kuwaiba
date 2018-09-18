@@ -338,10 +338,25 @@ public class ProcessInstanceView extends DynamicComponent {
                 }
             });
             
+            Button btnIndicators = new Button("Indicators");
+            btnIndicators.addClickListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    ProcessInstanceIndicatorView view = new ProcessInstanceIndicatorView(processInstance, wsBean, remoteSession);
+                    Window window = new Window();       
+                    window.setWidth(100, Unit.PERCENTAGE);
+                    window.setHeight(100, Unit.PERCENTAGE);
+                    window.setModal(true);
+                    window.setContent(view);
+                    getUI().addWindow(window);
+                }
+            });
+            
             GridLayout gl = new GridLayout();
             gl.setSizeFull();
-            gl.setColumns(3);
+            gl.setColumns(4);
             gl.setRows(1);
+            gl.addComponent(btnIndicators);
             gl.addComponent(btnSave);
             gl.addComponent(btnViewProcessInstance);
             gl.addComponent(btnNext);

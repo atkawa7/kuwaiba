@@ -114,7 +114,7 @@ public class Constants {
             public static final String BUTTON_PLUS_ICON = "buttonPlusIcon";
             public static final String BUTTON_COGS_ICON = "buttonCogsIcon";
             public static final String BUTTON_PRIMARY = "buttonPrimary";
-                        
+            public static final String BUTTON_DANGER = "buttonDanger";
         }
     }
     

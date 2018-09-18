@@ -754,4 +754,21 @@ $v-field-background-color: #ccffe6;
             padding: 5px;
         }
     }
+    
+    .indicatortable {
+        .v-verticallayout {
+            border-style: solid;
+            border-width: thin;
+            border-color:#000000;            
+        }
+        .normal {
+            background: greenyellow;            
+        }
+        .warning {
+            background: yellow;
+        }
+        .critical {
+            background: red;
+        }
+    }
 }

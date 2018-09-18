@@ -240,15 +240,23 @@ public class ElementButton extends AbstractElement {
                                 }
                                 parameterValues.add(anElement != null ? anElement : propertyChangeLine.get(i));
                             }
-                            Object result = runner.run(parameterValues);
-                                                                                                                                            
+                            Object newValue = runner.run(parameterValues);
+                            Object oldValue = element.getPropertyValue(propertyName);
+
+                            element.onComponentEvent(new EventDescriptor(
+                                Constants.EventAttribute.ONPROPERTYCHANGE, 
+                                propertyName, 
+                                newValue, 
+                                oldValue
+                            ));
+                            
                             element.fireElementEvent(new EventDescriptor(
                                 Constants.EventAttribute.ONPROPERTYCHANGE, 
                                 propertyName, 
-                                result, 
-                                element.getPropertyValue(propertyName)
+                                newValue, 
+                                oldValue
                             ));
-                            element.firePropertyChangeEvent();
+//                            element.firePropertyChangeEvent();
                         }
                     }
                 }
