@@ -178,6 +178,14 @@ public class Constants {
      */
     public static final String LABEL_PROCESS_INSTANCE = "processInstance";
     /**
+     * The pools of configuration variables
+     */
+    public static final String LABEL_CONFIG_VARIABLES_POOLS = "configVariablesPools";
+    /**
+     * The configuration variables
+     */
+    public static final String LABEL_CONFIG_VARIABLES = "configVariables";
+    /**
      * label used for contacts
      */
     public static final String LABEL_CONTACTS = "contacts";
@@ -254,6 +262,8 @@ public class Constants {
     public static final String PROPERTY_VERSION = "version"; //NOI18N
     public static final String PROPERTY_APPLIES_TO = "appliesTo"; //NOI18N
     public static final String PROPERTY_TAGS = "tags"; //NOI18N
+    public static final String PROPERTY_MASKED = "masked"; //NOI18N
+    public static final String PROPERTY_VALUE = "value"; //NOI18N
     /**
      * Property SNMP version
      */

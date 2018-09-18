@@ -490,6 +490,11 @@ $v-field-background-color: #ccffe6;
             right: 0;
             padding-right: 10px;
         }
+        
+        /*Used to confine an image within the limits of the "screen" part of tha TheaterLayout in a dashboard*/
+        .v-image-theater-layout-screen-image {
+            max-height: 150px;
+        }
     }
     
     .navtree {

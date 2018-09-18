@@ -1630,4 +1630,77 @@ public interface ApplicationEntityManager {
      * @throws OperationNotPermittedException If the process can no be deleted
      */
     public void deleteProcessInstance(long processInstanceId) throws OperationNotPermittedException;
+    
+    //Config Variables Management
+    /**
+     * Creates a configuration variable inside a pool. A configuration variable is a place where a value will be stored so it can retrieved by whomever need it. 
+     * These variables are typically used to store values that help other modules to work, such as URLs, user names, dimensions, etc
+     * @param configVariablesPoolId The id of the pool where the config variable will be put
+     * @param name The name of the pool. This value can not be null or empty. Duplicate variable names are not allowed
+     * @param description The description of the what the variable does
+     * @param type The type of the variable. Use 1 for number, 2 for strings, 3 for booleans, 4 for unidimensional arrays and 5 for matrixes. 
+     * @param masked If the value should be masked when rendered (for security reasons, for example)
+     * @param valueDefinition In most cases (primitive types like numbers, strings or booleans) will be the actual value of the variable as a string (for example "5" or "admin" or "true"). For arrays and matrixes use the following notation: <br> 
+     * Arrays: (value1,value2,value3,valueN), matrixes: [(row1col1, row1col2,... row1colN), (row2col1, row2col2,... row2colN), (rowNcol1, rowNcol2,... rowNcolN)]. The values will be interpreted as strings 
+     * @return The id of the newly created variable
+     * @throws ApplicationObjectNotFoundException If the parent pool could not be found
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the name is empty, the type is invalid, the value definition is empty
+     */
+    public long createConfigurationVariable(long configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Updates the value of a configuration variable. See #{@link #createConfigurationVariable(long, java.lang.String, java.lang.String, int, java.lang.String) } for value definition syntax
+     * @param name The current name of the variable that will be modified
+     * @param propertyToUpdate The name of the property to be updated. Possible values are: "name", "description", "type", "masked" and "value"
+     * @param newValue The new value as string
+     * @throws InvalidArgumentException If the property to be updated can not be recognized
+     * @throws ApplicationObjectNotFoundException If the config variable can not be found
+     */
+    public void updateConfigurationVariable(String name, String propertyToUpdate, String newValue) throws InvalidArgumentException, ApplicationObjectNotFoundException;
+    /**
+     * Deletes a config variable
+     * @param name The name of the variable to be deleted
+     * @throws ApplicationObjectNotFoundException If the config variable could not be found
+     */
+    public void deleteConfigurationVariable(String name) throws ApplicationObjectNotFoundException;
+    /**
+     * Retrieves a configuration variable
+     * @param name The name of the variable to be retrieved
+     * @return The variable
+     * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException If the variable could not be found
+     */
+    public ConfigurationVariable getConfigurationVariable(String name) throws ApplicationObjectNotFoundException;
+    /**
+     * Gets the config variables in a config variable pool
+     * @param parentPoolId The id pool to retrieve the variables from
+     * @return The list of config variables in the given pool
+     * @throws ApplicationObjectNotFoundException If the pool could not be found
+     */
+    public List<ConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId) throws ApplicationObjectNotFoundException;
+    /**
+     * Retrieves the list of pools of config variables
+     * @return The available pools of configuration variables
+     */
+    public List<Pool> getConfigurationVariablesPool();
+    /**
+     * Creates a pool of configuration variables
+     * @param name The name of the pool. Empty or null values are not allowed
+     * @param description The description of the pool
+     * @return The id of the newly created pool
+     */
+    public long createConfigurationVariablesPool(String name, String description);
+    /**
+     * Updates an attribute of a given config variables pool
+     * @param poolId The id of the pool to update
+     * @param propertyToUpdate The property to update. The valid values are "name" and "description"
+     * @param value The value of the property to be updated
+     * @throws InvalidArgumentException If the property provided is not valid
+     * @throws ApplicationObjectNotFoundException If the pool could not be found
+     */
+    public void updateConfigurationVariablesPool(long poolId, String propertyToUpdate, String value) throws InvalidArgumentException, ApplicationObjectNotFoundException;
+    /**
+     * Deletes a configuration variables pool
+     * @param poolId The id of the pool to be deleted
+     * @throws ApplicationObjectNotFoundException If the pool could not be found
+     */
+    public void deleteConfigurationVariablesPool(long poolId) throws ApplicationObjectNotFoundException;
 }

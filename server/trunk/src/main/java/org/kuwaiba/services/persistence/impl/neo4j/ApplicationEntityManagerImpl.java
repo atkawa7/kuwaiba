@@ -53,6 +53,7 @@ import org.kuwaiba.apis.persistence.ConnectionManager;
 import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 import org.kuwaiba.apis.persistence.application.BusinessRule;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
+import org.kuwaiba.apis.persistence.application.ConfigurationVariable;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.FavoritesFolder;
 import org.kuwaiba.apis.persistence.application.forms.FormDefinition;
@@ -191,6 +192,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      */
     private Label processInstanceLabel;
     /**
+     * The label that contains the configuration variables pools
+     */
+    private Label configurationVariablesPools;
+    /**
+     * The label that contains the configuration variables
+     */
+    private Label configurationVariables;
+    /**
      * Reference to the singleton instance of CacheManager
      */
     private CacheManager cm;
@@ -234,7 +243,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         formLabel = Label.label(Constants.LABEL_FORM);
         formInstanceLabel = Label.label(Constants.LABEL_FORM_INSTANCE);
         processInstanceLabel = Label.label(Constants.LABEL_PROCESS_INSTANCE);
-            
+        configurationVariablesPools = Label.label(Constants.LABEL_CONFIG_VARIABLES_POOLS);
+        configurationVariables = Label.label(Constants.LABEL_CONFIG_VARIABLES);
+        
         try (Transaction tx = graphDb.beginTx()) {
             
             ResourceIterator<Node> listTypeItems = graphDb.findNodes(listTypeItemLabel);
@@ -4731,6 +4742,76 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
     }
     
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Configuration Values">
+    @Override
+    public long createConfigurationVariable(long configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        
+        if (type > 5 || type < 1)
+            throw new InvalidArgumentException(String.format("The specified type (%s) is not valid", type));
+
+        if (name == null || name.trim().isEmpty())
+            throw  new InvalidArgumentException("The name of the pool can not be empty");
+
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node parentPool = graphDb.findNode(configurationVariablesPools, Constants.PROPERTY_ID, configVariablesPoolId);
+            
+            if (parentPool == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find a configuration variables pool with id %s", configVariablesPoolId));
+            
+            Node newConfigVariableNode = graphDb.createNode(configurationVariables);
+            newConfigVariableNode.setProperty(Constants.PROPERTY_NAME, name);
+            newConfigVariableNode.setProperty(Constants.PROPERTY_DESCRIPTION, description != null ? description : "");
+            newConfigVariableNode.setProperty(Constants.PROPERTY_TYPE, type);
+            newConfigVariableNode.setProperty(Constants.PROPERTY_MASKED, masked);
+            newConfigVariableNode.setProperty(Constants.PROPERTY_VALUE, valueDefinition != null ? valueDefinition : "");
+            tx.success();
+            return newConfigVariableNode.getId();
+        }
+    }
+
+    @Override
+    public void updateConfigurationVariable(String name, String propertyToUpdate, String newValue) throws InvalidArgumentException, ApplicationObjectNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteConfigurationVariable(String name) throws ApplicationObjectNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ConfigurationVariable getConfigurationVariable(String name) throws ApplicationObjectNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<ConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId) throws ApplicationObjectNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<Pool> getConfigurationVariablesPool() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public long createConfigurationVariablesPool(String name, String description) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateConfigurationVariablesPool(long poolId, String propertyToUpdate, String value) throws InvalidArgumentException, ApplicationObjectNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteConfigurationVariablesPool(long poolId) throws ApplicationObjectNotFoundException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
     //</editor-fold>
     //</editor-fold>
 //Helpers

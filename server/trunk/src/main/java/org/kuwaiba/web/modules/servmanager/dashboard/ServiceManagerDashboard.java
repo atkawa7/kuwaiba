@@ -30,7 +30,7 @@ public class ServiceManagerDashboard extends AbstractDashboard {
     
     public ServiceManagerDashboard(RemoteObjectLight customer, RemoteObjectLight service, WebserviceBean wsBean) {
         super(service.toString(), new TheaterDashboardLayout(3, 2));
-        ((TheaterDashboardLayout)getDashboardLayout()).setScreenWidget(new ZabbixGraphDashboardWidget(service, wsBean));
+        ((TheaterDashboardLayout)getDashboardLayout()).setScreenWidget(new ZabbixGraphDashboardWidget(service));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(0, 0, new ResourcesDashboardWidget(service, wsBean));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 0, new TopologyViewDashboardWidget(this, service, wsBean));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 0, new EndToEndViewDashboardWidget(this, service, wsBean));

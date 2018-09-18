@@ -19,8 +19,9 @@ package org.kuwaiba.web.modules.servmanager.dashboard;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.ComboBox;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
@@ -44,7 +45,6 @@ import javax.json.JsonValue;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
-import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
@@ -54,18 +54,38 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  */
 public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
     /**
+     * URL to be used to make the API requests
+     */
+    private final static String DEFAULT_ZABBIX_API_ENDPOINT_URL = "http://localhost/zabbix/api_jsonrpc.php";
+    /**
+     * Default Zabbix user if none specified
+     */
+    private final static String DEFAULT_ZABBIX_USER = "Admin";
+    /**
+     * Default Zabbix password if none specified
+     */
+    private final static String DEFAULT_ZABBIX_PASSWORD = "zabbix";
+    /**
      * Reference to the selected service
      */
     private RemoteObjectLight service;
+    /*
+    * The graphs currently associated to the selected service
+    */
+    private List<ZabbixGraph> zabbixGraphs;
     /**
-     * Reference to the backend bean
+     * Variable indicating the index in the currentGraphs array of the current graph on display.
      */
-    private WebserviceBean wsBean;
+    private int currentGraphIndex = 0;
+    /**
+     * A panel containing the current graph on display
+     */
+    private Panel pnlZabbixGraphs;
     
-    public ZabbixGraphDashboardWidget(RemoteObjectLight service, WebserviceBean wsBean) {
+    public ZabbixGraphDashboardWidget(RemoteObjectLight service) {
         super(String.format("Zabbix Graphs for %s", service));
+        addStyleName("dashboard");
         this.service = service;
-        this.wsBean = wsBean;
         this.createContent();
     }
    
@@ -88,6 +108,11 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
             JsonReader authReader = Json.createReader(new StringReader(authResponse));
             JsonObject authObject = authReader.readObject();
             
+            if (!authObject.containsKey("result")) {
+                Notifications.showError(String.format("The Zabbix server returned an error code: %s", authObject.containsKey("error") ? authObject.getString("error") : "No further details"));
+                return;
+            }
+            
             String authKey = authObject.getString("result");
             
             
@@ -101,16 +126,11 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
             "    \"id\": 1\n" +
             "}");
             
-            
-            ComboBox<ZabbixGraph> cmbGraphs = new ComboBox<>();
-            cmbGraphs.setWidth(20, Unit.PERCENTAGE);
-            cmbGraphs.setEmptySelectionCaption("Zabbix graphs for this service");
-            
             JsonReader graphReader = Json.createReader(new StringReader(graphResponse));
             JsonObject graphObject = graphReader.readObject();
             
             JsonArray jsonGraphs = graphObject.getJsonArray("result");
-            List<ZabbixGraph> zabbixGraphs = new ArrayList<>();
+            zabbixGraphs = new ArrayList<>();
             
             for (JsonValue jsonGraph : jsonGraphs) {
                 String[] graphNameTokens = ((JsonObject)jsonGraph).getString("name").split(":");
@@ -121,32 +141,65 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
             if (zabbixGraphs.isEmpty())
                 addComponent(new Label("This service does not have Zabbix graphs associated to it. If this is not the case, please check your naming conventions or contact an administrator"));
             else {
-                cmbGraphs.setItems(zabbixGraphs);
-                addComponent(cmbGraphs);
                 
-                cmbGraphs.addSelectionListener((event) -> {
-                    
-                    if (!cmbGraphs.getSelectedItem().isPresent())
+                pnlZabbixGraphs = new Panel();
+                pnlZabbixGraphs.setSizeUndefined();
+                
+                HorizontalLayout lytCaroussel = new HorizontalLayout();
+                lytCaroussel.setSizeFull();
+                
+                Button btnPreviousGraph = new Button(VaadinIcons.ARROW_LEFT);
+                btnPreviousGraph.setEnabled(false);
+                btnPreviousGraph.addClickListener((event) -> {
+                    if (currentGraphIndex < 0) {
+                        currentGraphIndex = 0;
                         return;
+                    }
                     
-                    Window wdwGraphs = new Window(cmbGraphs.getSelectedItem().get().toString());
+                    if (currentGraphIndex == 0) 
+                        btnPreviousGraph.setEnabled(false);
+                    else
+                        currentGraphIndex--;
+                    
+                    updateZabbixGraph();
+                });
+                
+                Button btnNextGraph = new Button(VaadinIcons.ARROW_RIGHT);
+                btnNextGraph.setEnabled(zabbixGraphs.size() > 1);
+                
+                btnNextGraph.addClickListener((event) -> {
+                    
+                    if (currentGraphIndex == zabbixGraphs.size() - 1)
+                        currentGraphIndex = 0;
+                    else 
+                        currentGraphIndex++;
+                    
+                    btnPreviousGraph.setEnabled(currentGraphIndex > 0);
+                    
+                    updateZabbixGraph();
+                });
+                
+                updateZabbixGraph();
+                lytCaroussel.addComponents(btnPreviousGraph, pnlZabbixGraphs, btnNextGraph);
+                lytCaroussel.setExpandRatio(btnNextGraph, 2);
+                lytCaroussel.setExpandRatio(pnlZabbixGraphs, 6);
+                lytCaroussel.setExpandRatio(btnPreviousGraph, 2);
+
+                lytCaroussel.setComponentAlignment(pnlZabbixGraphs, Alignment.MIDDLE_CENTER);
+                lytCaroussel.setComponentAlignment(btnPreviousGraph, Alignment.MIDDLE_LEFT);
+                lytCaroussel.setComponentAlignment(btnNextGraph, Alignment.MIDDLE_RIGHT);
+                
+                pnlZabbixGraphs.addClickListener((event) -> {
+                    Window wdwGraphs = new Window(zabbixGraphs.get(currentGraphIndex).toString());
                     
                     VerticalLayout lytGraph = new VerticalLayout();
                     lytGraph.setSizeUndefined();
                     
-                    Button btnRefresh = new Button("Refresh", VaadinIcons.REFRESH);
-                    Panel pnlZabbixGraph = new Panel(new Image(cmbGraphs.getSelectedItem().get().toString(), 
-                            new ExternalResource("http://localhost/zabbix/chart2.php?graphid=" + cmbGraphs.getSelectedItem().get().id + 
-                                    "&period=3600&stime=20180913084803&isNow=1&profileIdx=web.graphs&profileIdx2=798&width=1194&screenid=")));
+                    Panel pnlZabbixGraph = new Panel(new Image(wdwGraphs.getCaption(), 
+                            new ExternalResource("http://localhost/zabbix/chart2.php?graphid=" + zabbixGraphs.get(currentGraphIndex).id + 
+                                    "&period=3600&isNow=1&profileIdx=web.graphs&profileIdx2=798&width=1194")));
                     
-                    lytGraph.addComponents(btnRefresh, pnlZabbixGraph);
-                    
-                    lytGraph.setExpandRatio(btnRefresh, 1);
-                    btnRefresh.addClickListener((e) -> {
-                        pnlZabbixGraph.setContent(new Image(cmbGraphs.getSelectedItem().get().toString(), 
-                            new ExternalResource("http://localhost/zabbix/chart2.php?graphid=" + cmbGraphs.getSelectedItem().get().id + 
-                                    "&period=3600&stime=20180913084803&isNow=1&profileIdx=web.graphs&profileIdx2=798&width=1194&screenid=")));
-                    });
+                    lytGraph.addComponents(pnlZabbixGraph);
                     
                     wdwGraphs.setModal(true);
                     wdwGraphs.setHeight(80, Unit.PERCENTAGE);
@@ -154,8 +207,9 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
                     wdwGraphs.setContent(lytGraph);
                     
                     UI.getCurrent().addWindow(wdwGraphs);
-                    
                 });
+                
+                addComponent(lytCaroussel);
                 
             }
             //Logout
@@ -171,6 +225,17 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
         } catch (InvalidArgumentException ex) {
             Notifications.showError(ex.getLocalizedMessage());
         }
+    }
+    
+    /**
+     * Replaces the image currently on display at the Zabbix graphs panel with the current seleted graph
+     */
+    private void updateZabbixGraph() {
+        Image newGraph = new Image(zabbixGraphs.get(currentGraphIndex).toString(), 
+                        new ExternalResource("http://localhost/zabbix/chart2.php?graphid=" + zabbixGraphs.get(currentGraphIndex).id + 
+                                    "&period=3600&isNow=1&profileIdx=web.graphs&profileIdx2=798&width=1194"));
+        newGraph.setStyleName("theater-layout-screen-image");
+        pnlZabbixGraphs.setContent(newGraph);
     }
     
     /**
@@ -206,7 +271,7 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
             } else 
                 throw new InvalidArgumentException(String.format("The Zabbix server returned an error code %s. Contact your administrator", responseCode));
         } catch (IOException ex) {
-            throw new InvalidArgumentException(String.format("An unexpected error occurred: %s", ex.getLocalizedMessage()));
+            throw new InvalidArgumentException(String.format("An unexpected error occurred while loading Zabbix graphics: %s", ex.getLocalizedMessage()));
         }
     }
 

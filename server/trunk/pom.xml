@@ -163,13 +163,6 @@
             <version>2.4.7</version>
         </dependency>
         
-        <!-- Use to deal with Sync Data Source Configurations -->
-        <dependency>
-            <groupId>javax.json</groupId>
-            <artifactId>javax.json-api</artifactId>
-            <version>1.0</version>
-        </dependency>
-        
         <!-- SNMP4J is used by many sync providers -->
         <dependency>
             <groupId>org.snmp4j</groupId>

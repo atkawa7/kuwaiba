@@ -15415,6 +15415,10 @@ div.v-layout.v-horizontal.v-widget {
 	padding-right: 10px;
 }
 
+.nuqui .dashboards .v-image-theater-layout-screen-image {
+	max-height: 150px;
+}
+
 .nuqui .navtree .v-tree8 {
 	background: white;
 }
