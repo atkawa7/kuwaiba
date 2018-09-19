@@ -45,6 +45,7 @@ import javax.json.JsonValue;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
+import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
@@ -69,6 +70,10 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
      * Reference to the selected service
      */
     private RemoteObjectLight service;
+    /**
+    * Reference to the backend bean
+    */
+    private WebserviceBean wsBean;
     /*
     * The graphs currently associated to the selected service
     */
@@ -82,18 +87,26 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
      */
     private Panel pnlZabbixGraphs;
     
-    public ZabbixGraphDashboardWidget(RemoteObjectLight service) {
+    public ZabbixGraphDashboardWidget(RemoteObjectLight service, WebserviceBean wsBean) {
         super(String.format("Zabbix Graphs for %s", service));
         addStyleName("dashboard");
         this.service = service;
+        this.wsBean = wsBean;
         this.createContent();
     }
    
     @Override
     public void createContent() { 
         addComponents(new Label(String.format("<h2>%s</h2>", service), ContentMode.HTML));
-        //Login
+        
         try {
+            
+//            try {
+//                wsB
+//            } catch (ServerSideException ex) {
+//            }
+            
+            //Login
             String authResponse = createHttpPostRequestForTextResponse("http://localhost/zabbix/api_jsonrpc.php", "{\n" +
             "    \"jsonrpc\": \"2.0\",\n" +
             "    \"method\": \"user.login\",\n" +
@@ -120,7 +133,8 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
             "    \"jsonrpc\": \"2.0\",\n" +
             "    \"method\": \"graph.get\",\n" +
             "    \"params\": {\n" +
-            "        \"output\": \"extend\"\n" +
+            "        \"output\": \"extend\",\n" +
+            "        \"expandName\": true \n" + //This is very important. If not included, Zabbix will return the name of the template (which is composed by placeholders) instead of the actual name of the graph
             "    },\n" +
             "    \"auth\": \"" + authKey + "\",\n" +
             "    \"id\": 1\n" +
@@ -136,6 +150,7 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
                 String[] graphNameTokens = ((JsonObject)jsonGraph).getString("name").split(":");
                 
                 if (service.getName().equals(graphNameTokens[graphNameTokens.length - 1]))
+                //if (((JsonObject)jsonGraph).getString("name").contains(service.getName()))
                     zabbixGraphs.add(new ZabbixGraph(((JsonObject)jsonGraph).getString("graphid"), ((JsonObject)jsonGraph).getString("name")));
             }
             if (zabbixGraphs.isEmpty())
@@ -197,9 +212,10 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
                     
                     Panel pnlZabbixGraph = new Panel(new Image(wdwGraphs.getCaption(), 
                             new ExternalResource("http://localhost/zabbix/chart2.php?graphid=" + zabbixGraphs.get(currentGraphIndex).id + 
-                                    "&period=3600&isNow=1&profileIdx=web.graphs&profileIdx2=798&width=1194")));
+                                    "&period=3600&isNow=1&profileIdx=web.graphs&profileIdx2=798&width=1200")));
                     
                     lytGraph.addComponents(pnlZabbixGraph);
+                    lytGraph.setComponentAlignment(pnlZabbixGraph, Alignment.MIDDLE_CENTER);
                     
                     wdwGraphs.setModal(true);
                     wdwGraphs.setHeight(80, Unit.PERCENTAGE);
@@ -228,12 +244,12 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
     }
     
     /**
-     * Replaces the image currently on display at the Zabbix graphs panel with the current seleted graph
+     * Replaces the image currently on display at the Zabbix graphs panel with the current selected graph
      */
     private void updateZabbixGraph() {
         Image newGraph = new Image(zabbixGraphs.get(currentGraphIndex).toString(), 
                         new ExternalResource("http://localhost/zabbix/chart2.php?graphid=" + zabbixGraphs.get(currentGraphIndex).id + 
-                                    "&period=3600&isNow=1&profileIdx=web.graphs&profileIdx2=798&width=1194"));
+                                    "&period=3600&isNow=1&profileIdx=web.graphs&profileIdx2=798&width=600"));
         newGraph.setStyleName("theater-layout-screen-image");
         pnlZabbixGraphs.setContent(newGraph);
     }
@@ -251,6 +267,7 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");
             connection.setRequestProperty("Content-Type", "application/json-rpc");
             connection.setDoOutput(true);
+            
             
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(connection.getOutputStream());
             outputStreamWriter.write(content);
@@ -274,6 +291,7 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
             throw new InvalidArgumentException(String.format("An unexpected error occurred while loading Zabbix graphics: %s", ex.getLocalizedMessage()));
         }
     }
+   
 
     /**
      * A simple POJO that represents a Zabbix graph and that can be used in lists and combo boxes

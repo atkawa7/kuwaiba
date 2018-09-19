@@ -14,14 +14,19 @@
  *  limitations under the License.
  */
 
-package org.kuwaiba.apis.persistence.application;
+package org.kuwaiba.interfaces.ws.toserialize.application;
+
+import java.io.Serializable;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
 
 /**
- * Simple POJO that represents a configuration variable. A configuration variable is a place where a value will be stored so it can retrieved by whomever need it. 
- * These variables are typically used to store values that help other modules to work, such as URLs, user names, dimensions, etc
+ * A wrapper of {@link org.kuwaiba.apis.persistence.application.ConfigurationVariable}
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ConfigurationVariable {
+@XmlAccessorType(XmlAccessType.FIELD)
+public class RemoteConfigurationVariable implements Serializable {
     /**
      * The variable is a number
      */
@@ -63,7 +68,12 @@ public class ConfigurationVariable {
      */
     private int type;
 
-    public ConfigurationVariable(long id, String name, String description, boolean masked, int type) {
+    /**
+     * Mandatory default constructor. Do not use in your code.
+     */
+    public RemoteConfigurationVariable() { }
+
+    public RemoteConfigurationVariable(long id, String name, String description, boolean masked, int type) {
         this.id = id;
         this.name = name;
         this.description = description;

@@ -4752,64 +4752,199 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             throw new InvalidArgumentException(String.format("The specified type (%s) is not valid", type));
 
         if (name == null || name.trim().isEmpty())
-            throw  new InvalidArgumentException("The name of the pool can not be empty");
+            throw  new InvalidArgumentException("The name of the configuration variable can not be empty");
 
-        
         try (Transaction tx = graphDb.beginTx()) {
-            Node parentPool = graphDb.findNode(configurationVariablesPools, Constants.PROPERTY_ID, configVariablesPoolId);
+            Node parentPoolNode = graphDb.findNodes(configurationVariablesPools).stream().filter((configvariablesPoolNode) -> {
+                return configvariablesPoolNode.getId() == configVariablesPoolId; 
+            }).findFirst().get();
             
-            if (parentPool == null)
-                throw new ApplicationObjectNotFoundException(String.format("Can not find a configuration variables pool with id %s", configVariablesPoolId));
+            if (parentPoolNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find a pool with id %s", configVariablesPoolId));
             
             Node newConfigVariableNode = graphDb.createNode(configurationVariables);
+            newConfigVariableNode.createRelationshipTo(parentPoolNode, RelTypes.CHILD_OF_SPECIAL);
             newConfigVariableNode.setProperty(Constants.PROPERTY_NAME, name);
             newConfigVariableNode.setProperty(Constants.PROPERTY_DESCRIPTION, description != null ? description : "");
             newConfigVariableNode.setProperty(Constants.PROPERTY_TYPE, type);
             newConfigVariableNode.setProperty(Constants.PROPERTY_MASKED, masked);
             newConfigVariableNode.setProperty(Constants.PROPERTY_VALUE, valueDefinition != null ? valueDefinition : "");
+            
             tx.success();
+            
             return newConfigVariableNode.getId();
         }
     }
 
     @Override
     public void updateConfigurationVariable(String name, String propertyToUpdate, String newValue) throws InvalidArgumentException, ApplicationObjectNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (Transaction tx = graphDb.beginTx()) {
+            Node configVariableNode = graphDb.findNode(configurationVariables, Constants.PROPERTY_NAME, name);
+            
+            if (configVariableNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find a configuration variable named %s", name));
+            
+            switch (propertyToUpdate) {
+                case Constants.PROPERTY_NAME:
+                    if (newValue == null || newValue.trim().isEmpty())
+                        throw  new InvalidArgumentException("The name of the configuration variable can not be empty");
+                    configVariableNode.setProperty(Constants.PROPERTY_NAME, newValue);
+                    break;
+                case Constants.PROPERTY_DESCRIPTION:
+                    configVariableNode.setProperty(Constants.PROPERTY_DESCRIPTION, newValue);
+                    break;
+                case Constants.PROPERTY_TYPE:
+                    try {
+                        int type = Integer.valueOf(newValue);
+                        
+                        if (type > 5 || type < 1)
+                            throw new InvalidArgumentException(String.format("The specified type (%s) is not valid", type));
+                        
+                        configVariableNode.setProperty(Constants.PROPERTY_TYPE, type);
+                    } catch (NumberFormatException ex) {
+                        throw new InvalidArgumentException(String.format("Type %s is not a number", newValue));
+                    }
+                    break;
+                case Constants.PROPERTY_MASKED:
+                    configVariableNode.setProperty(Constants.PROPERTY_MASKED, Boolean.valueOf(newValue));
+                    break;
+                case Constants.PROPERTY_VALUE:
+                    configVariableNode.setProperty(Constants.PROPERTY_VALUE, newValue);
+                    break;
+                default:
+                    throw new InvalidArgumentException(String.format("Invalid configuration variable property: %s", propertyToUpdate));
+            }            
+            tx.success();
+        }
     }
 
     @Override
     public void deleteConfigurationVariable(String name) throws ApplicationObjectNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (Transaction tx = graphDb.beginTx()) {
+            Node configVariableNode = graphDb.findNode(configurationVariables, Constants.PROPERTY_NAME, name);
+            
+            if (configVariableNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find a configuration variable named %s", name));
+            
+            configVariableNode.delete();
+            tx.success();
+        }
     }
 
     @Override
     public ConfigurationVariable getConfigurationVariable(String name) throws ApplicationObjectNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (Transaction tx = graphDb.beginTx()) {
+            Node configVariableNode = graphDb.findNode(configurationVariables, Constants.PROPERTY_NAME, name);
+            
+            if (configVariableNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find a configuration variable named %s", name));
+            
+            return new ConfigurationVariable(configVariableNode.getId(), (String)configVariableNode.getProperty(Constants.PROPERTY_NAME), 
+                     (String)configVariableNode.getProperty(Constants.PROPERTY_DESCRIPTION), (boolean)configVariableNode.getProperty(Constants.PROPERTY_MASKED), 
+                     (int)configVariableNode.getProperty(Constants.PROPERTY_TYPE));
+        }
     }
 
     @Override
     public List<ConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId) throws ApplicationObjectNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (Transaction tx = graphDb.beginTx()) {
+            Node parentPool = graphDb.findNode(configurationVariablesPools, Constants.PROPERTY_ID, parentPoolId);
+            
+            if (parentPool == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find a pool with id %s", parentPoolId));
+            
+            List<ConfigurationVariable> res = new ArrayList<>();
+            
+            parentPool.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING).forEach((childOfRelationship) -> {
+                Node configVariableNode = childOfRelationship.getStartNode();
+                
+                res.add(new ConfigurationVariable(configVariableNode.getId(), (String)configVariableNode.getProperty(Constants.PROPERTY_NAME), 
+                     (String)configVariableNode.getProperty(Constants.PROPERTY_DESCRIPTION), (boolean)configVariableNode.getProperty(Constants.PROPERTY_MASKED), 
+                     (int)configVariableNode.getProperty(Constants.PROPERTY_TYPE)));
+            });
+            
+            tx.success();
+            return res;
+        }
     }
 
     @Override
-    public List<Pool> getConfigurationVariablesPool() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<Pool> getConfigurationVariablesPools() {
+        try (Transaction tx = graphDb.beginTx()) {
+            List<Pool> res = new ArrayList<>();
+            graphDb.findNodes(configurationVariablesPools).stream().forEach((poolNode) -> {
+                res.add(new Pool(poolNode.getId(), (String)poolNode.getProperty(Constants.PROPERTY_NAME), (String)poolNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+                        "Pool of Configuration Variables", POOL_TYPE_MODULE_ROOT));
+            });
+            
+            tx.success();
+            return res;
+        }
     }
 
     @Override
-    public long createConfigurationVariablesPool(String name, String description) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public long createConfigurationVariablesPool(String name, String description) throws InvalidArgumentException {
+        
+        if (name == null || name.trim().isEmpty())
+            throw  new InvalidArgumentException("The name of the configuration variables pool can not be empty");
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node newPoolNode = graphDb.createNode(configurationVariablesPools);
+            
+            newPoolNode.setProperty(Constants.PROPERTY_NAME, name);
+            newPoolNode.setProperty(Constants.PROPERTY_DESCRIPTION, description == null ? "" : description);
+            
+            tx.success();
+            return newPoolNode.getId();
+        }
     }
 
     @Override
     public void updateConfigurationVariablesPool(long poolId, String propertyToUpdate, String value) throws InvalidArgumentException, ApplicationObjectNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (Transaction tx = graphDb.beginTx()) {
+            Node poolNode = graphDb.findNodes(configurationVariablesPools).stream().filter((configvariablesPoolNode) -> {
+                return configvariablesPoolNode.getId() == poolId; 
+            }).findFirst().get();
+            
+            if (poolNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find a pool with id %s", poolId));
+            
+            switch(propertyToUpdate) {
+                case Constants.PROPERTY_NAME:
+                    if (value == null || value.trim().isEmpty())
+                        throw  new InvalidArgumentException("The name of the pool can not be empty");
+                    
+                    poolNode.setProperty(Constants.PROPERTY_NAME, value);
+                    break;
+                case Constants.PROPERTY_DESCRIPTION:
+                    poolNode.setProperty(Constants.PROPERTY_DESCRIPTION, value == null ? "" : value);
+                    break;
+                default:
+                    throw new InvalidArgumentException(String.format("Invalid pool property: %s", propertyToUpdate));
+            }
+            
+            tx.success();
+        }
     }
 
     @Override
     public void deleteConfigurationVariablesPool(long poolId) throws ApplicationObjectNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try (Transaction tx = graphDb.beginTx()) {
+            Node poolNode = graphDb.findNodes(configurationVariablesPools).stream().filter((configvariablesPoolNode) -> {
+                return configvariablesPoolNode.getId() == poolId; 
+            }).findFirst().get();
+            
+            if (poolNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find a pool with id %s", poolId));
+            
+            poolNode.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING).forEach((childOfRelationship) -> {
+                childOfRelationship.getStartNode().delete();
+            });
+            
+            poolNode.delete();
+            
+            tx.success();
+        }
     }
 
     //</editor-fold>

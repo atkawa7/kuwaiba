@@ -1680,14 +1680,15 @@ public interface ApplicationEntityManager {
      * Retrieves the list of pools of config variables
      * @return The available pools of configuration variables
      */
-    public List<Pool> getConfigurationVariablesPool();
+    public List<Pool> getConfigurationVariablesPools();
     /**
      * Creates a pool of configuration variables
      * @param name The name of the pool. Empty or null values are not allowed
      * @param description The description of the pool
      * @return The id of the newly created pool
+     * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the name provided is null or empty
      */
-    public long createConfigurationVariablesPool(String name, String description);
+    public long createConfigurationVariablesPool(String name, String description) throws InvalidArgumentException;
     /**
      * Updates an attribute of a given config variables pool
      * @param poolId The id of the pool to update
@@ -1698,7 +1699,7 @@ public interface ApplicationEntityManager {
      */
     public void updateConfigurationVariablesPool(long poolId, String propertyToUpdate, String value) throws InvalidArgumentException, ApplicationObjectNotFoundException;
     /**
-     * Deletes a configuration variables pool
+     * Deletes a configuration variables pool. Deleting a pool also deletes the config variables contained within
      * @param poolId The id of the pool to be deleted
      * @throws ApplicationObjectNotFoundException If the pool could not be found
      */

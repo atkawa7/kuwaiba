@@ -37,6 +37,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBackgroundJob;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteBusinessRule;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConfigurationVariable;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFavoritesFolder;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteForm;
@@ -664,5 +665,17 @@ public interface WebserviceBean {
     public RemoteProcessInstance getProcessInstance(long processInstanceId, String ipAddress, String sessionId) throws ServerSideException;
     public void deleteProcessInstance(long processInstanceId, String ipAddress, String sessionId) throws ServerSideException;
     public void reloadProcessDefinitions(String ipAddress, String sessionId) throws ServerSideException;
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Configuration Values">
+    public long createConfigurationVariable(long configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition) throws ServerSideException;
+    public void updateConfigurationVariable(String name, String propertyToUpdate, String newValue) throws ServerSideException;
+    public void deleteConfigurationVariable(String name) throws ServerSideException;
+    public RemoteConfigurationVariable getConfigurationVariable(String name) throws ServerSideException;
+    public List<RemoteConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId) throws ServerSideException;
+    public List<RemotePool> getConfigurationVariablesPools();
+    public long createConfigurationVariablesPool(String name, String description) throws ServerSideException;
+    public void updateConfigurationVariablesPool(long poolId, String propertyToUpdate, String value) throws ServerSideException;
+    public void deleteConfigurationVariablesPool(long poolId) throws ServerSideException;
     //</editor-fold>
 }

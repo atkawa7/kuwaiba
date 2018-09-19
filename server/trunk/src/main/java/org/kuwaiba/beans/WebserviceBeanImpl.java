@@ -111,6 +111,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFormInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConfigurationVariable;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
@@ -3888,6 +3889,53 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(ex.getMessage());
         }
     }
+
+    @Override
+    public long createConfigurationVariable(long configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition) throws ServerSideException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateConfigurationVariable(String name, String propertyToUpdate, String newValue) throws ServerSideException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteConfigurationVariable(String name) throws ServerSideException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public RemoteConfigurationVariable getConfigurationVariable(String name) throws ServerSideException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<RemoteConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId) throws ServerSideException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<RemotePool> getConfigurationVariablesPools() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public long createConfigurationVariablesPool(String name, String description) throws ServerSideException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void updateConfigurationVariablesPool(long poolId, String propertyToUpdate, String value) throws ServerSideException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void deleteConfigurationVariablesPool(long poolId) throws ServerSideException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Sync/Bulk load data methods">
