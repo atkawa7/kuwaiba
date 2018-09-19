@@ -88,15 +88,9 @@ public class FormInstanceCreator extends AbstractFormInstanceCreator {
             else if (data instanceof String) {
                 XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.DATA_TYPE, Constants.Attribute.DataType.STRING);
             }
-            
-////            try {
-////                if (Integer.valueOf(String.valueOf(data)) instanceof Integer)                    
-////                    XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.DATA_TYPE, Constants.Attribute.DataType.INTEGER);
-////                }
-////            catch(NumberFormatException nfe) {
-////                                                                    
-////            }
-            
+            else if (data instanceof Integer) {
+                XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.DATA_TYPE, Constants.Attribute.DataType.INTEGER);
+            }
             else if (data instanceof LocalDate) {
                 XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.DATA_TYPE, Constants.Attribute.DataType.DATE);
             }

@@ -112,6 +112,13 @@ public abstract class AbstractFormInstanceLoader {
                 if (value != null)
                     return Boolean.valueOf(value);
             break;
+            case Constants.Attribute.DataType.INTEGER:
+                
+                value = reader.getAttributeValue(null, Constants.Attribute.VALUE);
+                
+                if (value != null)
+                    return Integer.valueOf(value);
+            break;
             default:
                 return null;
         }
