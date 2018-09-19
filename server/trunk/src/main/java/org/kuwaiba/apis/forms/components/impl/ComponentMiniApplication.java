@@ -16,8 +16,8 @@ import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.Constants;
 import org.kuwaiba.apis.forms.elements.ElementMiniApplication;
 import org.kuwaiba.apis.forms.elements.EventDescriptor;
+import org.kuwaiba.apis.web.gui.miniapps.AbstractMiniApplication;
 import org.kuwaiba.beans.WebserviceBean;
-import org.kuwaiba.apis.forms.components.impl.miniapps.AbstractComponentMiniApplication;
 import org.openide.util.Exceptions;
 
 /**
@@ -27,7 +27,7 @@ import org.openide.util.Exceptions;
 public class ComponentMiniApplication extends GraphicalComponent {
     private Window window;
     private final WebserviceBean webserviceBean;
-    private AbstractComponentMiniApplication acma;
+    private AbstractMiniApplication ama;
     private ElementMiniApplication miniApp;
 
     public ComponentMiniApplication(WebserviceBean webserviceBean) {
@@ -52,9 +52,9 @@ public class ComponentMiniApplication extends GraphicalComponent {
                 Constructor<?> constructor = aClass.getConstructor(Properties.class);
                 Object object = constructor.newInstance(new Object[] { new Properties() });
                 
-                if (object instanceof AbstractComponentMiniApplication) {
+                if (object instanceof AbstractMiniApplication) {
                     
-                    acma = (AbstractComponentMiniApplication) object;
+                    ama = (AbstractMiniApplication) object;
                     /*
                     acma.setWebserviceBean(webserviceBean);
                                         
@@ -114,16 +114,16 @@ public class ComponentMiniApplication extends GraphicalComponent {
             
             if (Constants.Property.INPUT_PARAMETERS.equals(event.getPropertyName())) {
                 if (event.getNewValue() instanceof Properties) {
-                    acma.setInputParameters((Properties) event.getNewValue());
+                    ama.setInputParameters((Properties) event.getNewValue());
                                         
-                    acma.setWebserviceBean(webserviceBean);
+                    ama.setWebserviceBean(webserviceBean);
                                         
                     Object content = null;
                                         
                     if (Constants.Attribute.Mode.DETACHED.equals(miniApp.getMode()))
-                        content = acma.launchDetached();
+                        content = ama.launchDetached();
                     else if (Constants.Attribute.Mode.EMBEDDED.equals(miniApp.getMode()))
-                        content = acma.launchEmbedded();
+                        content = ama.launchEmbedded();
                     
                     if (content instanceof Component) 
                         getComponent().setContent((Component) content);

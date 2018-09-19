@@ -12,7 +12,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.kuwaiba.apis.forms.components.impl.miniapps;
+package org.kuwaiba.web.procmanager;
 
 import com.neotropic.kuwaiba.modules.reporting.img.SceneExporter;
 import com.vaadin.server.FileResource;
@@ -32,7 +32,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
  * Mini Application used to show the Rack View given the object Id and Class Name
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class MiniAppRackView extends AbstractComponentMiniApplication {
+public class MiniAppRackView extends AbstractMiniApplication<Component, Component> {
     
     public MiniAppRackView(Properties inputParameters) {
         super(inputParameters);

@@ -14,7 +14,6 @@
  */
 package org.kuwaiba.web.procmanager;
 
-import org.kuwaiba.apis.forms.components.impl.miniapps.AbstractComponentMiniApplication;
 import com.neotropic.kuwaiba.modules.reporting.img.SceneExporter;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
@@ -24,7 +23,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
@@ -33,7 +31,6 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
-import com.vaadin.ui.themes.ValoTheme;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,16 +44,14 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.procmanager.connections.ComponentConnectionCreator;
 import org.kuwaiba.web.procmanager.connections.ComponentConnectionSource;
-import org.kuwaiba.web.procmanager.connections.ComponentConnectionTarget;
 import org.kuwaiba.web.procmanager.rackview.ComponentDeviceList;
 import org.kuwaiba.web.procmanager.rackview.ComponentRackSelector;
-import org.kuwaiba.web.procmanager.rackview.ComponentRackView;
 
 /**
  * Wrapped to configure the instalation of a device
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class MiniAppInstallation extends AbstractComponentMiniApplication {
+public class MiniAppInstallation extends AbstractMiniApplication<Component, Component> {
 
     public MiniAppInstallation(Properties inputParameters) {
         super(inputParameters);

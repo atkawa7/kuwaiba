@@ -19,6 +19,7 @@ package org.kuwaiba.apis.web.gui.miniapps;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * This class defines the behavior of all mini applications. A mini application is a piece of code (wrapped in a graphical or console element
@@ -54,7 +55,10 @@ public abstract class AbstractMiniApplication<D, E> {
      * Listeners to events during the execution of the mini application
      */
     List<MiniApplicationResultListener> listeners;
-
+    /**
+     * Web service reference
+     */
+    private WebserviceBean webserviceBean;
     /**
      * Default constructor. Use [AbstractMiniApplicationSubclass].getConstructor(Properties.class).newInstance(...) to create instances using reflection
      * @param inputParameters Input configuration parameters for the current mini application
@@ -63,6 +67,30 @@ public abstract class AbstractMiniApplication<D, E> {
         this.inputParameters = inputParameters;
         this.miniApplicationData = new Properties();
         this.listeners = new ArrayList<>();
+    }
+    
+    public WebserviceBean getWebserviceBean() {
+        return webserviceBean;        
+    }
+        
+    public void setWebserviceBean(WebserviceBean webserviceBean) {
+        this.webserviceBean = webserviceBean;                
+    }
+    
+    public Properties getInputParameters() {
+        return inputParameters;
+    }
+    
+    public void setInputParameters(Properties inputParameters) {
+        this.inputParameters = inputParameters;
+    }
+    
+    public Properties getOutputParameters() {
+        return miniApplicationData;
+    }
+    
+    public void setOutputParameters(Properties outputParameters) {
+        this.miniApplicationData = outputParameters;
     }
     
     /**
