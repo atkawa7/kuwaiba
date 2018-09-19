@@ -15,19 +15,19 @@
 package org.inventory.core.templates.layouts.actions;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalClassMetadata;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.communications.util.Constants;
-import org.inventory.communications.util.Utils;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.core.templates.layouts.ShowDeviceLayoutTopComponent;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
+import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 import org.openide.util.lookup.ServiceProvider;
 import org.openide.windows.WindowManager;
@@ -42,6 +42,31 @@ public class ShowDeviceLayoutView extends GenericObjectNodeAction {
     
     public ShowDeviceLayoutView() {
         putValue(NAME, "Device Layout");
+    }
+    
+    @Override
+    public boolean isEnabled() {
+        Lookup.Result<? extends ObjectNode> selectedObjectNode = Utilities.actionsGlobalContext().lookupResult(ObjectNode.class);
+        
+        if (selectedObjectNode == null)
+            return false;
+        
+        boolean hasModel = true;
+        selectedObjects = new ArrayList();
+                
+        for (ObjectNode selectedNode : selectedObjectNode.allInstances()) {
+            
+            LocalObjectLight lol = selectedNode.getLookup().lookup(LocalObjectLight.class);
+            
+            LocalClassMetadata lcm = CommunicationsStub.getInstance().getMetaForClass(lol.getClassName(), false);
+            
+            if (!lcm.hasAttribute("model")) //NOI18N
+                hasModel = false;
+            
+            selectedObjects.add(selectedNode.getObject());
+        }
+        
+        return !selectedObjects.isEmpty() && hasModel;
     }
 
     @Override
@@ -82,7 +107,7 @@ public class ShowDeviceLayoutView extends GenericObjectNodeAction {
 
     @Override
     public String[] appliesTo() {
-        return null; //Enable this action for any object
+        return new String [] {"GenericCommunicationsElement", "GenericDistributionFrame", "GenericBoard"};
     }
     
     @Override
