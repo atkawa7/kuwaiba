@@ -59,7 +59,7 @@ public class IPSynchronizer {
      */
     private final List<BusinessObjectLight> currentVirtualPorts;
     /**
-     * The current map pf subnets and sub-subnets
+     * The current map of subnets and sub-subnets
      */
     private final HashMap<BusinessObjectLight, List<BusinessObjectLight>> subnets;
     /**
@@ -149,6 +149,53 @@ public class IPSynchronizer {
         }
         return res;
     }
+    
+    /**
+     * Create an IP address in a given subnet
+     * @param subnet a given subnet
+     * @param ipAddr a new ip address to be created
+     * @param syncMask a
+     */
+    private BusinessObject createIp(BusinessObjectLight subnet, String ipAddr, String syncMask){
+        BusinessObject createdIp = null;
+        HashMap<String, String> ipAttributes = new HashMap<>();
+        ipAttributes.put(Constants.PROPERTY_NAME, ipAddr);
+        ipAttributes.put(Constants.PROPERTY_DESCRIPTION, "created with sync");
+        ipAttributes.put(Constants.PROPERTY_MASK, syncMask); //TODO set the list types attributes
+        try { 
+            long newIpId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, -1);
+            createdIp = bem.getObject(newIpId);
+            ips.get(subnet).add(createdIp);
+            res.add(new SyncResult(SyncResult.TYPE_SUCCESS, "Add IP to Subnet", String.format("%s was added to %s successfully", ipAddr, subnet)));
+        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
+            res.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                        String.format("%s was not added tot %s", ipAddr, subnet), 
+                        ex.getLocalizedMessage()));
+        }
+        
+        return createdIp;
+    }
+    
+    /**
+     * Creates a new subnet
+     * @param newSubnet a given subnet name
+     * @return the created subnet
+     */
+    private BusinessObjectLight createSubnet(String newSubnet){
+        BusinessObjectLight currentSubnet = null;
+        String [] attributeNames = {"name", "description", "networkIp", "broadcastIp", "hosts"};
+        String [] attributeValues = {newSubnet + ".0/24", "created with sync", newSubnet + ".0", newSubnet + ".255", "254"};
+        try {
+            currentSubnet = bem.getObject(bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
+        } catch (ApplicationObjectNotFoundException | ArraySizeMismatchException | BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException ex) {
+            res.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                    String.format("%s [Subnet] can't be created", newSubnet + ".0/24"), 
+                    ex.getLocalizedMessage()));
+        }//we must add the new subnet into the current subnets and ips
+        subnets.put(currentSubnet, new ArrayList<>()); 
+        ips.put(currentSubnet, new ArrayList<>());
+        return currentSubnet;
+    }
    
     /**
      * Search for a given IP address got it from the ipAddrTableMIB data
@@ -157,7 +204,7 @@ public class IPSynchronizer {
      * @param syncMask the ip address mask from sync
      * @return an IP address created in kuwaiba
      */
-    private BusinessObjectLight syncSubentsEtIpAddresses(String ipAddr, String syncMask){
+    private BusinessObjectLight syncSubentsAndIps(String ipAddr, String syncMask){
         BusinessObject ip = null;
         //We will consider only a /24 subnet 
         String []ipAddrSegments = ipAddr.split("\\.");
@@ -170,53 +217,33 @@ public class IPSynchronizer {
                 break;
             }
         }//we create the subnet if doesn't exists
-        if(currentSubnet == null){
-            String [] attributeNames = {"name", "description", "networkIp", "broadcastIp", "hosts"};
-            String [] attributeValues = {newSubnet + ".0/24", "sync", newSubnet + ".0", newSubnet + ".255", "254"};
-            try {
-                currentSubnet = bem.getObject(bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
-            } catch (ApplicationObjectNotFoundException | ArraySizeMismatchException | BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException ex) {
-                res.add(new SyncResult(SyncResult.TYPE_ERROR, 
-                        String.format("%s [Subnet] can't be created", newSubnet + ".0/24"), 
-                        ex.getLocalizedMessage()));
-            }//we must add the new subnet into the current subnets and ips
-            subnets.put(currentSubnet, new ArrayList<>()); 
-            ips.put(currentSubnet, new ArrayList<>());
-        }else{//with the subnet found we must search if the IP address exists
-            List<BusinessObjectLight> currentIps = ips.get(currentSubnet);
-            if(!currentIps.isEmpty()){
-                for (BusinessObjectLight currentIpLight : currentIps) {
-                    if(currentIpLight.getName().equals(ipAddr)){
-                        try {//we must check the mask if the IP already exists and if its attributes are updated
-                            BusinessObject currentIp = bem.getObject(currentIpLight.getId());
-                            String oldMask = currentIp.getAttributes().get(Constants.PROPERTY_MASK);
-                            if(!oldMask.equals(syncMask)){
-                                currentIp.getAttributes().put(Constants.PROPERTY_MASK, syncMask);
-                                bem.updateObject(currentIp.getClassName(), currentIp.getId(), currentIp.getAttributes());
-                                res.add(new SyncResult(SyncResult.TYPE_SUCCESS, 
-                                    String.format("Update the mask of %s", currentIp),
-                                    String.format("From: %s to: %s", oldMask, syncMask)));
-                            }
-                            return currentIpLight;
-                        } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-                            res.add(new SyncResult(SyncResult.TYPE_ERROR,  String.format("Update the mask of %s", currentIpLight), ex.getLocalizedMessage()));
+        if(currentSubnet == null)
+            currentSubnet = createSubnet(newSubnet);
+        
+        //with the subnet found we must search if the Ip address exists
+        List<BusinessObjectLight> currentIps = ips.get(currentSubnet);
+        //we found the subnet but has no IPs so we create the ip
+        if(currentIps != null && !currentIps.isEmpty()){
+            for (BusinessObjectLight currentIpLight : currentIps) {
+                if(currentIpLight.getName().equals(ipAddr)){
+                    try {//we must check the mask if the IP already exists and if its attributes are updated
+                        BusinessObject currentIp = bem.getObject(currentIpLight.getId());
+                        String oldMask = currentIp.getAttributes().get(Constants.PROPERTY_MASK);
+                        if(!oldMask.equals(syncMask)){
+                            currentIp.getAttributes().put(Constants.PROPERTY_MASK, syncMask);
+                            bem.updateObject(currentIp.getClassName(), currentIp.getId(), currentIp.getAttributes());
+                            res.add(new SyncResult(SyncResult.TYPE_SUCCESS, 
+                                String.format("updating the mask of %s", currentIp),
+                                String.format("from: %s to: %s", oldMask, syncMask)));
                         }
+                        return currentIpLight;
+                    } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
+                        res.add(new SyncResult(SyncResult.TYPE_ERROR,  String.format("updating the mask of %s", currentIpLight), ex.getLocalizedMessage()));
                     }
                 }
-            }//we create the ip address if doesn't exists in the current subnet
-            HashMap<String, String> ipAttributes = new HashMap<>();
-            ipAttributes.put(Constants.PROPERTY_NAME, ipAddr);
-            ipAttributes.put(Constants.PROPERTY_MASK, syncMask);
-            try {
-                long createdIpId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, currentSubnet.getClassName(), currentSubnet.getId(), ipAttributes, -1);
-                ip = bem.getObject(createdIpId);
-                res.add(new SyncResult(SyncResult.TYPE_SUCCESS, "Add IP to Subnet", String.format("%s was added to %s successfully", ipAddr, currentSubnet)));
-            } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-                res.add(new SyncResult(SyncResult.TYPE_ERROR, String.format("%s was not added to %s", ipAddr, currentSubnet), ex.getLocalizedMessage()));
             }
-        }
-        ips.get(currentSubnet).add(ip);
-        return ip;
+        }//we create the ip address if doesn't exists in the current subnet
+        return createIp(currentSubnet, ipAddr, syncMask);
     }
     
     
@@ -234,7 +261,7 @@ public class IPSynchronizer {
             String ipAddress = ipAddresses.get(i);
             String mask = masks.get(i);
             //We search for the ip address
-            BusinessObjectLight currentIpAddress = syncSubentsEtIpAddresses(ipAddress, mask);
+            BusinessObjectLight currentIpAddress = syncSubentsAndIps(ipAddress, mask);
             if(currentIpAddress != null){
                 for(int j=0; j < ifportIds.size(); j++){
                     if(ifportIds.get(j).equals(portId)){
@@ -376,8 +403,11 @@ public class IPSynchronizer {
             if(currentPort.getName().toLowerCase().equals(SyncUtil.wrapPortName(ifName.toLowerCase())))
                 return currentPort;
         }
+        
         for(BusinessObjectLight currentVirtualPort: currentVirtualPorts){
-            if(currentVirtualPort.getName().toLowerCase().equals(SyncUtil.wrapPortName(ifName.toLowerCase())))
+            if(currentVirtualPort.getName().toLowerCase().equals(
+                    ifName.contains(".") ? ifName.split("\\.")[1] : SyncUtil.wrapPortName(ifName.toLowerCase())
+            ))
                 return currentVirtualPort;
         }
         return null;
