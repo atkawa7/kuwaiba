@@ -47,6 +47,7 @@ import org.kuwaiba.apis.persistence.application.BusinessRule;
 import org.kuwaiba.apis.persistence.application.BusinessRuleConstraint;
 import org.kuwaiba.apis.persistence.application.FavoritesFolder;
 import org.kuwaiba.apis.persistence.application.CompactQuery;
+import org.kuwaiba.apis.persistence.application.ConfigurationVariable;
 import org.kuwaiba.apis.persistence.application.ExtendedQuery;
 import org.kuwaiba.apis.persistence.application.FileObject;
 import org.kuwaiba.apis.persistence.application.FileObjectLight;
@@ -3891,48 +3892,150 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
 
     @Override
-    public long createConfigurationVariable(long configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public long createConfigurationVariable(long configVariablesPoolId, String name, 
+            String description, int type, boolean masked, String valueDefinition, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("createConfigurationVariable", ipAddress, sessionId);
+            long res = aem.createConfigurationVariable(configVariablesPoolId, name, description, type, masked, valueDefinition);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, String.format("Configuration variable %s was created", name));
+            return res;
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
-    public void updateConfigurationVariable(String name, String propertyToUpdate, String newValue) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void updateConfigurationVariable(String name, String propertyToUpdate, 
+            String newValue, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("updateConfigurationVariable", ipAddress, sessionId);
+            aem.updateConfigurationVariable(name, propertyToUpdate, newValue);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, String.format("Configuration variable %s was was updated: %s -> %s", name, propertyToUpdate, newValue));
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
-    public void deleteConfigurationVariable(String name) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void deleteConfigurationVariable(String name, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("deleteConfigurationVariable", ipAddress, sessionId);
+            aem.deleteConfigurationVariable(name);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, String.format("Configuration variable %s was was deleted", name));
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
-    public RemoteConfigurationVariable getConfigurationVariable(String name) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public RemoteConfigurationVariable getConfigurationVariable(String name, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+
+        try {
+            aem.validateWebServiceCall("getConfigurationVariable", ipAddress, sessionId);
+            ConfigurationVariable configVariable = aem.getConfigurationVariable(name);
+            return new RemoteConfigurationVariable(configVariable.getId(), configVariable.getName(), 
+                    configVariable.getDescription(), configVariable.isMasked(), configVariable.getType());
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
-    public List<RemoteConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<RemoteConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+            
+        try {
+            aem.validateWebServiceCall("getConfigurationVariablesInPool", ipAddress, sessionId);
+            List<RemoteConfigurationVariable> res = new ArrayList<>();
+            aem.getConfigurationVariablesInPool(parentPoolId).forEach((configVariable) -> {
+                res.add(new RemoteConfigurationVariable(configVariable.getId(), configVariable.getName(), 
+                    configVariable.getDescription(), configVariable.isMasked(), configVariable.getType()));
+            });
+            
+            return res;
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
-    public List<RemotePool> getConfigurationVariablesPools() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public List<RemotePool> getConfigurationVariablesPools(String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("getConfigurationVariablesPools", ipAddress, sessionId);
+            List<RemotePool> res = new ArrayList<>();
+            aem.getConfigurationVariablesPools().forEach((aConfigVariablesPool) -> {
+                res.add(new RemotePool(aConfigVariablesPool.getId(), aConfigVariablesPool.getName(), aConfigVariablesPool.getDescription(), 
+                        aConfigVariablesPool.getClassName(), aConfigVariablesPool.getType()));
+            });
+            
+            return res;
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
-    public long createConfigurationVariablesPool(String name, String description) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public long createConfigurationVariablesPool(String name, String description, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("createConfigurationVariablesPool", ipAddress, sessionId);
+            long res = aem.createConfigurationVariablesPool(name, description);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, String.format("Configuration variables pool %s was created", name));
+            return res;
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
-    public void updateConfigurationVariablesPool(long poolId, String propertyToUpdate, String value) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void updateConfigurationVariablesPool(long poolId, String propertyToUpdate, String value, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("updateConfigurationVariablesPool", ipAddress, sessionId);
+            aem.updateConfigurationVariablesPool(poolId, propertyToUpdate, value);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, String.format("Configuration variables pool with id %s was was updated: %s -> %s", poolId, propertyToUpdate, value));
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
     }
 
     @Override
-    public void deleteConfigurationVariablesPool(long poolId) throws ServerSideException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void deleteConfigurationVariablesPool(long poolId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("deleteConfigurationVariablesPool", ipAddress, sessionId);
+            aem.deleteConfigurationVariablesPool(poolId);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, String.format("Configuration variables pool with id %s was was deleted", poolId));
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
     }
     
     

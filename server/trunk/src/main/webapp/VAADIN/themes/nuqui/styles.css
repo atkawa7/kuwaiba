@@ -15417,8 +15417,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .dashboards .v-image-theater-layout-screen-image {
 	max-height: 150px;
-	opacity: 1;
-	transition: opacity 0.3s;
 }
 
 .nuqui .navtree .v-tree8 {
@@ -15689,4 +15687,22 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .subformpopup .v-datefield .v-filterselect, .nuqui .subformpopup .v-label, .nuqui .subformpopup .v-textfield, .nuqui .subformpopup .v-button {
 	margin: 5px;
 	padding: 5px;
+}
+
+.nuqui .indicatortable .v-verticallayout {
+	border-style: solid;
+	border-width: thin;
+	border-color: #000000;
+}
+
+.nuqui .indicatortable .normal {
+	background: greenyellow;
+}
+
+.nuqui .indicatortable .warning {
+	background: yellow;
+}
+
+.nuqui .indicatortable .critical {
+	background: red;
 }

@@ -81,6 +81,7 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteAttributeMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConfigurationVariable;
 
 /**
  * Main web service
@@ -2268,6 +2269,209 @@ public class KuwaibaService {
             }
         }
     }
+    
+    //<editor-fold defaultstate="collapsed" desc="Configuration Values">
+    /**
+     * Creates a configuration variable inside a pool. A configuration variable is a place where a value will be stored so it can retrieved by whomever need it. 
+     * These variables are typically used to store values that help other modules to work, such as URLs, user names, dimensions, etc
+     * @param configVariablesPoolId The id of the pool where the config variable will be put
+     * @param name The name of the pool. This value can not be null or empty. Duplicate variable names are not allowed
+     * @param description The description of the what the variable does
+     * @param type The type of the variable. Use 1 for number, 2 for strings, 3 for booleans, 4 for unidimensional arrays and 5 for matrixes. 
+     * @param masked If the value should be masked when rendered (for security reasons, for example)
+     * @param valueDefinition In most cases (primitive types like numbers, strings or booleans) will be the actual value of the variable as a string (for example "5" or "admin" or "true"). For arrays and matrixes use the following notation: <br> 
+     * Arrays: (value1,value2,value3,valueN), matrixes: [(row1col1, row1col2,... row1colN), (row2col1, row2col2,... row2colN), (rowNcol1, rowNcol2,... rowNcolN)]. The values will be interpreted as strings 
+     * @param sessionId The session token
+     * @return The id of the newly created variable
+     * @throws ServerSideException If the parent pool could not be found or if the name is empty, the type is invalid, the value definition is empty
+     */
+    @WebMethod(operationName = "createConfigurationVariable")
+    public long createConfigurationVariable(@WebParam(name = "configVariablesPoolId")long configVariablesPoolId, @WebParam(name = "name")String name, 
+            @WebParam(name = "description")String description, @WebParam(name = "type")int type, @WebParam(name = "masked")boolean masked, @WebParam(name = "valueDefinition")String valueDefinition, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createConfigurationVariable(configVariablesPoolId, name, description, type, masked, valueDefinition, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createConfigurationVariable: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Updates the value of a configuration variable. See #{@link #createConfigurationVariable(long, java.lang.String, java.lang.String, int, java.lang.String) } for value definition syntax
+     * @param name The current name of the variable that will be modified
+     * @param propertyToUpdate The name of the property to be updated. Possible values are: "name", "description", "type", "masked" and "value"
+     * @param newValue The new value as string
+     * @param sessionId The session token
+     * @throws ServerSideException If the property to be updated can not be recognized or if the config variable can not be found
+     */
+    @WebMethod(operationName = "updateConfigurationVariable")
+    public void updateConfigurationVariable(@WebParam(name = "name")String name, @WebParam(name = "propertyToUpdate")String propertyToUpdate, 
+            @WebParam(name = "newValue")String newValue, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.updateConfigurationVariable(name, propertyToUpdate, newValue, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateConfigurationVariable: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Deletes a config variable
+     * @param name The name of the variable to be deleted
+     * @param sessionId The session token
+     * @throws ServerSideException If the config variable could not be found
+     */
+    @WebMethod(operationName = "deleteConfigurationVariable")
+    public void deleteConfigurationVariable(@WebParam(name = "name")String name, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.deleteConfigurationVariable(name, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteConfigurationVariable: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Retrieves a configuration variable
+     * @param name The name of the variable to be retrieved
+     * @param sessionId The session token
+     * @return The variable
+     * @throws ServerSideException If the variable could not be found
+     */
+    @WebMethod(operationName = "getConfigurationVariable")
+    public RemoteConfigurationVariable getConfigurationVariable(@WebParam(name = "name")String name, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getConfigurationVariable(name, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getConfigurationVariable: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Gets the config variables in a config variable pool
+     * @param parentPoolId The id pool to retrieve the variables from
+     * @param sessionId The session token
+     * @return The list of config variables in the given pool
+     * @throws ServerSideException If the pool could not be found
+     */
+    @WebMethod(operationName = "getConfigurationVariablesInPool")
+    public List<RemoteConfigurationVariable> getConfigurationVariablesInPool(@WebParam(name = "parentPoolId")long parentPoolId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getConfigurationVariablesInPool(parentPoolId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getConfigurationVariablesInPool: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Retrieves the list of pools of config variables
+     * @param sessionId The session token
+     * @return The available pools of configuration variables
+     */
+    @WebMethod(operationName = "getConfigurationVariablesPools")
+    public List<RemotePool> getConfigurationVariablesPools(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getConfigurationVariablesPools(getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getConfigurationVariablesPools: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Creates a pool of configuration variables
+     * @param name The name of the pool. Empty or null values are not allowed
+     * @param description The description of the pool
+     * @param sessionId The session token
+     * @return The id of the newly created pool
+     * @throws ServerSideException If the name provided is null or empty
+     */
+    @WebMethod(operationName = "createConfigurationVariablesPool")
+    public long createConfigurationVariablesPool(@WebParam(name = "name")String name, @WebParam(name = "description")String description, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.createConfigurationVariablesPool(name, description, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createConfigurationVariablesPool: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Updates an attribute of a given config variables pool
+     * @param poolId The id of the pool to update
+     * @param propertyToUpdate The property to update. The valid values are "name" and "description"
+     * @param value The value of the property to be updated
+     * @param sessionId The session token
+     * @throws ServerSideException If the pool could not be found or If the property provided is not valid
+     */
+    @WebMethod(operationName = "updateConfigurationVariablesPool")
+    public void updateConfigurationVariablesPool(@WebParam(name = "")long poolId, @WebParam(name = "propertyToUpdate")String propertyToUpdate, 
+            @WebParam(name = "value")String value, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.updateConfigurationVariablesPool(poolId, propertyToUpdate, value, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateConfigurationVariablesPool: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Deletes a configuration variables pool. Deleting a pool also deletes the config variables contained within
+     * @param poolId The id of the pool to be deleted
+     * @param sessionId The session token
+     * @throws ServerSideException If the pool could not be found
+     */
+    @WebMethod(operationName = "deleteConfigurationVariablesPool")
+    public void deleteConfigurationVariablesPool(@WebParam(name = "poolId")long poolId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.deleteConfigurationVariablesPool(poolId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteConfigurationVariablesPool: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    //</editor-fold>
     
     //</editor-fold>
 
@@ -8143,6 +8347,7 @@ public class KuwaibaService {
             }
         }
         //</editor-fold>
+        
     // </editor-fold>
         
     // <editor-fold defaultstate="collapsed" desc="Helpers. Click on the + sign on the left to edit the code.">/**
