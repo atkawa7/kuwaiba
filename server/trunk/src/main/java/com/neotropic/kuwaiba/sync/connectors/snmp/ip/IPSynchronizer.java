@@ -83,6 +83,10 @@ public class IPSynchronizer {
      */
     private Pool ipv4Root;
     /**
+     * Reference to the root node of the IPv6 
+     */
+    private Pool ipv6Root;
+    /**
      * reference to the bem
      */
     private BusinessEntityManager bem;
@@ -132,29 +136,28 @@ public class IPSynchronizer {
         try {
             readCurrentStructure(bem.getObjectChildren(className, id, -1), 1);
             readCurrentStructure(bem.getObjectSpecialChildren(className, id), 2);
-            //we get the rood nodes for the ipv4
+            //we get the rood nodes for ipv4 ipv6 root nodes
             List<Pool> ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
-            ipv4Root = ipv4RootPools.get(0);
-            try {
-                readcurrentFolder(ipv4RootPools);
-                readCurrentSubnets(ipv4Root);
-            } catch (ApplicationObjectNotFoundException ex) {
-                res.add(new SyncResult(SyncResult.TYPE_ERROR, 
+            List<Pool> ipv6RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV6, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
+
+            readcurrentFolder(ipv4RootPools);
+            readcurrentFolder(ipv6RootPools);
+           
+            associateIPAddress();
+        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | ApplicationObjectNotFoundException ex) {
+            res.add(new SyncResult(SyncResult.TYPE_ERROR, 
                         "Unexpected error reading current structure", 
                         ex.getLocalizedMessage()));
-            }
-            associateIPAddress();
-        } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
-            Exceptions.printStackTrace(ex);
         }
         return res;
     }
     
     /**
-     * Create an IP address in a given subnet
+     * Creates an IP address in a given subnet
      * @param subnet a given subnet
      * @param ipAddr a new ip address to be created
-     * @param syncMask a
+     * @param syncMask a mask for the given ip address
+     * @return the new created ip address
      */
     private BusinessObject createIp(BusinessObjectLight subnet, String ipAddr, String syncMask){
         BusinessObject createdIp = null;
@@ -172,7 +175,6 @@ public class IPSynchronizer {
                         String.format("%s was not added tot %s", ipAddr, subnet), 
                         ex.getLocalizedMessage()));
         }
-        
         return createdIp;
     }
     
@@ -204,8 +206,7 @@ public class IPSynchronizer {
      * @param syncMask the ip address mask from sync
      * @return an IP address created in kuwaiba
      */
-    private BusinessObjectLight syncSubentsAndIps(String ipAddr, String syncMask){
-        BusinessObject ip = null;
+    private BusinessObjectLight updateSubentsIps(String ipAddr, String syncMask){
         //We will consider only a /24 subnet 
         String []ipAddrSegments = ipAddr.split("\\.");
         String newSubnet =  ipAddrSegments[0] + "." + ipAddrSegments[1] + "." + ipAddrSegments[2];
@@ -245,8 +246,7 @@ public class IPSynchronizer {
         }//we create the ip address if doesn't exists in the current subnet
         return createIp(currentSubnet, ipAddr, syncMask);
     }
-    
-    
+        
     /**
      * Reads the MIB data an associate IP addresses with ports
      */
@@ -261,7 +261,7 @@ public class IPSynchronizer {
             String ipAddress = ipAddresses.get(i);
             String mask = masks.get(i);
             //We search for the ip address
-            BusinessObjectLight currentIpAddress = syncSubentsAndIps(ipAddress, mask);
+            BusinessObjectLight currentIpAddress = updateSubentsIps(ipAddress, mask);
             if(currentIpAddress != null){
                 for(int j=0; j < ifportIds.size(); j++){
                     if(ifportIds.get(j).equals(portId)){
@@ -319,7 +319,8 @@ public class IPSynchronizer {
         for (BusinessObjectLight child : children) {
             if (child.getClassName().equals(Constants.CLASS_ELECTRICALPORT) || child.getClassName().equals(Constants.CLASS_SFPPORT) || child.getClassName().contains(Constants.CLASS_OPTICALPORT)) 
                 currentPorts.add(child);
-            else if (child.getClassName().equals(Constants.CLASS_VIRTUALPORT) || child.getClassName().equals(Constants.CLASS_MPLSTUNNEL))
+            else if (child.getClassName().equals(Constants.CLASS_VIRTUALPORT) || child.getClassName().equals(Constants.CLASS_MPLSTUNNEL) || 
+                   child.getClassName().equals(Constants.CLASS_BRIDGEDOMAININTERFACE))
                 currentVirtualPorts.add(child);
             
             if (childrenType == 1) 
@@ -346,7 +347,7 @@ public class IPSynchronizer {
     }
     
     /**
-     * Gets the subnets in a given the folder from the IPAM module
+     * Gets the subnets of a given folder from the IPAM module
      * @param folder a given folder from the IPAM
      * @throws ApplicationObjectNotFoundException
      * @throws MetadataObjectNotFoundException
