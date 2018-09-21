@@ -16,17 +16,14 @@ package org.kuwaiba.web.procmanager;
 
 import com.neotropic.kuwaiba.modules.reporting.img.SceneExporter;
 import com.vaadin.server.FileResource;
-import com.vaadin.server.Page;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
-import com.vaadin.ui.UI;
 import java.io.File;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.web.gui.miniapps.AbstractMiniApplication;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
  * Mini Application used to show the Physical Path View given the object Id and Class Name
