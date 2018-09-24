@@ -142,5 +142,27 @@ public class ElementMiniApplication extends AbstractElement {
                 }                
             }
         }
-    }        
+    }  
+    
+    @Override
+    public boolean hasProperty(String propertyName) {
+        
+        switch (propertyName) {
+            case Constants.Property.INPUT_PARAMETERS:
+                return true;
+            default:
+                return super.hasProperty(propertyName);
+        }
+    }
+        
+    @Override
+    public Object getPropertyValue(String propertyName) {
+        
+        switch (propertyName) {
+            case Constants.Property.INPUT_PARAMETERS:
+                return getInputParameters();
+            default:
+                return getPropertyValue(propertyName);
+        }
+    }
 }
