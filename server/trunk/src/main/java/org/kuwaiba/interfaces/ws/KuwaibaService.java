@@ -82,6 +82,7 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConfigurationVariable;
+import org.openide.util.Exceptions;
 
 /**
  * Main web service
@@ -8129,6 +8130,7 @@ public class KuwaibaService {
             }
         }
         //</editor-fold>
+        
         //<editor-fold desc="Process Manager" defaultstate="collapsed">
         /**
          * Creates a process definition. A process definition is the metadata that defines the steps and constraints 
@@ -8348,6 +8350,176 @@ public class KuwaibaService {
         }
         //</editor-fold>
         
+        // <editor-fold defaultstate="collapsed" desc="Warehouse Module">
+        /**
+         * Gets the warehouse module root pools
+         * @param sessionId Session token
+         * @return the warehouse module root pools
+         * @throws ServerSideException If the class Warehouse or VirtualWatehouse not exist
+         */
+        @WebMethod(operationName = "getWarehouseRootPools")
+        public List<RemotePool> getWarehouseRootPools(
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+            
+            try {
+                return wsBean.getWarehouseRootPool(getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in getWarehouseRootPools: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
+        }
+        /**
+         * Associates an object (a resource) to an existing warehouse or virtual warehouse
+         * @param objectClass Object class
+         * @param objectId Object id
+         * @param warehouseClass Warehouse class
+         * @param warehouseId Warehouse id
+         * @param sessionId Session token
+         * @throws ServerSideException If the user is not allowed to invoke the method
+         *                             If any of the objects can't be found
+         *                             If any of the objects involved can't be connected (i.e. if it's not an inventory object)
+         *                             If any of the classes provided can not be found
+         */
+        @WebMethod(operationName = "associatePhysicalNodeToWarehouse")
+        public void associatePhysicalNodeToWarehouse (
+                @WebParam(name = "objectClass")String objectClass,
+                @WebParam(name = "objectId")long objectId,
+                @WebParam(name = "warehouseClass")String warehouseClass,
+                @WebParam(name = "warehouseId")long warehouseId,
+                @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+            try{
+                wsBean.associatePhysicalNodeToWarehouse(objectClass, objectId, warehouseClass, warehouseId, getIPAddress(), sessionId);
+            } catch(Exception e){
+                if (e instanceof ServerSideException)
+                    throw e;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in associatePhysicalNodeToWarehouse: " + e.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
+        }
+
+         /**
+         * Associates a list of objects (resources) to an existing warehouse or virtual warehouse
+         * @param objectClass Object class
+         * @param objectId Object id
+         * @param warehouseClass Warehouse class
+         * @param warehouseId Warehouse id
+         * @param sessionId Session token
+         * @throws ServerSideException If the user is not allowed to invoke the method
+         *                             If any of the objects can't be found
+         *                             If any of the objects involved can't be connected (i.e. if it's not an inventory object)
+         *                             If any of the classes provided can not be found
+         */
+        @WebMethod(operationName = "associatesPhysicalNodeToWarehouse")
+        public void associatesPhysicalNodeToWarehouse (
+                @WebParam(name = "objectClass")String[] objectClass,
+                @WebParam(name = "objectId")long[] objectId,
+                @WebParam(name = "warehouseClass")String warehouseClass,
+                @WebParam(name = "warehouseId")long warehouseId,
+                @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+            try{
+                wsBean.associatesPhysicalNodeToWarehouse(objectClass, objectId, warehouseClass, warehouseId, getIPAddress(), sessionId);
+            } catch(Exception e){
+                if (e instanceof ServerSideException)
+                    throw e;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in associatesPhysicalNodeToWarehouse: " + e.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
+        }
+
+        /**
+         * Releases an object from a warehouse or virtual warehouse that is using it
+         * @param warehouseClass Warehouse class
+         * @param warehouseId Warehouse id
+         * @param targetId target object id
+         * @param sessionId Session token
+         * @throws ServerSideException If the user is not allowed to invoke the method
+         *                             If the object can not be found
+         *                             If the class can not be found
+         *                             If the object activity log could no be found
+         */
+        @WebMethod(operationName = "releasePhysicalNodeFromWarehouse")
+        public void releasePhysicalNodeFromWarehouse (
+                @WebParam(name = "warehouseClass")String warehouseClass,
+                @WebParam(name = "warehouseId")long warehouseId,
+                @WebParam(name = "targetId")long targetId,           
+                @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+            try{
+                wsBean.releasePhysicalNodeFromWarehouse(warehouseClass, warehouseId, targetId, getIPAddress(), sessionId);
+            } catch(Exception e){
+                if (e instanceof ServerSideException)
+                    throw e;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in releasePhysicalNodeFromWarehouse: " + e.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
+        }
+        /**
+        * Moves objects from their current parent to a warehouse pool target object.
+        * @param  targetClass New parent object id
+        * @param targetOid The new parent's oid
+        * @param objectClasses Class names of the objects to be moved
+        * @param objectOids Oids of the objects to be moved
+        * @param sessionId Session token
+        * @throws ServerSideException If the object's or new parent's class can't be found
+        *                             If the object or its new parent can't be found
+        *                             If the update can't be performed due to a business rule
+        */
+        @WebMethod(operationName = "moveObjectsToWarehousePool")
+        public void moveObjectsToWarehousePool(@WebParam(name = "targetClass")String targetClass,
+                @WebParam(name = "targetOid")long targetOid,
+                @WebParam(name = "objectsClasses")String[] objectClasses,
+                @WebParam(name = "objectsOids")long[] objectOids,
+                @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
+            try{
+                wsBean.moveObjectsToWarehousePool(targetClass,targetOid, objectClasses, objectOids, getIPAddress(), sessionId);
+            } catch(Exception e){
+                if (e instanceof ServerSideException)
+                    throw e;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in moveObjectsToWarehousePool: " + e.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
+        }
+
+        /**
+         * Moves objects from their current parent to a target object.
+         * @param  targetClass New parent object id
+         * @param targetOid The new parent's oid
+         * @param objectClasses Class names of the objects to be moved
+         * @param objectOids Oids of the objects to be moved
+         * @param sessionId Session token
+         * @throws ServerSideException If the object's or new parent's class can't be found
+         *                             If the object or its new parent can't be found
+         *                             If the update can't be performed due to a business rule
+         */
+        @WebMethod(operationName = "moveObjectsToWarehouse")
+        public void moveObjectsToWarehouse(@WebParam(name = "targetClass")String targetClass,
+                @WebParam(name = "targetOid")long targetOid,
+                @WebParam(name = "objectsClasses")String[] objectClasses,
+                @WebParam(name = "objectsOids")long[] objectOids,
+                @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
+            try{
+                wsBean.moveObjectsToWarehouse(targetClass,targetOid, objectClasses, objectOids, getIPAddress(), sessionId);
+            } catch(Exception e){
+                if (e instanceof ServerSideException)
+                    throw e;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in moveObjectsToWarehouse: " + e.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
+        }
+        // </editor-fold>
     // </editor-fold>
         
     // <editor-fold defaultstate="collapsed" desc="Helpers. Click on the + sign on the left to edit the code.">/**

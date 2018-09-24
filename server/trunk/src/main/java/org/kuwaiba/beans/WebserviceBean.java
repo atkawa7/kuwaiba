@@ -633,6 +633,15 @@ public interface WebserviceBean {
         public List<RemoteBackgroundJob> getCurrentJobs(String ipAddress, String sessionId) throws ServerSideException;
         public void killJob(long jobId, String ipAddress, String sessionId) throws ServerSideException;
         //</editor-fold>
+        
+        // <editor-fold defaultstate="collapsed" desc="Warehouse Module">
+    public List<RemotePool> getWarehouseRootPool(String ipAddress, String sessionId) throws ServerSideException;
+    public void associatePhysicalNodeToWarehouse(String objectClass, long objectId, String warehouseClass, long warehouseId, String ipAddress, String sessionId) throws ServerSideException;
+    public void associatesPhysicalNodeToWarehouse(String[] objetClass, long[] objectId, String warehouseClass, long warehouseId, String ipAddress, String sessionId) throws ServerSideException;
+    public void releasePhysicalNodeFromWarehouse(String warehouseClass, long warehouseId, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public void moveObjectsToWarehousePool(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException;
+    public void moveObjectsToWarehouse(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException;
+        // </editor-fold>
     
     // Bookmarks
     public long createFavoritesFolderForUser(String favoritesFolderName, long userId, String ipAddress, String sessionId) throws ServerSideException;

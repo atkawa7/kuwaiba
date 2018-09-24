@@ -25,6 +25,7 @@ import com.neotropic.kuwaiba.modules.reporting.model.RemoteReportLight;
 import com.neotropic.kuwaiba.modules.sdh.SDHContainerLinkDefinition;
 import com.neotropic.kuwaiba.modules.sdh.SDHModule;
 import com.neotropic.kuwaiba.modules.sdh.SDHPosition;
+import com.neotropic.kuwaiba.modules.warehouse.WarehouseModule;
 import com.neotropic.kuwaiba.scheduling.BackgroundJob;
 import com.neotropic.kuwaiba.scheduling.JobManager;
 import com.neotropic.kuwaiba.sync.model.SyncAction;
@@ -5964,6 +5965,167 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             throw new ServerSideException("Invalid resource type");
             
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+        // </editor-fold>
+        // <editor-fold defaultstate="collapsed" desc="Warehouse Module">
+    @Override
+    public List<RemotePool> getWarehouseRootPool(String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null || bem == null || mem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getWarehouseRootPool", ipAddress, sessionId);
+            WarehouseModule warehouseModule = (WarehouseModule) aem.getCommercialModule(WarehouseModule.MODULE_NAME);
+            
+            List<RemotePool> remotePools = new ArrayList();
+            
+            List<Pool> pools = warehouseModule.getWarehouseRootPools();
+            
+            for (Pool pool : pools)
+                remotePools.add(new RemotePool(pool));
+            
+            return remotePools;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void associatePhysicalNodeToWarehouse(String objectClass, long objectId, String warehouseClass, long warehouseId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("associatePhysicalNodeToWarehouse", ipAddress, sessionId);
+            
+            if (mem.isSubClass("Warehouse", warehouseClass) || mem.isSubClass("VirtualWarehouse", warehouseClass)) { //NOI18N
+                
+            
+                bem.createSpecialRelationship(warehouseClass, warehouseId, objectClass, objectId, "warehouseHas", true); //NOI18N
+
+                aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), warehouseClass, warehouseId, 
+                    ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                    "warehouseHas", "", Long.toString(objectId), ""); //NOI18N
+            }
+            else
+                throw new ServerSideException(String.format("Class %s is not a Warehouse or VirtualWarehouse", warehouseClass));
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void associatesPhysicalNodeToWarehouse(String[] objectClass, long[] objectId, String warehouseClass, long warehouseId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            String affectedProperties = "", newValues = "";
+            
+            aem.validateWebServiceCall("associatesPhysicalNodeToWarehouse", ipAddress, sessionId);
+            
+            if (mem.isSubClass("Warehouse", warehouseClass) || mem.isSubClass("VirtualWarehouse", warehouseClass)) { //NOI18N
+                
+                for (int i = 0; i < objectId.length; i++) {
+                    bem.createSpecialRelationship(warehouseClass, warehouseId, objectClass[i], objectId[i], "warehouseHas", true); //NOI18N
+                    affectedProperties += "warehouseHas" + " "; //NOI18N
+                    newValues += objectId[i] + " ";
+                }
+                aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), warehouseClass, warehouseId, 
+                    ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
+                    affectedProperties, "", newValues, "Associate objects to " + warehouseClass); //NOI18N            
+            } 
+            else
+                throw new ServerSideException(String.format("Class %s is not a Warehouse or VirtualWarehouse", warehouseClass));
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    @Override
+    public void releasePhysicalNodeFromWarehouse(String warehouseClass, long warehouseId, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("releasePhysicalNodeFromWarehouse", ipAddress, sessionId);
+            bem.releaseSpecialRelationship(warehouseClass, warehouseId, objectId, "warehouseHas"); //NOI18N
+            
+            aem.createObjectActivityLogEntry(getUserNameFromSession(sessionId), warehouseClass, warehouseId, 
+                ActivityLogEntry.ACTIVITY_TYPE_RELEASE_RELATIONSHIP_INVENTORY_OBJECT, 
+                "warehouseHas", Long.toString(objectId), "", "Release object from service"); //NOI18N
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    @Override
+    public void moveObjectsToWarehousePool(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        if (objectClasses.length != objectOids.length)
+            throw new ServerSideException("Array sizes do not match");
+        try {
+            aem.validateWebServiceCall("moveObjectsToWarehousePool", ipAddress, sessionId);
+            HashMap<String,List<Long>> temObjects = new HashMap<>();
+            for (int i = 0; i< objectClasses.length; i++){
+                List<Long> ids = temObjects.get(objectClasses[i]);
+                if (ids == null)
+                    ids = new ArrayList<>();
+                
+                ids.add(objectOids[i]);
+                temObjects.put(objectClasses[i], ids);
+            }
+
+            HashMap<String,long[]> objects = new HashMap<>();
+            for(String className : temObjects.keySet()){
+                List<Long> ids = temObjects.get(className);
+                long[] ids_ = new long[ids.size()];
+                for (int i=0; i<ids.size(); i++) 
+                    ids_[i] = ids.get(i);
+                
+                objects.put(className, ids_);
+            }
+            bem.moveObjectsToPool(targetClass, targetOid, objects);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                    ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
+                    String.format("%s moved to warehouse pool with id %s", Arrays.toString(objectOids), targetOid));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }        
+    }
+    @Override
+    public void moveObjectsToWarehouse(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        if (objectClasses.length != objectOids.length)
+            throw new ServerSideException("Array sizes do not match");
+        try {
+            aem.validateWebServiceCall("moveObjectsToWarehouse", ipAddress, sessionId);
+            HashMap<String,List<Long>> temObjects = new HashMap<>();
+            for (int i = 0; i< objectClasses.length; i++){
+                List<Long> ids = temObjects.get(objectClasses[i]);
+                if (ids == null)
+                    ids = new ArrayList<>();
+                
+                ids.add(objectOids[i]);
+                temObjects.put(objectClasses[i], ids);
+            }
+            
+            HashMap<String,long[]> objects = new HashMap<>();
+            for(String className : temObjects.keySet()){
+                List<Long> ids = temObjects.get(className);
+                long[] ids_ = new long[ids.size()];
+                for (int i=0; i<ids.size(); i++) 
+                    ids_[i] = ids.get(i);
+                
+                objects.put(className, ids_);
+            }
+            bem.moveObjects(targetClass, targetOid, objects);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                    ActivityLogEntry.ACTIVITY_TYPE_CHANGE_PARENT, 
+                    String.format("%s moved to object with id %s", Arrays.toString(objectOids), targetOid));
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

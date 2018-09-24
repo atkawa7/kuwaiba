@@ -477,6 +477,14 @@ public class Constants {
      */
     public static final String CLASS_WIRELESSCONTAINER = "WirelessContainer"; //NOI18N
     /**
+     * Class Warehouse
+     */
+    public static final String CLASS_WAREHOUSE = "Warehouse"; //NOI18N;
+    /**
+     * Class VitualWarehouse
+     */
+    public static final String CLASS_VIRTUALWAREHOUSE = "VirtualWarehouse"; //NOI18N;
+    /**
      * Dummy root node name
      */
     public static final String NODE_DUMMYROOT = "DummyRoot"; //NOI18N
@@ -488,6 +496,14 @@ public class Constants {
      * IPv6 root node name
      */
     public static final String NODE_IPV6ROOT = "IPv6Root"; //NOI18N
+    /**
+     * Warehouse root node name
+     */
+    public static final String NODE_WAREHOUSE = "Warehouses"; //NOI18N
+    /**
+     * VirtualWarehouse root node name
+     */
+    public static final String NODE_VIRTUALWAREHOUSE = "Virtual Warehouses"; //NOI18N
     /**
      * Project root node name
      */
