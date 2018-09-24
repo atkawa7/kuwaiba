@@ -1,7 +1,16 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
+ * 
+ *   Licensed under the EPL License, Version 1.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *        http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
  */
 package org.kuwaiba.apis.forms.components.impl;
 
@@ -52,26 +61,9 @@ public class ComponentMiniApplication extends GraphicalComponent {
                 Constructor<?> constructor = aClass.getConstructor(Properties.class);
                 Object object = constructor.newInstance(new Object[] { new Properties() });
                 
-                if (object instanceof AbstractMiniApplication) {
-                    
+                if (object instanceof AbstractMiniApplication)
                     ama = (AbstractMiniApplication) object;
-                    /*
-                    acma.setWebserviceBean(webserviceBean);
-                                        
-                    Object content = null;
-                    
-//                    miniApp.fireOnLoad();
-                    
-                    if (Constants.Attribute.Mode.DETACHED.equals(miniApp.getMode()))
-                        content = acma.launchDetached();
-                    else if (Constants.Attribute.Mode.EMBEDDED.equals(miniApp.getMode()))
-                        content = acma.launchEmbedded();
-                    
-                    if (content instanceof Component) 
-                        getComponent().setContent((Component) content);
-                    */
-                }
-                
+                                
             } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                 Exceptions.printStackTrace(ex);
             }
@@ -83,12 +75,11 @@ public class ComponentMiniApplication extends GraphicalComponent {
         if (Constants.EventAttribute.ONCLICK.equals(event.getEventName())) {
             if (Constants.Function.OPEN.equals(event.getPropertyName())) {
                 if (UI.getCurrent() != null) {
-                    if (window == null)
-                        window = new Window();
-                                        
+                    window = new Window();                                                            
                     window.setModal(true);
-                    window.setContent(getComponent());
+                    window.setContent((Component) ama.launchDetached());
                     window.center();
+                    window.setSizeFull();
 
                     UI.getCurrent().addWindow(window);
                 }
@@ -99,17 +90,7 @@ public class ComponentMiniApplication extends GraphicalComponent {
                                                 
             }
         }
-        /*
-        public void onElementEvent(EventDescriptor event) {
-            if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
-
-                if (Constants.Property.ROWS.equals(event.getPropertyName())) {
-                    ElementGrid grid = (ElementGrid) getComponentEventListener();
-                    updateRows(grid);
-                }
-            }
-        }
-        */
+        
         if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
             
             if (Constants.Property.INPUT_PARAMETERS.equals(event.getPropertyName())) {

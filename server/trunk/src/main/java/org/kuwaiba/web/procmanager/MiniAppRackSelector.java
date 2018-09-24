@@ -16,6 +16,7 @@ package org.kuwaiba.web.procmanager;
 
 import com.vaadin.server.Page;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,7 @@ public class MiniAppRackSelector extends AbstractMiniApplication<Component, Comp
 
     @Override
     public Component launchDetached() {
-        return null;
+        return launchEmbedded();
     }
 
     @Override
@@ -67,10 +68,11 @@ public class MiniAppRackSelector extends AbstractMiniApplication<Component, Comp
             }
                         
         } catch (ServerSideException ex) {
-
+            Notification.show("Unexpected Input Parameter was received in the MiniAppRackView", Notification.Type.ERROR_MESSAGE);
         }
         ComponentDeviceList componentDeviceList = new ComponentDeviceList(selectedDevices, getWebserviceBean());
         ComponentRackSelector componentRackSelector = new ComponentRackSelector(componentDeviceList, getWebserviceBean());
+                
         return componentRackSelector;
     }
 
