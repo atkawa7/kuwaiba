@@ -13,9 +13,11 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.inventory.scriptqueries;
+package com.neotropic.inventory.modules.warehouses;
 
-import org.inventory.scriptqueries.nodes.ScriptQueryRootNode;
+import com.neotropic.inventory.modules.warehouses.nodes.WarehouseRootNode;
+import javax.security.auth.RefreshFailedException;
+import javax.security.auth.Refreshable;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
@@ -28,36 +30,35 @@ import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
 /**
- * Top component which displays something.
+ * Top component which displays the warehouses and virtual warehouses.
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @ConvertAsProperties(
-        dtd = "-//org.inventory.scriptqueries//ScriptQueriesManager//EN",
+        dtd = "-//com.neotropic.inventory.modules.warehouses//Warehouses//EN",
         autostore = false
 )
 @TopComponent.Description(
-        preferredID = "ScriptQueriesManagerTopComponent",
-        iconBase="org/inventory/scriptqueries/res/icon.png", 
+        preferredID = "WarehousesTopComponent",
+        iconBase="com/neotropic/inventory/modules/warehouses/res/icon.png", 
         persistenceType = TopComponent.PERSISTENCE_NEVER
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
-@ActionID(category = "Window", id = "org.inventory.scriptqueries.ScriptQueriesManagerTopComponent")
-@ActionReferences( value = {@ActionReference(path = "Menu/Tools/Advanced" )} )
+@ActionID(category = "Window", id = "com.neotropic.inventory.modules.warehouses.WarehousesTopComponent")
+@ActionReferences( value = {@ActionReference(path = "Menu/Tools" )} )
 @TopComponent.OpenActionRegistration(
-        displayName = "#CTL_ScriptQueriesManagerAction",
-        preferredID = "ScriptQueriesManagerTopComponent"
+        displayName = "#CTL_WarehousesAction",
+        preferredID = "WarehousesTopComponent"
 )
 @Messages({
-    "CTL_ScriptQueriesManagerAction=Script Queries Manager",
+    "CTL_WarehousesAction=Warehouses",
 })
-public final class ScriptQueriesManagerTopComponent extends TopComponent implements ExplorerManager.Provider {
+public final class WarehousesTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable {
     private ExplorerManager em;
 
-    public ScriptQueriesManagerTopComponent() {
+    public WarehousesTopComponent() {
         initComponents();
-        setName("Script Queries Manager");
-        setToolTipText("Script Queries Manager");
-        
+        setName("Warehouses");
+        setToolTipText("Warehouses");
         initCustomComponents();
     }
 
@@ -76,7 +77,7 @@ public final class ScriptQueriesManagerTopComponent extends TopComponent impleme
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        em.setRootContext(new ScriptQueryRootNode());
+        em.setRootContext(new WarehouseRootNode(new WarehouseRootNode.WarehouseRootNodeChildren()));
     }
 
     @Override
@@ -104,6 +105,19 @@ public final class ScriptQueriesManagerTopComponent extends TopComponent impleme
     private void initCustomComponents() {
         em = new ExplorerManager();
         associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
-        add(new BeanTreeView());
+        BeanTreeView beanTreeView = new BeanTreeView();
+        beanTreeView.setRootVisible(false);
+        add(beanTreeView);
+    }
+
+    @Override
+    public boolean isCurrent() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void refresh() throws RefreshFailedException {
+        componentClosed();
+        componentOpened();
     }
 }

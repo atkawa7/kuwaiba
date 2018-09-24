@@ -5117,6 +5117,125 @@ public class CommunicationsStub {
     }
         // </editor-fold>
     
+        // <editor-fold defaultstate="collapsed" desc="Warehouse Module">   
+    /**
+     * Gets the warehouse module root pools
+     * @return the warehouse module root pools, or null if the class Warehouse or VirtualWatehouse not exist
+     */
+    public List<LocalPool> getWarehouseRootPool() {        
+        try {
+            List<LocalPool> res = new ArrayList();
+            
+            List<RemotePool> rootPools = service.getWarehouseRootPools(session.getSessionId());
+            
+            for (RemotePool rootPool : rootPools)
+                res.add(new LocalPool(rootPool.getId(), rootPool.getName(), rootPool.getClassName(), rootPool.getDescription(), rootPool.getType()));
+            return res;
+                        
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    };       
+    /**
+    * Associates a list of objects (resources) to an existing warehouse or virtual warehouse
+    * @param classNames Object classes
+    * @param objectIds Object ids
+    * @param warehouseClass Warehouse class
+    * @param warehouseId Warehouse id
+    * @return False 
+    *  If the user is not allowed to invoke the method
+    *  If any of the objects can't be found
+    *  If any of the objects involved can't be connected (i.e. if it's not an inventory object)
+    *  If any of the classes provided can not be found
+    */
+    public boolean associatesPhysicalNodeToWarehouse(List<String> classNames, List<Long> objectIds, String warehouseClass, long warehouseId){
+        try{
+            List<String> objectsClassList = new ArrayList<>();
+            List<Long> objectsIdList = new ArrayList<>();
+            objectsClassList.addAll(classNames);
+            objectsIdList.addAll(objectIds);
+            service.associatesPhysicalNodeToWarehouse(objectsClassList, objectsIdList, warehouseClass, warehouseId, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
+        }
+    }
+    /**
+     * Releases an object from a warehouse or virtual warehouse that is using it
+     * @param warehouseClass Warehouse class
+     * @param warehouseId Warehouse id
+     * @param targetId target object id
+     * @return False
+     *  If the user is not allowed to invoke the method
+     *  If the object can not be found
+     *  If the class can not be found
+     *  If the object activity log could no be found
+     */
+    public boolean releasePhysicalNodeFromWarehouse(String warehouseClass, long warehouseId, long targetId){
+        try{
+            service.releasePhysicalNodeFromWarehouse(warehouseClass, warehouseId, targetId, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
+        }
+    }
+    /**
+    * Moves objects from their current parent to a warehouse pool target object.
+    * @param targetClass New parent object id
+    * @param targetOid The new parent's oid
+    * @param objects Class names and Oids of the objects to be moved
+    * @return False
+    *   If the object's or new parent's class can't be found
+    *   If the object or its new parent can't be found
+    *   If the update can't be performed due to a business rule
+    */
+    public boolean moveObjectsToWarehousePool(String targetClass, long targetOid, LocalObjectLight[] objects) {
+
+        try{
+            List<Long> objectOids = new ArrayList<>();
+            List<String> objectClasses = new ArrayList<>();
+
+            for (LocalObjectLight lol : objects){
+                objectOids.add(lol.getId());
+                objectClasses.add(lol.getClassName());
+            }
+            service.moveObjectsToWarehousePool(targetClass, targetOid, objectClasses, objectOids, this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    /**
+     * Moves objects from their current parent to a target object.
+     * @param  targetClass New parent object id
+     * @param targetOid The new parent's oid
+     * @param objects Class names and Oids of the objects to be moved
+     * @return False
+     *  If the object's or new parent's class can't be found
+     *  If the object or its new parent can't be found
+     *  If the update can't be performed due to a business rule
+     */
+    public boolean moveObjectsToWarehouse(String targetClass, long targetOid, List<LocalObjectLight> objects) {
+        try{
+            List<Long> objectOids = new ArrayList<>();
+            List<String> objectClasses = new ArrayList<>();
+
+            for (LocalObjectLight lol : objects){
+                objectOids.add(lol.getId());
+                objectClasses.add(lol.getClassName());
+            }
+            service.moveObjectsToWarehouse(targetClass, targetOid, objectClasses, objectOids,this.session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+        // </editor-fold>
     // </editor-fold>
     
     // <editor-fold desc="Helper Methods" defaultstate="collapsed">

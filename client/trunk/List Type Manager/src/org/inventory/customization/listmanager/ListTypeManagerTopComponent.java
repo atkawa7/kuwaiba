@@ -16,6 +16,7 @@
 package org.inventory.customization.listmanager;
 
 import javax.swing.ActionMap;
+import org.inventory.core.services.api.behaviors.Refreshable;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.customization.listmanager.nodes.ListTypeChildren;
 import org.netbeans.api.settings.ConvertAsProperties;
@@ -57,7 +58,7 @@ import org.openide.windows.WindowManager;
     "CTL_ListTypeManagerTopComponent=List Type Manager",
     "HINT_ListTypeManagerTopComponent=Manage the list-type kind of attributes"
 })
-public final class ListTypeManagerTopComponent extends TopComponent implements ExplorerManager.Provider {
+public final class ListTypeManagerTopComponent extends TopComponent implements ExplorerManager.Provider, Refreshable {
     static final String ROOT_ICON_PATH = "org/inventory/customization/listmanager/res/root.png";
     
     private final ExplorerManager em = new ExplorerManager();
@@ -130,5 +131,11 @@ public final class ListTypeManagerTopComponent extends TopComponent implements E
 
     public NotificationUtil getNotifier(){
         return NotificationUtil.getInstance();
+    }
+
+    @Override
+    public void refresh() {
+        componentClosed();
+        componentOpened();
     }
 }

@@ -50,6 +50,7 @@ public class LocalPrivilege {
     public static final String PRIVILEGE_TASK_MANAGER = "task-manager";
     public static final String PRIVILEGE_SYNC = "sync";
     public static final String PRIVILEGE_CONTACTS = "contacts";
+    public static final String PRIVILEGE_WAREHOUSES = "warehouses";
     
     /**
      * For now, these privileges will be hard-coded, however in the near future, every module will provide its own set of tokens

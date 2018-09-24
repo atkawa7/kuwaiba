@@ -216,6 +216,14 @@ public class Constants {
      */
     public static final String CLASS_MPLSLINK = "MPLSLink";
     /**
+     * Class Warehouse
+     */
+    public static final String CLASS_WAREHOUSE = "Warehouse";
+    /**
+     * Class VirualWarehouse
+     */
+    public static final String CLASS_VIRTUALWAREHOUSE = "VirtualWarehouse";
+    /**
      * Default type for a new attribute
      */
     public static final String DEFAULT_ATTRIBUTE_TYPE = "String";
