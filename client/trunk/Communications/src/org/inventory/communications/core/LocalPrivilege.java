@@ -50,6 +50,7 @@ public class LocalPrivilege {
     public static final String PRIVILEGE_TASK_MANAGER = "task-manager";
     public static final String PRIVILEGE_SYNC = "sync";
     public static final String PRIVILEGE_CONTACTS = "contacts";
+    public static final String PRIVILEGE_CONFIG_VARIABLES = "config-variables";
     public static final String PRIVILEGE_WAREHOUSES = "warehouses";
     
     /**

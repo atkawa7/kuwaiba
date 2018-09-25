@@ -80,6 +80,7 @@ import com.neotropic.inventory.modules.sync.AbstractRunnableSyncFindingsManager;
 import com.neotropic.inventory.modules.sync.AbstractRunnableSyncResultsManager;
 import com.neotropic.inventory.modules.sync.LocalSyncProvider;
 import com.neotropic.inventory.modules.sync.LocalSyncAction;
+import org.inventory.communications.core.LocalConfigurationVariable;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.wsclient.ApplicationLogEntry;
 import org.inventory.communications.wsclient.RemoteAttributeMetadata;
@@ -98,6 +99,7 @@ import org.inventory.communications.wsclient.RemoteFavoritesFolder;
 import org.inventory.communications.wsclient.RemoteBusinessRule;
 import org.inventory.communications.wsclient.RemoteClassMetadata;
 import org.inventory.communications.wsclient.RemoteClassMetadataLight;
+import org.inventory.communications.wsclient.RemoteConfigurationVariable;
 import org.inventory.communications.wsclient.RemoteContact;
 import org.inventory.communications.wsclient.RemoteFileObject;
 import org.inventory.communications.wsclient.RemoteFileObjectLight;
@@ -5814,6 +5816,171 @@ public class CommunicationsStub {
             return null;
         }
     } 
+    
+    //<editor-fold desc="Configuration Variables" defaultstate="collapsed">
+    /**
+     * Creates a configuration variable inside a pool. A configuration variable is a place where a value will be stored so it can retrieved by whomever need it. 
+     * These variables are typically used to store values that help other modules to work, such as URLs, user names, dimensions, etc
+     * @param configVariablesPoolId The id of the pool where the config variable will be put
+     * @param name The name of the pool. This value can not be null or empty. Duplicate variable names are not allowed
+     * @param description The description of the what the variable does
+     * @param type The type of the variable. Use 1 for number, 2 for strings, 3 for booleans, 4 for unidimensional arrays and 5 for matrixes. 
+     * @param masked If the value should be masked when rendered (for security reasons, for example)
+     * @param valueDefinition In most cases (primitive types like numbers, strings or booleans) will be the actual value of the variable as a string (for example "5" or "admin" or "true"). For arrays and matrixes use the following notation: <br> 
+     * Arrays: (value1,value2,value3,valueN), matrixes: [(row1col1, row1col2,... row1colN), (row2col1, row2col2,... row2colN), (rowNcol1, rowNcol2,... rowNcolN)]. The values will be interpreted as strings 
+     * @return The newly created variable. Null if the parent pool could not be found or if the name is empty, the type is invalid, the value definition is empty
+     */
+    public LocalConfigurationVariable createConfigurationVariable(long configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition) {
+        try {
+            long newConfigurationVariableId = service.createConfigurationVariable(configVariablesPoolId, name, description, type, masked, valueDefinition, session.getSessionId());
+            
+            return new LocalConfigurationVariable(newConfigurationVariableId, name, description, masked, type);
+            
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Updates the value of a configuration variable. See #{@link #createConfigurationVariable(long, java.lang.String, java.lang.String, int, java.lang.String) } for value definition syntax
+     * @param name The current name of the variable that will be modified
+     * @param propertyToUpdate The name of the property to be updated. Possible values are: "name", "description", "type", "masked" and "value"
+     * @param newValue The new value as string
+     * @return False if the property to be updated can not be recognized or if the config variable can not be found. True otherwise
+     */
+    public boolean updateConfigurationVariable(String name, String propertyToUpdate, String newValue) {
+        try {
+            service.updateConfigurationVariable(name, propertyToUpdate, newValue, session.getSessionId());
+            return true;
+            
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    /**
+     * Deletes a config variable
+     * @param name The name of the variable to be deleted
+     * @return False if the config variable could not be found. True otherwise.
+     */
+    public boolean deleteConfigurationVariable(String name) {
+        try {
+            service.deleteConfigurationVariable(name, session.getSessionId());
+            return true;
+            
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    /**
+     * Retrieves a configuration variable
+     * @param name The name of the variable to be retrieved
+     * @return Null if the variable could not be found. The local representation of the variable otherwise
+     */
+    public LocalConfigurationVariable getConfigurationVariable(String name) {
+        try {
+            RemoteConfigurationVariable configurationVariable = service.getConfigurationVariable(name, session.getSessionId());
+            return new LocalConfigurationVariable(configurationVariable.getId(), configurationVariable.getName(), 
+                    configurationVariable.getDescription(), configurationVariable.isMasked(), configurationVariable.getType());
+            
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    /**
+     * Gets the config variables in a config variable pool
+     * @param parentPoolId The id pool to retrieve the variables from
+     * @return The list of config variables in the given pool or null if the pool could not be found
+     */
+    public List<LocalConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId) {
+        try {
+            List<RemoteConfigurationVariable> configurationVariablesInPool = service.getConfigurationVariablesInPool(parentPoolId, session.getSessionId());
+            List<LocalConfigurationVariable> res = new ArrayList<>();
+                    
+            configurationVariablesInPool.stream().forEach((configurationVariable) -> {
+                res.add(new LocalConfigurationVariable(configurationVariable.getId(), configurationVariable.getName(), 
+                    configurationVariable.getDescription(), configurationVariable.isMasked(), configurationVariable.getType()));
+            });
+            
+            return res;
+            
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    /**
+     * Retrieves the list of pools of config variables
+     * @return The available pools of configuration variables
+     */
+    public List<LocalPool> getConfigurationVariablesPools() {
+        try {
+            List<RemotePool> configurationVariablesPools = service.getConfigurationVariablesPools(session.getSessionId());
+            List<LocalPool> res = new ArrayList<>();
+                    
+            configurationVariablesPools.stream().forEach((pool) -> {
+                res.add(new LocalPool(pool.getId(), pool.getName(), pool.getClassName(), pool.getDescription(), pool.getType()));
+            });
+            
+            return res;
+            
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    /**
+     * Creates a pool of configuration variables
+     * @param name The name of the pool. Empty or null values are not allowed
+     * @param description The description of the pool
+     * @return The newly created pool or null if the name provided is null or empty
+     */
+    public LocalPool createConfigurationVariablesPool(String name, String description) {
+        try {
+            long newPoolId = service.createConfigurationVariablesPool(name, description, session.getSessionId());
+            return new LocalPool(newPoolId, name, "Pool of Configuration Variables", description, LocalPool.POOL_TYPE_MODULE_ROOT);
+            
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    /**
+     * Updates an attribute of a given config variables pool
+     * @param poolId The id of the pool to update
+     * @param propertyToUpdate The property to update. The valid values are "name" and "description"
+     * @param value The value of the property to be updated
+     * @return false if the property provided is not valid or if the pool could not be found. True otherwise
+     */
+    public boolean updateConfigurationVariablesPool(long poolId, String propertyToUpdate, String value) {
+        try {
+            service.updateConfigurationVariablesPool(poolId, propertyToUpdate, value, session.getSessionId());
+            return true;
+            
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    /**
+     * Deletes a configuration variables pool. Deleting a pool also deletes the config variables contained within
+     * @param poolId The id of the pool to be deleted
+     * @return False if the pool could not be found. True if the operation was successful
+     */
+    public boolean deleteConfigurationVariablesPool(long poolId) {
+        try {
+            service.deleteConfigurationVariablesPool(poolId, session.getSessionId());
+            return true;
+            
+        } catch (ServerSideException_Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    //</editor-fold>
     
     //<editor-fold desc="Business Rules" defaultstate="collapsed">
     /**

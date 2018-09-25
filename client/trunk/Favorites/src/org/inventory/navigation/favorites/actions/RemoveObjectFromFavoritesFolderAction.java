@@ -44,9 +44,9 @@ import org.openide.util.lookup.ServiceProvider;
  */
 @ActionsGroupType(group=ActionsGroupType.Group.RELEASE_FROM)
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class RemoveObjectFromFavoritesFolder extends GenericObjectNodeAction implements ComposedAction {
+public class RemoveObjectFromFavoritesFolderAction extends GenericObjectNodeAction implements ComposedAction {
     
-    public RemoveObjectFromFavoritesFolder() {
+    public RemoveObjectFromFavoritesFolderAction() {
         putValue(NAME, I18N.gm("remove_from_favorites_folder"));
     }
     
