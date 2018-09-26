@@ -17,8 +17,16 @@
 package org.kuwaiba.core.variables.nodes.actions;
 
 import java.awt.event.ActionEvent;
+import javax.swing.JOptionPane;
+import org.inventory.communications.CommunicationsStub;
+import org.inventory.communications.core.LocalConfigurationVariable;
 import org.inventory.communications.core.LocalPrivilege;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
+import org.kuwaiba.core.variables.nodes.ConfigurationVariableNode;
+import org.kuwaiba.core.variables.nodes.ConfigurationVariablesPoolNode;
+import org.openide.util.Utilities;
 
 /**
  * Deletes a configuration variable
@@ -37,6 +45,17 @@ public class DeleteConfigurationVariableAction extends GenericInventoryAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this configuration variable?", "Delete Configuration Variable", JOptionPane.OK_CANCEL_OPTION) == JOptionPane.CANCEL_OPTION)
+            return;
+        
+        ConfigurationVariableNode selectedNode = Utilities.actionsGlobalContext().lookup(ConfigurationVariableNode.class);
+        if (selectedNode != null) {
+            
+            
+            if (CommunicationsStub.getInstance().deleteConfigurationVariable(selectedNode.getLookup().lookup(LocalConfigurationVariable.class).getName()))
+                ((ConfigurationVariablesPoolNode.ConfigurationVariablesPoolNodeChildren)selectedNode.getParentNode().getChildren()).addNotify();
+            else
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+        }
     }
 }

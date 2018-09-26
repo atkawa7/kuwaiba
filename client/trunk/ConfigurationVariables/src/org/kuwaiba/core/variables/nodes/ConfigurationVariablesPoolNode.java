@@ -16,11 +16,21 @@
 
 package org.kuwaiba.core.variables.nodes;
 
+import java.awt.Image;
+import java.util.Collections;
+import java.util.List;
+import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalConfigurationVariable;
+import org.inventory.communications.core.LocalPool;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
+import org.kuwaiba.core.variables.nodes.actions.ConfigurationVariablesActionFactory;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
+import org.openide.util.ImageUtilities;
+import org.openide.util.lookup.Lookups;
 
 /**
  * A node representing a pool of configuration variables
@@ -28,16 +38,50 @@ import org.openide.nodes.Node;
  */
 public class ConfigurationVariablesPoolNode extends AbstractNode {
 
-    public ConfigurationVariablesPoolNode(Children children) {
-        super(children);
+    private static final Image ICON = ImageUtilities.loadImage("org/kuwaiba/core/variables/res/poolNodeIcon.png");
+    
+    public ConfigurationVariablesPoolNode(LocalPool configVariablesPool) {
+        super(new ConfigurationVariablesPoolNodeChildren(), Lookups.singleton(configVariablesPool));
+    }
+
+    @Override
+    public Action[] getActions(boolean context) {
+        return new Action[] { ConfigurationVariablesActionFactory.getAddConfigurationVariableAction(), 
+                              null,
+                              ConfigurationVariablesActionFactory.getDeleteConfigurationVariablesPoolAction()};
+        
+    }
+
+    @Override
+    public String getName() {
+        return getLookup().lookup(LocalPool.class).getName();
+    }
+
+    @Override
+    public Image getOpenedIcon(int type) {
+        return ICON;
+    }
+
+    @Override
+    public Image getIcon(int type) {
+        return ICON;
     }
     
-    
-    private class ConfigurationVariablesPoolNodeChildren extends Children.Keys<LocalConfigurationVariable> {
-
+    public static class ConfigurationVariablesPoolNodeChildren extends Children.Keys<LocalConfigurationVariable> {
+        
         @Override
         public void addNotify() {
-            //CommunicationsStub.getInstance().getChildrenOfClass(0, PROP_NAME, PROP_DISPLAY_NAME)
+            List<LocalConfigurationVariable> configurationVariablesInPool = 
+                    CommunicationsStub.getInstance().getConfigurationVariablesInPool(getNode().getLookup().lookup(LocalPool.class).getId());
+            if (configurationVariablesInPool == null)
+                NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
+            else
+                setKeys(configurationVariablesInPool);
+        }
+        
+        @Override
+        public void removeNotify() {
+            setKeys(Collections.EMPTY_SET);
         }
         
         @Override

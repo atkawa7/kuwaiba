@@ -120,7 +120,6 @@ import org.inventory.communications.wsclient.RemoteSynchronizationGroup;
 import org.inventory.communications.wsclient.RemoteTask;
 import org.inventory.communications.wsclient.RemoteTaskResult;
 import org.inventory.communications.wsclient.ResultRecord;
-import org.inventory.communications.wsclient.ServerSideException_Exception;
 import org.inventory.communications.wsclient.StringPair;
 import org.inventory.communications.wsclient.SyncFinding;
 import org.inventory.communications.wsclient.SyncResult;
@@ -233,7 +232,7 @@ public class CommunicationsStub {
             
             this.session = new LocalSession(this.service.createSession(user, password, 1 /*A desktop session*/));
             return true;
-        }catch(MalformedURLException | ServerSideException_Exception ex) { 
+        }catch(Exception ex) { 
             this.error =  ex.getMessage();
             return false;
         }
@@ -345,7 +344,7 @@ public class CommunicationsStub {
                 res.add(new LocalObject(remoteChild.getClassName(), id, remoteChild.getAttributes(), classMetadata));
             }
             return res;
-        }catch(ServerSideException_Exception | IllegalArgumentException ex){
+        }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
         }
@@ -5811,7 +5810,7 @@ public class CommunicationsStub {
                 localResults.add(new LocalSyncResult(result.getType(), result.getActionDescription(), result.getResult()));
             return localResults;
             
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
@@ -5834,9 +5833,9 @@ public class CommunicationsStub {
         try {
             long newConfigurationVariableId = service.createConfigurationVariable(configVariablesPoolId, name, description, type, masked, valueDefinition, session.getSessionId());
             
-            return new LocalConfigurationVariable(newConfigurationVariableId, name, description, masked, type);
+            return new LocalConfigurationVariable(newConfigurationVariableId, name, description, valueDefinition, masked, type);
             
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
@@ -5854,7 +5853,7 @@ public class CommunicationsStub {
             service.updateConfigurationVariable(name, propertyToUpdate, newValue, session.getSessionId());
             return true;
             
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return false;
         }
@@ -5869,7 +5868,7 @@ public class CommunicationsStub {
             service.deleteConfigurationVariable(name, session.getSessionId());
             return true;
             
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return false;
         }
@@ -5882,10 +5881,10 @@ public class CommunicationsStub {
     public LocalConfigurationVariable getConfigurationVariable(String name) {
         try {
             RemoteConfigurationVariable configurationVariable = service.getConfigurationVariable(name, session.getSessionId());
-            return new LocalConfigurationVariable(configurationVariable.getId(), configurationVariable.getName(), 
-                    configurationVariable.getDescription(), configurationVariable.isMasked(), configurationVariable.getType());
+            return new LocalConfigurationVariable(configurationVariable.getId(), configurationVariable.getName(),
+                    configurationVariable.getDescription(), configurationVariable.getValueDefinition(), configurationVariable.isMasked(), configurationVariable.getType());
             
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
@@ -5902,12 +5901,12 @@ public class CommunicationsStub {
                     
             configurationVariablesInPool.stream().forEach((configurationVariable) -> {
                 res.add(new LocalConfigurationVariable(configurationVariable.getId(), configurationVariable.getName(), 
-                    configurationVariable.getDescription(), configurationVariable.isMasked(), configurationVariable.getType()));
+                    configurationVariable.getDescription(), configurationVariable.getValueDefinition(), configurationVariable.isMasked(), configurationVariable.getType()));
             });
             
             return res;
             
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
@@ -5927,7 +5926,7 @@ public class CommunicationsStub {
             
             return res;
             
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
@@ -5943,7 +5942,7 @@ public class CommunicationsStub {
             long newPoolId = service.createConfigurationVariablesPool(name, description, session.getSessionId());
             return new LocalPool(newPoolId, name, "Pool of Configuration Variables", description, LocalPool.POOL_TYPE_MODULE_ROOT);
             
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
         }
@@ -5960,7 +5959,7 @@ public class CommunicationsStub {
             service.updateConfigurationVariablesPool(poolId, propertyToUpdate, value, session.getSessionId());
             return true;
             
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return false;
         }
@@ -5975,7 +5974,7 @@ public class CommunicationsStub {
             service.deleteConfigurationVariablesPool(poolId, session.getSessionId());
             return true;
             
-        } catch (ServerSideException_Exception ex) {
+        } catch (Exception ex) {
             this.error = ex.getMessage();
             return false;
         }

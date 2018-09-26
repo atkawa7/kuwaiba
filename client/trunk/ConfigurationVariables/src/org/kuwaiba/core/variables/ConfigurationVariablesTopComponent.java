@@ -15,9 +15,14 @@
  */
 package org.kuwaiba.core.variables;
 
+import org.inventory.core.services.api.behaviors.Refreshable;
+import org.kuwaiba.core.variables.nodes.ConfigurationVariablesRootNode;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
+import org.openide.explorer.ExplorerManager;
+import org.openide.explorer.ExplorerUtils;
+import org.openide.explorer.view.BeanTreeView;
 import org.openide.windows.TopComponent;
 import org.openide.util.NbBundle.Messages;
 
@@ -31,7 +36,7 @@ import org.openide.util.NbBundle.Messages;
 )
 @TopComponent.Description(
         preferredID = "ConfigurationVariablesTopComponent",
-        iconBase="org/kuwaiba/core/variables/icon.png", 
+        iconBase="org/kuwaiba/core/variables/res/icon.png", 
         persistenceType = TopComponent.PERSISTENCE_ALWAYS
 )
 @TopComponent.Registration(mode = "explorer", openAtStartup = false)
@@ -46,10 +51,14 @@ import org.openide.util.NbBundle.Messages;
     "CTL_ConfigurationVariablesTopComponent=Configuration Variables Module",
     "HINT_ConfigurationVariablesTopComponent=Create and Edit Configuration Variables"
 })
-public final class ConfigurationVariablesTopComponent extends TopComponent {
+public final class ConfigurationVariablesTopComponent extends TopComponent 
+        implements ExplorerManager.Provider, Refreshable {
 
+    private ExplorerManager em = new ExplorerManager();
+    
     public ConfigurationVariablesTopComponent() {
         initComponents();
+        initCustomComponents();
         setName(Bundle.CTL_ConfigurationVariablesTopComponent());
         setToolTipText(Bundle.HINT_ConfigurationVariablesTopComponent());
 
@@ -63,28 +72,19 @@ public final class ConfigurationVariablesTopComponent extends TopComponent {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
-        this.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
+        setLayout(new java.awt.BorderLayout());
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
     @Override
     public void componentOpened() {
-        // TODO add custom code on component opening
+        em.setRootContext(new ConfigurationVariablesRootNode());
     }
 
     @Override
     public void componentClosed() {
-        // TODO add custom code on component closing
+        em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
     }
 
     void writeProperties(java.util.Properties p) {
@@ -97,5 +97,21 @@ public final class ConfigurationVariablesTopComponent extends TopComponent {
     void readProperties(java.util.Properties p) {
         String version = p.getProperty("version");
         // TODO read your settings according to their version
+    }
+
+    private void initCustomComponents() {
+        associateLookup(ExplorerUtils.createLookup(em, getActionMap()));
+        add(new BeanTreeView());
+    }
+
+    @Override
+    public ExplorerManager getExplorerManager() {
+        return em;
+    }
+
+    @Override
+    public void refresh() {
+        componentClosed();
+        componentOpened();
     }
 }

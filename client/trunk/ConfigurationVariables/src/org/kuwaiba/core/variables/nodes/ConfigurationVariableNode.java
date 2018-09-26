@@ -16,7 +16,9 @@
 
 package org.kuwaiba.core.variables.nodes;
 
+import javax.swing.Action;
 import org.inventory.communications.core.LocalConfigurationVariable;
+import org.kuwaiba.core.variables.nodes.actions.ConfigurationVariablesActionFactory;
 import org.kuwaiba.core.variables.nodes.properties.ConfigurationVariableNativeTypeProperty;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
@@ -41,6 +43,11 @@ public class ConfigurationVariableNode extends AbstractNode {
     @Override
     public String getDisplayName() {
         return getLookup().lookup(LocalConfigurationVariable.class).getName();
+    }
+    
+    @Override
+    public Action[] getActions(boolean context) {
+        return new Action[] { ConfigurationVariablesActionFactory.getDeleteConfigurationVariableAction() };
     }
     
     @Override

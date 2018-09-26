@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="masked" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}int"/>
+ *         &lt;element name="valueDefinition" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -35,7 +36,8 @@ import javax.xml.bind.annotation.XmlType;
     "name",
     "description",
     "masked",
-    "type"
+    "type",
+    "valueDefinition"
 })
 public class RemoteConfigurationVariable {
 
@@ -44,6 +46,7 @@ public class RemoteConfigurationVariable {
     protected String description;
     protected boolean masked;
     protected int type;
+    protected String valueDefinition;
 
     /**
      * Gets the value of the id property.
@@ -139,6 +142,30 @@ public class RemoteConfigurationVariable {
      */
     public void setType(int value) {
         this.type = value;
+    }
+
+    /**
+     * Gets the value of the valueDefinition property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getValueDefinition() {
+        return valueDefinition;
+    }
+
+    /**
+     * Sets the value of the valueDefinition property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setValueDefinition(String value) {
+        this.valueDefinition = value;
     }
 
 }

@@ -54,6 +54,10 @@ public class LocalConfigurationVariable {
      */
     private String description;
     /**
+     * The value of the variable
+     */
+    private String valueDefinition;
+    /**
      * If the value should be masked when rendered, and in the future, when stored (for security reasons, for example)
      */
     private boolean masked;
@@ -62,12 +66,13 @@ public class LocalConfigurationVariable {
      */
     private int type;
 
-    public LocalConfigurationVariable(long id, String name, String description, boolean masked, int type) {
+    public LocalConfigurationVariable(long id, String name, String description, String valueDefinition, boolean masked, int type) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.masked = masked;
         this.type = type;
+        this.valueDefinition = valueDefinition;
     }
 
     public long getId() {
@@ -108,5 +113,13 @@ public class LocalConfigurationVariable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getValueDefinition() {
+        return valueDefinition;
+    }
+
+    public void setValue(String valueDefinition) {
+        this.valueDefinition = valueDefinition;
     }
 }

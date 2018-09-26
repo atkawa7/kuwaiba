@@ -21,7 +21,6 @@ import static javax.swing.JComponent.WHEN_IN_FOCUSED_WINDOW;
 import javax.swing.KeyStroke;
 import javax.swing.text.DefaultEditorKit;
 import org.inventory.core.services.api.behaviors.Refreshable;
-import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.navigation.navigationtree.nodes.actions.DeleteBusinessObjectAction;
 import org.netbeans.api.settings.ConvertAsProperties;
 import org.openide.awt.ActionID;
@@ -30,12 +29,9 @@ import org.openide.awt.ActionReferences;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.ExplorerUtils;
 import org.openide.explorer.view.BeanTreeView;
-import org.openide.util.Lookup;
 import org.openide.util.NbBundle.Messages;
 import org.openide.util.actions.SystemAction;
-import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
-import org.openide.windows.WindowManager;
 
 /**
  * Service Manager Top component
@@ -65,7 +61,6 @@ public final class ServiceManagerTopComponent extends TopComponent
 
     private ExplorerManager em;
     private BeanTreeView tree;
-    private NotificationUtil nu;
     private ServiceManagerService sms;
     
     public ServiceManagerTopComponent() {
@@ -74,7 +69,6 @@ public final class ServiceManagerTopComponent extends TopComponent
         setName(Bundle.CTL_ServiceManagerTopComponent());
         setToolTipText(Bundle.HINT_ServiceManagerTopComponent());
         
-        nu = Lookup.getDefault().lookup(NotificationUtil.class);
         sms = new ServiceManagerService(this);
         tree = new BeanTreeView();
         add(tree);
@@ -117,12 +111,7 @@ public final class ServiceManagerTopComponent extends TopComponent
     @Override
     public void componentClosed() {
         em.getRootContext().getChildren().remove(em.getRootContext().getChildren().getNodes());
-        TopComponent propertiesWindow = WindowManager.getDefault().findTopComponent("properties");
-        propertiesWindow.close();
-        //Workaround, because when you close a TC whose mode is "explorer" and open it again,
-        //it docks as "explorer". This forces the TC to be always docked "explorer"
-        Mode myMode = WindowManager.getDefault().findMode("explorer"); //NOI18N
-        myMode.dockInto(this);
+        
     }
 
     void writeProperties(java.util.Properties p) {
@@ -140,10 +129,6 @@ public final class ServiceManagerTopComponent extends TopComponent
     @Override
     public ExplorerManager getExplorerManager() {
         return em;
-    }
-    
-    public NotificationUtil getNotifier(){
-        return nu;
     }
 
     @Override
