@@ -3949,7 +3949,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.validateWebServiceCall("getConfigurationVariable", ipAddress, sessionId);
             ConfigurationVariable configVariable = aem.getConfigurationVariable(name);
             return new RemoteConfigurationVariable(configVariable.getId(), configVariable.getName(), 
-                    configVariable.getDescription(), configVariable.isMasked(), configVariable.getType());
+                    configVariable.getDescription(), configVariable.getValueDefinition(), configVariable.isMasked(), configVariable.getType());
         } catch(InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -3965,7 +3965,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<RemoteConfigurationVariable> res = new ArrayList<>();
             aem.getConfigurationVariablesInPool(parentPoolId).forEach((configVariable) -> {
                 res.add(new RemoteConfigurationVariable(configVariable.getId(), configVariable.getName(), 
-                    configVariable.getDescription(), configVariable.isMasked(), configVariable.getType()));
+                    configVariable.getDescription(), configVariable.getValueDefinition(), configVariable.isMasked(), configVariable.getType()));
             });
             
             return res;

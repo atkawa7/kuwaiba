@@ -4826,6 +4826,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (configVariableNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Can not find a configuration variable named %s", name));
             
+            configVariableNode.getRelationships().forEach((relationship) -> {
+                relationship.delete();
+            });
+            
             configVariableNode.delete();
             tx.success();
         }
@@ -4840,7 +4844,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("Can not find a configuration variable named %s", name));
             
             return new ConfigurationVariable(configVariableNode.getId(), (String)configVariableNode.getProperty(Constants.PROPERTY_NAME), 
-                     (String)configVariableNode.getProperty(Constants.PROPERTY_DESCRIPTION), (boolean)configVariableNode.getProperty(Constants.PROPERTY_MASKED), 
+                    (String)configVariableNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+                    (String)configVariableNode.getProperty(Constants.PROPERTY_VALUE), 
+                    (boolean)configVariableNode.getProperty(Constants.PROPERTY_MASKED), 
                      (int)configVariableNode.getProperty(Constants.PROPERTY_TYPE));
         }
     }
@@ -4848,22 +4854,31 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public List<ConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId) throws ApplicationObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            Node parentPool = graphDb.findNode(configurationVariablesPools, Constants.PROPERTY_ID, parentPoolId);
+            Node parentPoolNode = graphDb.findNodes(configurationVariablesPools).stream().filter((configvariablesPoolNode) -> {
+                return configvariablesPoolNode.getId() == parentPoolId; 
+            }).findFirst().get();
             
-            if (parentPool == null)
+            if (parentPoolNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Can not find a pool with id %s", parentPoolId));
             
             List<ConfigurationVariable> res = new ArrayList<>();
             
-            parentPool.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING).forEach((childOfRelationship) -> {
+            parentPoolNode.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING).forEach((childOfRelationship) -> {
                 Node configVariableNode = childOfRelationship.getStartNode();
                 
                 res.add(new ConfigurationVariable(configVariableNode.getId(), (String)configVariableNode.getProperty(Constants.PROPERTY_NAME), 
-                     (String)configVariableNode.getProperty(Constants.PROPERTY_DESCRIPTION), (boolean)configVariableNode.getProperty(Constants.PROPERTY_MASKED), 
+                    (String)configVariableNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+                    (String)configVariableNode.getProperty(Constants.PROPERTY_VALUE), 
+                    (boolean)configVariableNode.getProperty(Constants.PROPERTY_MASKED), 
                      (int)configVariableNode.getProperty(Constants.PROPERTY_TYPE)));
             });
             
             tx.success();
+            
+            res.sort((o1, o2) -> {
+                return o1.getName().compareTo(o2.getName());
+            });
+            
             return res;
         }
     }
@@ -4878,6 +4893,11 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             });
             
             tx.success();
+            
+            res.sort((o1, o2) -> {
+                return o1.getName().compareTo(o2.getName());
+            });
+            
             return res;
         }
     }
@@ -4938,7 +4958,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("Can not find a pool with id %s", poolId));
             
             poolNode.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING).forEach((childOfRelationship) -> {
-                childOfRelationship.getStartNode().delete();
+                Node configVariableNode = childOfRelationship.getStartNode();
+                childOfRelationship.delete();
+                configVariableNode.delete();
             });
             
             poolNode.delete();

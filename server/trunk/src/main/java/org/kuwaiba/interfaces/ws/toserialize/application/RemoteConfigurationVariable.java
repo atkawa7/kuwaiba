@@ -67,18 +67,23 @@ public class RemoteConfigurationVariable implements Serializable {
      * Variable type. See TYPE_XXX for possible values;
      */
     private int type;
+    /**
+     * The formatted value of the variable
+     */
+    private String valueDefinition;
 
     /**
      * Mandatory default constructor. Do not use in your code.
      */
     public RemoteConfigurationVariable() { }
 
-    public RemoteConfigurationVariable(long id, String name, String description, boolean masked, int type) {
+    public RemoteConfigurationVariable(long id, String name, String description, String valueDefinition, boolean masked, int type) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.masked = masked;
         this.type = type;
+        this.valueDefinition = valueDefinition;
     }
 
     public long getId() {
@@ -119,5 +124,13 @@ public class RemoteConfigurationVariable implements Serializable {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getValueDefinition() {
+        return valueDefinition;
+    }
+
+    public void setValueDefinition(String valueDefinition) {
+        this.valueDefinition = valueDefinition;
     }
 }
