@@ -63,6 +63,7 @@ class NewSyncGroupAction extends GenericInventoryAction {
         cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.ip.IPAddressesSyncProvider", "IP address mib", true));
         cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.vlan.SnmpCiscoVlansSyncProvider", "VLANs mib", true));
         cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.ssh.bdi.BridgeDomainSyncProvider", "Bridge Domains", true));
+        cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.bgp.BgpSyncProvider", "BGP Map", true));
 
         
         JComplexDialogPanel pnlPoolProperties = new JComplexDialogPanel(
