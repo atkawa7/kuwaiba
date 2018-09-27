@@ -54,11 +54,11 @@ public abstract class AbstractMiniApplication<D, E> {
     /**
      * Listeners to events during the execution of the mini application
      */
-    List<MiniApplicationResultListener> listeners;
+    List<MiniApplicationEventtListener> listeners;
     /**
-     * Web service reference
+     * Reference to the backend bean
      */
-    private WebserviceBean webserviceBean;
+    protected WebserviceBean wsBean;
     /**
      * Default constructor. Use [AbstractMiniApplicationSubclass].getConstructor(Properties.class).newInstance(...) to create instances using reflection
      * @param inputParameters Input configuration parameters for the current mini application
@@ -68,13 +68,9 @@ public abstract class AbstractMiniApplication<D, E> {
         this.miniApplicationData = new Properties();
         this.listeners = new ArrayList<>();
     }
-    
-    public WebserviceBean getWebserviceBean() {
-        return webserviceBean;        
-    }
         
-    public void setWebserviceBean(WebserviceBean webserviceBean) {
-        this.webserviceBean = webserviceBean;                
+    public void setWebserviceBean(WebserviceBean wsBean) {
+        this.wsBean = wsBean;                
     }
     
     public Properties getInputParameters() {
@@ -97,7 +93,7 @@ public abstract class AbstractMiniApplication<D, E> {
      * Adds a result listener
      * @param listener The listener to be added
      */
-    public void addResultListener(MiniApplicationResultListener listener){
+    public void addEventListener(MiniApplicationEventtListener listener){
         this.listeners.add(listener);
     }
     
@@ -105,7 +101,7 @@ public abstract class AbstractMiniApplication<D, E> {
      * Removes a listener
      * @param listener The listener to be removed
      */
-    public void removeResultListener(MiniApplicationResultListener listener) {
+    public void removeEventListener(MiniApplicationEventtListener listener) {
         this.listeners.remove(listener);
     }
     

@@ -68,8 +68,8 @@ public class MiniAppRackView extends AbstractMiniApplication<Component, Componen
 
                 String img = sceneExporter.buildRackView(
                     Page.getCurrent().getWebBrowser().getAddress(), 
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")), //NOI18N
-                    getWebserviceBean(), 
+                    (RemoteSession) UI.getCurrent().getSession().getAttribute("session"), //NOI18N
+                    wsBean, 
                     className, 
                     id);
                                 

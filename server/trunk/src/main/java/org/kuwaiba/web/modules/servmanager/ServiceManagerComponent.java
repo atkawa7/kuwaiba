@@ -19,6 +19,7 @@ import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.selection.SingleSelectionEvent;
 import com.vaadin.event.selection.SingleSelectionListener;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.ui.ComboBox;
@@ -45,12 +46,12 @@ import org.kuwaiba.beans.WebserviceBean;
  * Main view for the Service Manager module
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-@CDIView("smanager")
+@CDIView("servmanager")
 public class ServiceManagerComponent extends AbstractTopComponent {
     /**
      * View identifier
      */
-    public static String VIEW_NAME = "smanager";
+    public static String VIEW_NAME = "servmanager";
     /**
      * Combo box containing the current customers
      */
@@ -95,8 +96,10 @@ public class ServiceManagerComponent extends AbstractTopComponent {
             List<RemoteObjectLight> currentCustomers = wsBean.getObjectsOfClassLight(Constants.CLASS_GENERICCUSTOMER, -1, Page.getCurrent().getWebBrowser().getAddress(), 
                     ((RemoteSession) getSession().getAttribute("session")).getSessionId());
             
-            cmbCustomers = new ComboBox<>("Customer", currentCustomers);
+            cmbCustomers = new ComboBox<>("", currentCustomers);
             cmbCustomers.setSizeFull();
+            cmbCustomers.setEmptySelectionCaption("Select a Customer...");
+            
             cmbCustomers.addSelectionListener(new SingleSelectionListener<RemoteObjectLight>() {
                 @Override
                 public void selectionChange(SingleSelectionEvent<RemoteObjectLight> event) {
@@ -121,7 +124,9 @@ public class ServiceManagerComponent extends AbstractTopComponent {
                 }
             });
             
-            txtServiceFilter = new TextField("Filter");
+            txtServiceFilter = new TextField();
+            txtServiceFilter.setPlaceholder("Search...");
+            txtServiceFilter.setIcon(VaadinIcons.SEARCH);
             txtServiceFilter.addValueChangeListener(this::onTxtFilterChange);
             txtServiceFilter.setSizeFull();
             

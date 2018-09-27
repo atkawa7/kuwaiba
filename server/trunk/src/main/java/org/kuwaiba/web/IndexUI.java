@@ -103,6 +103,11 @@ public class IndexUI extends UI {
                         (RemoteSession) getSession().getAttribute("session"));
             ipamModule.attachToMenu(mnuMain);
             
+            // Synchronization Manager module
+//            SyncManagerModule syncManagerModule = new SyncManagerModule(null, wsBean, 
+//                        (RemoteSession) getSession().getAttribute("session"));
+//            syncManagerModule.attachToMenu(mnuMain);
+            
             // Process Manager Module
             ProcessManagerModule processManagerModule = new ProcessManagerModule(null, wsBean, 
                 (RemoteSession) getSession().getAttribute("session"));

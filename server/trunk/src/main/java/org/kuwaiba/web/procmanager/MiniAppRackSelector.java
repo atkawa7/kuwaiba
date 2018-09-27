@@ -57,7 +57,7 @@ public class MiniAppRackSelector extends AbstractMiniApplication<Component, Comp
                 
                 for (Object id : getInputParameters().keySet()) {
 
-                    RemoteObject child = getWebserviceBean().getObject(
+                    RemoteObject child = wsBean.getObject(
                         getInputParameters().getProperty(String.valueOf(id)), 
                         Long.valueOf(String.valueOf(id)), 
                         Page.getCurrent().getWebBrowser().getAddress(),
@@ -70,8 +70,8 @@ public class MiniAppRackSelector extends AbstractMiniApplication<Component, Comp
         } catch (ServerSideException ex) {
             Notification.show("Unexpected Input Parameter was received in the MiniAppRackView", Notification.Type.ERROR_MESSAGE);
         }
-        ComponentDeviceList componentDeviceList = new ComponentDeviceList(selectedDevices, getWebserviceBean());
-        ComponentRackSelector componentRackSelector = new ComponentRackSelector(componentDeviceList, getWebserviceBean());
+        ComponentDeviceList componentDeviceList = new ComponentDeviceList(selectedDevices, wsBean);
+        ComponentRackSelector componentRackSelector = new ComponentRackSelector(componentDeviceList, wsBean);
                 
         return componentRackSelector;
     }

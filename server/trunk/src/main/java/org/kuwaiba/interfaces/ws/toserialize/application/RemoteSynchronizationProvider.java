@@ -41,9 +41,9 @@ public final class RemoteSynchronizationProvider implements Serializable {
 
     public RemoteSynchronizationProvider() { }
     
-    public RemoteSynchronizationProvider(String id, String displatName, boolean automated) {
+    public RemoteSynchronizationProvider(String id, String displayName, boolean automated) {
         this.id = id;
-        this.displayName = displatName;
+        this.displayName = displayName;
         this.automated = automated;
     }
 
@@ -70,4 +70,10 @@ public final class RemoteSynchronizationProvider implements Serializable {
     public void setAutomated(boolean automated) {
         this.automated = automated;
     }
+    
+    @Override
+    public String toString() {
+        return displayName;
+    }
+    
 }

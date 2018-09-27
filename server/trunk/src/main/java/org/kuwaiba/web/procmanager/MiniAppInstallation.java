@@ -48,7 +48,7 @@ import org.kuwaiba.web.procmanager.rackview.ComponentDeviceList;
 import org.kuwaiba.web.procmanager.rackview.ComponentRackSelector;
 
 /**
- * Wrapped to configure the instalation of a device
+ * Wrapped to configure the installation of a device
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class MiniAppInstallation extends AbstractMiniApplication<Component, Component> {
@@ -71,7 +71,7 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
         List<MaterialBean> materialBeans = new ArrayList();
         
         for (RemoteObject device : devices) {
-            MaterialBean materialBean = new MaterialBean(device, getWebserviceBean());
+            MaterialBean materialBean = new MaterialBean(device, wsBean);
             materialBeans.add(materialBean);
         }
         devicesGrid.setItems(materialBeans);
@@ -132,7 +132,7 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
                 
                 for (Object id : getInputParameters().keySet()) {
 
-                    RemoteObject child = getWebserviceBean().getObject(
+                    RemoteObject child = wsBean.getObject(
                         getInputParameters().getProperty(String.valueOf(id)), 
                         Long.valueOf(String.valueOf(id)), 
                         Page.getCurrent().getWebBrowser().getAddress(),
@@ -200,7 +200,7 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
                 String img = sceneExporter.buildRackView(
                     Page.getCurrent().getWebBrowser().getAddress(), 
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")), //NOI18N
-                    getWebserviceBean(), 
+                    wsBean, 
                     materialBean.getRackObject().getClassName(), 
                     materialBean.getRackObject().getId());
                                 
@@ -319,10 +319,10 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
 ////                        Page.getCurrent().getWebBrowser().getAddress(), 
 ////                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
                     
-                    ComponentDeviceList componentDeviceList = new ComponentDeviceList(selectedDevices, getWebserviceBean());
+                    ComponentDeviceList componentDeviceList = new ComponentDeviceList(selectedDevices, wsBean);
 ////                    ComponentRackView componentRackView = new ComponentRackView(targetObject, getWebserviceBean());
                                         
-                    ComponentRackSelector componentRackSelector = new ComponentRackSelector(componentDeviceList, getWebserviceBean()/*, componentRackView*/);
+                    ComponentRackSelector componentRackSelector = new ComponentRackSelector(componentDeviceList, wsBean/*, componentRackView*/);
                     
                     Window window = new Window();
                     window.setContent(componentRackSelector);
@@ -341,15 +341,14 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
             }
         });
         
-        Button btnConnection = new Button();
-        btnConnection.setCaption("Connect Devices");
+        Button btnConnection = new Button("Connect Devices");
         btnConnection.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                ComponentConnectionSource componentConnectionSource = new ComponentConnectionSource(selectedDevices, getWebserviceBean());
+                ComponentConnectionSource componentConnectionSource = new ComponentConnectionSource(selectedDevices, wsBean);
 ////                ComponentConnectionTarget componentConnectionTarget = new ComponentConnectionTarget(getWebserviceBean());
 
-                ComponentConnectionCreator componentConnectionCreator = new ComponentConnectionCreator(componentConnectionSource, getWebserviceBean()/*, componentConnectionTarget*/);
+                ComponentConnectionCreator componentConnectionCreator = new ComponentConnectionCreator(componentConnectionSource, wsBean/*, componentConnectionTarget*/);
 
                 Window window = new Window();
                 window.setContent(componentConnectionCreator);
@@ -502,7 +501,7 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
         }
         
         public String getBtnViewPhysicalPath() {
-            return "Show Phisical Path";
+            return "Show Physical Path";
         }
     }
 }

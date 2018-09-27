@@ -105,6 +105,7 @@ class NavigationTreeComponent extends AbstractTopComponent {
         this.txtFilter.setPlaceholder("Search...");
         this.txtFilter.setMinChars(3);
         this.txtFilter.setDelay(500);
+        this.txtFilter.setIcon(VaadinIcons.SEARCH);
         this.txtFilter.setSuggestionProvider(new AutocompleteSuggestionProvider() {
             @Override
             public Collection<AutocompleteSuggestion> querySuggestions(AutocompleteQuery query) {

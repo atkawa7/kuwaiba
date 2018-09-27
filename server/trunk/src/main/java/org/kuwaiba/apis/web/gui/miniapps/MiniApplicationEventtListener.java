@@ -20,7 +20,7 @@ package org.kuwaiba.apis.web.gui.miniapps;
  * A listener to be implemented by those using mini applications. The idea is that once the mini application ends its task, the interested actors are notified accordingly
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public interface MiniApplicationResultListener {
+public interface MiniApplicationEventtListener {
     /**
      * To be called once the mini application completes its execution
      * @param event The type of event. See enumeration MiniApplicationEvent for possible types
