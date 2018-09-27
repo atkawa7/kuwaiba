@@ -14,16 +14,9 @@
     <inherits name="com.vaadin.contextmenu.WidgetSet" />
     <inherits name="com.vaadin.DefaultWidgetSet" />
     
-
     <inherits name="com.neotropic.vaadin.lienzo.WidgetSet" />
-
     
-
-    
-
-    
-
     <inherits name="com.vaadin.tapio.googlemaps.Widgetset" />
-
     
+    <inherits name="org.tltv.gantt.WidgetSet" />
 </module>

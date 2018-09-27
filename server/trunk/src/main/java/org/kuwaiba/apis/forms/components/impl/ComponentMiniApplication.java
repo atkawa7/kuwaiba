@@ -74,7 +74,10 @@ public class ComponentMiniApplication extends GraphicalComponent {
     public void onElementEvent(EventDescriptor event) {
         if (Constants.EventAttribute.ONCLICK.equals(event.getEventName())) {
             if (Constants.Function.OPEN.equals(event.getPropertyName())) {
-                if (UI.getCurrent() != null) {
+                if (ama.launchDetached() instanceof Window) {
+                    UI.getCurrent().addWindow((Window) ama.launchDetached());
+                }
+                else if (UI.getCurrent() != null) {
                     window = new Window();                                                            
                     window.setModal(true);
                     window.setContent((Component) ama.launchDetached());
@@ -105,8 +108,9 @@ public class ComponentMiniApplication extends GraphicalComponent {
                         content = ama.launchDetached();
                     else if (Constants.Attribute.Mode.EMBEDDED.equals(miniApp.getMode()))
                         content = ama.launchEmbedded();
-                    
-                    if (content instanceof Component) 
+                    if (content instanceof Window) {
+                        //UI.getCurrent().addWindow((Window) content);                        
+                    } else if (content instanceof Component) 
                         getComponent().setContent((Component) content);
                 }
             }

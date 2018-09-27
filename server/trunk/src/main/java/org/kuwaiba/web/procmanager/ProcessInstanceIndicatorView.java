@@ -8,14 +8,15 @@ package org.kuwaiba.web.procmanager;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.GridLayout;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
@@ -49,10 +50,10 @@ public class ProcessInstanceIndicatorView extends VerticalLayout {
         // Column 3: Status
         // Column 4: Start
         // Column 5: Finish
-        List<RemoteActivityDefinition> lstActivities = null;
+        List<RemoteActivityDefinition> activities = null;
                 
         try {
-            lstActivities = webserviceBean.getProcessInstanceActivitiesPath(
+            activities = webserviceBean.getProcessInstanceActivitiesPath(
                 remoteProcessInstance.getId(),
                 Page.getCurrent().getWebBrowser().getAddress(),
                 remoteSession.getSessionId());
@@ -60,7 +61,17 @@ public class ProcessInstanceIndicatorView extends VerticalLayout {
             //Exceptions.printStackTrace(ex);
             return;
         }
-        
+        List<RemoteActivityDefinition> lstActivities = new ArrayList();
+        // Ignoring the activities with type start, conditional, and end        
+        for (RemoteActivityDefinition activity : activities) {
+            
+            if (activity.getType() == ActivityDefinition.TYPE_START || 
+                activity.getType() == ActivityDefinition.TYPE_CONDITIONAL || 
+                activity.getType() == ActivityDefinition.TYPE_END)
+                continue;
+            
+            lstActivities.add(activity);
+        }
         float width = 200;
         float height = 35;
         int columns = 7;
@@ -73,11 +84,11 @@ public class ProcessInstanceIndicatorView extends VerticalLayout {
         
         for (int j = 0; j < columns; j += 1) {
             
-            VerticalLayout verticalLayout = new VerticalLayout();
-            verticalLayout.setHeight(height, Unit.PIXELS);
-            verticalLayout.setWidth(width + (j == 0 ? width + 100 : 0), Unit.PIXELS);
+            HorizontalLayout horizontalLayout = new HorizontalLayout();
+            horizontalLayout.setHeight(height, Unit.PIXELS);
+            horizontalLayout.setWidth(width + (j == 0 ? width + 100 : 0), Unit.PIXELS);
             
-            header.addComponent(verticalLayout, j, 0);
+            header.addComponent(horizontalLayout, j, 0);
         }
         Label lblActivity = new Label("Activity");
         lblActivity.setStyleName(ValoTheme.LABEL_BOLD);
@@ -97,29 +108,29 @@ public class ProcessInstanceIndicatorView extends VerticalLayout {
         Label lblRealDuration = new Label("Real Duration");
         lblRealDuration.setStyleName(ValoTheme.LABEL_BOLD);
         
-        Label lblStatus = new Label("Status");
+        Label lblStatus = new Label("Real Duration - Expected Duration");
         lblStatus.setStyleName(ValoTheme.LABEL_BOLD);
                 
-        ((VerticalLayout) header.getComponent(0, 0)).addComponent(lblActivity);
-        ((VerticalLayout) header.getComponent(0, 0)).setComponentAlignment(lblActivity, Alignment.MIDDLE_CENTER);
+        ((HorizontalLayout) header.getComponent(0, 0)).addComponent(lblActivity);
+        ((HorizontalLayout) header.getComponent(0, 0)).setComponentAlignment(lblActivity, Alignment.MIDDLE_CENTER);
         
-        ((VerticalLayout) header.getComponent(1, 0)).addComponent(lblRole);
-        ((VerticalLayout) header.getComponent(1, 0)).setComponentAlignment(lblRole, Alignment.MIDDLE_CENTER);
+        ((HorizontalLayout) header.getComponent(1, 0)).addComponent(lblRole);
+        ((HorizontalLayout) header.getComponent(1, 0)).setComponentAlignment(lblRole, Alignment.MIDDLE_CENTER);
                 
-        ((VerticalLayout) header.getComponent(2, 0)).addComponent(lblStart);
-        ((VerticalLayout) header.getComponent(2, 0)).setComponentAlignment(lblStart, Alignment.MIDDLE_CENTER);
+        ((HorizontalLayout) header.getComponent(2, 0)).addComponent(lblStart);
+        ((HorizontalLayout) header.getComponent(2, 0)).setComponentAlignment(lblStart, Alignment.MIDDLE_CENTER);
         
-        ((VerticalLayout) header.getComponent(3, 0)).addComponent(lblFinish);
-        ((VerticalLayout) header.getComponent(3, 0)).setComponentAlignment(lblFinish, Alignment.MIDDLE_CENTER);
+        ((HorizontalLayout) header.getComponent(3, 0)).addComponent(lblFinish);
+        ((HorizontalLayout) header.getComponent(3, 0)).setComponentAlignment(lblFinish, Alignment.MIDDLE_CENTER);
         
-        ((VerticalLayout) header.getComponent(4, 0)).addComponent(lblExpectedDuration);
-        ((VerticalLayout) header.getComponent(4, 0)).setComponentAlignment(lblExpectedDuration, Alignment.MIDDLE_CENTER);
+        ((HorizontalLayout) header.getComponent(4, 0)).addComponent(lblExpectedDuration);
+        ((HorizontalLayout) header.getComponent(4, 0)).setComponentAlignment(lblExpectedDuration, Alignment.MIDDLE_CENTER);
         
-        ((VerticalLayout) header.getComponent(5, 0)).addComponent(lblRealDuration);
-        ((VerticalLayout) header.getComponent(5, 0)).setComponentAlignment(lblRealDuration, Alignment.MIDDLE_CENTER);
+        ((HorizontalLayout) header.getComponent(5, 0)).addComponent(lblRealDuration);
+        ((HorizontalLayout) header.getComponent(5, 0)).setComponentAlignment(lblRealDuration, Alignment.MIDDLE_CENTER);
         
-        ((VerticalLayout) header.getComponent(6, 0)).addComponent(lblStatus);
-        ((VerticalLayout) header.getComponent(6, 0)).setComponentAlignment(lblStatus, Alignment.MIDDLE_CENTER);
+        ((HorizontalLayout) header.getComponent(6, 0)).addComponent(lblStatus);
+        ((HorizontalLayout) header.getComponent(6, 0)).setComponentAlignment(lblStatus, Alignment.MIDDLE_CENTER);
         
         GridLayout data = new GridLayout();
         
@@ -128,11 +139,11 @@ public class ProcessInstanceIndicatorView extends VerticalLayout {
         for (int j = 0; j < columns; j += 1) {
             
             for (int i = 0; i < rows; i += 1) {
-                VerticalLayout verticalLayout = new VerticalLayout();
-                verticalLayout.setHeight(height, Unit.PIXELS);
-                verticalLayout.setWidth(width + (j == 0 ? width + 100 : 0), Unit.PIXELS);
+                HorizontalLayout horizontalLayout = new HorizontalLayout();
+                horizontalLayout.setHeight(height, Unit.PIXELS);
+                horizontalLayout.setWidth(width + (j == 0 ? width + 100 : 0), Unit.PIXELS);
                                 
-                data.addComponent(verticalLayout, j, i);
+                data.addComponent(horizontalLayout, j, i);
             }
         }
         setSpacing(false);
@@ -152,57 +163,70 @@ public class ProcessInstanceIndicatorView extends VerticalLayout {
 ////        int columns = data.getColumns();
         int rows = data.getRows();
         
-        VerticalLayout cell = null;
+        HorizontalLayout cell = null;
         Label lblCell = null;
         
         for (int i = 0; i < rows; i += 1) {
             
-            cell = (VerticalLayout) data.getComponent(0, i);
+            int real = r.nextInt(10);
+            int expected = r.nextInt(10);
+            
+            cell = (HorizontalLayout) data.getComponent(0, i);
             lblCell = new Label(lstActivities.get(i).getName());
             cell.addComponent(lblCell);
             cell.setComponentAlignment(lblCell, Alignment.MIDDLE_LEFT);
 
-            cell = (VerticalLayout) data.getComponent(1, i);
+            cell = (HorizontalLayout) data.getComponent(2, i);
             lblCell = new Label(lstActivities.get(i).getActor().getName());
             cell.addComponent(lblCell);
             cell.setComponentAlignment(lblCell, Alignment.MIDDLE_LEFT);
 
-            cell = (VerticalLayout) data.getComponent(2, i);
-            lblCell = new Label(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)));
+            cell = (HorizontalLayout) data.getComponent(3, i);
+            lblCell = new Label(LocalDate.now().toString());
+            cell.addComponent(lblCell);
+            cell.setComponentAlignment(lblCell, Alignment.MIDDLE_LEFT);
+            
+            cell = (HorizontalLayout) data.getComponent(4, i);
+            lblCell = new Label(LocalDate.now().plusDays(real).toString());
             cell.addComponent(lblCell);
             cell.setComponentAlignment(lblCell, Alignment.MIDDLE_LEFT);
 
-            int c = r.nextInt(10);
-            int d = r.nextInt(10);
-
-            cell = (VerticalLayout) data.getComponent(3, i);
-            lblCell = new Label(LocalDate.now().plusDays(c).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL)));
-            cell.addComponent(lblCell);
-            cell.setComponentAlignment(lblCell, Alignment.MIDDLE_LEFT);
-
-            cell = (VerticalLayout) data.getComponent(4, i);
-            lblCell = new Label("" + d);
+            cell = (HorizontalLayout) data.getComponent(5, i);
+            lblCell = new Label("" + expected);
             cell.addComponent(lblCell);
             cell.setComponentAlignment(lblCell, Alignment.MIDDLE_LEFT);
             r.nextInt(10);
 
-            cell = (VerticalLayout) data.getComponent(5, i);
-            lblCell = new Label("" + c);
+            cell = (HorizontalLayout) data.getComponent(6, i);
+            lblCell = new Label("" + real);
             cell.addComponent(lblCell);
             cell.setComponentAlignment(lblCell, Alignment.MIDDLE_LEFT);
 
-            cell = (VerticalLayout) data.getComponent(6, i);
-
-            if (c > d) {
-                cell.addStyleName("critical");
+            cell = (HorizontalLayout) data.getComponent(1, i);
+            
+            VerticalLayout verticalLayoutCell = new VerticalLayout();
+            verticalLayoutCell.setStyleName("indicatorlayout");
+            float height = 30;
+            verticalLayoutCell.setWidth(height, Unit.PIXELS);
+            verticalLayoutCell.setHeight(height, Unit.PIXELS);
+            
+            if (real > expected) {
+                verticalLayoutCell.addStyleName("critical");
             }
             else {
-                if (c > 5) {
-                    cell.addStyleName("warning");
+                if (real > 5) {
+                    verticalLayoutCell.addStyleName("warning");
                 } else {
-                    cell.addStyleName("normal");
+                    verticalLayoutCell.addStyleName("normal");
                 }
             }
+            lblCell = new Label("" + (real - expected));
+            cell.addComponent(verticalLayoutCell);
+            cell.addComponent(lblCell);            
+            cell.setExpandRatio(verticalLayoutCell, 0.1f);
+            cell.setExpandRatio(lblCell, 0.9f);
+            cell.setComponentAlignment(verticalLayoutCell, Alignment.MIDDLE_CENTER);
+            cell.setComponentAlignment(lblCell, Alignment.MIDDLE_CENTER);
         }
     }
 }

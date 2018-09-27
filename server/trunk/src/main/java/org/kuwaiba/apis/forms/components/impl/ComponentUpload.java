@@ -71,7 +71,7 @@ public class ComponentUpload extends GraphicalComponent {
             upload.setReceiver(uploader);
             upload.addSucceededListener(uploader);
             
-            configureComponent(elementUpload);
+            configureComponent(elementUpload, true);
         }
     }
 
@@ -85,7 +85,7 @@ public class ComponentUpload extends GraphicalComponent {
                 ComponentEventListener componentEventListener = getComponentEventListener();
                                                 
                 if (componentEventListener instanceof ElementUpload)
-                    configureComponent((ElementUpload) componentEventListener);
+                    configureComponent((ElementUpload) componentEventListener, false);
             }
         }
     }
@@ -125,12 +125,12 @@ public class ComponentUpload extends GraphicalComponent {
                 ComponentEventListener componentEventListener = getComponentEventListener();
                                 
                 if (componentEventListener instanceof ElementUpload)
-                    configureComponent((ElementUpload) componentEventListener);
+                    configureComponent((ElementUpload) componentEventListener, false);
             }
         }
     }
     
-    private void configureComponent(ElementUpload elementUpload) {
+    private void configureComponent(ElementUpload elementUpload, boolean fromInit) {
         
         if (elementUpload != null) {
             
@@ -142,11 +142,14 @@ public class ComponentUpload extends GraphicalComponent {
                 link.setResource(streamResource);
                 upload.setButtonCaption(I18N.gm("update_file")); 
                 
-                String anUrl = getResourceURL(link, streamResource);
-                
-                fireComponentEvent(new EventDescriptor(
-                    Constants.EventAttribute.ONPROPERTYCHANGE, 
-                    ElementUpload.ELEMENT_UPLOAD_URL, anUrl, null));
+                if (!fromInit) {
+                    
+                    String anUrl = getResourceURL(link, streamResource);
+
+                    fireComponentEvent(new EventDescriptor(
+                        Constants.EventAttribute.ONPROPERTYCHANGE, 
+                        ElementUpload.ELEMENT_UPLOAD_URL, anUrl, null));
+                }
             }
             else {                
                 link.setVisible(false);

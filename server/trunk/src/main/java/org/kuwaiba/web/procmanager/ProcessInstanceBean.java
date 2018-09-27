@@ -219,4 +219,9 @@ public class ProcessInstanceBean {
     public String getViewButtonCaption() {
         return "View";
     }
+    
+    public String getTimelineButtonCaption() {
+        return "Timeline";
+    }
+    
 }

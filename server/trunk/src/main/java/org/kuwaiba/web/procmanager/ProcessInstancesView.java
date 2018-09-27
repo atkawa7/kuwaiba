@@ -16,6 +16,8 @@ package org.kuwaiba.web.procmanager;
 
 import com.vaadin.data.HasValue;
 import com.vaadin.data.HasValue.ValueChangeListener;
+import com.vaadin.event.selection.SelectionEvent;
+import com.vaadin.event.selection.SelectionListener;
 import org.kuwaiba.apis.web.gui.notifications.MessageBox;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
@@ -40,6 +42,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
@@ -82,9 +85,12 @@ public class ProcessInstancesView extends VerticalLayout {
     }
     
     public void initView() {
-        VerticalLayout wrapper = new VerticalLayout();        
-        wrapper.setWidth("100%");
-        wrapper.setStyleName("addpadding");
+//        setSizeFull();
+//        setSpacing(false);
+        
+//        VerticalLayout wrapper = new VerticalLayout();        
+////        wrapper.setWidth("100%");
+//        wrapper.setStyleName("addpadding");
         
         HorizontalLayout tools = new HorizontalLayout();
         tools.setWidth("100%");
@@ -102,6 +108,8 @@ public class ProcessInstancesView extends VerticalLayout {
         grid = new Grid<>();
         grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.setWidth("100%");
+        
+        UI.getCurrent().getPage().getStyles().add(".v-grid tr th, .v-grid tr td { height: 30px; }");
         
         List<ProcessInstanceBean> beans = new ArrayList();
                 
@@ -173,7 +181,7 @@ public class ProcessInstancesView extends VerticalLayout {
         }
         grid.addColumn(ProcessInstanceBean::getCurrentActivity, new HtmlRenderer()).setCaption("Current Activity").setId(columnCurrentActivityId);
         grid.addColumn(ProcessInstanceBean::getCurrentActivityActor).setCaption("Actor").setId(columnActorId);
-                
+        /*                
         ButtonRenderer buttonContinuar = new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
             @Override
             public void click(ClickableRenderer.RendererClickEvent event) {
@@ -212,10 +220,60 @@ public class ProcessInstancesView extends VerticalLayout {
                 getUI().addWindow(newWindow);
             }
         });
+        ButtonRenderer btnTimeline = new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
+            @Override
+            public void click(ClickableRenderer.RendererClickEvent event) {
+                ProcessInstanceBean processInstanceBean = (ProcessInstanceBean) event.getItem();
                 
+//                    ProcessInstanceIndicatorView view = new ProcessInstanceIndicatorView(
+//                        processInstanceBean.getProcessInstance(), 
+//                        wsBean, 
+//                        session);
+                    TimelineView view = new TimelineView(
+                        wsBean,
+                        processInstanceBean.getProcessDefinition(),
+                        processInstanceBean.getProcessInstance(), 
+                        session);
+                    
+                    Window window = new Window();       
+                    window.setWidth(100, Unit.PERCENTAGE);
+                    window.setHeight(100, Unit.PERCENTAGE);
+                    window.setModal(true);
+                    window.setContent(view);
+                    getUI().addWindow(window);
+            }
+        });
+                        
         grid.addColumn(ProcessInstanceBean::getEditButtonCaption, buttonContinuar).setCaption("Status").setId(columnStatusId);
+        grid.addColumn(ProcessInstanceBean::getTimelineButtonCaption, btnTimeline).setCaption("Timeline");
         grid.addColumn(ProcessInstanceBean::getViewButtonCaption, buttonView).setCaption("View").setId(columnViewId);  
-        
+        */
+        grid.addSelectionListener(new SelectionListener<ProcessInstanceBean>() {
+            @Override
+            public void selectionChange(SelectionEvent<ProcessInstanceBean> event) {
+                Optional<ProcessInstanceBean> optional = event.getFirstSelectedItem();
+                ProcessInstanceBean processInstanceBean = optional.get();
+                
+                UI ui = getUI();
+                
+                MenuBar mainMenu = ((IndexUI) ui).getMainMenu();
+                
+                ((ProcessManagerComponent) ui.getContent()).removeAllComponents();
+                
+                ((ProcessManagerComponent) ui.getContent()).addComponent(mainMenu);
+                ((ProcessManagerComponent) ui.getContent()).setExpandRatio(mainMenu, 0.5f);
+
+                TimelineView timelineView = new TimelineView(
+                    wsBean,
+                    processInstanceBean.getProcessDefinition(),
+                    processInstanceBean.getProcessInstance(), 
+                    session);
+
+                ((ProcessManagerComponent) ui.getContent()).addComponent(timelineView);
+                ((ProcessManagerComponent) ui.getContent()).setExpandRatio(timelineView, 9.5f);
+            }
+        });
+                
         if (canDelete()) {
             
             grid.addColumn(ProcessInstanceBean::getDeleteButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
@@ -264,35 +322,35 @@ public class ProcessInstancesView extends VerticalLayout {
             })).setCaption("Delete");    
         }
         // Filter To Status
-        HeaderCell statusHeaderCell = headerRow.getCell(columnStatusId);
-        
-        ComboBox cmbStatus = new ComboBox();
-        
-        List<String> status = new ArrayList();
-        status.add("Created");
-        status.add("Finalized");
-        status.add("Continue");
-        
-        cmbStatus.setItems(status);
-        statusHeaderCell.setComponent(cmbStatus);
-        
-        cmbStatus.addValueChangeListener(new ValueChangeListener<String>() {
-            
-            @Override
-            public void valueChange(HasValue.ValueChangeEvent<String> event) {
-                Iterator<ProcessInstanceBean> iterator = beans.iterator();
-                
-                List<ProcessInstanceBean> filteredItems = new ArrayList();
-                
-                while (iterator.hasNext()) {
-                    ProcessInstanceBean element = iterator.next();
-
-                    if (captionFilter.test(element != null ? element.getEditButtonCaption() : null, event.getValue() != null ? event.getValue() : ""))
-                        filteredItems.add(element);
-                }
-                grid.setItems(filteredItems);
-            }
-        });
+////        HeaderCell statusHeaderCell = headerRow.getCell(columnStatusId);
+////        
+////        ComboBox cmbStatus = new ComboBox();
+////        
+////        List<String> status = new ArrayList();
+////        status.add("Created");
+////        status.add("Finalized");
+////        status.add("Continue");
+////        
+////        cmbStatus.setItems(status);
+////        statusHeaderCell.setComponent(cmbStatus);
+////        
+////        cmbStatus.addValueChangeListener(new ValueChangeListener<String>() {
+////            
+////            @Override
+////            public void valueChange(HasValue.ValueChangeEvent<String> event) {
+////                Iterator<ProcessInstanceBean> iterator = beans.iterator();
+////                
+////                List<ProcessInstanceBean> filteredItems = new ArrayList();
+////                
+////                while (iterator.hasNext()) {
+////                    ProcessInstanceBean element = iterator.next();
+////
+////                    if (captionFilter.test(element != null ? element.getEditButtonCaption() : null, event.getValue() != null ? event.getValue() : ""))
+////                        filteredItems.add(element);
+////                }
+////                grid.setItems(filteredItems);
+////            }
+////        });
         // Filter To Current Activity
         HeaderCell currentActivityHeaderCell = headerRow.getCell(columnCurrentActivityId);
         
@@ -346,20 +404,27 @@ public class ProcessInstancesView extends VerticalLayout {
                 
         Label lblProcessDefinitionName = new Label((processDefinition.getName() != null ? processDefinition.getName() : "") + " Processes");
         lblProcessDefinitionName.addStyleNames(ValoTheme.LABEL_LARGE, ValoTheme.LABEL_BOLD);
-                
-        wrapper.addComponent(lblProcessDefinitionName);
-        
-        wrapper.setComponentAlignment(lblProcessDefinitionName, Alignment.TOP_CENTER);
                                 
         tools.addComponent(btnCreateProcessInstance);
-        
         tools.setComponentAlignment(btnCreateProcessInstance, Alignment.MIDDLE_RIGHT);
-        wrapper.addComponent(tools);
-        wrapper.addComponent(grid);
         
+        addComponent(lblProcessDefinitionName);
+        addComponent(tools);
+        addComponent(grid);
+        
+        grid.setHeight(90, Unit.PERCENTAGE);
+        
+        setComponentAlignment(lblProcessDefinitionName, Alignment.TOP_CENTER);
+        setExpandRatio(lblProcessDefinitionName, 0.05f);
+        setExpandRatio(tools, 0.05f);
+        setExpandRatio(grid, 0.8f);
+        
+//        wrapper.setSizeFull();
+                
         setSpacing(false);
-        addComponent(wrapper);
-        setComponentAlignment(wrapper, Alignment.TOP_CENTER);
+//        addComponent(wrapper);
+////        setComponentAlignment(wrapper, Alignment.TOP_CENTER);
+//        setExpandRatio(wrapper, 1f);
     }
     
     private boolean canDelete() {

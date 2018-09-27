@@ -13,7 +13,7 @@
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vaadin.version>8.3.1</vaadin.version>
+        <vaadin.version>8.5.2</vaadin.version>
         <vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
                 
         <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>        
@@ -24,7 +24,13 @@
         <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
     </properties>
     
-    <dependencies>   
+    <dependencies>
+        <!-- Used to create the Timeline charts in the Process Manager module -->
+        <dependency>
+           <groupId>org.tltv.gantt</groupId>
+           <artifactId>gantt-addon</artifactId>
+           <version>1.0.4</version>
+        </dependency>
         <!-- Used to create flow charts in the Process Manager module -->
         <dependency>
            <groupId>com.vaadin.pontus</groupId>
@@ -252,7 +258,7 @@
                 <version>${vaadin.plugin.version}</version>
                 <configuration>
                     <!--<extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>-->
-                    <extraJvmArgs>-Xmx1g</extraJvmArgs>
+                    <extraJvmArgs>-Xmx1G  -Xss1G</extraJvmArgs>
                     <webappDirectory>${basedir}/src/main/webapp/VAADIN/widgetsets</webappDirectory>
                     <hostedWebapp>${basedir}/src/main/webapp/VAADIN/widgetsets</hostedWebapp>
                     <noServer>true</noServer>

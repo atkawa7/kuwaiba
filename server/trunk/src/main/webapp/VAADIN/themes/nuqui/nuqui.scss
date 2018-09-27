@@ -293,7 +293,9 @@ $v-field-background-color: #ccffe6;
             color:inherit;
             border:none; 
             padding:0!important;
-            font: inherit;            
+            font: inherit;   
+            text-decoration:underline;
+            cursor:pointer;
         }
     }
     
@@ -757,18 +759,27 @@ $v-field-background-color: #ccffe6;
     
     .indicatortable {
         .v-verticallayout {
+            /*
             border-style: solid;
             border-width: thin;
             border-color:#000000;            
+            */
+        }
+        .indicatorlayout {
+            /*
+            border-style: solid;
+            border-width: thin;
+            border-color:#000000;            
+            */
         }
         .normal {
-            background: greenyellow;            
+            background: darkseagreen;            
         }
         .warning {
-            background: yellow;
+            background: darkkhaki;
         }
         .critical {
-            background: red;
+            background: darksalmon;
         }
     }
 }
