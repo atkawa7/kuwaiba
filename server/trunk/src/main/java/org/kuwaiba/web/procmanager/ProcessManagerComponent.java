@@ -44,8 +44,7 @@ public class ProcessManagerComponent extends AbstractTopComponent {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         setStyleName("processmanager");
-        addStyleName("darklayout");
-        
+                        
         setSizeFull();
         
         MenuBar mainMenu = ((IndexUI)getUI()).getMainMenu();

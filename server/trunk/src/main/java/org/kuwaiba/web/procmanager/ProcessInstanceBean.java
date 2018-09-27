@@ -16,6 +16,8 @@ package org.kuwaiba.web.procmanager;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
+import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import java.util.List;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.util.StringPair;
@@ -208,20 +210,26 @@ public class ProcessInstanceBean {
     }
     
     public String getEditButtonCaption() {
-        if (getCurrentActivityDefinition() == null)
-            return "Created";
-            
-        if (getCurrentActivityDefinition().getType() == ActivityDefinition.TYPE_END)
-            return "Finalized";
-        return "Continue";
+        return "<span class=\"v-icon\" style=\"font-family: "
+            + VaadinIcons.TASKS.getFontFamily()
+            + "\">&#x"
+            + Integer.toHexString(VaadinIcons.TASKS.getCodepoint())
+            + ";</span>";
     }
     
     public String getViewButtonCaption() {
-        return "View";
+        return "<span class=\"v-icon\" style=\"font-family: "
+            + VaadinIcons.SITEMAP.getFontFamily()
+            + "\">&#x"
+            + Integer.toHexString(VaadinIcons.SITEMAP.getCodepoint())
+            + ";</span>";
     }
     
     public String getTimelineButtonCaption() {
-        return "Timeline";
-    }
-    
+        return "<span class=\"v-icon\" style=\"font-family: "
+            + VaadinIcons.CALENDAR_CLOCK.getFontFamily()
+            + "\">&#x"
+            + Integer.toHexString(VaadinIcons.CALENDAR_CLOCK.getCodepoint())
+            + ";</span>";
+    }    
 }

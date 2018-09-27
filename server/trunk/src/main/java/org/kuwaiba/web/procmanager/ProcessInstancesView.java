@@ -21,6 +21,7 @@ import com.vaadin.event.selection.SelectionListener;
 import org.kuwaiba.apis.web.gui.notifications.MessageBox;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.ComboBox;
@@ -31,7 +32,6 @@ import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.components.grid.HeaderCell;
 import com.vaadin.ui.components.grid.HeaderRow;
 import com.vaadin.ui.renderers.ButtonRenderer;
@@ -56,9 +56,10 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActor;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConditionalActivityDefinition;
 import org.kuwaiba.util.i18n.I18N;
 import org.kuwaiba.web.IndexUI;
+import com.vaadin.ui.Component;
 
 /**
- * Shows a set of process instances
+ * Shown the instances of a process definition
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ProcessInstancesView extends VerticalLayout {
@@ -72,8 +73,10 @@ public class ProcessInstancesView extends VerticalLayout {
     private final RemoteSession session;
             
     public ProcessInstancesView(RemoteProcessDefinition processDefinition, List<RemoteProcessInstance> processes, WebserviceBean wsBean, RemoteSession session) {
-        setStyleName("darklayout");
         setSizeFull();
+        setSpacing(false);
+        setMargin(false);
+                
         this.processDefinition = processDefinition;
         this.processes = processes;
         this.wsBean = wsBean;
@@ -84,16 +87,26 @@ public class ProcessInstancesView extends VerticalLayout {
         initView();
     }
     
+    private void setActionComponent(Component component) {
+        UI ui = getUI();
+        
+        MenuBar mainMenu = ((IndexUI) ui).getMainMenu();
+        
+        ((ProcessManagerComponent) ui.getContent()).removeAllComponents();
+        
+        ((ProcessManagerComponent) ui.getContent()).addComponent(mainMenu);
+        ((ProcessManagerComponent) ui.getContent()).setExpandRatio(mainMenu, 0.5f);
+        
+        ((ProcessManagerComponent) ui.getContent()).addComponent(component);
+        ((ProcessManagerComponent) ui.getContent()).setExpandRatio(component, 9.5f);
+    }
+    
     public void initView() {
-//        setSizeFull();
-//        setSpacing(false);
-        
-//        VerticalLayout wrapper = new VerticalLayout();        
-////        wrapper.setWidth("100%");
-//        wrapper.setStyleName("addpadding");
-        
         HorizontalLayout tools = new HorizontalLayout();
-        tools.setWidth("100%");
+        tools.setSpacing(false);
+        tools.setMargin(false);
+        tools.setWidth(80, Unit.PERCENTAGE);
+        tools.setHeight(100, Unit.PERCENTAGE);
                 
         btnCreateProcessInstance = new Button(I18N.gm("new"), VaadinIcons.PLUS);
                         
@@ -107,9 +120,10 @@ public class ProcessInstancesView extends VerticalLayout {
                 
         grid = new Grid<>();
         grid.setSelectionMode(Grid.SelectionMode.SINGLE);
-        grid.setWidth("100%");
+        grid.setWidth(80, Unit.PERCENTAGE);
+        grid.setHeight(90, Unit.PERCENTAGE);
         
-        UI.getCurrent().getPage().getStyles().add(".v-grid tr th, .v-grid tr td { height: 30px; }");
+        UI.getCurrent().getPage().getStyles().add(".v-grid tr th, .v-grid tr td { height: 34px; }");
         
         List<ProcessInstanceBean> beans = new ArrayList();
                 
@@ -181,27 +195,22 @@ public class ProcessInstancesView extends VerticalLayout {
         }
         grid.addColumn(ProcessInstanceBean::getCurrentActivity, new HtmlRenderer()).setCaption("Current Activity").setId(columnCurrentActivityId);
         grid.addColumn(ProcessInstanceBean::getCurrentActivityActor).setCaption("Actor").setId(columnActorId);
-        /*                
+                  
         ButtonRenderer buttonContinuar = new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
             @Override
             public void click(ClickableRenderer.RendererClickEvent event) {
                 ProcessInstanceBean processInstanceBean = (ProcessInstanceBean) event.getItem();
                 
-                UI ui = getUI();
+                ProcessInstanceView processInstanceView = new ProcessInstanceView(
+                    processInstanceBean.getProcessInstance(), 
+                    processInstanceBean.getProcessDefinition(), 
+                    wsBean, 
+                    session);
                 
-                MenuBar mainMenu = ((IndexUI) ui).getMainMenu();
-                
-                ((ProcessManagerComponent) ui.getContent()).removeAllComponents();
-                
-                ((ProcessManagerComponent) ui.getContent()).addComponent(mainMenu);
-                ((ProcessManagerComponent) ui.getContent()).setExpandRatio(mainMenu, 0.5f);
-
-                ProcessInstanceView processInstanceView = new ProcessInstanceView(processInstanceBean.getProcessInstance(), processInstanceBean.getProcessDefinition(), wsBean, session);
-
-                ((ProcessManagerComponent) ui.getContent()).addComponent(processInstanceView);
-                ((ProcessManagerComponent) ui.getContent()).setExpandRatio(processInstanceView, 9.5f);
+                setActionComponent(processInstanceView);
             }
-        });        
+        });
+        buttonContinuar.setHtmlContentAllowed(true);
         ButtonRenderer buttonView = new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
             @Override
             public void click(ClickableRenderer.RendererClickEvent event) {
@@ -212,42 +221,29 @@ public class ProcessInstancesView extends VerticalLayout {
                     processInstanceBean.getProcessDefinition(), 
                     wsBean, 
                     session);
-                Window newWindow = new Window();
-                newWindow.setWidth(80, Unit.PERCENTAGE);
-                newWindow.setHeight(80, Unit.PERCENTAGE);
-                newWindow.setModal(true);
-                newWindow.setContent(processGraph);
-                getUI().addWindow(newWindow);
+                
+                setActionComponent(processGraph);
             }
         });
+        buttonView.setHtmlContentAllowed(true);
         ButtonRenderer btnTimeline = new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
             @Override
             public void click(ClickableRenderer.RendererClickEvent event) {
                 ProcessInstanceBean processInstanceBean = (ProcessInstanceBean) event.getItem();
+                TimelineView timelineView = new TimelineView(
+                    processInstanceBean.getProcessInstance(),
+                    wsBean,
+                    session);
                 
-//                    ProcessInstanceIndicatorView view = new ProcessInstanceIndicatorView(
-//                        processInstanceBean.getProcessInstance(), 
-//                        wsBean, 
-//                        session);
-                    TimelineView view = new TimelineView(
-                        wsBean,
-                        processInstanceBean.getProcessDefinition(),
-                        processInstanceBean.getProcessInstance(), 
-                        session);
-                    
-                    Window window = new Window();       
-                    window.setWidth(100, Unit.PERCENTAGE);
-                    window.setHeight(100, Unit.PERCENTAGE);
-                    window.setModal(true);
-                    window.setContent(view);
-                    getUI().addWindow(window);
+                setActionComponent(timelineView);
             }
-        });
-                        
-        grid.addColumn(ProcessInstanceBean::getEditButtonCaption, buttonContinuar).setCaption("Status").setId(columnStatusId);
-        grid.addColumn(ProcessInstanceBean::getTimelineButtonCaption, btnTimeline).setCaption("Timeline");
-        grid.addColumn(ProcessInstanceBean::getViewButtonCaption, buttonView).setCaption("View").setId(columnViewId);  
-        */
+        });      
+        btnTimeline.setHtmlContentAllowed(true);
+        
+        grid.addColumn(ProcessInstanceBean::getEditButtonCaption, buttonContinuar).setId(columnStatusId).setMinimumWidth(50f).setMaximumWidth(50f);
+        grid.addColumn(ProcessInstanceBean::getTimelineButtonCaption, btnTimeline).setMinimumWidth(50f).setMaximumWidth(50f);
+        grid.addColumn(ProcessInstanceBean::getViewButtonCaption, buttonView).setId(columnViewId).setMinimumWidth(50f).setMaximumWidth(50f);  
+        
         grid.addSelectionListener(new SelectionListener<ProcessInstanceBean>() {
             @Override
             public void selectionChange(SelectionEvent<ProcessInstanceBean> event) {
@@ -263,17 +259,17 @@ public class ProcessInstancesView extends VerticalLayout {
                 ((ProcessManagerComponent) ui.getContent()).addComponent(mainMenu);
                 ((ProcessManagerComponent) ui.getContent()).setExpandRatio(mainMenu, 0.5f);
 
-                TimelineView timelineView = new TimelineView(
-                    wsBean,
-                    processInstanceBean.getProcessDefinition(),
+                ProcessInstanceToolsView processInstanceToolsView = new ProcessInstanceToolsView(
+                    processInstanceBean.getProcessDefinition(), 
                     processInstanceBean.getProcessInstance(), 
+                    wsBean, 
                     session);
 
-                ((ProcessManagerComponent) ui.getContent()).addComponent(timelineView);
-                ((ProcessManagerComponent) ui.getContent()).setExpandRatio(timelineView, 9.5f);
+                ((ProcessManagerComponent) ui.getContent()).addComponent(processInstanceToolsView);
+                ((ProcessManagerComponent) ui.getContent()).setExpandRatio(processInstanceToolsView, 9.5f);
             }
         });
-                
+            /*    
         if (canDelete()) {
             
             grid.addColumn(ProcessInstanceBean::getDeleteButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
@@ -319,38 +315,10 @@ public class ProcessInstancesView extends VerticalLayout {
                         }
                     });
                 }
-            })).setCaption("Delete");    
+            })).setCaption("Delete");   
+            
         }
-        // Filter To Status
-////        HeaderCell statusHeaderCell = headerRow.getCell(columnStatusId);
-////        
-////        ComboBox cmbStatus = new ComboBox();
-////        
-////        List<String> status = new ArrayList();
-////        status.add("Created");
-////        status.add("Finalized");
-////        status.add("Continue");
-////        
-////        cmbStatus.setItems(status);
-////        statusHeaderCell.setComponent(cmbStatus);
-////        
-////        cmbStatus.addValueChangeListener(new ValueChangeListener<String>() {
-////            
-////            @Override
-////            public void valueChange(HasValue.ValueChangeEvent<String> event) {
-////                Iterator<ProcessInstanceBean> iterator = beans.iterator();
-////                
-////                List<ProcessInstanceBean> filteredItems = new ArrayList();
-////                
-////                while (iterator.hasNext()) {
-////                    ProcessInstanceBean element = iterator.next();
-////
-////                    if (captionFilter.test(element != null ? element.getEditButtonCaption() : null, event.getValue() != null ? event.getValue() : ""))
-////                        filteredItems.add(element);
-////                }
-////                grid.setItems(filteredItems);
-////            }
-////        });
+        */
         // Filter To Current Activity
         HeaderCell currentActivityHeaderCell = headerRow.getCell(columnCurrentActivityId);
         
@@ -402,52 +370,45 @@ public class ProcessInstancesView extends VerticalLayout {
             }
         });
                 
-        Label lblProcessDefinitionName = new Label((processDefinition.getName() != null ? processDefinition.getName() : "") + " Processes");
-        lblProcessDefinitionName.addStyleNames(ValoTheme.LABEL_LARGE, ValoTheme.LABEL_BOLD);
-                                
+        Label lblProcessDefinitionName = new Label("<h2>" + (processDefinition.getName() != null ? processDefinition.getName() : "") + " Processes" + "</h2>", ContentMode.HTML);
+                                        
         tools.addComponent(btnCreateProcessInstance);
         tools.setComponentAlignment(btnCreateProcessInstance, Alignment.MIDDLE_RIGHT);
         
         addComponent(lblProcessDefinitionName);
         addComponent(tools);
         addComponent(grid);
+                
+        setComponentAlignment(lblProcessDefinitionName, Alignment.MIDDLE_CENTER);
+        setComponentAlignment(tools, Alignment.MIDDLE_CENTER);
+        setComponentAlignment(grid, Alignment.MIDDLE_CENTER);
         
-        grid.setHeight(90, Unit.PERCENTAGE);
-        
-        setComponentAlignment(lblProcessDefinitionName, Alignment.TOP_CENTER);
         setExpandRatio(lblProcessDefinitionName, 0.05f);
         setExpandRatio(tools, 0.05f);
-        setExpandRatio(grid, 0.8f);
-        
-//        wrapper.setSizeFull();
-                
-        setSpacing(false);
-//        addComponent(wrapper);
-////        setComponentAlignment(wrapper, Alignment.TOP_CENTER);
-//        setExpandRatio(wrapper, 1f);
+        setExpandRatio(grid, 0.95f);
     }
     
-    private boolean canDelete() {
-        try {
-            List<GroupInfoLight> groups = wsBean.getGroupsForUser(
-                session.getUserId(),
-                Page.getCurrent().getWebBrowser().getAddress(),
-                session.getSessionId());
-            
-            for (GroupInfoLight group : groups) {
-
-                if ("Commercial".equals(group.getName())) //NOI18N
-                    return true;
-            }
-            
-            return false;
-            
-        } catch (ServerSideException ex) {
-            Notifications.showError(ex.getMessage());
-                        
-            return false;
-        }
-    }
+////    private boolean canDelete() {
+////        try {
+////            List<GroupInfoLight> groups = wsBean.getGroupsForUser(
+////                session.getUserId(),
+////                Page.getCurrent().getWebBrowser().getAddress(),
+////                session.getSessionId());
+////            
+////            for (GroupInfoLight group : groups) {
+////
+////                if ("Commercial".equals(group.getName())) //NOI18N
+////                    return true;
+////            }
+////            
+////            return false;
+////            
+////        } catch (ServerSideException ex) {
+////            Notifications.showError(ex.getMessage());
+////                        
+////            return false;
+////        }
+////    }
     
     public static void createProcessInstance(RemoteProcessDefinition processDef, WebserviceBean webserviceBean, RemoteSession remoteSession) {
                 
@@ -492,9 +453,7 @@ public class ProcessInstancesView extends VerticalLayout {
             }
         });
     }
-    
-    
-    
+        
     private final ComboBox.CaptionFilter captionFilter = new ComboBox.CaptionFilter() {        
         
         @Override

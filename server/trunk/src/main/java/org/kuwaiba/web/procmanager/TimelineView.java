@@ -18,21 +18,11 @@ import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.server.Sizeable.Unit;
-import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Grid.Column;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.TabSheet;
 import com.vaadin.ui.UI;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import com.vaadin.ui.renderers.HtmlRenderer;
-import com.vaadin.ui.themes.ValoTheme;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,7 +33,6 @@ import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.tltv.gantt.Gantt;
@@ -53,9 +42,8 @@ import org.tltv.gantt.client.shared.Step;
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class TimelineView extends VerticalLayout {
+public class TimelineView extends HorizontalLayout {
     private final WebserviceBean webserviceBean;
-    private final RemoteProcessDefinition processDefinition;
     private final RemoteProcessInstance processInstance;
     private final RemoteSession session;
     
@@ -64,143 +52,30 @@ public class TimelineView extends VerticalLayout {
     private ListDataProvider<TimelineStep> listDataProvider;
     
     
-    public TimelineView(WebserviceBean webserviceBean, RemoteProcessDefinition processDefinition, RemoteProcessInstance processInstance, RemoteSession session) {
+    public TimelineView(RemoteProcessInstance processInstance, WebserviceBean webserviceBean, RemoteSession session) {
         this.webserviceBean = webserviceBean;
-        this.processDefinition = processDefinition;
         this.processInstance = processInstance;
         this.session = session;
-        
-        UI.getCurrent().getPage().getStyles().add(".v-grid tr th, .v-grid tr td { height: 45px; }");
-        //UI.getCurrent().getPage().getStyles().add(".gantt-container { background-size: 18px 45px; }");
-        
                 
         setSizeFull();
         setMargin(false);
         setSpacing(false);
-                                
-        HorizontalLayout horizontalLayout = new HorizontalLayout();
-        horizontalLayout.setWidth(100, Unit.PERCENTAGE);
-        horizontalLayout.setHeight(100, Unit.PERCENTAGE);
-        horizontalLayout.setMargin(false); 
-        horizontalLayout.setSpacing(false); 
                 
+        UI.getCurrent().getPage().getStyles().add(".v-grid tr th, .v-grid tr td { height: 45px; }");
+        
         gantt = new Gantt();
-        gantt.setWidth(100, Unit.PERCENTAGE);
-        gantt.setHeight(100, Unit.PERCENTAGE);
+        gantt.setSizeFull();
         gantt.setResizableSteps(false);
         gantt.setMovableSteps(false);
                 
         Grid<TimelineStep> grid = getGrid();
-        
-        horizontalLayout.addComponent(grid); 
-        horizontalLayout.addComponent(gantt); 
-        
-        horizontalLayout.setExpandRatio(grid, 0.4f); 
-        horizontalLayout.setExpandRatio(gantt, 0.6f); 
-        
-        Label lbl = new Label("<h1>" + processDefinition.getName() + " Options</h1>", ContentMode.HTML);
-        
-        //lbl.addStyleName(ValoTheme.LABEL_H1);
-        /*
-        Button btn = new Button("Show Process graph");
-        
-        btn.addClickListener(new Button.ClickListener() {
-            @Override
-            public void buttonClick(Button.ClickEvent event) {
-                //ProcessInstanceBean processInstanceBean = (ProcessInstanceBean) event.getItem();
                 
-                ProcessGraph processGraph = new ProcessGraph(
-                    TimelineView.this.processInstance, 
-                    TimelineView.this.processDefinition, 
-                    TimelineView.this.webserviceBean, 
-                    session);
-                Window newWindow = new Window();
-                newWindow.setWidth(80, Unit.PERCENTAGE);
-                newWindow.setHeight(80, Unit.PERCENTAGE);
-                newWindow.setModal(true);
-                newWindow.setContent(processGraph);
-                getUI().addWindow(newWindow);
+        addComponent(grid); 
+        addComponent(gantt); 
                 
-            }
-        });
-        
-        btn.addStyleName(ValoTheme.BUTTON_LARGE);
-        btn.setIcon(VaadinIcons.SITEMAP);
-        */
-        final String timeline = "Timeline";
-        final String graph = "Graph";
-        final String activities = "Activities";
-        
-        TabSheet tabSheet = new TabSheet();
-        tabSheet.setSizeFull();
-        tabSheet.addTab(horizontalLayout, timeline, VaadinIcons.CALENDAR_CLOCK);
-        tabSheet.addTab(new VerticalLayout(), activities, VaadinIcons.TASKS);
-        tabSheet.addTab(new VerticalLayout(), graph, VaadinIcons.SITEMAP);
-        
-        tabSheet.addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
-            
-            @Override
-            public void selectedTabChange(TabSheet.SelectedTabChangeEvent event) {
-                TabSheet tabSheet = event.getTabSheet();
-                Component tab = (Component) tabSheet.getSelectedTab();
-                String caption = tabSheet.getTab(tab).getCaption();
+        setExpandRatio(grid, 0.4f); 
+        setExpandRatio(gantt, 0.6f);
                 
-                if (graph.equals(caption)) {
-                    
-                    if (!(tab instanceof ProcessGraph)) {
-                    
-                        ProcessGraph processGraph = new ProcessGraph(
-                            TimelineView.this.processInstance, 
-                            TimelineView.this.processDefinition, 
-                            TimelineView.this.webserviceBean, 
-                            TimelineView.this.session);
-
-                        tabSheet.replaceComponent(tab, processGraph);
-                    }
-                } else if (activities.equals(caption)) {
-                    
-                    if (!(tab instanceof ProcessInstanceView)) {
-                        
-                        ProcessInstanceView processInstanceView = new ProcessInstanceView(
-                            TimelineView.this.processInstance, 
-                            TimelineView.this.processDefinition, 
-                            TimelineView.this.webserviceBean, 
-                            TimelineView.this.session);
-
-                        tabSheet.replaceComponent(tab, processInstanceView);
-                    }
-                }
-            }
-        });
-        /*
-        tabsheet.addSelectedTabChangeListener(
-        new TabSheet.SelectedTabChangeListener() {
-        public void selectedTabChange(SelectedTabChangeEvent event) {
-        // Find the tabsheet
-         TabSheet tabsheet = event.getTabSheet();
-        // Find the tab (here we know it's a layout)
-         Layout tab = (Layout) tabsheet.getSelectedTab();
-        // Get the tab caption from the tab object
-         String caption = tabsheet.getTab(tab).getCaption();
-        // Fill the tab content
-         tab.removeAllComponents();
-         tab.addComponent(new Image(null,
-        new ThemeResource("img/planets/"+caption+".jpg")));
-         }
-        });
-         */
-        
-        addComponent(lbl);
-//        addComponent(btn);
-        addComponent(tabSheet);
-//        setComponentAlignment(lbl, Alignment.MIDDLE_CENTER);
-//        setComponentAlignment(btn, Alignment.BOTTOM_LEFT);
-        setExpandRatio(lbl, 0.1f);
-//        setExpandRatio(btn, 0.05f);
-
-
-        setExpandRatio(tabSheet, 0.9f);
-        
         gantt.setVerticalScrollDelegateTarget(grid);
     }
     
