@@ -86,7 +86,8 @@ public class ListTypeManagerComponent extends AbstractTopComponent {
                             Page.getCurrent().getWebBrowser().getAddress(), 
                             ((RemoteSession) getSession().getAttribute("session")).getSessionId());
             
-            txtListTypeFilter = new TextField("Filter");
+            txtListTypeFilter = new TextField();
+            txtListTypeFilter.setPlaceholder("Search...");
             txtListTypeFilter.addValueChangeListener(this::onTxtFilterChange);
             txtListTypeFilter.setSizeFull();
             

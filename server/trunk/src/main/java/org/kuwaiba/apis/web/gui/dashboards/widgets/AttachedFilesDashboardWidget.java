@@ -21,6 +21,7 @@ import com.vaadin.server.ResourceReference;
 import com.vaadin.server.StreamResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.themes.ValoTheme;
@@ -69,7 +70,7 @@ public class AttachedFilesDashboardWidget extends AbstractDashboardWidget {
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
             
             if (attachedFiles.isEmpty())
-                Notifications.showInfo("This object does not have files attached to it");
+                this.contentComponent = new Label("This object does not have files attached to it");
             else {
                 VerticalLayout lytAttachments = new VerticalLayout();
                 Grid<RemoteFileObjectLight> tblAttachments = new Grid<>();

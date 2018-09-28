@@ -49,8 +49,8 @@ public class TheaterDashboardLayout extends VerticalLayout {
         this.lytChairs.setSpacing(true);
         this.addComponents(this.lytScreen, this.lytChairs);
         this.setSizeFull();
-        this.setExpandRatio(this.lytScreen, 4);
-        this.setExpandRatio(this.lytChairs, 6);
+        this.setExpandRatio(this.lytScreen, 5);
+        this.setExpandRatio(this.lytChairs, 5);
     }
     
     /**

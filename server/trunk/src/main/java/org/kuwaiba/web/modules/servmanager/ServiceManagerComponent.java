@@ -19,7 +19,6 @@ import com.vaadin.data.HasValue;
 import com.vaadin.data.provider.ListDataProvider;
 import com.vaadin.event.selection.SingleSelectionEvent;
 import com.vaadin.event.selection.SingleSelectionListener;
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.server.Page;
 import com.vaadin.ui.ComboBox;
@@ -125,8 +124,7 @@ public class ServiceManagerComponent extends AbstractTopComponent {
             });
             
             txtServiceFilter = new TextField();
-            txtServiceFilter.setPlaceholder("Search...");
-            txtServiceFilter.setIcon(VaadinIcons.SEARCH);
+            txtServiceFilter.setPlaceholder("Type a service name or class...");
             txtServiceFilter.addValueChangeListener(this::onTxtFilterChange);
             txtServiceFilter.setSizeFull();
             

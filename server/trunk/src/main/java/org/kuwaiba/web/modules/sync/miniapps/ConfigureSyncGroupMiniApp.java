@@ -101,11 +101,14 @@ public class ConfigureSyncGroupMiniApp extends AbstractMiniApplication<Window, P
             
             switch(event.getType()) {
                 case WizardEvent.TYPE_FINAL_STEP:
+                    Notifications.showInfo("Action completed successfully");
                     close();
                     break;
                 case WizardEvent.TYPE_NEXT_STEP:
                     setCaption(event.getMessage());
                     break;
+                case WizardEvent.TYPE_CANCEL:
+                    close();
             }
         }
     }
@@ -153,6 +156,10 @@ public class ConfigureSyncGroupMiniApp extends AbstractMiniApplication<Window, P
          */
         public final static int TYPE_STEP_REJECTED = 3;
         /**
+         * The user hit "Cancel"
+         */
+        public final static int TYPE_CANCEL = 4;
+        /**
          * Type of event. See TYPE_XXX for possible values
          */
         private int type;
@@ -188,6 +195,10 @@ public class ConfigureSyncGroupMiniApp extends AbstractMiniApplication<Window, P
          */
         private Button btnAction;
         /**
+         * The cancel action
+         */
+        private Button btnCancel;
+        /**
          * Reference to the current step
          */
         private Step currentStep;
@@ -200,6 +211,7 @@ public class ConfigureSyncGroupMiniApp extends AbstractMiniApplication<Window, P
             this.setSizeFull();
             this.pnlMain = new Panel();
             this.btnAction = new Button();
+            this.btnCancel = new Button("Cancel");
             
             this.btnAction.addClickListener((event) -> {
                 try {
@@ -223,6 +235,10 @@ public class ConfigureSyncGroupMiniApp extends AbstractMiniApplication<Window, P
                 
             });
             
+            btnCancel.addClickListener((event) -> {
+                fireEvent(new WizardEvent(WizardEvent.TYPE_CANCEL, ""));
+            });
+            
             this.pnlMain.setContent(firstStep);
             this.currentStep = firstStep;
             if (currentStep.isFinal())
@@ -230,8 +246,10 @@ public class ConfigureSyncGroupMiniApp extends AbstractMiniApplication<Window, P
             else
                 this.btnAction.setCaption("Next");
             
-            this.addComponents(pnlMain, btnAction);
-            this.setComponentAlignment(btnAction, Alignment.MIDDLE_RIGHT);
+            HorizontalLayout lytButtons = new HorizontalLayout(btnAction, btnCancel);
+            
+            this.addComponents(pnlMain, lytButtons);
+            this.setComponentAlignment(lytButtons, Alignment.MIDDLE_RIGHT);
             
             this.listeners = new ArrayList<>();
         }

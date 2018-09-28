@@ -105,7 +105,7 @@ public class IPAddressManagerComponent extends AbstractTopComponent {
 
         this.txtFilter = new AutocompleteTextField();
         this.txtFilter.setWidth(100, Unit.PERCENTAGE);
-        this.txtFilter.setPlaceholder("Search...");
+        this.txtFilter.setPlaceholder("Type an IP address or subnet...");
         this.txtFilter.setMinChars(3);
         this.txtFilter.setDelay(500);
         this.txtFilter.setTypeSearch(true);

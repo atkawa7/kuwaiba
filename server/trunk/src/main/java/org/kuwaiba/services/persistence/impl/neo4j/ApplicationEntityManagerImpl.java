@@ -1148,11 +1148,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             List<BusinessObjectLight> res = new ArrayList<>();
             Result result = graphDb.execute(cypherQuery);
         
-            Iterator<Node> n_column = result.columnAs("ltUser");
+            Iterator<Node> objectsThatUseListType = result.columnAs("ltUser");
             
-            for (Node node : Iterators.asIterable(n_column)) 
+            objectsThatUseListType.forEachRemaining((node) -> {
                 res.add(Util.createRemoteObjectLightFromNode(node));
-            
+            });
+
             tx.success();
             return res;
         }
