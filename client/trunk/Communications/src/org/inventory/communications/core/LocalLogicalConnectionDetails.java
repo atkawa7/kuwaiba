@@ -51,8 +51,8 @@ public class LocalLogicalConnectionDetails {
         LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(remoteCircuitDetails.getConnectionObject().getClassName(), false);
         this.connectionObject =  new LocalObject(remoteCircuitDetails.getConnectionObject().getClassName(), remoteCircuitDetails.getConnectionObject().getId(),
                                     remoteCircuitDetails.getConnectionObject().getAttributes(), classMetadata);
-        this.endpointA =  new LocalObjectLight(remoteCircuitDetails.getEndpointA().getId(), remoteCircuitDetails.getEndpointA().getName(), remoteCircuitDetails.getEndpointA().getClassName());
-        this.endpointB = new LocalObjectLight(remoteCircuitDetails.getEndpointB().getId(), remoteCircuitDetails.getEndpointB().getName(), remoteCircuitDetails.getEndpointB().getClassName());
+        this.endpointA = remoteCircuitDetails.getEndpointA() == null ? null : new LocalObjectLight(remoteCircuitDetails.getEndpointA().getId(), remoteCircuitDetails.getEndpointA().getName(), remoteCircuitDetails.getEndpointA().getClassName());
+        this.endpointB = remoteCircuitDetails.getEndpointB() == null ? null : new LocalObjectLight(remoteCircuitDetails.getEndpointB().getId(), remoteCircuitDetails.getEndpointB().getName(), remoteCircuitDetails.getEndpointB().getClassName());
         this.physicalPathForEndpointA = new ArrayList<>();
         for (RemoteObjectLight physicalPathForEndpointAElement : remoteCircuitDetails.getPhysicalPathForEndpointA())
             this.physicalPathForEndpointA.add(new LocalObjectLight(physicalPathForEndpointAElement.getId(), physicalPathForEndpointAElement.getName(), physicalPathForEndpointAElement.getClassName()));

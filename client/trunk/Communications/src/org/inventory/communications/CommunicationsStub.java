@@ -103,6 +103,7 @@ import org.inventory.communications.wsclient.RemoteConfigurationVariable;
 import org.inventory.communications.wsclient.RemoteContact;
 import org.inventory.communications.wsclient.RemoteFileObject;
 import org.inventory.communications.wsclient.RemoteFileObjectLight;
+import org.inventory.communications.wsclient.RemoteLogicalConnectionDetails;
 import org.inventory.communications.wsclient.RemoteObject;
 import org.inventory.communications.wsclient.RemoteObjectLight;
 import org.inventory.communications.wsclient.RemoteObjectLightList;
@@ -5815,7 +5816,7 @@ public class CommunicationsStub {
             return null;
         }
     } 
-    
+    //</editor-fold>
     //<editor-fold desc="Configuration Variables" defaultstate="collapsed">
     /**
      * Creates a configuration variable inside a pool. A configuration variable is a place where a value will be stored so it can retrieved by whomever need it. 
@@ -6031,6 +6032,26 @@ public class CommunicationsStub {
             this.error =  ex.getMessage();
             return null;
         }
+    }
+    //</editor-fold>
+    //<editor-fold desc="BGP" defaultstate="collapsed">
+    /**
+     * Updates a Favorites folder
+     * @param mappedBGPLinksIds
+     * @return True if the Favorites folder was updated successfully
+     */
+    public List<LocalLogicalConnectionDetails> getBGPMap(List<Long> mappedBGPLinksIds) {
+        try {
+            List<LocalLogicalConnectionDetails> bgpMap = new ArrayList<>();
+            List<RemoteLogicalConnectionDetails> remoteBgpMap = service.getBGPMap(mappedBGPLinksIds, session.getSessionId());
+            for (RemoteLogicalConnectionDetails remoteLogicalConnectionDetails : remoteBgpMap) {
+                bgpMap.add(new LocalLogicalConnectionDetails(remoteLogicalConnectionDetails));
+            }
+            return bgpMap;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+        }
+        return null;
     }
     //</editor-fold>
 }
