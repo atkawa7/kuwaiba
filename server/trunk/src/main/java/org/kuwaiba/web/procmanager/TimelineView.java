@@ -29,6 +29,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.TimeZone;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -51,7 +52,8 @@ public class TimelineView extends HorizontalLayout {
     
     private ListDataProvider<TimelineStep> listDataProvider;
     
-    
+    private TimeZone defaultTimeZone;
+        
     public TimelineView(RemoteProcessInstance processInstance, WebserviceBean webserviceBean, RemoteSession session) {
         this.webserviceBean = webserviceBean;
         this.processInstance = processInstance;
@@ -67,6 +69,7 @@ public class TimelineView extends HorizontalLayout {
         gantt.setSizeFull();
         gantt.setResizableSteps(false);
         gantt.setMovableSteps(false);
+        gantt.setTimeZone(getDefaultTimeZone());
                 
         Grid<TimelineStep> grid = getGrid();
                 
@@ -77,6 +80,18 @@ public class TimelineView extends HorizontalLayout {
         setExpandRatio(gantt, 0.6f);
                 
         gantt.setVerticalScrollDelegateTarget(grid);
+    }
+    
+    private TimeZone getDefaultTimeZone() {
+        if (defaultTimeZone != null) {
+            return defaultTimeZone;
+        }
+        TimeZone tz = TimeZone.getDefault();
+        if (Gantt.getSupportedTimeZoneIDs().contains(tz.getID()))
+            defaultTimeZone = tz;
+        else
+            defaultTimeZone = TimeZone.getTimeZone("Europe/Madrid");
+        return defaultTimeZone;
     }
     
     private List<TimelineStep> getTimelineSteps() {        
