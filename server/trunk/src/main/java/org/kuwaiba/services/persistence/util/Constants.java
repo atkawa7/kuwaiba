@@ -419,6 +419,10 @@ public class Constants {
     /**
      * Class MPLS Tunnel
      */
+    public static final String CLASS_BRIDGEDOMAIN = "BridgeDomain";
+    /**
+     * Class MPLS Tunnel
+     */
     public static final String CLASS_BRIDGEDOMAININTERFACE = "BridgeDomainInterface";
     /**
      * Class GenericLogicalPort 

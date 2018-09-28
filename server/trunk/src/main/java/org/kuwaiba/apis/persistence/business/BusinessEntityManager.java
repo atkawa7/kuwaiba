@@ -688,7 +688,7 @@ public interface BusinessEntityManager {
      * @param objectClass The class of the object whose special attribute will be retrieved from
      * @param objectId The object's id
      * @param specialAttributeName The name of the special attribute
-     * @return The list of elements related with such relationship plus the properties of theis relationships
+     * @return The list of elements related with such relationship plus the properties of theirs relationships
      * @throws BusinessObjectNotFoundException If the object could not be found
      * @throws MetadataObjectNotFoundException If the object class could not be found
      */

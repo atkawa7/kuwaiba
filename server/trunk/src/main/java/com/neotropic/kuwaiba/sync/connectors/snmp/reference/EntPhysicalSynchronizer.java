@@ -22,6 +22,7 @@ import com.neotropic.kuwaiba.sync.model.TableData;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.Json;
@@ -48,6 +49,7 @@ import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.util.i18n.I18N;
+import org.openide.util.Exceptions;
 
 
 /**
@@ -1409,12 +1411,18 @@ public class EntPhysicalSynchronizer {
             boolean wasHighSpeedUpdated = false;
             attributes.put(Constants.PROPERTY_NAME, SyncUtil.wrapPortName(ifName));
             attributes.put("highSpeed", portSpeed);  
+            checkVirtualPorts();
             //We must create the Mngmnt Port, virtualPorts, tunnels and Loopbacks
             if(SyncUtil.isSynchronizable(ifName)){
                 BusinessObjectLight currrentInterface;
                 //First we search if the port is the current virtual ports
-                if(ifName.contains("."))
+                if(ifName.contains(".")){
+                    //GE 0/0/0/12.10
+                    String x = SyncUtil.wrapPortName(ifName);
                     currrentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), 2);
+                    if(currrentInterface == null)
+                        currrentInterface = searchInCurrentStructure(ifName.split("\\.")[1], 2);
+                }
                 else if(ifName.toLowerCase().contains("lo")) //NOI18N
                     currrentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName), 2);
                 //We must add the s when we look for po ports because posx/x/x ports has no s in the if mib
@@ -1431,6 +1439,7 @@ public class EntPhysicalSynchronizer {
                     //we search for the physical port parent of the virtual port 
                     currrentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName.split("\\.")[0]), 1);
                     if(currrentInterface != null && currrentInterface.getName().equals(SyncUtil.wrapPortName(ifName.split("\\.")[0]))){
+                        attributes.put(Constants.PROPERTY_NAME, ifName.split("\\.")[1]);
                         createdId = bem.createObject(Constants.CLASS_VIRTUALPORT, currrentInterface.getClassName(), currrentInterface.getId(), attributes, -1);
                         createdClassName = "VirtualPort";
                         status = 1;
@@ -1461,7 +1470,12 @@ public class EntPhysicalSynchronizer {
                     status = 1;
                 }//we Update attributes, for now only high speed
                 else if(currrentInterface != null){ 
-                    //status = 0;
+                    if(ifName.contains(".") && attributes.get(Constants.PROPERTY_NAME).contains(".")){
+                        attributes.put(Constants.PROPERTY_NAME,ifName.split("\\.")[1]);
+                        bem.updateObject(currrentInterface.getClassName(), currrentInterface.getId(), attributes);
+                        status = 3;
+                    }
+                    
                     attributes = bem.getObject(currrentInterface.getId()).getAttributes();
                     //The name should be in lowercase
                     if(!attributes.get(Constants.PROPERTY_NAME).toLowerCase().equals(attributes.get(Constants.PROPERTY_NAME))){
@@ -1552,6 +1566,51 @@ public class EntPhysicalSynchronizer {
             }
         }
         return -1; //doesn't exists
+    }
+    
+    private void checkVirtualPorts(){
+        for(BusinessObjectLight currentPort: currentPorts){
+            try {
+                List<BusinessObjectLight> portChildren = bem.getObjectChildren(currentPort.getClassName(), currentPort.getId(), -1);
+                boolean found = false;
+                for(int i=0; i< portChildren.size(); i++){
+                    for(int j=0; j<portChildren.size(); j++){
+                        if(i != j && (portChildren.get(i).getClassName().equals(Constants.CLASS_VIRTUALPORT) && 
+                                portChildren.get(j).getClassName().equals(Constants.CLASS_VIRTUALPORT))){
+                            if(portChildren.get(i).getName().contains(".")){
+                                String afterPoint = portChildren.get(i).getName().split("\\.")[1];
+                                if(afterPoint.equals(portChildren.get(j).getName())){
+                                    found = true;
+                                    HashMap<String, List<BusinessObjectLight>> specialAttributes = bem.getSpecialAttributes(portChildren.get(i).getClassName(), portChildren.get(i).getId());
+                                    for (Map.Entry<String, List<BusinessObjectLight>> entry : specialAttributes.entrySet()) {
+                                        String key = entry.getKey();
+                                        for (BusinessObjectLight businessObjectLight : entry.getValue()) {
+                                            try {
+                                                bem.createSpecialRelationship(portChildren.get(j).getClassName(), portChildren.get(j).getId(),
+                                                businessObjectLight.getClassName(), businessObjectLight.getId(), key, false);
+                                            } catch (OperationNotPermittedException ex) {
+                                                Exceptions.printStackTrace(ex);
+                                            }
+                                        }
+                                    }
+                                    try {
+                                        //we delete the port after migrate its relationships
+                                        bem.deleteObject(portChildren.get(i).getClassName(), portChildren.get(i).getId(), true);
+                                    } catch (OperationNotPermittedException ex) {
+                                        Exceptions.printStackTrace(ex);
+                                    }
+                                }
+                            }
+                        }   
+                    }
+                    if(portChildren.get(i).getName().contains(".") && !found)
+                        System.out.println("to delete: "+ portChildren.get(i));
+                }
+                
+            } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
+                Exceptions.printStackTrace(ex);
+            }
+        }
     }
     
     /**

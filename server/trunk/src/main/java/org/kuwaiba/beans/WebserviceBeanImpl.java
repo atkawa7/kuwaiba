@@ -6131,6 +6131,53 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
         // </editor-fold>
+        // <editor-fold defaultstate="collapsed" desc="BGP Viewer Module">
+        public List<RemoteLogicalConnectionDetails> getBGPMap(List<Long> mappedBGPLinksIds, String ipAddress, String sessionId) throws ServerSideException{
+            if (aem == null)
+                throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+            try {
+                aem.validateWebServiceCall("createBGPView", ipAddress, sessionId);
+                List<RemoteLogicalConnectionDetails> bgpMap = new ArrayList<>();
+                List<BusinessObjectLight> elements = bem.getObjectsOfClassLight(Constants.CLASS_GENERICCOMMUNICATIONSELEMENT, -1);
+                for (BusinessObjectLight element : elements) {
+                    List<BusinessObjectLight> bgpLinks = bem.getSpecialAttribute(element.getClassName(), element.getId(), "bgpLink");
+                    for (BusinessObjectLight bgpLink : bgpLinks) {
+                        if(!mappedBGPLinksIds.contains(bgpLink.getId())){ //We only add the bgp links that are not yet rendered
+                           List<BusinessObjectLight> physicalDeviceA = new ArrayList<>();
+                           List<BusinessObjectLight> physicalDeviceB = new ArrayList<>();
+
+                           List<BusinessObjectLight> bgpEndpointA = bem.getSpecialAttribute(bgpLink.getClassName(), bgpLink.getId(), "bgpLinkEndpointA");
+                           if(!bgpEndpointA.isEmpty()){
+                                BusinessObjectLight parent = bem.getParentOfClass(bgpEndpointA.get(0).getClassName(), bgpEndpointA.get(0).getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+                                if(parent == null)
+                                   parent = bem.getParent(bgpEndpointA.get(0).getClassName(), bgpEndpointA.get(0).getId());
+                                if(parent != null)
+                                   physicalDeviceA.add(parent);
+                           }
+                           List<BusinessObjectLight> bgpEndpointB = bem.getSpecialAttribute(bgpLink.getClassName(), bgpLink.getId(), "bgpLinkEndpointB");
+                           if(!bgpEndpointB.isEmpty()){
+                                BusinessObjectLight parent = bem.getParentOfClass(bgpEndpointB.get(0).getClassName(), bgpEndpointB.get(0).getId(), Constants.CLASS_GENERICCOMMUNICATIONSELEMENT);
+                                if(parent == null)
+                                    parent = bem.getParent(bgpEndpointB.get(0).getClassName(), bgpEndpointB.get(0).getId());
+                                if(parent != null)
+                                    physicalDeviceB.add(parent);
+                           }
+                           bgpMap.add(new RemoteLogicalConnectionDetails(bem.getObject(bgpLink.getId()), 
+                                       bgpEndpointA.isEmpty() ? null : bgpEndpointA.get(0), 
+                                       bgpEndpointB.isEmpty() ? null : bgpEndpointB.get(0), 
+                                       physicalDeviceA, physicalDeviceB));
+                        }
+                    }
+                }
+ 
+                return bgpMap;
+            
+            } catch(InventoryException ex) {
+                Exceptions.printStackTrace(ex);
+                throw new ServerSideException(ex.getMessage());
+            }
+        }
+        // </editor-fold>
     // </editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Helper methods. Click on the + sign on the left to edit the code.">

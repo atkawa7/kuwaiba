@@ -31,7 +31,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.modules.servmanager.views.EndToEndView;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.web.modules.servmanager.views.ServManagerFormCreator;
+import org.kuwaiba.web.modules.servmanager.views.FormCreator;
 import org.openide.util.Exceptions;
 
 /**
@@ -99,7 +99,7 @@ public class EndToEndViewDashboardWidget extends AbstractDashboardWidget {
             btnFormTable.addClickListener(click ->{
                 Window formWindow = new Window(" ");
                 try {
-                    ServManagerFormCreator servManagerFormCreator = new ServManagerFormCreator(service, wsBean, Page.getCurrent().getWebBrowser().getAddress(),
+                    FormCreator servManagerFormCreator = new FormCreator(service, wsBean, Page.getCurrent().getWebBrowser().getAddress(),
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                     formWindow.setContent(servManagerFormCreator.createForm());
                     formWindow.center();

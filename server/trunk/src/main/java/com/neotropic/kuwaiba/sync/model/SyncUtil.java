@@ -121,6 +121,8 @@ public class SyncUtil {
         currentPortName = currentPortName.toLowerCase().replace("_", "/");
         if(currentPortName.toLowerCase().startsWith("lo") && currentPortName.length() < 6)
             return currentPortName.toLowerCase().replace("lo", "loopback");
+        if(currentPortName.toLowerCase().startsWith("bvi") || currentPortName.toLowerCase().startsWith("bvi"))
+            return currentPortName.toLowerCase().replace("bvi", "bv");
         //Fastethernet
         if(currentPortName.toLowerCase().contains("fastethernet"))
             return currentPortName.toLowerCase().replace("fastethernet", "fa");

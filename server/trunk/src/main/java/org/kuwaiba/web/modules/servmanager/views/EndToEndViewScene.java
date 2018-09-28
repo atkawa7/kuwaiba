@@ -79,7 +79,7 @@ public class EndToEndViewScene extends AbstractScene {
             Window tableInfo = new Window(" ");
             tableInfo.addStyleName("v-window-center");
             try {
-                ServManagerFormCreator formView = new ServManagerFormCreator(service, wsBean, 
+                FormCreator formView = new FormCreator(service, wsBean, 
                         Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
 
                 for (RemoteObjectLight edge : edges.keySet()) {
@@ -109,7 +109,7 @@ public class EndToEndViewScene extends AbstractScene {
                 Component x = null;
                 for (RemoteObjectLight device : nodes.keySet()) {
                     if (device.getId() == id){
-                        ServManagerFormCreator formView = new ServManagerFormCreator(service, wsBean, 
+                        FormCreator formView = new FormCreator(service, wsBean, 
                                 Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
                         
                         List<SrvEdgeWidget> connectedEdgeWidgets = lienzoComponent.getNodeEdgeWidgets(srvNode);

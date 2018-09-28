@@ -8520,6 +8520,30 @@ public class KuwaibaService {
             }
         }
         // </editor-fold>
+        //<editor-fold desc="BGP Viwer Module" defaultstate="collapsed">
+        /**
+         * Creates/updates a map of the BGPLinks
+         * @param mappedBgpLinksIds BGPLinks that are already mapped, it can be 
+         * an empty array if nothing is mapped of if the whole map should be generated again.
+         * @param sessionId The session token
+         * @return A list of BGPlinks with their endPoints(ports) and the CommunicationsElements parents of the ports
+         * @throws ServerSideException If the structure is invalid, or the process definition could not be found or one of the properties is malformed or have an unexpected name
+         */
+        @WebMethod(operationName = "getBGPMap")
+        public List<RemoteLogicalConnectionDetails> getBGPMap(@WebParam(name="mappedBgpLinksIds")List<Long> mappedBgpLinksIds, 
+                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+            try {
+                return wsBean.getBGPMap(mappedBgpLinksIds, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in updateProcessDefinition: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
+        }
+        // </editor-fold>
     // </editor-fold>
         
     // <editor-fold defaultstate="collapsed" desc="Helpers. Click on the + sign on the left to edit the code.">/**

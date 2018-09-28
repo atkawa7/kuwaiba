@@ -61,8 +61,8 @@ public class RemoteLogicalConnectionDetails implements Serializable {
             BusinessObjectLight endpointA, BusinessObjectLight endpointB, 
             List<BusinessObjectLight> physicalPathForEndpointA, List<BusinessObjectLight> physicalPathForEndpointB) {
         this.connectionObject = new RemoteObject(connectionObject);
-        this.endpointA =  new RemoteObjectLight(endpointA);
-        this.endpointB = new RemoteObjectLight(endpointB);
+        this.endpointA = endpointA == null ? null : new RemoteObjectLight(endpointA);
+        this.endpointB = endpointB == null ? null : new RemoteObjectLight(endpointB);
         this.physicalPathForEndpointA = new ArrayList<>();
         for (BusinessObjectLight physicalPathForEndpointAElement : physicalPathForEndpointA)
             this.physicalPathForEndpointA.add(new RemoteObjectLight(physicalPathForEndpointAElement));
@@ -71,8 +71,6 @@ public class RemoteLogicalConnectionDetails implements Serializable {
             this.physicalPathForEndpointB.add(new RemoteObjectLight(physicalPathForEndpointBElement));
     }
     
-    
-
     public RemoteObject getConnectionObject() {
         return connectionObject;
     }

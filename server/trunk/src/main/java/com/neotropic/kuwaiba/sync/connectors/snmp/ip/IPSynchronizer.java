@@ -39,7 +39,6 @@ import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.services.persistence.util.Constants;
-import org.openide.util.Exceptions;
 
 /**
  * Synchronizer for the ipAddrTable data
@@ -139,11 +138,12 @@ public class IPSynchronizer {
             //we get the rood nodes for ipv4 ipv6 root nodes
             List<Pool> ipv4RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV4, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
             List<Pool> ipv6RootPools = aem.getRootPools(Constants.CLASS_SUBNET_IPV6, ApplicationEntityManager.POOL_TYPE_MODULE_ROOT, false);
-
+            ipv4Root = ipv4RootPools.get(0);
+            ipv6Root = ipv6RootPools.get(0);
             readcurrentFolder(ipv4RootPools);
             readcurrentFolder(ipv6RootPools);
            
-            associateIPAddress();
+            readMibData();
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | ApplicationObjectNotFoundException ex) {
             res.add(new SyncResult(SyncResult.TYPE_ERROR, 
                         "Unexpected error reading current structure", 
@@ -250,7 +250,7 @@ public class IPSynchronizer {
     /**
      * Reads the MIB data an associate IP addresses with ports
      */
-    private void associateIPAddress(){
+    private void readMibData(){
         List<String> ipAddresses = ipAddrTable.get("ipAdEntAddr");
         List<String> addrPortsIds = ipAddrTable.get("ipAdEntIfIndex");
         List<String> masks = ipAddrTable.get("ipAdEntNetMask");

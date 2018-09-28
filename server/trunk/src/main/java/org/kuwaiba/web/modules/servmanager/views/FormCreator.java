@@ -45,7 +45,7 @@ import org.openide.util.Exceptions;
  * Has methods to create form tables for end to end view
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
-public class ServManagerFormCreator{
+public class FormCreator{
    /**
      * For ADM side A
      */
@@ -112,7 +112,7 @@ public class ServManagerFormCreator{
      */
     private boolean isMplsView;
     
-    public ServManagerFormCreator(RemoteObjectLight service, WebserviceBean wsBean, String ipAddress, String sessionId) throws ServerSideException {
+    public FormCreator(RemoteObjectLight service, WebserviceBean wsBean, String ipAddress, String sessionId) throws ServerSideException {
         this.wsBean = wsBean;
         this.service = service;
         this.ipAddress = ipAddress;
