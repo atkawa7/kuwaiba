@@ -2140,9 +2140,38 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         return paths;
         
     }
-   
     
-    
+    //<editor-fold desc="Warehouse" defaultstate="collapsed">
+    @Override
+    public List<BusinessObjectLight> getWarehousesInObject(String objectClassName, long objectId) throws MetadataObjectNotFoundException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, objectClassName);
+            
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(objectClassName);
+            
+            List<BusinessObjectLight> warehouses = new ArrayList();
+                                    
+            String cypherQuery = ""
+                + "match (warehouse:inventory_objects)-[:RELATED_TO_SPECIAL{ name: 'warehouseHas' }]-(child:inventory_objects)-[:CHILD_OF*]->(parent:inventory_objects)-[:INSTANCE_OF]->(class:classes{name: '" + objectClassName + "'}) "
+                + "where id(parent) = " + objectId + " return warehouse;";
+            
+            Result result = graphDb.execute(cypherQuery);
+            ResourceIterator<Node> warehouseColumn = result.columnAs("warehouse");
+            List<Node> lstWarehouseColumn = Iterators.asList(warehouseColumn);
+            
+            for (Node warehouse : lstWarehouseColumn)
+                warehouses.add(Util.createRemoteObjectLightFromNode(warehouse));
+            
+            Collections.sort(warehouses);
+            
+            tx.success();
+            return warehouses;
+        }
+    }
+    //</editor-fold>
+        
     //<editor-fold desc="Reporting API implementation" defaultstate="collapsed">
         @Override
     public long createClassLevelReport(String className, String reportName, String reportDescription, 

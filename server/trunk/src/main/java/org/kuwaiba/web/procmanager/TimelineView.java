@@ -155,23 +155,31 @@ public class TimelineView extends HorizontalLayout {
                         
             timelineStep.setActivityExpectedDuration(activityExpectedDuration);
         }
-        long startDate = timelineSteps.get(0).getStartDate();
-        long endDate = timelineSteps.get(0).getEndDate();
-        
-        for (TimelineStep timelineStep : timelineSteps) {
+        // Prevents a java.lang.IndexOutOfBoundsException
+        if (timelineSteps.size() > 0) {
             
-            if (timelineStep.getStartDate() < startDate)
-                startDate = timelineStep.getStartDate();
-            
-            if (timelineStep.getEndDate() > endDate)
-                endDate = timelineStep.getEndDate();
+            long startDate = timelineSteps.get(0).getStartDate();
+            long endDate = timelineSteps.get(0).getEndDate();
+
+            for (TimelineStep timelineStep : timelineSteps) {
+
+                if (timelineStep.getStartDate() < startDate)
+                    startDate = timelineStep.getStartDate();
+
+                if (timelineStep.getEndDate() > endDate)
+                    endDate = timelineStep.getEndDate();
+            }
+
+            calendar.setTime(new Date(startDate));
+            gantt.setStartDate(calendar.getTime());
+
+            calendar.setTime(new Date(endDate));
+            gantt.setEndDate(calendar.getTime());
+        } else {
+            Date date = new Date();
+            gantt.setStartDate(date);
+            gantt.setEndDate(date);
         }
-                        
-        calendar.setTime(new Date(startDate));
-        gantt.setStartDate(calendar.getTime());
-        
-        calendar.setTime(new Date(endDate));
-        gantt.setEndDate(calendar.getTime());
                 
         if (timelineSteps == null)
             return null;

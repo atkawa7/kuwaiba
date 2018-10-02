@@ -1021,5 +1021,7 @@ public interface BusinessEntityManager {
             throws ApplicationObjectNotFoundException, InvalidArgumentException;
     //</editor-fold>
     
-    
+    //<editor-fold desc="Warehouse" defaultstate="collapsed">
+    public List<BusinessObjectLight> getWarehousesInObject(String objectClassName, long objectId) throws MetadataObjectNotFoundException;
+    //</editor-fold>
 }

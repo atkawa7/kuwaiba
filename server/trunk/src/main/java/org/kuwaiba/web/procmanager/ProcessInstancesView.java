@@ -431,20 +431,20 @@ public class ProcessInstancesView extends VerticalLayout {
                                 id, 
                                 Page.getCurrent().getWebBrowser().getAddress(),
                                 remoteSession.getSessionId());
-
+                                                                        
+                        ProcessInstanceView processInstanceView = new ProcessInstanceView(processInstance, processDef, webserviceBean,remoteSession);
+                        
                         UI ui = UI.getCurrent();
-
+                        
                         MenuBar mainMenu = ((IndexUI) ui).getMainMenu();
-
+                        
                         ((ProcessManagerComponent) ui.getContent()).removeAllComponents();
-
+                        
                         ((ProcessManagerComponent) ui.getContent()).addComponent(mainMenu);
                         ((ProcessManagerComponent) ui.getContent()).setExpandRatio(mainMenu, 0.5f);
-
-                        ProcessInstanceView processInstanceView = new ProcessInstanceView(processInstance, processDef, webserviceBean,remoteSession);
-
+                        
                         ((ProcessManagerComponent) ui.getContent()).addComponent(processInstanceView);
-                        ((ProcessManagerComponent) ui.getContent()).setExpandRatio(processInstanceView, 9.5f);
+                        
                     } catch (ServerSideException ex) {
                         Exceptions.printStackTrace(ex);
                     }
