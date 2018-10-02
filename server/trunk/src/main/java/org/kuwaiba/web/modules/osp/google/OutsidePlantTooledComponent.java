@@ -27,14 +27,13 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.web.custom.core.AbstractTooledComponent;
-import org.kuwaiba.web.modules.osp.OutsidePlantComponent;
+import org.kuwaiba.web.modules.osp.OutsidePlantComponentOld;
 //import org.kuwaiba.web.modules.osp.google.tool.actions.ActionsFactory;
 //import org.kuwaiba.web.modules.osp.google.tool.actions.DeleteOspViewAction;
 //import org.kuwaiba.web.modules.osp.google.tool.actions.FilterByAction;
 //import org.kuwaiba.web.modules.osp.google.tool.actions.NewOspViewAction;
 //import org.kuwaiba.web.modules.osp.google.tool.actions.OpenOspViewAction;
 //import org.kuwaiba.web.modules.osp.google.tool.actions.SaveOspViewAction;
-
 /**
  * The tooled component that wrapped the DragAndDropWrapper GoogleMapWrapper
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>

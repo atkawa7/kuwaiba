@@ -1151,7 +1151,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Iterator<Node> objectsThatUseListType = result.columnAs("ltUser");
             
             objectsThatUseListType.forEachRemaining((node) -> {
-                res.add(Util.createRemoteObjectLightFromNode(node));
+                if (node.hasRelationship(RelTypes.INSTANCE_OF))
+                    res.add(Util.createRemoteObjectLightFromNode(node));
+                else if (node.hasRelationship(RelTypes.INSTANCE_OF_SPECIAL))
+                    res.add(Util.createTemplateElementLightFromNode(node));
             });
 
             tx.success();

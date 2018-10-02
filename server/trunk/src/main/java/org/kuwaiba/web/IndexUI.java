@@ -43,6 +43,7 @@ import org.kuwaiba.web.modules.contacts.ContactManagerModule;
 import org.kuwaiba.web.modules.ipam.IPAddressManagerModule;
 import org.kuwaiba.web.modules.ltmanager.ListTypeManagerModule;
 import org.kuwaiba.web.modules.navtree.NavigationTreeModule;
+import org.kuwaiba.web.modules.osp.OutsidePlantModule;
 import org.kuwaiba.web.modules.servmanager.ServiceManagerModule;
 import org.kuwaiba.web.procmanager.ProcessManagerModule;
 
@@ -107,6 +108,11 @@ public class IndexUI extends UI {
 //            SyncManagerModule syncManagerModule = new SyncManagerModule(null, wsBean, 
 //                        (RemoteSession) getSession().getAttribute("session"));
 //            syncManagerModule.attachToMenu(mnuMain);
+
+            // Outside Plant
+            OutsidePlantModule outsidePlantModule = new OutsidePlantModule(null, wsBean, 
+                        (RemoteSession) getSession().getAttribute("session"));
+            outsidePlantModule.attachToMenu(mnuMain);
             
             // Process Manager Module
             ProcessManagerModule processManagerModule = new ProcessManagerModule(null, wsBean, 

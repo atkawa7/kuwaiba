@@ -26,9 +26,7 @@ import java.util.List;
  */
 public class PropertySheet extends Grid<AbstractProperty> {
 
-    public PropertySheet(List<AbstractProperty> properties, String caption) {
-        setItems(properties);
-        setCaption(caption);
+    public PropertySheet() {
         setHeaderVisible(false);
         setSizeUndefined();
         addColumn(AbstractProperty::getName);
@@ -38,6 +36,13 @@ public class PropertySheet extends Grid<AbstractProperty> {
             label.setStyleName(ValoTheme.LAYOUT_HORIZONTAL_WRAPPING);
             return label;
         });
+    }
+    
+    public PropertySheet(List<AbstractProperty> properties, String caption) {
+        this();
+        setItems(properties);
+        setCaption(caption);
+        
     }
 
     public void clear() {

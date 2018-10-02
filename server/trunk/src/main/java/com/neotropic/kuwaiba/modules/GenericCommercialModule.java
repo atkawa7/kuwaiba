@@ -20,7 +20,7 @@ import org.kuwaiba.apis.persistence.business.BusinessEntityManager;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 
 /**
- * All commercial modules should implement this interface
+ * All third-party commercial modules should implement this interface
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public interface GenericCommercialModule {
