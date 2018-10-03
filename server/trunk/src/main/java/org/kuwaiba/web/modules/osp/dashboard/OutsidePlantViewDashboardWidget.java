@@ -17,15 +17,25 @@
 package org.kuwaiba.web.modules.osp.dashboard;
 
 import com.vaadin.icons.VaadinIcons;
+import com.vaadin.shared.ui.dnd.DropEffect;
 import com.vaadin.tapio.googlemaps.GoogleMap;
+import com.vaadin.tapio.googlemaps.client.overlays.GoogleMapMarker;
 import com.vaadin.ui.MenuBar;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.dnd.DropTargetExtension;
+import com.vaadin.ui.dnd.event.DropEvent;
+import com.vaadin.ui.dnd.event.DropListener;
+import java.util.HashMap;
+import java.util.Optional;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
+import org.kuwaiba.apis.web.gui.dashboards.DashboardEventBus;
+import org.kuwaiba.apis.web.gui.dashboards.DashboardEventListener;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * A widget that displays a map and allows to drop elements from a navigation tree and create physical connections
@@ -37,11 +47,17 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
      */
     private GoogleMap mapMain;
     /**
+     * A map with the existing nodes
+     */
+    private HashMap<Long, RemoteObjectLight> nodes;
+    
+    /**
      * Reference to the backend bean
      */
     private WebserviceBean wsBean;
-    public OutsidePlantViewDashboardWidget(WebserviceBean wsBean) {
-        super("Outside Plant Viewer");
+    public OutsidePlantViewDashboardWidget(DashboardEventBus eventBus, WebserviceBean wsBean) {
+        super("Outside Plant Viewer", eventBus);
+        nodes = new HashMap<>();
         createContent();
         setSizeFull();
     }
@@ -64,6 +80,30 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
             mapMain = new GoogleMap(apiKey, null, language);
             mapMain.setSizeFull();
             
+            //Enable the tree as a drop target
+            DropTargetExtension<GoogleMap> dropTarget = new DropTargetExtension<>(mapMain);
+            dropTarget.setDropEffect(DropEffect.MOVE);
+
+            dropTarget.addDropListener(new DropListener<GoogleMap>() {
+                @Override
+                public void drop(DropEvent<GoogleMap> event) {
+                    Optional<String> transferData = event.getDataTransferData(RemoteObjectLight.DATA_TYPE); //Only get this type of data. Note that the type of the data to be trasferred is set in the drag source
+
+                    if (transferData.isPresent()) {
+                        for (String serializedObject : transferData.get().split("~o~")) {
+                            String[] serializedObjectTokens = serializedObject.split("~a~", -1);
+                            RemoteObjectLight businessObject = new RemoteObjectLight(serializedObjectTokens[1], Long.valueOf(serializedObjectTokens[0]), serializedObjectTokens[2]);
+                            GoogleMapMarker newMarker = mapMain.addMarker(businessObject.toString(), mapMain.getCenter(), true, "/icons/" + businessObject.getClassName() + ".png");
+                            nodes.put(newMarker.getId(), businessObject);
+                        }
+                    } 
+                }
+            });
+            
+            mapMain.addMarkerClickListener((clickedMarker) -> {
+                eventBus.notifySubscribers(new DashboardEventListener.DashboardEvent(this, DashboardEventListener.DashboardEvent.TYPE_SELECTION, nodes.get(clickedMarker.getId())));
+            });
+            
             MenuBar mnuMain = new MenuBar();
         
             mnuMain.addItem("New", VaadinIcons.FOLDER_ADD, (selectedItem) -> {
@@ -71,6 +111,10 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
             });
 
             mnuMain.addItem("Open", VaadinIcons.FOLDER_OPEN, (selectedItem) -> {
+
+            });
+            
+            mnuMain.addItem("Save", VaadinIcons.ARROW_DOWN, (selectedItem) -> {
 
             });
 

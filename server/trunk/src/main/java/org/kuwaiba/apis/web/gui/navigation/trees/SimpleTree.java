@@ -18,17 +18,23 @@ package org.kuwaiba.apis.web.gui.navigation.trees;
 import org.kuwaiba.apis.web.gui.navigation.nodes.ChildrenProvider;
 import org.kuwaiba.apis.web.gui.navigation.nodes.AbstractNode;
 import com.vaadin.data.provider.TreeDataProvider;
+import com.vaadin.server.SerializableFunction;
+import com.vaadin.shared.ui.dnd.EffectAllowed;
 import com.vaadin.ui.IconGenerator;
 import com.vaadin.ui.Tree;
+import com.vaadin.ui.TreeGrid;
+import com.vaadin.ui.components.grid.TreeGridDragSource;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.kuwaiba.apis.web.gui.navigation.InventoryObjectTreeData;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * A tree that extends the features of the default one and makes use of the Nodes API
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class SimpleTree extends Tree<AbstractNode> {
-
+    
     /**
      *  Constructor for trees with only one root node
      * @param roots The root nodes of the tree
@@ -39,6 +45,16 @@ public class SimpleTree extends Tree<AbstractNode> {
             AbstractNode... roots) {
         InventoryObjectTreeData treeData = new InventoryObjectTreeData(childrenProvider);
         treeData.addRootItems(roots);
+        
+        //Enable the tree as a drag source
+        TreeGridDragSource<AbstractNode> dragSource = new TreeGridDragSource<>((TreeGrid<AbstractNode>)this.getCompositionRoot());
+        dragSource.setEffectAllowed(EffectAllowed.MOVE);
+        dragSource.setDragDataGenerator(RemoteObjectLight.DATA_TYPE, new SerializableFunction<AbstractNode, String>() {
+            @Override
+            public String apply(AbstractNode t) { //Now we serialize the object to be transferred
+                return ((RemoteObjectLight)t.getObject()).getId() + "~a~" + ((RemoteObjectLight)t.getObject()).getClassName() + "~a~" + ((RemoteObjectLight)t.getObject()).getName();
+            }
+        });
         
         setDataProvider(new TreeDataProvider(treeData));
         setSizeFull();
@@ -63,5 +79,15 @@ public class SimpleTree extends Tree<AbstractNode> {
         this.getTreeData().clear();
         this.getTreeData().addRootItems(newRoots);
         this.setTreeData(getTreeData());
+    }
+    
+    /**
+     * Represents as a string the set of selected objects in the tree so they can be transferred in a drag&drop operation
+     * @return The serializes representation of the selected objects
+     */
+    private String serializeSelectedObjects() {
+        return getSelectedItems().stream().map(n -> 
+                ((RemoteObjectLight)n.getObject()).getId() + "~a~" + ((RemoteObjectLight)n.getObject()).getClassName()+ "~a~" + ((RemoteObjectLight)n.getObject()).getName()
+        ).collect(Collectors.joining("~o~"));
     }
 }

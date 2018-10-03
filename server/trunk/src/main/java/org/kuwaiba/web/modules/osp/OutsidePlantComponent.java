@@ -17,17 +17,17 @@
 package org.kuwaiba.web.modules.osp;
 
 import com.vaadin.cdi.CDIView;
-import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
 import com.vaadin.ui.HorizontalSplitPanel;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.MenuBar;
+import com.vaadin.ui.VerticalLayout;
 import javax.inject.Inject;
+import org.kuwaiba.apis.web.gui.dashboards.DashboardEventBus;
+import org.kuwaiba.apis.web.gui.dashboards.widgets.NavigationTreeDashboardWidget;
 import org.kuwaiba.apis.web.gui.dashboards.widgets.PropertySheetDashboardWidget;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.web.IndexUI;
-import org.kuwaiba.web.modules.osp.dashboard.OutsidePlantDashboard;
 import org.kuwaiba.web.modules.osp.dashboard.OutsidePlantViewDashboardWidget;
 
 /**
@@ -35,24 +35,39 @@ import org.kuwaiba.web.modules.osp.dashboard.OutsidePlantViewDashboardWidget;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 @CDIView("osp")
-public class OutsidePlantComponent extends AbstractTopComponent implements View {
+public class OutsidePlantComponent extends AbstractTopComponent {
     /**
      * The name of the view
      */
     public static String VIEW_NAME = "osp";
+    /**
+     * Reference to the backend bean
+     */
     @Inject
     private WebserviceBean wsBean;
     
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
-//        setStyleName("dashboards");
-//        addStyleName("navtree");
+        addStyleName("navtree");
         
         MenuBar mnuMain = ((IndexUI)getUI()).getMainMenu();
 
         addComponent(mnuMain);
-        HorizontalSplitPanel pnlSplitMain = new HorizontalSplitPanel(new PropertySheetDashboardWidget(wsBean), 
-                new OutsidePlantViewDashboardWidget(wsBean));
+        
+        DashboardEventBus eventBus = new DashboardEventBus();
+        
+        PropertySheetDashboardWidget propertySheetWidget = new PropertySheetDashboardWidget(wsBean);
+        eventBus.addSubscriber(propertySheetWidget);
+        
+        NavigationTreeDashboardWidget navTreeWidget = new NavigationTreeDashboardWidget(eventBus, wsBean);
+        VerticalLayout lytExplorer = new VerticalLayout(navTreeWidget, propertySheetWidget);
+        lytExplorer.setExpandRatio(navTreeWidget, 7);
+        lytExplorer.setExpandRatio(propertySheetWidget, 3);
+        
+        lytExplorer.setSizeFull();
+        
+        HorizontalSplitPanel pnlSplitMain = new HorizontalSplitPanel(lytExplorer, 
+                new OutsidePlantViewDashboardWidget(eventBus, wsBean));
         
         pnlSplitMain.setSizeFull();
         pnlSplitMain.setSplitPosition(30, Unit.PERCENTAGE);

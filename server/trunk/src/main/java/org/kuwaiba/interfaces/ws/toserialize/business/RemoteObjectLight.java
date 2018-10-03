@@ -31,6 +31,10 @@ import org.kuwaiba.interfaces.ws.toserialize.application.Validator;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteObjectLight implements Serializable, Comparable<RemoteObjectLight> {
     /**
+     * MIME Type used mainly while dragging and dropping nodes representing RemoteObjectLights
+     */
+    public static final String DATA_TYPE = "object/remote-object-light";
+    /**
      * Object's oid
      */
     private long id;

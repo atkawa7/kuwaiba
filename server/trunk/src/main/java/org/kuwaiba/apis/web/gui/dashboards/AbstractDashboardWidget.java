@@ -56,6 +56,10 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
      */
     protected AbstractDashboard parentDashboard;
     /**
+     * Reference to the event bus so the widget can share information with other widgets
+     */
+    protected DashboardEventBus eventBus;
+    /**
      * Dashboard widget title
      */
     protected String title;
@@ -68,12 +72,12 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
     }
     
     public AbstractDashboardWidget(String title, AbstractDashboard parentDashboard) {
-        this.colSpan = 1;
-        this.rowSpan = 1;
-        this.title = title;
+        this(title);
         this.parentDashboard = parentDashboard;
-        this.activeContent = ActiveContent.CONTENT_COVER;
-        this.setMargin(true);
+    }
+
+    public AbstractDashboardWidget(String title, DashboardEventBus eventBus) {
+        this.eventBus = eventBus;
     }
 
     public int getColSpan() {
@@ -98,6 +102,11 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
 
     public void setActiveContent(ActiveContent activeContent) {
         this.activeContent = activeContent;
+    }
+    
+    public final void fireEvent(DashboardEventListener.DashboardEvent event) {
+        if (eventBus != null)
+            eventBus.notifySubscribers(event);
     }
 
     /**
