@@ -57,6 +57,8 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConditionalActivi
 import org.kuwaiba.util.i18n.I18N;
 import org.kuwaiba.web.IndexUI;
 import com.vaadin.ui.Component;
+import org.kuwaiba.apis.persistence.PersistenceService;
+import static org.kuwaiba.web.procmanager.ProcessInstanceView.debugMode;
 
 /**
  * Shown the instances of a process definition
@@ -71,8 +73,13 @@ public class ProcessInstancesView extends VerticalLayout {
     
     private final WebserviceBean wsBean;
     private final RemoteSession session;
+    
+    public static Boolean debugMode;
             
     public ProcessInstancesView(RemoteProcessDefinition processDefinition, List<RemoteProcessInstance> processes, WebserviceBean wsBean, RemoteSession session) {
+        
+        debugMode = Boolean.valueOf(String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("debugMode")));
+        
         setSizeFull();
         setSpacing(false);
         setMargin(false);
@@ -269,8 +276,8 @@ public class ProcessInstancesView extends VerticalLayout {
                 ((ProcessManagerComponent) ui.getContent()).setExpandRatio(processInstanceToolsView, 9.5f);
             }
         });
-            /*    
-        if (canDelete()) {
+        
+        if (debugMode) {
             
             grid.addColumn(ProcessInstanceBean::getDeleteButtonCaption, new ButtonRenderer(new RendererClickListener<RemoteProcessInstance>() {
                 @Override
@@ -316,9 +323,7 @@ public class ProcessInstancesView extends VerticalLayout {
                     });
                 }
             })).setCaption("Delete");   
-            
         }
-        */
         // Filter To Current Activity
         HeaderCell currentActivityHeaderCell = headerRow.getCell(columnCurrentActivityId);
         
@@ -433,17 +438,16 @@ public class ProcessInstancesView extends VerticalLayout {
                                 remoteSession.getSessionId());
                                                                         
                         ProcessInstanceView processInstanceView = new ProcessInstanceView(processInstance, processDef, webserviceBean,remoteSession);
-                        
-                        UI ui = UI.getCurrent();
-                        
-                        MenuBar mainMenu = ((IndexUI) ui).getMainMenu();
-                        
-                        ((ProcessManagerComponent) ui.getContent()).removeAllComponents();
-                        
-                        ((ProcessManagerComponent) ui.getContent()).addComponent(mainMenu);
-                        ((ProcessManagerComponent) ui.getContent()).setExpandRatio(mainMenu, 0.5f);
-                        
-                        ((ProcessManagerComponent) ui.getContent()).addComponent(processInstanceView);
+                                                                                                
+                        MenuBar mainMenu = ((IndexUI) UI.getCurrent()).getMainMenu();
+
+                        ((ProcessManagerComponent) UI.getCurrent().getContent()).removeAllComponents();
+
+                        ((ProcessManagerComponent) UI.getCurrent().getContent()).addComponent(mainMenu);
+                        ((ProcessManagerComponent) UI.getCurrent().getContent()).setExpandRatio(mainMenu, 0.5f);
+
+                        ((ProcessManagerComponent) UI.getCurrent().getContent()).addComponent(processInstanceView);
+                        ((ProcessManagerComponent) UI.getCurrent().getContent()).setExpandRatio(processInstanceView, 9.5f);
                         
                     } catch (ServerSideException ex) {
                         Exceptions.printStackTrace(ex);
