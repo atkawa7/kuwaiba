@@ -69,25 +69,25 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
     /**
      * The common connection provider
      */
-    private PhysicalConnectionProvider myConnectionProvider;
+    private final PhysicalConnectionProvider myConnectionProvider;
     /**
      * Default control point move action (shared by all connection widgets)
      */
-    private CustomMoveControlPointAction moveControlPointAction =
+    private final CustomMoveControlPointAction moveControlPointAction =
             new CustomMoveControlPointAction(this);
     /**
      * Default add/remove control point action (shared by all connection widgets)
      */
-    private CustomAddRemoveControlPointAction addRemoveControlPointAction =
+    private final CustomAddRemoveControlPointAction addRemoveControlPointAction =
             new CustomAddRemoveControlPointAction(this);
     /**
      * Default move widget action (shared by all connection widgets)
      */
-    private CustomMoveAction moveAction = new CustomMoveAction(this);
+    private final CustomMoveAction moveAction = new CustomMoveAction(this);
     /**
      * Popup provider for all nodes and connections
      */
-    private PopupMenuProvider defaultPopupMenuProvider;
+    private final PopupMenuProvider defaultPopupMenuProvider;
     
     public ChildrenViewScene (ObjectViewConfigurationObject configObject) {
         interactionLayer = new LayerWidget(this);
@@ -272,7 +272,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         if (myChildren == null)
             throw new IllegalArgumentException();
         
-        List<LocalObject> myConnections = com.getChildrenOfClass(object.getId(),object.getClassName(), Constants.CLASS_GENERICCONNECTION);
+        List<LocalObjectLight> myConnections = com.getSpecialChildrenOfClassLight(object.getClassName(), object.getId(), Constants.CLASS_GENERICCONNECTION);
         if (myConnections == null)
             throw new IllegalArgumentException();
         
@@ -426,7 +426,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         }
     }
     
-    private void renderDefaultView(LocalObjectLight currentObject, List<LocalObjectLight> children, List<LocalObject> connections) {
+    private void renderDefaultView(LocalObjectLight currentObject, List<LocalObjectLight> children, List<LocalObjectLight> connections) {
         
         int lastX = 0;
             
@@ -440,7 +440,7 @@ public final class ChildrenViewScene extends AbstractScene<LocalObjectLight, Loc
         }
             
         //TODO: This algorithm to find the endpoints for a connection could be improved in many ways
-        for (LocalObject container : connections) {            
+        for (LocalObjectLight container : connections) {            
             List<LocalObjectLight> aSide = CommunicationsStub.getInstance()
                 .getSpecialAttribute(container.getClassName(), container.getId(), "endpointA"); //NOI18N
             if (aSide == null) {

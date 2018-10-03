@@ -63,7 +63,7 @@ public final class ObjectViewTopComponent extends TopComponent
     
     private ChildrenViewScene scene;
     private ObjectViewConfigurationObject configObject;
-    private LocalObjectLight currentObject;
+    private final LocalObjectLight currentObject;
     
     KeyEventDispatcher keyEventDispatcher;
     

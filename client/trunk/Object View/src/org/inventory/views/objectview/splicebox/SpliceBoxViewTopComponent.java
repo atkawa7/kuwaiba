@@ -62,7 +62,7 @@ public class SpliceBoxViewTopComponent extends TopComponent implements ExplorerM
 
     @Override
     protected void componentOpened() {
-        scene.render(new LocalObjectLight(39387, "Test SP", "SpliceBox"));
+        scene.render(new LocalObjectLight(45930, "Test SP", "SpliceBox"));
     }
 
     @Override
