@@ -1807,7 +1807,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.validateWebServiceCall("createPhysicalConnection", ipAddress, sessionId);
             
             if (!mem.isSubClass("GenericPhysicalConnection", connectionClass)) //NOI18N
-                throw new ServerSideException("Class %s is not subclass of GenericPhysicalConnection"); //NOI18N
+                throw new ServerSideException(String.format("Class %s is not subclass of GenericPhysicalConnection", connectionClass)); //NOI18N
 
             boolean isLink = false;
             

@@ -37,7 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
-import org.kuwaiba.apis.web.gui.nodes.containment.ContainmentNode;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;

@@ -28,7 +28,7 @@ import javax.naming.NamingException;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import com.vaadin.tapio.googlemaps.GoogleMap;
+import com.vaadin.tapio.googlemaps.GoogleMapsComponent;
 import com.vaadin.tapio.googlemaps.client.LatLon;
 import com.vaadin.ui.UI;
 import java.util.List;
@@ -68,7 +68,7 @@ class WelcomeView extends VerticalLayout implements View {
                 String language = (String)context.lookup("java:comp/env/mapLanguage");
                 
                 
-                GoogleMap mapMain = new GoogleMap(apiKey, null, language);
+                GoogleMapsComponent mapMain = new GoogleMapsComponent(apiKey, null, language);
                 
                 mapMain.setSizeFull();
                 
