@@ -674,14 +674,27 @@ public class LienzoComponentWidget extends LienzoPanel implements ClntFrameWidge
         NodeWidget source = srvNodeWidgets.get(srvEdge.getSource());
         NodeWidget target = srvNodeWidgets.get(srvEdge.getTarget());
         
-        List<Point> coordinates = new ArrayList();
+        List<Point> coordinates;
+        
+        coordinates = new ArrayList();
+
         coordinates.add(new Point(
             source.getX() + source.getWidth() / 2, 
             source.getY() + source.getHeight() / 2));
-        
+
         coordinates.add(new Point(
             target.getX() + target.getWidth() / 2, 
             target.getY() + target.getHeight() / 2));
+        
+        if (srvEdge.getControlPoints() == null || (srvEdge.getControlPoints() != null && srvEdge.getControlPoints().size() <= 1)) {    
+            
+        }
+        else {
+            srvEdge.getControlPoints().set(0, coordinates.get(0));
+            srvEdge.getControlPoints().set(srvEdge.getControlPoints().size() - 1, coordinates.get(1));
+            
+            coordinates = srvEdge.getControlPoints();
+        }
         
         final EdgeWidget edgeWidget = new EdgeWidget(edgeLayer, srvEdge.getColor(), coordinates);
         edgeWidget.addEdgeWidgetUpdateListener(this);
@@ -777,6 +790,41 @@ public class LienzoComponentWidget extends LienzoPanel implements ClntFrameWidge
                 edgeWidget.setStrokeColor(srvEdge.getColor());
                 
                 clntEdge.setColor(srvEdge.getColor());
+            }
+
+            if (clntEdge.getControlPoints() != null && srvEdge.getControlPoints() != null) {
+                if (clntEdge.getControlPoints().size() != srvEdge.getControlPoints().size()) {
+                    
+                    List<Point> srvControlPoints = new ArrayList();
+
+                    for (Point point : srvEdge.getControlPoints())
+                        srvControlPoints.add(new Point(point.getX(), point.getY()));
+
+                    clntEdge.setControlPoints(srvControlPoints);
+                    
+                    edgeWidget.updatePolyline(srvControlPoints);
+                    
+                } else {
+                    
+                    boolean flag = false;
+                    
+                    for (int i = 0; i < clntEdge.getControlPoints().size(); i += 1) {
+                        if (clntEdge.getControlPoints().get(i).getX() != srvEdge.getControlPoints().get(i).getX() || 
+                            clntEdge.getControlPoints().get(i).getY() != srvEdge.getControlPoints().get(i).getY()) {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (flag) {
+                                                
+                        List<Point> srvControlPoints = new ArrayList();
+                        
+                        for (Point point : srvEdge.getControlPoints())
+                            srvControlPoints.add(new Point(point.getX(), point.getY()));
+                        
+                        clntEdge.setControlPoints(srvControlPoints);
+                    }
+                }
             }
         }
     }
