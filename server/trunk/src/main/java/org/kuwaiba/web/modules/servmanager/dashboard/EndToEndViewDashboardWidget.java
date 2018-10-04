@@ -109,7 +109,7 @@ public class EndToEndViewDashboardWidget extends AbstractDashboardWidget {
                     Exceptions.printStackTrace(ex);
                 }
             });
-
+            
             lytContent.addComponent(new EndToEndView(service, wsBean));
             
             this.contentComponent = lytContent;

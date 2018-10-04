@@ -69,6 +69,8 @@ public class EndToEndViewScene extends AbstractScene {
         
         lienzoComponent.addNodeWidgetClickListener(nodeWidgetClickListener);
         lienzoComponent.addEdgeWidgetClickListener(edgeWidgetClickListener);
+        
+        setSizeUndefined();
     }
     
     EdgeWidgetClickListener edgeWidgetClickListener = new EdgeWidgetClickListener() {
@@ -212,6 +214,7 @@ public class EndToEndViewScene extends AbstractScene {
                                     }
                                 }
                             }
+                            //lienzoComponent.updateEdgeWidget(edgeId);
                         }
                     }
                 }
@@ -219,6 +222,7 @@ public class EndToEndViewScene extends AbstractScene {
         } catch (XMLStreamException ex) {
             Notifications.showError(ex.getMessage());
         }
+
     }
 
     @Override
@@ -358,6 +362,15 @@ public class EndToEndViewScene extends AbstractScene {
                         }
                     }
                 }
+                for (SrvNodeWidget node : nodes.values()) {       
+                    node.setWidth(32);
+                    node.setHeight(32);
+                    lienzoComponent.addNodeWidget(node);
+                }
+                
+                for (SrvEdgeWidget edge : edges.values())
+                    lienzoComponent.addEdgeWidget(edge);
+                
                 addComponent(lienzoComponent);
             }
         } catch (ServerSideException ex) {
@@ -372,7 +385,7 @@ public class EndToEndViewScene extends AbstractScene {
 
     protected SrvNodeWidget attachNodeWidget(RemoteObjectLight node) {
         SrvNodeWidget newNode = new SrvNodeWidget(node.getId());
-        lienzoComponent.addNodeWidget(newNode);
+        
             
         newNode.setUrlIcon("/icons/" + node.getClassName() + ".png");
 
@@ -393,7 +406,7 @@ public class EndToEndViewScene extends AbstractScene {
             newEdge.setColor(toHexString(new Color(classMetadata.getColor())));
             newEdge.setCaption(edge.toString());
             edges.put(edge, newEdge);
-            lienzoComponent.addEdgeWidget(newEdge);
+            //lienzoComponent.addEdgeWidget(newEdge);
             return newEdge; 
         } catch (ServerSideException ex) {
             return new SrvEdgeWidget(323927373);

@@ -32,8 +32,9 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.dnd.DropTargetExtension;
 import com.vaadin.ui.dnd.event.DropEvent;
 import com.vaadin.ui.dnd.event.DropListener;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -209,7 +210,11 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                                 GoogleMapMarker mrkSource = objectsToMarkers.get(aSide);
                                 GoogleMapMarker mrkDestination = objectsToMarkers.get(bSide);
                                 
-                                GoogleMapPolyline connection = new GoogleMapPolyline(newConnection.toString(), Arrays.asList(mrkSource.getPosition(), mrkDestination.getPosition()));
+                                List<LatLon> coordinates = new ArrayList();
+                                coordinates.add(mrkSource.getPosition());
+                                coordinates.add(mrkDestination.getPosition());
+                                                                
+                                GoogleMapPolyline connection = new GoogleMapPolyline(newConnection.toString(), coordinates);
                                 connection.setStrokeWeight(2);
                                 
                                 edgesToObjects.put(connection, newConnection);

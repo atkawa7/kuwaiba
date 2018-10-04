@@ -55,6 +55,7 @@ public final class EndToEndView extends Panel {
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
         }
+        setSizeFull();
         
         this.setContent(scene);
     }
