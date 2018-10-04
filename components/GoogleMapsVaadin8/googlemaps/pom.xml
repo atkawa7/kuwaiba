@@ -10,7 +10,7 @@
     <name>Google Maps for Vaadin 8</name>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vaadin.version>8.3.1</vaadin.version>
+        <vaadin.version>8.5.2</vaadin.version>
         <vaadin.plugin.version>${vaadin.version}</vaadin.plugin.version>
 
         <gwt-maps-api.version>3.10.0-alpha-7</gwt-maps-api.version>
