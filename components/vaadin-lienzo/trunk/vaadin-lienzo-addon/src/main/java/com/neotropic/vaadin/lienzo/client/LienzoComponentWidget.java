@@ -791,41 +791,6 @@ public class LienzoComponentWidget extends LienzoPanel implements ClntFrameWidge
                 
                 clntEdge.setColor(srvEdge.getColor());
             }
-
-            if (clntEdge.getControlPoints() != null && srvEdge.getControlPoints() != null) {
-                if (clntEdge.getControlPoints().size() != srvEdge.getControlPoints().size()) {
-                    
-                    List<Point> srvControlPoints = new ArrayList();
-
-                    for (Point point : srvEdge.getControlPoints())
-                        srvControlPoints.add(new Point(point.getX(), point.getY()));
-
-                    clntEdge.setControlPoints(srvControlPoints);
-                    
-                    edgeWidget.updatePolyline(srvControlPoints);
-                    
-                } else {
-                    
-                    boolean flag = false;
-                    
-                    for (int i = 0; i < clntEdge.getControlPoints().size(); i += 1) {
-                        if (clntEdge.getControlPoints().get(i).getX() != srvEdge.getControlPoints().get(i).getX() || 
-                            clntEdge.getControlPoints().get(i).getY() != srvEdge.getControlPoints().get(i).getY()) {
-                            flag = true;
-                            break;
-                        }
-                    }
-                    if (flag) {
-                                                
-                        List<Point> srvControlPoints = new ArrayList();
-                        
-                        for (Point point : srvEdge.getControlPoints())
-                            srvControlPoints.add(new Point(point.getX(), point.getY()));
-                        
-                        clntEdge.setControlPoints(srvControlPoints);
-                    }
-                }
-            }
         }
     }
     

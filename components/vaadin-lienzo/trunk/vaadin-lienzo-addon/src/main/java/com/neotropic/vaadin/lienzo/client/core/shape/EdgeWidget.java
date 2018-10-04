@@ -98,43 +98,6 @@ public class EdgeWidget {
         polyLine.batch();
     }
     
-    public void updatePolyline(List<Point> coordinates) {
-        removePolyLine();
-        
-        double sourceX = coordinates.get(0).getX();
-	double sourceY = coordinates.get(0).getY();
-        
-        for (Point coordinate : coordinates) {		
-            double x = coordinate.getX();
-            double y = coordinate.getY();
-            
-            Circle circle = createCircleControlPoint(x, y);
-            circle.setVisible(false);
-            this.controlPoints.add(circle);
-            
-            edgeLayer.add(circle);
-            
-            Point point = createPointFromCircleControlPoint(circle, controlPoints);
-            points.add(point);
-	}
-        polyLine = new PolyLine(Point2DArray.fromArrayOfDouble(arrayOfDoubleFromListOfPoints(points)));
-	polyLine.setX(sourceX);
-	polyLine.setY(sourceY);
-	polyLine.setStrokeColor(strokeColor);
-	polyLine.setStrokeWidth(strokeWidth);
-				
-	polyLine.addNodeMouseDoubleClickHandler(new NodeMouseDoubleClickHandler() {
-
-            @Override
-            public void onNodeMouseDoubleClick(NodeMouseDoubleClickEvent event) {
-                newControlPoint(event.getX(), event.getY(), controlPoints);
-                fireEdgeWidgetUpdate();
-            }
-	});
-        edgeLayer.add(polyLine);
-        polyLine.batch();
-    }
-    
     public void removePolyLine() {
         edgeLayer.remove(polyLine);
         for (Circle controlPoint : controlPoints)
