@@ -56,6 +56,8 @@ public class EdgeWidget {
     
     private boolean editable = true;
     
+    private double selectionStrokeOffset = 10;
+    
     public EdgeWidget(Layer edgeLayer) {
         this.edgeLayer = edgeLayer;
     }
@@ -85,6 +87,7 @@ public class EdgeWidget {
 	polyLine.setY(sourceY);
 	polyLine.setStrokeColor(strokeColor);
 	polyLine.setStrokeWidth(strokeWidth);
+        polyLine.setSelectionStrokeOffset(selectionStrokeOffset + strokeWidth);
 				
 	polyLine.addNodeMouseDoubleClickHandler(new NodeMouseDoubleClickHandler() {
 
@@ -122,6 +125,7 @@ public class EdgeWidget {
     public void setStrokeWidth(double strokeWidth) {
         this.strokeWidth = strokeWidth;
         polyLine.setStrokeWidth(strokeWidth);
+        polyLine.setSelectionStrokeOffset(selectionStrokeOffset + strokeWidth);
         polyLine.batch();
     }
     
@@ -233,7 +237,7 @@ public class EdgeWidget {
             // Distance from a point to a line
             double d = Math.abs(x*a + y*b + c)/Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
             // Is the point near to line?
-            if (d <= polyLine.getStrokeWidth()) {
+            if (d <= polyLine.getStrokeWidth() + polyLine.getSelectionStrokeOffset()) {
                 // bounds of line with control points cp1  and cp2
                 double left, right, top, bottom;
                 
