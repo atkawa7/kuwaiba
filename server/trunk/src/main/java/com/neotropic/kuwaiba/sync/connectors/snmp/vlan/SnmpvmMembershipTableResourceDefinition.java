@@ -21,16 +21,14 @@ import org.snmp4j.smi.OID;
 /**
  * ciscoMgmt
  *       └─ciscoVtpMIB
- *                └─vtpMIBObjects
- *                             └─vlanTrunkPorts
+ *                └─ciscoVlanMembershipMIB
+ *                               └─ciscoVlanMembershipMIBObjects
+ *                                                        └─vmMembershipTable
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
-public class SnmpVlanTrunkPortsTableResourceDefinition extends HashMap<String, OID>{
-    //Here you find the info to sync the VLANs for ports in trunk mode
-    public SnmpVlanTrunkPortsTableResourceDefinition() {
-        put("vlanTrunkPortVlansEnabled", new OID("1.3.6.1.4.1.9.9.46.1.6.1.1.4")); //
-        put("vlanTrunkPortVlansEnabled2k", new OID("1.3.6.1.4.1.9.9.46.1.6.1.1.17"));
-        put("vlanTrunkPortVlansEnabled3k", new OID("1.3.6.1.4.1.9.9.46.1.6.1.1.18"));
-        put("vlanTrunkPortVlansEnabled4k", new OID("1.3.6.1.4.1.9.9.46.1.6.1.1.19"));
+public class SnmpvmMembershipTableResourceDefinition extends HashMap<String, OID>{
+    //Here you find info about the VLANs to sync ports in access mode.
+    public SnmpvmMembershipTableResourceDefinition() {
+        put("vmVlan", new OID("1.3.6.1.4.1.9.9.68.1.2.2.1.2")); //the name of the vlan
     }
 }

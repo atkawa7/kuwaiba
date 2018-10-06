@@ -48,7 +48,7 @@ public class CiscoVlansSinchronizer {
     /**
      * Prefix for vlans
      */
-    private static final String VLAN_PREFIX = "vlan";
+    //private static final String VLAN_PREFIX = "vlan";
     /**
      * Relationship to associate a port with vlans
      */
@@ -73,6 +73,10 @@ public class CiscoVlansSinchronizer {
      * The ifXTable loaded into the memory
      */
     private final HashMap<String, List<String>> ifXTable;
+    /**
+     * The vmMembershipTable loaded into the memory
+     */
+    private final HashMap<String, List<String>> vmMembershipTable;
     /**
      * The current ports of the device
      */
@@ -112,6 +116,7 @@ public class CiscoVlansSinchronizer {
         vlanInfo = (HashMap<String, List<String>>)data.get(2).getValue();
         currentPorts = new ArrayList<>();
         currentVlans = new ArrayList<>();
+        vmMembershipTable = (HashMap<String, List<String>>)data.get(3).getValue();
     }
 
     public List<SyncResult> execute ()
@@ -123,7 +128,8 @@ public class CiscoVlansSinchronizer {
             results.add(new SyncResult(SyncResult.TYPE_ERROR, "Unexpected error reading current structure", ex.getLocalizedMessage()));
         }
         syncVlans();
-        relatePorts();
+        relateTrunkPorts();
+        relateAccessPorts();
         return results;
     }
     
@@ -131,12 +137,11 @@ public class CiscoVlansSinchronizer {
         List<String> vlanInstances = vlanInfo.get("instance");
         List<String> vlanNames = vlanInfo.get("vtpVlanName");
         List<BusinessObjectLight> vlansToRemove = new ArrayList<>();
-        
         //first we must to romve the vlans that doens't match with the ones that we are synchronizing
         for(BusinessObjectLight vlan : currentVlans){
             boolean vlanExists = false;
             for(int i = 0; i < vlanInstances.size(); i++){
-                if((VLAN_PREFIX + vlanInstances.get(i).split("\\.")[1]).equals(vlan.getName())){
+                if((vlanInstances.get(i).split("\\.")[1]).equals(vlan.getName())){
                     vlanExists = true;
                     break;
                 }
@@ -158,11 +163,11 @@ public class CiscoVlansSinchronizer {
         //Now we create the vlans
         for(int i = 0; i < vlanInstances.size(); i++){
             //The instances has 1.XXX so we must split and add the "vlan" we won't suppor the "vl"
-            BusinessObjectLight currentVlan = searchInCurrentStructure(VLAN_PREFIX + vlanInstances.get(i).split("\\.")[1]);
+            BusinessObjectLight currentVlan = searchInCurrentStructure(vlanInstances.get(i).split("\\.")[1]);
             if (currentVlan == null){
                 HashMap<String, String> attributes = new HashMap<>();
                 attributes.put(Constants.PROPERTY_DESCRIPTION, vlanNames.get(i));
-                attributes.put(Constants.PROPERTY_NAME, VLAN_PREFIX + vlanInstances.get(i).split("\\.")[1]);
+                attributes.put(Constants.PROPERTY_NAME, vlanInstances.get(i).split("\\.")[1]);
 
                 long newVlanId;
                     try{
@@ -175,7 +180,7 @@ public class CiscoVlansSinchronizer {
                     // ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.valueOf(newObjectId));
                 } catch (ApplicationObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
                    results.add(new SyncResult(SyncResult.TYPE_ERROR,
-                           String.format("%s can't be created", VLAN_PREFIX + vlanInstances.get(i).split("\\.")[1]), 
+                           String.format("%s can't be created", vlanInstances.get(i).split("\\.")[1]), 
                            ex.getLocalizedMessage()));
                 }
             }
@@ -183,7 +188,7 @@ public class CiscoVlansSinchronizer {
     }
     
     /**
-     * For every port instances it processes the vlans data obtained 
+     * For every port (in trunk mode) instances it processes the vlans data obtained 
      * from the vlanTrunkPortTable and compares it with ports and 
      * vlans created in Kuwaiba in order to create relationships.
      * 
@@ -224,7 +229,7 @@ public class CiscoVlansSinchronizer {
      * 
      * We avoid the patterns with ff:ff:ff:ff or Xf:ff:ff:ff or ff:ff:ff:fX
      */
-    public void relatePorts(){
+    public void relateTrunkPorts(){
         List<String> vlanInstances = vlanInfo.get("instance");
         List<String> ifInstances = ifXTable.get("instance");
         List<String> instancesNames = ifXTable.get("ifName");
@@ -284,11 +289,11 @@ public class CiscoVlansSinchronizer {
                         checkPortVlansRelationships(currentPort, candidateVlans, assosiatedVlans);
                         //The filtterd vlans should be created in Kuwaiba but we check if they are already created in kuwaiba
                         for (long vlanName : candidateVlans) {
-                            BusinessObjectLight currentVlan = searchInCurrentStructure(VLAN_PREFIX + vlanName);
+                            BusinessObjectLight currentVlan = searchInCurrentStructure(Long.toString(vlanName));
                             if(currentVlan == null){
                                 results.add(new SyncResult(SyncResult.TYPE_ERROR, 
                                             "Searching in the current structure",
-                                            String.format("%s not found", VLAN_PREFIX + vlanName)));
+                                            String.format("%s not found", vlanName)));
                             }else{//we must check if a relationship between the port and vland is already set
                                 boolean isAlreadyAssociated = false;
                                 for (BusinessObjectLight assosiatedVlan : assosiatedVlans) {
@@ -296,6 +301,7 @@ public class CiscoVlansSinchronizer {
                                         isAlreadyAssociated = true;
                                         results.add(new SyncResult(SyncResult.TYPE_INFORMATION, "",
                                             String.format("%s and %s are related", currentPort, assosiatedVlan)));
+                                        break;
                                     }
                                 }
                                 if(!isAlreadyAssociated){
@@ -304,11 +310,11 @@ public class CiscoVlansSinchronizer {
                                                 currentVlan.getClassName(), currentVlan.getId(), RELATIONSHIP_PORT_BELONGS_TO_VLAN, false);
                                     } catch (BusinessObjectNotFoundException | OperationNotPermittedException | MetadataObjectNotFoundException ex) {
                                         results.add(new SyncResult(SyncResult.TYPE_ERROR,
-                                                String.format("%s and %s were not related", currentPort, VLAN_PREFIX + vlanName),
+                                                String.format("%s and %s were not related", currentPort, vlanName),
                                                 ex.getLocalizedMessage()));
                                     }
                                     results.add(new SyncResult(SyncResult.TYPE_SUCCESS, "",
-                                            String.format("%s and %s was related successfully ", currentPort, VLAN_PREFIX + vlanName)));
+                                            String.format("%s and %s was related successfully ", currentPort, vlanName)));
                                 }
                             }
                         }    
@@ -317,6 +323,62 @@ public class CiscoVlansSinchronizer {
             }
         }
     }
+    
+    public void relateAccessPorts(){
+        List<String> ifInstances = ifXTable.get("instance"); //port ids
+        List<String> instancesNames = ifXTable.get("ifName"); // port names
+        List<String> vmVlan = vmMembershipTable.get("vmVlan"); //vlan names
+        List<String> vmVlanInstances = vmMembershipTable.get("instance"); //the port ids
+        
+        for (int i = 0; i<vmVlan.size(); i++) {
+            BusinessObjectLight currentVlan = searchInCurrentStructure(vmVlan.get(i));
+            if(currentVlan == null)
+                results.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                                            "Searching in the current structure",
+                                            String.format("%s not found", vmVlan.get(i))));
+            else{
+                int indexOf = ifInstances.indexOf(vmVlanInstances.get(i));
+                if(indexOf > -1){
+                    BusinessObjectLight currentPort = searchInCurrentStructure(instancesNames.get(indexOf));
+                    if(currentPort == null)
+                        results.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                                    "Search in the current structure",
+                                    String.format("%s not found", SyncUtil.wrapPortName(instancesNames.get(indexOf)))));
+                    else{
+                        List<BusinessObjectLight> assosiatedVlans = new ArrayList<>();
+                            try {
+                                assosiatedVlans = bem.getSpecialAttribute(currentPort.getClassName(), currentPort.getId(), RELATIONSHIP_PORT_BELONGS_TO_VLAN);
+                        } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException ex) {
+                            results.add(new SyncResult(SyncResult.TYPE_ERROR, ex.getLocalizedMessage(),
+                                            String.format("Can not get Vlans associated to %s", currentPort)));
+                        }
+                        boolean isAlreadyAssociated = false;
+                        for (BusinessObjectLight assosiatedVlan : assosiatedVlans) {
+                            if(assosiatedVlan.getId() == currentVlan.getId()){ //The port and the vlan has a relation
+                                isAlreadyAssociated = true;
+                                results.add(new SyncResult(SyncResult.TYPE_INFORMATION, "",
+                                    String.format("%s and %s are related", currentPort, assosiatedVlan)));
+                                break;
+                            }
+                        }
+                        if(!isAlreadyAssociated){
+                            try {
+                                bem.createSpecialRelationship(currentPort.getClassName(), currentPort.getId(),
+                                        currentVlan.getClassName(), currentVlan.getId(), RELATIONSHIP_PORT_BELONGS_TO_VLAN, false);
+                            } catch (BusinessObjectNotFoundException | OperationNotPermittedException | MetadataObjectNotFoundException ex) {
+                                results.add(new SyncResult(SyncResult.TYPE_ERROR,
+                                        String.format("%s and %s were not related", currentPort, vmVlan.get(i)),
+                                        ex.getLocalizedMessage()));
+                            }
+                            results.add(new SyncResult(SyncResult.TYPE_SUCCESS, "",
+                                    String.format("%s and %s was related successfully ", currentPort, vmVlan.get(i))));
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     
     /**
      * Checks if there are changes an release the relationships between 
@@ -332,7 +394,7 @@ public class CiscoVlansSinchronizer {
         for (BusinessObjectLight assosiatedVlan : assosiatedVlans) {
             boolean isAssociatedVlanInVlansToAssosiate = false;
             for(long vlanToAssosiateName : vlanstoAssosiate){
-                if(assosiatedVlan.getName().equals( VLAN_PREFIX + vlanToAssosiateName))
+                if(assosiatedVlan.getName().equals(vlanToAssosiateName))
                     isAssociatedVlanInVlansToAssosiate = true;
             }
             //if the vlan is not in the list of the vlans to assosiate after sync it must be release
@@ -451,10 +513,10 @@ public class CiscoVlansSinchronizer {
      * Checks if a given port exists in the current structure
      * @param instance a given name for port, virtual port or vlan
      * @return the object, null doesn't exists in the current structure
-    */
+     */
     private BusinessObjectLight searchInCurrentStructure(String instance){
         for(BusinessObjectLight currentPort: currentPorts){
-            if(currentPort.getName().toLowerCase().equals(SyncUtil.wrapPortName(instance.toLowerCase())))
+            if(SyncUtil.wrapPortName(currentPort.getName()).equals(SyncUtil.wrapPortName(instance.toLowerCase())))
                 return currentPort;
         }
         for(BusinessObjectLight currentVlan: currentVlans){

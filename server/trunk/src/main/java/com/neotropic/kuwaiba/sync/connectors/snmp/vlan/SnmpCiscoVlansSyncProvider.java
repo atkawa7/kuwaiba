@@ -31,19 +31,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.json.Json;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
-import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
-import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
-import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.util.i18n.I18N;
-import org.openide.util.Exceptions;
 import org.snmp4j.smi.OID;
 
 /**
@@ -152,7 +146,7 @@ public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
                         snmpManager.setPrivacyProtocol(agent.getParameters().get(Constants.PROPERTY_PRIVACY_PROTOCOL));
                         snmpManager.setPrivacyPass(agent.getParameters().get(Constants.PROPERTY_PRIVACY_PASS));
                     }
-                    
+                    //VlanTrunkPortsTable
                     SnmpVlanTrunkPortsTableResourceDefinition VlanTrunkPortsTable = new SnmpVlanTrunkPortsTableResourceDefinition();
                     List<List<String>> vlansMibTableAsString = snmpManager.getTableAsString(VlanTrunkPortsTable.values().toArray(new OID[0]));
                     
@@ -164,7 +158,7 @@ public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
                     pollResult.getResult().put(mappedObjLight, new ArrayList<>());
                     pollResult.getResult().get(mappedObjLight).add(
                             new TableData("vlansMibTable", SyncUtil.parseMibTable("instance", VlanTrunkPortsTable, vlansMibTableAsString))); //NOI18N
-                    
+                    //ifXTable
                     SnmpifXTableResocurceDefinition ifXTable = new SnmpifXTableResocurceDefinition();
                     List<List<String>> ifXTableAsString = snmpManager.getTableAsString(ifXTable.values().toArray(new OID[0]));
                     
@@ -176,7 +170,7 @@ public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
                     
                     pollResult.getResult().get(mappedObjLight).add(
                             new TableData("ifXTable", SyncUtil.parseMibTable("instance", ifXTable, ifXTableAsString))); //NOI18N
-                    
+                    //VlanInfo
                     SnmpVtpVlanTableResourceDefinition vlanInfo = new SnmpVtpVlanTableResourceDefinition();
                     List<List<String>> vlanInfoAsString = snmpManager.getTableAsString(vlanInfo.values().toArray(new OID[0]));
                     
@@ -188,7 +182,20 @@ public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
                     
                     pollResult.getResult().get(mappedObjLight).add(
                             new TableData("vlanInfo", SyncUtil.parseMibTable("instance", vlanInfo, vlanInfoAsString))); //NOI18N
+
+                    //vmMemberShipTable
+                    SnmpvmMembershipTableResourceDefinition vmMembershipTable = new SnmpvmMembershipTableResourceDefinition();
+                    List<List<String>> vmMembershipTableAsString = snmpManager.getTableAsString(vmMembershipTable.values().toArray(new OID[0]));
                     
+                    if (vmMembershipTableAsString == null) {
+                        pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                            new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString())));
+                        return pollResult;
+                    }
+                    
+                    pollResult.getResult().get(mappedObjLight).add(
+                            new TableData("vmMembershipTable", SyncUtil.parseMibTable("instance", vmMembershipTable, vmMembershipTableAsString))); //NOI18N
+                      
                 }
             }
         }
