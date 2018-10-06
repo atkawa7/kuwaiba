@@ -18,6 +18,7 @@ package org.kuwaiba.interfaces.ws.toserialize.business;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -48,15 +49,24 @@ public class RemoteLogicalConnectionDetails implements Serializable {
      */
     private List<RemoteObjectLight> physicalPathForEndpointA;
     /**
-     * Physical path of the connection's endpoint A (all the chain of physical elements -patches, mirror ports, etc- until reaching the next physical port)
+     * Physical path of the connection's endpoint B (all the chain of physical elements -patches, mirror ports, etc- until reaching the next physical port)
      */
     private List<RemoteObjectLight> physicalPathForEndpointB;
+    /**
+     * Physical paths, one for every port that belongs to the same VLAN of the endpoint A
+     */
+    private RemoteObjectRelatedObjects physicalPathForVlansEndpointA;
+    /**
+     * Physical paths, one for every port that belongs to the same VLAN of the endpoint B
+     */
+    private RemoteObjectRelatedObjects physicalPathForVlansEndpointB;
 
     /**
      * Default parameter-less constructor
      */
     public RemoteLogicalConnectionDetails() { }
 
+    //Used for getBGPMap
     public RemoteLogicalConnectionDetails(BusinessObject connectionObject, 
             BusinessObjectLight endpointA, BusinessObjectLight endpointB, 
             List<BusinessObjectLight> physicalPathForEndpointA, List<BusinessObjectLight> physicalPathForEndpointB) {
@@ -69,6 +79,26 @@ public class RemoteLogicalConnectionDetails implements Serializable {
         this.physicalPathForEndpointB = new ArrayList<>();
         for (BusinessObjectLight physicalPathForEndpointBElement : physicalPathForEndpointB)
             this.physicalPathForEndpointB.add(new RemoteObjectLight(physicalPathForEndpointBElement));
+    }
+    
+    //Used for getLogicalLinkDetails
+    public RemoteLogicalConnectionDetails(BusinessObject connectionObject, 
+            BusinessObjectLight endpointA, BusinessObjectLight endpointB, 
+            List<BusinessObjectLight> physicalPathForEndpointA, List<BusinessObjectLight> physicalPathForEndpointB,
+            HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForVlansEndpointA, 
+            HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForVlansEndpointB) {
+        this.connectionObject = new RemoteObject(connectionObject);
+        this.endpointA = endpointA == null ? null : new RemoteObjectLight(endpointA);
+        this.endpointB = endpointB == null ? null : new RemoteObjectLight(endpointB);
+        this.physicalPathForEndpointA = new ArrayList<>();
+        for (BusinessObjectLight physicalPathForEndpointAElement : physicalPathForEndpointA)
+            this.physicalPathForEndpointA.add(new RemoteObjectLight(physicalPathForEndpointAElement));
+        this.physicalPathForEndpointB = new ArrayList<>();
+        for (BusinessObjectLight physicalPathForEndpointBElement : physicalPathForEndpointB)
+            this.physicalPathForEndpointB.add(new RemoteObjectLight(physicalPathForEndpointBElement));
+        
+        this.physicalPathForVlansEndpointA = new RemoteObjectRelatedObjects(physicalPathForVlansEndpointA);
+        this.physicalPathForVlansEndpointB = new RemoteObjectRelatedObjects(physicalPathForVlansEndpointB);
     }
     
     public RemoteObject getConnectionObject() {
@@ -109,5 +139,21 @@ public class RemoteLogicalConnectionDetails implements Serializable {
 
     public void setPhysicalPathForEndpointB(List<RemoteObjectLight> physicalPathForEndpointB) {
         this.physicalPathForEndpointB = physicalPathForEndpointB;
+    }  
+
+    public RemoteObjectRelatedObjects getPhysicalPathForVlansEndpointA() {
+        return physicalPathForVlansEndpointA;
+    }
+
+    public void setPhysicalPathForVlansEndpointA(RemoteObjectRelatedObjects physicalPathForVlansEndpointA) {
+        this.physicalPathForVlansEndpointA = physicalPathForVlansEndpointA;
+    }
+
+    public RemoteObjectRelatedObjects getPhysicalPathForVlansEndpointB() {
+        return physicalPathForVlansEndpointB;
+    }
+
+    public void setPhysicalPathForVlansEndpointB(RemoteObjectRelatedObjects physicalPathForVlansEndpointB) {
+        this.physicalPathForVlansEndpointB = physicalPathForVlansEndpointB;
     }
 }

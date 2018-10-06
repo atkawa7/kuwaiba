@@ -241,6 +241,45 @@ public class BGPSynchronizer {
     }
    
     /**
+     * Search a provider(cloud) in the same city of the device that is been sync
+     * remote ip addr port
+     * @param asn asn number form snmp
+     * @param asnName asn name from peeringDB
+     * @param bgpPeerRemoteAddr remote ip addr from snmp
+     * @param bgpPeerIdentifier peering id from snmp
+     * @return the created cloud
+     */
+    private BusinessObject searchProvider(String asn, String asnName, String bgpPeerRemoteAddr, String bgpPeerIdentifier){
+        try{
+            if(!asnName.isEmpty()){
+                BusinessObject location = bem.getParentOfClass(className, id, "City");
+                if(location == null)
+                    res.add(new SyncResult(SyncResult.TYPE_ERROR, "Seacrhing device location",
+                            "The sync device has no parent subclass of City"));
+                else{
+                    List<BusinessObjectLight> objectChildren = bem.getObjectChildren(location.getClassName(), location.getId(), -1);
+                    for (BusinessObjectLight child : objectChildren) {
+                        BusinessObject obj = bem.getObject(child.getId());
+                        HashMap<String, String> attributes = obj.getAttributes();
+                        if(child.getName().equals(asnName) && 
+                                attributes.get("asn").equals(asn) && 
+                                attributes.get("bgpPeerIdentifier").equals(bgpPeerIdentifier)){
+                        
+                            return obj;
+                        }
+                    }
+                    return null;
+                }
+            }
+        } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | InvalidArgumentException ex) {
+            res.add(new SyncResult(SyncResult.TYPE_ERROR, "Creating provider", 
+                    String.format("no provider was created for asn %s related with ip: %s due to: %s", 
+                            asn, bgpPeerRemoteAddr, ex.getLocalizedMessage())));
+        }
+        return null;
+    }
+    
+    /**
      * Creates a provider(cloud) a port and relates thar port with the 
      * remote ip addr port
      * @param asn asn number form snmp
@@ -252,10 +291,10 @@ public class BGPSynchronizer {
     private BusinessObject createProvider(String asn, String asnName, String bgpPeerRemoteAddr, String bgpPeerIdentifier){
         try{
             if(!asnName.isEmpty()){
-                BusinessObject location = bem.getParentOfClass(className, id, "ViewableObject");
+                BusinessObject location = bem.getParentOfClass(className, id, "City");
                 if(location == null)
                     res.add(new SyncResult(SyncResult.TYPE_ERROR, "Seacrhing device location",
-                            "The sync device has no parent subclass of ViewableObject"));
+                            "The sync device has no parent subclass of City"));
                 else{
                     HashMap<String, String> attributes = new HashMap<>();
                     attributes.put("asn", asn);
@@ -326,19 +365,39 @@ public class BGPSynchronizer {
         return null;
     }
     
-    private BusinessObjectLight checkBGPLink(String asn, String asnName, BusinessObjectLight port) 
+    private BusinessObjectLight checkBGPLink(BusinessObjectLight sourcePort, BusinessObjectLight destinyPort) 
             throws MetadataObjectNotFoundException, BusinessObjectNotFoundException
     {
-        HashMap<String, List<BusinessObjectLight>> localPortRels = bem.getSpecialAttributes(port.getClassName(), port.getId());
-        List<BusinessObjectLight> sourceBgpLinks = new ArrayList<>();
-        for (Map.Entry<String, List<BusinessObjectLight>> entry : localPortRels.entrySet()) {
-            if(entry.getKey().equals(RELATIONSHIP_BGPLINKENDPOINTA) || entry.getKey().equals(RELATIONSHIP_BGPLINKENDPOINTB))
-                sourceBgpLinks = entry.getValue();
+        HashMap<String, List<BusinessObjectLight>> sourcePortRels = bem.getSpecialAttributes(sourcePort.getClassName(), sourcePort.getId());
+        List<BusinessObjectLight> sourceBgpLinksA = new ArrayList<>();
+        List<BusinessObjectLight> sourceBgpLinksB = new ArrayList<>();
+        for (Map.Entry<String, List<BusinessObjectLight>> entry : sourcePortRels.entrySet()) {
+            if(entry.getKey().equals(RELATIONSHIP_BGPLINKENDPOINTA))
+                sourceBgpLinksA = entry.getValue();
+            if( entry.getKey().equals(RELATIONSHIP_BGPLINKENDPOINTB))
+                sourceBgpLinksB = entry.getValue();
         }
-        for (BusinessObjectLight sourceBgpLink : sourceBgpLinks) {
-            if(sourceBgpLink.getName().equals(asn))
+               
+        HashMap<String, List<BusinessObjectLight>> destinyPortRels = bem.getSpecialAttributes(destinyPort.getClassName(), destinyPort.getId());
+        List<BusinessObjectLight> destinyBgpLinksA = new ArrayList<>();
+        List<BusinessObjectLight> destinyBgpLinksB = new ArrayList<>();
+        for (Map.Entry<String, List<BusinessObjectLight>> entry : destinyPortRels.entrySet()) {
+            if(entry.getKey().equals(RELATIONSHIP_BGPLINKENDPOINTA))
+                destinyBgpLinksA = entry.getValue();
+            if(entry.getKey().equals(RELATIONSHIP_BGPLINKENDPOINTB))
+                destinyBgpLinksB = entry.getValue();
+        }
+        
+        for (BusinessObjectLight sourceBgpLink : sourceBgpLinksA) {
+            if(destinyBgpLinksB.contains(sourceBgpLink))
                 return sourceBgpLink;
         }
+        
+        for (BusinessObjectLight sourceBgpLink : sourceBgpLinksB) {
+            if(destinyBgpLinksA.contains(sourceBgpLink))
+                return sourceBgpLink;
+        }
+        
         return null;
     }
     
@@ -355,52 +414,52 @@ public class BGPSynchronizer {
             String bgpPeerIdentifier, String bgpPeerRemotePort)
     {
         try{ 
-            //We search the remote port in neighbor device
             String asnName = AFRIX_ASN;
             if(!asn.equals(AFRIX_ASN))
                asnName = checkPeeringDB(asn, bgpPeerLocalAddr, bgpPeerRemoteAddr);
-            BusinessObjectLight remotePort = searchIp(bgpPeerRemoteAddr);
+            //We search the remote port in neighbor device
+            BusinessObjectLight remotePort = searchPortByAddr(bgpPeerRemoteAddr);
             //if no port was related with the remoteAddr we create a provider(Cloud)
             BusinessObject remoteDevice = null;
-            BusinessObjectLight sourceBgpLink = checkBGPLink(asn, asnName, localPort);
+            
             if(remotePort != null)
                 remoteDevice = findRemoteDevice(asn, bgpPeerRemoteAddr, remotePort, bgpPeerIdentifier);
+            
             else if(!asn.equals(AFRIX_ASN)){ //we only create a provider if is a foreigner asn
                 remoteDevice = createProvider(asn, asnName, bgpPeerRemoteAddr, bgpPeerIdentifier);
                 if(remoteDevice != null)
-                remotePort = createRemoteProviderPort(remoteDevice, bgpPeerRemoteAddr, bgpPeerRemotePort);
+                    remotePort = createRemoteProviderPort(remoteDevice, bgpPeerRemoteAddr, bgpPeerRemotePort);
             }
-            //we create at least one side of the BGPLink in the source routers
-            if(remotePort == null && remoteDevice == null && sourceBgpLink == null){//no remoteDevice were found we must check if the BGPLink exists and has end point in the source device
-                HashMap<String, String> attributesToBeSet = new HashMap<>();
-                attributesToBeSet.put(Constants.PROPERTY_NAME, asn);
-                long bgpLinkId = bem.createSpecialObject(BGPLINK, null, -1, attributesToBeSet, -1);
-                sourceBgpLink = new BusinessObject(BGPLINK, bgpLinkId, asn);
-                //We create the relationship nedpoints, we also create a relationship between the devices and the bgp link 
-                //endpointA
-                bem.createSpecialRelationship(BGPLINK, bgpLinkId, localPort.getClassName(), localPort.getId(), RELATIONSHIP_BGPLINKENDPOINTA, false);
-                bem.createSpecialRelationship(BGPLINK, bgpLinkId, className, id, RELATIONSHIP_BGPLINK, false);
-                res.add(new SyncResult(SyncResult.TYPE_SUCCESS, "BGPLink source endpoint created", 
-                                String.format("in this device - %s, for asn: %s(%s)", localPort, asnName, asn)));
-            }
-            else
-                res.add(new SyncResult(SyncResult.TYPE_INFORMATION, "Check BGPLink source endpoint", 
-                       String.format("the BGPLink for asn: %s(%s) has an enpoint in this device, port: %s", 
-                               asnName, asn, localPort)));
+            //we only create the BGPLink if we have both sides
             //the destiny side
-            if(remotePort != null && remoteDevice != null && sourceBgpLink != null){
-                BusinessObjectLight destinyBgpLink = checkBGPLink(asn, asnName, remotePort);
-                if(destinyBgpLink == null){
+            if(remotePort != null && remoteDevice != null){
+                BusinessObjectLight sourceBgpLink = checkBGPLink(localPort, remotePort);
+                if(sourceBgpLink == null){
+                    HashMap<String, String> attributesToBeSet = new HashMap<>();
+                    attributesToBeSet.put(Constants.PROPERTY_NAME, asn);
+                    long bgpLinkId = bem.createSpecialObject(BGPLINK, null, -1, attributesToBeSet, -1);
+                    sourceBgpLink = new BusinessObject(BGPLINK, bgpLinkId, asn);
+                    //We create the endpoints of the relationship, we also create a relationship between the devices and the bgp link 
+                    //endpointA
+                    bem.createSpecialRelationship(BGPLINK, bgpLinkId, localPort.getClassName(), localPort.getId(), RELATIONSHIP_BGPLINKENDPOINTA, false);
+                    bem.createSpecialRelationship(BGPLINK, bgpLinkId, className, id, RELATIONSHIP_BGPLINK, false);
+                    res.add(new SyncResult(SyncResult.TYPE_SUCCESS, "BGPLink source endpoint created", 
+                                    String.format("in this device - %s, for asn: %s(%s)", localPort, asnName, asn)));
+                    //endpointB
                     bem.createSpecialRelationship(BGPLINK, sourceBgpLink.getId(), remotePort.getClassName(), remotePort.getId(), RELATIONSHIP_BGPLINKENDPOINTB, false);
                     bem.createSpecialRelationship(BGPLINK, sourceBgpLink.getId(), remoteDevice.getClassName(), remoteDevice.getId(), RELATIONSHIP_BGPLINK, false);
                     res.add(new SyncResult(SyncResult.TYPE_SUCCESS, "BGPLink destiny endpoint created", 
                                 String.format("in %s - %s, for asn: %s(%s)", remoteDevice, remotePort, asnName, asn)));
-                }//TODO check if must be release this BGPLink
-                else if(destinyBgpLink.getId() == sourceBgpLink.getId() && asn.equals(sourceBgpLink.getName()))
-                    res.add(new SyncResult(SyncResult.TYPE_INFORMATION, "Check BGPLink destiny endpoint", 
-                       String.format("the BGPLink for asn: %s(%s) has an enpoint in %s, port: %s", 
-                               asnName, asn, remoteDevice, remotePort)));
+                }
+                else
+                    res.add(new SyncResult(SyncResult.TYPE_INFORMATION, "BGPLink exists", 
+                       String.format("asn: %s(%s), has endpoints %s to %s in device %s", 
+                               localPort, asnName, asn, remoteDevice, remotePort)));
             }
+            else
+                res.add(new SyncResult(SyncResult.TYPE_INFORMATION, String.format("BGPLink will not be created for asn: %s(%s)", asnName, asn), 
+                   String.format("only source endpoint %s was found, no destiny port was found realted with ip %s", 
+                           localPort, bgpPeerRemoteAddr)));
         } catch (ApplicationObjectNotFoundException | InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException |OperationNotPermittedException ex) {
                 res.add(new SyncResult(SyncResult.TYPE_ERROR, "creating BGP Link", 
                     String.format("Could not create BGPLink, due to: %s", ex.getLocalizedMessage())));
@@ -413,7 +472,7 @@ public class BGPSynchronizer {
      * @param iPaddress a given IP address
      * @return the communications element related with the given IP 
      */
-    private BusinessObjectLight searchIp(String iPaddress){
+    private BusinessObjectLight searchPortByAddr(String iPaddress){
         for(BusinessObjectLight subnet : ips.keySet()){
             for (BusinessObjectLight ip :  ips.get(subnet)) {
                 try {

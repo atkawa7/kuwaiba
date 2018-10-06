@@ -110,7 +110,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
             String className = null;                
             String address = null;
             String port = null;
-            String community = null;
+            //String community = null;
 
             if (agent.getParameters().containsKey("deviceId")) //NOI18N
                 id = Long.valueOf(agent.getParameters().get("deviceId")); //NOI18N
