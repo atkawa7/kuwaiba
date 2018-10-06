@@ -168,7 +168,8 @@ public class CacheManager {
         if(uniqueClassAttributes == null){
             uniqueClassAttributes = new HashMap<>();
             List<String> values = new ArrayList<>();
-            values.add(value);
+            if(value != null) //maybe still there is no object of this class with this unique attribute
+                values.add(value);
             uniqueClassAttributes.put(attributeName, values);
             uniqueClassAttributesIndex.put(className, uniqueClassAttributes);
         }
@@ -192,10 +193,11 @@ public class CacheManager {
         HashMap<String, List<String>> uniqueClassAttributes = uniqueClassAttributesIndex.get(className);
         if(uniqueClassAttributes == null){
             uniqueClassAttributes = new HashMap<>();
-            uniqueClassAttributes.put(attributeName, values);
+            if(values != null)
+                uniqueClassAttributes.put(attributeName, values);
             uniqueClassAttributesIndex.put(className, uniqueClassAttributes);
         }
-        else{
+        else if(values != null){
             uniqueClassAttributes.put(attributeName, values);
             uniqueClassAttributesIndex.put(className, uniqueClassAttributes);
         }

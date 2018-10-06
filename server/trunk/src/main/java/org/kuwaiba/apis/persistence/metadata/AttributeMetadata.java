@@ -273,4 +273,9 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
     public int compareTo(AttributeMetadata o) {
         return order.compareTo(o.order);
     }
+    
+    @Override
+    public String toString() {
+        return String.format("%s", name);
+    }
 }

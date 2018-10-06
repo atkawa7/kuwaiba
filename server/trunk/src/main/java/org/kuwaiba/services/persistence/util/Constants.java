@@ -381,6 +381,10 @@ public class Constants {
      */
     public static final String CLASS_VRF_INSTANCE = "VRFInstance"; //NOI18N
     /**
+     * Class BGPLink
+     */
+    public static final String CLASS_BGPLINK = "BGPLink"; //NOI18N
+    /**
      * Class Generic Communications Equipment
      */
     public static final String CLASS_GENERICCOMMUNICATIONSELEMENT = "GenericCommunicationsElement";

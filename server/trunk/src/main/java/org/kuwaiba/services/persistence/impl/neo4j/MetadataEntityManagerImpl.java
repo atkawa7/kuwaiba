@@ -1859,9 +1859,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                             }
                         }
                     }
-                }
+                }else
+                    uniqueValues.put(className, null);//when no object has been created
             }
-        }
+        }//end for
         for(String _className : uniqueValues.keySet())
             cm.putUniqueAttributeValuesIndex(className, attributeName, uniqueValues.get(_className));
         return true;
@@ -1897,7 +1898,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                                         attribute.getName(), 
                                         remoteObject.getAttributes().get(attribute.getName()));
                         }
-                    }
+                    }else//there are no created objects, but this attribute is unique
+                        cm.putUniqueAttributeValueIndex(subClassMetadata.getName(), 
+                                        attribute.getName(), null);
                 }
             }
         }//end for 

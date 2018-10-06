@@ -1038,7 +1038,7 @@ public class Util {
         final TraversalDescription UPDATE_TRAVERSAL = classNode.getGraphDatabase().traversalDescription().
                     breadthFirst().
                     relationships(RelTypes.EXTENDS, Direction.INCOMING);
-
+        
         for(Path p : UPDATE_TRAVERSAL.traverse(classNode)){
             for(Relationship rel : p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE)) {
                 if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeName)){
