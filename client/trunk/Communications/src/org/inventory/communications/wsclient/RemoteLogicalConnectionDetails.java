@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="endpointB" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" minOccurs="0"/>
  *         &lt;element name="physicalPathForEndpointA" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="physicalPathForEndpointB" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectLight" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="physicalPathForVlansEndpointA" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectRelatedObjects" minOccurs="0"/>
+ *         &lt;element name="physicalPathForVlansEndpointB" type="{http://ws.interfaces.kuwaiba.org/}remoteObjectRelatedObjects" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -38,7 +40,9 @@ import javax.xml.bind.annotation.XmlType;
     "endpointA",
     "endpointB",
     "physicalPathForEndpointA",
-    "physicalPathForEndpointB"
+    "physicalPathForEndpointB",
+    "physicalPathForVlansEndpointA",
+    "physicalPathForVlansEndpointB"
 })
 public class RemoteLogicalConnectionDetails {
 
@@ -49,6 +53,8 @@ public class RemoteLogicalConnectionDetails {
     protected List<RemoteObjectLight> physicalPathForEndpointA;
     @XmlElement(nillable = true)
     protected List<RemoteObjectLight> physicalPathForEndpointB;
+    protected RemoteObjectRelatedObjects physicalPathForVlansEndpointA;
+    protected RemoteObjectRelatedObjects physicalPathForVlansEndpointB;
 
     /**
      * Gets the value of the connectionObject property.
@@ -178,6 +184,54 @@ public class RemoteLogicalConnectionDetails {
             physicalPathForEndpointB = new ArrayList<RemoteObjectLight>();
         }
         return this.physicalPathForEndpointB;
+    }
+
+    /**
+     * Gets the value of the physicalPathForVlansEndpointA property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link RemoteObjectRelatedObjects }
+     *     
+     */
+    public RemoteObjectRelatedObjects getPhysicalPathForVlansEndpointA() {
+        return physicalPathForVlansEndpointA;
+    }
+
+    /**
+     * Sets the value of the physicalPathForVlansEndpointA property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link RemoteObjectRelatedObjects }
+     *     
+     */
+    public void setPhysicalPathForVlansEndpointA(RemoteObjectRelatedObjects value) {
+        this.physicalPathForVlansEndpointA = value;
+    }
+
+    /**
+     * Gets the value of the physicalPathForVlansEndpointB property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link RemoteObjectRelatedObjects }
+     *     
+     */
+    public RemoteObjectRelatedObjects getPhysicalPathForVlansEndpointB() {
+        return physicalPathForVlansEndpointB;
+    }
+
+    /**
+     * Sets the value of the physicalPathForVlansEndpointB property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link RemoteObjectRelatedObjects }
+     *     
+     */
+    public void setPhysicalPathForVlansEndpointB(RemoteObjectRelatedObjects value) {
+        this.physicalPathForVlansEndpointB = value;
     }
 
 }

@@ -21,7 +21,10 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
@@ -70,19 +73,19 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
     /**
      * Custom move provider
      */
-    private CustomMoveProvider moveProvider;
+    private final CustomMoveProvider moveProvider;
     /**
      * Custom add/remove control point action
      */
-    private CustomAddRemoveControlPointAction addRemoveControlPointAction;
+    private final CustomAddRemoveControlPointAction addRemoveControlPointAction;
     /**
      * Custom move control point action
      */
-    private CustomMoveControlPointAction moveControlPointAction;
+    private final CustomMoveControlPointAction moveControlPointAction;
     /**
      * Custom select provider
      */
-    private WidgetAction selectAction;
+    private final WidgetAction selectAction;
     private List<LocalLogicalConnectionDetails> bgpMap;
     private List<Long> bgpLinksIds;
 
@@ -101,6 +104,7 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         addChild(interactionLayer);
         addChild(edgeLayer);
         addChild(nodeLayer);
+        
         
         moveProvider = new CustomMoveProvider(this);
         selectAction = ActionFactory.createSelectAction(new CustomSelectProvider(this), true);
@@ -189,55 +193,100 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
     }
 
     public void createBGPView(List<LocalLogicalConnectionDetails> bgpMap){
+        this.clear();
         this.bgpMap = bgpMap;
-        Random rand = new Random();
-        for (LocalLogicalConnectionDetails localLogicalConnectionDetail : bgpMap) {
-            LocalObject bgpLink = localLogicalConnectionDetail.getConnectionObject();
-            localLogicalConnectionDetail.getEndpointA();
-            localLogicalConnectionDetail.getEndpointB();
-            List<LocalObjectLight> physicalPathForEndpointA = localLogicalConnectionDetail.getPhysicalPathForEndpointA();
-            if(!physicalPathForEndpointA.isEmpty() && physicalPathForEndpointA.get(0) != null){
-                Widget widget = findWidget(physicalPathForEndpointA.get(0));
-                if(widget == null){
-                    addNode(physicalPathForEndpointA.get(0));
-                    validate();
+        Map<LocalObjectLight, List<LocalObjectLight>> portDevices = new HashMap<>();
+        Map<LocalObjectLight, LocalObjectLight> portParent = new HashMap<>();
+        Map<LocalObjectLight, List<LocalObjectLight>> bgpLinkPorts = new HashMap<>();
+       
+        for (LocalLogicalConnectionDetails logicalConnectionDetail : bgpMap) {
+            LocalObjectLight endpointA = logicalConnectionDetail.getEndpointA();
+            LocalObjectLight endpointB = logicalConnectionDetail.getEndpointB();
+            
+            List<LocalObjectLight> physicalPathForEndpointA = logicalConnectionDetail.getPhysicalPathForEndpointA();
+            List<LocalObjectLight> physicalPathForEndpointB = logicalConnectionDetail.getPhysicalPathForEndpointB();
+            List<LocalObjectLight> bgpLink = new ArrayList<>();
+            
+            if(endpointA != null){ 
+                if(portDevices.get(endpointA) == null)
+                    portDevices.put(endpointA, new ArrayList<LocalObjectLight>());
+            
+                portParent.put(endpointA, physicalPathForEndpointA.get(0));
+                if(!physicalPathForEndpointB.isEmpty() && 
+                        physicalPathForEndpointB.get(0) != null){
+                    portDevices.get(endpointA).add(physicalPathForEndpointB.get(0));
+                    bgpLink.add(physicalPathForEndpointA.get(0));
                 }
             }
-                
-            List<LocalObjectLight> physicalPathForEndpointB = localLogicalConnectionDetail.getPhysicalPathForEndpointB();
-            if(!physicalPathForEndpointB.isEmpty() && physicalPathForEndpointB.get(0) != null){
-                Widget widget = findWidget(physicalPathForEndpointB.get(0));
-                if(widget == null){
-                    addNode(physicalPathForEndpointB.get(0));
-                    validate();
+                      
+            if(endpointB != null){ 
+//                if(portDevices.get(endpointB) == null)
+//                    portDevices.put(endpointB, new ArrayList<LocalObjectLight>());
+            
+                portParent.put(endpointB, physicalPathForEndpointB.get(0));
+                if(!physicalPathForEndpointA.isEmpty() && 
+                        physicalPathForEndpointA.get(0) != null){
+//                    portDevices.get(endpointB).add(physicalPathForEndpointA.get(0));                
+                    bgpLink.add(physicalPathForEndpointB.get(0));
                 }
             }
             
-            Widget connectiuonWidget = findWidget(bgpLink);
-            if(connectiuonWidget == null){
-                addEdge(bgpLink);
-                bgpLinksIds.add(bgpLink.getId());
-                if(!physicalPathForEndpointA.isEmpty() && physicalPathForEndpointA.get(0) != null){
-                    setEdgeSource(bgpLink, physicalPathForEndpointA.get(0));
-                   validate();
+            bgpLinkPorts.put(logicalConnectionDetail.getConnectionObject(), bgpLink);
+        }
+        
+        Random r = new Random(35660);
+        for (Map.Entry<LocalObjectLight, List<LocalObjectLight>> entry : portDevices.entrySet()) {
+            LocalObjectLight port = entry.getKey();
+            List<LocalObjectLight> destinations = entry.getValue();
+            LocalObjectLight source = portParent.get(port);
+
+            if(findWidget(source) == null)
+                addNode(source);
+            if(!destinations.isEmpty()){
+                if(destinations.size() == 1){
+                    addNode(destinations.get(0));
+                    validate();
+                    LocalObjectLight tempE = new LocalObjectLight(r.nextLong(), port.getName() + " IX ", "BGPLink");
+                    addEdge(tempE);
+                    validate();
+                    setEdgeSource(tempE, source);
+                    validate();
+                    setEdgeTarget(tempE, destinations.get(0)); 
+                    validate();
                 }
-//                else{
-//                    LocalObjectLight empty = new LocalObjectLight(rand.nextInt(1654)+19000000, "waiting sync", "MPLSRouter");
-//                    addNode(empty);
-//                    setEdgeSource(bgpLink, empty);
-//                    validate();
-//                }
-                
-                if(!physicalPathForEndpointB.isEmpty() && physicalPathForEndpointB.get(0) != null){
-                    setEdgeTarget(bgpLink, physicalPathForEndpointB.get(0));
-                   validate();
+                else{
+                    int ix=0;
+                    int notIx=0;
+                    for(LocalObjectLight device : destinations){
+                        if(!device.getClassName().equals("Cloud")){
+                            if(findWidget(device) == null)
+                                addNode(device);
+                            notIx ++;
+                            validate();
+                            LocalObjectLight tempE = new LocalObjectLight(r.nextLong(), port.getName() + " IX ", "BGPLink");
+                            addEdge(tempE);
+                            validate();
+                            setEdgeSource(tempE, source);
+                            validate();
+                            setEdgeTarget(tempE, device); 
+                            validate();
+                        }
+                        ix++;
+                    }
+                    if(destinations.size() - notIx != 0){
+                        LocalObjectLight temp = new LocalObjectLight(50373, "IX", "Cloud");
+                        if(findWidget(temp) == null)
+                               addNode(temp);
+                        validate();
+                        LocalObjectLight tempE = new LocalObjectLight(r.nextLong(), port.getName() + " IX ", "BGPLink");
+                        addEdge(tempE);
+                        validate();
+                        setEdgeSource(tempE, source);
+                        validate();
+                        setEdgeTarget(tempE, temp); 
+                        validate();
+                    }
                 }
-//                else{
-//                    LocalObjectLight empty = new LocalObjectLight(rand.nextInt(1015464654)+1000000, "waiting sync", "MPLSRouter");
-//                    addNode(empty);
-//                    setEdgeTarget(bgpLink, empty);
-//                    validate();
-//                }   
             }
         }
         validate();
@@ -274,7 +323,7 @@ public class BGPModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
         nodeLayer.addChild(newNode);
         newNode.getActions(ACTION_SELECT).addAction(selectAction);
         newNode.getActions(ACTION_SELECT).addAction(ActionFactory.createMoveAction(moveProvider, moveProvider));
-                
+        newNode.setPreferredLocation(new Point(nodeLayer.getChildren().size() * 200, (nodeLayer.getChildren().size() % 2) * 200 ));       
         //newNode.getActions(ACTION_CONNECT).addAction(selectAction);
         //newNode.getActions(ACTION_CONNECT).addAction(ActionFactory.createConnectAction(interactionLayer, connectProvider));
         

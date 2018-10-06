@@ -17,7 +17,6 @@ package com.neotropic.inventory.modules.sdh;
 
 import com.neotropic.inventory.modules.sdh.scene.SDHModuleScene;
 import com.neotropic.inventory.modules.sdh.wizard.SDHConnectionWizard;
-import java.awt.BorderLayout;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

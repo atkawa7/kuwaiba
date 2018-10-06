@@ -63,7 +63,7 @@ import org.openide.util.NbBundle.Messages;
 })
 public final class BGPTopComponent extends TopComponent {
 
-    private static final String ICON_PATH = "com/neotropic/inventory/modules/sdh/res/icon.png";
+    private static final String ICON_PATH = "com/neotropic/inventory/modules/bgp/res/icon.png";
     private ExplorerManager em;
     private BGPModuleScene scene;
     private BGPModuleService service;
@@ -72,8 +72,6 @@ public final class BGPTopComponent extends TopComponent {
     public BGPTopComponent() {
         initComponents();
         initCustomComponents();
-        setName(Bundle.CTL_BGPTopComponent());
-        setToolTipText(Bundle.HINT_BGPTopComponent());
         setIcon(ImageUtilities.loadImage(ICON_PATH, true));
     }
     

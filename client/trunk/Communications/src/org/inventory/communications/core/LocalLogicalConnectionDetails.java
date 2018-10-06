@@ -16,10 +16,15 @@
 package org.inventory.communications.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.wsclient.RemoteLogicalConnectionDetails;
 import org.inventory.communications.wsclient.RemoteObjectLight;
+import org.inventory.communications.wsclient.RemoteObjectLightList;
+import org.inventory.communications.wsclient.RemoteObjectRelatedObjects;
 
 /**
  * This is the local representation of the RemoteLocalConnectionsDetails class
@@ -46,8 +51,17 @@ public class LocalLogicalConnectionDetails {
      * Physical path of the connection's endpoint A (all the chain of physical elements -patches, mirror ports, etc- until reaching the next physical port)
      */
     private List<LocalObjectLight> physicalPathForEndpointB;
+    /**
+     * Physical paths, one for every port that belongs to the same VLAN of the endpoint A
+     */
+    private Map<LocalObjectLight, List<LocalObjectLight>> physicalPathForVlansEndpointA;
+    /**
+     * Physical paths, one for every port that belongs to the same VLAN of the endpoint B
+     */
+    private Map<LocalObjectLight, List<LocalObjectLight>> physicalPathForVlansEndpointB;
 
     public LocalLogicalConnectionDetails(RemoteLogicalConnectionDetails remoteCircuitDetails) {
+        
         LocalClassMetadata classMetadata = CommunicationsStub.getInstance().getMetaForClass(remoteCircuitDetails.getConnectionObject().getClassName(), false);
         this.connectionObject =  new LocalObject(remoteCircuitDetails.getConnectionObject().getClassName(), remoteCircuitDetails.getConnectionObject().getId(),
                                     remoteCircuitDetails.getConnectionObject().getAttributes(), classMetadata);
@@ -59,6 +73,51 @@ public class LocalLogicalConnectionDetails {
         this.physicalPathForEndpointB = new ArrayList<>();
         for (RemoteObjectLight physicalPathForEndpointBElement : remoteCircuitDetails.getPhysicalPathForEndpointB())
             this.physicalPathForEndpointB.add(new LocalObjectLight(physicalPathForEndpointBElement.getId(), physicalPathForEndpointBElement.getName(), physicalPathForEndpointBElement.getClassName()));
+        
+        this.physicalPathForVlansEndpointA = new HashMap<>();
+        if(remoteCircuitDetails.getPhysicalPathForVlansEndpointA() != null){
+            List<RemoteObjectLight> objsA = remoteCircuitDetails.getPhysicalPathForVlansEndpointA().getObjs();
+            List<RemoteObjectLightList> relatedObjectsA = remoteCircuitDetails.getPhysicalPathForVlansEndpointA().getRelatedObjects();
+
+            for (int i = 0; i < objsA.size(); i++){
+                RemoteObjectLightList relatedRemoteObjects = relatedObjectsA.get(i);
+                LocalObjectLight[] relatedLocalObjects = new LocalObjectLight[relatedRemoteObjects.getList().size()];
+                int j = 0;
+                for (RemoteObjectLight relatedRemoteObject : relatedRemoteObjects.getList()) {
+                    relatedLocalObjects[j] = new LocalObjectLight(relatedRemoteObject.getId(), 
+                                                    relatedRemoteObject.getName(), 
+                                                    relatedRemoteObject.getClassName());
+                    j++;
+                }
+                this.physicalPathForVlansEndpointA.put(
+                        new LocalObjectLight(objsA.get(i).getId(), 
+                                objsA.get(i).getName(), 
+                                objsA.get(i).getClassName()),
+                        Arrays.asList(relatedLocalObjects));
+            }
+        }
+        if(remoteCircuitDetails.getPhysicalPathForVlansEndpointA() != null){
+            this.physicalPathForVlansEndpointB = new HashMap<>();
+            List<RemoteObjectLight> objsB = remoteCircuitDetails.getPhysicalPathForVlansEndpointA().getObjs();
+            List<RemoteObjectLightList> relatedObjectsB = remoteCircuitDetails.getPhysicalPathForVlansEndpointA().getRelatedObjects();
+        
+            for (int i = 0; i < objsB.size(); i++){
+                RemoteObjectLightList relatedRemoteObjects = relatedObjectsB.get(i);
+                LocalObjectLight[] relatedLocalObjects = new LocalObjectLight[relatedRemoteObjects.getList().size()];
+                int j = 0;
+                for (RemoteObjectLight relatedRemoteObject : relatedRemoteObjects.getList()) {
+                    relatedLocalObjects[j] = new LocalObjectLight(relatedRemoteObject.getId(), 
+                                                    relatedRemoteObject.getName(), 
+                                                    relatedRemoteObject.getClassName());
+                    j++;
+                }
+                this.physicalPathForVlansEndpointB.put(
+                        new LocalObjectLight(objsB.get(i).getId(), 
+                                objsB.get(i).getName(), 
+                                objsB.get(i).getClassName()),
+                        Arrays.asList(relatedLocalObjects));
+            }
+        }
     }
     
     
@@ -82,4 +141,13 @@ public class LocalLogicalConnectionDetails {
     public List<LocalObjectLight> getPhysicalPathForEndpointB() {
         return physicalPathForEndpointB;
     }
+
+    public Map<LocalObjectLight, List<LocalObjectLight>> getPhysicalPathForVlansEndpointA() {
+        return physicalPathForVlansEndpointA;
+    }
+
+    public Map<LocalObjectLight, List<LocalObjectLight>> getPhysicalPathForVlansEndpointB() {
+        return physicalPathForVlansEndpointB;
+    }
+
 }

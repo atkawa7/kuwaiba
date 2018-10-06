@@ -24,6 +24,7 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;

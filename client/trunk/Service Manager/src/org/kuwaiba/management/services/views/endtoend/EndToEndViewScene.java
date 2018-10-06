@@ -24,7 +24,9 @@ import java.awt.event.ActionEvent;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventFactory;
@@ -370,16 +372,23 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
             List<LocalObjectLight> nodesToBeDeleted = new ArrayList<>(getNodes()); 
             try {
                 for (LocalObjectLight serviceResource : serviceResources) {
+                    LocalObjectLight lastAddedASideEquipmentLogical = null, lastAddedBSideEquipmentLogical = null;
+                    LocalObjectLight lastAddedASideEquipmentPhysical = null;
+                    LocalObjectLight lastAddedBSideEquipmentPhysical = null;
                     if (com.isSubclassOf(serviceResource.getClassName(), "GenericLogicalConnection")) {
+                        
                         LocalLogicalConnectionDetails logicalCircuitDetails = com.getLogicalLinkDetails(serviceResource.getClassName(), serviceResource.getId());
                         //Let's create the boxes corresponding to the endpoint A of the logical circuit
                         List<LocalObjectLight> parentsUntilFirstComEquipmentA; 
                         if(com.isSubclassOf(logicalCircuitDetails.getEndpointA().getClassName(), Constants.CLASS_GENERICLOGICALPORT)){
                             List<LocalObjectLight> parentsUntilFirstPhysicalPortA = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
                                 getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericPhysicalPort");
-                            
-                            parentsUntilFirstComEquipmentA = com.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortA.get(0).
-                                getClassName(), parentsUntilFirstPhysicalPortA.get(0).getId(), "GenericCommunicationsElement");
+                            //This is only for pseudowire and will be removed once the MPLS sync has been finished, because vc ends in the device not a port
+                            if(com.isSubclassOf(parentsUntilFirstPhysicalPortA.get(0).getClassName(), "GenericCommunicationsElement"))
+                                parentsUntilFirstComEquipmentA = Arrays.asList(parentsUntilFirstPhysicalPortA.get(0));
+                            else
+                                parentsUntilFirstComEquipmentA = com.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortA.get(0).
+                                    getClassName(), parentsUntilFirstPhysicalPortA.get(0).getId(), "GenericCommunicationsElement");
                         }
                         else
                             parentsUntilFirstComEquipmentA = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
@@ -388,18 +397,22 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                         
                         LocalObjectLight aSideEquipmentLogical = parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1);
                         
+                        lastAddedASideEquipmentLogical = aSideEquipmentLogical;
                         if (findWidget(aSideEquipmentLogical) != null)
                             nodesToBeDeleted.remove(aSideEquipmentLogical);
                         else
                             addNode(aSideEquipmentLogical);
-
+                       
                         //Now the other side
                         List<LocalObjectLight> parentsUntilFirstComEquipmentB;
                         if(com.isSubclassOf(logicalCircuitDetails.getEndpointB().getClassName(), Constants.CLASS_GENERICLOGICALPORT)){
-                             List<LocalObjectLight> parentsUntilFirstPhysicalPortB = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
-                                getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericPhysicalPort");
-                            
-                            parentsUntilFirstComEquipmentB = com.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortB.get(0).
+                             List<LocalObjectLight> parentsUntilFirstPhysicalPortB = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
+                                getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericPhysicalPort");
+                            //This is only for pseudowire and will be removed once the MPLS sync has been finished, because vc ends in the device not a port
+                            if(com.isSubclassOf(parentsUntilFirstPhysicalPortB.get(0).getClassName(), "GenericCommunicationsElement"))
+                                 parentsUntilFirstComEquipmentB = Arrays.asList(parentsUntilFirstPhysicalPortB.get(0));
+                            else
+                                parentsUntilFirstComEquipmentB = com.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortB.get(0).
                                 getClassName(), parentsUntilFirstPhysicalPortB.get(0).getId(), "GenericCommunicationsElement");
                         }
                         else
@@ -408,11 +421,12 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
 
                         LocalObjectLight bSideEquipmentLogical = parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1);
                         
+                        lastAddedBSideEquipmentLogical = bSideEquipmentLogical;
                         if (findWidget(bSideEquipmentLogical) != null)
                             nodesToBeDeleted.remove(bSideEquipmentLogical);
                         else
                             addNode(bSideEquipmentLogical);
-                        
+                                               
                         //Now the logical link
                         ObjectConnectionWidget logicalLinkWidget = (ObjectConnectionWidget) findWidget(logicalCircuitDetails.getConnectionObject());
                         if(logicalLinkWidget == null){
@@ -427,8 +441,11 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                         //We start with the A side
                         if (!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()) {
                             int i = 2;
-                            LocalObjectLight lastAddedASideEquipmentPhysical = null;
-                            if (com.isSubclassOf(logicalCircuitDetails.getPhysicalPathForEndpointA().get(0).getClassName(), Constants.CLASS_GENERICLOGICALPORT))
+                            
+                            if (com.isSubclassOf(logicalCircuitDetails.getPhysicalPathForEndpointA().get(0).getClassName(), Constants.CLASS_GENERICLOGICALPORT) ||
+                                    (com.isSubclassOf(logicalCircuitDetails.getPhysicalPathForEndpointA().get(0).getClassName(), Constants.CLASS_GENERICPORT)
+                                    &&
+                                    com.isSubclassOf(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1).getClassName(), Constants.CLASS_GENERICPORT)))
                                 i = 3;
                             for(int index = i; index < logicalCircuitDetails.getPhysicalPathForEndpointA().size(); index += 3){
                                 LocalObjectLight nextPhysicalHop = logicalCircuitDetails.getPhysicalPathForEndpointA().get(index);
@@ -464,10 +481,46 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                 }
                             }
                         }
+                        //we must check if there is something to show with vlans
+                        if(!logicalCircuitDetails.getPhysicalPathForVlansEndpointA().isEmpty()){
+                            for (Map.Entry<LocalObjectLight, List<LocalObjectLight>> en : logicalCircuitDetails.getPhysicalPathForVlansEndpointA().entrySet()) {
+                                LocalObjectLight key = en.getKey();
+                                List<LocalObjectLight> physicalPath = en.getValue();
+                                
+                                LocalObjectLight endpointVlan = com.getFirstParentOfClass(physicalPath.get(0).getClassName(), 
+                                        physicalPath.get(0).getId(), 
+                                        "GenericCommunicationsElement");
+                                
+                                LocalObjectLight physicalVlan = com.getFirstParentOfClass(physicalPath.get(2).getClassName(), 
+                                        physicalPath.get(2).getId(), 
+                                        "GenericCommunicationsElement");
+                                    
+                                if(findWidget(physicalVlan) == null)
+                                            addNode(physicalVlan);
+                                        
+                                ObjectConnectionWidget physicalLinkWidget = (ObjectConnectionWidget) findWidget(physicalPath.get(1));
+
+                                if(physicalLinkWidget == null)
+                                    physicalLinkWidget = (ObjectConnectionWidget) addEdge(physicalPath.get(1));
+
+                                physicalLinkWidget.getLabelWidget().setLabel(physicalPath.get(1) + "  " + physicalPath.get(2));
+                                setEdgeTarget(physicalPath.get(1), physicalVlan);
+                                
+                                if(!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()){
+                                    if(endpointVlan.getId() == lastAddedASideEquipmentPhysical.getId())
+                                        setEdgeSource(physicalPath.get(1), lastAddedASideEquipmentPhysical);
+                                }
+                                else if(lastAddedASideEquipmentLogical != null){
+                                    if(endpointVlan.getId() == lastAddedASideEquipmentLogical.getId()){
+                                       setEdgeSource(physicalPath.get(1), lastAddedASideEquipmentLogical);
+                                    }
+                                }
+                            }
+                        }
                         //Now the b side
                         if (!logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty()) {
                             int i = 2;
-                            LocalObjectLight lastAddedBSideEquipmentPhysical = null;
+                            
                             if (com.isSubclassOf(logicalCircuitDetails.getPhysicalPathForEndpointB().get(0).getClassName(), Constants.CLASS_GENERICLOGICALPORT))
                                 i = 3;
                             for(int index = i; index < logicalCircuitDetails.getPhysicalPathForEndpointB().size(); index += 3){
@@ -500,6 +553,42 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                         setEdgeTarget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(index-1), bSideEquipmentPhysical);
                                         
                                         lastAddedBSideEquipmentPhysical = bSideEquipmentPhysical;
+                                    }
+                                }
+                            }
+                        }
+                        //we must check if there is something to show with vlans
+                        if(!logicalCircuitDetails.getPhysicalPathForVlansEndpointB().isEmpty()){
+                            for (Map.Entry<LocalObjectLight, List<LocalObjectLight>> en : logicalCircuitDetails.getPhysicalPathForVlansEndpointB().entrySet()) {
+                                LocalObjectLight key = en.getKey();
+                                List<LocalObjectLight> physicalPath = en.getValue();
+                                
+                                LocalObjectLight endpointVlan = com.getFirstParentOfClass(physicalPath.get(0).getClassName(), 
+                                        physicalPath.get(0).getId(), 
+                                        "GenericCommunicationsElement");
+                                
+                                LocalObjectLight physicalVlan = com.getFirstParentOfClass(physicalPath.get(2).getClassName(), 
+                                        physicalPath.get(2).getId(), 
+                                        "GenericCommunicationsElement");
+                                    
+                                if(findWidget(physicalVlan) == null)
+                                            addNode(physicalVlan);
+                                        
+                                ObjectConnectionWidget physicalLinkWidget = (ObjectConnectionWidget) findWidget(physicalPath.get(1));
+
+                                if(physicalLinkWidget == null)
+                                    physicalLinkWidget = (ObjectConnectionWidget) addEdge(physicalPath.get(1));
+
+                                physicalLinkWidget.getLabelWidget().setLabel(physicalPath.get(1) + " " + physicalPath.get(2));
+                                setEdgeTarget(physicalPath.get(1), physicalVlan);
+                                
+                                if(logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty()){
+                                    if(endpointVlan.getId() == lastAddedBSideEquipmentPhysical.getId())
+                                        setEdgeSource(physicalPath.get(1), lastAddedBSideEquipmentPhysical);
+                                }
+                                else if(lastAddedASideEquipmentLogical != null){
+                                    if(endpointVlan.getId() == lastAddedBSideEquipmentLogical.getId()){
+                                       setEdgeSource(physicalPath.get(1), lastAddedBSideEquipmentLogical);
                                     }
                                 }
                             }
@@ -615,4 +704,5 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
         this.validate();
         this.repaint();
     }
+
 }

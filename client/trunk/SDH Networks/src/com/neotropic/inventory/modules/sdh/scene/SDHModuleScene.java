@@ -1,4 +1,4 @@
-/**
+/*
  *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
@@ -98,7 +98,7 @@ public class SDHModuleScene extends AbstractScene<LocalObjectLight, LocalObjectL
 
     public SDHModuleScene() {
         getActions().addAction(ActionFactory.createAcceptAction(new CustomAcceptActionProvider(this, Constants.CLASS_GENERICCOMMUNICATIONSELEMENT)));
-
+        
         nodeLayer = new LayerWidget(this);
         edgeLayer = new LayerWidget(this);
         interactionLayer = new LayerWidget(this);
