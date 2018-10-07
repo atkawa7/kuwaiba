@@ -15,7 +15,9 @@
 package org.kuwaiba.web.procmanager;
 
 import com.vaadin.server.Page;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import java.util.ArrayList;
@@ -50,11 +52,12 @@ public class MiniAppRackSelector extends AbstractMiniApplication<Component, Comp
 
     @Override
     public Component launchEmbedded() {
-        List<RemoteObject> selectedDevices = new ArrayList();
+        
         
         try {
             if (getInputParameters() != null) {
-                
+                List<RemoteObject> selectedDevices = new ArrayList();
+                                
                 for (Object id : getInputParameters().keySet()) {
 
                     RemoteObject child = wsBean.getObject(
@@ -65,15 +68,21 @@ public class MiniAppRackSelector extends AbstractMiniApplication<Component, Comp
 
                     selectedDevices.add(child);                
                 }
+                if (!selectedDevices.isEmpty()) {
+                    
+                    ComponentDeviceList componentDeviceList = new ComponentDeviceList(selectedDevices, wsBean);
+                    ComponentRackSelector componentRackSelector = new ComponentRackSelector(componentDeviceList, wsBean);
+
+                    return componentRackSelector;
+                }
+                else {
+                    return new Label("<h3 style=\"color:#f9a825;\">The input parameters can not be empty</h3>", ContentMode.HTML);
+                }
             }
-                        
         } catch (ServerSideException ex) {
             Notification.show("Unexpected Input Parameter was received in the MiniAppRackView", Notification.Type.ERROR_MESSAGE);
         }
-        ComponentDeviceList componentDeviceList = new ComponentDeviceList(selectedDevices, wsBean);
-        ComponentRackSelector componentRackSelector = new ComponentRackSelector(componentDeviceList, wsBean);
-                
-        return componentRackSelector;
+        return new Label("<h3 style=\"color:#e57373;\">The input parameters can not be null</h3>", ContentMode.HTML);
     }
 
     @Override

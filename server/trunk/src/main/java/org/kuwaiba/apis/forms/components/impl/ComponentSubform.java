@@ -56,25 +56,34 @@ public class ComponentSubform extends GraphicalComponent implements ComponentCon
     public void onElementEvent(EventDescriptor event) {
         if (Constants.EventAttribute.ONCLICK.equals(event.getEventName())) {
             if (Constants.Function.OPEN.equals(event.getPropertyName())) {
-                if (UI.getCurrent() != null) {
-                    if (window == null) {
-                        window = new Window();                        
-                        window.setStyleName("subformpopup"); //NOI18N
+                
+                if (getComponentEventListener() instanceof ElementSubform) {
+                    
+                    ElementSubform elementSubform = (ElementSubform) getComponentEventListener();
+                    
+                    if (elementSubform.isEnabled()) {
                         
-                        VerticalLayout verticalLayout = new VerticalLayout();
-                        verticalLayout.setWidth(100, Unit.PERCENTAGE);
-                        verticalLayout.setHeightUndefined();
-                        verticalLayout.setSpacing(false);
-                        
-                        verticalLayout.addComponent(getComponent());
-                        verticalLayout.setComponentAlignment(getComponent(), Alignment.MIDDLE_CENTER);
-                        
-                        window.setContent(verticalLayout);
-                        
-                        window.setModal(true);
-                        window.center();
-                    }                                       
-                    UI.getCurrent().addWindow(window);
+                        if (UI.getCurrent() != null) {
+                            if (window == null) {
+                                window = new Window();                        
+                                window.setStyleName("subformpopup"); //NOI18N
+
+                                VerticalLayout verticalLayout = new VerticalLayout();
+                                verticalLayout.setWidth(100, Unit.PERCENTAGE);
+                                verticalLayout.setHeightUndefined();
+                                verticalLayout.setSpacing(false);
+
+                                verticalLayout.addComponent(getComponent());
+                                verticalLayout.setComponentAlignment(getComponent(), Alignment.MIDDLE_CENTER);
+
+                                window.setContent(verticalLayout);
+
+                                window.setModal(true);
+                                window.center();
+                            }                                       
+                            UI.getCurrent().addWindow(window);
+                        }
+                    }
                 }
             } else if (Constants.Function.CLOSE.equals(event.getPropertyName())) {
                 if (window != null)

@@ -398,7 +398,53 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
         alignment = reader.getAttributeValue(null, Constants.Property.ALIGNMENT);
     }
     
+    private void loadHidden(List<String> list) {
+        if (list != null && !list.isEmpty()) {
+
+            String functionName = list.get(0);
+
+            Runner runner = getFormStructure().getElementScript().getFunctionByName(functionName);
+
+            List parameters = new ArrayList();
+
+            for (int i = 1; i < list.size(); i += 1) {
+                AbstractElement anElement = getFormStructure().getElementById(list.get(i));
+                
+                if (anElement == null) {
+                    if (getFormStructure().getElementScript() != null && 
+                        getFormStructure().getElementScript().getFunctions() != null) {
+                        
+                        if (getFormStructure().getElementScript().getFunctions().containsKey(list.get(i))) {
+                            
+                            Runner paramRunner = getFormStructure().getElementScript().getFunctions().get(list.get(i));
+                            
+                            if (paramRunner != null) {
+                                parameters.add(paramRunner);
+                                continue;
+                            }
+                        }
+                    }
+                }
+                parameters.add(anElement != null ? anElement : list.get(i));
+            }
+
+            Object newValue = runner.run(parameters);
+
+            setHidden((boolean) newValue);
+            
+            fireElementEvent(new EventDescriptor(
+                Constants.EventAttribute.ONPROPERTYCHANGE, 
+                Constants.Property.HIDDEN, newValue, null));
+        }
+    }
+    
     public void fireOnLoad() {
+        if (hasProperty(Constants.EventAttribute.ONLOAD, Constants.Property.HIDDEN)) {
+            
+            List<String> list = getEvents().get(Constants.EventAttribute.ONLOAD).get(Constants.Property.HIDDEN);
+            
+            loadHidden(list);
+        }
     }
     
     public void fireOnLazyLoad() {

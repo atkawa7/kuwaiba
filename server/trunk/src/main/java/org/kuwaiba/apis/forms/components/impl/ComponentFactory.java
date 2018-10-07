@@ -147,6 +147,8 @@ public class ComponentFactory {
             
             if (element.getHeight() != null)
                 graphicalComponent.getComponent().setHeight(element.getHeight());
+                        
+            graphicalComponent.getComponent().setVisible(!element.isHidden());
             
             element.setElementEventListener(graphicalComponent);
             graphicalComponent.setComponentEventListener(element);

@@ -25,6 +25,18 @@ import java.util.List;
 public abstract class AbstractElementContainer extends AbstractElement {
     private List<AbstractElement> children;
     public boolean repaint = false;
+    
+    public AbstractElement getChild(String childId) {
+        for (AbstractElement child : children) {
+            
+            if (child.getId() != null && child.getId().equals(childId))
+                return child;
+                                    
+            if (child instanceof AbstractElementContainer)
+                return ((AbstractElementContainer) child).getChild(childId);
+        }
+        return null;        
+    }
 
     public List<AbstractElement> getChildren() {
         return children;

@@ -70,6 +70,9 @@ public class ComponentTextField extends GraphicalComponent {
             
             if (Constants.Property.ENABLED.equals(event.getPropertyName()))
                 getComponent().setEnabled((boolean) event.getNewValue());
+            
+            if (Constants.Property.HIDDEN.equals(event.getPropertyName()))
+                getComponent().setVisible(!((ElementTextField) getComponentEventListener()).isHidden());
         }
         
     }

@@ -90,8 +90,12 @@ public class ComponentComboBox extends GraphicalComponent {
                         lst.add(obj);
                 }
                 getComponent().setItems(lst);
-            } else if (Constants.Property.VALUE.equals(event.getPropertyName())) {
+            }
+            else if (Constants.Property.VALUE.equals(event.getPropertyName())) {
                 getComponent().setValue(event.getNewValue());
+            }
+            else if (Constants.Property.HIDDEN.equals(event.getPropertyName())) {
+                getComponent().setVisible(!((ElementComboBox) getComponentEventListener()).isHidden());
             }
         }
     }

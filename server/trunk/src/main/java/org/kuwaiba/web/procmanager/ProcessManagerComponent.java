@@ -50,7 +50,7 @@ public class ProcessManagerComponent extends AbstractTopComponent {
         MenuBar mainMenu = ((IndexUI)getUI()).getMainMenu();
         
         addComponent(mainMenu);
-        setExpandRatio(mainMenu, 0.5f);
+        setExpandRatio(mainMenu, 0.3f);
                 
         RemoteProcessDefinition processDefinition = (RemoteProcessDefinition) getSession().getAttribute("selectedProcessDefinition");
         
@@ -62,7 +62,7 @@ public class ProcessManagerComponent extends AbstractTopComponent {
 
             ProcessInstancesView processInstancesView = new ProcessInstancesView(processDefinition, processInstances, wsBean, ((RemoteSession) getSession().getAttribute("session")));
             addComponent(processInstancesView);
-            setExpandRatio(processInstancesView, 9.5f);
+            setExpandRatio(processInstancesView, 9.7f);
 
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());

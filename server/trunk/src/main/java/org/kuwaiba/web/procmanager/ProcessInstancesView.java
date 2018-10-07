@@ -38,27 +38,24 @@ import com.vaadin.ui.renderers.ButtonRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer;
 import com.vaadin.ui.renderers.ClickableRenderer.RendererClickListener;
 import com.vaadin.ui.renderers.HtmlRenderer;
-import com.vaadin.ui.themes.ValoTheme;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.openide.util.Exceptions;
 import org.kuwaiba.beans.WebserviceBean;
-import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfoLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActor;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConditionalActivityDefinition;
 import org.kuwaiba.util.i18n.I18N;
 import org.kuwaiba.web.IndexUI;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.themes.ValoTheme;
 import org.kuwaiba.apis.persistence.PersistenceService;
-import static org.kuwaiba.web.procmanager.ProcessInstanceView.debugMode;
 
 /**
  * Shown the instances of a process definition
@@ -94,18 +91,39 @@ public class ProcessInstancesView extends VerticalLayout {
         initView();
     }
     
-    private void setActionComponent(Component component) {
-        UI ui = getUI();
+    public static void setActionComponent(Component component, ProcessInstancesView processInstancesView) {
+        UI ui = UI.getCurrent().getUI();
         
         MenuBar mainMenu = ((IndexUI) ui).getMainMenu();
         
         ((ProcessManagerComponent) ui.getContent()).removeAllComponents();
         
         ((ProcessManagerComponent) ui.getContent()).addComponent(mainMenu);
-        ((ProcessManagerComponent) ui.getContent()).setExpandRatio(mainMenu, 0.5f);
+        ((ProcessManagerComponent) ui.getContent()).setExpandRatio(mainMenu, 0.3f);
+                
+        VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.setSizeFull();
+        verticalLayout.setSpacing(false);
+        verticalLayout.setMargin(false);
         
-        ((ProcessManagerComponent) ui.getContent()).addComponent(component);
-        ((ProcessManagerComponent) ui.getContent()).setExpandRatio(component, 9.5f);
+        if (processInstancesView != null) {
+            Button btnBack = new Button();
+            btnBack.addStyleName(ValoTheme.BUTTON_BORDERLESS);
+            btnBack.setIcon(VaadinIcons.ARROW_BACKWARD);
+            btnBack.addClickListener(new Button.ClickListener() {
+                @Override
+                public void buttonClick(Button.ClickEvent event) {
+                    setActionComponent(processInstancesView, null);
+                }
+            });
+            verticalLayout.addComponent(btnBack);
+            verticalLayout.setExpandRatio(btnBack, 0.5f);
+        }
+        verticalLayout.addComponent(component);
+        verticalLayout.setExpandRatio(component, 9.5f);
+        
+        ((ProcessManagerComponent) ui.getContent()).addComponent(verticalLayout);        
+        ((ProcessManagerComponent) ui.getContent()).setExpandRatio(verticalLayout, 9.7f);
     }
     
     public void initView() {
@@ -137,6 +155,7 @@ public class ProcessInstancesView extends VerticalLayout {
         for (RemoteProcessInstance process : processes)
             beans.add(new ProcessInstanceBean(process, wsBean, session));
         
+        String columnProcessId = "columnProcessId"; //NOI18N
         String columnOrderNumberId = "columnOrderNumber"; //NOI18N
         String columnServiceCodeId = "columnServiceCode"; //NOI18N
         String columnCurrentActivityId = "columnCurrentActivity"; //NOI18N
@@ -148,6 +167,8 @@ public class ProcessInstancesView extends VerticalLayout {
         
         final String NEW_SERVICE = "New Service"; //NOI18N
         HeaderRow headerRow = grid.appendHeaderRow();
+        
+        grid.addColumn(ProcessInstanceBean::getProcessId).setCaption("Process Id").setId(columnProcessId).setWidthUndefined();
         
         if (processDefinition.getName().equals(NEW_SERVICE)) {
             grid.addColumn(ProcessInstanceBean::getOrderNumber).setCaption("Order Number").setId(columnOrderNumberId);
@@ -214,7 +235,7 @@ public class ProcessInstancesView extends VerticalLayout {
                     wsBean, 
                     session);
                 
-                setActionComponent(processInstanceView);
+                setActionComponent(processInstanceView, ProcessInstancesView.this);
             }
         });
         buttonContinuar.setHtmlContentAllowed(true);
@@ -229,7 +250,7 @@ public class ProcessInstancesView extends VerticalLayout {
                     wsBean, 
                     session);
                 
-                setActionComponent(processGraph);
+                setActionComponent(processGraph, ProcessInstancesView.this);
             }
         });
         buttonView.setHtmlContentAllowed(true);
@@ -242,7 +263,7 @@ public class ProcessInstancesView extends VerticalLayout {
                     wsBean,
                     session);
                 
-                setActionComponent(timelineView);
+                setActionComponent(timelineView, ProcessInstancesView.this);
             }
         });      
         btnTimeline.setHtmlContentAllowed(true);
@@ -255,25 +276,18 @@ public class ProcessInstancesView extends VerticalLayout {
             @Override
             public void selectionChange(SelectionEvent<ProcessInstanceBean> event) {
                 Optional<ProcessInstanceBean> optional = event.getFirstSelectedItem();
-                ProcessInstanceBean processInstanceBean = optional.get();
                 
-                UI ui = getUI();
+                if (optional != null && optional.get() != null) {
+                    ProcessInstanceBean processInstanceBean = optional.get();
                 
-                MenuBar mainMenu = ((IndexUI) ui).getMainMenu();
-                
-                ((ProcessManagerComponent) ui.getContent()).removeAllComponents();
-                
-                ((ProcessManagerComponent) ui.getContent()).addComponent(mainMenu);
-                ((ProcessManagerComponent) ui.getContent()).setExpandRatio(mainMenu, 0.5f);
+                    ProcessInstanceView processInstanceView = new ProcessInstanceView(
+                        processInstanceBean.getProcessInstance(), 
+                        processInstanceBean.getProcessDefinition(), 
+                        wsBean, 
+                        session);
 
-                ProcessInstanceToolsView processInstanceToolsView = new ProcessInstanceToolsView(
-                    processInstanceBean.getProcessDefinition(), 
-                    processInstanceBean.getProcessInstance(), 
-                    wsBean, 
-                    session);
-
-                ((ProcessManagerComponent) ui.getContent()).addComponent(processInstanceToolsView);
-                ((ProcessManagerComponent) ui.getContent()).setExpandRatio(processInstanceToolsView, 9.5f);
+                    setActionComponent(processInstanceView, ProcessInstancesView.this);
+                }
             }
         });
         
@@ -438,16 +452,7 @@ public class ProcessInstancesView extends VerticalLayout {
                                 remoteSession.getSessionId());
                                                                         
                         ProcessInstanceView processInstanceView = new ProcessInstanceView(processInstance, processDef, webserviceBean,remoteSession);
-                                                                                                
-                        MenuBar mainMenu = ((IndexUI) UI.getCurrent()).getMainMenu();
-
-                        ((ProcessManagerComponent) UI.getCurrent().getContent()).removeAllComponents();
-
-                        ((ProcessManagerComponent) UI.getCurrent().getContent()).addComponent(mainMenu);
-                        ((ProcessManagerComponent) UI.getCurrent().getContent()).setExpandRatio(mainMenu, 0.5f);
-
-                        ((ProcessManagerComponent) UI.getCurrent().getContent()).addComponent(processInstanceView);
-                        ((ProcessManagerComponent) UI.getCurrent().getContent()).setExpandRatio(processInstanceView, 9.5f);
+                        setActionComponent(processInstanceView, null);
                         
                     } catch (ServerSideException ex) {
                         Exceptions.printStackTrace(ex);

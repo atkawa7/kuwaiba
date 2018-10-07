@@ -16,10 +16,7 @@ package org.kuwaiba.web.procmanager;
 
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Label;
 import java.util.List;
-import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -48,6 +45,10 @@ public class ProcessInstanceBean {
     
     public RemoteProcessInstance getProcessInstance() {
         return processInstance;        
+    }
+    
+    public long getProcessId() {
+        return processInstance.getId();
     }
     
     public RemoteProcessDefinition getProcessDefinition() {

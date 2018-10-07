@@ -96,8 +96,6 @@ public class ProcessInstanceView extends DynamicComponent {
         this.processDefinition = processDefinition;
         this.processInstance = processInstance;
         activities = new HashMap();
-                        
-////        setSplitPosition(20, Unit.PERCENTAGE);
         initView();
     }
     
@@ -517,7 +515,7 @@ public class ProcessInstanceView extends DynamicComponent {
     private void updateActivities() {
         activities.clear();
         activitiesLayout.removeAllComponents();
-        
+                
         try {
             List<RemoteActivityDefinition> lstActivities = wsBean.getProcessInstanceActivitiesPath(
                 processInstance.getId(),

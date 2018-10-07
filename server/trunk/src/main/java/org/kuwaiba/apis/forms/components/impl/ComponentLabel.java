@@ -56,6 +56,9 @@ public class ComponentLabel extends GraphicalComponent {
             
             if (Constants.Property.VALUE.equals(event.getPropertyName()))
                 getComponent().setValue(((ElementLabel) getComponentEventListener()).getValue());
+            
+            if (Constants.Property.HIDDEN.equals(event.getPropertyName()))
+                getComponent().setVisible(!((ElementLabel) getComponentEventListener()).isHidden());
         }
     }
     
