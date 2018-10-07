@@ -89,7 +89,7 @@ public class ProcessManagerModule extends AbstractModule {
                         UI.getCurrent().getNavigator().addView(ProcessManagerComponent.VIEW_NAME, open());
                         UI.getCurrent().getNavigator().navigateTo(ProcessManagerComponent.VIEW_NAME);
                         
-                        ProcessInstancesView.createProcessInstance(processDefinition, wsBean, session);
+                        ProcessInstancesView.createProcessInstance(null, processDefinition, wsBean, session);
                     }
                 });
                 

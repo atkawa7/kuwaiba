@@ -139,7 +139,7 @@ public class ProcessInstancesView extends VerticalLayout {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 
-                createProcessInstance(processDefinition, wsBean, session);
+                createProcessInstance(ProcessInstancesView.this, processDefinition, wsBean, session);
             }
         });
                 
@@ -429,7 +429,7 @@ public class ProcessInstancesView extends VerticalLayout {
 ////        }
 ////    }
     
-    public static void createProcessInstance(RemoteProcessDefinition processDef, WebserviceBean webserviceBean, RemoteSession remoteSession) {
+    public static void createProcessInstance(ProcessInstancesView processInstancesView, RemoteProcessDefinition processDef, WebserviceBean webserviceBean, RemoteSession remoteSession) {
                 
         MessageBox.getInstance().showMessage(new Label("Create an instance of the process")).addClickListener(new Button.ClickListener() {
                                                 
@@ -452,7 +452,7 @@ public class ProcessInstancesView extends VerticalLayout {
                                 remoteSession.getSessionId());
                                                                         
                         ProcessInstanceView processInstanceView = new ProcessInstanceView(processInstance, processDef, webserviceBean,remoteSession);
-                        setActionComponent(processInstanceView, null);
+                        setActionComponent(processInstanceView, processInstancesView);
                         
                     } catch (ServerSideException ex) {
                         Exceptions.printStackTrace(ex);
