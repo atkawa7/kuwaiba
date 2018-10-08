@@ -365,6 +365,7 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
 
     @Override
     public void render(LocalObjectLight selectedService) {
+        this.clear();//don't remove this until we rewrite this method
         List<LocalObjectLight> serviceResources = com.getServiceResources(selectedService.getClassName(), selectedService.getId());
         if (serviceResources == null)
             NotificationUtil.getInstance().showSimplePopup("Error", NotificationUtil.ERROR_MESSAGE, com.getError());
@@ -507,7 +508,7 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                 setEdgeTarget(physicalPath.get(1), physicalVlan);
                                 
                                 if(!logicalCircuitDetails.getPhysicalPathForEndpointA().isEmpty()){
-                                    if(endpointVlan.getId() == lastAddedASideEquipmentPhysical.getId())
+                                    if(lastAddedASideEquipmentPhysical != null && endpointVlan.getId() == lastAddedASideEquipmentPhysical.getId())
                                         setEdgeSource(physicalPath.get(1), lastAddedASideEquipmentPhysical);
                                 }
                                 else if(lastAddedASideEquipmentLogical != null){
@@ -583,7 +584,7 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                 setEdgeTarget(physicalPath.get(1), physicalVlan);
                                 
                                 if(logicalCircuitDetails.getPhysicalPathForEndpointB().isEmpty()){
-                                    if(endpointVlan.getId() == lastAddedBSideEquipmentPhysical.getId())
+                                    if(lastAddedBSideEquipmentPhysical != null && endpointVlan.getId() == lastAddedBSideEquipmentPhysical.getId())
                                         setEdgeSource(physicalPath.get(1), lastAddedBSideEquipmentPhysical);
                                 }
                                 else if(lastAddedASideEquipmentLogical != null){
