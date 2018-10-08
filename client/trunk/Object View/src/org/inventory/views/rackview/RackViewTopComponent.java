@@ -602,9 +602,9 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
 ////            message = CommunicationsStub.getInstance().getError();
         } else {
             Integer rackUnits = (Integer) rack.getAttribute(Constants.PROPERTY_RACK_UNITS);
-            if (rackUnits == null || rackUnits == 0) {
+            if (rackUnits == null || rackUnits == 0) 
                 message += String.format("Attribute %s in rack %s does not exist or is not set correctly\n", Constants.PROPERTY_RACK_UNITS, rack);                                                             
-            } else {
+            else {
                 List<LocalObjectLight> devicesLight = CommunicationsStub.getInstance().getObjectChildren(rack.getId(), rack.getClassName());
                 if (devicesLight != null) {
 ////                    List<LocalClassMetadata> objChildrenClasses = new ArrayList<>();
@@ -659,7 +659,13 @@ public final class RackViewTopComponent extends TopComponent implements ActionLi
                                 break;
                             
                             devices.add(device);
-
+                            
+                            if (device.getAttribute(Constants.PROPERTY_POSITION) == null)
+                                message += String.format("The attribute position is not set in object %s\n", deviceLight);
+                            
+                            if (device.getAttribute(Constants.PROPERTY_RACK_UNITS) == null)
+                                message += String.format("The attribute rackUnits is not set in object %s\n", deviceLight);
+                            
                             int devicePosition = device.getAttribute(Constants.PROPERTY_POSITION) != null ? (int) device.getAttribute(Constants.PROPERTY_POSITION) : 0;
                             if (devicePosition < 0)
                                 message += String.format("The %s in %s must be greater than or equal to zero\n", Constants.PROPERTY_POSITION, device.toString());
