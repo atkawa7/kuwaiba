@@ -147,7 +147,7 @@ public class ProcessInstanceView extends DynamicComponent {
     }
     
     private void setArtifact(RemoteActivityDefinition currentActivity, Button btnNext, Button eventBtn) {
-        RemoteArtifact remoteArtifact = null;
+        RemoteArtifact remoteArtifact;
 
         try {
             remoteArtifact = wsBean.getArtifactForActivity(
@@ -493,9 +493,9 @@ public class ProcessInstanceView extends DynamicComponent {
             }
             
             setComponentCenter(artifactWrapperLayout);
-        } else {
-            Notifications.showError("His Role does not allow to start this activity");
-        }
+        } else 
+            Notifications.showError("The group you belong to can not start or edit this activity");
+        
     }
     
     public void initView() {

@@ -95,9 +95,11 @@ public class Wizard extends VerticalLayout {
             this.btnAction.setCaption("Next");
 
         HorizontalLayout lytButtons = new HorizontalLayout(btnAction, btnCancel);
-
+        
         this.addComponents(pnlMain, lytButtons);
         this.setComponentAlignment(lytButtons, Alignment.MIDDLE_RIGHT);
+        this.setExpandRatio(pnlMain, 9);
+        this.setExpandRatio(lytButtons, 1);
 
         this.listeners = new ArrayList<>();
     }

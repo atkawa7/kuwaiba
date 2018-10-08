@@ -4367,7 +4367,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             syncDataSourceConfigNode.setProperty(Constants.PROPERTY_NAME, configName);
             for (StringPair parameter : parameters) {
                 if (!syncDataSourceConfigNode.hasProperty(parameter.getKey()))
-                    syncDataSourceConfigNode.setProperty(parameter.getKey(), parameter.getValue());
+                    syncDataSourceConfigNode.setProperty(parameter.getKey(), parameter.getValue() == null ? "" : parameter.getValue());
                 else
                     throw new InvalidArgumentException(String.format("Parameter %s in configuration %s is duplicated", configName, parameter.getKey()));
             }
@@ -4972,18 +4972,113 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             tx.success();
         }
     }
+    
+    @Override
+    public long createOSPView(String name, String description, byte[] structure) throws InvalidArgumentException {
+        
+        if (name == null || name.trim().isEmpty())
+            throw new InvalidArgumentException("The name of the view can not be empty");
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            Node newViewNode = graphDb.createNode(Label.label("ospViews")); //NOI18N
+            newViewNode.setProperty(Constants.PROPERTY_NAME, name);
+            newViewNode.setProperty(Constants.PROPERTY_DESCRIPTION, description == null ? "" : description);
+            newViewNode.setProperty(Constants.PROPERTY_STRUCTURE, structure == null ? new byte[0] : structure);
+            
+            tx.success();
+            return newViewNode.getId();
+        }
+    }
+
+    @Override
+    public ViewObject getOSPView(long viewId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node ospViewNode = graphDb.findNodes(Label.label("ospViews")).stream().filter((viewNode) -> { //NOI18N
+                return viewNode.getId() == viewId; 
+            }).findFirst().get();
+            
+            if (ospViewNode == null) 
+                throw new ApplicationObjectNotFoundException(String.format("OSP view with id %s could not be found", viewId));
+            
+            ViewObject res = new ViewObject(viewId, (String)ospViewNode.getProperty(Constants.PROPERTY_NAME), 
+                    (String)ospViewNode.getProperty(Constants.PROPERTY_DESCRIPTION), "OSPView"); //NOI18N
+            
+            res.setStructure((byte[])ospViewNode.getProperty(Constants.PROPERTY_STRUCTURE));
+            tx.success();
+            
+            return res;
+        }
+    }
+
+    @Override
+    public List<ViewObjectLight> getOSPViews() throws InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            List<ViewObjectLight> res = new ArrayList<>();
+            graphDb.findNodes(Label.label("ospViews")).stream().forEach((viewNode) -> {
+                res.add(new ViewObjectLight(viewNode.getId(), (String)viewNode.getProperty(Constants.PROPERTY_NAME), 
+                        (String)viewNode.getProperty(Constants.PROPERTY_DESCRIPTION), "OSPView")); //NOI18N
+            });
+            
+            tx.success();
+            return res;
+        }
+    }
+
+    @Override
+    public void updateOSPView(long viewId, String name, String description, byte[] structure) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node ospViewNode = graphDb.findNodes(Label.label("ospViews")).stream().filter((viewNode) -> { //NOI18N
+                return viewNode.getId() == viewId; 
+            }).findFirst().get();
+            
+            if (ospViewNode == null) 
+                throw new ApplicationObjectNotFoundException(String.format("OSP view with id %s could not be found", viewId));
+            
+            if (name != null) {
+                if (name.trim().isEmpty())
+                    throw new InvalidArgumentException("The name of the view can not be empty");
+                else
+                    ospViewNode.setProperty(Constants.PROPERTY_NAME, name);
+            }
+            
+            if (description != null)
+                ospViewNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
+            
+            if (structure != null)
+                ospViewNode.setProperty(Constants.PROPERTY_STRUCTURE, structure);
+            
+            tx.success();
+        }
+    }
+
+    //</editor-fold>
+    //<editor-fold desc="Outside Plant" defaultstate="collapsed">
+    @Override    
+    public void deleteOSPView(long viewId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node ospViewNode = graphDb.findNodes(Label.label("ospViews")).stream().filter((viewNode) -> { //NOI18N
+                return viewNode.getId() == viewId; 
+            }).findFirst().get();
+            
+            if (ospViewNode == null) 
+                throw new ApplicationObjectNotFoundException(String.format("OSP view with id %s could not be found", viewId));
+            
+            ospViewNode.delete();
+            tx.success();
+        }
+    }
 
     //</editor-fold>
     //</editor-fold>
 //Helpers
-    
     private Node getFavoritesFolderForUser(long favoritesFolderId, long userId) {
         Node userNode = Util.findNodeByLabelAndId(userLabel, userId);
 
         if (userNode == null)
             return null; // user not found
-
-
+        
+        
         if (userNode.hasRelationship(Direction.OUTGOING, RelTypes.HAS_BOOKMARK)) {
             for (Relationship relationship : userNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_BOOKMARK)) {
 

@@ -23,6 +23,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 
 /**
  * A small embeddable component that can be inserted into an AbstractDashboard. A DashboardWidget has two "faces": 
@@ -132,8 +133,7 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
             wnwContent.setContent(contentComponent);
             wnwContent.center();
             getUI().addWindow(wnwContent);
-        } else 
-            getUI().addWindow(new Window("Error", new Label("The content component has not been set. Please check your createContent method")));
+        } else Notifications.showError("The content component has not been set. Please check your createContent method");
     }
     
     /**

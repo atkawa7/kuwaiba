@@ -83,7 +83,7 @@ public class ReportsDashboardWidget extends AbstractDashboardWidget {
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
             
             if (classLevelReports.isEmpty())
-                Notifications.showInfo(String.format("The class %s does not have reports associated to it", businessObject.getClassName()));
+                this.contentComponent = new Label(String.format("The class %s does not have reports associated to it", businessObject.getClassName()));
             else {
                 VerticalLayout lytReports = new VerticalLayout();
                 Grid<RemoteReportLight> tblReports = new Grid<>();

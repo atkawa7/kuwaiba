@@ -1704,4 +1704,48 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the pool could not be found
      */
     public void deleteConfigurationVariablesPool(long poolId) throws ApplicationObjectNotFoundException;
+    
+    //<editor-fold desc="Outside Plant" defaultstate="collapsed">
+    /**
+    * Creates an Outside Plant View
+    * @param name The name of the new view
+    * @param description The description of the new view
+    * @param structure The XML document with the contents of the view. The format of the XML document is consistent with the other views
+    * @throws InvalidArgumentException If the name is empty. 
+    * @return The id of the newly created view
+    */
+    public long createOSPView(String name, String description, byte[] structure) throws InvalidArgumentException;
+    
+    /**
+    * Retrieves the specific information about an existing OSP view
+    * @param viewId The id of the view
+    * @return An object containing the view details and structure
+    * @throws ApplicationObjectNotFoundException If the view could not be found
+    */
+    public ViewObject getOSPView(long viewId) throws ApplicationObjectNotFoundException;
+    /**
+    * Retrieves the existing OSP views
+    * @return The list of existing OSP views
+    * @throws InvalidArgumentException If one of the views is malformed
+    */
+    public List<ViewObjectLight> getOSPViews() throws InvalidArgumentException;
+
+    /**
+    * Updates an existing OSP view
+    * @param viewId The id of the view
+    * @param name The new name of the view. Null if to remain unchanged
+    * @param description The new description of the view. Null if to remain unchanged
+    * @param structure   The new content of the view. Null if to remain unchanged
+    * @throws ApplicationObjectNotFoundException If the view could not be found
+    * @throws InvalidArgumentException If the new name (if applicable) is empty
+    */
+    public void updateOSPView(long viewId, String name, String description, byte[] structure) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+
+    /**
+    * Deletes an existing OSP view
+    * @param viewId The id of the view to be deleted
+    * @throws ApplicationObjectNotFoundException If the view could not be found
+    */
+    public void deleteOSPView(long viewId) throws ApplicationObjectNotFoundException;
+    //</editor-fold>
 }

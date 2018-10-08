@@ -92,16 +92,16 @@ public class ObjectViewScene extends AbstractScene {
                             SrvEdgeWidget edgeWidget = findEdgeWidget(objectId);
                             
                             if (edgeWidget != null) {
+                                List<Point> controlPoints = new ArrayList<>();
                                 while(true) {
                                     reader.nextTag();
-                                    List<Point> controlPoints = new ArrayList<>();
-                                    
                                     if (reader.getName().equals(qControlPoint)) {
                                         if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
                                             controlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
-                                    } else {
-                                        edgeWidget.setControlPoints(controlPoints);
-                                        break;
+                                        else {
+                                            edgeWidget.setControlPoints(controlPoints);
+                                            break;
+                                        }
                                     }
                                 }
                             }

@@ -82,7 +82,6 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConfigurationVariable;
-import org.openide.util.Exceptions;
 
 /**
  * Main web service
@@ -8520,7 +8519,7 @@ public class KuwaibaService {
             }
         }
         // </editor-fold>
-        //<editor-fold desc="BGP Viwer Module" defaultstate="collapsed">
+        //<editor-fold desc="Routing Explorer Module" defaultstate="collapsed">
         /**
          * Creates/updates a map of the BGPLinks
          * @param mappedBgpLinksIds BGPLinks that are already mapped, it can be 
@@ -8544,6 +8543,118 @@ public class KuwaibaService {
             }
         }
         // </editor-fold>
+        
+        //<editor-fold desc="Outside plant">
+        /**
+         * Creates an Outside Plant View
+         * @param name The name of the new view
+         * @param description The description of the new view
+         * @param content The XML document with the contents of the view. The format of the XML document is consistent with the other views
+         * @param sessionId Session token
+         * @throws ServerSideException If the name is empty. 
+         * @return The id of the newly created view
+         */
+        @WebMethod(operationName = "createOSPView")
+        public long createOSPView(@WebParam(name = "name")String name, @WebParam(name = "description")String description, 
+                @WebParam(name = "content")byte[] content, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+            try {
+                return wsBean.createOSPView(name, description, content, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in createOSPView: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
+        }
+        
+        /**
+         * Retrieves the specific information about an existing OSP view
+         * @param viewId The id of the view
+         * @param sessionId The session token
+         * @return An object containing the view details and structure
+         * @throws ServerSideException If the view could not be found
+         */
+        @WebMethod(operationName = "getOSPView")
+        public RemoteViewObject getOSPView(@WebParam(name = "viewId")long viewId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
+            try {
+                return wsBean.getOSPView(viewId, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in getOSPView: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
+        }
+        
+        /**
+         * Retrieves the existing OSP views
+         * @param sessionId The session token
+         * @return The list of existing OSP views
+         * @throws ServerSideException If an unexpected error appeared
+         */
+        @WebMethod(operationName = "getOSPViews")
+        public List<RemoteViewObjectLight> getOSPViews(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+            try {
+                return wsBean.getOSPViews(getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in getOSPViews: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
+        }
+        
+        /**
+         * Updates an existing OSP view
+         * @param viewId The id of the view
+         * @param name The new name of the view. Null if to remain unchanged
+         * @param description The new description of the view. Null if to remain unchanged
+         * @param content  The new content of the view. Null if to remain unchanged
+         * @param sessionId The session token
+         * @throws ServerSideException If the view could not be found or if the new name (if applicable) is empty
+         */
+        @WebMethod(operationName = "updateOSPView")
+        public void updateOSPView(@WebParam(name = "viewId")long viewId, @WebParam(name = "name")String name, @WebParam(name = "description")String description, 
+                @WebParam(name = "content")byte[] content, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+            try {
+                wsBean.updateOSPView(viewId, name, description, content, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in updateOSPView: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
+        }
+        
+        /**
+         * Deletes an existing OSP view
+         * @param viewId The id of the view to be deleted
+         * @param sessionId The session token
+         * @throws ServerSideException If the view could not be found
+         */
+        @WebMethod(operationName = "deleteOSPView")
+        public void deleteOSPView(@WebParam(name = "viewId")long viewId, @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+            try {
+                wsBean.deleteOSPView(viewId, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in deleteOSPView: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
+        }
+        
+        //</editor-fold>
     // </editor-fold>
         
     // <editor-fold defaultstate="collapsed" desc="Helpers. Click on the + sign on the left to edit the code.">/**

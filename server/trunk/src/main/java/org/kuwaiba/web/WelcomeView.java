@@ -71,6 +71,7 @@ class WelcomeView extends VerticalLayout implements View {
                 GoogleMapsComponent mapMain = new GoogleMapsComponent(apiKey, null, language);
                 
                 mapMain.setSizeFull();
+                mapMain.showMarkerLabels(true);
                 
                 try {
                     List<RemoteObjectLight> allPhysicalLocations = wsBean.getObjectsOfClassLight(Constants.CLASS_GENERICLOCATION, -1, Page.getCurrent().getWebBrowser().getAddress(), 
@@ -89,7 +90,7 @@ class WelcomeView extends VerticalLayout implements View {
                                     
                                     if (latitude != null)
                                         mapMain.addMarker(aPhysicalLocation.toString(), new LatLon(
-                                            Float.valueOf(longitude), Float.valueOf(latitude)), false, "/icons/" + aPhysicalLocation.getClassName() + ".png");
+                                            Float.valueOf(latitude), Float.valueOf(longitude)), false, "/icons/" + aPhysicalLocation.getClassName() + ".png");
                                 }
                                 
                             } catch (ServerSideException ex) {

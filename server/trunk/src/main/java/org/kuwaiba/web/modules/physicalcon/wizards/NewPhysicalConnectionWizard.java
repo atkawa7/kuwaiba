@@ -357,6 +357,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
          * <li>bSide: The RemoteObjectLight instance representing the bSide of the connection. Must be a port</li>
          * <li>templateId: The id of the template to be used to create the object. -1 to create it without template</li>
          * </ul>
+         * @param wsBean Reference to the backend bean
          */
         public SelectLinkEndpointsStep(Properties properties, WebserviceBean wsBean) {
             this.wsBean = wsBean;
@@ -404,7 +405,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
                         }
                     }
                 }, new SimpleIconGenerator(wsBean, session), 
-                new AbstractNode<RemoteObjectLight>((RemoteObjectLight)properties.get("rootASide")) {
+                new AbstractNode<RemoteObjectLight>((RemoteObjectLight)properties.get("rootBSide")) {
                     @Override
                     public AbstractAction[] getActions() { return new AbstractAction[0]; }
 
@@ -414,7 +415,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
             this.bSideTree.setSelectionMode(Grid.SelectionMode.SINGLE);
             
             this.addComponents(aSideTree, bSideTree);
-            this.setSizeFull();
+            this.setSizeUndefined();
         }
 
         @Override

@@ -6175,6 +6175,86 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
         // </editor-fold>
+    //  <editor-fold desc="Outside Plant" defaultstate="collapsed">
+
+    @Override
+    public long createOSPView(String name, String description, byte[] content, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("createOSPView", ipAddress, sessionId);
+            long res = aem.createOSPView(name, description, content);
+                    
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, 
+                String.format("Created OSP View with id %s ", res));
+            return res;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public RemoteViewObject getOSPView(long viewId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getOSPView", ipAddress, sessionId);
+            return new RemoteViewObject(aem.getOSPView(viewId));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<RemoteViewObjectLight> getOSPViews(String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getOSPView", ipAddress, sessionId);
+            List<RemoteViewObjectLight> res = new ArrayList<>();
+            
+            aem.getOSPViews().forEach((aView) -> res.add(new RemoteViewObjectLight(aView)));
+            
+            return res;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void updateOSPView(long viewId, String name, String description, byte[] content, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("updateOSPView", ipAddress, sessionId);
+            aem.updateOSPView(viewId, name, description, content);
+            
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, 
+                String.format("OSP View with id %s ", viewId));
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteOSPView(long viewId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("deleteOSPView", ipAddress, sessionId);
+            aem.deleteOSPView(viewId);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, 
+                String.format("OSP View with id %s ", viewId));
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+        
+    //  </editor-fold>
         // <editor-fold defaultstate="collapsed" desc="BGP Viewer Module">
         @Override
         public List<RemoteLogicalConnectionDetails> getBGPMap(List<Long> mappedBGPLinksIds, String ipAddress, String sessionId) throws ServerSideException{

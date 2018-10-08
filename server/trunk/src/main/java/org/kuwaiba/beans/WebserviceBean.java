@@ -24,7 +24,6 @@ import com.neotropic.kuwaiba.sync.model.SyncResult;
 import java.util.HashMap;
 import java.util.List;
 import javax.ejb.Local;
-import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.exceptions.NotAuthorizedException;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.apis.persistence.util.StringPair;
@@ -642,6 +641,15 @@ public interface WebserviceBean {
     public void moveObjectsToWarehousePool(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException;
     public void moveObjectsToWarehouse(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException;
         // </editor-fold>
+    
+    //<editor-fold desc="Outside Plant" defaultstate="collapsed">
+    public long createOSPView(String name, String description, byte[] content, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteViewObject getOSPView(long viewId, String ipAddress, String sessionId) throws ServerSideException;
+    public List<RemoteViewObjectLight> getOSPViews(String ipAddressString, String sessionId) throws ServerSideException;
+    public void updateOSPView(long viewId, String name, String description, byte[] content, String ipAddress, String sessionId) throws ServerSideException;
+    public void deleteOSPView(long viewId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    //</editor-fold>
         
         // <editor-fold defaultstate="collapsed" desc="BGP Viewer Module">
         public List<RemoteLogicalConnectionDetails> getBGPMap(List<Long> mappedBGPLinksIds, String ipAddress, String sessionId) throws ServerSideException;

@@ -21,6 +21,7 @@ import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.PasswordField;
 import com.vaadin.ui.RadioButtonGroup;
@@ -124,10 +125,17 @@ public class ConfigureSyncGroupMiniApp extends AbstractMiniApplication<Window, P
         public ChooseConfigurationStep(Properties properties) {
             this.setSizeFull();
             this.properties = properties;
-            this.properties.put("title", "Choose Configuration");
-            this.chkOptions = new RadioButtonGroup<>("What kind of configuration do you want to start?");
-            this.chkOptions.setItems(new Option(1, "Select an existing Synchronization Group"), new Option(2, "Create a Synchronization Group from scratch"));
-            this.addComponent(chkOptions);
+            
+            if (properties.get("deviceId") == null || properties.get("deviceClass") == null) 
+                this.addComponent(new Label("Make sure you set the properties deviceId and deviceClass properly (did you select a device from the list?)"));
+            else {
+                this.properties.put("title", "Choose Configuration");
+                this.chkOptions = new RadioButtonGroup<>("What kind of configuration do you want to start?");
+                this.chkOptions.setItems(new Option(1, "Select an existing Synchronization Group"), new Option(2, "Create a Synchronization Group from scratch"));
+                this.addComponent(chkOptions);
+            }
+            
+            
         }
 
         @Override
@@ -367,8 +375,9 @@ public class ConfigureSyncGroupMiniApp extends AbstractMiniApplication<Window, P
         
         public ChooseSyncGroupStep(Properties properties) {
             this.setSizeFull();
-            this.properties.put("title", "Choose Sync Group");
             this.properties = properties;
+            this.properties.put("title", "Choose Sync Group");
+            
             this.tblSyncGroups = new Grid<>("Select a sync group from the list");
             try {
                 tblSyncGroups.setItems(wsBean.getSynchronizationGroups(Page.getCurrent().getWebBrowser().getAddress(), 

@@ -35,6 +35,9 @@ import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.SecureRandom;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import javax.json.Json;
@@ -42,10 +45,16 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import javax.json.JsonValue;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.X509TrustManager;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
@@ -149,8 +158,9 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
             for (JsonValue jsonGraph : jsonGraphs) {
                 String[] graphNameTokens = ((JsonObject)jsonGraph).getString("name").split(":");
                 
-                if (service.getName().equals(graphNameTokens[graphNameTokens.length - 1]))
-                //if (((JsonObject)jsonGraph).getString("name").contains(service.getName()))
+                //if (service.getName().equals(graphNameTokens[graphNameTokens.length - 1]))
+                //System.out.println(String.format("graphsMap.put(\"%s\", %s)", ((JsonObject)jsonGraph).getString("name"), ((JsonObject)jsonGraph).getString("graphid")));
+                if (((JsonObject)jsonGraph).getString("name").contains(service.getName()))
                     zabbixGraphs.add(new ZabbixGraph(((JsonObject)jsonGraph).getString("graphid"), ((JsonObject)jsonGraph).getString("name")));
             }
             if (zabbixGraphs.isEmpty())
@@ -212,10 +222,9 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
                     
                     Panel pnlZabbixGraph = new Panel(new Image(wdwGraphs.getCaption(), 
                             new ExternalResource("http://localhost/zabbix/chart2.php?graphid=" + zabbixGraphs.get(currentGraphIndex).id + 
-                                    "&period=3600&isNow=1&profileIdx=web.graphs&profileIdx2=798&width=1200")));
+                                    "&period=3600&isNow=1&profileIdx=web.graphs&profileIdx2=798&width=1194")));
                     
                     lytGraph.addComponents(pnlZabbixGraph);
-                    lytGraph.setComponentAlignment(pnlZabbixGraph, Alignment.MIDDLE_CENTER);
                     
                     wdwGraphs.setModal(true);
                     wdwGraphs.setHeight(80, Unit.PERCENTAGE);
@@ -244,13 +253,14 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
     }
     
     /**
-     * Replaces the image currently on display at the Zabbix graphs panel with the current selected graph
+     * Replaces the image currently on display at the Zabbix graphs panel with the current seleted graph
      */
     private void updateZabbixGraph() {
-        Image newGraph = new Image(zabbixGraphs.get(currentGraphIndex).toString(), 
+        Image newGraph = new Image("", 
                         new ExternalResource("http://localhost/zabbix/chart2.php?graphid=" + zabbixGraphs.get(currentGraphIndex).id + 
-                                    "&period=3600&isNow=1&profileIdx=web.graphs&profileIdx2=798&width=600"));
+                                    "&period=3600&isNow=1&profileIdx=web.graphs&profileIdx2=798&width=1194"));
         newGraph.setStyleName("theater-layout-screen-image");
+        pnlZabbixGraphs.setCaption(zabbixGraphs.get(currentGraphIndex).toString());
         pnlZabbixGraphs.setContent(newGraph);
     }
     
@@ -262,6 +272,7 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
      */
     private String createHttpPostRequestForTextResponse(String url, String content) throws InvalidArgumentException {
         try {
+            trustEveryone();
             HttpURLConnection connection = (HttpURLConnection)new URL(url).openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("User-Agent", "Mozilla/5.0");
@@ -291,7 +302,30 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
             throw new InvalidArgumentException(String.format("An unexpected error occurred while loading Zabbix graphics: %s", ex.getLocalizedMessage()));
         }
     }
-   
+    
+    
+private void trustEveryone() { 
+    try { 
+            HttpsURLConnection.setDefaultHostnameVerifier(new HostnameVerifier(){ 
+                    public boolean verify(String hostname, SSLSession session) { 
+                            return true; 
+                    }}); 
+            SSLContext context = SSLContext.getInstance("TLS"); 
+            context.init(null, new X509TrustManager[]{new X509TrustManager(){ 
+                    public void checkClientTrusted(X509Certificate[] chain, 
+                                    String authType) throws CertificateException {} 
+                    public void checkServerTrusted(X509Certificate[] chain, 
+                                    String authType) throws CertificateException {} 
+                    public X509Certificate[] getAcceptedIssuers() { 
+                            return new X509Certificate[0]; 
+                    }}}, new SecureRandom()); 
+            HttpsURLConnection.setDefaultSSLSocketFactory( 
+                            context.getSocketFactory()); 
+    } catch (Exception e) { // should never happen 
+            e.printStackTrace(); 
+    } 
+} 
+    
 
     /**
      * A simple POJO that represents a Zabbix graph and that can be used in lists and combo boxes
@@ -317,3 +351,4 @@ public class ZabbixGraphDashboardWidget extends AbstractDashboardWidget {
         }
     }
 }
+
