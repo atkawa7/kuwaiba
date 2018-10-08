@@ -43,18 +43,9 @@ public class ShowRackViewAction extends GenericObjectNodeAction {
             RackViewTopComponent rackView = ((RackViewTopComponent) WindowManager.
                 getDefault().findTopComponent("RackViewTopComponent_" + rack.getId()));
             
-            if (rackView == null) {
-                rackView = new RackViewTopComponent(rack);
-                rackView.open();
-            } else {
-                if (rackView.isOpened())
-                    rackView.requestAttention(true);
-                else { //Even after closed, the TCs (even the no-singletons) continue to exist in the NBP's PersistenceManager registry, 
-                       //so we will reuse the instance, refreshing the vierw first
-                    rackView.refresh();
-                    rackView.open();
-                }
-            }
+            rackView = new RackViewTopComponent(rack);
+            rackView.open();
+                
             rackView.requestActive();
         }
     }

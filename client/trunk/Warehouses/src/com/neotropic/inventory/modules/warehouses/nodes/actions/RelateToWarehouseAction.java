@@ -107,7 +107,7 @@ public class RelateToWarehouseAction extends GenericObjectNodeAction implements 
 
     @Override
     public String[] appliesTo() {
-        return null; //Enable this action for any object
+        return new String [] {"GenericPhysicalNode"};
     }
     
     @Override

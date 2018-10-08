@@ -108,7 +108,7 @@ public class RelateToVirtualWarehouseAction extends GenericObjectNodeAction impl
 
     @Override
     public String[] appliesTo() {
-        return null; //Enable this action for any object
+        return new String [] {"GenericPhysicalNode"};
     }
     
     @Override
