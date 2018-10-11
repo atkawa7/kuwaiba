@@ -16,7 +16,6 @@
 package org.kuwaiba.apis.web.gui.properties;
 
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.shared.ui.grid.ColumnResizeMode;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.themes.ValoTheme;
@@ -30,9 +29,7 @@ public class PropertySheet extends Grid<AbstractProperty> {
 
     public PropertySheet() {
         setHeaderVisible(false);
-        setColumnResizeMode(ColumnResizeMode.ANIMATED);
         setSizeUndefined();
-        //addColumn(AbstractProperty::getName).setWidth(170);
         addComponentColumn((property) -> {
             Label label = new Label("<b>" + property.getName() + "</b>", ContentMode.HTML); //NOI18N
             return label;
@@ -49,7 +46,6 @@ public class PropertySheet extends Grid<AbstractProperty> {
         this();
         setItems(properties);
         setCaption(caption);
-        
     }
 
     public void clear() {

@@ -224,6 +224,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
          * <li>class: The class of the new container (a RemoteClassMetadataLight instance)</li>
          * <li>templateId: The id of the template to be used to create the object. -1 to create it without template</li>
          * </ul>
+         * @param wsBean Reference to the backend bean
          */
         public SelectContainerEndpointsStep(Properties properties, WebserviceBean wsBean) {
             this.wsBean = wsBean;
@@ -255,6 +256,7 @@ public class NewPhysicalConnectionWizard extends Wizard {
                     public void refresh(boolean recursive) { }
             });
             this.aSideTree.setSelectionMode(Grid.SelectionMode.SINGLE);
+            this.aSideTree.setSizeUndefined();
             
             this.bSideTree = new SimpleTree(
             new ChildrenProvider<RemoteObjectLight, RemoteObjectLight>() {
@@ -279,9 +281,11 @@ public class NewPhysicalConnectionWizard extends Wizard {
                     public void refresh(boolean recursive) { }
             });
             this.bSideTree.setSelectionMode(Grid.SelectionMode.SINGLE);
+            this.aSideTree.setSizeUndefined();
             
             this.addComponents(aSideTree, bSideTree);
-            this.setSizeUndefined();
+            this.setSpacing(true);
+            this.setWidth(100, Unit.PERCENTAGE);
         }
 
         @Override

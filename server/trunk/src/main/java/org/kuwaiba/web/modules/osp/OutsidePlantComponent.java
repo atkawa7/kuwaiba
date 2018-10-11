@@ -70,7 +70,7 @@ public class OutsidePlantComponent extends AbstractTopComponent {
                 new OutsidePlantViewDashboardWidget(eventBus, wsBean));
         
         pnlSplitMain.setSizeFull();
-        pnlSplitMain.setSplitPosition(30, Unit.PERCENTAGE);
+        pnlSplitMain.setSplitPosition(20, Unit.PERCENTAGE);
         
         addComponent(pnlSplitMain);
         

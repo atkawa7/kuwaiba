@@ -6216,6 +6216,10 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             aem.getOSPViews().forEach((aView) -> res.add(new RemoteViewObjectLight(aView)));
             
+            res.sort((view1, view2) -> {
+                return view1.getName().compareTo(view2.getName()); //To change body of generated lambdas, choose Tools | Templates.
+            });
+            
             return res;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());

@@ -30,7 +30,6 @@ import com.vaadin.ui.FormLayout;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.MenuBar;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -38,9 +37,11 @@ import com.vaadin.ui.Window;
 import com.vaadin.ui.dnd.DropTargetExtension;
 import com.vaadin.ui.dnd.event.DropEvent;
 import com.vaadin.ui.dnd.event.DropListener;
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -58,6 +59,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.dashboards.DashboardEventBus;
 import org.kuwaiba.apis.web.gui.dashboards.DashboardEventListener;
+import org.kuwaiba.apis.web.gui.navigation.views.AbstractScene;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.apis.web.gui.tools.Wizard;
 import org.kuwaiba.beans.WebserviceBean;
@@ -66,6 +68,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.web.modules.physicalcon.wizards.NewPhysicalConnectionWizard;
 
 /**
@@ -102,6 +105,10 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
      */
     private int defaultZoom;
     /**
+     * A hash that caches the colors of the connections by connection class name
+     */
+    private HashMap<String, String> connectionColors;
+    /**
      * Reference to the backend bean
      */
     private WebserviceBean wsBean;
@@ -111,6 +118,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
         this.nodes = new ArrayList<>();
         this.edges = new ArrayList<>();
         this.wsBean= wsBean;
+        this.connectionColors = new HashMap<>();
         this.createContent();
         this.setSizeFull();
     }
@@ -229,12 +237,9 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                         lytContent.setExpandRatio(tblOSPViews, 9);
                         lytContent.setExpandRatio(lytButtons, 1);
                         lytContent.setComponentAlignment(lytButtons, Alignment.MIDDLE_RIGHT);
-                        lytContent.setSizeFull();
+                        lytContent.setWidth(100, Unit.PERCENTAGE);
                         
-                        Panel pnlCoiso = new Panel(lytContent);
-                        pnlCoiso.setSizeFull();
-                        
-                        wdwOpen.setContent(pnlCoiso);
+                        wdwOpen.setContent(lytContent);
                         
                         wdwOpen.center();
                         wdwOpen.setModal(true);
@@ -329,6 +334,17 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                 UI.getCurrent().addWindow(wdwSelectRootObjects);
                 
                 btnOk.addClickListener((event) -> {
+                    
+                    if (!cmbASideRoot.getSelectedItem().isPresent() || !cmbBSideRoot.getSelectedItem().isPresent()) {
+                        Notifications.showError("Select both sides of the connection");
+                        return;
+                    }
+                    
+                    if (cmbASideRoot.getSelectedItem().get().equals(cmbBSideRoot.getSelectedItem().get())){
+                        Notifications.showError("The selected nodes must be different");
+                        return;
+                    }
+                    
                     wdwSelectRootObjects.close();
                     NewPhysicalConnectionWizard wizard = new NewPhysicalConnectionWizard(cmbASideRoot.getSelectedItem().get().getBusinessObject(), 
                                     cmbBSideRoot.getSelectedItem().get().getBusinessObject(), wsBean);
@@ -338,7 +354,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                     Window wdwWizard = new Window("New Connection Wizard", wizard);
                     wdwWizard.center();
                     wdwWizard.setModal(true);
-                    wdwWizard.setWidth(30, Unit.PERCENTAGE);
+                    wdwWizard.setWidth(50, Unit.PERCENTAGE);
                     wdwWizard.setHeight(70, Unit.PERCENTAGE);
                 
                     wizard.addEventListener((wizardEvent) -> {
@@ -356,7 +372,9 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                                 coordinates.add(mrkDestination.getPosition());
                                                                 
                                 GoogleMapPolyline connection = new GoogleMapPolyline(newConnection.toString(), coordinates);
-                                connection.setStrokeWeight(2);
+                                connection.setStrokeWeight(3);
+                                
+                                connection.setStrokeColor(getConnectionColorFromClassName(newConnection.getClassName()));
                                 
                                 OSPEdge newEdge = new OSPEdge(connection, newConnection);
                                 newEdge.setSourceObject(getNodeFromBusinessObject(aSide));
@@ -398,112 +416,80 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
      * Exports the view to XML
      * @return The XML document as a byte array
      */
-//    public byte[] getAsXml() {
-//        try {
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
-//            XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
-//            XMLEventFactory xmlef = XMLEventFactory.newInstance();
-//            
-//            
-//
-//            QName qnameView = new QName("view"); //NOI18N
-//            xmlew.add(xmlef.createStartElement(qnameView, null, null));
-//            xmlew.add(xmlef.createAttribute(new QName("version"), VIEW_FORMAT_VERSION)); //NOI18N
-//
-//            QName qnameClass = new QName("class"); //NOI18N
-//            xmlew.add(xmlef.createStartElement(qnameClass, null, null));
-//            xmlew.add(xmlef.createCharacters("OSPView")); //NOI18N
-//            xmlew.add(xmlef.createEndElement(qnameClass, null));
-//            
-//            QName qCenter = new QName("center"); //NOI18N
-//            xmlew.add(xmlef.createStartElement(qCenter, null, null));
-//            xmlew.add(xmlef.createAttribute(new QName("lon"), Double.toString(mapMain.getCenter().getLon()))); //NOI18N
-//            xmlew.add(xmlef.createAttribute(new QName("lat"), Double.toString(mapMain.getCenter().getLat()))); //NOI18N
-//            xmlew.add(xmlef.createEndElement(qCenter, null));
-//            
-//            QName qZoom = new QName("zoom"); //NOI18N
-//            xmlew.add(xmlef.createStartElement(qZoom, null, null));
-//            xmlew.add(xmlef.createCharacters(String.valueOf(mapMain.getZoom()))); //NOI18N
-//            xmlew.add(xmlef.createEndElement(qZoom, null));
-//
-//            QName qnameNodes = new QName("nodes"); //NOI18N
-//            xmlew.add(xmlef.createStartElement(qnameNodes, null, null));
-//            
-//            //First the nodes
-//            for (OSPNode node : nodes) {
-//                QName qnameNode = new QName("node"); //NOI18N
-//                xmlew.add(xmlef.createStartElement(qnameNode, null, null));
-//                xmlew.add(xmlef.createAttribute(new QName("lon"), Double.toString(node.getMarker().getPosition().getLon()))); //NOI18N
-//                xmlew.add(xmlef.createAttribute(new QName("lat"), Double.toString(node.getMarker().getPosition().getLat()))); //NOI18N
-//                xmlew.add(xmlef.createAttribute(new QName("class"), node.getBusinessObject().getClassName())); //NOI18N
-//                xmlew.add(xmlef.createCharacters(Long.toString(node.getBusinessObject().getId())));
-//                xmlew.add(xmlef.createEndElement(qnameNode, null));
-//            }
-//            xmlew.add(xmlef.createEndElement(qnameNodes, null));
-//
-//            //Now the connections
-//            QName qnameEdges = new QName("edges"); //NOI18N
-//            xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
-//            
-//            for (OSPEdge edge : edges) {
-//                GoogleMapPolyline lnEdge = edge.getPolyline();
-//                QName qnameEdge = new QName("edge"); //NOI18N
-//                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(edge.getBusinessObject().getId()))); //NOI18N
-//                xmlew.add(xmlef.createAttribute(new QName("class"), edge.getBusinessObject().getClassName())); //NOI18N
-//
-//                xmlew.add(xmlef.createAttribute(new QName("aside"), String.valueOf(edge.getSourceObject().getBusinessObject().getId()))); //NOI18N
-//                xmlew.add(xmlef.createAttribute(new QName("bside"), String.valueOf(edge.getTargetObject().getBusinessObject().getId()))); //NOI18N
-//                
-//                for (LatLon point : lnEdge.getCoordinates()) {
-//                    QName qnameControlpoint = new QName("controlpoint"); //NOI18N
-//                    xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
-//                    xmlew.add(xmlef.createAttribute(new QName("lon"), Double.toString(point.getLon()))); //NOI18N
-//                    xmlew.add(xmlef.createAttribute(new QName("lat"), Double.toString(point.getLat()))); //NOI18N
-//                    xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
-//                }
-//                xmlew.add(xmlef.createEndElement(qnameEdge, null));
-//            }
-//            xmlew.add(xmlef.createEndElement(qnameEdges, null));
-//            xmlew.add(xmlef.createEndElement(qnameView, null));
-//            xmlew.close();
-//            return baos.toByteArray();
-//        } catch (XMLStreamException ex) { 
-//            //Should not happen
-//            return new byte[0];
-//        }
-//    }
-    
     public byte[] getAsXml() {
-            
-            StringBuilder sb = new StringBuilder();
-            
-            sb.append("<view version=\"1.0\"><center lon=\"").append(mapMain.getCenter().getLon()).append("\" lat=\"").append(mapMain.getCenter().getLat()).append("\" />");
-            sb.append("<zoom>").append(mapMain.getZoom()).append("</zoom>").append("<nodes>");
-            
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            XMLOutputFactory xmlof = XMLOutputFactory.newInstance();
+            XMLEventWriter xmlew = xmlof.createXMLEventWriter(baos);
+            XMLEventFactory xmlef = XMLEventFactory.newInstance();
 
+            QName qnameView = new QName("view"); //NOI18N
+            xmlew.add(xmlef.createStartElement(qnameView, null, null));
+            xmlew.add(xmlef.createAttribute(new QName("version"), VIEW_FORMAT_VERSION)); //NOI18N
+
+            QName qnameClass = new QName("class"); //NOI18N
+            xmlew.add(xmlef.createStartElement(qnameClass, null, null));
+            xmlew.add(xmlef.createCharacters("OSPView")); //NOI18N
+            xmlew.add(xmlef.createEndElement(qnameClass, null));
+            
+            QName qCenter = new QName("center"); //NOI18N
+            xmlew.add(xmlef.createStartElement(qCenter, null, null));
+            xmlew.add(xmlef.createAttribute(new QName("lon"), Double.toString(mapMain.getCenter().getLon()))); //NOI18N
+            xmlew.add(xmlef.createAttribute(new QName("lat"), Double.toString(mapMain.getCenter().getLat()))); //NOI18N
+            xmlew.add(xmlef.createEndElement(qCenter, null));
+            
+            QName qZoom = new QName("zoom"); //NOI18N
+            xmlew.add(xmlef.createStartElement(qZoom, null, null));
+            xmlew.add(xmlef.createCharacters(String.valueOf(mapMain.getZoom()))); //NOI18N
+            xmlew.add(xmlef.createEndElement(qZoom, null));
+
+            QName qnameNodes = new QName("nodes"); //NOI18N
+            xmlew.add(xmlef.createStartElement(qnameNodes, null, null));
+            
             //First the nodes
-            for (OSPNode node : nodes) 
-                sb.append("<node lon=\"").append(node.getMarker().getPosition().getLon()).append("\" lat=\"").append(node.getMarker().getPosition().getLat()).append("\" class=\"").append(node.getBusinessObject().getClassName()).append("\">").append(node.getBusinessObject().getId()).append("</node>");
-            
-            sb.append("</nodes>").append("<edges>");
-            
+            for (OSPNode node : nodes) {
+                QName qnameNode = new QName("node"); //NOI18N
+                xmlew.add(xmlef.createStartElement(qnameNode, null, null));
+                xmlew.add(xmlef.createAttribute(new QName("lon"), Double.toString(node.getMarker().getPosition().getLon()))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("lat"), Double.toString(node.getMarker().getPosition().getLat()))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("class"), node.getBusinessObject().getClassName())); //NOI18N
+                xmlew.add(xmlef.createCharacters(Long.toString(node.getBusinessObject().getId())));
+                xmlew.add(xmlef.createEndElement(qnameNode, null));
+            }
+            xmlew.add(xmlef.createEndElement(qnameNodes, null));
 
+            //Now the connections
+            QName qnameEdges = new QName("edges"); //NOI18N
+            xmlew.add(xmlef.createStartElement(qnameEdges, null, null));
+            
             for (OSPEdge edge : edges) {
                 GoogleMapPolyline lnEdge = edge.getPolyline();
+                QName qnameEdge = new QName("edge"); //NOI18N
+                xmlew.add(xmlef.createStartElement(qnameEdge, null, null));
+                xmlew.add(xmlef.createAttribute(new QName("id"), Long.toString(edge.getBusinessObject().getId()))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("class"), edge.getBusinessObject().getClassName())); //NOI18N
 
-                sb.append("<edge id=\"").append(edge.getBusinessObject().getId()).append("\" class=\"").append(edge.getBusinessObject().getClassName()).append("\" aside=\"").append(edge.getSourceObject().getBusinessObject().getId()).append("\" bside=\"").append(edge.getTargetObject().getBusinessObject().getId()).append("\">");
+                xmlew.add(xmlef.createAttribute(new QName("aside"), String.valueOf(edge.getSourceObject().getBusinessObject().getId()))); //NOI18N
+                xmlew.add(xmlef.createAttribute(new QName("bside"), String.valueOf(edge.getTargetObject().getBusinessObject().getId()))); //NOI18N
                 
-                for (LatLon point : lnEdge.getCoordinates())
-                    sb.append("<controlpoint lon=\"").append(point.getLon()).append("\" lat=\"").append(point.getLat()).append("\" />"); //NOI18N
-                    
-                sb.append("</edge>");
+                for (LatLon point : lnEdge.getCoordinates()) {
+                    QName qnameControlpoint = new QName("controlpoint"); //NOI18N
+                    xmlew.add(xmlef.createStartElement(qnameControlpoint, null, null));
+                    xmlew.add(xmlef.createAttribute(new QName("lon"), Double.toString(point.getLon()))); //NOI18N
+                    xmlew.add(xmlef.createAttribute(new QName("lat"), Double.toString(point.getLat()))); //NOI18N
+                    xmlew.add(xmlef.createEndElement(qnameControlpoint, null));
+                }
+                xmlew.add(xmlef.createEndElement(qnameEdge, null));
             }
-            sb.append("</edges></view>");
-            return sb.toString().getBytes();
-        
+            xmlew.add(xmlef.createEndElement(qnameEdges, null));
+            xmlew.add(xmlef.createEndElement(qnameView, null));
+            xmlew.close();
+            return baos.toByteArray();
+        } catch (XMLStreamException ex) { 
+            //Should not happen
+            return new byte[0];
+        }
     }
-    
     
     /**
      * Renders a view from an XML document
@@ -589,6 +575,8 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                                     }
                                     
                                     GoogleMapPolyline newPolyline = new GoogleMapPolyline(businessObject.toString(), controlPoints);
+                                    newPolyline.setStrokeWeight(3);
+                                    newPolyline.setStrokeColor(getConnectionColorFromClassName(businessObject.getClassName()));
                                     OSPEdge newEdge = new OSPEdge(newPolyline, businessObject);
                                     newEdge.setSourceObject(sourceNode);
                                     newEdge.setTargetObject(targetNode);
@@ -623,6 +611,9 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
             } 
     }
 
+    /**
+     * Clears and centers the map
+     */
     public void clearView() {
         nodes.forEach((node) -> { mapMain.removeMarker(node.getMarker()); });
         edges.forEach((edge) -> { mapMain.removeEdge(edge.getPolyline()); });
@@ -632,6 +623,28 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
         
         mapMain.setCenter(defaultCenter);
         mapMain.setZoom(defaultZoom);
+    }
+    
+    /**
+     * Gets the color of a connection using as input its class
+     * @param className The connection class
+     * @return The color of the connection as an HTML-compatible hex value. Defaults to black in case of error
+     */
+    private String getConnectionColorFromClassName(String className) {
+        String connectionColor = connectionColors.get(className);
+                                
+        if (connectionColor == null) {
+            try {
+                RemoteClassMetadata classMetadata = wsBean.getClass(className, Page.getCurrent().getWebBrowser().getAddress(), 
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                connectionColor = AbstractScene.toHexString(new Color(classMetadata.getColor()));
+            } catch (ServerSideException ex) {
+                connectionColor = "#FFFFFF"; //NOI18N
+                Notifications.showError(ex.getLocalizedMessage());
+            }
+        }
+        
+        return connectionColor;
     }
     
     /**

@@ -58,11 +58,8 @@ public class ObjectViewScene extends AbstractScene {
     public void render(byte[] structure) throws IllegalArgumentException {
         try {
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-            QName qZoom = new QName("zoom"); //NOI18N
-            QName qCenter = new QName("center"); //NOI18N
             QName qNode = new QName("node"); //NOI18N
             QName qEdge = new QName("edge"); //NOI18N
-            QName qLabel = new QName("label"); //NOI18N
             QName qControlPoint = new QName("controlpoint"); //NOI18N
 
             ByteArrayInputStream bais = new ByteArrayInputStream(structure);
@@ -85,9 +82,6 @@ public class ObjectViewScene extends AbstractScene {
                     } else {
                         if (reader.getName().equals(qEdge)) {
                             long objectId = Long.valueOf(reader.getAttributeValue(null, "id")); //NOI18N
-
-                            //long aSide = Long.valueOf(reader.getAttributeValue(null, "aside")); //NOI18N
-                            //long bSide = Long.valueOf(reader.getAttributeValue(null, "bside")); //NOI18N
 
                             SrvEdgeWidget edgeWidget = findEdgeWidget(objectId);
                             
