@@ -54,8 +54,11 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConditionalActivi
 import org.kuwaiba.util.i18n.I18N;
 import org.kuwaiba.web.IndexUI;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Notification;
 import com.vaadin.ui.themes.ValoTheme;
 import org.kuwaiba.apis.persistence.PersistenceService;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
+import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfoLight;
 
 /**
  * Shown the instances of a process definition
@@ -268,25 +271,38 @@ public class ProcessInstancesView extends VerticalLayout {
         });      
         btnTimeline.setHtmlContentAllowed(true);
         
-        grid.addColumn(ProcessInstanceBean::getEditButtonCaption, buttonContinuar).setId(columnStatusId).setMinimumWidth(50f).setMaximumWidth(50f);
-        grid.addColumn(ProcessInstanceBean::getTimelineButtonCaption, btnTimeline).setMinimumWidth(50f).setMaximumWidth(50f);
-        grid.addColumn(ProcessInstanceBean::getViewButtonCaption, buttonView).setId(columnViewId).setMinimumWidth(50f).setMaximumWidth(50f);  
+        grid.addColumn(ProcessInstanceBean::getEditButtonCaption, buttonContinuar)
+            .setId(columnStatusId)
+            .setMinimumWidth(50f)
+            .setMaximumWidth(50f)
+            .setDescriptionGenerator(e -> "<b>Activities</b>", ContentMode.HTML);
+        
+        grid.addColumn(ProcessInstanceBean::getTimelineButtonCaption, btnTimeline)
+            .setMinimumWidth(50f)
+            .setMaximumWidth(50f)
+            .setDescriptionGenerator(e -> "<b>Timeline</b>", ContentMode.HTML);
+        
+        grid.addColumn(ProcessInstanceBean::getViewButtonCaption, buttonView)
+            .setId(columnViewId)
+            .setMinimumWidth(50f)
+            .setMaximumWidth(50f)
+            .setDescriptionGenerator(e -> "<b>Graph</b>", ContentMode.HTML);
         
         grid.addSelectionListener(new SelectionListener<ProcessInstanceBean>() {
             @Override
             public void selectionChange(SelectionEvent<ProcessInstanceBean> event) {
                 Optional<ProcessInstanceBean> optional = event.getFirstSelectedItem();
                 
-                if (optional != null && optional.get() != null) {
+                if (optional.isPresent()) {
                     ProcessInstanceBean processInstanceBean = optional.get();
-                
-                    ProcessInstanceView processInstanceView = new ProcessInstanceView(
+                    
+                    ProcessInstanceToolsView processInstanceToolsView = new ProcessInstanceToolsView(
+                        processInstanceBean.getProcessDefinition(),
                         processInstanceBean.getProcessInstance(), 
-                        processInstanceBean.getProcessDefinition(), 
                         wsBean, 
                         session);
 
-                    setActionComponent(processInstanceView, ProcessInstancesView.this);
+                    setActionComponent(processInstanceToolsView, ProcessInstancesView.this);
                 }
             }
         });
@@ -428,9 +444,31 @@ public class ProcessInstancesView extends VerticalLayout {
 ////            return false;
 ////        }
 ////    }
-    
+        
     public static void createProcessInstance(ProcessInstancesView processInstancesView, RemoteProcessDefinition processDef, WebserviceBean webserviceBean, RemoteSession remoteSession) {
-                
+        if (processDef == null || webserviceBean == null || remoteSession == null) {
+            Notifications.showError("Can not create a process instance");
+            return;
+        }
+        RemoteActivityDefinition startActivity = processDef.getStartActivity();
+        if (startActivity != null) {
+            RemoteActor remoteActor = startActivity.getActor();
+            if (remoteActor != null) {
+                if(!actorEnabled(webserviceBean, remoteSession, remoteActor)) {
+                    Notifications.showError(I18N.gm("procmanager.user_is_not_authorized_to_perform_this_action"));
+                    return;
+                }
+            }
+            else {
+                Notifications.showError("The actor of the start activity cannot be found");
+                return;
+            }
+        }
+        else {
+            Notifications.showError("Start activity cannot be found");
+            return;
+        }
+        
         MessageBox.getInstance().showMessage(new Label("Create an instance of the process")).addClickListener(new Button.ClickListener() {
                                                 
             @Override
@@ -457,7 +495,6 @@ public class ProcessInstancesView extends VerticalLayout {
                     } catch (ServerSideException ex) {
                         Exceptions.printStackTrace(ex);
                     }
-                    
                 }
             }
         });
@@ -492,5 +529,26 @@ public class ProcessInstancesView extends VerticalLayout {
                 getAllActivities(activity.getNextActivity());
             }
         }
+    }
+    
+    private static boolean actorEnabled(WebserviceBean webserviceBean, RemoteSession remoteSession, RemoteActor actor) {
+        try {
+            List<GroupInfoLight> groups = webserviceBean.getGroupsForUser(
+                remoteSession.getUserId(),
+                Page.getCurrent().getWebBrowser().getAddress(),
+                remoteSession.getSessionId());
+            
+            if (actor != null) {
+                
+                for (GroupInfoLight group : groups) {
+
+                    if (actor.getName().equals(group.getName()))
+                        return true;
+                }
+            }
+        } catch (ServerSideException ex) {
+            Notifications.showError(ex.getMessage());
+        }
+        return false;
     }
 }

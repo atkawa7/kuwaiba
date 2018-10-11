@@ -6174,6 +6174,31 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    @Override    
+    public RemoteObjectLight getPhysicalNodeToObjectInWarehouse(String objectClassName, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getObjectLight", ipAddress, sessionId);
+            BusinessObjectLight physicalNode = bem.getPhysicalNodeToObjectInWarehouse(objectClassName, objectId);
+            return physicalNode != null ? new RemoteObjectLight(physicalNode) : null;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    public RemoteObjectLight getWarehouseToObject(String objectClassName, long objectId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getObjectLight", ipAddress, sessionId);
+            BusinessObjectLight warehouse = bem.getWarehouseToObject(objectClassName, objectId);
+            
+            return warehouse != null ? new RemoteObjectLight(warehouse) : null;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
         // </editor-fold>
     //  <editor-fold desc="Outside Plant" defaultstate="collapsed">
 

@@ -640,6 +640,8 @@ public interface WebserviceBean {
     public void releasePhysicalNodeFromWarehouse(String warehouseClass, long warehouseId, long objectId, String ipAddress, String sessionId) throws ServerSideException;
     public void moveObjectsToWarehousePool(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException;
     public void moveObjectsToWarehouse(String targetClass, long targetOid, String[] objectClasses, long[] objectOids, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObjectLight getPhysicalNodeToObjectInWarehouse(String objectClassName, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteObjectLight getWarehouseToObject(String objectClassName, long objectId, String ipAddress, String sessionId) throws ServerSideException;
         // </editor-fold>
     
     //<editor-fold desc="Outside Plant" defaultstate="collapsed">

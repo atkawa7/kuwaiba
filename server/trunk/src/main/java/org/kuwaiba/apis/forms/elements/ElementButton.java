@@ -204,7 +204,7 @@ public class ElementButton extends AbstractElement {
 ////                    }
                     fireElementEvent(new EventDescriptor(Constants.EventAttribute.ONCLICK, Constants.Function.SAVE));
                 } 
-                else if (Constants.Function.PROPERTY_CHANGE.equals(key)) {
+                else if (key != null && key.contains(Constants.Function.PROPERTY_CHANGE)) {
                     List<String> propertyChangeLine = getEvents().get(Constants.EventAttribute.ONCLICK).get(key);
                     
                     if (propertyChangeLine != null && propertyChangeLine.size() >= 3) {

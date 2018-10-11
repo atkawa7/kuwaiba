@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
@@ -356,8 +357,16 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
                         events.put(eventAttr, new LinkedHashMap());
 
                     HashMap<String, List<String>> function = events.get(eventAttr);
-
-                    function.put(functionName, params);                                        
+                    
+                    if (function.containsKey(functionName)) {
+                        
+                        while (function.containsKey(functionName))
+                            functionName = functionName + new Random().nextInt();
+                            
+                        function.put(functionName, params);
+                    } else {
+                        function.put(functionName, params);
+                    }
                 }
             }
         }

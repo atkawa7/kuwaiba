@@ -19,6 +19,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.server.ResourceReference;
 import com.vaadin.server.StreamResource;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
@@ -493,9 +494,16 @@ public class ProcessInstanceView extends DynamicComponent {
             }
             
             setComponentCenter(artifactWrapperLayout);
-        } else 
-            Notifications.showError("The group you belong to can not start or edit this activity");
-        
+        }
+        else {
+            VerticalLayout verticalLayout = new VerticalLayout();
+            verticalLayout.setSpacing(false);
+            Label label = new Label("<h1 style=\"color:#ff8a80;\">The group you belong to can not start or edit this activity<h1>", ContentMode.HTML);            
+            verticalLayout.addComponent(label);
+            verticalLayout.setComponentAlignment(label, Alignment.MIDDLE_CENTER);
+            verticalLayout.setSizeFull();
+            setComponentCenter(verticalLayout);
+        }
     }
     
     public void initView() {

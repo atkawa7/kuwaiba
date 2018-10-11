@@ -45,7 +45,7 @@ public class MiniAppRackView extends AbstractMiniApplication<Component, Componen
 
     @Override
     public Component launchDetached() {
-        return null;
+        return launchEmbedded();
     }
 
     @Override

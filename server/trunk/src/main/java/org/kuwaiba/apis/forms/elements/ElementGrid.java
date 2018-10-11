@@ -177,6 +177,20 @@ public class ElementGrid extends AbstractElement {
         if (hasProperty(Constants.EventAttribute.ONPROPERTYCHANGE, Constants.Property.ROWS)) {
             List<String> list = getEvents().get(Constants.EventAttribute.ONPROPERTYCHANGE).get(Constants.Property.ROWS);
             loadValue(list);
+        }
+        else if (hasProperty(Constants.EventAttribute.ONPROPERTYCHANGE, Constants.Property.SELECTED_ROW)) {
+            long oldValue = getSelectedRow();
+            long newValue = (long) getNewValue(Constants.EventAttribute.ONPROPERTYCHANGE, Constants.Property.SELECTED_ROW);
+
+            setSelectedRow(newValue);
+
+            firePropertyChangeEvent();
+
+            fireElementEvent(new EventDescriptor(
+                Constants.EventAttribute.ONPROPERTYCHANGE, 
+                Constants.Property.SELECTED_ROW, newValue, oldValue));
+        }
+        else {
             super.propertyChange();
         }
     }
@@ -264,6 +278,8 @@ public class ElementGrid extends AbstractElement {
     public boolean hasProperty(String propertyName) {
         switch (propertyName) {
             case Constants.Property.ROWS:
+                return true;
+            case Constants.Property.SELECTED_ROW:
                 return true;
             default:
                 return super.hasProperty(propertyName);

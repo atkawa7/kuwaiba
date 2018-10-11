@@ -1023,5 +1023,7 @@ public interface BusinessEntityManager {
     
     //<editor-fold desc="Warehouse" defaultstate="collapsed">
     public List<BusinessObjectLight> getWarehousesInObject(String objectClassName, long objectId) throws MetadataObjectNotFoundException;
+    public BusinessObjectLight getPhysicalNodeToObjectInWarehouse(String objectClassName, long objectId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
+    public BusinessObjectLight getWarehouseToObject(String objectClassName, long objectId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
     //</editor-fold>
 }

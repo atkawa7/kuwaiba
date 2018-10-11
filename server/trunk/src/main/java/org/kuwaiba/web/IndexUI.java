@@ -45,6 +45,7 @@ import org.kuwaiba.web.modules.ltmanager.ListTypeManagerModule;
 import org.kuwaiba.web.modules.navtree.NavigationTreeModule;
 import org.kuwaiba.web.modules.osp.OutsidePlantModule;
 import org.kuwaiba.web.modules.servmanager.ServiceManagerModule;
+import org.kuwaiba.web.modules.warehouse.WarehouseManagerModule;
 import org.kuwaiba.web.procmanager.ProcessManagerModule;
 
 /**
@@ -113,6 +114,11 @@ public class IndexUI extends UI {
             OutsidePlantModule outsidePlantModule = new OutsidePlantModule(null, wsBean, 
                         (RemoteSession) getSession().getAttribute("session"));
             outsidePlantModule.attachToMenu(mnuMain);
+            
+            // Warehouse Manager
+            WarehouseManagerModule warehouseManagerModule = new WarehouseManagerModule(null, wsBean, 
+                        (RemoteSession) getSession().getAttribute("session"));
+            warehouseManagerModule.attachToMenu(mnuMain);
             
             // Process Manager Module
             ProcessManagerModule processManagerModule = new ProcessManagerModule(null, wsBean, 

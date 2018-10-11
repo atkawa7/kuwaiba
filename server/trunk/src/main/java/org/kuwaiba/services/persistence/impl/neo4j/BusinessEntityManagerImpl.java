@@ -874,7 +874,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     return parents;
                 else { 
                     String parentNodeClass = Util.getClassName(parentNode);
-                    parents.add(Util.createRemoteObjectLightFromNode(parentNode));
+                    try {
+                        parents.add(Util.createRemoteObjectLightFromNode(parentNode));
+                    } catch(Exception ex) {
+                        throw new ApplicationObjectNotFoundException("Some of the parents are not a Inventory Object");
+                    }
                     if (mem.isSubClass(objectToMatchClassName, parentNodeClass))
                         return parents;
                     
@@ -2170,6 +2174,73 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             return warehouses;
         }
     }
+    @Override
+    public BusinessObjectLight getWarehouseToObject(String objectClassName, long objectId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, objectClassName);
+            
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(objectClassName);
+            
+            getObjectLight(objectClassName, objectId);
+            
+            List<BusinessObjectLight> warehouses = new ArrayList();
+                                                
+            String cypherQuery = ""
+                + "MATCH (class{name:'" + objectClassName + "'})<-[:INSTANCE_OF]-(inventoryObject)-[:CHILD_OF_SPECIAL{name: 'pool'}]->(pool)-[:CHILD_OF_SPECIAL{name: 'pool'}]->(warehouse) "
+                + "WHERE id(inventoryObject) = " + objectId + " "
+                + "RETURN warehouse;";
+            
+            Result result = graphDb.execute(cypherQuery);
+            ResourceIterator<Node> warehouseColumn = result.columnAs("warehouse");
+            List<Node> lstWarehouseColumn = Iterators.asList(warehouseColumn);
+            
+            for (Node warehouse : lstWarehouseColumn)
+                warehouses.add(Util.createRemoteObjectLightFromNode(warehouse));
+            
+            Collections.sort(warehouses);
+            
+            tx.success();
+            if (warehouses.size() > 0)
+                return warehouses.get(0);
+            return null;
+        }
+    }
+    
+    @Override
+    public BusinessObjectLight getPhysicalNodeToObjectInWarehouse(String objectClassName, long objectId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node classNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, objectClassName);
+            
+            if (classNode == null)
+                throw new MetadataObjectNotFoundException(objectClassName);
+            
+            getObjectLight(objectClassName, objectId);
+            
+            List<BusinessObjectLight> physicalNodes = new ArrayList();
+                                    
+            String cypherQuery = ""
+                + "MATCH (class{name:'" + objectClassName + "'})<-[:INSTANCE_OF]-(inventoryObject)-[:CHILD_OF_SPECIAL{name: 'pool'}]->(pool)-[:CHILD_OF_SPECIAL{name: 'pool'}]->(warehouse)-[:RELATED_TO_SPECIAL{name: 'warehouseHas'}]->(physicalNode) "
+                + "WHERE id(inventoryObject) = " + objectId + " "
+                + "RETURN physicalNode;";
+            
+            Result result = graphDb.execute(cypherQuery);
+            ResourceIterator<Node> physicalNodeColumn = result.columnAs("physicalNode");
+            List<Node> lstphysicalNodeColumn = Iterators.asList(physicalNodeColumn);
+            
+            for (Node physicalNode : lstphysicalNodeColumn)
+                physicalNodes.add(Util.createRemoteObjectLightFromNode(physicalNode));
+            
+            Collections.sort(physicalNodes);
+            
+            tx.success();
+            if (physicalNodes.size() > 0)
+                return physicalNodes.get(0);
+            return null;
+        }
+    }
     //</editor-fold>
         
     //<editor-fold desc="Reporting API implementation" defaultstate="collapsed">
@@ -2851,6 +2922,21 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Node instance = instanceOfRelationship.getStartNode();
             if (instance.hasProperty(filterName) && instance.getProperty(filterName).equals(filterValue))
                 res.add(Util.createRemoteObjectLightFromNode(instance));
+            else {
+                Iterable<Relationship> iterableRelationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
+                Iterator<Relationship> relationships = iterableRelationships.iterator();
+                
+                while(relationships.hasNext()){
+                    Relationship relationship = relationships.next();
+                    
+                    if (relationship.hasProperty(Constants.PROPERTY_NAME) && 
+                        String.valueOf(relationship.getProperty(Constants.PROPERTY_NAME)).equals(filterName) &&
+                        String.valueOf(relationship.getEndNode().getId()).equals(filterValue)) {
+                        
+                        res.add(Util.createRemoteObjectLightFromNode(instance));                        
+                    }
+                }
+            }
         }
         
         for (Relationship subClassRel : classNode.getRelationships(Direction.INCOMING, RelTypes.EXTENDS))
@@ -2868,6 +2954,21 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             Node instance = instanceOfRelationship.getStartNode();
             if (instance.hasProperty(filterName) && instance.getProperty(filterName).equals(filterValue))
                 res.add(Util.createRemoteObjectFromNode(instance));
+            else {
+                Iterable<Relationship> iterableRelationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
+                Iterator<Relationship> relationships = iterableRelationships.iterator();
+                
+                while(relationships.hasNext()){
+                    Relationship relationship = relationships.next();
+                    
+                    if (relationship.hasProperty(Constants.PROPERTY_NAME) && 
+                        String.valueOf(relationship.getProperty(Constants.PROPERTY_NAME)).equals(filterName) &&
+                        String.valueOf(relationship.getEndNode().getId()).equals(filterValue)) {
+                        
+                        res.add(Util.createRemoteObjectFromNode(instance));                        
+                    }
+                }
+            }
         }
         
         for (Relationship subClassRel : classNode.getRelationships(Direction.INCOMING, RelTypes.EXTENDS))
