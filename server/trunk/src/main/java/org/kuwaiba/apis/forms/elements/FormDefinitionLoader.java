@@ -252,11 +252,11 @@ public class FormDefinitionLoader {
                     }
                     if (reader.getName().equals(TAG_SCRIPT)) {
                         String src = reader.getAttributeValue(null, Constants.Attribute.SRC);
-
-                        elementScript.initFromXML(reader);
                         
                         if (src != null)
                             loadExternalScript(src);
+                        
+                        elementScript.initFromXML(reader);
                     }
                 }
             }

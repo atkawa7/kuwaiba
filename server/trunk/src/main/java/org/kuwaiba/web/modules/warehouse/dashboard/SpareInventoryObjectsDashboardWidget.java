@@ -51,6 +51,12 @@ import org.kuwaiba.web.procmanager.MiniAppRackView;
  */
 public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidget {
     private final WebserviceBean webserviceBean;
+    
+    public SpareInventoryObjectsDashboardWidget(WebserviceBean webserviceBean) {
+        super("Spare Inventory Objects");
+        this.webserviceBean = webserviceBean;
+        this.createContent();
+    }
 
     public SpareInventoryObjectsDashboardWidget(AbstractDashboard rootComponent, WebserviceBean webserviceBean) {
         super("Spare Inventory Objects", rootComponent);

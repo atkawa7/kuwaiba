@@ -49,9 +49,7 @@ public class ElementScript implements Tag {
     public void initFromXML(XMLStreamReader reader) throws XMLStreamException {
         QName tagScript = new QName(Constants.Tag.SCRIPT);
         QName tagFunction = new QName(Constants.Tag.FUNCTION);
-                        
-////        functions = new HashMap();
-        
+                
         while (true) {
             reader.nextTag();
             

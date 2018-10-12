@@ -87,8 +87,9 @@ public class MiniAppRackView extends AbstractMiniApplication<Component, Componen
                 panel.setContent(image);
             }
         }
-        catch(NumberFormatException numberFormatException) {
-            Notification.show("Unexpected Input Parameter was received in the MiniAppRackView", Notification.Type.ERROR_MESSAGE);
+        catch(Exception exception) {
+            //Notification.show("Unexpected Input Parameter was received in the MiniAppRackView", Notification.Type.ERROR_MESSAGE);
+            Notification.show("The rack view can no be show", Notification.Type.ERROR_MESSAGE);
         }
         return panel;
     }
