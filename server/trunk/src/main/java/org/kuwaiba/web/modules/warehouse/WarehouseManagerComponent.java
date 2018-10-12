@@ -22,10 +22,9 @@ import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.web.IndexUI;
 import org.kuwaiba.web.modules.warehouse.dashboard.SpareInventoryObjectsDashboardWidget;
-import org.kuwaiba.web.modules.warehouse.dashboard.WarehouseManagerDashboard;
 
 /**
- * 
+ * Main content of the Warehouse Manager Module
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 @CDIView("warehousemanager")

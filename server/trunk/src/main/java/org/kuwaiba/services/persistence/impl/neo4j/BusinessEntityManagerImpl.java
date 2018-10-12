@@ -851,40 +851,39 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     @Override
     public List<BusinessObjectLight> getParentsUntilFirstOfClass(String objectClass, 
             long oid, String objectToMatchClassName) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException {
-        /**
-         * TODO: Replace this for a proper implementation using cypher
-         */
-        try(Transaction tx = graphDb.beginTx()) {
-            Node objectNode = getInstanceOfClass(objectClass, oid);
-            List<BusinessObjectLight> parents = new ArrayList<>();
-            while (true) {
-                Node parentNode = null;
-                if (objectNode.hasRelationship(RelTypes.CHILD_OF, Direction.OUTGOING))
-                    parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF, Direction.OUTGOING).getEndNode();
-                
-                if (objectNode.hasRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING))
-                    parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).getEndNode();
-                              
-                
-                if (parentNode == null)
-                    throw new ApplicationObjectNotFoundException(String.format("Navigation tree root not found. Contact your administrator (%s, %s)", objectClass, oid));
+                        
+        List<BusinessObjectLight> parents =  new ArrayList<>();
+              
+        String cypherQuery = "MATCH (n)-[:" + RelTypes.CHILD_OF + "|" + RelTypes.CHILD_OF_SPECIAL + "*]->(m) " +
+                             "WHERE id(n) = " + oid + " " +
+                            "RETURN m as parents";
+      
+        try (Transaction tx = graphDb.beginTx()) {
+            Result result = graphDb.execute(cypherQuery);
+            Iterator<Node> column = result.columnAs("parents");
+            for (Node node : Iterators.asIterable(column)) {
                 
                 Label label = Label.label(Constants.LABEL_ROOT); //If the parent node is the dummy root, just return null
-                if (parentNode.hasLabel(label))
-                    return parents;
-                else { 
-                    String parentNodeClass = Util.getClassName(parentNode);
-                    try {
-                        parents.add(Util.createRemoteObjectLightFromNode(parentNode));
-                    } catch(Exception ex) {
-                        throw new ApplicationObjectNotFoundException("Some of the parents are not a Inventory Object");
-                    }
-                    if (mem.isSubClass(objectToMatchClassName, parentNodeClass))
-                        return parents;
-                    
-                    objectNode = parentNode;
+                if (node.hasLabel(label))
+                    break;
+                
+                if (node.hasProperty(Constants.PROPERTY_NAME)) {
+                    if (node.getProperty(Constants.PROPERTY_NAME).equals(Constants.NODE_DUMMYROOT))
+                        break;
                 }
+                
+                if(node.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)) {                    
+                    parents.add(Util.createRemoteObjectLightFromNode(node));
+                    
+                    String parentNodeClass = Util.getClassName(node);
+                    if (mem.isSubClass(objectToMatchClassName, parentNodeClass))
+                        break;
+                }
+                else //the node has a poolNode as a parent
+                    parents.add(Util.createRemoteObjectLightFromPoolNode(node));
             }
+            tx.success();
+            return parents;
         }
     }
     
@@ -919,7 +918,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
         }
     }
-    
+    /**
+     * This method was replaced by the method getFirstParentOfClass
+     * @throws BusinessObjectNotFoundException 
+     * @throws MetadataObjectNotFoundException 
+     * @throws InvalidArgumentException
+     */
+    @Deprecated
     @Override
     public BusinessObject getParentOfClass(String objectClass, long oid, String parentClass) 
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {

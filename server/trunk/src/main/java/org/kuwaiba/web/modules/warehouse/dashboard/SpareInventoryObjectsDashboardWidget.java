@@ -46,7 +46,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.procmanager.MiniAppRackView;
 
 /**
- *
+ * A widget that displays spare inventory objects and allows see its rack view
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidget {
@@ -314,57 +314,56 @@ public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidge
                             break;
                             case "City": //NOI18N
                                 cityObject = parent;                     
-                            break;
+                            break;                            
                         }
                     }
                 } catch (Exception exception) {
-                    // Catch the exception generated in objects whose parents are not a inventory object
-                    try {
-                        warehouseObject = webserviceBean.getWarehouseToObject(
+                }
+                try {
+                    warehouseObject = webserviceBean.getWarehouseToObject(
+                            spareObject.getClassName(), 
+                            spareObject.getId(), 
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+
+                    if (warehouseObject != null) {
+
+                        RemoteObjectLight physicalNode = webserviceBean.getPhysicalNodeToObjectInWarehouse(
                                 spareObject.getClassName(), 
                                 spareObject.getId(), 
                                 Page.getCurrent().getWebBrowser().getAddress(),
                                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
 
-                        if (warehouseObject != null) {
+                        if (physicalNode != null) {
 
-                            RemoteObjectLight physicalNode = webserviceBean.getPhysicalNodeToObjectInWarehouse(
-                                    spareObject.getClassName(), 
-                                    spareObject.getId(), 
+                            List<RemoteObjectLight> parents = webserviceBean.getParentsUntilFirstOfClass(
+                                    physicalNode.getClassName(),
+                                    physicalNode.getId(),
+                                    "City", //NOI18N
                                     Page.getCurrent().getWebBrowser().getAddress(),
                                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+                            // A Building can be a physical Node then this is include to get a building
+                            parents.add(physicalNode);
 
-                            if (physicalNode != null) {
+                            for (RemoteObjectLight parent : parents) {
 
-                                List<RemoteObjectLight> parents = webserviceBean.getParentsUntilFirstOfClass(
-                                        physicalNode.getClassName(),
-                                        physicalNode.getId(),
-                                        "City", //NOI18N
-                                        Page.getCurrent().getWebBrowser().getAddress(),
-                                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-                                // A Building can be a physical Node then this is include to get a building
-                                parents.add(physicalNode);
-
-                                for (RemoteObjectLight parent : parents) {
-
-                                    switch(parent.getClassName()) {
-                                        case "Rack": //NOI18N
-                                            rackObject = parent;
-                                        break;
-                                        case "Building": //NOI18N
-                                            buildingObject = parent;
-                                        break;
-                                        case "City": //NOI18N
-                                            cityObject = parent;                     
-                                        break;
-                                    }
+                                switch(parent.getClassName()) {
+                                    case "Rack": //NOI18N
+                                        rackObject = parent;
+                                    break;
+                                    case "Building": //NOI18N
+                                        buildingObject = parent;
+                                    break;
+                                    case "City": //NOI18N
+                                        cityObject = parent;                     
+                                    break;
                                 }
-                            }                       
-                        }
-                    } catch (ServerSideException ex) {
-                        //Catch another unexpected exception and notify
-                        Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+                            }
+                        }                       
                     }
+                } catch (ServerSideException ex) {
+                    //Catch another unexpected exception and notify
+                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
                 }
             }
         }
