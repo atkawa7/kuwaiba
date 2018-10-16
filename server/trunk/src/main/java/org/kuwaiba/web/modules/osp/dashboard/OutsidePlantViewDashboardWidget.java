@@ -203,6 +203,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                         Window wdwOpen = new Window("Open OSP View");
                         VerticalLayout lytContent = new VerticalLayout();
                         Grid<RemoteViewObjectLight> tblOSPViews = new Grid<>("Select a view from the list", ospViews);
+                        tblOSPViews.setHeaderVisible(false);
                         tblOSPViews.setSelectionMode(Grid.SelectionMode.SINGLE);
                         tblOSPViews.addColumn(RemoteViewObjectLight::getName).setWidthUndefined();
                         tblOSPViews.addColumn(RemoteViewObjectLight::getDescription);
@@ -255,7 +256,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                     Notifications.showInfo("The view is empty. There's nothing to save");
                 else {
                     VerticalLayout lytContent = new VerticalLayout();
-                    Window wdwSave = new Window("Save OPS View");
+                    Window wdwSave = new Window("Save OSP View");
 
                     TextField txtName = new TextField("Name");
                     txtName.setValue(currentView == null ? "" : currentView.getName());
@@ -323,9 +324,11 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                 ComboBox<OSPNode> cmbASideRoot = new ComboBox<>("A Side", nodes);
                 cmbASideRoot.setEmptySelectionAllowed(false);
                 cmbASideRoot.setEmptySelectionCaption("Select the A Side...");
+                cmbASideRoot.setWidth(170, Unit.PIXELS);
                 ComboBox<OSPNode> cmbBSideRoot = new ComboBox<>("B Side", nodes);
                 cmbBSideRoot.setEmptySelectionAllowed(false);
                 cmbBSideRoot.setEmptySelectionCaption("Select the B Side...");
+                cmbBSideRoot.setWidth(170, Unit.PIXELS);
                 Button btnOk = new Button("OK");
                 
                 wdwSelectRootObjects.center();
@@ -395,7 +398,8 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                 });
                 
                 FormLayout lytContent = new FormLayout(cmbASideRoot, cmbBSideRoot, btnOk);
-                lytContent.setSizeUndefined();
+                lytContent.setMargin(true);
+                lytContent.setWidthUndefined();
                 
                 wdwSelectRootObjects.setContent(lytContent);
             });

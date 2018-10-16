@@ -145,7 +145,7 @@ public abstract class AbstractFormInstanceCreator {
                                     Object data = rows.get(i).get(j);
                                     
                                     sharedInformation.put(elementGrid.getId() + i + j + Constants.Attribute.DATA_TYPE, Constants.Attribute.DataType.STRING);
-                                    sharedInformation.put(elementGrid.getId() + i + j, data.toString());
+                                    sharedInformation.put(elementGrid.getId() + i + j, data == null ? "" : data.toString());
                                     
                                     if (isRemoteObjectLight(data)) {
                                         

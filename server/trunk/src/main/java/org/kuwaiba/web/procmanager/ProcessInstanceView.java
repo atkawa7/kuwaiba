@@ -27,7 +27,6 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -63,7 +62,7 @@ import org.kuwaiba.util.i18n.I18N;
 import org.openide.util.Exceptions;
 
 /**
- * Render the current activity and all activities of a process instance
+ * Renders the current activity and all activities of a process instance
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ProcessInstanceView extends DynamicComponent {
@@ -80,8 +79,10 @@ public class ProcessInstanceView extends DynamicComponent {
     private ArtifactView artifactView;
     
     private VerticalLayout activitiesLayout = new VerticalLayout();
-    
-    public static Boolean debugMode;
+    /**
+     * Debug mode flag
+     */
+    public boolean debugMode;
     
     
     public ProcessInstanceView(RemoteProcessInstance processInstance, RemoteProcessDefinition processDefinition, WebserviceBean wsBean, RemoteSession remoteSession) {
@@ -160,7 +161,7 @@ public class ProcessInstanceView extends DynamicComponent {
             try {
                 remoteArtifact.setContent(artifactView.getArtifactRenderer().getContent());
             } catch (Exception ex) {
-                Notification.show(I18N.gm("error"), ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+                Notifications.showError(ex.getMessage());
                 return;
             }
             remoteArtifact.setSharedInformation(artifactView.getArtifactRenderer().getSharedInformation());
@@ -170,7 +171,7 @@ public class ProcessInstanceView extends DynamicComponent {
             try {
                 content = artifactView.getArtifactRenderer().getContent();
             } catch (Exception ex1) {
-                Notification.show(I18N.gm("error"), ex1.getMessage(), Notification.Type.ERROR_MESSAGE);
+                Notifications.showError(ex1.getMessage());
                 return;
             }
 
@@ -211,7 +212,7 @@ public class ProcessInstanceView extends DynamicComponent {
                 if (currentActivity instanceof RemoteConditionalActivityDefinition)
                     updateActivities();                                        
 
-                Notification.show(I18N.gm("success"), "The activity was updated", Notification.Type.TRAY_NOTIFICATION);
+                Notifications.showInfo("The activity was updated");
 
             }
             processInstance = wsBean.getProcessInstance(

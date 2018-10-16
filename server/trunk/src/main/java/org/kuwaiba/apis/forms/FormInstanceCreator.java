@@ -94,7 +94,7 @@ public class FormInstanceCreator extends AbstractFormInstanceCreator {
             else if (data instanceof LocalDate) {
                 XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.DATA_TYPE, Constants.Attribute.DataType.DATE);
             }
-            xmlew.add(xmlef.createCharacters(data.toString()));
+            xmlew.add(xmlef.createCharacters(data == null ? "" : data.toString()));
             xmlew.add(xmlef.createEndElement(tagData, null));
         }        
         xmlew.add(xmlef.createEndElement(tagRow, null));

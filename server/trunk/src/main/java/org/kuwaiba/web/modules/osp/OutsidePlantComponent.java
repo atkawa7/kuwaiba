@@ -39,7 +39,7 @@ public class OutsidePlantComponent extends AbstractTopComponent {
     /**
      * The name of the view
      */
-    public static String VIEW_NAME = "osp";
+    public static String VIEW_NAME = "osp"; //NOI18N
     /**
      * Reference to the backend bean
      */
@@ -70,7 +70,7 @@ public class OutsidePlantComponent extends AbstractTopComponent {
                 new OutsidePlantViewDashboardWidget(eventBus, wsBean));
         
         pnlSplitMain.setSizeFull();
-        pnlSplitMain.setSplitPosition(20, Unit.PERCENTAGE);
+        pnlSplitMain.setSplitPosition(25, Unit.PERCENTAGE);
         
         addComponent(pnlSplitMain);
         

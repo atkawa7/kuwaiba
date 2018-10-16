@@ -36,6 +36,7 @@ import org.kuwaiba.apis.persistence.application.process.ConditionalActivityDefin
 import org.kuwaiba.apis.persistence.application.process.ProcessDefinition;
 import org.kuwaiba.apis.persistence.application.process.ProcessDefinitionLoader;
 import org.kuwaiba.apis.persistence.application.process.ProcessInstance;
+import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.openide.util.Exceptions;
@@ -143,13 +144,19 @@ public final class ProcessCache {
             return null;
         }
     }
-        
-    public ProcessDefinition getProcessDefinition(long id) throws InventoryException {
+    
+    /**
+     * Retrieves a process definition either from the database or a process definition repository (like a file or an external provider)
+     * @param id The id of the process definition
+     * @return The process definition mapped as a Java object
+     * @throws ApplicationObjectNotFoundException When the process definition could not be found
+     */
+    public ProcessDefinition getProcessDefinition(long id) throws ApplicationObjectNotFoundException {
         for (ProcessDefinition processDefinition : processDefinitions) {
             if (processDefinition.getId() == id)            
                 return processDefinition;                
         }
-        throw new InventoryException("Process Definition can not be found") {};
+        throw new ApplicationObjectNotFoundException("Process Definition can not be found");
     }
     
     public long createProcessInstance(long processInstanceId, long processDefId, String name, String description) throws InventoryException {
@@ -192,14 +199,14 @@ public final class ProcessCache {
         renderProcessInstance(processInstance);
     }
     
-    public ProcessInstance getProcessInstance(long processInstanceId) throws InventoryException {
+    public ProcessInstance getProcessInstance(long processInstanceId) throws ApplicationObjectNotFoundException {
         ProcessInstance processInstance = processInstances.get(processInstanceId);
         if (processInstance != null)        
             return processInstance;
-        throw new InventoryException("Process Instances can not be found") {};
+        throw new ApplicationObjectNotFoundException("Process Instances can not be found");
     }
     
-    public Artifact getArtifactForActivity(long processInstanceId, long activityId) throws InventoryException {
+    public Artifact getArtifactForActivity(long processInstanceId, long activityId) throws ApplicationObjectNotFoundException {
         ProcessInstance processInstance = getProcessInstance(processInstanceId);
         
         ProcessDefinition processDef = getProcessDefinition(processInstance.getProcessDefinition());
@@ -221,7 +228,7 @@ public final class ProcessCache {
                     return artifactInstances.get(artifactDef);
             }
         }
-        throw new InventoryException("Process Instances Artifact can not be found") {};
+        throw new ApplicationObjectNotFoundException("Process Instances Artifact can not be found");
     }
     
     public ArtifactDefinition getArtifactDefinitionForActivity(long processDefinitionId, long activityDefinitionId) throws InventoryException {
@@ -240,9 +247,9 @@ public final class ProcessCache {
         throw new InventoryException("Artifact Definition can not be found") {};
     }
     
-    private boolean getConditionalArtifactContent(Artifact artifact) throws InventoryException {
+    private boolean getConditionalArtifactContent(Artifact artifact) throws ApplicationObjectNotFoundException {
         if (artifact == null)
-            throw new InventoryException("Conditional Artifact can not be found") {};
+            throw new ApplicationObjectNotFoundException("Conditional Artifact can not be found");
         
         try {
             byte[] content = artifact.getContent();
@@ -266,7 +273,7 @@ public final class ProcessCache {
             reader.close();
             
         } catch (Exception ex) {
-            throw new InventoryException("Conditional Artifact Content Malformed") {};
+            throw new ApplicationObjectNotFoundException("Conditional Artifact Content Malformed");
         }
         return false;
     }
@@ -291,7 +298,7 @@ public final class ProcessCache {
         return result;
     }
     
-    public ActivityDefinition getNextActivityForProcessInstance(long processInstanceId, long currentActivityId) throws InventoryException {
+    public ActivityDefinition getNextActivityForProcessInstance(long processInstanceId, long currentActivityId) throws ApplicationObjectNotFoundException {
         
         ProcessInstance processInstance = getProcessInstance(processInstanceId);
         
@@ -336,7 +343,7 @@ public final class ProcessCache {
                 activity = activity.getNextActivity();
             }
         }
-        throw new InventoryException("Next Activity can not be found") {};
+        throw new ApplicationObjectNotFoundException("Next Activity can not be found");
     }
     
     public ActivityDefinition getNextActivityForProcessInstance(long processInstanceId) throws InventoryException {

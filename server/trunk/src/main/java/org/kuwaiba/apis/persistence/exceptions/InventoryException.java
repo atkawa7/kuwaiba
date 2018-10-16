@@ -21,7 +21,7 @@ package org.kuwaiba.apis.persistence.exceptions;
  * Root class for all custom exceptions in this package
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public abstract class InventoryException extends Exception{
+public abstract class InventoryException extends Exception {
 
     public InventoryException() {    }
     
