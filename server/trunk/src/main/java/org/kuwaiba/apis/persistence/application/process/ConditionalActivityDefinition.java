@@ -14,6 +14,8 @@
  */
 package org.kuwaiba.apis.persistence.application.process;
 
+import java.util.List;
+
 /**
  *
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
@@ -23,9 +25,9 @@ public class ConditionalActivityDefinition extends ActivityDefinition {
     private ActivityDefinition nextActivityIfFalse;
     
     public ConditionalActivityDefinition(long id, String name, String description, 
-        int type, boolean confirm, String color, ArtifactDefinition arfifact, Actor actor) {
+        int type, boolean confirm, String color, ArtifactDefinition arfifact, Actor actor, List<Kpi> kpis, List<KpiAction> kpiActions) {
         
-        super(id, name, description, type, arfifact, actor, false, confirm, color);
+        super(id, name, description, type, arfifact, actor, kpis, kpiActions, false, confirm, color);
     }
     
     @Override

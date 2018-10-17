@@ -79,7 +79,10 @@ public abstract class AbstractFormInstanceCreator {
             
             if (!parent.isSave())
                 return;
-                                                
+            
+            if (parent instanceof ElementSubform)
+                return;
+            
             xmlew.add(xmlef.createStartElement(tag, null, null));
             XMLUtil.getInstance().createAttribute(xmlew, xmlef, Constants.Attribute.ID, parent.getId());
             
@@ -201,7 +204,7 @@ public abstract class AbstractFormInstanceCreator {
         for (Object data : row) {
             
             xmlew.add(xmlef.createStartElement(tagData, null, null));
-            xmlew.add(xmlef.createCharacters(data.toString()));
+            xmlew.add(xmlef.createCharacters(data != null ? data.toString() : ""));
             xmlew.add(xmlef.createEndElement(tagData, null));
         }        
         xmlew.add(xmlef.createEndElement(tagRow, null));

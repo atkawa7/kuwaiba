@@ -15,6 +15,7 @@
 package org.kuwaiba.interfaces.ws.toserialize.application;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
@@ -29,9 +30,9 @@ public class RemoteConditionalActivityDefinition extends RemoteActivityDefinitio
     private RemoteActivityDefinition nextActivityIfFalse;
         
     public RemoteConditionalActivityDefinition(long id, String name, String description, 
-        int type, RemoteArtifactDefinition arfifact, RemoteActor actor, boolean confirm, String color) {
+        int type, RemoteArtifactDefinition arfifact, RemoteActor actor, boolean confirm, String color, List<RemoteKpi> kpis, List<RemoteKpiAction> kpiActions) {
         
-        super(id, name, description, type, arfifact, actor, false, confirm, color);
+        super(id, name, description, type, arfifact, actor, false, confirm, color, kpis, kpiActions);
     }
     
     @Override

@@ -58,7 +58,7 @@ public class ProcessInstanceToolsView extends TabSheet {
         addTab(new VerticalLayout(), ACTIVITIES, VaadinIcons.TASKS);
         addTab(new VerticalLayout(), GRAPH, VaadinIcons.SITEMAP);
         
-        setSelectedTab(0);
+        setSelectedTab(1);
         
         addSelectedTabChangeListener(new TabSheet.SelectedTabChangeListener() {
             

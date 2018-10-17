@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 import java.util.Scanner;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -45,7 +46,12 @@ public class ProcessDefinitionLoader {
         public static final String PATH = "path"; //NOI18N
         public static final String PARAMETERS = "parameters"; //NOI18N
         public static final String PARAMETER = "parameter"; //NOI18N
-    }    
+        public static final String KPIS = "kpis"; //NOI18N
+        public static final String KPI = "kpi"; //NOI18N
+        public static final String ACTIONS = "actions"; //NOI18N
+        public static final String ACTION = "action"; //NOI18N
+        public static final String THRESHOLD = "threshold"; //NOI18N
+    }
     
     private class Attribute {
         public static final String NAME = "name"; //NOI18N
@@ -63,6 +69,8 @@ public class ProcessDefinitionLoader {
         public static final String IDLING = "idling"; //NOI18N
         public static final String CONFIRM = "confirm"; //NOI18N
         public static final String COLOR = "color"; //NOI18N
+        public static final String ACTION = "action"; //NOI18N
+        public static final String VALUE = "value"; //NOI18N
     }
     public class XMLProcessDefinitionException extends Exception {
         
@@ -70,6 +78,7 @@ public class ProcessDefinitionLoader {
             super(message);
         }      
     }
+    
     private final long processDefinitionId;
         
     public ProcessDefinitionLoader(long processDefinitionId) {
@@ -88,8 +97,12 @@ public class ProcessDefinitionLoader {
         HashMap<Long, ActivityDefinition> activityDefinitions = new HashMap();
         HashMap<Long, ArtifactDefinition> artifactDefinitions = new HashMap();
         HashMap<Long, List<Long>> paths = new HashMap();
+        HashMap<Long, List<Kpi>> activityKpis = new HashMap();
+        HashMap<Long, List<KpiAction>> activityKpiActions = new HashMap();
         HashMap<Long, Long> activityartifact = new HashMap();
         HashMap<Long, Long> activityactor = new HashMap();
+        List<Kpi> processKpis = new ArrayList();
+        List<KpiAction> processKpiActions = new ArrayList();
         
         QName tagProcessDefinition = new QName(Tag.PROCESS_DEFINITION);
         QName tagActors = new QName(Tag.ACTORS);
@@ -101,6 +114,11 @@ public class ProcessDefinitionLoader {
         QName tagPath = new QName(Tag.PATH);
         QName tagParameters = new QName(Tag.PARAMETERS);
         QName tagParameter = new QName(Tag.PARAMETER);
+        QName tagKpis = new QName(Tag.KPIS);
+        QName tagKpi = new QName(Tag.KPI);
+        QName tagActions = new QName(Tag.ACTIONS);
+        QName tagAction = new QName(Tag.ACTION);
+        QName tagThreshold = new QName(Tag.THRESHOLD);
                 
         XMLInputFactory xif = XMLInputFactory.newInstance();
         ByteArrayInputStream bais = new ByteArrayInputStream(processDefinitionStructure);
@@ -119,6 +137,8 @@ public class ProcessDefinitionLoader {
                         Long.valueOf(reader.getAttributeValue(null, Attribute.CREATION_DATE)),
                         reader.getAttributeValue(null, Attribute.VERSION),
                         Boolean.valueOf(reader.getAttributeValue(null, Attribute.ENABLED)),
+                        null, 
+                        null,
                         null
                     );
                     startActivityId = Long.valueOf(reader.getAttributeValue(null, Attribute.START_ACTIVITY_ID));
@@ -169,6 +189,8 @@ public class ProcessDefinitionLoader {
                                         Boolean.valueOf(reader.getAttributeValue(null, Attribute.CONFIRM)), 
                                         reader.getAttributeValue(null, Attribute.COLOR),
                                         null, 
+                                        null, 
+                                        null, 
                                         null);
                                     
                                 } else {
@@ -179,6 +201,8 @@ public class ProcessDefinitionLoader {
                                         reader.getAttributeValue(null, Attribute.DESCRIPTION), 
                                         activityDefinitionType, 
                                         null, 
+                                        null,
+                                        null,
                                         null, 
                                         Boolean.valueOf(reader.getAttributeValue(null, Attribute.IDLING)),
                                         Boolean.valueOf(reader.getAttributeValue(null, Attribute.CONFIRM)), 
@@ -283,6 +307,85 @@ public class ProcessDefinitionLoader {
                                         artifactDefinitions.put(artifactDefinition.getId(), artifactDefinition);
                                         activityartifact.put(activityDefinitionId, artifactDefinition.getId());
                                     }
+                                }
+                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT && 
+                                    reader.getName().equals(tagKpis)) {
+                                    
+                                    if (!activityKpis.containsKey(activityDefinitionId))
+                                        activityKpis.put(activityDefinitionId, new ArrayList());
+                                    
+                                    if (!activityKpiActions.containsKey(activityDefinitionId))
+                                        activityKpiActions.put(activityDefinitionId, new ArrayList());
+                                    
+                                    while (true) {
+                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT &&
+                                            reader.getName().equals(tagKpi)) {
+
+                                            String kpiName = reader.getAttributeValue(null, Attribute.NAME);
+                                            String kpiDescription = reader.getAttributeValue(null, Attribute.DESCRIPTION);
+                                            String kpiAction = reader.getAttributeValue(null, Attribute.ACTION);
+                                            Properties kpiThresholds = new Properties();
+
+                                            reader.nextTag();
+
+                                            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT && 
+                                                reader.getName().equals(tagThreshold)) {
+
+                                                while (true) {
+                                                    if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
+                                                        if (reader.getName().equals(tagThreshold)) {
+
+                                                            String thresholdName = reader.getAttributeValue(null, Attribute.NAME);
+                                                            String thresholdValue = reader.getAttributeValue(null, Attribute.VALUE);
+
+                                                            if (thresholdName != null && thresholdValue != null) {
+                                                                kpiThresholds.setProperty(thresholdName, thresholdValue);
+                                                            } else {
+                                                                //ToDo: Malformed xml exception
+                                                            }
+                                                        }
+                                                    }
+                                                    if (reader.getEventType() == XMLStreamConstants.END_ELEMENT) {
+                                                        if (reader.getName().equals(tagKpi))
+                                                            break;
+                                                    }
+                                                    reader.next();
+                                                }
+                                            }
+                                            Kpi kpi = new Kpi(kpiName, kpiDescription, kpiAction, kpiThresholds);
+                                            activityKpis.get(activityDefinitionId).add(kpi);
+                                        }
+                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT &&
+                                            reader.getName().equals(tagActions)) {
+
+                                            while (true) {
+                                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT && 
+                                                    reader.getName().equals(tagAction)) {
+
+                                                    int actionType = Integer.valueOf(reader.getAttributeValue(null, Attribute.TYPE));
+                                                    String actionName = reader.getAttributeValue(null, Attribute.NAME);
+                                                    String actionDescription = reader.getAttributeValue(null, Attribute.DESCRIPTION);
+                                                    String actionScript = reader.getElementText();
+
+                                                    KpiAction kpiAction = new KpiAction(actionType, actionName, actionDescription, actionScript);
+                                                    activityKpiActions.get(activityDefinitionId).add(kpiAction);
+                                                }
+                                                if (reader.getEventType() == XMLStreamConstants.END_ELEMENT && 
+                                                    reader.getName().equals(tagActions))
+                                                    break;
+
+                                                reader.next();
+                                            }
+                                        }
+                                        if (reader.getEventType() == XMLStreamConstants.END_ELEMENT &&
+                                            reader.getName().equals(tagKpis))
+                                            break;
+
+                                        reader.next();
+                                    }
+                                }
+                                if (reader.getEventType() == XMLStreamConstants.END_ELEMENT && 
+                                    reader.getName().equals(tagActivityDefinition)) {
                                     break;
                                 }
                                 reader.next();
@@ -298,11 +401,81 @@ public class ProcessDefinitionLoader {
                         reader.next();
                     }
                 }
+                if (reader.getName().equals(tagKpis)) {
+                    while (true) {
+                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT &&
+                            reader.getName().equals(tagKpi)) {
+                            
+                            String kpiName = reader.getAttributeValue(null, Attribute.NAME);
+                            String kpiDescription = reader.getAttributeValue(null, Attribute.DESCRIPTION);
+                            String kpiAction = reader.getAttributeValue(null, Attribute.ACTION);
+                            Properties kpiThresholds = new Properties();
+
+                            reader.nextTag();
+
+                            if (reader.getEventType() == XMLStreamConstants.START_ELEMENT && 
+                                reader.getName().equals(tagThreshold)) {
+
+                                while (true) {
+                                    if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
+                                        if (reader.getName().equals(tagThreshold)) {
+
+                                            String thresholdName = reader.getAttributeValue(null, Attribute.NAME);
+                                            String thresholdValue = reader.getAttributeValue(null, Attribute.VALUE);
+
+                                            if (thresholdName != null && thresholdValue != null) {
+                                                kpiThresholds.setProperty(thresholdName, thresholdValue);
+                                            } else {
+                                                //ToDo: Malformed xml exception
+                                            }
+                                        }
+                                    }
+                                    if (reader.getEventType() == XMLStreamConstants.END_ELEMENT) {
+                                        if (reader.getName().equals(tagKpi))
+                                            break;
+                                    }
+                                    reader.next();
+                                }
+                            }
+                            Kpi kpi = new Kpi(kpiName, kpiDescription, kpiAction, kpiThresholds);
+                            processKpis.add(kpi);
+                        }
+                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT &&
+                            reader.getName().equals(tagActions)) {
+                            
+                            while (true) {
+                                if (reader.getEventType() == XMLStreamConstants.START_ELEMENT && 
+                                    reader.getName().equals(tagAction)) {
+                                    
+                                    int actionType = Integer.valueOf(reader.getAttributeValue(null, Attribute.TYPE));
+                                    String actionName = reader.getAttributeValue(null, Attribute.NAME);
+                                    String actionDescription = reader.getAttributeValue(null, Attribute.DESCRIPTION);
+                                    String actionScript = reader.getElementText();
+                                    
+                                    KpiAction kpiAction = new KpiAction(actionType, actionName, actionDescription, actionScript);
+                                    processKpiActions.add(kpiAction);
+                                }
+                                if (reader.getEventType() == XMLStreamConstants.END_ELEMENT && 
+                                    reader.getName().equals(tagActions))
+                                    break;
+                                
+                                reader.next();
+                            }
+                        }
+                        if (reader.getEventType() == XMLStreamConstants.END_ELEMENT &&
+                            reader.getName().equals(tagKpis))
+                            break;
+                        
+                        reader.next();
+                    }
+                }
             }
         }
         if (processDefinition != null && activityDefinitions.containsKey(startActivityId)) {
             
             processDefinition.setStartActivity(activityDefinitions.get(startActivityId));
+            processDefinition.setKpis(processKpis);
+            processDefinition.setKpiActions(processKpiActions);
             
             for (Long activityDefinitionId : activityDefinitions.keySet()) {
                 
@@ -325,6 +498,14 @@ public class ProcessDefinitionLoader {
                     
                 } else {
                     //TODO: exception activity no has actor
+                }
+                
+                if (activityKpis.containsKey(activityDefinitionId)) {
+                    activityDefinition.setKpis(activityKpis.get(activityDefinitionId));
+                }
+                
+                if (activityKpiActions.containsKey(activityDefinitionId)) {
+                    activityDefinition.setKpiActions(activityKpiActions.get(activityDefinitionId));
                 }
                 
                 if (activityDefinition.getType() == ActivityDefinition.TYPE_CONDITIONAL) {

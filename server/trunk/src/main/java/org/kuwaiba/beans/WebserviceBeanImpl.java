@@ -105,6 +105,7 @@ import org.kuwaiba.apis.persistence.application.ScriptQuery;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.application.process.Artifact;
 import org.kuwaiba.apis.persistence.application.process.ArtifactDefinition;
+import org.kuwaiba.apis.persistence.application.process.KpiResult;
 import org.kuwaiba.apis.persistence.application.process.ProcessDefinition;
 import org.kuwaiba.apis.persistence.application.process.ProcessInstance;
 import org.kuwaiba.apis.persistence.business.Contact;
@@ -114,6 +115,9 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinitio
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConfigurationVariable;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteKpi;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteKpiAction;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteKpiResult;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
@@ -5613,7 +5617,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
         //</editor-fold>
-        //<editor-fold desc="Process API" defaultstate="collapsed">
+        //<editor-fold desc="Process Engine" defaultstate="collapsed">
 
     @Override
     public RemoteArtifact getArtifactForActivity(long processInstanceId, long activityId, 
@@ -5624,7 +5628,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.validateWebServiceCall("getArtifactForActivity", ipAddress, sessionId);
             Artifact artifact = aem.getArtifactForActivity(processInstanceId, activityId);
             
-            return new RemoteArtifact(artifact.getId(), artifact.getName(), artifact.getContentType(), artifact.getContent(), artifact.getSharedInformation());
+            return new RemoteArtifact(artifact.getId(), artifact.getName(), artifact.getContentType(), artifact.getContent(), artifact.getSharedInformation(), artifact.getCreationDate(), artifact.getCommitDate());
             
         } catch(InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -5663,7 +5667,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("commitActivity", ipAddress, sessionId);
             aem.commitActivity(processInstanceId, activityDefinitionId, 
-                new Artifact(artifact.getId(), artifact.getName(), artifact.getContentType(), artifact.getContent(), artifact.getSharedInformation()));
+                new Artifact(artifact.getId(), artifact.getName(), artifact.getContentType(), artifact.getContent(), artifact.getSharedInformation(), artifact.getCreationDate(), artifact.getCommitDate()));
             
         } catch(InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -5677,7 +5681,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("updateActivity", ipAddress, sessionId);
             aem.updateActivity(processInstanceId, activityDefinitionId, 
-                new Artifact(artifact.getId(), artifact.getName(), artifact.getContentType(), artifact.getContent(), artifact.getSharedInformation()));
+                new Artifact(artifact.getId(), artifact.getName(), artifact.getContentType(), artifact.getContent(), artifact.getSharedInformation(), artifact.getCreationDate(), artifact.getCreationDate()));
             
         } catch(InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -5742,7 +5746,10 @@ public class WebserviceBeanImpl implements WebserviceBean {
             return new RemoteProcessDefinition(processDefinitionId, processDefinition.getName(), 
                     processDefinition.getDescription(), processDefinition.getCreationDate(), 
                     processDefinition.getVersion(), processDefinition.isEnabled(), 
-                    RemoteActivityDefinition.asRemoteActivityDefinition(processDefinition.getStartActivity()));
+                    RemoteActivityDefinition.asRemoteActivityDefinition(processDefinition.getStartActivity()),
+                    RemoteKpi.asRemoteKpis(processDefinition.getKpis()),
+                    RemoteKpiAction.asRemoteKpiActions(processDefinition.getKpiActions())
+            );
             
         } catch(InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -5831,7 +5838,10 @@ public class WebserviceBeanImpl implements WebserviceBean {
                     processDefinition.getCreationDate(), 
                     processDefinition.getVersion(), 
                     processDefinition.isEnabled(), 
-                    RemoteActivityDefinition.asRemoteActivityDefinition(processDefinition.getStartActivity())));
+                    RemoteActivityDefinition.asRemoteActivityDefinition(processDefinition.getStartActivity()),
+                    RemoteKpi.asRemoteKpis(processDefinition.getKpis()),
+                    RemoteKpiAction.asRemoteKpiActions(processDefinition.getKpiActions())
+                ));
             }
             return result;
                         
@@ -5890,6 +5900,41 @@ public class WebserviceBeanImpl implements WebserviceBean {
             Exceptions.printStackTrace(ex);
             throw new ServerSideException(ex.getMessage());
         }
+    }
+    
+    @Override
+    public RemoteKpiResult executeActivityKpiAction(String kpiActionName, RemoteArtifact remoteArtifact, long processDefinitionId, long activityDefinitionId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("executeKpiAction", ipAddress, sessionId);
+            
+            Artifact artifact = null;
+            
+            if (remoteArtifact != null) {
+                artifact = new Artifact(
+                    remoteArtifact.getId(), 
+                    remoteArtifact.getName(), 
+                    remoteArtifact.getContentType(), 
+                    remoteArtifact.getContent(), 
+                    remoteArtifact.getSharedInformation(), 
+                    remoteArtifact.getCreationDate(), 
+                    remoteArtifact.getCommitDate());
+            }
+            ProcessDefinition processDefinition = aem.getProcessDefinition(processDefinitionId);
+            ActivityDefinition activityDefinition = aem.getActivityDefinition(processDefinitionId, activityDefinitionId);
+                        
+            KpiResult kpiResult = KpiResult.runActivityKpiAction(kpiActionName, artifact, processDefinition, activityDefinition);
+            RemoteKpiResult remoteKpiResult = null;
+            
+            if (kpiResult != null)
+                remoteKpiResult = new RemoteKpiResult(kpiResult.getComplianceLevel(), kpiResult.getObservations(), kpiResult.getValues());
+            
+            return remoteKpiResult;
+        } catch(InventoryException ex) {
+            Exceptions.printStackTrace(ex);
+            throw new ServerSideException(ex.getMessage());
+        }        
     }
         //</editor-fold>
         // <editor-fold defaultstate="collapsed" desc="Fault Management Integration">

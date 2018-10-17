@@ -15,6 +15,8 @@
  */
 package org.kuwaiba.apis.persistence.application.process;
 
+import java.util.List;
+
 /**
  * An activity is an step in a process. Conditionals are a particular type of activities from the point of view of this API. This class
  * is a representation of a definition of an activity, which is basically a description of what it does (like presenting a form for the user 
@@ -30,11 +32,21 @@ public class ActivityDefinition extends ActivityDefinitionLight {
      * The next activity according to the flow defined in the process definition
      */
     private ActivityDefinition nextActivity;
+    /**
+     * List of Key Performance Indicators to Activity Definition
+     */
+    private List<Kpi> kpis;
+    /**
+     * List of Key Performance Indicator Actions to Activity Definition
+     */
+    private List<KpiAction> kpiActions;
     
     public ActivityDefinition(long id, String name, String description, 
-            int type, ArtifactDefinition arfifact, Actor actor, boolean idling, boolean confirm,String color) {
+            int type, ArtifactDefinition arfifact, Actor actor, List<Kpi> kpis, List<KpiAction> kpiActions, boolean idling, boolean confirm,String color) {
         super(id, name, description, type, arfifact, idling, confirm, color);
         this.actor = actor;
+        this.kpis = kpis;
+        this.kpiActions = kpiActions;
     }
     public Actor getActor() {
         return actor;
@@ -51,7 +63,23 @@ public class ActivityDefinition extends ActivityDefinitionLight {
     public void setNextActivity(ActivityDefinition nextActivity) {
         this.nextActivity = nextActivity;
     }
-
+    
+    public List<Kpi> getKpis() {
+        return kpis;
+    }
+    
+    public void setKpis(List<Kpi> kpis) {
+        this.kpis = kpis;
+    }
+    
+    public List<KpiAction> getKpiActions() {
+        return kpiActions;
+    }
+    
+    public void setKpiActions(List<KpiAction> kpiActions) {
+        this.kpiActions = kpiActions;
+    }
+    
     @Override
     public int hashCode() {
         return super.hashCode();

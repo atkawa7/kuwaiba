@@ -1560,6 +1560,13 @@ public interface ApplicationEntityManager {
     */
     public ProcessDefinition getProcessDefinition(long processDefinitionId) throws ApplicationObjectNotFoundException;
     /**
+     * Retrieves a process definition
+     * @param processDefinitionId The id of the process definition
+     * @param activityDefinitionId The id of the Activity definition
+     * @return The activity definition
+     */
+    public ActivityDefinition getActivityDefinition(long processDefinitionId, long activityDefinitionId);
+    /**
     * Deletes a process definition
     * @param processDefinitionId The process definition to be deleted
     * @throws ApplicationObjectNotFoundException If the process definition could not be found

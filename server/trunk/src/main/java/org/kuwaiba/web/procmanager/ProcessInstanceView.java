@@ -35,6 +35,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import org.kuwaiba.apis.forms.FormRenderer;
@@ -180,7 +181,10 @@ public class ProcessInstanceView extends DynamicComponent {
                 "", 
                 "", 
                 content, 
-                artifactView.getArtifactRenderer().getSharedInformation());
+                artifactView.getArtifactRenderer().getSharedInformation(), 
+                new Date().getTime(),
+                new Date().getTime()
+            );
         }
 
         try {

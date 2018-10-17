@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -4540,6 +4541,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 throw new ApplicationObjectNotFoundException(String.format("The Process Instance with id %s could not be found", processInstanceId));
             
             try {
+                artifact.setCommitDate(new Date().getTime());
                 ProcessCache.getInstance().commitActivity(processInstanceId, activityDefinitionId, artifact);
                 
                 ProcessInstance processInstace = ProcessCache.getInstance().getProcessInstance(processInstanceId);
@@ -4611,6 +4613,16 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public ProcessDefinition getProcessDefinition(long processDefinitionId) {
         try {
             return ProcessCache.getInstance().getProcessDefinition(processDefinitionId);
+        } catch (InventoryException ex) {
+            Exceptions.printStackTrace(ex);
+            return null;
+        }
+    }
+    
+    @Override
+    public ActivityDefinition getActivityDefinition(long processDefinitionId, long activityDefinitionId) {
+        try {
+            return ProcessCache.getInstance().getActivityDefinition(processDefinitionId, activityDefinitionId);
         } catch (InventoryException ex) {
             Exceptions.printStackTrace(ex);
             return null;

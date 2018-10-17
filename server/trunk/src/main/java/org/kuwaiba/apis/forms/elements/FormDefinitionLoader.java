@@ -276,32 +276,45 @@ public class FormDefinitionLoader {
         }
     }
     
+    private List<AbstractElement> getElementChildrenRecursively(AbstractElement parentElement) {
+        
+        List<AbstractElement> elementChildren = new ArrayList();
+        
+        if (parentElement instanceof AbstractElementContainer) {
+            
+            AbstractElementContainer elementContainer = (AbstractElementContainer) parentElement;
+            
+            if (elementContainer.getChildren() != null) {
+                                
+                for (AbstractElement child : elementContainer.getChildren())
+                    elementChildren.addAll(getElementChildrenRecursively(child));
+            }
+            else
+                elementChildren.add(parentElement);
+        }
+        else
+            elementChildren.add(parentElement);
+        
+        return elementChildren;
+    }
+    
     public void fireOnload(ScriptQueryExecutor scriptQueryExecutor) {
         for (Runner runner : elementScript.getFunctions().values())
             runner.setScriptQueryExecutor(scriptQueryExecutor);
-        
+
         List<AbstractElement> subformsChildren = new ArrayList();
                 
         for (AbstractElement element : elements) {
-            if (element instanceof ElementSubform) {
-                ElementSubform subform = (ElementSubform) element;
-                
-                List<AbstractElement> subformChildren = subform.getChildren();
-                                                
-                if (subformChildren != null) {
-                    for (AbstractElement subformChild : subformChildren) {
-                        if (!(subformChild instanceof ElementSubform))
-                            subformsChildren.add(subformChild);
-                    }
-                }
-            }
+            if (element instanceof ElementSubform)
+                subformsChildren.addAll(getElementChildrenRecursively(element));
         }
-        
-        
+                        
         for (AbstractElement element : elements) {
             if (!subformsChildren.contains(element))
                 element.fireOnLoad();
         }
     }
+    
+    
     
 }

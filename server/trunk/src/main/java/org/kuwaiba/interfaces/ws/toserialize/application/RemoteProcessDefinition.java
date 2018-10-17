@@ -16,14 +16,18 @@
 package org.kuwaiba.interfaces.ws.toserialize.application;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Wrapper of ProcessDefinition. A process definition is the metadata of a process. It contains the set of 
  * activities, conditionals and the flow that connects everything
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
+@XmlRootElement(name = "remoteProcessDefinition")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteProcessDefinition implements Serializable {
     /**
@@ -54,11 +58,22 @@ public class RemoteProcessDefinition implements Serializable {
      * Reference to the start activity (typically a TYPE_START type of activity). The rest will be linked from this one
      */
     private RemoteActivityDefinition startActivity;
+    /**
+     * List of Key Performance Indicators to Process Definition
+     */
+    @XmlElement(name = "kpis")
+    private List<RemoteKpi> kpis;
+    /**
+     * List of Key Performance Indicator Actions to Process Definition
+     */
+    @XmlElement(name = "kpiActions")
+    private List<RemoteKpiAction> kpiActions;
 
     public RemoteProcessDefinition() { }
 
     public RemoteProcessDefinition(long id, String name, String description, long creationDate, 
-            String version, boolean enabled, RemoteActivityDefinition startActivity) {
+            String version, boolean enabled, RemoteActivityDefinition startActivity, 
+            List<RemoteKpi> kpis, List<RemoteKpiAction> kpiActions) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -66,6 +81,8 @@ public class RemoteProcessDefinition implements Serializable {
         this.version = version;
         this.enabled = enabled;
         this.startActivity = startActivity;
+        this.kpis = kpis;
+        this.kpiActions = kpiActions;
     }
 
     public long getId() {
@@ -122,6 +139,22 @@ public class RemoteProcessDefinition implements Serializable {
 
     public void setStartAction(RemoteActivityDefinition startActivity) {
         this.startActivity = startActivity;
+    }
+    
+    public List<RemoteKpi> getKpis() {
+        return kpis;
+    }
+    
+    public void setKpis(List<RemoteKpi> kpis) {
+        this.kpis = kpis;
+    }
+    
+    public List<RemoteKpiAction> getKpiActions() {
+        return kpiActions;
+    }
+    
+    public void setKpiActions(List<RemoteKpiAction> kpiActions) {
+        this.kpiActions = kpiActions;
     }
 
     @Override

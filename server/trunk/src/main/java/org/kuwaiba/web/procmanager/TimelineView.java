@@ -28,12 +28,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.TimeZone;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteKpi;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteKpiResult;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.tltv.gantt.Gantt;
@@ -103,7 +105,21 @@ public class TimelineView extends HorizontalLayout {
         List<TimelineStep> timelineSteps = new ArrayList();
                 
         for (RemoteActivityDefinition activityDefinition : activityDefinitions) {
-            TimelineStep timelineStep = new TimelineStep(activityDefinition);
+            RemoteArtifact artifact = null;
+            try {
+                artifact = webserviceBean.getArtifactForActivity(
+                        processInstance.getId(),
+                        activityDefinition.getId(),
+                        Page.getCurrent().getWebBrowser().getAddress(),
+                        session.getSessionId());
+            } catch (ServerSideException ex) {
+                // Activity does not have artifact
+            }
+            TimelineStep timelineStep = new TimelineStep(
+                webserviceBean, 
+                processInstance.getProcessDefinition(), 
+                activityDefinition, 
+                artifact);
             
             if (activityDefinition.getColor() != null)
                 timelineStep.setBackgroundColor(activityDefinition.getColor().replace("#", "")); //NOI18N                
@@ -130,30 +146,64 @@ public class TimelineView extends HorizontalLayout {
         calendar.setTime(new Date());
         
         for (TimelineStep timelineStep : timelineSteps) {
-            timelineStep.setActivityStartDate(calendar.getTime());
-            timelineStep.setStartDate(calendar.getTime());
+            if (timelineStep.getArtifact() != null && 
+                timelineStep.getArtifact().getCreationDate() > 0 &&
+                timelineStep.getArtifact().getCommitDate() > 0) {
+                
+                calendar.setTime(new Date(timelineStep.getArtifact().getCreationDate()));
+                
+                timelineStep.setActivityStartDate(calendar.getTime());
+                timelineStep.setStartDate(calendar.getTime());
+                
+                calendar.setTime(new Date(timelineStep.getArtifact().getCommitDate()));
+                //calendar.set(Calendar.HOUR, 24);
+                
+                timelineStep.setActivityEndDate(calendar.getTime());
+                timelineStep.setEndDate(calendar.getTime());
+                
+                long difference = timelineStep.getEndDate() - timelineStep.getStartDate();
+                float days = (difference / (1000*60*60*24));            
+
+                timelineStep.setActivityRealDurationActivity((int) days);
+
+////                int activityExpectedDuration = 0;
+////
+////                while (activityExpectedDuration <= 0)
+////                    activityExpectedDuration = new Random().nextInt(6);
+                int activityExpectedDuration = -1;
+                
+                if (timelineStep.getKpi() != null && 
+                    timelineStep.getKpi().getThresholds() != null && 
+                    timelineStep.getKpi().getThresholds().getProperty("normal") != null) { //NOI18N
+                    
+                    activityExpectedDuration = Integer.valueOf(timelineStep.getKpi().getThresholds().getProperty("normal")); //NOI18N
+                }
+                timelineStep.setActivityExpectedDuration(activityExpectedDuration);
+            }
+////            timelineStep.setActivityStartDate(calendar.getTime());
+////            timelineStep.setStartDate(calendar.getTime());
             
-            int i = 0;
+////            int i = 0;
+////            
+////            while (i <= 0)
+////                i = new Random().nextInt(10);
+////                        
+////            calendar.set(Calendar.HOUR, i * 24);
             
-            while (i <= 0)
-                i = new Random().nextInt(10);
-                        
-            calendar.set(Calendar.HOUR, i * 24);
+////            timelineStep.setActivityEndDate(calendar.getTime());
+////            timelineStep.setEndDate(calendar.getTime());
             
-            timelineStep.setActivityEndDate(calendar.getTime());
-            timelineStep.setEndDate(calendar.getTime());
-            
-            long difference = timelineStep.getEndDate() - timelineStep.getStartDate();
-            float days = (difference / (1000*60*60*24));            
-            
-            timelineStep.setActivityRealDurationActivity((int) days);
-            
-            int activityExpectedDuration = 0;
-            
-            while (activityExpectedDuration <= 0)
-                activityExpectedDuration = new Random().nextInt(6);
-                        
-            timelineStep.setActivityExpectedDuration(activityExpectedDuration);
+////            long difference = timelineStep.getEndDate() - timelineStep.getStartDate();
+////            float days = (difference / (1000*60*60*24));            
+////            
+////            timelineStep.setActivityRealDurationActivity((int) days);
+////            
+////            int activityExpectedDuration = 0;
+////            
+////            while (activityExpectedDuration <= 0)
+////                activityExpectedDuration = new Random().nextInt(6);
+////                        
+////            timelineStep.setActivityExpectedDuration(activityExpectedDuration);
         }
         // Prevents a java.lang.IndexOutOfBoundsException
         if (timelineSteps.size() > 0) {
@@ -163,18 +213,19 @@ public class TimelineView extends HorizontalLayout {
 
             for (TimelineStep timelineStep : timelineSteps) {
 
-                if (timelineStep.getStartDate() < startDate)
+                if (timelineStep.getStartDate() > 0 && timelineStep.getStartDate() < startDate)
                     startDate = timelineStep.getStartDate();
 
                 if (timelineStep.getEndDate() > endDate)
                     endDate = timelineStep.getEndDate();
             }
-
-            calendar.setTime(new Date(startDate));
-            gantt.setStartDate(calendar.getTime());
-
-            calendar.setTime(new Date(endDate));
-            gantt.setEndDate(calendar.getTime());
+            gantt.setStartDate(new Date(startDate));
+            gantt.setEndDate(new Date(endDate));
+////            calendar.setTime(new Date(startDate));
+////            gantt.setStartDate(calendar.getTime());
+////
+////            calendar.setTime(new Date(endDate));
+////            gantt.setEndDate(calendar.getTime());
         } else {
             Date date = new Date();
             gantt.setStartDate(date);
@@ -258,14 +309,30 @@ public class TimelineView extends HorizontalLayout {
     }
     
     public class TimelineStep extends Step {
-        private RemoteActivityDefinition activityDefinition;
+        private final WebserviceBean webserviceBean;
+        private final long processDefinitionId;
+        private final RemoteActivityDefinition activityDefinition;
+        private final RemoteArtifact artifact;
+        private final RemoteKpi kpi;
         private Date activityStartDate;
         private Date activityEndDate;
         private int activityRealDuration = 0;
         private int activityExpectedDuration = 0;
         
-        public TimelineStep(RemoteActivityDefinition activityDefinition) {
+        public TimelineStep(WebserviceBean webserviceBean, long processDefinitionId, RemoteActivityDefinition activityDefinition, RemoteArtifact artifact) {
+            this.webserviceBean = webserviceBean;
+            this.processDefinitionId = processDefinitionId;
             this.activityDefinition = activityDefinition;
+            this.artifact = artifact;
+            kpi = findKpi(activityDefinition);
+        }
+        
+        public RemoteArtifact getArtifact() {
+            return artifact;
+        }
+        
+        public RemoteKpi getKpi() {
+            return kpi;
         }
         
         public String getActivityNameAndDescription() {
@@ -295,16 +362,35 @@ public class TimelineView extends HorizontalLayout {
         public String getTimelineIndicatorColor() {
             String color = "#000000";
             
-            if (getActivityRealDuration() > getActivityExpectedDuration()) {
-                
-                if (getActivityRealDuration() <= 7)
-                    color = "#f7eea0"; //warning
-                else
-                    color = "#db9090"; //critical;
-            }
-            else
-                color = "#bffcb3"; //normal
+////            if (getActivityRealDuration() > getActivityExpectedDuration()) {
+////                
+////                if (getActivityRealDuration() <= 7)
+////                    color = "#f7eea0"; //warning
+////                else
+////                    color = "#db9090"; //critical;
+////            }
+////            else
+////                color = "#bffcb3"; //normal
             
+            try {
+                RemoteKpiResult kpiResult = webserviceBean.executeActivityKpiAction(
+                        "time",
+                        artifact,
+                        processDefinitionId,
+                        activityDefinition.getId(),
+                        Page.getCurrent().getWebBrowser().getAddress(),
+                        session.getSessionId());
+                if (kpiResult != null) {
+                    if (kpiResult.getComplianceLevel() == 10)
+                        color = "#bffcb3"; //warning
+                    if (kpiResult.getComplianceLevel() == 5)
+                        color = "#f7eea0"; //normal
+                    if (kpiResult.getComplianceLevel() == 0)
+                        color = "#db9090"; //critical
+                }
+            } catch (ServerSideException ex) {
+                
+            }
             String result = "<span class=\"v-icon\" style=\"font-family: "
                     + VaadinIcons.STOP.getFontFamily() + ";color:" + color
                     + "\">&#x"
@@ -351,5 +437,15 @@ public class TimelineView extends HorizontalLayout {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
             return simpleDateFormat.format(getActivityEndDate());
         }        
+        
+        private RemoteKpi findKpi(RemoteActivityDefinition activityDefinition) {
+            if (activityDefinition != null && activityDefinition.getKpis() != null) {
+                for (RemoteKpi kpi :activityDefinition.getKpis()) {
+                    if (kpi.getName() != null && kpi.getName().equals("time"))
+                        return kpi;
+                }
+            }
+            return null;
+        } 
     }
 }

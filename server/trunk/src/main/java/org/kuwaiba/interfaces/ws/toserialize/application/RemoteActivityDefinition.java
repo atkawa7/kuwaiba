@@ -16,8 +16,11 @@
 package org.kuwaiba.interfaces.ws.toserialize.application;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.application.process.ConditionalActivityDefinition;
 
@@ -27,6 +30,7 @@ import org.kuwaiba.apis.persistence.application.process.ConditionalActivityDefin
  * to fill it in). The activity definition has at least one artifact definition, which contains (in our example) the actual form.
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
+@XmlRootElement(name = "remoteActivityDefinition")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteActivityDefinition implements Serializable {
     /**
@@ -69,9 +73,22 @@ public class RemoteActivityDefinition implements Serializable {
      * The next activity according to the flow defined in the process definition
      */
     private RemoteActivityDefinition nextActivity;
+    /**
+     * List of Key Performance Indicators
+     */
+    @XmlElement(name = "kpis")
+    private List<RemoteKpi> kpis;
+    /**
+     * List of Key Performance Indicator Actions
+     */
+    @XmlElement(name = "kpiActions")
+    private List<RemoteKpiAction> kpiActions;
+    
+    public RemoteActivityDefinition() {
+    }
 
     public RemoteActivityDefinition(long id, String name, String description, 
-            int type, RemoteArtifactDefinition arfifact, RemoteActor actor, boolean idling, boolean confirm, String color) {
+            int type, RemoteArtifactDefinition arfifact, RemoteActor actor, boolean idling, boolean confirm, String color, List<RemoteKpi> kpis, List<RemoteKpiAction> kpiActions) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -81,6 +98,8 @@ public class RemoteActivityDefinition implements Serializable {
         this.idling = idling;
         this.confirm = confirm;
         this.color = color;
+        this.kpis = kpis;
+        this.kpiActions = kpiActions;
     }
 
     public long getId() {
@@ -163,6 +182,22 @@ public class RemoteActivityDefinition implements Serializable {
         this.color = color;
     }
     
+    public List<RemoteKpi> getKpis() {
+        return kpis;
+    }
+    
+    public void setKpis(List<RemoteKpi> kpis) {
+        this.kpis = kpis;
+    }
+    
+    public List<RemoteKpiAction> getKpiActions() {
+        return kpiActions;
+    }
+    
+    public void setKpiActions(List<RemoteKpiAction> kpiActions) {
+        this.kpiActions = kpiActions;
+    }
+    
     public static RemoteActivityDefinition asRemoteActivityDefinition(ActivityDefinition activityDefinition) {
         RemoteActivityDefinition res = null;
         
@@ -172,7 +207,9 @@ public class RemoteActivityDefinition implements Serializable {
                 new RemoteArtifactDefinition(activityDefinition.getArfifact().getId(), activityDefinition.getArfifact().getName(), activityDefinition.getArfifact().getDescription(), activityDefinition.getArfifact().getVersion(), activityDefinition.getArfifact().getType(), activityDefinition.getArfifact().getDefinition(), activityDefinition.getArfifact().getPreconditionsScript(), activityDefinition.getArfifact().getPostconditionsScript(), activityDefinition.getArfifact().isPrintable(), activityDefinition.getArfifact().getPrintableTemplate()), 
                 new RemoteActor(activityDefinition.getActor().getId(), activityDefinition.getActor().getName(), activityDefinition.getActor().getType()),
                 activityDefinition.confirm(), 
-                activityDefinition.getColor());
+                activityDefinition.getColor(),
+                RemoteKpi.asRemoteKpis(activityDefinition.getKpis()),
+                RemoteKpiAction.asRemoteKpiActions(activityDefinition.getKpiActions()));
             
             if (((ConditionalActivityDefinition) activityDefinition).getNextActivityIfTrue() != null) 
                 ((RemoteConditionalActivityDefinition) res).setNextActivityIfTrue(RemoteActivityDefinition.asRemoteActivityDefinition(((ConditionalActivityDefinition) activityDefinition).getNextActivityIfTrue()));
@@ -181,13 +218,17 @@ public class RemoteActivityDefinition implements Serializable {
                 ((RemoteConditionalActivityDefinition) res).setNextActivityIfFalse(RemoteActivityDefinition.asRemoteActivityDefinition(((ConditionalActivityDefinition) activityDefinition).getNextActivityIfFalse()));
             
         } else {
+            
+            
             res = new RemoteActivityDefinition(activityDefinition.getId(), activityDefinition.getName(), 
                 activityDefinition.getDescription(), activityDefinition.getType(), 
                 new RemoteArtifactDefinition(activityDefinition.getArfifact().getId(), activityDefinition.getArfifact().getName(), activityDefinition.getArfifact().getDescription(), activityDefinition.getArfifact().getVersion(), activityDefinition.getArfifact().getType(), activityDefinition.getArfifact().getDefinition(), activityDefinition.getArfifact().getPreconditionsScript(), activityDefinition.getArfifact().getPostconditionsScript(), activityDefinition.getArfifact().isPrintable(), activityDefinition.getArfifact().getPrintableTemplate()), 
                 new RemoteActor(activityDefinition.getActor().getId(), activityDefinition.getActor().getName(), activityDefinition.getActor().getType()),
                 activityDefinition.isIdling(),
                 activityDefinition.confirm(), 
-                activityDefinition.getColor());
+                activityDefinition.getColor(),
+                RemoteKpi.asRemoteKpis(activityDefinition.getKpis()),
+                RemoteKpiAction.asRemoteKpiActions(activityDefinition.getKpiActions()));
             
             if (activityDefinition.getNextActivity() != null) 
                 res.setNextActivity(RemoteActivityDefinition.asRemoteActivityDefinition(activityDefinition.getNextActivity()));

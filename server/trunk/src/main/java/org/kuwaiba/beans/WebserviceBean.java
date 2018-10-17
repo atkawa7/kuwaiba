@@ -42,6 +42,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteContact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFavoritesFolder;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteForm;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteFormInstance;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteKpiResult;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteFileObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemotePool;
@@ -688,6 +689,7 @@ public interface WebserviceBean {
     public RemoteProcessInstance getProcessInstance(long processInstanceId, String ipAddress, String sessionId) throws ServerSideException;
     public void deleteProcessInstance(long processInstanceId, String ipAddress, String sessionId) throws ServerSideException;
     public void reloadProcessDefinitions(String ipAddress, String sessionId) throws ServerSideException;
+    public RemoteKpiResult executeActivityKpiAction(String kpiActionName, RemoteArtifact remoteArtifact, long processDefinitionId, long activityDefinitionId, String ipAddress, String sessionId) throws ServerSideException;
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="Configuration Values">

@@ -50,15 +50,25 @@ public class RemoteArtifact implements Serializable {
      * instance and to other activity instances or the process instance.
      */
     private List<StringPair> sharedInformation;
+    /**
+     * The artifact creation date
+     */
+    private long creationDate = 0;
+    /**
+     * The artifact commit date
+     */
+    private long commitDate = 0;
 
     public RemoteArtifact() { }
     
-    public RemoteArtifact(long id, String name, String contentType, byte[] content, List<StringPair> sharedInformation) {
+    public RemoteArtifact(long id, String name, String contentType, byte[] content, List<StringPair> sharedInformation, long creationDate, long commitDate) {
         this.name = name;
         this.contentType = contentType;
         this.content = content;
         this.id = id;
         this.sharedInformation = sharedInformation;
+        this.creationDate = creationDate;
+        this.commitDate = commitDate;
     }
     
     public long getId() {
@@ -99,6 +109,22 @@ public class RemoteArtifact implements Serializable {
     
     public void setSharedInformation(List<StringPair> sharedInformation) {
         this.sharedInformation = sharedInformation;
+    }
+    
+    public long getCreationDate() {
+        return creationDate;
+    }
+    
+    public void setCreationDate(long creationDate) {
+        this.creationDate = creationDate;
+    }
+    
+    public long getCommitDate() {
+        return commitDate;
+    }
+    
+    public void setCommitDate(long commitDate) {
+        this.commitDate = commitDate;
     }
 
     @Override

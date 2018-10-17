@@ -15,6 +15,8 @@
  */
 package org.kuwaiba.apis.persistence.application.process;
 
+import java.util.List;
+
 /**
  * Wraps the definition of a process. The activities are represented as a linked list
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
@@ -48,9 +50,17 @@ public class ProcessDefinition {
      * Reference to the start activity (typically a TYPE_START type of activity). The rest will be linked from this one
      */
     private ActivityDefinition startActivity;
+    /**
+     * List of Key Performance Indicators to Process Definition
+     */
+    private List<Kpi> kpis;
+    /**
+     * List of Key Performance Indicator Actions to Process Definition
+     */
+    private List<KpiAction> kpiActions;
         
     public ProcessDefinition(long id, String name, String description, long creationDate, 
-            String version, boolean enabled, ActivityDefinition startActivity) {
+            String version, boolean enabled, ActivityDefinition startActivity, List<Kpi> kpis, List<KpiAction> kpiActions) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -58,6 +68,8 @@ public class ProcessDefinition {
         this.version = version;
         this.enabled = enabled;
         this.startActivity = startActivity;
+        this.kpis = kpis;
+        this.kpiActions = kpiActions;
     }
 
     public long getId() {
@@ -115,7 +127,23 @@ public class ProcessDefinition {
     public void setStartActivity(ActivityDefinition startActivity) {
         this.startActivity = startActivity;
     }
-
+    
+    public List<Kpi> getKpis() {
+        return kpis;
+    }
+    
+    public void setKpis(List<Kpi> kpis) {
+        this.kpis = kpis;
+    }
+    
+    public List<KpiAction> getKpiActions() {
+        return kpiActions;
+    }
+    
+    public void setKpiActions(List<KpiAction> kpiActions) {
+        this.kpiActions = kpiActions;
+    }
+    
     @Override
     public int hashCode() {
         int hash = 7;

@@ -206,6 +206,20 @@ public final class ProcessCache {
         throw new ApplicationObjectNotFoundException("Process Instances can not be found");
     }
     
+    public ActivityDefinition getActivityDefinition(long processDefinitionId, long activityDefinitionId) throws InventoryException {
+        if (processActivityDefinitions.containsKey(processDefinitionId)) {
+            
+            if (processActivityDefinitions.get(processDefinitionId) != null) {
+                
+                for (ActivityDefinition activityDef : processActivityDefinitions.get(processDefinitionId))
+                    
+                    if (activityDef.getId() == activityDefinitionId)
+                        return activityDef;
+            }
+        }
+        throw new InventoryException("Artifact Definition can not be found") {};
+    }
+    
     public Artifact getArtifactForActivity(long processInstanceId, long activityId) throws ApplicationObjectNotFoundException {
         ProcessInstance processInstance = getProcessInstance(processInstanceId);
         
@@ -491,6 +505,8 @@ public final class ProcessCache {
             final String ATTR_ARTIFACT_DEFINTION_ID = "artifactDefinitionId";
             final String ATTR_KEY = "key";
             final String ATTR_VALUE = "value";
+            final String ATTR_CREATION_DATE = "creationDate";
+            final String ATTR_COMMIT_DATE = "commitDate";
             
             QName tagProcessInstance = new QName(TAG_PROCESS_INSTANCE);
             QName tagArtifacts = new QName(TAG_PROCESS_ARTIFACTS);
@@ -542,7 +558,9 @@ public final class ProcessCache {
                         xmlew.add(xmlef.createAttribute(new QName(ATTR_NAME), artifact.getName()));
                         xmlew.add(xmlef.createAttribute(new QName(ATTR_CONTENT_TYPE), artifact.getContentType()));
                         xmlew.add(xmlef.createAttribute(new QName(ATTR_ARTIFACT_DEFINTION_ID), Long.toString(activityDefinition.getArfifact().getId())));
-
+                        xmlew.add(xmlef.createAttribute(new QName(ATTR_CREATION_DATE), Long.toString(artifact.getCreationDate())));
+                        xmlew.add(xmlef.createAttribute(new QName(ATTR_COMMIT_DATE), Long.toString(artifact.getCommitDate())));
+                        
                         xmlew.add(xmlef.createStartElement(tagContent, null, null));
                         xmlew.add(xmlef.createCData(new String(artifact.getContent())));
                         xmlew.add(xmlef.createEndElement(tagContent, null));
@@ -600,6 +618,8 @@ public final class ProcessCache {
             final String ATTR_ARTIFACT_DEFINTION_ID = "artifactDefinitionId";
             final String ATTR_KEY = "key";
             final String ATTR_VALUE = "value";
+            final String ATTR_CREATION_DATE = "creationDate";
+            final String ATTR_COMMIT_DATE = "commitDate";
             
             QName tagArtifact = new QName(TAG_PROCESS_ARTIFACT);
             QName tagContent = new QName(TAG_PROCESS_CONTENT);
@@ -615,6 +635,8 @@ public final class ProcessCache {
                         String name = reader.getAttributeValue(null, ATTR_NAME);
                         String contentType = reader.getAttributeValue(null, ATTR_CONTENT_TYPE);
                         long artifactDefId = Long.valueOf(reader.getAttributeValue(null, ATTR_ARTIFACT_DEFINTION_ID));
+                        long creationDate = Long.valueOf(reader.getAttributeValue(null, ATTR_CREATION_DATE) != null ? reader.getAttributeValue(null, ATTR_CREATION_DATE) : "0");
+                        long commitDate = Long.valueOf(reader.getAttributeValue(null, ATTR_COMMIT_DATE) != null ? reader.getAttributeValue(null, ATTR_COMMIT_DATE) : "0");
                         
                         byte[] content = null;
                         List<StringPair> shares = new ArrayList();
@@ -652,7 +674,7 @@ public final class ProcessCache {
                             }
                             reader.next();
                         }
-                        Artifact artifact = new Artifact(artifactCounter++, name, contentType, content, shares);
+                        Artifact artifact = new Artifact(artifactCounter++, name, contentType, content, shares, creationDate, commitDate);
                                                 
                         for (ActivityDefinition activityDef : activityDefs) {
                             
