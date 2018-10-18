@@ -599,7 +599,7 @@ $v-field-background-color: #ccffe6;
         -ms-user-select: none;
         -o-user-select: no
     }
-
+    
     .report-forms{
         .device-title{
             border-top-right-radius: 8px; 
@@ -621,6 +621,8 @@ $v-field-background-color: #ccffe6;
         .peering{ background: #00cc99; }
 
         .router{ background: #66ff66; }
+        
+        .switch{ background: #8080ff; }
 
         .adm{ background: #33cc33; }
 
@@ -670,6 +672,10 @@ $v-field-background-color: #ccffe6;
             bottom: 0;
             width: 100%;
             text-align: center;
+        }
+
+        .button-in-cell{
+            height: auto !important;
         }
     }
     //END of end to end View forms
@@ -773,5 +779,5 @@ $v-field-background-color: #ccffe6;
         .critical {
             background: darksalmon;
         }
-    }
+    }  
 }

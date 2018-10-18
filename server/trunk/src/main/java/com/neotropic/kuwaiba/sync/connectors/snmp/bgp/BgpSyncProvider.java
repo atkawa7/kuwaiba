@@ -28,6 +28,7 @@ import com.neotropic.kuwaiba.sync.model.SyncUtil;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import com.neotropic.kuwaiba.sync.model.TableData;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -154,8 +155,8 @@ public class BgpSyncProvider extends AbstractSyncProvider{
                     return pollResult;
                 }
 
-                pollResult.getResult().put(mappedObjLight, new ArrayList<>());
-                pollResult.getResult().get(mappedObjLight).add(
+                pollResult.getResult().put(agent, new ArrayList<>());
+                pollResult.getResult().get(agent).add(
                         new TableData("bgpTable", SyncUtil.parseMibTable("instance", bgpTable, tableAsString))); //NOI18N
                 //
                 SnmpBgpLocalResourceDefinition bgpLocalTable = new SnmpBgpLocalResourceDefinition();
@@ -167,7 +168,7 @@ public class BgpSyncProvider extends AbstractSyncProvider{
                     return pollResult;
                 }
 
-                pollResult.getResult().get(mappedObjLight).add(
+                pollResult.getResult().get(agent).add(
                         new TableData("bgpLocalTable", SyncUtil.parseMibTable("instance", bgpLocalTable, bgpLocalTableAsString))); //NOI18N
             } catch(InventoryException ex) {
                 pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
@@ -193,20 +194,23 @@ public class BgpSyncProvider extends AbstractSyncProvider{
     }
 
     @Override
-    public List<SyncResult> automatedSync(PollResult pollResult) {
-        HashMap<BusinessObjectLight, List<AbstractDataEntity>> originalData = pollResult.getResult();
+    public  List<SyncResult> automatedSync(PollResult pollResult) {
+        HashMap<SyncDataSourceConfiguration, List<AbstractDataEntity>> originalData = pollResult.getResult();
         List<SyncResult> res = new ArrayList<>();
         // Adding to findings list the not blocking execution exception found during the mapped poll
         for (SyncDataSourceConfiguration agent : pollResult.getExceptions().keySet()) {
             for (Exception ex : pollResult.getExceptions().get(agent))
-                res.add(new SyncResult(SyncFinding.EVENT_ERROR, String.format("Severe error while processing data source configuration %s", agent.getName()), ex.getLocalizedMessage()));
+                res.add(new SyncResult(agent.getId(), SyncFinding.EVENT_ERROR, String.format("Severe error while processing data source configuration %s", agent.getName()), ex.getLocalizedMessage()));
         }
-        for (Map.Entry<BusinessObjectLight, List<AbstractDataEntity>> entrySet : originalData.entrySet()) {
+        for (Map.Entry<SyncDataSourceConfiguration, List<AbstractDataEntity>> entrySet : originalData.entrySet()) {
             List<TableData> mibTables = new ArrayList<>();
             entrySet.getValue().forEach((value) -> {
                 mibTables.add((TableData)value);
             });
-            BGPSynchronizer ipSync = new BGPSynchronizer(entrySet.getKey(), mibTables);
+            BGPSynchronizer ipSync = new BGPSynchronizer(entrySet.getKey().getId(),
+                    new BusinessObjectLight(entrySet.getKey().getParameters().get("deviceClass"), 
+                    Long.valueOf(entrySet.getKey().getParameters().get("deviceId")), ""), 
+                    mibTables);
             res.addAll(ipSync.execute());
         }
         return res;

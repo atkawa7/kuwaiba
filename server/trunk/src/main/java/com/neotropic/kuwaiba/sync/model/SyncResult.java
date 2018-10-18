@@ -54,10 +54,15 @@ public class SyncResult {
      * The textual description of the result of that action
      */
     private String result;
+    /**
+     * Data source configuration id
+     */
+    private long dataSourceId;
    
     public SyncResult() { }
 
-    public SyncResult(int type, String actionDescription, String result) {
+    public SyncResult(long dataSourceId, int type, String actionDescription, String result) {
+        this.dataSourceId = dataSourceId;
         this.type = type;
         this.actionDescription = actionDescription;
         this.result = result;
@@ -85,5 +90,13 @@ public class SyncResult {
 
     public void setResult(String result) {
         this.result = result;
+    }
+
+    public long getDataSourceId() {
+        return dataSourceId;
+    }
+
+    public void setDataSourceId(long dataSourceId) {
+        this.dataSourceId = dataSourceId;
     }
 }

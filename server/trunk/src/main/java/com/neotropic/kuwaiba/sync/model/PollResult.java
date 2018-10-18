@@ -28,7 +28,7 @@ public class PollResult {
     /**
      * A hashmap with the result of polling the device provided
      */
-    private final HashMap<BusinessObjectLight, List<AbstractDataEntity>> result;
+    private final HashMap<SyncDataSourceConfiguration, List<AbstractDataEntity>> result;
     /**
      * A hashmap that contains the list of exceptions per sync configuration 
      */
@@ -39,7 +39,7 @@ public class PollResult {
         exceptions = new HashMap();
     }
     
-    public HashMap<BusinessObjectLight, List<AbstractDataEntity>> getResult() {
+    public HashMap<SyncDataSourceConfiguration, List<AbstractDataEntity>> getResult() {
         return result;
     }
     

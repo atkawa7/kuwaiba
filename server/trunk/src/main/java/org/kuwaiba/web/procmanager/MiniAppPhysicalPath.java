@@ -18,6 +18,7 @@ import com.neotropic.kuwaiba.modules.reporting.img.SceneExporter;
 import com.vaadin.server.FileResource;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Image;
+import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import java.io.File;
@@ -64,19 +65,22 @@ public class MiniAppPhysicalPath extends AbstractMiniApplication<Component, Comp
                 SceneExporter.PATH = newPath;
 
                 String img = sceneExporter.buildPhysicalPathView(className, id);
-                                
-                SceneExporter.PATH = oldPath;
-                
-                FileResource resource = new FileResource(new File(newPath + img + ".png"));                    
+                if(img == null)
+                    panel.setContent(new Label("No physical connections"));
+                else{
+                    SceneExporter.PATH = oldPath;
 
-                Image image = new Image();
-                image.setSource(resource);
-                
-                image.setWidth("100%");
-                image.setHeightUndefined();
-                
-                panel.setSizeFull();
-                panel.setContent(image);
+                    FileResource resource = new FileResource(new File(newPath + img + ".png"));                    
+
+                    Image image = new Image();
+                    image.setSource(resource);
+
+                    //image.setWidth("100%");
+                    //image.setHeightUndefined();
+
+                    //panel.setSizeFull();
+                    panel.setContent(image);
+                }
             }
         }
         catch(Exception exception) {

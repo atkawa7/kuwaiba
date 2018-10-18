@@ -14,13 +14,13 @@
  */
 package org.kuwaiba.web.modules.servmanager.dashboard;
 
-import org.kuwaiba.apis.web.gui.dashboards.widgets.ReportsDashboardWidget;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 import org.kuwaiba.apis.web.gui.dashboards.layouts.TheaterDashboardLayout;
 import org.kuwaiba.apis.web.gui.dashboards.widgets.AttachedFilesDashboardWidget;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.web.modules.navtree.dashboard.RelationshipsDashboardWidget;
+import org.kuwaiba.web.modules.servmanager.views.FormDashboardWidget;
 
 /**
  * The dashboard used to show the information related to a given service
@@ -35,7 +35,7 @@ public class ServiceManagerDashboard extends AbstractDashboard {
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 0, new TopologyViewDashboardWidget(this, service, wsBean));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 0, new EndToEndViewDashboardWidget(this, service, wsBean));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(0, 1, new RelationshipsDashboardWidget(service, wsBean));
-        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 1, new ReportsDashboardWidget(service, wsBean));
+        ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 1, new FormDashboardWidget(this, service, wsBean));
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(2, 1, new AttachedFilesDashboardWidget(service, wsBean));
     }
 }

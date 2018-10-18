@@ -105,64 +105,64 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
     public PollResult mappedPoll(SynchronizationGroup syncGroup) {            
         PollResult pollResult = new PollResult();
         
-        for (SyncDataSourceConfiguration agent : syncGroup.getSyncDataSourceConfigurations()) {
+        for (SyncDataSourceConfiguration dsConfig : syncGroup.getSyncDataSourceConfigurations()) {
             long id = -1L;
             String className = null;                
             String address = null;
             String port = null;
             //String community = null;
 
-            if (agent.getParameters().containsKey("deviceId")) //NOI18N
-                id = Long.valueOf(agent.getParameters().get("deviceId")); //NOI18N
+            if (dsConfig.getParameters().containsKey("deviceId")) //NOI18N
+                id = Long.valueOf(dsConfig.getParameters().get("deviceId")); //NOI18N
             else 
-                pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                     new InvalidArgumentException(String.format(I18N.gm("parameter_deviceId_no_defined"), syncGroup.getName(), syncGroup.getId())));
 
-            if (agent.getParameters().containsKey("deviceClass")) //NOI18N
-                className = agent.getParameters().get("deviceClass"); //NOI18N
+            if (dsConfig.getParameters().containsKey("deviceClass")) //NOI18N
+                className = dsConfig.getParameters().get("deviceClass"); //NOI18N
             else
-                pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                     new InvalidArgumentException(String.format(I18N.gm("parameter_deviceClass_no_defined"), syncGroup.getName(), syncGroup.getId())));
 
-            if (agent.getParameters().containsKey("ipAddress")) //NOI18N
-                address = agent.getParameters().get("ipAddress"); //NOI18N
+            if (dsConfig.getParameters().containsKey("ipAddress")) //NOI18N
+                address = dsConfig.getParameters().get("ipAddress"); //NOI18N
             else 
-                pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                     new InvalidArgumentException(String.format(I18N.gm("parameter_ipAddress_no_defined"), syncGroup.getName(), syncGroup.getId())));
 
-            if (agent.getParameters().containsKey("port")) //NOI18N 
-                port = agent.getParameters().get("port"); //NOI18N
+            if (dsConfig.getParameters().containsKey("port")) //NOI18N 
+                port = dsConfig.getParameters().get("port"); //NOI18N
             else 
-                pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                     new InvalidArgumentException(String.format(I18N.gm("parameter_port_no_defined"), syncGroup.getName(), syncGroup.getId())));
 
             String version = SnmpManager.VERSION_2c;
-            if (agent.getParameters().containsKey(Constants.PROPERTY_SNMP_VERSION))
-                version = agent.getParameters().get(Constants.PROPERTY_SNMP_VERSION);
+            if (dsConfig.getParameters().containsKey(Constants.PROPERTY_SNMP_VERSION))
+                version = dsConfig.getParameters().get(Constants.PROPERTY_SNMP_VERSION);
 
             if (SnmpManager.VERSION_2c.equals(version)) {
-                if (!agent.getParameters().containsKey(Constants.PROPERTY_COMMUNITY))
-                    pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                if (!dsConfig.getParameters().containsKey(Constants.PROPERTY_COMMUNITY))
+                    pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                         new InvalidArgumentException(String.format(I18N.gm("parameter_community_no_defined"), syncGroup.getName(), syncGroup.getId())));
             }
             if (SnmpManager.VERSION_3.equals(version)) {
-                if (!agent.getParameters().containsKey(Constants.PROPERTY_AUTH_PROTOCOL))
-                    pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                if (!dsConfig.getParameters().containsKey(Constants.PROPERTY_AUTH_PROTOCOL))
+                    pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                         new InvalidArgumentException(String.format(I18N.gm("parameter_auth_protocol_no_defined"), syncGroup.getName(), syncGroup.getId())));
                 
-                if (!agent.getParameters().containsKey(Constants.PROPERTY_SECURITY_NAME))
-                    pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                if (!dsConfig.getParameters().containsKey(Constants.PROPERTY_SECURITY_NAME))
+                    pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                         new InvalidArgumentException(String.format(I18N.gm("parameter_security_name_no_defined"), syncGroup.getName(), syncGroup.getId())));
             }
 
-            if (pollResult.getSyncDataSourceConfigurationExceptions(agent).isEmpty()) {
+            if (pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).isEmpty()) {
 
                 BusinessObjectLight mappedObjLight = null;
 
                 try {
                     mappedObjLight = PersistenceService.getInstance().getBusinessEntityManager().getObjectLight(className, id);
                 } catch(InventoryException ex) {
-                    pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                    pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                         new InvalidArgumentException(String.format(I18N.gm("snmp_sync_object_not_found"), ex.getMessage())));
                 }
                 if (mappedObjLight != null) {
@@ -172,29 +172,29 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                     snmpManager.setVersion(version);
 
                     if (SnmpManager.VERSION_2c.equals(version))
-                        snmpManager.setCommunity(agent.getParameters().get(Constants.PROPERTY_COMMUNITY));
+                        snmpManager.setCommunity(dsConfig.getParameters().get(Constants.PROPERTY_COMMUNITY));
 
                     if (SnmpManager.VERSION_3.equals(version)) {
-                        snmpManager.setAuthProtocol(agent.getParameters().get(Constants.PROPERTY_AUTH_PROTOCOL));
-                        snmpManager.setAuthPass(agent.getParameters().get(Constants.PROPERTY_AUTH_PASS));
-                        snmpManager.setSecurityLevel(agent.getParameters().get(Constants.PROPERTY_SECURITY_LEVEL));
-                        snmpManager.setContextName(agent.getParameters().get(Constants.PROPERTY_CONTEXT_NAME));
-                        snmpManager.setSecurityName(agent.getParameters().get(Constants.PROPERTY_SECURITY_NAME));
-                        snmpManager.setPrivacyProtocol(agent.getParameters().get(Constants.PROPERTY_PRIVACY_PROTOCOL));
-                        snmpManager.setPrivacyPass(agent.getParameters().get(Constants.PROPERTY_PRIVACY_PASS));
+                        snmpManager.setAuthProtocol(dsConfig.getParameters().get(Constants.PROPERTY_AUTH_PROTOCOL));
+                        snmpManager.setAuthPass(dsConfig.getParameters().get(Constants.PROPERTY_AUTH_PASS));
+                        snmpManager.setSecurityLevel(dsConfig.getParameters().get(Constants.PROPERTY_SECURITY_LEVEL));
+                        snmpManager.setContextName(dsConfig.getParameters().get(Constants.PROPERTY_CONTEXT_NAME));
+                        snmpManager.setSecurityName(dsConfig.getParameters().get(Constants.PROPERTY_SECURITY_NAME));
+                        snmpManager.setPrivacyProtocol(dsConfig.getParameters().get(Constants.PROPERTY_PRIVACY_PROTOCOL));
+                        snmpManager.setPrivacyPass(dsConfig.getParameters().get(Constants.PROPERTY_PRIVACY_PASS));
                     }
                     //ENTITY-MIB table
                     ReferenceSnmpEntPhysicalTableResourceDefinition entPhysicalTable = new ReferenceSnmpEntPhysicalTableResourceDefinition();
                     List<List<String>> tableAsString = snmpManager.getTableAsString(entPhysicalTable.values().toArray(new OID[0]));
                         
                     if (tableAsString == null) {
-                        pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                        pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                             new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString())));
                         return pollResult;
                     }
                     
-                    pollResult.getResult().put(mappedObjLight, new ArrayList<>());
-                    pollResult.getResult().get(mappedObjLight).add(
+                    pollResult.getResult().put(dsConfig, new ArrayList<>());
+                    pollResult.getResult().get(dsConfig).add(
                             new TableData("entPhysicalTable", SyncUtil.parseMibTable("instance", entPhysicalTable, tableAsString))); //NOI18N
                 
                     //IF_MIB
@@ -202,12 +202,12 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                     List<List<String>> ifMibTableAsString = snmpManager.getTableAsString(ifMibTable.values().toArray(new OID[0]));
 
                     if (ifMibTableAsString == null) {
-                        pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                        pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                             new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString())));
                         return pollResult;
                     }
                     
-                    pollResult.getResult().get(mappedObjLight).add(
+                    pollResult.getResult().get(dsConfig).add(
                             new TableData("ifMibTable", SyncUtil.parseMibTable("instance", ifMibTable, ifMibTableAsString))); //NOI18N
                 }
             }
@@ -217,21 +217,25 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
     
     @Override
     public List<SyncFinding> supervisedSync(PollResult pollResult) {
-        HashMap<BusinessObjectLight, List<AbstractDataEntity>> originalData = pollResult.getResult();
+        HashMap<SyncDataSourceConfiguration, List<AbstractDataEntity>> originalData = pollResult.getResult();
         List<SyncFinding> findings = new ArrayList<>();
         // Adding to findings list the not blocking execution exception found during the mapped poll
         for (SyncDataSourceConfiguration agent : pollResult.getExceptions().keySet()) {
             for (Exception exception : pollResult.getExceptions().get(agent))
-                findings.add(new SyncFinding(SyncFinding.EVENT_ERROR, 
+                findings.add(new SyncFinding(agent.getId(), SyncFinding.EVENT_ERROR, 
                         exception.getMessage(), 
                         Json.createObjectBuilder().add("type","ex").build().toString()));
         }
-        for (Map.Entry<BusinessObjectLight, List<AbstractDataEntity>> entrySet : originalData.entrySet()) {
+        for (Map.Entry<SyncDataSourceConfiguration, List<AbstractDataEntity>> entrySet : originalData.entrySet()) {
             List<TableData> mibTables = new ArrayList<>();
             entrySet.getValue().forEach((value) -> {
                 mibTables.add((TableData)value);
             });
-            EntPhysicalSynchronizer x = new EntPhysicalSynchronizer(entrySet.getKey(), mibTables);
+            
+            EntPhysicalSynchronizer x = new EntPhysicalSynchronizer(entrySet.getKey().getId(),
+                    new BusinessObjectLight(entrySet.getKey().getParameters().get("deviceClass"), 
+                    Long.valueOf(entrySet.getKey().getParameters().get("deviceId")), ""),
+                    mibTables);
             
             try {
                 findings.addAll(x.sync());
@@ -254,7 +258,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
     }
 
     @Override
-    public List<SyncResult> automatedSync(PollResult pollResult) {
+    public  List<SyncResult> automatedSync(PollResult pollResult) {
         throw new UnsupportedOperationException("This provider does not support automated sync");
     }
 
@@ -281,10 +285,10 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
             if (type != null && jsonObj != null) {
                 switch (type) {
                     case "hierarchy":
-                        updateContaimentHiearchy(jsonObj.getJsonObject("hierarchy"));
+                        updateContaimentHiearchy(action.getFinding().getDataSourceId(), jsonObj.getJsonObject("hierarchy"));
                         break;
                     case "listType":
-                        createMissingListTypes(jsonObj);
+                        createMissingListTypes(action.getFinding().getDataSourceId(), jsonObj);
                         break;
                     case "device":
                         manageDevices(jsonObj, action.getFinding());
@@ -303,7 +307,9 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                         deleteOldStructure(jsonObj, action.getFinding());
                         break;
                     case "object_port_no_match":
-                        results.add(new SyncResult(SyncResult.TYPE_WARNING, String.format(ACTION_PORT_NO_MATCH, jsonObj.toString()), " There is nothing kuwaiba could do with this port, its name has no match with the data got it from SNMP, please check manually in order to move it or delete it"));
+                        results.add(new SyncResult(action.getFinding().getDataSourceId(),
+                                SyncResult.TYPE_WARNING, String.format(ACTION_PORT_NO_MATCH, 
+                                        jsonObj.toString()), " There is nothing kuwaiba could do with this port, its name has no match with the data got it from SNMP, please check manually in order to move it or delete it"));
                         break;
                     case "object_port_no_match_new":
                         createNewPorts(jsonObj, action.getFinding());
@@ -365,7 +371,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                                                 default:
                                                     break;
                                             }
-                                            results.add(new SyncResult(SyncResult.TYPE_SUCCESS, 
+                                            results.add(new SyncResult(action.getFinding().getDataSourceId(), SyncResult.TYPE_SUCCESS, 
                                                 "ifmib Synchronization",
                                                 String.format("The interface: %s, %s", ifName, s) + service));
                                         }
@@ -387,7 +393,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                                         String destinyPort = child.getJsonObject("result").getString("destinyPort");
                                         String device = child.getJsonObject("result").getString("device");
                                         String service = child.getJsonObject("result").getString("service");
-                                        results.add(new SyncResult(SyncResult.TYPE_SUCCESS, 
+                                        results.add(new SyncResult(action.getFinding().getDataSourceId(), SyncResult.TYPE_SUCCESS, 
                                                 String.format("In divice: %s was created the VcID: %s, sourcePort: %s, destinyPort: %s, service name: %s", device, vcid, sourcePort, destinyPort, service)
                                                 , "Info"));
                                     }                                
@@ -408,7 +414,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                                         String ipSource = child.getJsonObject("result").getString("ipSource");
                                         String ipDestiny = child.getJsonObject("result").getString("ipDestiny");
                                         String description = child.getJsonObject("result").getString("description");
-                                        results.add(new SyncResult(SyncResult.TYPE_SUCCESS, 
+                                        results.add(new SyncResult(action.getFinding().getDataSourceId(), SyncResult.TYPE_SUCCESS, 
                                                 String.format("The tunnel: %s was related with VcID: %s, ipSource: %s - ipDestiny: %s, service: %s", tunnel, vcid, ipSource, ipDestiny, description)
                                                 , "Info"));
                                     }                                
@@ -419,7 +425,8 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                 }
             } else {
                 if (action.getFinding().getType() == SyncFinding.EVENT_ERROR)
-                    results.add(new SyncResult(SyncResult.TYPE_ERROR, action.getFinding().getDescription(), I18N.gm("error")));
+                    results.add(new SyncResult(action.getFinding().getDataSourceId(), 
+                            SyncResult.TYPE_ERROR, action.getFinding().getDescription(), I18N.gm("error")));
             }
         }
         return results;
@@ -434,7 +441,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
      *            }
      * }
      */
-    private void updateContaimentHiearchy(JsonObject jo){
+    private void updateContaimentHiearchy(long dataSourceConfigId, JsonObject jo){
         try {
             HashMap<String, List<String>> classes = new HashMap<>();
             for (Map.Entry<String, JsonValue> entry : jo.entrySet()) {
@@ -467,16 +474,16 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                 List<String> possibleChildrenToAdd = entrySet.getValue();
 
                     mem.addPossibleChildren(key, possibleChildrenToAdd.toArray(new String[possibleChildrenToAdd.size()]));
-                    results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_CONTAINMENT_HIERARCHY, key, possibleChildrenToAdd), 
+                    results.add(new SyncResult(dataSourceConfigId, SyncResult.TYPE_SUCCESS, String.format(ACTION_CONTAINMENT_HIERARCHY, key, possibleChildrenToAdd), 
                             "Updated successfully"));
             }
         } catch (MetadataObjectNotFoundException | InvalidArgumentException ex) {
-            results.add(new SyncResult(SyncResult.TYPE_ERROR, "Updating the class hierarchy", "Possible cause: " + ex.getMessage() + "Please check and run the sync again"));
+            results.add(new SyncResult(dataSourceConfigId, SyncResult.TYPE_ERROR, "Updating the class hierarchy", "Possible cause: " + ex.getMessage() + "Please check and run the sync again"));
         }
     }
     
-    private void createMissingListTypes(JsonObject jo){
-        results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_LISTTYPE_CREATED, jo.getString("name")), "Created successfully"));
+    private void createMissingListTypes(long dataSourceConfigId, JsonObject jo){
+        results.add(new SyncResult(dataSourceConfigId, SyncResult.TYPE_SUCCESS, String.format(ACTION_LISTTYPE_CREATED, jo.getString("name")), "Created successfully"));
     }
     
     private void manageDevices(JsonObject device, SyncFinding find){
@@ -503,9 +510,9 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                     name = bem.getObject(deviceId).getAttributes().get("name");
                 else
                     name = attributes.get("name");
-                results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_UPDATED, name, deviceClassName, Long.toString(deviceId)), "Updated successfully"));
+                results.add(new SyncResult(find.getDataSourceId(), SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_UPDATED, name, deviceClassName, Long.toString(deviceId)), "Updated successfully"));
             } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-                results.add(new SyncResult(SyncResult.TYPE_ERROR, find.getDescription(), "Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
+                results.add(new SyncResult(find.getDataSourceId(), SyncResult.TYPE_ERROR, find.getDescription(), "Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
             }
         }
     }
@@ -564,11 +571,14 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                             if(!className.contains("Port") || attributes.get("name").contains("Power") || className.contains("PowerPort")){
                                 long createdObjectId = bem.createObject(className, parentClassName, parentId, attributes, -1);
                                 createdIdsToMap.put(childId, createdObjectId);
-                                results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), "Created successfully"));
+                                results.add(new SyncResult(find.getDataSourceId(),
+                                        SyncResult.TYPE_SUCCESS, 
+                                        String.format(ACTION_OBJECT_CREATED, attributes.get("name"), 
+                                                className, Long.toString(createdObjectId)), "Created successfully"));
                             }
                            
                         } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-                            results.add(new SyncResult(SyncResult.TYPE_ERROR, find.getDescription(), "Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
+                            results.add(new SyncResult(find.getDataSourceId(), SyncResult.TYPE_ERROR, find.getDescription(), "Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
                             break;
                         }
                     }
@@ -602,7 +612,8 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                 //move the old port into the new location
                 bem.updateObject(className, childId, newAttributes);
                 bem.moveObjects(parentClassName, parentId, objectsToMove);
-                results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_UPDATED, jsnPrtAttrs.get("name"), className, Long.toString(childId)), "Updated successfully"));
+                results.add(new SyncResult(find.getDataSourceId(), SyncResult.TYPE_SUCCESS, 
+                        String.format(ACTION_OBJECT_UPDATED, jsnPrtAttrs.get("name"), className, Long.toString(childId)), "Updated successfully"));
                 parentId = childId; //the port id
                 
                 for(StringPair port : nameOfCreatedPorts) {
@@ -636,16 +647,16 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                                                             
                                 long createdObjectId = bem.createObject(className, parentClassName, parentId, attributes, -1);
                                 createdIdsToMap.put(childId, createdObjectId);
-                                results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), "Created successfully"));
+                                results.add(new SyncResult(find.getDataSourceId(), SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), "Created successfully"));
                             }
                         }
                     }
                 }
             }
             else
-                results.add(new SyncResult(SyncResult.TYPE_WARNING, find.getDescription(), "Kuwaiba was not able to find the new parent to move the old port, please move it manually"));
+                results.add(new SyncResult(find.getDataSourceId(), SyncResult.TYPE_WARNING, find.getDescription(), "Kuwaiba was not able to find the new parent to move the old port, please move it manually"));
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | OperationNotPermittedException ex) {
-            results.add(new SyncResult(SyncResult.TYPE_ERROR, find.getDescription()," Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
+            results.add(new SyncResult(find.getDataSourceId(), SyncResult.TYPE_ERROR, find.getDescription()," Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
         } catch (InvalidArgumentException ex) {
             Logger.getLogger(SyncAction.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -675,7 +686,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
         else
             parentId = createdIdsToMap.get(tempParentId);
         if(parentId == null){
-                results.add(new SyncResult(SyncResult.TYPE_WARNING, find.getDescription(),  
+                results.add(new SyncResult(find.getDataSourceId(), SyncResult.TYPE_WARNING, find.getDescription(),  
                     "The port could not be created because the parent doesn't "
                             + "exists, please check if there is an error than "
                             + "prevented the creation of some elements in the "
@@ -713,9 +724,9 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                             parentId = createdIdsToMap.get(tempParentId);
                         long createdObjectId = bem.createObject(className, parentClassName, parentId, attributes, -1);
                         createdIdsToMap.put(childId, createdObjectId);
-                        results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), "Created successfully"));
+                        results.add(new SyncResult(find.getDataSourceId(), SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), "Created successfully"));
                     } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-                        results.add(new SyncResult(SyncResult.TYPE_WARNING, find.getDescription(), " Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
+                        results.add(new SyncResult(find.getDataSourceId(), SyncResult.TYPE_WARNING, find.getDescription(), " Possible cause: " + ex.getMessage() + " Please check and run the sync again"));
                     }
                 }
             }
@@ -723,9 +734,9 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                 try{
                     long createdObjectId = bem.createObject(className, parentClassName, parentId, attributes, -1);
                     createdIdsToMap.put(childId, createdObjectId);
-                    results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), "Created successfully"));
+                    results.add(new SyncResult(find.getDataSourceId(), SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_CREATED, attributes.get("name"), className, Long.toString(createdObjectId)), "Created successfully"));
                 } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-                    results.add(new SyncResult(SyncResult.TYPE_WARNING, find.getDescription(), "Possible cause: " + ex.getMessage()));
+                    results.add(new SyncResult(find.getDataSourceId(), SyncResult.TYPE_WARNING, find.getDescription(), "Possible cause: " + ex.getMessage()));
                 }
             }
         }
@@ -742,10 +753,10 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
         String className = jdevice.getString("deviceClassName");
         try {
             bem.deleteObject(className, Long.valueOf(jdevice.getString("deviceId")), false);
-            results.add(new SyncResult(SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_DELETED, jdevice.get("deviceName"), className, jdevice.getString("deviceId")), "Deleted successfully"));
+            results.add(new SyncResult(find.getDataSourceId(), SyncResult.TYPE_SUCCESS, String.format(ACTION_OBJECT_DELETED, jdevice.get("deviceName"), className, jdevice.getString("deviceId")), "Deleted successfully"));
 
         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-            results.add(new SyncResult(SyncResult.TYPE_WARNING, find.getDescription(), 
+            results.add(new SyncResult(find.getDataSourceId(), SyncResult.TYPE_WARNING, find.getDescription(), 
                                         ex.getMessage() + "T his structure could not be deleted, because some elements has relationships (services, IP, links, etc), please check this structure and migrate ports manually.\n" +
                     "Remeber kuwaiba is able to move the ports if they have a similiar name in the current navigation tree and the data got from the SNMP, otherwise is not possible to move the ports. Please check and run the sync again"));
         }

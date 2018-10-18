@@ -62,6 +62,10 @@ public class CiscoVlansSinchronizer {
      */
     private final long id;
     /**
+     * Device Data Source Configuration id
+     */
+    private final long dsConfigId;
+    /**
      * The vlanInfo table loaded into the memory
      */
     private final HashMap<String, List<String>> vlanInfo;
@@ -98,7 +102,7 @@ public class CiscoVlansSinchronizer {
      */
     private List<SyncResult> results = new ArrayList<>();
 
-    public CiscoVlansSinchronizer(BusinessObjectLight obj, List<TableData> data) {
+    public CiscoVlansSinchronizer(long dsConfigId, BusinessObjectLight obj, List<TableData> data) {
         try {
             PersistenceService persistenceService = PersistenceService.getInstance();
             bem = persistenceService.getBusinessEntityManager();
@@ -111,6 +115,7 @@ public class CiscoVlansSinchronizer {
         }
         this.className = obj.getClassName();
         this.id = obj.getId();
+        this.dsConfigId = dsConfigId;
         vlanTrunkPortsTable = (HashMap<String, List<String>>)data.get(0).getValue();
         ifXTable = (HashMap<String, List<String>>)data.get(1).getValue();
         vlanInfo = (HashMap<String, List<String>>)data.get(2).getValue();
@@ -119,13 +124,13 @@ public class CiscoVlansSinchronizer {
         vmMembershipTable = (HashMap<String, List<String>>)data.get(3).getValue();
     }
 
-    public List<SyncResult> execute ()
+    public List<SyncResult> execute()
     {
         try {
             readCurrentStructure(bem.getObjectChildren(className, id, -1), 1);
             readCurrentStructure(bem.getObjectSpecialChildren(className, id), 2);
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException ex) {
-            results.add(new SyncResult(SyncResult.TYPE_ERROR, "Unexpected error reading current structure", ex.getLocalizedMessage()));
+            results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, "Unexpected error reading current structure", ex.getLocalizedMessage()));
         }
         syncVlans();
         relateTrunkPorts();
@@ -150,11 +155,11 @@ public class CiscoVlansSinchronizer {
                 try {
                     bem.deleteObject(vlan.getClassName(), vlan.getId(), true);
                 } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-                    results.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                    results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                             String.format("%s can not be deleted", vlan), ex.getLocalizedMessage()));
                 }
                 vlansToRemove.add(vlan);
-                results.add(new SyncResult(SyncResult.TYPE_SUCCESS, "", 
+                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "", 
                     String.format("%s was deleted", vlan)));
             }
         }
@@ -174,12 +179,12 @@ public class CiscoVlansSinchronizer {
                     newVlanId = bem.createSpecialObject(Constants.CLASS_VLAN, className, id, attributes, -1);
                     BusinessObject newVlan = bem.getObject(newVlanId);
                     currentVlans.add(newVlan);
-                    results.add(new SyncResult(SyncResult.TYPE_SUCCESS, "", 
+                    results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "", 
                             String.format("%s was created", newVlan)));
                     //aem.createGeneralActivityLogEntry(aem.getUserInSession(className)
                     // ActivityLogEntry.ACTIVITY_TYPE_CREATE_INVENTORY_OBJECT, String.valueOf(newObjectId));
                 } catch (ApplicationObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-                   results.add(new SyncResult(SyncResult.TYPE_ERROR,
+                   results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,
                            String.format("%s can't be created", vlanInstances.get(i).split("\\.")[1]), 
                            ex.getLocalizedMessage()));
                 }
@@ -267,7 +272,7 @@ public class CiscoVlansSinchronizer {
                     //Then we search for the port in the current kuwaiba's structure
                     BusinessObjectLight currentPort = searchInCurrentStructure(SyncUtil.wrapPortName(portName));
                     if(currentPort == null)
-                        results.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                        results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                             "Search in the current structure",
                             String.format("%s not found", SyncUtil.wrapPortName(portName))));
                     else{
@@ -283,7 +288,7 @@ public class CiscoVlansSinchronizer {
                         try {
                             assosiatedVlans = bem.getSpecialAttribute(currentPort.getClassName(), currentPort.getId(), RELATIONSHIP_PORT_BELONGS_TO_VLAN);
                         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException ex) {
-                            results.add(new SyncResult(SyncResult.TYPE_ERROR, ex.getLocalizedMessage(),
+                            results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, ex.getLocalizedMessage(),
                                             String.format("Can not get Vlans associated to %s", currentPort)));
                         }
                         checkPortVlansRelationships(currentPort, candidateVlans, assosiatedVlans);
@@ -291,7 +296,7 @@ public class CiscoVlansSinchronizer {
                         for (long vlanName : candidateVlans) {
                             BusinessObjectLight currentVlan = searchInCurrentStructure(Long.toString(vlanName));
                             if(currentVlan == null){
-                                results.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                                             "Searching in the current structure",
                                             String.format("%s not found", vlanName)));
                             }else{//we must check if a relationship between the port and vland is already set
@@ -299,7 +304,7 @@ public class CiscoVlansSinchronizer {
                                 for (BusinessObjectLight assosiatedVlan : assosiatedVlans) {
                                     if(assosiatedVlan.getId() == currentVlan.getId()){ //The port and the vlan has a relation
                                         isAlreadyAssociated = true;
-                                        results.add(new SyncResult(SyncResult.TYPE_INFORMATION, "",
+                                        results.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, "",
                                             String.format("%s and %s are related", currentPort, assosiatedVlan)));
                                         break;
                                     }
@@ -309,11 +314,11 @@ public class CiscoVlansSinchronizer {
                                         bem.createSpecialRelationship(currentPort.getClassName(), currentPort.getId(),
                                                 currentVlan.getClassName(), currentVlan.getId(), RELATIONSHIP_PORT_BELONGS_TO_VLAN, false);
                                     } catch (BusinessObjectNotFoundException | OperationNotPermittedException | MetadataObjectNotFoundException ex) {
-                                        results.add(new SyncResult(SyncResult.TYPE_ERROR,
+                                        results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,
                                                 String.format("%s and %s were not related", currentPort, vlanName),
                                                 ex.getLocalizedMessage()));
                                     }
-                                    results.add(new SyncResult(SyncResult.TYPE_SUCCESS, "",
+                                    results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "",
                                             String.format("%s and %s was related successfully ", currentPort, vlanName)));
                                 }
                             }
@@ -333,7 +338,7 @@ public class CiscoVlansSinchronizer {
         for (int i = 0; i<vmVlan.size(); i++) {
             BusinessObjectLight currentVlan = searchInCurrentStructure(vmVlan.get(i));
             if(currentVlan == null)
-                results.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                                             "Searching in the current structure",
                                             String.format("%s not found", vmVlan.get(i))));
             else{
@@ -341,7 +346,7 @@ public class CiscoVlansSinchronizer {
                 if(indexOf > -1){
                     BusinessObjectLight currentPort = searchInCurrentStructure(instancesNames.get(indexOf));
                     if(currentPort == null)
-                        results.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                        results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                                     "Search in the current structure",
                                     String.format("%s not found", SyncUtil.wrapPortName(instancesNames.get(indexOf)))));
                     else{
@@ -349,14 +354,14 @@ public class CiscoVlansSinchronizer {
                             try {
                                 assosiatedVlans = bem.getSpecialAttribute(currentPort.getClassName(), currentPort.getId(), RELATIONSHIP_PORT_BELONGS_TO_VLAN);
                         } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException ex) {
-                            results.add(new SyncResult(SyncResult.TYPE_ERROR, ex.getLocalizedMessage(),
+                            results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, ex.getLocalizedMessage(),
                                             String.format("Can not get Vlans associated to %s", currentPort)));
                         }
                         boolean isAlreadyAssociated = false;
                         for (BusinessObjectLight assosiatedVlan : assosiatedVlans) {
                             if(assosiatedVlan.getId() == currentVlan.getId()){ //The port and the vlan has a relation
                                 isAlreadyAssociated = true;
-                                results.add(new SyncResult(SyncResult.TYPE_INFORMATION, "",
+                                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, "",
                                     String.format("%s and %s are related", currentPort, assosiatedVlan)));
                                 break;
                             }
@@ -366,11 +371,11 @@ public class CiscoVlansSinchronizer {
                                 bem.createSpecialRelationship(currentPort.getClassName(), currentPort.getId(),
                                         currentVlan.getClassName(), currentVlan.getId(), RELATIONSHIP_PORT_BELONGS_TO_VLAN, false);
                             } catch (BusinessObjectNotFoundException | OperationNotPermittedException | MetadataObjectNotFoundException ex) {
-                                results.add(new SyncResult(SyncResult.TYPE_ERROR,
+                                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,
                                         String.format("%s and %s were not related", currentPort, vmVlan.get(i)),
                                         ex.getLocalizedMessage()));
                             }
-                            results.add(new SyncResult(SyncResult.TYPE_SUCCESS, "",
+                            results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "",
                                     String.format("%s and %s was related successfully ", currentPort, vmVlan.get(i))));
                         }
                     }
@@ -402,11 +407,11 @@ public class CiscoVlansSinchronizer {
                 try {
                     bem.releaseSpecialRelationship(port.getClassName(), port.getId(), assosiatedVlan.getId(), RELATIONSHIP_PORT_BELONGS_TO_VLAN);
                 } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException ex) {
-                    results.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                    results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                         ex.getLocalizedMessage(),
                         String.format("Relation between %s and %s was not released", port, assosiatedVlan)));
                 }
-                results.add(new SyncResult(SyncResult.TYPE_SUCCESS, 
+                results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, 
                         "Updating ports related with VLANs",
                         String.format("Relationship between %s and %s was release", port, assosiatedVlan)));
             }

@@ -15,15 +15,12 @@
  */
 package org.kuwaiba.web.modules.servmanager.dashboard;
 
-import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.shared.MouseEventDetails;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -31,7 +28,6 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.modules.servmanager.views.EndToEndView;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.web.modules.servmanager.views.FormCreator;
 import org.openide.util.Exceptions;
 
 /**
@@ -92,24 +88,7 @@ public class EndToEndViewDashboardWidget extends AbstractDashboardWidget {
             Label info = new Label(String.format("Status: %s - Bandwidth: %s" , status != null ? status : "<Not Set>", bandwidth != null ? bandwidth : "<Not Set>"));
             
             lytContent.addComponent(new HorizontalLayout(lblTitle, info));
-        
-            Button btnFormTable = new Button("Show Form", VaadinIcons.GRID_H);
-            lytContent.addComponent(btnFormTable);
-
-            btnFormTable.addClickListener(click ->{
-                Window formWindow = new Window(" ");
-                try {
-                    FormCreator servManagerFormCreator = new FormCreator(service, wsBean, Page.getCurrent().getWebBrowser().getAddress(),
-                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-                    formWindow.setContent(servManagerFormCreator.createForm());
-                    formWindow.center();
-                    UI.getCurrent().addWindow(formWindow);
-                    
-                } catch (ServerSideException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
-            });
-            
+      
             lytContent.addComponent(new EndToEndView(service, wsBean));
             
             this.contentComponent = lytContent;

@@ -70,62 +70,62 @@ public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
     public PollResult mappedPoll(SynchronizationGroup syncGroup) {            
         PollResult pollResult = new PollResult();
         
-        for (SyncDataSourceConfiguration agent : syncGroup.getSyncDataSourceConfigurations()) {
+        for (SyncDataSourceConfiguration dsConfig : syncGroup.getSyncDataSourceConfigurations()) {
             long id = -1L;
             String className = null;                
             String address = null;
             String port = null;
             //String community = null;
 
-            if (agent.getParameters().containsKey("deviceId")) //NOI18N
-                id = Long.valueOf(agent.getParameters().get("deviceId")); //NOI18N
+            if (dsConfig.getParameters().containsKey("deviceId")) //NOI18N
+                id = Long.valueOf(dsConfig.getParameters().get("deviceId")); //NOI18N
             else 
-                pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                     new InvalidArgumentException(String.format(I18N.gm("parameter_deviceId_no_defined"), syncGroup.getName(), syncGroup.getId())));
 
-            if (agent.getParameters().containsKey("deviceClass")) //NOI18N
-                className = agent.getParameters().get("deviceClass"); //NOI18N
+            if (dsConfig.getParameters().containsKey("deviceClass")) //NOI18N
+                className = dsConfig.getParameters().get("deviceClass"); //NOI18N
             else
-                pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                     new InvalidArgumentException(String.format(I18N.gm("parameter_deviceClass_no_defined"), syncGroup.getName(), syncGroup.getId())));
 
-            if (agent.getParameters().containsKey("ipAddress")) //NOI18N
-                address = agent.getParameters().get("ipAddress"); //NOI18N
+            if (dsConfig.getParameters().containsKey("ipAddress")) //NOI18N
+                address = dsConfig.getParameters().get("ipAddress"); //NOI18N
             else 
-                pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                     new InvalidArgumentException(String.format(I18N.gm("parameter_ipAddress_no_defined"), syncGroup.getName(), syncGroup.getId())));
 
-            if (agent.getParameters().containsKey("port")) //NOI18N 
-                port = agent.getParameters().get("port"); //NOI18N
+            if (dsConfig.getParameters().containsKey("port")) //NOI18N 
+                port = dsConfig.getParameters().get("port"); //NOI18N
             else 
-                pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                     new InvalidArgumentException(String.format(I18N.gm("parameter_port_no_defined"), syncGroup.getName(), syncGroup.getId())));
 
             String version = SnmpManager.VERSION_2c;
-            if (agent.getParameters().containsKey(Constants.PROPERTY_SNMP_VERSION))
-                version = agent.getParameters().get(Constants.PROPERTY_SNMP_VERSION);
+            if (dsConfig.getParameters().containsKey(Constants.PROPERTY_SNMP_VERSION))
+                version = dsConfig.getParameters().get(Constants.PROPERTY_SNMP_VERSION);
 
             if (SnmpManager.VERSION_2c.equals(version)) {
-                if (!agent.getParameters().containsKey(Constants.PROPERTY_COMMUNITY))
-                    pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                if (!dsConfig.getParameters().containsKey(Constants.PROPERTY_COMMUNITY))
+                    pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                         new InvalidArgumentException(String.format(I18N.gm("parameter_community_no_defined"), syncGroup.getName(), syncGroup.getId())));
             }
             if (SnmpManager.VERSION_3.equals(version)) {
-                if (!agent.getParameters().containsKey(Constants.PROPERTY_AUTH_PROTOCOL))
-                    pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                if (!dsConfig.getParameters().containsKey(Constants.PROPERTY_AUTH_PROTOCOL))
+                    pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                         new InvalidArgumentException(String.format(I18N.gm("parameter_auth_protocol_no_defined"), syncGroup.getName(), syncGroup.getId())));
                 
-                if (!agent.getParameters().containsKey(Constants.PROPERTY_SECURITY_NAME))
-                    pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                if (!dsConfig.getParameters().containsKey(Constants.PROPERTY_SECURITY_NAME))
+                    pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                         new InvalidArgumentException(String.format(I18N.gm("parameter_security_name_no_defined"), syncGroup.getName(), syncGroup.getId())));
             }
 
-            if (pollResult.getSyncDataSourceConfigurationExceptions(agent).isEmpty()) {
+            if (pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).isEmpty()) {
                 BusinessObjectLight mappedObjLight = null;
                 try {
                     mappedObjLight = PersistenceService.getInstance().getBusinessEntityManager().getObjectLight(className, id);
                 } catch(InventoryException ex) {
-                    pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                    pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                         new InvalidArgumentException(String.format(I18N.gm("snmp_sync_object_not_found"), ex.getMessage())));
                 }
                 if (mappedObjLight != null) {
@@ -135,52 +135,52 @@ public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
                     snmpManager.setVersion(version);
 
                     if (SnmpManager.VERSION_2c.equals(version))
-                        snmpManager.setCommunity(agent.getParameters().get(Constants.PROPERTY_COMMUNITY));
+                        snmpManager.setCommunity(dsConfig.getParameters().get(Constants.PROPERTY_COMMUNITY));
 
                     if (SnmpManager.VERSION_3.equals(version)) {
-                        snmpManager.setAuthProtocol(agent.getParameters().get(Constants.PROPERTY_AUTH_PROTOCOL));
-                        snmpManager.setAuthPass(agent.getParameters().get(Constants.PROPERTY_AUTH_PASS));
-                        snmpManager.setSecurityLevel(agent.getParameters().get(Constants.PROPERTY_SECURITY_LEVEL));
-                        snmpManager.setContextName(agent.getParameters().get(Constants.PROPERTY_CONTEXT_NAME));
-                        snmpManager.setSecurityName(agent.getParameters().get(Constants.PROPERTY_SECURITY_NAME));
-                        snmpManager.setPrivacyProtocol(agent.getParameters().get(Constants.PROPERTY_PRIVACY_PROTOCOL));
-                        snmpManager.setPrivacyPass(agent.getParameters().get(Constants.PROPERTY_PRIVACY_PASS));
+                        snmpManager.setAuthProtocol(dsConfig.getParameters().get(Constants.PROPERTY_AUTH_PROTOCOL));
+                        snmpManager.setAuthPass(dsConfig.getParameters().get(Constants.PROPERTY_AUTH_PASS));
+                        snmpManager.setSecurityLevel(dsConfig.getParameters().get(Constants.PROPERTY_SECURITY_LEVEL));
+                        snmpManager.setContextName(dsConfig.getParameters().get(Constants.PROPERTY_CONTEXT_NAME));
+                        snmpManager.setSecurityName(dsConfig.getParameters().get(Constants.PROPERTY_SECURITY_NAME));
+                        snmpManager.setPrivacyProtocol(dsConfig.getParameters().get(Constants.PROPERTY_PRIVACY_PROTOCOL));
+                        snmpManager.setPrivacyPass(dsConfig.getParameters().get(Constants.PROPERTY_PRIVACY_PASS));
                     }
                     //VlanTrunkPortsTable
                     SnmpVlanTrunkPortsTableResourceDefinition VlanTrunkPortsTable = new SnmpVlanTrunkPortsTableResourceDefinition();
                     List<List<String>> vlansMibTableAsString = snmpManager.getTableAsString(VlanTrunkPortsTable.values().toArray(new OID[0]));
                     
                     if (vlansMibTableAsString == null) {
-                        pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                        pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                             new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString())));
                         return pollResult;
                     }
-                    pollResult.getResult().put(mappedObjLight, new ArrayList<>());
-                    pollResult.getResult().get(mappedObjLight).add(
+                    pollResult.getResult().put(dsConfig, new ArrayList<>());
+                    pollResult.getResult().get(dsConfig).add(
                             new TableData("vlansMibTable", SyncUtil.parseMibTable("instance", VlanTrunkPortsTable, vlansMibTableAsString))); //NOI18N
                     //ifXTable
                     SnmpifXTableResocurceDefinition ifXTable = new SnmpifXTableResocurceDefinition();
                     List<List<String>> ifXTableAsString = snmpManager.getTableAsString(ifXTable.values().toArray(new OID[0]));
                     
                     if (ifXTableAsString == null) {
-                        pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                        pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                             new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString())));
                         return pollResult;
                     }
                     
-                    pollResult.getResult().get(mappedObjLight).add(
+                    pollResult.getResult().get(dsConfig).add(
                             new TableData("ifXTable", SyncUtil.parseMibTable("instance", ifXTable, ifXTableAsString))); //NOI18N
                     //VlanInfo
                     SnmpVtpVlanTableResourceDefinition vlanInfo = new SnmpVtpVlanTableResourceDefinition();
                     List<List<String>> vlanInfoAsString = snmpManager.getTableAsString(vlanInfo.values().toArray(new OID[0]));
                     
                     if (vlanInfoAsString == null) {
-                        pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                        pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                             new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString())));
                         return pollResult;
                     }
                     
-                    pollResult.getResult().get(mappedObjLight).add(
+                    pollResult.getResult().get(dsConfig).add(
                             new TableData("vlanInfo", SyncUtil.parseMibTable("instance", vlanInfo, vlanInfoAsString))); //NOI18N
 
                     //vmMemberShipTable
@@ -188,14 +188,13 @@ public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
                     List<List<String>> vmMembershipTableAsString = snmpManager.getTableAsString(vmMembershipTable.values().toArray(new OID[0]));
                     
                     if (vmMembershipTableAsString == null) {
-                        pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
+                        pollResult.getSyncDataSourceConfigurationExceptions(dsConfig).add(
                             new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString())));
                         return pollResult;
                     }
                     
-                    pollResult.getResult().get(mappedObjLight).add(
+                    pollResult.getResult().get(dsConfig).add(
                             new TableData("vmMembershipTable", SyncUtil.parseMibTable("instance", vmMembershipTable, vmMembershipTableAsString))); //NOI18N
-                      
                 }
             }
         }
@@ -220,18 +219,22 @@ public class SnmpCiscoVlansSyncProvider extends AbstractSyncProvider{
     @Override
     public List<SyncResult> automatedSync(PollResult pollResult) {
         List<SyncResult> res = new ArrayList<>();
-        HashMap<BusinessObjectLight, List<AbstractDataEntity>> originalData = pollResult.getResult();
+        HashMap<SyncDataSourceConfiguration, List<AbstractDataEntity>> originalData = pollResult.getResult();
         // Adding to result list the not blocking execution exception found during the mapped poll
-        for (SyncDataSourceConfiguration agent : pollResult.getExceptions().keySet()) {
-            for (Exception ex : pollResult.getExceptions().get(agent))
-                res.add(new SyncResult(SyncFinding.EVENT_ERROR, String.format("Severe error while processing data source configuration %s", agent.getName()), ex.getLocalizedMessage()));
+        for (SyncDataSourceConfiguration dsConfig : pollResult.getExceptions().keySet()) {
+            for (Exception ex : pollResult.getExceptions().get(dsConfig))
+                res.add(new SyncResult(dsConfig.getId(), SyncFinding.EVENT_ERROR, String.format("Severe error while processing data source configuration %s", dsConfig.getName()), ex.getLocalizedMessage()));
         }
-        for (Map.Entry<BusinessObjectLight, List<AbstractDataEntity>> entrySet : originalData.entrySet()) {
+        for (Map.Entry<SyncDataSourceConfiguration, List<AbstractDataEntity>> entrySet : originalData.entrySet()) {
             List<TableData> mibTables = new ArrayList<>();
             entrySet.getValue().forEach((value) -> {
                 mibTables.add((TableData)value);
             });
-            CiscoVlansSinchronizer ciscoSync = new CiscoVlansSinchronizer(entrySet.getKey(), mibTables);
+            
+            CiscoVlansSinchronizer ciscoSync = new CiscoVlansSinchronizer(entrySet.getKey().getId(),
+                    new BusinessObjectLight(entrySet.getKey().getParameters().get("deviceClass"), 
+                    Long.valueOf(entrySet.getKey().getParameters().get("deviceId")), ""), 
+                    mibTables);
             res.addAll(ciscoSync.execute());
         }
         return res;

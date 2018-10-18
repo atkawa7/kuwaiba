@@ -156,8 +156,8 @@ public class SnmpMplsSyncProvider extends AbstractSyncProvider {
                             new ConnectionException(String.format(I18N.gm("snmp_agent_connection_exception"), mappedObjLight.toString())));
                         return pollResult;
                     }
-                    pollResult.getResult().put(mappedObjLight, new ArrayList<>());
-                    pollResult.getResult().get(mappedObjLight).add(
+                    pollResult.getResult().put(agent, new ArrayList<>());
+                    pollResult.getResult().get(agent).add(
                             new TableData("mplsMibTable", SyncUtil.parseMibTable("instance", mplsMibTable, mplsMibTableAsString))); //NOI18N
                     
                     SnmpCpwVcMplsTeMappingTableMibResourceDefinition teMibTable = new SnmpCpwVcMplsTeMappingTableMibResourceDefinition();
@@ -169,7 +169,7 @@ public class SnmpMplsSyncProvider extends AbstractSyncProvider {
                         return pollResult;
                     }
                     
-                    pollResult.getResult().get(mappedObjLight).add(
+                    pollResult.getResult().get(agent).add(
                             new TableData("teMibTable", SyncUtil.parseMibTable("instance", teMibTable, teMibTableAsString))); //NOI18N
                     
                     
@@ -182,7 +182,7 @@ public class SnmpMplsSyncProvider extends AbstractSyncProvider {
                         return pollResult;
                     }
                     
-                    pollResult.getResult().get(mappedObjLight).add(
+                    pollResult.getResult().get(agent).add(
                             new TableData("inboundMibTable", SyncUtil.parseMibTable("instance", inboundMibTable, inboundMibTableAsString))); //NOI18N
                 }
             }
@@ -207,21 +207,24 @@ public class SnmpMplsSyncProvider extends AbstractSyncProvider {
 
     @Override
     public List<SyncResult> automatedSync(PollResult pollResult) {
-        HashMap<BusinessObjectLight, List<AbstractDataEntity>> originalData = pollResult.getResult();
+        HashMap<SyncDataSourceConfiguration, List<AbstractDataEntity>> originalData = pollResult.getResult();
         List<SyncResult> res = new ArrayList<>();
         // Adding to findings list the not blocking execution exception found during the mapped poll
         for (SyncDataSourceConfiguration agent : pollResult.getExceptions().keySet()) {
             for (Exception exception : pollResult.getExceptions().get(agent))
-                res.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                res.add(new SyncResult(agent.getId(), SyncResult.TYPE_ERROR, 
                         exception.getMessage(), 
                         Json.createObjectBuilder().add("type","ex").build().toString()));
         }
-        for (Map.Entry<BusinessObjectLight, List<AbstractDataEntity>> entrySet : originalData.entrySet()) {
+        for (Map.Entry<SyncDataSourceConfiguration, List<AbstractDataEntity>> entrySet : originalData.entrySet()) {
             List<TableData> mibTables = new ArrayList<>();
             entrySet.getValue().forEach((value) -> {
                 mibTables.add((TableData)value);
             });
-            CpwVcMplsSynchronizer ciscoSync = new CpwVcMplsSynchronizer(entrySet.getKey(), mibTables);
+            CpwVcMplsSynchronizer ciscoSync = new CpwVcMplsSynchronizer(entrySet.getKey().getId(),
+                    new BusinessObjectLight(entrySet.getKey().getParameters().get("deviceClass"), 
+                    Long.valueOf(entrySet.getKey().getParameters().get("deviceId")), ""), 
+                    mibTables);
             res.addAll(ciscoSync.execute());
         }
         return res;

@@ -15,19 +15,13 @@
  */
 package org.kuwaiba.web.modules.servmanager.dashboard;
 
-import com.vaadin.server.Page;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.beans.WebserviceBean;
-import org.kuwaiba.exceptions.ServerSideException;
-import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.util.i18n.I18N;
-import org.kuwaiba.web.modules.servmanager.views.FormCreator;
-import org.openide.util.Exceptions;
 
 /**
  * Information forms for services resources
@@ -72,14 +66,14 @@ public class FormsDashboardWidget extends AbstractDashboardWidget{
 
     @Override
     public void createContent() {
-        try {
-            
-            FormCreator servManagerFormCreator = new FormCreator(service, wsBean, Page.getCurrent().getWebBrowser().getAddress(),
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-            
-        } catch (ServerSideException ex) {
-            Exceptions.printStackTrace(ex);
-        }
+//        try {
+//            
+//            FormCreator servManagerFormCreator = new FormCreator(service, wsBean, Page.getCurrent().getWebBrowser().getAddress(),
+//                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+//            
+//        } catch (ServerSideException ex) {
+//            Exceptions.printStackTrace(ex);
+//        }
     }
     
 }

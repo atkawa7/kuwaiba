@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 
 /**
- * Wraps the an object and objects related with it so a Hashmap doesn't have to be used
+ * Wraps the object and objects related with it so a Hashmap doesn't have to be used
  * e.g. a list of ports and its parents when vlan maps its generated
  * @author Adrian Martinez Molina <adrian.matinez@kuwaiba.org>
  */
@@ -35,7 +35,7 @@ public class RemoteObjectRelatedObjects implements Serializable {
      */
     private List<RemoteObjectLight> objs;
     /**
-     * The related objects. The indexes of this list are synced with those in #{@code relationships} and were separated from the 
+     * The related objects. The indexes of this list are synchronized with those in #{@code relationships} and were separated from the 
      * original HashMap to allow an easier serialization of the data structure
      */
     private List<RemoteObjectLightList> relatedObjects;

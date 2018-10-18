@@ -140,7 +140,6 @@ public class ServiceManagerComponent extends AbstractTopComponent {
                     pnlMain.setSecondComponent(secondComponent);
                 }
             });
-            
 
             FormLayout lytFilter = new FormLayout(cmbCustomers, txtServiceFilter);
             lytFilter.setMargin(true);

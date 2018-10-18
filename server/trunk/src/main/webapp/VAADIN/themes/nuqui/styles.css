@@ -15547,6 +15547,10 @@ div.v-layout.v-horizontal.v-widget {
 	background: #66ff66;
 }
 
+.nuqui .report-forms .switch {
+	background: #8080ff;
+}
+
 .nuqui .report-forms .adm {
 	background: #33cc33;
 }
@@ -15625,6 +15629,10 @@ div.v-layout.v-horizontal.v-widget {
 	bottom: 0;
 	width: 100%;
 	text-align: center;
+}
+
+.nuqui .report-forms .button-in-cell {
+	height: auto !important;
 }
 
 .nuqui .selector .v-verticallayout-deviceeven {

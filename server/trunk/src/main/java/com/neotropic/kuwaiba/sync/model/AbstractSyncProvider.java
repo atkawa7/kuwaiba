@@ -17,7 +17,9 @@
 package com.neotropic.kuwaiba.sync.model;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 
 /**
  * This class describes the generic behavior of all the synchronization providers. 

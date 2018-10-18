@@ -67,6 +67,10 @@ public class EntPhysicalSynchronizer {
      */
     private final long id;
     /**
+     * Device Data Source Configuration id
+     */
+    private final long dsConfigId;
+    /**
      * Current structure of the device
      */
     private final HashMap<Long, List<BusinessObjectLight>> currentObjectStructure;
@@ -160,7 +164,7 @@ public class EntPhysicalSynchronizer {
     */
     private boolean debugMode;
     
-    public EntPhysicalSynchronizer(BusinessObjectLight obj, List<TableData> data) {
+    public EntPhysicalSynchronizer(long dsConfigId, BusinessObjectLight obj, List<TableData> data) {
         
         try {
             PersistenceService persistenceService = PersistenceService.getInstance();
@@ -176,6 +180,7 @@ public class EntPhysicalSynchronizer {
         }
         this.className = obj.getClassName();
         this.id = obj.getId();
+        this.dsConfigId = dsConfigId;
         entityData = (HashMap<String, List<String>>)data.get(0).getValue();
         ifXTable = (HashMap<String, List<String>>)data.get(1).getValue();
         currentObjectStructure = new HashMap<>();
@@ -221,7 +226,7 @@ public class EntPhysicalSynchronizer {
         if (entityData.get("entPhysicalContainedIn").contains(INITAL_ID))
             createTreeFromFile(INITAL_ID);
         else 
-            findings.add(new SyncFinding(SyncFinding.EVENT_ERROR,
+            findings.add(new SyncFinding(dsConfigId, SyncFinding.EVENT_ERROR,
                                             I18N.gm("no_inital_id_was_found"),
                                             I18N.gm("check_initial_id_in_snmp_data")));
         removeChildrenless();
@@ -459,7 +464,7 @@ public class EntPhysicalSynchronizer {
         jHierarchyFinding = SyncUtil.joBuilder(jHierarchyFinding).add("hierarchy",jsonHierarchy).build();//NOI18N
         if(!jsonHierarchy.isEmpty()){
             jHierarchyFinding = SyncUtil.joBuilder(jHierarchyFinding).add("hierarchy",jsonHierarchy).build();//NOI18N
-            findings.add(new SyncFinding(SyncFinding.EVENT_NEW,
+            findings.add(new SyncFinding(dsConfigId, SyncFinding.EVENT_NEW,
                     I18N.gm("error"),
                     jHierarchyFinding.toString()));
         }
@@ -526,7 +531,7 @@ public class EntPhysicalSynchronizer {
                     objectName = SyncUtil.wrapPortName(objectName);
                                 
                 if(mappedClass == null) //it was impossible to parse the SNMP class into kuwaiba's class
-                    findings.add(new SyncFinding(SyncFinding.EVENT_ERROR,
+                    findings.add(new SyncFinding(dsConfigId, SyncFinding.EVENT_ERROR,
                                 I18N.gm("empty_fields_in_the_data"),
                                 Json.createObjectBuilder().add("type","error")
                                         .add("className", entityData.get("entPhysicalClass").get(i))
@@ -539,7 +544,7 @@ public class EntPhysicalSynchronizer {
                         HashMap<String, String> comparedAttributes = SyncUtil.compareAttributes(bem.getObject(id).getAttributes(), newAttributes);
                         if (!comparedAttributes.isEmpty()) {
                             comparedAttributes.put("name", bem.getObject(id).getAttributes().get("name"));//we need to add the name as atribute again to show the name in the results
-                            findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
+                            findings.add(new SyncFinding(dsConfigId, SyncFinding.EVENT_UPDATE,
                                     I18N.gm("router_has_changes"),
                                     createExtraInfoToUpdateAttributesInObject(Long.toString(id), mappedClass, comparedAttributes, bem.getObject(id).getAttributes()).toString()));
                         }
@@ -570,7 +575,7 @@ public class EntPhysicalSynchronizer {
                         //The is first time is tryng to sync from SNMP
                         if (!isBranchAlreadyCreated(branch)) {
                             //Loaded from snmp first time
-                            findings.add(new SyncFinding(SyncFinding.EVENT_NEW,
+                            findings.add(new SyncFinding(dsConfigId, SyncFinding.EVENT_NEW,
                                     I18N.gm("new_branch_to_sync"),
                                     listToJson(branch, "branch").toString()));
                         }
@@ -690,7 +695,7 @@ public class EntPhysicalSynchronizer {
                         .add("deviceClassName", removedObj.getClassName())
                         .build();
 
-                findings.add(new SyncFinding(SyncFinding.EVENT_DELETE,
+                findings.add(new SyncFinding(dsConfigId, SyncFinding.EVENT_DELETE,
                         String.format("The object %s WILL BE DELETED, perhaps it was removed physically from the device. If you are not sure, SKIP this action", 
                                 removedObj.toString()),
                         jdevice.toString()));
@@ -880,7 +885,7 @@ public class EntPhysicalSynchronizer {
             newObj = SyncUtil.joBuilder(newObj).add("deviceClassName", oldObj.getClassName()).build();
             newObj = SyncUtil.joBuilder(newObj).add("attributes", SyncUtil.parseAttributesToJson(attributeChanges)).build();
             newObj = SyncUtil.joBuilder(newObj).add("oldAttributes", SyncUtil.parseOldAttributesToJson(oldAttributes)).build();
-            findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE, String.format(I18N.gm("object_attributes_changed"), oldObj.toString()), newObj.toString()));
+            findings.add(new SyncFinding(dsConfigId, SyncFinding.EVENT_UPDATE, String.format(I18N.gm("object_attributes_changed"), oldObj.toString()), newObj.toString()));
         }
     }
     
@@ -1061,13 +1066,12 @@ public class EntPhysicalSynchronizer {
     }
     
     public void createAttributeError(String aClass, String attributeName, String type){
-       
-       findings.add(new SyncFinding(SyncFinding.EVENT_ERROR,
-                                            String.format(I18N.gm("attribute_does_not_exist_in_class"), attributeName, type, aClass),
-                                            Json.createObjectBuilder().add("type","error")
-                                             .add("className", aClass)
-                                             .add("attributeType", type)  
-                                             .add("attributeName", attributeName).build().toString()));
+       findings.add(new SyncFinding(dsConfigId, SyncFinding.EVENT_ERROR,
+                                    String.format(I18N.gm("attribute_does_not_exist_in_class"), attributeName, type, aClass),
+                                    Json.createObjectBuilder().add("type","error")
+                                            .add("className", aClass)
+                                            .add("attributeType", type)  
+                                            .add("attributeName", attributeName).build().toString()));
     }
     
 
@@ -1090,7 +1094,7 @@ public class EntPhysicalSynchronizer {
                             .build();
                 
                 json = SyncUtil.joBuilder(json).add("device", jdevice).build();
-                findings.add(new SyncFinding(SyncFinding.EVENT_DELETE,
+                findings.add(new SyncFinding(dsConfigId, SyncFinding.EVENT_DELETE,
                             String.format("The %s - %s and all its children WILL BE DELETED. Perhaps it was removed physically from the device. If you are not sure select SKIP this action", 
                                     currentChildFirstLevel.toString(), Long.toString(currentChildFirstLevel.getId())),
                             json.toString()));
@@ -1121,7 +1125,7 @@ public class EntPhysicalSynchronizer {
                     jsont = SyncUtil.joBuilder(jsont).add("deviceParent", jsonp).build();
                     
                     if(tParent.getClassName().contains("Port"))
-                        findings.add(new SyncFinding(SyncFinding.EVENT_DELETE,
+                        findings.add(new SyncFinding(dsConfigId, SyncFinding.EVENT_DELETE,
                            String.format("This device %s was child of %s, but it should be its parent. A new one was place correctly. Would you like to delete the old element? This operations is completely safe", 
                                    deviceToDelete.toString(), tParent.toString()), jsont.toString()));
                     
@@ -1142,7 +1146,7 @@ public class EntPhysicalSynchronizer {
             JsonObject json = Json.createObjectBuilder().add("type", "old_object_to_delete").build();
             json = SyncUtil.joBuilder(json).add("device", oldPort).build();
 
-            findings.add(new SyncFinding(SyncFinding.EVENT_DELETE,
+            findings.add(new SyncFinding(dsConfigId, SyncFinding.EVENT_DELETE,
                     String.format("There was no match for port: %s [%s] - id: %s. Do you want to delete this port after the sync process?",
                             oldPort.getString("deviceName"), oldPort.getString("deviceClassName"), oldPort.getString("deviceId")),
                     json.toString()));
@@ -1151,7 +1155,7 @@ public class EntPhysicalSynchronizer {
         for (JsonObject jnewPort : newPorts) {
             jnewPort = SyncUtil.joBuilder(jnewPort).add("type", "object_port_no_match_new").build();
 
-            findings.add(new SyncFinding(SyncFinding.EVENT_NEW,
+            findings.add(new SyncFinding(dsConfigId, SyncFinding.EVENT_NEW,
                     String.format("There was no match for port: %s [%s]. Do you want to create this port after the sync process?",
                             jnewPort.getJsonObject("attributes").getString("name"), jnewPort.getString("className")),
                     jnewPort.toString()));
@@ -1196,7 +1200,7 @@ public class EntPhysicalSynchronizer {
                         if(parentId > 0 )
                             portFound = SyncUtil.joBuilder(portFound).add("deviceParentId", Long.toString(parentId)).build();
 
-                        findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
+                        findings.add(new SyncFinding(dsConfigId, SyncFinding.EVENT_UPDATE,
                                 String.format("The port %s with id: %s will be moved to a new location to match the structure reported by the SNMP agent, do you want to proceed?", oldPort.toString(), oldPort.getId()),
                                 portFound.toString()));
                     }
@@ -1209,7 +1213,7 @@ public class EntPhysicalSynchronizer {
                             portFound = SyncUtil.joBuilder(portFound).add("deviceId", Long.toString(oldPort.getId())).build();
                             portFound = SyncUtil.joBuilder(portFound).add("attributes", SyncUtil.parseAttributesToJson(changedAttributes)).build();
                             portFound = SyncUtil.joBuilder(portFound).add("oldAttributes", SyncUtil.parseOldAttributesToJson(oldAttributes)).build();
-                            findings.add(new SyncFinding(SyncFinding.EVENT_UPDATE,
+                            findings.add(new SyncFinding(dsConfigId, SyncFinding.EVENT_UPDATE,
                                 String.format("Would you like to overwrite the attributes in port %s, with those in port with id %s?", oldPort.toString(), oldPort.getId()),
                                 portFound.toString()));
                         }
@@ -1329,7 +1333,7 @@ public class EntPhysicalSynchronizer {
             } else {//The list type doesn't exist, we create a finding
                 if (!listTypeEvaluated.contains(listTypeNameFromSNMP)) {
                     long createListTypeItem = aem.createListTypeItem(listTypeClassName, listTypeNameFromSNMP.trim(), listTypeNameFromSNMP.trim());
-                    findings.add(new SyncFinding(SyncFinding.EVENT_NEW,
+                    findings.add(new SyncFinding(dsConfigId, SyncFinding.EVENT_NEW,
                             String.format(I18N.gm("list_type_will_be_created"), listTypeNameFromSNMP),
                             Json.createObjectBuilder()
                             .add("type", "listtype") //NOI18N
@@ -1439,7 +1443,15 @@ public class EntPhysicalSynchronizer {
                     //we search for the physical port parent of the virtual port 
                     currrentInterface = searchInCurrentStructure(SyncUtil.wrapPortName(ifName.split("\\.")[0]), 1);
                     if(currrentInterface != null && currrentInterface.getName().equals(SyncUtil.wrapPortName(ifName.split("\\.")[0]))){
-                        attributes.put(Constants.PROPERTY_NAME, ifName.split("\\.")[1]);
+                        String className;
+                        if(ifName.toLowerCase().contains(".si")){
+                            className = "ServiceInstance";
+                            attributes.put(Constants.PROPERTY_NAME, ifName.split("\\.")[2]);
+                        }else{
+                            className = "Constants.CLASS_VIRTUALPORT";
+                            attributes.put(Constants.PROPERTY_NAME, ifName.split("\\.")[1]);
+                        }
+                        
                         createdId = bem.createObject(Constants.CLASS_VIRTUALPORT, currrentInterface.getClassName(), currrentInterface.getId(), attributes, -1);
                         createdClassName = "VirtualPort";
                         status = 1;
@@ -1518,7 +1530,7 @@ public class EntPhysicalSynchronizer {
             ifMibSyncResult = SyncUtil.jArrayBuilder(ifMibSyncResult).add(Json.createObjectBuilder().add("result", jo)).build();
         if(!jsonResults.isEmpty()){
         ifMibj = SyncUtil.joBuilder(ifMibj).add("type", "ifbmib").add("ifmibsync", ifMibSyncResult).build();
-            findings.add(new SyncFinding(SyncResult.TYPE_INFORMATION, 
+            findings.add(new SyncFinding(dsConfigId, SyncResult.TYPE_INFORMATION, 
                            "if-mib synchronization result", ifMibj.toString()));
         }
     }

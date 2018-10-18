@@ -170,7 +170,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     /**
      * Sync/load data reference
      */
-    private SyncManager sync;
+    private final SyncManager sync;
 
     
     public WebserviceBeanImpl() {
@@ -2129,16 +2129,18 @@ public class WebserviceBeanImpl implements WebserviceBean {
      * @return a map with key: port, value: physical path of that port
      * @throws ServerSideException 
      */
-    private HashMap<BusinessObjectLight, List<BusinessObjectLight>> getPhysycalpathVlans(BusinessObjectLight endpoint) throws ServerSideException
-    {
+    private HashMap<BusinessObjectLight, List<BusinessObjectLight>> getPhysycalpathVlans(BusinessObjectLight endpoint) 
+            throws ServerSideException{
         try {
             HashMap<BusinessObjectLight, List<BusinessObjectLight>> vlansPhysicalPath = new HashMap<>();
+            //we get the the vlans to which the port belongs
             List<BusinessObjectLight> vlans = bem.getSpecialAttribute(endpoint.getClassName(), endpoint.getId(), "portBelongsToVlan");
          
             for (BusinessObjectLight vlan : vlans) {
+                //We get all the port of every vlan
                 List<BusinessObjectLight> vlanPorts = bem.getSpecialAttribute(vlan.getClassName(), vlan.getId(), "portBelongsToVlan");
                 for (BusinessObjectLight vlanPort : vlanPorts) {
-                    if(vlanPort.getId() != endpoint.getId()){
+                    if(vlanPort.getId() != endpoint.getId()){//we get the physical path for every port of the vlan except of the given endpoint 
                         List<BusinessObjectLight> vlanPhysicalPath = bem.getPhysicalPath(vlanPort.getClassName(), vlanPort.getId());
                         if(!vlanPhysicalPath.isEmpty())
                             vlansPhysicalPath.put(vlanPort, vlanPhysicalPath);

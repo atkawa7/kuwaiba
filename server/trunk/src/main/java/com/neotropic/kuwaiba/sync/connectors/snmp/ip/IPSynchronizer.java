@@ -54,6 +54,10 @@ public class IPSynchronizer {
      */
     private final long id;
     /**
+     * Device Data Source Configuration id
+     */
+    private final long dsConfigId;
+    /**
      * To load the structure of the actual device
      */
     private final List<BusinessObjectLight> currentVirtualPorts;
@@ -102,7 +106,7 @@ public class IPSynchronizer {
      */
     private List<SyncResult> res;
     
-    public IPSynchronizer(BusinessObjectLight obj, List<TableData> data) {
+    public IPSynchronizer(long dsConfigId, BusinessObjectLight obj, List<TableData> data) {
         try {
             PersistenceService persistenceService = PersistenceService.getInstance();
             bem = persistenceService.getBusinessEntityManager();
@@ -118,6 +122,7 @@ public class IPSynchronizer {
         res = new ArrayList<>();
         this.className = obj.getClassName();
         this.id = obj.getId();
+        this.dsConfigId = dsConfigId;
         ipAddrTable = (HashMap<String, List<String>>)data.get(0).getValue();
         ifXTable = (HashMap<String, List<String>>)data.get(1).getValue();
         currentPorts = new ArrayList<>();
@@ -145,7 +150,7 @@ public class IPSynchronizer {
            
             readMibData();
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | ApplicationObjectNotFoundException ex) {
-            res.add(new SyncResult(SyncResult.TYPE_ERROR, 
+            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                         "Unexpected error reading current structure", 
                         ex.getLocalizedMessage()));
         }
@@ -169,9 +174,9 @@ public class IPSynchronizer {
             long newIpId = bem.createSpecialObject(Constants.CLASS_IP_ADDRESS, subnet.getClassName(), subnet.getId(), ipAttributes, -1);
             createdIp = bem.getObject(newIpId);
             ips.get(subnet).add(createdIp);
-            res.add(new SyncResult(SyncResult.TYPE_SUCCESS, "Add IP to Subnet", String.format("%s was added to %s successfully", ipAddr, subnet)));
+            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Add IP to Subnet", String.format("%s was added to %s successfully", ipAddr, subnet)));
         } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
-            res.add(new SyncResult(SyncResult.TYPE_ERROR, 
+            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                         String.format("%s was not added tot %s", ipAddr, subnet), 
                         ex.getLocalizedMessage()));
         }
@@ -190,7 +195,7 @@ public class IPSynchronizer {
         try {
             currentSubnet = bem.getObject(bem.createPoolItem(ipv4Root.getId(), ipv4Root.getClassName(), attributeNames, attributeValues, 0));
         } catch (ApplicationObjectNotFoundException | ArraySizeMismatchException | BusinessObjectNotFoundException | InvalidArgumentException | MetadataObjectNotFoundException ex) {
-            res.add(new SyncResult(SyncResult.TYPE_ERROR, 
+            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                     String.format("%s [Subnet] can't be created", newSubnet + ".0/24"), 
                     ex.getLocalizedMessage()));
         }//we must add the new subnet into the current subnets and ips
@@ -233,13 +238,13 @@ public class IPSynchronizer {
                         if(!oldMask.equals(syncMask)){
                             currentIp.getAttributes().put(Constants.PROPERTY_MASK, syncMask);
                             bem.updateObject(currentIp.getClassName(), currentIp.getId(), currentIp.getAttributes());
-                            res.add(new SyncResult(SyncResult.TYPE_SUCCESS, 
+                            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, 
                                 String.format("updating the mask of %s", currentIp),
                                 String.format("from: %s to: %s", oldMask, syncMask)));
                         }
                         return currentIpLight;
                     } catch (InvalidArgumentException | BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException ex) {
-                        res.add(new SyncResult(SyncResult.TYPE_ERROR,  String.format("updating the mask of %s", currentIpLight), ex.getLocalizedMessage()));
+                        res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,  String.format("updating the mask of %s", currentIpLight), ex.getLocalizedMessage()));
                     }
                 }
             }
@@ -256,6 +261,7 @@ public class IPSynchronizer {
         List<String> masks = ipAddrTable.get("ipAdEntNetMask");
         List<String> ifportIds = ifXTable.get("instance");
         List<String> portNames = ifXTable.get("ifName");
+        List<String> servicesNames = ifXTable.get("ifAlias");
         for(int i=0; i < addrPortsIds.size(); i++){
             String portId = addrPortsIds.get(i);
             String ipAddress = ipAddresses.get(i);
@@ -266,6 +272,8 @@ public class IPSynchronizer {
                 for(int j=0; j < ifportIds.size(); j++){
                     if(ifportIds.get(j).equals(portId)){
                         String portName = portNames.get(j);
+                        String serviceName = servicesNames.get(j);
+                        
                         BusinessObjectLight currentPort = searchInCurrentStructure(portName);
                         if(currentPort != null){
                             List<BusinessObjectLight> currentRelatedIPAddresses;
@@ -273,12 +281,15 @@ public class IPSynchronizer {
                                 currentRelatedIPAddresses = bem.getSpecialAttribute(
                                         currentPort.getClassName(),
                                         currentPort.getId(), RELATIONSHIP_IPAMHASADDRESS);
-                                                       //We check if the interface is already related with the ip
+                                //We check if the interface is already related with the ip
                                 boolean alreadyRelated = false;
+                                //We also relate the ipAddr with the service
+                                if(!serviceName.isEmpty())
+                                    checkServices(serviceName, currentIpAddress.getId());
                                 for (BusinessObjectLight currentRelatedIPAddress : currentRelatedIPAddresses) {
                                     if(currentRelatedIPAddress.getName().equals(currentIpAddress.getName())){ 
                                         alreadyRelated = true;
-                                        res.add(new SyncResult(SyncResult.TYPE_INFORMATION, "Relate interface - IP address",
+                                        res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION, "Relate interface - IP address",
                                             String.format("%s and %s are related", currentRelatedIPAddress, currentPort)));
                                         break;
                                     }
@@ -287,17 +298,18 @@ public class IPSynchronizer {
                                     bem.createSpecialRelationship(currentPort.getClassName(),currentPort.getId(),
                                                 currentIpAddress.getClassName(), currentIpAddress.getId(), RELATIONSHIP_IPAMHASADDRESS, true);
                                     
-                                    res.add(new SyncResult(SyncResult.TYPE_SUCCESS, "Relate interface - IP address",
+                                    res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, "Relate interface - IP address",
                                             String.format("%s and %s were related successfully ", currentIpAddress, currentPort)));
                                 }
+                                
                             } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException |OperationNotPermittedException ex) {
-                                res.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                                res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                                         String.format("trying to relate %s with %s", currentIpAddress, currentPort),
                                         ex.getLocalizedMessage()));
                             }
                         }
                         else
-                            res.add(new SyncResult(SyncResult.TYPE_ERROR, 
+                            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR, 
                                     "Search in the current structure",
                                     String.format("%s not found ", portName)));
                     }
@@ -320,7 +332,7 @@ public class IPSynchronizer {
             if (child.getClassName().equals(Constants.CLASS_ELECTRICALPORT) || child.getClassName().equals(Constants.CLASS_SFPPORT) || child.getClassName().contains(Constants.CLASS_OPTICALPORT)) 
                 currentPorts.add(child);
             else if (child.getClassName().equals(Constants.CLASS_VIRTUALPORT) || child.getClassName().equals(Constants.CLASS_MPLSTUNNEL) || 
-                   child.getClassName().equals(Constants.CLASS_BRIDGEDOMAININTERFACE))
+                   child.getClassName().equals(Constants.CLASS_BRIDGEDOMAININTERFACE) || child.getClassName().equals(Constants.CLASS_SERVICE_INSTANCE))
                 currentVirtualPorts.add(child);
             
             if (childrenType == 1) 
@@ -406,11 +418,83 @@ public class IPSynchronizer {
         }
         
         for(BusinessObjectLight currentVirtualPort: currentVirtualPorts){
-            if(currentVirtualPort.getName().toLowerCase().equals(
-                    ifName.contains(".") ? ifName.split("\\.")[1] : SyncUtil.wrapPortName(ifName.toLowerCase())
-            ))
+            String portName;
+            if(ifName.toLowerCase().contains(".si"))
+                 portName = ifName.split("\\.")[2];
+            else if (ifName.toLowerCase().contains(".") && ifName.split("\\.").length == 2)        
+                portName = ifName.split("\\.")[1];
+            else
+                portName = SyncUtil.wrapPortName(ifName.toLowerCase());
+            
+            if(currentVirtualPort.getName().toLowerCase().equals(portName))
                 return currentVirtualPort;
         }
         return null;
     }    
+    
+    /**
+     * Checks if a given service name exists in kuwaiba in order to 
+     * associate the resource read it form the if-mib 
+     * @param serviceName the service read it form the  if-mib
+     * @param ipAddr the ip address of the resource created
+     * @throws ApplicationObjectNotFoundException
+     * @throws BusinessObjectNotFoundException
+     * @throws MetadataObjectNotFoundException
+     * @throws InvalidArgumentException
+     * @throws OperationNotPermittedException 
+     */
+    private void checkServices(String serviceName, long ipAddr){
+        try{
+            List<BusinessObjectLight> servicesCreatedInKuwaiba = new ArrayList<>();
+            //We get the services created in kuwaiba
+            List<Pool> serviceRoot = aem.getRootPools("GenericCustomer", 2, false);
+            for(Pool customerPool: serviceRoot){
+
+                //TelecoOperators
+                List<BusinessObjectLight> poolItems = aem.getPoolItems(customerPool.getId(), -1);
+                for(BusinessObjectLight telecoOperator : poolItems){
+                    List<Pool> poolsInObject = aem.getPoolsInObject(telecoOperator.getClassName(), telecoOperator.getId(), "GenericService");
+                    //Service Pool
+                    for(Pool servicePool : poolsInObject){
+                        List<BusinessObjectLight> actualServices = aem.getPoolItems(servicePool.getId(), -1);
+                        actualServices.forEach((actualService) -> {
+                            servicesCreatedInKuwaiba.add(actualService);
+                        });
+                    }
+                }
+            }
+            boolean related = false;
+            //Now we check the resources with the given serviceName or ifAlias
+            for(BusinessObjectLight currentService : servicesCreatedInKuwaiba){
+                //The service is al ready created in kuwaiba
+                if(!currentService.getName().isEmpty()){
+                    if(serviceName.equals(currentService.getName()) || serviceName.toLowerCase().contains(currentService.getName().toLowerCase())){
+                        List<BusinessObjectLight> serviceResources = bem.getSpecialAttribute(currentService.getClassName(), currentService.getId(), "uses");
+                        for (BusinessObjectLight resource : serviceResources) {
+                            if(resource.getId() == ipAddr) //The port is already a resource of the service
+                                res.add(new SyncResult(dsConfigId, SyncResult.TYPE_INFORMATION,
+                                        "Searching service",
+                                        String.format("The service: %s is related with the ip: %s ", serviceName, ipAddr)));
+                            related = true;
+                            break;
+                        }
+                        if(!related){
+                            bem.createSpecialRelationship(currentService.getClassName(), currentService.getId(), Constants.CLASS_IP_ADDRESS, ipAddr, "uses", true);
+
+                            res.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,
+                                "Searching service",
+                                String.format("The service: %s was related with the ip: %s ", serviceName, ipAddr)));
+                        }
+                    }
+                }
+            }
+        } catch (BusinessObjectNotFoundException | MetadataObjectNotFoundException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
+               res.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,
+                                        String.format("Serching service %s, related with ip: %s ", serviceName, ipAddr),
+                                        String.format("due to: %s ", ex.getLocalizedMessage())));
+        }
+        res.add(new SyncResult(dsConfigId, SyncResult.TYPE_WARNING, 
+                                    "Searching service",
+                                    String.format("The service: %s was not found, the ip: %s was no related ", serviceName, ipAddr)));
+    }
 }

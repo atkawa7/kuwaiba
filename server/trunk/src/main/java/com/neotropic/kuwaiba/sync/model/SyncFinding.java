@@ -54,13 +54,18 @@ public class SyncFinding {
      * particular implementation, a JSON/YML format is suggested
      */
     private String extraInformation;
+    /**
+     * Data source configuration id
+     */
+    private long dataSourceId;
 
     public SyncFinding() { }
 
-    public SyncFinding(int type, String description, String extraInformation) {
+    public SyncFinding(long dataSourceId, int type, String description, String extraInformation) {
         this.type = type;
         this.description = description;
         this.extraInformation = extraInformation;
+        this.dataSourceId = dataSourceId;
     }
     
     public int getType() {
@@ -86,4 +91,13 @@ public class SyncFinding {
     public void setExtraInformation(String extraInformation) {
         this.extraInformation = extraInformation;
     }
+
+    public long getDataSourceId() {
+        return dataSourceId;
+    }
+
+    public void setDataSourceId(long dataSourceId) {
+        this.dataSourceId = dataSourceId;
+    }
+    
 }

@@ -80,22 +80,22 @@ public class EndToEndViewScene extends AbstractScene {
             SrvEdgeWidget srvEdge = lienzoComponent.getEdge(id);
             Window tableInfo = new Window(" ");
             tableInfo.addStyleName("v-window-center");
-            try {
-                FormCreator formView = new FormCreator(service, wsBean, 
-                        Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
-
-                for (RemoteObjectLight edge : edges.keySet()) {
-                    if(edge.getId() == id && edge.getClassName().equals(Constants.CLASS_MPLSTUNNEL)){
-                        Component x = formView.createVC(edge);
-                        tableInfo.setContent(x);
-                        closeWindows();
-                        getUI().addWindow(tableInfo);
-                    }
-                }
-            lienzoComponent.updateEdgeWidget(srvEdge.getId());
-            } catch (ServerSideException ex) {
-                Exceptions.printStackTrace(ex);
-            }
+//            try {
+//                FormDashboardWidget formView = new FormDashboardWidget(service, wsBean, 
+//                        Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+//
+//                for (RemoteObjectLight edge : edges.keySet()) {
+//                    if(edge.getId() == id && edge.getClassName().equals(Constants.CLASS_MPLSTUNNEL)){
+//                        Component x = formView.createVC(edge);
+//                        tableInfo.setContent(x);
+//                        closeWindows();
+//                        getUI().addWindow(tableInfo);
+//                    }
+//                }
+//            lienzoComponent.updateEdgeWidget(srvEdge.getId());
+//            } catch (ServerSideException ex) {
+//                Exceptions.printStackTrace(ex);
+//            }
         }
     };
     
@@ -111,8 +111,7 @@ public class EndToEndViewScene extends AbstractScene {
                 Component x = null;
                 for (RemoteObjectLight device : nodes.keySet()) {
                     if (device.getId() == id){
-                        FormCreator formView = new FormCreator(service, wsBean, 
-                                Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
+                        TableCreator formView = new TableCreator(service, wsBean);
                         
                         List<SrvEdgeWidget> connectedEdgeWidgets = lienzoComponent.getNodeEdgeWidgets(srvNode);
                         for(SrvEdgeWidget edge : connectedEdgeWidgets){
