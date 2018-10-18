@@ -33,11 +33,11 @@ public class LocalSyncAction {
     /**
      * the finding that has been processed
      */
-    private LocalSyncFinding finding;
+    private final LocalSyncFinding finding;
     /**
      * the actions that will be executed
      */
-    private int type;
+    private final int type;
     
     public LocalSyncAction(LocalSyncFinding finding, int type) {
         this.finding = finding;

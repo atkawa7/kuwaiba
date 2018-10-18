@@ -5711,7 +5711,8 @@ public class CommunicationsStub {
                         
                         List<LocalSyncResult> syncResults = new ArrayList<>();
                         for (SyncResult syncResult : get.getReturn())
-                            syncResults.add(new LocalSyncResult(syncResult.getType(), syncResult.getActionDescription(), syncResult.getResult()));
+                            syncResults.add(new LocalSyncResult(syncResult.getDataSourceId(), 
+                                    syncResult.getType(), syncResult.getActionDescription(), syncResult.getResult()));
                         
                         progress.setLocalSyncGroup(syncGroup);
                         progress.setSyncResults(syncResults);
@@ -5754,7 +5755,8 @@ public class CommunicationsStub {
                         
                         List<LocalSyncFinding> syncFindings = new ArrayList<>();
                         for (SyncFinding syncFinding : get.getReturn())
-                            syncFindings.add(new LocalSyncFinding(syncFinding.getType(), syncFinding.getDescription(), syncFinding.getExtraInformation()));
+                            syncFindings.add(new LocalSyncFinding(syncFinding.getDataSourceId(), 
+                                    syncFinding.getType(), syncFinding.getDescription(), syncFinding.getExtraInformation()));
                         
                         progress.setLocalSyncGroup(syncGroup);
                         progress.setFindings(syncFindings);
@@ -5794,6 +5796,7 @@ public class CommunicationsStub {
             for (LocalSyncAction localSyncAction : LocalActions) {
                 
                 SyncFinding finding = new SyncFinding();
+                finding.setDataSourceId(localSyncAction.getFinding().getDataSourceId());
                 finding.setDescription(localSyncAction.getFinding().getDescription());
                 finding.setExtraInformation(localSyncAction.getFinding().getExtraInformation());
                 finding.setType(localSyncAction.getFinding().getType());
@@ -5808,7 +5811,8 @@ public class CommunicationsStub {
             
             List<LocalSyncResult> localResults = new ArrayList<>();
             for(SyncResult result : results)
-                localResults.add(new LocalSyncResult(result.getType(), result.getActionDescription(), result.getResult()));
+                localResults.add(new LocalSyncResult(result.getDataSourceId(),
+                        result.getType(), result.getActionDescription(), result.getResult()));
             return localResults;
             
         } catch (Exception ex) {

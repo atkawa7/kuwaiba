@@ -54,10 +54,15 @@ public class LocalSyncFinding {
      * particular implementation, a JSON/YML format is suggested
      */
     private String extraInformation;
+    /**
+     * Data source configuration id
+     */
+    private long dataSourceId;
 
     public LocalSyncFinding() { }
 
-    public LocalSyncFinding(int type, String description, String extraInformation) {
+    public LocalSyncFinding(long dataSourceId, int type, String description, String extraInformation) {
+        this.dataSourceId = dataSourceId;
         this.type = type;
         this.description = description;
         this.extraInformation = extraInformation;
@@ -85,5 +90,13 @@ public class LocalSyncFinding {
 
     public void setExtraInformation(String extraInformation) {
         this.extraInformation = extraInformation;
+    }
+
+    public long getDataSourceId() {
+        return dataSourceId;
+    }
+
+    public void setDataSourceId(long dataSourceId) {
+        this.dataSourceId = dataSourceId;
     }
 }

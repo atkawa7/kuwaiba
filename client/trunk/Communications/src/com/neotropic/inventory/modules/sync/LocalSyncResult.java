@@ -47,8 +47,13 @@ public class LocalSyncResult {
      * The type of result. Gives feedback of the status of the executed action. See TYPE_* for possible values
      */
     private int type;
+    /**
+     * Data source configuration id
+     */
+    private long dataSourceId;
    
-    public LocalSyncResult(int type, String actionDescription, String result) {
+    public LocalSyncResult(long dataSourceId, int type, String actionDescription, String result) {
+        this.dataSourceId = dataSourceId;
         this.type = type;
         this.actionDescription = actionDescription;
         this.result = result;
@@ -77,4 +82,12 @@ public class LocalSyncResult {
     public void setResult(String result) {
         this.result = result;
     }
+
+    public long getDataSourceId() {
+        return dataSourceId;
+    }
+
+    public void setDataSourceId(long dataSourceId) {
+        this.dataSourceId = dataSourceId;
+    }   
 }

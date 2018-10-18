@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}int"/>
  *         &lt;element name="actionDescription" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="result" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="dataSourceId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -31,13 +32,15 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "syncResult", propOrder = {
     "type",
     "actionDescription",
-    "result"
+    "result",
+    "dataSourceId"
 })
 public class SyncResult {
 
     protected int type;
     protected String actionDescription;
     protected String result;
+    protected long dataSourceId;
 
     /**
      * Gets the value of the type property.
@@ -101,6 +104,22 @@ public class SyncResult {
      */
     public void setResult(String value) {
         this.result = value;
+    }
+
+    /**
+     * Gets the value of the dataSourceId property.
+     * 
+     */
+    public long getDataSourceId() {
+        return dataSourceId;
+    }
+
+    /**
+     * Sets the value of the dataSourceId property.
+     * 
+     */
+    public void setDataSourceId(long value) {
+        this.dataSourceId = value;
     }
 
 }
