@@ -58,7 +58,7 @@ public class GoogleGwtMapLabel {
         
     public GoogleGwtMapLabel(MapWidget mapWidget, LatLng latLng, String caption) {
         this.caption = caption;
-        htmlCaption = new HTML("<b style=\"font-size: small; background-color:cyan\">" + caption + "</b>");
+        htmlCaption = new HTML("<span style=\"padding: 4px; font-size: small; background-color:cyan; moz-border-radius:3px 3px 3px 3px; border-radius:3px 3px 3px 3px;\">" + caption + "</span>");
                         
         this.mapWidget = mapWidget;
         this.latLng = latLng;
@@ -86,6 +86,6 @@ public class GoogleGwtMapLabel {
     
     public void setCaption(String caption) {
         this.caption = caption;
-        htmlCaption.setHTML("<b style=\"font-size: small; background-color:cyan\">" + caption + "</b>");
+        htmlCaption.setHTML("<span style=\"padding: 4px; font-size: small; background-color:cyan; moz-border-radius:3px 3px 3px 3px; border-radius:3px 3px 3px 3px;\">" + caption + "</span>");
     }
 }
