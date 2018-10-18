@@ -15,6 +15,7 @@
  */
 package com.neotropic.inventory.modules.sync.nodes.actions.windows;
 
+import com.neotropic.inventory.modules.sync.LocalSyncDataSourceConfiguration;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -31,6 +32,8 @@ import javax.swing.ListCellRenderer;
 import javax.swing.border.EmptyBorder;
 import com.neotropic.inventory.modules.sync.LocalSyncGroup;
 import com.neotropic.inventory.modules.sync.LocalSyncResult;
+import java.util.HashMap;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.export.ExportTablePanel;
 import org.inventory.core.services.api.export.ExportableTable;
 import org.inventory.core.services.api.export.filters.CSVFilter;
@@ -52,8 +55,10 @@ public class SyncResultsFrame extends JFrame {
     
     private JScrollPane pnlScrollMain;
     private SyncResultsList<LocalSyncResult> lstSyncResults;
+    private HashMap<Long, String> mapDataSourceConfigNames;
 
     public SyncResultsFrame(LocalSyncGroup syncGroup, List<LocalSyncResult> results) {
+        mapDataSourceConfigNames = new HashMap<>();
         setLayout(new BorderLayout());
         setTitle(String.format(I18N.gm("sync_list_of_results"), syncGroup.getName()));
         pnlScrollMain = new JScrollPane();
@@ -78,6 +83,17 @@ public class SyncResultsFrame extends JFrame {
             }
         });
         add(btnExport, BorderLayout.NORTH);
+        List<LocalSyncDataSourceConfiguration> dataSourceConfigurations = CommunicationsStub.getInstance().getSyncDataSourceConfigurations(syncGroup.getId());
+        for(LocalSyncResult result : results){
+            for (LocalSyncDataSourceConfiguration dataSourceConfiguration : dataSourceConfigurations) {
+                if(result.getDataSourceId() == dataSourceConfiguration.getId()){
+                    mapDataSourceConfigNames.put(result.getDataSourceId(), dataSourceConfiguration.getName());
+                    break;
+                }
+            }
+        }
+        
+        
         
         lstSyncResults = new SyncResultsList<>(results.toArray(new LocalSyncResult[0]));
         lstSyncResults.setCellRenderer(new SyncResultsCellRenderer());
@@ -91,8 +107,12 @@ public class SyncResultsFrame extends JFrame {
         @Override
         public Component getListCellRendererComponent(JList<? extends LocalSyncResult> list, 
                 LocalSyncResult value, int index, boolean isSelected, boolean cellHasFocus) {
-            JLabel lblResultEntry = new JLabel("<html><b>Action: </b>" + value.getActionDescription() 
-                                            + "<br/><b>Result: </b>" +value.getResult()+ "<html>");
+            
+            JLabel lblResultEntry = new JLabel("<html>"
+                                            +   "<b>Data Source Configuration: </b>"+  mapDataSourceConfigNames.get(value.getDataSourceId())
+                                            +   "<br/><b>Action: </b>" + value.getActionDescription() 
+                                            +   "<br/><b>Result: </b>" +value.getResult()
+                                            + "<html>");
             lblResultEntry.setBorder(new EmptyBorder(5, 5, 5, 0));
             lblResultEntry.setOpaque(true);
             lblResultEntry.setBackground(Color.WHITE);
