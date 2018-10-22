@@ -41,7 +41,6 @@ import org.kuwaiba.web.procmanager.MiniAppPhysicalPath;
  * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
  */
 public class TableCreator {
-    
     /**
      * Possible table devices
      */
@@ -348,13 +347,13 @@ public class TableCreator {
                 if(relationships.get(i).equals("endpointA")){
                     port1 = port;
                     card1 = wsBean.getParentsUntilFirstOfClass(port1.getClassName(), 
-                            port.getId(), "IPBoard", 
+                            port.getId(), "GenericBoard", 
                             Page.getCurrent().getWebBrowser().getAddress(),
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).get(0);
                     
                     if(stmEndPoint != null){
                         port2 = stmEndPoint;
-                        card2 = wsBean.getParentsUntilFirstOfClass(port2.getClassName(), port2.getId(), "IPBoard", 
+                        card2 = wsBean.getParentsUntilFirstOfClass(port2.getClassName(), port2.getId(), "GenericBoard", 
                                 Page.getCurrent().getWebBrowser().getAddress(),
                                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).get(0);
                     }
@@ -362,12 +361,12 @@ public class TableCreator {
             
                 else if(relationships.get(i).equals("endpointB")){
                     port2 = port;
-                    card2 = wsBean.getParentsUntilFirstOfClass(port2.getClassName(), port2.getId(), "IPBoard", 
+                    card2 = wsBean.getParentsUntilFirstOfClass(port2.getClassName(), port2.getId(), "GenericBoard", 
                             Page.getCurrent().getWebBrowser().getAddress(),
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).get(0);
                     if(stmEndPoint != null){
                         port1 = stmEndPoint;
-                        card1 = wsBean.getParentsUntilFirstOfClass(port1.getClassName(), port1.getId(), "IPBoard", 
+                        card1 = wsBean.getParentsUntilFirstOfClass(port1.getClassName(), port1.getId(), "GenericBoard", 
                             Page.getCurrent().getWebBrowser().getAddress(),
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()).get(0);
                     }

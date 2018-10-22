@@ -15,25 +15,19 @@
  */
 package org.kuwaiba.web.modules.servmanager.views;
 
-import com.vaadin.server.ExternalResource;
 import com.vaadin.server.Page;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Properties;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -43,9 +37,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteLogicalConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
 import org.kuwaiba.services.persistence.util.Constants;
-import org.kuwaiba.web.procmanager.MiniAppPhysicalPath;
 import org.openide.util.Exceptions;
 
 /**
