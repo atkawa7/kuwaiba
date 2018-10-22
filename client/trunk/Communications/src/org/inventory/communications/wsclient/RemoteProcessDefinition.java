@@ -1,6 +1,8 @@
 
 package org.inventory.communications.wsclient;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
@@ -23,6 +25,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="startActivity" type="{http://ws.interfaces.kuwaiba.org/}remoteActivityDefinition" minOccurs="0"/>
+ *         &lt;element name="kpis" type="{http://ws.interfaces.kuwaiba.org/}remoteKpi" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="kpiActions" type="{http://ws.interfaces.kuwaiba.org/}remoteKpiAction" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -39,7 +43,9 @@ import javax.xml.bind.annotation.XmlType;
     "creationDate",
     "version",
     "enabled",
-    "startActivity"
+    "startActivity",
+    "kpis",
+    "kpiActions"
 })
 public class RemoteProcessDefinition {
 
@@ -50,6 +56,8 @@ public class RemoteProcessDefinition {
     protected String version;
     protected boolean enabled;
     protected RemoteActivityDefinition startActivity;
+    protected List<RemoteKpi> kpis;
+    protected List<RemoteKpiAction> kpiActions;
 
     /**
      * Gets the value of the id property.
@@ -193,6 +201,64 @@ public class RemoteProcessDefinition {
      */
     public void setStartActivity(RemoteActivityDefinition value) {
         this.startActivity = value;
+    }
+
+    /**
+     * Gets the value of the kpis property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the kpis property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getKpis().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link RemoteKpi }
+     * 
+     * 
+     */
+    public List<RemoteKpi> getKpis() {
+        if (kpis == null) {
+            kpis = new ArrayList<RemoteKpi>();
+        }
+        return this.kpis;
+    }
+
+    /**
+     * Gets the value of the kpiActions property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the kpiActions property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getKpiActions().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link RemoteKpiAction }
+     * 
+     * 
+     */
+    public List<RemoteKpiAction> getKpiActions() {
+        if (kpiActions == null) {
+            kpiActions = new ArrayList<RemoteKpiAction>();
+        }
+        return this.kpiActions;
     }
 
 }

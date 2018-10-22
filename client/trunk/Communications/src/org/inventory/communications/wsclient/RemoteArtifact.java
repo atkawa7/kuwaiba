@@ -24,6 +24,8 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="contentType" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="content" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0"/>
  *         &lt;element name="sharedInformation" type="{http://ws.interfaces.kuwaiba.org/}stringPair" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="creationDate" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="commitDate" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -38,7 +40,9 @@ import javax.xml.bind.annotation.XmlType;
     "name",
     "contentType",
     "content",
-    "sharedInformation"
+    "sharedInformation",
+    "creationDate",
+    "commitDate"
 })
 public class RemoteArtifact {
 
@@ -48,6 +52,8 @@ public class RemoteArtifact {
     protected byte[] content;
     @XmlElement(nillable = true)
     protected List<StringPair> sharedInformation;
+    protected long creationDate;
+    protected long commitDate;
 
     /**
      * Gets the value of the id property.
@@ -162,6 +168,38 @@ public class RemoteArtifact {
             sharedInformation = new ArrayList<StringPair>();
         }
         return this.sharedInformation;
+    }
+
+    /**
+     * Gets the value of the creationDate property.
+     * 
+     */
+    public long getCreationDate() {
+        return creationDate;
+    }
+
+    /**
+     * Sets the value of the creationDate property.
+     * 
+     */
+    public void setCreationDate(long value) {
+        this.creationDate = value;
+    }
+
+    /**
+     * Gets the value of the commitDate property.
+     * 
+     */
+    public long getCommitDate() {
+        return commitDate;
+    }
+
+    /**
+     * Sets the value of the commitDate property.
+     * 
+     */
+    public void setCommitDate(long value) {
+        this.commitDate = value;
     }
 
 }

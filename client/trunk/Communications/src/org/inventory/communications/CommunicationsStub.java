@@ -81,6 +81,7 @@ import com.neotropic.inventory.modules.sync.AbstractRunnableSyncResultsManager;
 import com.neotropic.inventory.modules.sync.LocalSyncProvider;
 import com.neotropic.inventory.modules.sync.LocalSyncAction;
 import org.inventory.communications.core.LocalConfigurationVariable;
+import org.inventory.communications.core.LocalPhysicalConnectionDetails;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.wsclient.ApplicationLogEntry;
 import org.inventory.communications.wsclient.RemoteAttributeMetadata;
@@ -2334,6 +2335,22 @@ public class CommunicationsStub {
         try {
             
             return new LocalLogicalConnectionDetails(service.getLogicalLinkDetails(linkClass, linkId, session.getSessionId()));
+        }catch(Exception ex) {
+            this.error =  ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Returns the structure of a logical connection. The current implementation is quite simple and the return object 
+     * simply provides the endpoints and the next ports connected to such endpoints using a physical connection
+     * @param linkClass The class of the connection to be evaluated
+     * @param linkId The id of the connection to be evaluated
+     * @return An object with the details of the connection and the physical resources associated to it. Null in case of error
+     */
+    public LocalPhysicalConnectionDetails getPhysicalLinkDetails(String linkClass, long linkId) { 
+        try {
+            return new LocalPhysicalConnectionDetails(service.getPhysicalLinkDetails(linkClass, linkId, session.getSessionId()));
         }catch(Exception ex) {
             this.error =  ex.getMessage();
             return null;
