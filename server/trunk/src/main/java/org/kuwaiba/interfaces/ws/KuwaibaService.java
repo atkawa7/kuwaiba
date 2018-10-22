@@ -82,6 +82,7 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConfigurationVariable;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemotePhysicalConnectionDetails;
 
 /**
  * Main web service
@@ -3671,6 +3672,32 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in getLogicalLinkDetails: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Returns the structure of a physical connection. The current implementation is quite simple and the return object 
+     * simply provides the endpoints and its physical paths
+     * @param linkClass The class of the connection to be evaluated
+     * @param linkId The id of the connection to be evaluated
+     * @param sessionId Session token
+     * @return An object with the details of the connection and the physical resources associated to it
+     * @throws ServerSideException If the user is not allowed to invoke the method
+     *                             If the provided connection could not be found
+     */
+    @WebMethod(operationName = "getPhysicalLinkDetails")
+    public RemotePhysicalConnectionDetails getPhysicalLinkDetails(@WebParam(name = "linkClass") String linkClass, 
+                                        @WebParam(name = "linkId")long linkId,
+                                        @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getPhysicalLinkDetails(linkClass, linkId, getIPAddress(), sessionId);
+        } catch(Exception e) {
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getPhysicalLinkDetails: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }

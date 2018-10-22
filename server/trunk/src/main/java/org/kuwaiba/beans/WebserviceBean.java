@@ -71,6 +71,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemotePhysicalConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHContainerLinkDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHPosition;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteAttributeMetadata;
@@ -229,6 +230,7 @@ public interface WebserviceBean {
     public void disconnectPhysicalConnection(String connectionClass, long connectionId, int sideToDisconnect, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLight> getPhysicalPath(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteLogicalConnectionDetails getLogicalLinkDetails(String linkClass, long linkId, String ipAddress, String sessionId) throws ServerSideException;
+    public RemotePhysicalConnectionDetails getPhysicalLinkDetails(String linkClass, long linkId, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLight> getContainersBetweenObjects(String objectAClassName, long objectAId,
             String objectBClassName, long objectBId, String containerClassName, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteObjectLightList> getPhysicalConnectionsInObject(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;

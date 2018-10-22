@@ -140,6 +140,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelationships;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemotePhysicalConnectionDetails;
 import org.kuwaiba.interfaces.ws.toserialize.business.ServiceLevelCorrelatedInformation;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHContainerLinkDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.business.modules.sdh.RemoteSDHPosition;
@@ -2117,6 +2118,47 @@ public class WebserviceBeanImpl implements WebserviceBean {
             return new RemoteLogicalConnectionDetails(linkObject, endpointA, endpointB, 
                     physicalPathA, physicalPathB, 
                     physicalPathForVlansEndpointA, physicalPathForVlansEndpointB);
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public RemotePhysicalConnectionDetails getPhysicalLinkDetails(String linkClass, 
+            long linkId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend")); //NOI18N
+        try {
+            aem.validateWebServiceCall("getPhysicalLinkDetails", ipAddress, sessionId); //NOI18N
+            
+            BusinessObject linkObject = bem.getObject(linkId);
+            
+            BusinessObjectLight endpointA = null;
+            BusinessObjectLight endpointB = null;
+            List<BusinessObjectLight> physicalPathA = null, physicalPathB = null;
+            String endpointARelationshipName, endpointBRelationshipName;
+            
+            if (mem.isSubClass("GenericPhysicalLink", linkClass)) { //NOI18N
+                endpointARelationshipName = "endpointA"; //NOI18N
+                endpointBRelationshipName = "endpointB"; //NOI18N
+            }else 
+                throw new ServerSideException(String.format("Class %s is not a supported physical link", linkClass)); //NOI18N
+            
+            List<BusinessObjectLight> endpointARelationship = bem.getSpecialAttribute(linkClass, linkId, endpointARelationshipName); //NOI18N
+            if (!endpointARelationship.isEmpty()) {
+                endpointA = endpointARelationship.get(0);
+                physicalPathA = bem.getParents(endpointA.getClassName(), endpointA.getId());
+            }
+                       
+            List<BusinessObjectLight> endpointBRelationship = bem.getSpecialAttribute(linkClass, linkId, endpointBRelationshipName); //NOI18N
+            if (!endpointBRelationship.isEmpty()) {
+                endpointB = endpointBRelationship.get(0);
+                physicalPathB = bem.getParents(endpointB.getClassName(), endpointB.getId());
+            }
+                        
+            return new RemotePhysicalConnectionDetails(linkObject,  
+                    physicalPathA, physicalPathB);
             
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
