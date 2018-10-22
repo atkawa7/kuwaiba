@@ -124,6 +124,15 @@ public class ComponentButton extends GraphicalComponent {
                 }
             }
         }
+        else if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+                        
+            if (Constants.Property.HIDDEN.equals(event.getPropertyName())) {
+                getComponent().setVisible(!((ElementButton) getComponentEventListener()).isHidden());
+            } 
+            else if (Constants.Property.ENABLED.equals(event.getPropertyName())) {
+                getComponent().setEnabled((boolean) event.getNewValue());
+            }
+        }
     }
     
 }

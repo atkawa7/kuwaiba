@@ -45,7 +45,7 @@ public abstract class AbstractFormInstanceLoader {
     public abstract Object getClassInfoLight(long classId);
     public abstract Object getAttachment(String name, String path);
     
-    private Object getValue(XMLStreamReader reader, String dataType) {
+    private Object getValue(XMLStreamReader reader, String dataType) throws XMLStreamException {
         switch (dataType) {
             case Constants.Attribute.DataType.CLASS_INFO_LIGTH:
                 
@@ -93,28 +93,28 @@ public abstract class AbstractFormInstanceLoader {
             break;
             case Constants.Attribute.DataType.STRING:
                 
-                String value = reader.getAttributeValue(null, Constants.Attribute.VALUE);
+                String value = reader.getElementText();//.getAttributeValue(null, Constants.Attribute.VALUE);
                 
                 if (value != null)
                     return value;
             break;
             case Constants.Attribute.DataType.DATE:
                 
-                value = reader.getAttributeValue(null, Constants.Attribute.VALUE);
+                value = reader.getElementText();//.getAttributeValue(null, Constants.Attribute.VALUE);
                 
                 if (value != null)
                     return LocalDate.parse(value);
             break;
             case Constants.Attribute.DataType.BOOLEAN:
                 
-                value = reader.getAttributeValue(null, Constants.Attribute.VALUE);
+                value = reader.getElementText();//.getAttributeValue(null, Constants.Attribute.VALUE);
                 
                 if (value != null)
                     return Boolean.valueOf(value);
             break;
             case Constants.Attribute.DataType.INTEGER:
                 
-                value = reader.getAttributeValue(null, Constants.Attribute.VALUE);
+                value = reader.getElementText();//.getAttributeValue(null, Constants.Attribute.VALUE);
                 
                 if (value != null)
                     return Integer.valueOf(value);
@@ -148,6 +148,8 @@ public abstract class AbstractFormInstanceLoader {
                     String id = reader.getAttributeValue(null, Constants.Attribute.ID);
                     if (id != null) {
                         String dataType = reader.getAttributeValue(null, Constants.Attribute.DATA_TYPE);
+                        String caption = reader.getAttributeValue(null, Constants.Attribute.CAPTION);
+                        
                         if (dataType != null) {
                             
                             Object value = getValue(reader, dataType);
@@ -155,7 +157,6 @@ public abstract class AbstractFormInstanceLoader {
                             if (value != null)
                                 values.put(id, value);
                         }
-                        String caption = reader.getAttributeValue(null, Constants.Attribute.CAPTION);
                         
                         if (caption != null)
                             captions.put(id, caption);

@@ -454,6 +454,16 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
             
             loadHidden(list);
         }
+        if (hasProperty(Constants.EventAttribute.ONLOAD, Constants.Property.ENABLED)) {
+            
+            Object newValue = getNewValue(Constants.EventAttribute.ONLOAD, Constants.Property.ENABLED);
+            
+            setEnabled((boolean) newValue);
+            
+            fireElementEvent(new EventDescriptor(
+                Constants.EventAttribute.ONPROPERTYCHANGE, 
+                Constants.Property.ENABLED, newValue, null));
+        }
     }
     
     public void fireOnLazyLoad() {

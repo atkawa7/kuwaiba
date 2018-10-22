@@ -56,6 +56,8 @@ public class ComponentComboBox extends GraphicalComponent {
             
             getComponent().setRequiredIndicatorVisible(comboBox.isMandatory());
             
+            getComponent().setEnabled(comboBox.isEnabled());
+            
             getComponent().addValueChangeListener(new ValueChangeListener() {
                 @Override
                 public void valueChange(HasValue.ValueChangeEvent event) {
@@ -96,6 +98,9 @@ public class ComponentComboBox extends GraphicalComponent {
             }
             else if (Constants.Property.HIDDEN.equals(event.getPropertyName())) {
                 getComponent().setVisible(!((ElementComboBox) getComponentEventListener()).isHidden());
+            } 
+            else if (Constants.Property.ENABLED.equals(event.getPropertyName())) {
+                getComponent().setEnabled((boolean) event.getNewValue());
             }
         }
     }

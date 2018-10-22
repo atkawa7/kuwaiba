@@ -46,7 +46,7 @@ public class ComponentDateField extends GraphicalComponent {
             ElementDateField dateField = (ElementDateField) element;
             
             getComponent().addStyleName(ValoTheme.DATEFIELD_ALIGN_RIGHT);
-            getComponent().setValue(dateField.getValue() != null ? (LocalDate) dateField.getValue() : LocalDate.now());
+            getComponent().setValue(dateField.getValue() != null ? (LocalDate) dateField.getValue() : null);
             
             getComponent().addValueChangeListener(new ValueChangeListener<LocalDate>() {
                 @Override
@@ -67,8 +67,8 @@ public class ComponentDateField extends GraphicalComponent {
     public void onElementEvent(EventDescriptor event) {
         if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
             
-            if (Constants.Property.VALUE.equals(event.getPropertyName())) {
-            }
+            if (Constants.Property.VALUE.equals(event.getPropertyName()))
+                getComponent().setValue(event.getNewValue() != null && event.getNewValue() instanceof LocalDate ? (LocalDate) event.getNewValue() : null);
         }
     }
     
