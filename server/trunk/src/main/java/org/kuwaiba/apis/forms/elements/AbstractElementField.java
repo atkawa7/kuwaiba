@@ -14,11 +14,11 @@
  */
 package org.kuwaiba.apis.forms.elements;
 
-import com.vaadin.ui.Notification;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 
 /**
  * A field is a terminal element that contain data
@@ -115,7 +115,7 @@ public abstract class AbstractElementField extends AbstractElement {
                             
                             Object newValue = validator.run(parameters);
                             if (newValue instanceof Boolean && !((Boolean) newValue)) {
-                                Notification.show("WARNING", validator.getMessage(), Notification.Type.WARNING_MESSAGE);
+                                Notifications.showWarning(validator.getMessage());
                                 return;
                             }
                         }

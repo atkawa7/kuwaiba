@@ -19,12 +19,12 @@ import com.vaadin.server.FileResource;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import java.io.File;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.web.gui.miniapps.AbstractMiniApplication;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 
 /**
  * Mini Application used to show the Physical Path View given the object Id and Class Name
@@ -84,7 +84,7 @@ public class MiniAppPhysicalPath extends AbstractMiniApplication<Component, Comp
             }
         }
         catch(Exception exception) {
-            Notification.show("Unexpected Input Parameter was received in the MiniAppRackView", Notification.Type.ERROR_MESSAGE);
+            Notifications.showError("Unexpected Input Parameter was received in the MiniAppRackView");
         }
         return panel;
     }

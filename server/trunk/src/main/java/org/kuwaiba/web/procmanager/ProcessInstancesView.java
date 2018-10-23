@@ -54,7 +54,6 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConditionalActivi
 import org.kuwaiba.util.i18n.I18N;
 import org.kuwaiba.web.IndexUI;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.themes.ValoTheme;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;

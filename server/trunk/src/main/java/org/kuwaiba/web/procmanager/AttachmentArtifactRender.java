@@ -21,7 +21,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Link;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Upload;
 import com.vaadin.ui.themes.ValoTheme;
 import java.io.ByteArrayInputStream;
@@ -39,6 +38,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.forms.components.impl.ComponentUpload;
 import org.kuwaiba.apis.persistence.PersistenceService;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
 
@@ -88,7 +88,7 @@ public class AttachmentArtifactRender extends ArtifactRenderer {
                 }
 
             } catch (Exception ex) {
-                Notification.show("Error", "Attachment cannot be found", Notification.Type.ERROR_MESSAGE);
+                Notifications.showError("Attachment cannot be found");
             }
         }
     }
@@ -163,7 +163,7 @@ public class AttachmentArtifactRender extends ArtifactRenderer {
 
         @Override
         public void uploadSucceeded(Upload.SucceededEvent event) {
-            Notification.show("Success", String.format("File %s uploaded", file.getName()), Notification.Type.HUMANIZED_MESSAGE);
+            Notifications.showInfo(String.format("File %s uploaded", file.getName()));
             setArtifactContentView();
         }
     }
@@ -185,7 +185,7 @@ public class AttachmentArtifactRender extends ArtifactRenderer {
                     try {
                         return new FileInputStream(file);
                     } catch (FileNotFoundException ex) {
-                        Notification.show("Error", "File cannot be found", Notification.Type.ERROR_MESSAGE);
+                        Notifications.showError("File cannot be found");
                         return null;
                     }
                 }

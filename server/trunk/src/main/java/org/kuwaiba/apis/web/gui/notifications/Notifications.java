@@ -51,4 +51,17 @@ public class Notifications {
         wdwInfo.setIcon(new ThemeResource("icons/icon_info.png")); //NOI18N
         wdwInfo.show(Page.getCurrent());
     }
+    
+    /**
+     * Shows a simple warning message at the bottom of the screen for POPUP_DELAY milliseconds
+     * @param message The message to be displayed
+     */
+    public static void showWarning(String message) {
+        Notification wdwInfo = new Notification(message, Notification.Type.WARNING_MESSAGE);
+        wdwInfo.setPosition(Position.BOTTOM_CENTER);
+        wdwInfo.setDelayMsec(POPUP_DELAY);
+        wdwInfo.setStyleName("gray"); //NOI18N
+        wdwInfo.setIcon(new ThemeResource("icons/icon_warning.png")); //NOI18N
+        wdwInfo.show(Page.getCurrent());
+    }
 }

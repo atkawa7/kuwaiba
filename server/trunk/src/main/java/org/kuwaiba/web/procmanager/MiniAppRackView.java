@@ -19,13 +19,13 @@ import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Image;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import java.io.File;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.web.gui.miniapps.AbstractMiniApplication;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
@@ -88,8 +88,7 @@ public class MiniAppRackView extends AbstractMiniApplication<Component, Componen
             }
         }
         catch(Exception exception) {
-            //Notification.show("Unexpected Input Parameter was received in the MiniAppRackView", Notification.Type.ERROR_MESSAGE);
-            Notification.show("The rack view can no be show", Notification.Type.ERROR_MESSAGE);
+            Notifications.showError("The rack view can no be show");
         }
         return panel;
     }

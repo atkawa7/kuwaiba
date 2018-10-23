@@ -15,7 +15,6 @@
 package org.kuwaiba.apis.forms;
 
 import com.vaadin.server.Page;
-import com.vaadin.ui.Notification;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -55,7 +54,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
         try {
             remoteScriptQueries = wsBean.getScriptQueries(Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
         } catch (ServerSideException ex) {
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+            Notifications.showError(ex.getMessage());
         }
         scriptQueries = remoteScriptQueries != null ? remoteScriptQueries : new ArrayList();
     }
@@ -132,7 +131,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                                         
                                     } catch (ServerSideException ex) {
                                         
-                                        Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);                                        
+                                        Notifications.showError(ex.getMessage());
                                         return sharedInfo.get(sharedId + Constants.Attribute.OBJECT_NAME);
                                     }
                                 }
@@ -185,8 +184,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                             }
 
                         } catch (ServerSideException ex) {
-                            
-                            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+                            Notifications.showError(ex.getMessage());
                         }
                     }
                 }

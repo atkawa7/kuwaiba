@@ -23,7 +23,6 @@ import com.vaadin.ui.Component;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
@@ -37,6 +36,7 @@ import java.util.List;
 import java.util.Properties;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.web.gui.miniapps.AbstractMiniApplication;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -410,7 +410,7 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
                 
                 return material != null ? material.getName() : null;
             } catch (ServerSideException ex) {
-                Notification.show(ex.getMessage());
+                Notifications.showError(ex.getMessage());
             }
             return null;
         }
@@ -426,7 +426,7 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
                                 
                 return city != null ? city.getName() : null;
             } catch (ServerSideException ex) {
-                Notification.show(ex.getMessage());
+                Notifications.showError(ex.getMessage());
             }
             return null;
         }
@@ -447,7 +447,7 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
                                 
                 return rack != null ? rack.getName() : null;
             } catch (ServerSideException ex) {
-                Notification.show(ex.getMessage());
+                Notifications.showError(ex.getMessage());
             }
             return null;
         }
@@ -490,7 +490,7 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
                 
                 return port;
             } catch (ServerSideException ex) {
-                Notification.show(ex.getMessage());
+                Notifications.showError(ex.getMessage());
             }
             return null;
         }

@@ -18,12 +18,12 @@ import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.UI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import org.kuwaiba.apis.web.gui.miniapps.AbstractMiniApplication;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
@@ -80,7 +80,7 @@ public class MiniAppRackSelector extends AbstractMiniApplication<Component, Comp
                 }
             }
         } catch (ServerSideException ex) {
-            Notification.show("Unexpected Input Parameter was received in the MiniAppRackView", Notification.Type.ERROR_MESSAGE);
+            Notifications.showError("Unexpected Input Parameter was received in the MiniAppRackView");
         }
         return new Label("<h3 style=\"color:#e57373;\">The input parameters can not be null</h3>", ContentMode.HTML);
     }
