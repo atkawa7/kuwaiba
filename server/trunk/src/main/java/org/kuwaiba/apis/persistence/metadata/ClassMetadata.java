@@ -166,7 +166,21 @@ public class ClassMetadata extends ClassMetadataLight {
         throw new InvalidArgumentException(String.format ("Attribute %s could not be found in class %s", attributeName, getName()));
     }
     
-    public boolean isUnique(String attributeName)  throws InvalidArgumentException{
+    public boolean isUnique(String attributeName)  throws InvalidArgumentException {
+        for (AttributeMetadata eachAttribute : attributes){
+            if (eachAttribute.getName().equals(attributeName))
+                return eachAttribute.isUnique();
+        }
+        throw new InvalidArgumentException(String.format ("Attribute %s could not be found in class %s", attributeName, getName()));
+    }
+    
+    /**
+     * Tells if a given (list type) attribute is multiple or single 
+     * @param attributeName The name of the attribute
+     * @return true if the attribute is multiple. False otherwise
+     * @throws InvalidArgumentException If the attribute does not exist
+     */
+    public boolean isMultiple(String attributeName)  throws InvalidArgumentException{
         for (AttributeMetadata eachAttribute : attributes){
             if (eachAttribute.getName().equals(attributeName))
                 return eachAttribute.isUnique();

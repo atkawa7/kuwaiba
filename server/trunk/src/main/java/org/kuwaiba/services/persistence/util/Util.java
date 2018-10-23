@@ -122,20 +122,22 @@ public class Util {
     }
 
     /**
-     * Gets the requested nodes representing list type items
-     * @param listTypeId The id of the list type
-     * @param listType Node the list items are supposed to be instance of
-     * @return A node representing the list type item
+     * Gets the list type items nodes instances of the provided class and ids
+     * @param listTypeIds The ids of the list type items nodes to find
+     * @param listTypeClassNode Node the list items are supposed to be instance of
+     * @return The corresponding list type item nodes. The ones not found will be ignored
      */
-    public static Node getRealValue(long listTypeId, Node listType) {
-        Iterable<Relationship> listTypeItems = listType.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
+    public static List<Node> getListTypeItemNodes(Node listTypeClassNode, List<Long> listTypeIds) {
+        Iterable<Relationship> listTypeItems = listTypeClassNode.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
+        
+        List<Node> res = new ArrayList<>();
         
         for (Relationship listTypeRelationship : listTypeItems) {
-            if (listTypeRelationship.getStartNode().getId() == listTypeId)
-                return listTypeRelationship.getStartNode();
+            if (listTypeIds.contains(listTypeRelationship.getStartNode().getId()) )
+                res.add(listTypeRelationship.getStartNode());
         }
         
-        return null;
+        return res;
     }
 
     /**
@@ -397,6 +399,7 @@ public class Util {
         attribute.setUnique((Boolean)attributeNode.getProperty(Constants.PROPERTY_UNIQUE));
         attribute.setId(attributeNode.getId());
         attribute.setOrder(attributeNode.hasProperty(Constants.PROPERTY_ORDER) ? (int)attributeNode.getProperty(Constants.PROPERTY_ORDER) : 1000);
+        attribute.setMultiple(attributeNode.hasProperty(Constants.PROPERTY_MULTIPLE) ? (boolean)attributeNode.getProperty(Constants.PROPERTY_MULTIPLE) : false);
 
         return attribute;
     }
@@ -943,7 +946,7 @@ public class Util {
                     breadthFirst().
                     relationships(RelTypes.EXTENDS, Direction.INCOMING);
 
-        for(Path p : UPDATE_TRAVERSAL.traverse(classNode)){
+        for(Path p : UPDATE_TRAVERSAL.traverse(classNode)) {
             String currentClassName = (String) p.endNode().getProperty(Constants.PROPERTY_NAME);
             
             boolean hasAttribute = false;
@@ -966,7 +969,7 @@ public class Util {
             attrNode.setProperty(Constants.PROPERTY_MANDATORY, attributeDefinition.isMandatory()== null ? false : attributeDefinition.isMandatory());
             attrNode.setProperty(Constants.PROPERTY_DESCRIPTION, attributeDefinition.getDescription() ==  null ? "" : attributeDefinition.getDescription());
             attrNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, attributeDefinition.getDisplayName() == null ? "" : attributeDefinition.getDisplayName());
-            attrNode.setProperty(Constants.PROPERTY_TYPE, attributeDefinition.getType() == null ? "String" : attributeDefinition.getType());
+            attrNode.setProperty(Constants.PROPERTY_TYPE, attributeDefinition.getType() == null ? "String" : attributeDefinition.getType()); //NOI18N
             attrNode.setProperty(Constants.PROPERTY_READ_ONLY, attributeDefinition.isReadOnly() == null ? false : attributeDefinition.isReadOnly());
             attrNode.setProperty(Constants.PROPERTY_VISIBLE, attributeDefinition.isVisible() == null ? true : attributeDefinition.isVisible());
             attrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE, attributeDefinition.isAdministrative() == null ? false : attributeDefinition.isAdministrative());
@@ -974,6 +977,7 @@ public class Util {
             attrNode.setProperty(Constants.PROPERTY_NO_COPY, attributeDefinition.isNoCopy() == null ? false : attributeDefinition.isNoCopy());
             attrNode.setProperty(Constants.PROPERTY_UNIQUE, attributeDefinition.isUnique() == null ? false : attributeDefinition.isUnique());
             attrNode.setProperty(Constants.PROPERTY_ORDER, attributeDefinition.getOrder() == null ? 1000 : attributeDefinition.getOrder());
+            attrNode.setProperty(Constants.PROPERTY_MULTIPLE, attributeDefinition.isMultiple() == null ? false : attributeDefinition.isMultiple());
             
             p.endNode().createRelationshipTo(attrNode, RelTypes.HAS_ATTRIBUTE);
         }
@@ -1207,15 +1211,22 @@ public class Util {
         
         for (i = 0;  i <  ((howManyToShow == -1 || howManyToShow >= objectList.size()) ? objectList.size() - 1 : howManyToShow - 1); i++) {
             if (!objectList.get(i).getName().equals(Constants.NODE_DUMMYROOT)) 
-                outputString += objectList.get(i) + " / ";
+                outputString += objectList.get(i) + " / "; //NOI18N
             
         }
         
         if (!objectList.get(i).getName().equals(Constants.NODE_DUMMYROOT))
             outputString += objectList.get(i);
+        
         return outputString;
     }
     
+    /**
+     * Finds a node tagged witha label and with a particular id
+     * @param label The label used to tag the node
+     * @param id The id of the node to find
+     * @return The node or null if no node with with that label and id could be found
+     */
     public static Node findNodeByLabelAndId(Label label, long id) {
         GraphDatabaseService graphDb = (GraphDatabaseService) PersistenceService.getInstance().getConnectionManager().getConnectionHandler();
         
@@ -1223,23 +1234,6 @@ public class Util {
             
             String cypherQuery = "MATCH (node:" + label.name() + ") " +
                                  "WHERE id(node) = " + id + " " +
-                                 "RETURN node";
-            
-            Result result = graphDb.execute(cypherQuery);
-            ResourceIterator<Node> node = result.columnAs("node");
-            
-            tx.success();
-            return node.hasNext() ? node.next() : null;
-        }
-    }
-    
-    public static Node findNodeByLabelAndName(Label label, String name) {
-        GraphDatabaseService graphDb = (GraphDatabaseService) PersistenceService.getInstance().getConnectionManager().getConnectionHandler();
-        
-        try (Transaction tx = graphDb.beginTx()) {
-            
-            String cypherQuery = "MATCH (node:" + label.name() + ") " +
-                                 "WHERE node.name = \"" + name + "\" " +
                                  "RETURN node";
             
             Result result = graphDb.execute(cypherQuery);

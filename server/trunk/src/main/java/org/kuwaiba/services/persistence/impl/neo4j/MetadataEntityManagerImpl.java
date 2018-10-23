@@ -94,7 +94,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
     @Override
     public long createClass(ClassMetadata classDefinition) throws MetadataObjectNotFoundException, DatabaseException, InvalidArgumentException {
-        long id;
         if (classDefinition.getName() == null)
             throw new InvalidArgumentException("Class name can not be null");
             
@@ -122,9 +121,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             classNode.setProperty(Constants.PROPERTY_SMALL_ICON, classDefinition.getSmallIcon() ==  null ? new byte[0] : classDefinition.getSmallIcon());
             classNode.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis());
             classNode.setProperty(Constants.PROPERTY_IN_DESIGN, classDefinition.isInDesign() == null ? false : classDefinition.isInDesign());
-
-            id = classNode.getId();
-            
+          
             //Here we add the attributes
             if (classDefinition.getAttributes() != null) {
                 for (AttributeMetadata attributeMetadata : classDefinition.getAttributes())
@@ -167,6 +164,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         
                         Label label = Label.label(Constants.LABEL_ATTRIBUTE);
                         Node newAttrNode = graphDb.createNode(label);
+                        //Locks are not inherited
                         newAttrNode.setProperty(Constants.PROPERTY_NAME, attributeName);
                         newAttrNode.setProperty(Constants.PROPERTY_DESCRIPTION, parentAttrNode.getProperty(Constants.PROPERTY_DESCRIPTION));
                         newAttrNode.setProperty(Constants.PROPERTY_DISPLAY_NAME, parentAttrNode.getProperty(Constants.PROPERTY_DISPLAY_NAME));
@@ -176,9 +174,14 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         newAttrNode.setProperty(Constants.PROPERTY_ADMINISTRATIVE, parentAttrNode.getProperty(Constants.PROPERTY_ADMINISTRATIVE));
                         newAttrNode.setProperty(Constants.PROPERTY_NO_COPY, parentAttrNode.getProperty(Constants.PROPERTY_NO_COPY));
                         newAttrNode.setProperty(Constants.PROPERTY_UNIQUE, parentAttrNode.getProperty(Constants.PROPERTY_UNIQUE));
+                        newAttrNode.setProperty(Constants.PROPERTY_ORDER, parentAttrNode.hasProperty(Constants.PROPERTY_ORDER) ?  
+                                parentAttrNode.getProperty(Constants.PROPERTY_ORDER) : 1000);
+                        newAttrNode.setProperty(Constants.PROPERTY_MULTIPLE, parentAttrNode.hasProperty(Constants.PROPERTY_MULTIPLE) ?  
+                                parentAttrNode.getProperty(Constants.PROPERTY_MULTIPLE) : false);
                         newAttrNode.setProperty(Constants.PROPERTY_MANDATORY, parentNode.hasProperty(Constants.PROPERTY_MANDATORY) ?
                                 parentAttrNode.getProperty(Constants.PROPERTY_MANDATORY) : false);
-                        //newAttrNode.setProperty(PROPERTY_LOCKED, parentAttrNode.getProperty(PROPERTY_LOCKED));
+                        
+                        
                         classNode.createRelationshipTo(newAttrNode, RelTypes.HAS_ATTRIBUTE);
                     }
                 }//end if there is a Parent
@@ -189,10 +192,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             
             buildClassCache();
             tx.success();
+            
+            getSubClassesLight(classDefinition.getName(), true, false);
+            getSubClassesLightNoRecursive(classDefinition.getName(), true, false);
+            return classNode.getId();
         }
-        getSubClassesLight(classDefinition.getName(), true, false);
-        getSubClassesLightNoRecursive(classDefinition.getName(), true, false);
-        return id;
     }
 
     @Override
@@ -385,7 +389,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
             if (node == null)
                 throw new MetadataObjectNotFoundException(String.format(
-                        "Class %s could not be found. Contact your administrator.", className));
+                        "Class %s could not be found", className));
             
             if (!(Boolean)node.getProperty(Constants.PROPERTY_CUSTOM))
                 throw new InvalidArgumentException(String.format(
@@ -587,6 +591,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     
                 classManagerResultList.add(classMetadata);
             }
+            
+            tx.success();
         }
         cm.putSubclassesNorecursive(className, subclasses);
         return classManagerResultList;
@@ -617,6 +623,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
 
            for (Node node : Iterators.asIterable(n_column))
                 classMetadataResultList.add(Util.createClassMetadataFromNode(node));
+           
+           tx.success();
         }
         return classMetadataResultList;
     }
@@ -888,6 +896,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         oldValues = " ";
                         newValues = newAttributeDefinition.isMandatory() + " ";
                     }
+                    
                     if(newAttributeDefinition.getOrder() != null) {
                         Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_ORDER, newAttributeDefinition.getOrder());
                         
@@ -896,10 +905,23 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         newValues = newAttributeDefinition.getOrder() + " ";
                     }
                     
+                    if(newAttributeDefinition.isMultiple() != null) {
+                        
+                        if (newAttributeDefinition.isMultiple() && 
+                                AttributeMetadata.isPrimitive((String) attrNode.getProperty(Constants.PROPERTY_TYPE)))
+                            throw new InvalidArgumentException("primitive types can not be set as multiple");
+                        
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MULTIPLE, newAttributeDefinition.isMultiple());
+                        
+                        affectedProperties = Constants.PROPERTY_MULTIPLE + " ";
+                        oldValues = " ";
+                        newValues = newAttributeDefinition.isMultiple() + " ";
+                    }
+                    
                     //Refresh cache for the affected classes
                     refreshCacheOn(classNode);
                     tx.success();                    
-                    return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.format("Update attributes properties in class %s", classNode.getProperty(Constants.PROPERTY_NAME)));
+                    return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.format("Update attribute properties of class %s", classNode.getProperty(Constants.PROPERTY_NAME)));
                 }
             }//end for
             throw new MetadataObjectNotFoundException(String.format(
@@ -1031,11 +1053,22 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         oldValues = " ";
                         newValues = newAttributeDefinition.getOrder() + " ";
                     }
+                    if(newAttributeDefinition.isMultiple() != null) {
+                        if (newAttributeDefinition.isMultiple() && 
+                                AttributeMetadata.isPrimitive((String) attrNode.getProperty(Constants.PROPERTY_TYPE)))
+                            throw new InvalidArgumentException("primitive types can not be set as multiple");
+                        
+                        Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MULTIPLE, newAttributeDefinition.isMultiple());
+                        
+                        affectedProperties = Constants.PROPERTY_MULTIPLE + " ";
+                        oldValues = " ";
+                        newValues = newAttributeDefinition.isMultiple() + " ";
+                    }
                     
                     //Refresh cache for the affected classes
                     refreshCacheOn(classNode);
                     tx.success();
-                    return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.format("Update attributes properties in class %s", classNode.getProperty(Constants.PROPERTY_NAME)));
+                    return new ChangeDescriptor(affectedProperties.trim(), oldValues.trim(), newValues.trim(), String.format("Update attribute properties of class %s", classNode.getProperty(Constants.PROPERTY_NAME)));
                 }
             }//end for
             throw new MetadataObjectNotFoundException(String.format(
@@ -1560,10 +1593,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                throw new MetadataObjectNotFoundException(String.format(
                             "Can not find class %s", className));
             }
-            String cypherQuery = "MATCH (possibleParentClassNode:classes)-[:POSSIBLE_CHILD"+(recursive ? "*" : "")+ "]->(classNode:classes) "+
-                                 "WHERE classNode.name = \""+ className + "\" "+
-                                 "AND possibleParentClassNode.name <> \""+ Constants.NODE_DUMMYROOT + "\" "+
-                                 "RETURN distinct possibleParentClassNode "+
+            String cypherQuery = "MATCH (possibleParentClassNode:classes)-[:POSSIBLE_CHILD" + (recursive ? "*" : "") + "]->(classNode:classes) "+
+                                 "WHERE classNode.name = \"" + className + "\" "+
+                                 "AND possibleParentClassNode.name <> \"" + Constants.NODE_DUMMYROOT + "\" "+
+                                 "RETURN distinct possibleParentClassNode " +
                                  "ORDER BY possibleParentClassNode.name ASC";
 
             Result result = graphDb.execute(cypherQuery);
@@ -1736,8 +1769,8 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
    
    
    /**
-    * Checks if all the objects of a given class has a value in a given attribute marked as mandatory
-    * this method can also check all the objects from the subclasses of the given class.
+    * Checks if all the objects of a given class have a value in a given attribute marked as mandatory.
+    * This method also checks all the instances of the subclasses of the given class. This check is made before setting an attribute as mandatory (no empty values are allowed in existing objects, as this would violate the mandatory constraint)
     * @param className The object's class 
     * @param attributeName The object's attribute marked as mandatory
     * @param recursive false: if the method should evaluate all the objects of 

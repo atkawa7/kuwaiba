@@ -2055,7 +2055,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     @Override
     public List<BusinessObjectLight> getPhysicalPath(String objectClass, long objectId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException, ApplicationObjectNotFoundException {
         List<BusinessObjectLight> path = new ArrayList<>();
-        //If the port is a logical port (vitual port, Pseudowire or service instance, we look for the first physcla parent port)
+        //If the port is a logical port (virtual port, Pseudowire or service instance, we look for the first physcal parent port)
         long logicalPortId = 0;
         if(mem.isSubClass(Constants.CLASS_GENERICLOGICALPORT, objectClass)){
             logicalPortId = objectId;
@@ -2678,61 +2678,67 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         newObject.setProperty(Constants.PROPERTY_NAME, ""); //The default value is an empty string 
 
         newObject.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis()); //The default value is right now
+               
+        for (AttributeMetadata attributeMetadata : classToMap.getAttributes()) {
+            if (attributeMetadata.isMandatory() && attributes.get(attributeMetadata.getName()) == null)
+                throw new InvalidArgumentException(String.format("The attribute %s is mandatory, it can not be empty", attributes.get(attributeMetadata.getName())));
+            
+            if (attributes.get(attributeMetadata.getName()) == null) //If the attribute is not included in the initial set of attributes to be set, we skip any further action
+                continue;
+            
+            String attributeName = attributeMetadata.getName();
+            String attributeType = classToMap.getType(attributeName);
 
-        if (attributes != null){
-            for(String attributeName : attributes.keySet()) {
-                //If the array is empty, it means the attribute should be set to null, that is, ignore it
-                if (!attributes.get(attributeName).isEmpty()){
-                    if (attributes.get(attributeName) != null){
-                        if(classToMap.isMandatory(attributeName) && attributes.get(attributeName) == null)
-                            throw new InvalidArgumentException(String.format("The attribute %s is mandatory but has no value", attributeName));
-                        
-                        String attributeType = classToMap.getType(attributeName);
-                        if (AttributeMetadata.isPrimitive(attributeType)){
-                            if(classToMap.isUnique(attributeName)){
-                                //if an attribute is unique and mandatory it should be checked before the object creation, here
-                                if(classToMap.getType(attributeName).equals("String") || 
-                                    classToMap.getType(attributeName).equals("Integer") || 
-                                    classToMap.getType(attributeName).equals("Float") || 
-                                    classToMap.getType(attributeName).equals("Long")){
-                                    if(isObjectAttributeUnique(classToMap.getName(), attributeName, String.valueOf(Util.getRealValue(attributes.get(attributeName), classToMap.getType(attributeName)))))
-                                        newObject.setProperty(attributeName, Util.getRealValue(attributes.get(attributeName), classToMap.getType(attributeName)));
-                                    else
-                                        throw new InvalidArgumentException(String.format("The attribute %s is unique, the given value its already in use", attributeName));
-                                }
-                            }
-                            else
-                                newObject.setProperty(attributeName, Util.getRealValue(attributes.get(attributeName), classToMap.getType(attributeName)));
-                        }
-                        else {
-                            //If it's not a primitive type, maybe it's a relationship
-                            try {
-                                long listTypeId = Long.valueOf(attributes.get(attributeName));
-                                if (!mem.isSubClass(Constants.CLASS_GENERICOBJECTLIST, attributeType))
-                                    throw new InvalidArgumentException(String.format("Type %s is not a primitive nor a list type", attributeName));
-                                
-                                Node listTypeClassNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, attributeType);
-
-                                if (listTypeClassNode == null)
-                                    throw new InvalidArgumentException(String.format("Class %s could not be found as list type", attributeType));
-
-
-                                Node listTypeNode = Util.getRealValue(listTypeId, listTypeClassNode);
-
-                                if (listTypeNode == null)
-                                    throw new InvalidArgumentException(String.format("At least one of the list type items could not be found. Check attribute definition for \"%s\"", attributeName));
-
-                                Relationship newRelationship = newObject.createRelationshipTo(listTypeNode, RelTypes.RELATED_TO);
-                                newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
-                                
-                            } catch (NumberFormatException ex) {
-                                throw new InvalidArgumentException(String.format("The value %s is not a valid lis type item id", attributes.get(attributeName)));
-                            }
-                        }
+            if (AttributeMetadata.isPrimitive(attributeType)){
+                if(classToMap.isUnique(attributeName)){
+                    //if an attribute is unique and mandatory it should be checked before the object creation, here
+                    if(classToMap.getType(attributeName).equals("String") || //NOI18N
+                        classToMap.getType(attributeName).equals("Integer") ||  //NOI18N
+                        classToMap.getType(attributeName).equals("Float") ||  //NOI18N
+                        classToMap.getType(attributeName).equals("Long")) { //NOI18N
+                        if(isObjectAttributeUnique(classToMap.getName(), attributeName, attributes.get(attributeName)))
+                            newObject.setProperty(attributeName, Util.getRealValue(attributes.get(attributeName), classToMap.getType(attributeName)));
+                        else
+                            throw new InvalidArgumentException(String.format("The attribute %s is unique, but the value provided is already in use", attributeName));
                     }
                 }
+                else
+                    newObject.setProperty(attributeName, Util.getRealValue(attributes.get(attributeName), classToMap.getType(attributeName)));
             }
-        }            
+            else {
+                //If it's not a primitive type, maybe it must be a a list type
+                try {
+                    
+                    if (!mem.isSubClass(Constants.CLASS_GENERICOBJECTLIST, attributeType))
+                        throw new InvalidArgumentException(String.format("Type %s is not a primitive nor a list type", attributeName));
+
+                    List<Long> listTypeItemIds = new ArrayList<>();
+                    for (String listTypeItemIdAsString : attributes.get(attributeName).split(";")) //If the attribute is multiple, the ids will be separated by ";", otherwise, it will be a single long value
+                        listTypeItemIds.add(Long.valueOf(listTypeItemIdAsString));
+
+                    Node listTypeClassNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, attributeType);
+
+                    if (listTypeClassNode == null)
+                        throw new MetadataObjectNotFoundException(String.format("Class %s could not be found", attributeType));
+                    
+                    List<Node> listTypeItemNodes = Util.getListTypeItemNodes(listTypeClassNode, listTypeItemIds);
+
+                    if(!listTypeItemNodes.isEmpty()){
+                        //Create the new relationships
+                        for (Node listTypeItemNode : listTypeItemNodes) {
+                            Relationship newRelationship = newObject.createRelationshipTo(listTypeItemNode, RelTypes.RELATED_TO);
+                            newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
+                        }
+
+                    } else if(attributeMetadata.isMandatory())
+                        throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set to null", attributeName));
+
+                } catch (NumberFormatException ex) {
+                    throw new InvalidArgumentException(String.format("The value %s is not a valid list type item id", attributes.get(attributeName)));
+                }
+            }
+        }
+        
         newObject.createRelationshipTo(classNode, RelTypes.INSTANCE_OF);
         
         return newObject;       
@@ -2774,33 +2780,38 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
                     //Release the previous relationship
                     oldValues += " "; //Two empty, separation spaces
-                    for (Relationship rel : instance.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO)){
+                    for (Relationship rel : instance.getRelationships(Direction.OUTGOING, RelTypes.RELATED_TO)) {
                         if (rel.getProperty(Constants.PROPERTY_NAME).equals(attributeName)){
                             oldValues += rel.getEndNode().getProperty(Constants.PROPERTY_NAME) + " ";
                             rel.delete();
-                            break;
                         }
                     }
                     
-                    if (attributes.get(attributeName) != null){ //If the new value is different than null, then create the new relationships
+                    if (attributes.get(attributeName) != null) { //If the new value is different than null, then create the new relationships
                         try {
-                            long listTypeItemId = Long.valueOf(attributes.get(attributeName));
+                            List<Long> listTypeItemIds = new ArrayList<>();
+                            for (String listTypeItemIdAsString : attributes.get(attributeName).split(";")) //If the attribute is multiple, the ids will be separated by ";", otherwise, it will be a single long value
+                                listTypeItemIds.add(Long.valueOf(listTypeItemIdAsString));
                             
                             Node listTypeNodeClass = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, classMetadata.getType(attributeName));
-                            Node listTypeNode = Util.getRealValue(listTypeItemId, listTypeNodeClass);
-                            if(listTypeNode != null){
-                                //Create the new relationships
-                                newValues += listTypeNode.getProperty(Constants.PROPERTY_NAME) + " ";
-                                Relationship newRelationship = instance.createRelationshipTo(listTypeNode, RelTypes.RELATED_TO);
-                                newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
-                            }
-                            else if(classMetadata.getAttribute(attributeName).isMandatory())
-                                throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set to None", attributeName));
+                            List<Node> listTypeItemNodes = Util.getListTypeItemNodes(listTypeNodeClass, listTypeItemIds);
                             
+                            if(!listTypeItemNodes.isEmpty()){
+                                //Create the new relationships
+                                for (Node listTypeItemNode : listTypeItemNodes) {
+                                    newValues += listTypeItemNode.getProperty(Constants.PROPERTY_NAME) + " ";
+                                    Relationship newRelationship = instance.createRelationshipTo(listTypeItemNode, RelTypes.RELATED_TO);
+                                    newRelationship.setProperty(Constants.PROPERTY_NAME, attributeName);
+                                }
+                                
+                            } else if(classMetadata.getAttribute(attributeName).isMandatory())
+                                throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set to null", attributeName));
+
                         } catch(NumberFormatException ex) {
                             throw new InvalidArgumentException(String.format("The value %s is not a valid list type item id", attributes.get(attributeName)));
                         }
-                    }
+                    } else if(classMetadata.getAttribute(attributeName).isMandatory())
+                                throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set to null", attributeName));
                 }
             } else
                 throw new InvalidArgumentException(
@@ -2858,7 +2869,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         
         newInstance.createRelationshipTo(templateObject.getRelationships(RelTypes.INSTANCE_OF_SPECIAL).iterator().next().getEndNode(), RelTypes.INSTANCE_OF);
 
-        if (recursive){
+        if (recursive) {
             for (Relationship rel : templateObject.getRelationships(RelTypes.CHILD_OF, Direction.INCOMING)) {
                 Node classNode = rel.getStartNode().getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode();
                 Node newChild = copyTemplateElement(rel.getStartNode(), Util.createClassMetadataFromNode(classNode), true);

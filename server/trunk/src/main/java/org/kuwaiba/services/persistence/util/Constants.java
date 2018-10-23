@@ -238,6 +238,7 @@ public class Constants {
     public static final String PROPERTY_NO_COPY = "noCopy"; //NOI18N
     public static final String PROPERTY_UNIQUE = "unique"; //NOI18N
     public static final String PROPERTY_ORDER = "order"; //NOI18N
+    public static final String PROPERTY_MULTIPLE = "multiple"; //NOI18N
     public static final String PROPERTY_IN_DESIGN = "inDesign"; //NOI18N
     public static final String PROPERTY_FIRST_NAME = "firstName"; //NOI18N
     public static final String PROPERTY_LAST_NAME = "lastName"; //NOI18N

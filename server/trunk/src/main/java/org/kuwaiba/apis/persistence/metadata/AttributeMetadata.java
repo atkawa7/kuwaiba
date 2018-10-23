@@ -43,11 +43,11 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
      */
     public static final int MAPPING_BINARY = 4;
     /**
-     * Many to one relationship (such as types)
+     * Many to one relationship (such as list types, single selection)
      */
     public static final int MAPPING_MANYTOONE = 5;
     /**
-     * Many to many relationship
+     * Many to many relationship (list types, multiple selection)
      */
     public static final int MAPPING_MANYTOMANY = 6;
     /**
@@ -99,7 +99,7 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
      */
     private Boolean readOnly;
     /**
-     * Cannot change or delete a locked attribute
+     * A locked attribute can not be changed or deleted
      */
     private Boolean locked;
     /**
@@ -108,10 +108,10 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
      */
     private Integer order;
     /**
-     * The attribute mapping, that is, how should it be interpreted by a parser. See MAPPING_XXXX  constants for possible values
-     * @return If this attribute is marked as administrative or not
+     * Attributes marked with this flag are basically list types of multiple selection, thus this flag only makes sense for list type attributes and should not be set for primitive type (if so, it will be ignored)
      */
-    //private int mapping;
+    private Boolean multiple;
+    
     // <editor-fold defaultstate="collapsed" desc="getters and setters methods. Click on the + sign on the left to edit the code.">
     public Boolean isAdministrative() {
         return administrative;
@@ -224,6 +224,14 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
     public void setOrder(Integer order) {
         this.order = order;
     }
+
+    public Boolean isMultiple() {
+        return multiple;
+    }
+
+    public void setMultiple(Boolean multiple) {
+        this.multiple = multiple;
+    }
     
     // </editor-fold>
     
@@ -252,9 +260,9 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
      * @return true if the given type is primitive, false otherwise
      */
     public static boolean isPrimitive(String type) {
-        return type.equals("String") || type.equals("Integer") || type.equals("Float") 
-                || type.equals("Long") || type.equals("Boolean") || type.equals("Date")
-                || type.equals("Timestamp") || type.equals("Binary");
+        return type.equals("String") || type.equals("Integer") || type.equals("Float") //NOI18N
+                || type.equals("Long") || type.equals("Boolean") || type.equals("Date") //NOI18N
+                || type.equals("Timestamp") || type.equals("Binary"); //NOI18N
     }
     
     public static List<RemoteAttributeMetadata> toAttributeInfo(List<AttributeMetadata> toBeWrapped){
@@ -276,6 +284,6 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
     
     @Override
     public String toString() {
-        return String.format("%s", name);
+        return this.name;
     }
 }

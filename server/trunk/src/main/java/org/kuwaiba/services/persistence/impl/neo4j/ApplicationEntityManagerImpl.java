@@ -127,7 +127,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     /**
      * Default background path
      */
-    private static String DEFAULT_BACKGROUNDS_PATH = "/data/img/backgrounds";
+    private static String DEFAULT_BACKGROUNDS_PATH = "/data/img/backgrounds"; //NOI18N
     /**
      * Users index
      */
@@ -3007,7 +3007,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     public ChangeDescriptor updateScriptQueryParameters(String scriptQueryName, List<StringPair> parameters) 
         throws ApplicationObjectNotFoundException {
         
-        Node scriptQueryNode = Util.findNodeByLabelAndName(scriptQueryLabel, scriptQueryName);
+        Node scriptQueryNode = graphDb.findNode(scriptQueryLabel, Constants.PROPERTY_NAME, scriptQueryName);
 
         if (scriptQueryNode == null)
             throw new ApplicationObjectNotFoundException(String.format("A task with id %s could not be found", scriptQueryName));
@@ -3113,7 +3113,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     
     @Override
     public ScriptQueryResult executeScriptQuery(String scriptQueryName) throws ApplicationObjectNotFoundException, InvalidArgumentException {
-        Node scriptQueryNode = Util.findNodeByLabelAndName(scriptQueryLabel, scriptQueryName);
+        Node scriptQueryNode = graphDb.findNode(scriptQueryLabel, Constants.PROPERTY_NAME, scriptQueryName);
         
         if (scriptQueryNode == null)
             throw new ApplicationObjectNotFoundException(String.format("A Script Query with id %s could not be found", scriptQueryName));
