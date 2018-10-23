@@ -161,7 +161,7 @@ public abstract class AbstractFormInstanceCreator {
                                         sharedInformation.put(elementGrid.getId() + i + j + Constants.Attribute.CLASS_NAME, info.get(Constants.Attribute.CLASS_NAME));
                                                                                 
                                     } else if (isAttachment(data)) {
-                                        HashMap<String, String> info = getRemoteObjectLightInformation(data);
+                                        HashMap<String, String> info = getAttachmentInformation(data);
                                         
                                         sharedInformation.put(elementGrid.getId() + i + j + Constants.Attribute.DATA_TYPE, info.get(Constants.Attribute.DATA_TYPE));                                        
                                         sharedInformation.put(elementGrid.getId() + i + j + Constants.Attribute.NAME, info.get(Constants.Attribute.NAME));

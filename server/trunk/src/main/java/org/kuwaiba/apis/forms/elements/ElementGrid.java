@@ -52,7 +52,7 @@ public class ElementGrid extends AbstractElement {
     }
     
     public List<List<Object>> getRows() {
-        return rows;        
+        return rows;
     }
     
     public boolean addRow(List<Object> row) {

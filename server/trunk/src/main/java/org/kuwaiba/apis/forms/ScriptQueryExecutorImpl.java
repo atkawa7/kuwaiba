@@ -33,6 +33,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * An Implementation of Script Query Executor to the Web Client of Kuwaiba
@@ -109,8 +110,11 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
 
                         for (StringPair pair : sharedInformation)
                             sharedInfo.setProperty(pair.getKey(), pair.getValue());
+                        
+                        if (isGrid(sharedId, sharedInfo)) {
+                            return getRows(sharedId, sharedInfo);
 
-                        if (sharedInfo.containsKey(sharedId)) {
+                        } else if (sharedInfo.containsKey(sharedId)) {
                             return sharedInfo.getProperty(sharedId);
 
                         } else if (sharedInfo.containsKey(sharedId + Constants.Attribute.DATA_TYPE)) {
@@ -191,4 +195,78 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
         return null;
     }
     
+    private boolean isGrid(String gridId, Properties sharedInfo) {
+        final String ROWS_COUNT = "rowscount"; //NOI18N
+        final String COLUMNS_COUNT = "columnscount"; //NOI18N
+        
+        return gridId != null && sharedInfo != null && 
+               sharedInfo.containsKey(gridId + ROWS_COUNT) && 
+               sharedInfo.containsKey(gridId + COLUMNS_COUNT);
+    }
+    
+    private List<List<Object>> getRows(String gridId, Properties sharedInfo) {
+        final String ROWS_COUNT = "rowscount"; //NOI18N
+        final String COLUMNS_COUNT = "columnscount"; //NOI18N
+        try {
+            int rowCount = Integer.valueOf(sharedInfo.getProperty(gridId + ROWS_COUNT));
+            int columnCount = Integer.valueOf(sharedInfo.getProperty(gridId + COLUMNS_COUNT));
+            
+            if (rowCount > 0 && columnCount > 0) {
+                List<List<Object>> rows = new ArrayList();
+                
+                for (int i = 0; i < rowCount; i += 1) {
+                    List<Object> row = new ArrayList();
+                    
+                    for (int j = 0; j < columnCount; j += 1) {
+                        String sharedId = gridId + i + j;
+                        
+                        if (Constants.Attribute.DataType.REMOTE_OBJECT_LIGTH.equals(
+                            sharedInfo.getProperty(sharedId + Constants.Attribute.DATA_TYPE))) {
+                                                        
+                            String objectName = sharedInfo.getProperty(sharedId + Constants.Attribute.OBJECT_NAME);
+                            long objectId = Long.valueOf(sharedInfo.getProperty(sharedId + Constants.Attribute.OBJECT_ID));
+                            String className = sharedInfo.getProperty(sharedId + Constants.Attribute.CLASS_NAME);
+                            
+                            try {
+                                
+                                RemoteObjectLight rol = wsBean.getObjectLight(
+                                    className, 
+                                    objectId,
+                                    Page.getCurrent().getWebBrowser().getAddress(), 
+                                    session.getSessionId());
+                                
+                                row.add(rol != null ? rol : (objectName != null ? objectName : ""));
+                            } catch (Exception exception) {
+                                row.add(sharedInfo.get(sharedId) != null ? sharedInfo.get(sharedId) : "");
+                            }
+                        } else if (Constants.Attribute.DataType.STRING.equals(
+                            sharedInfo.getProperty(sharedId + Constants.Attribute.DATA_TYPE))) {
+                            
+                            row.add(sharedInfo.get(sharedId) != null ? sharedInfo.get(sharedId) : "");
+                        } else if (Constants.Attribute.DataType.ATTACHMENT.equals(
+                            sharedInfo.getProperty(sharedId + Constants.Attribute.DATA_TYPE))) {
+                            
+                            String name = sharedInfo.getProperty(sharedId + Constants.Attribute.NAME);
+                            String path = sharedInfo.getProperty(sharedId + Constants.Attribute.PATH);
+                            
+                            if (name != null && path != null) {
+                                FileInformation fileInformation = new FileInformation(name, path);
+                                row.add(fileInformation);
+                            }
+                            else {
+                                row.add(sharedInfo.get(sharedId) != null ? sharedInfo.get(sharedId) : "");
+                            }
+                        }
+                    }
+                    rows.add(row);
+                }
+                return rows;
+            }            
+        } catch(Exception ex) {
+                        
+        }
+                                
+        return null;                
+    }    
+        
 }
