@@ -52,6 +52,10 @@ public class RemoteClassMetadata extends RemoteClassMetadataLight {
      */
     private boolean [] attributesMandatories;
     /**
+     * Attributes mandatory
+     */
+    private boolean [] attributesMultiples;
+    /**
      * Attributes unique
      */
     private boolean [] attributesUniques;
@@ -100,6 +104,7 @@ public class RemoteClassMetadata extends RemoteClassMetadataLight {
         this.attributesDisplayNames = new String[this.attributesNames.length];
         this.attributesUniques = new boolean[this.attributesNames.length];
         this.attributesMandatories = new boolean[this.attributesNames.length];
+        this.attributesMultiples = new boolean[this.attributesNames.length];
         this.attributesVisibles = new boolean[this.attributesNames.length];
         this.attributesDescriptions = new String[this.attributesNames.length];
         this.attributesOrders = new Integer[this.attributesNames.length];
@@ -113,6 +118,7 @@ public class RemoteClassMetadata extends RemoteClassMetadataLight {
             this.attributesDisplayNames[i] = myAtt.getDisplayName() == null?
                 "":myAtt.getDisplayName();
             this.attributesMandatories[i] = myAtt.isMandatory();
+            this.attributesMultiples[i] = myAtt.isMultiple();
             this.attributesUniques[i] = myAtt.isUnique();
             this.attributesVisibles[i] = myAtt.isVisible();
             this.attributesDescriptions[i] = myAtt.getDescription()==null ?
@@ -152,6 +158,14 @@ public class RemoteClassMetadata extends RemoteClassMetadataLight {
 
     public void setAttributesMandatories(boolean[] attributesMandatories) {
         this.attributesMandatories = attributesMandatories;
+    }
+
+    public boolean[] getAttributesMultiples() {
+        return attributesMultiples;
+    }
+
+    public void setAttributesMultiples(boolean[] attributesMultiples) {
+        this.attributesMultiples = attributesMultiples;
     }
 
     public boolean[] getAttributesUniques() {

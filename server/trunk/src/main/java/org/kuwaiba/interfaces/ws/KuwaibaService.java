@@ -2684,23 +2684,25 @@ public class KuwaibaService {
       * @param objectClass Object class
       * @param oid Object id
       * @param sessionId Session token
-      * @return a representation of the entity as a RemoteObject
-      * @throws ServerSideException If the className class can't be found
-      *                             If the requested object can't be found
-      *                             If the object id can not be found
+      * @return a representation of the entity as a RemoteObject. The list of attribute values is a hashmap of strings (should be mapped to 
+      * actual types by the consumer of the service). Single list types are represented by the id of the list type item (a numeric value), 
+      * while multiple list types are strings wit the ids of the related list type items separated by semicolons (e.g. 123;786576;92332)
+      * @throws ServerSideException If the className class could not be found
+      *                             If the requested object could not be found
+      *                             If the object id could not be found
       */
     @WebMethod(operationName = "getObject")
     public RemoteObject getObject(@WebParam(name = "objectClass") String objectClass,
             @WebParam(name = "oid") long oid,
             @WebParam(name = "sessionId")String sessionId) throws ServerSideException{
 
-        try{
+        try {
             return wsBean.getObject(objectClass, oid, getIPAddress(), sessionId);
         } catch(Exception e){
             if (e instanceof ServerSideException)
                 throw e;
             else {
-                System.out.println("[KUWAIBA] An unexpected error occurred in getobject: " + e.getMessage());
+                System.out.println("[KUWAIBA] An unexpected error occurred in getObject: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -3053,7 +3055,9 @@ public class KuwaibaService {
      * Updates attributes of a given object
      * @param className object's class name
      * @param id Object id
-     * @param attributes A dictionary with pairs key-value, being <b>key</b>, the attribute name, and <b>value</b>, the serialized version of the attribute value. List types are represented by the id of the list type item (a numeric value).
+     * @param attributes A dictionary with pairs key-value, being <b>key</b>, the attribute name, and <b>value</b>, 
+     * the serialized version of the attribute value. Single list types are represented by the id of the list type item (a numeric value), 
+     * while multiple list types are strings wit the ids of the related list type items separated by semicolons (e.g. 123;786576;92332)
      * @param sessionId Session token
      * @throws ServerSideException If the object class can't be found
      *                             If the object can't be found
@@ -4463,6 +4467,7 @@ public class KuwaibaService {
      * @param isReadOnly is the attribute read only?
      * @param unique should this attribute be unique?
      * @param mandatory is the attribute mandatory when an object is created
+     * @param multiple Indicates if the attribute is a multiple selection list type. This flag has no effect in primitive types, such as strings or numbers
      * @param order Tells the system how to sort the attributes. A call to any method that returns the attributes of a class will return them sorted by order.
      * This is useful to show the attributes in property sheets in order of importance, for example. The default value is 1000
      * @param sessionId session token
@@ -4481,13 +4486,14 @@ public class KuwaibaService {
         boolean isReadOnly, @WebParam(name = "noCopy")
         boolean noCopy, @WebParam(name = "unique")
         boolean unique, @WebParam(name = "mandatory")
-        boolean mandatory, @WebParam(name = "order")
+        boolean mandatory, @WebParam(name = "multiple")
+        boolean multiple, @WebParam(name = "order")
         int order, @WebParam(name = "sessionId")
         String sessionId) throws ServerSideException {
 
         try {
             RemoteAttributeMetadata attrInfo = new RemoteAttributeMetadata(name, displayName, type, administrative, 
-                    visible, isReadOnly, unique, mandatory, description, noCopy, order);
+                    visible, isReadOnly, unique, mandatory, multiple, description, noCopy, order);
 
             wsBean.createAttribute(className, attrInfo, getIPAddress(), sessionId);
 
@@ -4514,6 +4520,7 @@ public class KuwaibaService {
      * @param noCopy Marks an attribute as not to be copied during a copy operation.
      * @param unique should this attribute be unique?
      * @param mandatory is the attribute mandatory when an object is created
+     * @param multiple Indicates if the attribute is a multiple selection list type. This flag has no effect in primitive types, such as strings or numbers
      * @param order Tells the system how to sort the attributes. A call to any method that returns the attributes of a class will return them sorted by order.
      * This is useful to show the attributes in property sheets in order of importance, for example. The default value is 1000
      * @param sessionId session token
@@ -4531,13 +4538,14 @@ public class KuwaibaService {
         boolean readOnly, @WebParam(name = "noCopy")
         boolean noCopy, @WebParam(name = "unique")
         boolean unique, @WebParam(name = "mandatory")
-        boolean mandatory, @WebParam(name = "order")
+        boolean mandatory, @WebParam(name = "multiple")
+        boolean multiple, @WebParam(name = "order")
         int order, @WebParam(name = "sessionId")
         String sessionId) throws ServerSideException {
 
         try {
             RemoteAttributeMetadata attrInfo = new RemoteAttributeMetadata(name, displayName, type, administrative, 
-                                   visible, readOnly, unique, mandatory, description, noCopy, order);
+                                   visible, readOnly, unique, mandatory, multiple, description, noCopy, order);
 
             wsBean.createAttribute(ClassId, attrInfo, getIPAddress(), sessionId);
 
@@ -4564,6 +4572,7 @@ public class KuwaibaService {
      * @param readOnly is the attribute read only?
      * @param unique should this attribute be unique?
      * @param mandatory is the attribute mandatory when an object is created
+     * @param multiple Indicates if the attribute is a multiple selection list type. This flag has no effect in primitive types, such as strings or numbers
      * @param noCopy can this attribute be copy in copy/paste operation?
      * @param order Tells the system how to sort the attributes. A call to any method that returns the attributes of a class will return them sorted by order.
      * This is useful to show the attributes in property sheets in order of importance, for example. The default value is 1000
@@ -4581,7 +4590,8 @@ public class KuwaibaService {
         String description, @WebParam(name = "type")
         String type, @WebParam(name = "administrative")
         Boolean administrative, @WebParam(name = "mandatory")
-        Boolean mandatory, @WebParam(name = "noCopy")
+        Boolean mandatory, @WebParam(name = "multiple")
+        Boolean multiple, @WebParam(name = "noCopy")
         Boolean noCopy, @WebParam(name = "readOnly")
         Boolean readOnly, @WebParam(name = "unique")
         Boolean unique, @WebParam(name = "visible")
@@ -4591,7 +4601,7 @@ public class KuwaibaService {
 
         try {
             RemoteAttributeMetadata ai = new RemoteAttributeMetadata(attributeId, name, displayName,
-                    type, administrative, visible, readOnly, unique, mandatory, 
+                    type, administrative, visible, readOnly, unique, mandatory, multiple,
                     description, noCopy, order);
             wsBean.setAttributeProperties(className, ai, getIPAddress(), sessionId);
         } catch(Exception e){
@@ -4617,6 +4627,7 @@ public class KuwaibaService {
      * @param readOnly is the attribute read only?
      * @param unique should this attribute be unique?
      * @param mandatory is the attribute mandatory when an object is created
+     * @param multiple Indicates if the attribute is a multiple selection list type. This flag has no effect in primitive types, such as strings or numbers
      * @param noCopy can this attribute be copy in copy/paste operation?
      * @param order Tells the system how to sort the attributes. A call to any method that returns the attributes of a class will return them sorted by order.
      * This is useful to show the attributes in property sheets in order of importance, for example. The default value is 1000
@@ -4634,7 +4645,8 @@ public class KuwaibaService {
         String description, @WebParam(name = "type")
         String type, @WebParam(name = "administrative")
         Boolean administrative, @WebParam(name = "mandatory")
-        Boolean mandatory, @WebParam(name = "noCopy")
+        Boolean mandatory, @WebParam(name = "multiple")
+        Boolean multiple, @WebParam(name = "noCopy")
         Boolean noCopy, @WebParam(name = "readOnly")
         Boolean readOnly, @WebParam(name = "unique")
         Boolean unique, @WebParam(name = "visible")
@@ -4644,7 +4656,7 @@ public class KuwaibaService {
 
         try {
             RemoteAttributeMetadata ai = new RemoteAttributeMetadata(attributeId, name, displayName, 
-                    type, administrative, visible, readOnly, unique, mandatory, 
+                    type, administrative, visible, readOnly, unique, mandatory, multiple,
                     description, noCopy, order);
             wsBean.setAttributeProperties(classId, ai, getIPAddress(), sessionId);
         } catch(Exception e){

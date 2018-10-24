@@ -909,7 +909,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         
                         if (newAttributeDefinition.isMultiple() && 
                                 AttributeMetadata.isPrimitive((String) attrNode.getProperty(Constants.PROPERTY_TYPE)))
-                            throw new InvalidArgumentException("primitive types can not be set as multiple");
+                            throw new InvalidArgumentException("Primitive types can not be set as multiple");
                         
                         Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MULTIPLE, newAttributeDefinition.isMultiple());
                         
@@ -1056,7 +1056,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     if(newAttributeDefinition.isMultiple() != null) {
                         if (newAttributeDefinition.isMultiple() && 
                                 AttributeMetadata.isPrimitive((String) attrNode.getProperty(Constants.PROPERTY_TYPE)))
-                            throw new InvalidArgumentException("primitive types can not be set as multiple");
+                            throw new InvalidArgumentException("Primitive types can not be set as multiple");
                         
                         Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MULTIPLE, newAttributeDefinition.isMultiple());
                         

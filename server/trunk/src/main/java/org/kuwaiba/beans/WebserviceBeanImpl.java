@@ -482,6 +482,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                                                        atrbMtdt.isVisible(),
                                                        atrbMtdt.isUnique(),
                                                        atrbMtdt.isMandatory(),
+                                                       atrbMtdt.isMultiple(),
                                                        atrbMtdt.getDescription(), 
                                                        atrbMtdt.getOrder());
             return atrbInfo;
@@ -506,6 +507,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                                                        atrbMtdt.isVisible(),
                                                        atrbMtdt.isUnique(),
                                                        atrbMtdt.isMandatory(),
+                                                       atrbMtdt.isMultiple(),
                                                        atrbMtdt.getDescription(), 
                                                        atrbMtdt.getOrder());
             return attrInfo;
@@ -531,6 +533,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             attrMtdt.setAdministrative(newAttributeDefinition.isAdministrative());
             attrMtdt.setUnique(newAttributeDefinition.isUnique());
             attrMtdt.setMandatory(newAttributeDefinition.isMandatory());
+            attrMtdt.setMultiple(newAttributeDefinition.isMultiple());
             attrMtdt.setVisible(newAttributeDefinition.isVisible());
             attrMtdt.setReadOnly(newAttributeDefinition.isReadOnly());
             attrMtdt.setNoCopy(newAttributeDefinition.isNoCopy());
@@ -563,6 +566,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             attrMtdt.setAdministrative(newAttributeDefinition.isAdministrative());
             attrMtdt.setUnique(newAttributeDefinition.isUnique());
             attrMtdt.setMandatory(newAttributeDefinition.isMandatory());
+            attrMtdt.setMultiple(newAttributeDefinition.isMultiple());
             attrMtdt.setVisible(newAttributeDefinition.isVisible());
             attrMtdt.setReadOnly(newAttributeDefinition.isReadOnly());
             attrMtdt.setNoCopy(newAttributeDefinition.isNoCopy());
@@ -1687,7 +1691,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
                 aem.validateWebServiceCall("getMandatoryAttributesInClass", ipAddress, sessionId);
                 List<AttributeMetadata> mandatoryObjectAttributes = mem.getMandatoryAttributesInClass(className);
-                return AttributeMetadata.toAttributeInfo(mandatoryObjectAttributes);
+                return RemoteAttributeMetadata.toRemoteAttributeList(mandatoryObjectAttributes);
 
             } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -2134,8 +2138,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             BusinessObject linkObject = bem.getObject(linkId);
             
-            BusinessObjectLight endpointA = null;
-            BusinessObjectLight endpointB = null;
+            BusinessObjectLight endpointA, endpointB;
+            
             List<BusinessObjectLight> physicalPathA = null, physicalPathB = null;
             String endpointARelationshipName, endpointBRelationshipName;
             

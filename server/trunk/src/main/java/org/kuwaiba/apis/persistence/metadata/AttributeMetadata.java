@@ -17,9 +17,6 @@
 package org.kuwaiba.apis.persistence.metadata;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteAttributeMetadata;
 
 /**
  * Contains the detailed metadata information about a class attribute
@@ -265,18 +262,6 @@ public class AttributeMetadata implements Serializable, Comparable<AttributeMeta
                 || type.equals("Timestamp") || type.equals("Binary"); //NOI18N
     }
     
-    public static List<RemoteAttributeMetadata> toAttributeInfo(List<AttributeMetadata> toBeWrapped){
-        if (toBeWrapped == null)
-            return null;
-        
-        List<RemoteAttributeMetadata> res = new ArrayList<>();
-        
-        for (AttributeMetadata toBeWrapped1 : toBeWrapped) 
-            res.add(new RemoteAttributeMetadata(toBeWrapped1.getName(), toBeWrapped1.getDisplayName(), toBeWrapped1.getType(), toBeWrapped1.isAdministrative(), toBeWrapped1.isVisible(), toBeWrapped1.isUnique(), toBeWrapped1.isMandatory(), toBeWrapped1.getDescription(), toBeWrapped1.getOrder()));
-        
-        return res;
-    }
-
     @Override
     public int compareTo(AttributeMetadata o) {
         return order.compareTo(o.order);

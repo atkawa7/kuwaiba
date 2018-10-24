@@ -17,6 +17,9 @@
 package org.kuwaiba.interfaces.ws.toserialize.metadata;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 
 /**
  * This is a wrapper class for AttributeMetadata, containing the info required for the clients
@@ -63,6 +66,10 @@ public class RemoteAttributeMetadata implements Serializable {
      */
     private Boolean mandatory;
     /**
+     * If true, this attribute is a multiple-selection list type. This flag has no effect in primitive attribute types (Strings, numbers, etc)
+     */
+    private Boolean multiple;
+    /**
      * Attribute's short description
      */
     private String description;
@@ -84,7 +91,7 @@ public class RemoteAttributeMetadata implements Serializable {
     }
 
     public RemoteAttributeMetadata(String name, String displayName, String type, 
-            Boolean administrative, Boolean visible, Boolean unique, Boolean mandatory, String description, Integer order) {
+            Boolean administrative, Boolean visible, Boolean unique, Boolean mandatory, Boolean multiple, String description, Integer order) {
         this.name = name;
         this.displayName = displayName;
         this.type = type;
@@ -94,13 +101,14 @@ public class RemoteAttributeMetadata implements Serializable {
         this.mandatory = mandatory;
         this.description = description;
         this.order = order;
+        this.multiple = multiple;
     }
 
     public RemoteAttributeMetadata(long id, String name, 
             String displayName, String type, 
             Boolean administrative,
             Boolean visible, Boolean readOnly, 
-            Boolean unique, Boolean mandatory, 
+            Boolean unique, Boolean mandatory, Boolean multiple,
             String description, Boolean noCopy, Integer order) {
         this.id = id;
         this.name = name;
@@ -111,6 +119,7 @@ public class RemoteAttributeMetadata implements Serializable {
         this.readOnly = readOnly;
         this.unique = unique;
         this.mandatory = mandatory;
+        this.multiple = multiple;
         this.description = description;
         this.noCopy = noCopy;
         this.order = order;
@@ -118,7 +127,7 @@ public class RemoteAttributeMetadata implements Serializable {
     
     public RemoteAttributeMetadata(String name, String displayName, String type, 
                          Boolean administrative, Boolean visible, 
-                         Boolean readOnly, Boolean unique, Boolean mandatory, 
+                         Boolean readOnly, Boolean unique, Boolean mandatory, Boolean multiple, 
                          String description, Boolean noCopy, Integer order) {
         this.name = name;
         this.displayName = displayName;
@@ -128,6 +137,7 @@ public class RemoteAttributeMetadata implements Serializable {
         this.readOnly = readOnly;
         this.unique = unique;
         this.mandatory = mandatory;
+        this.multiple = multiple;
         this.description = description;
         this.noCopy = noCopy;
         this.order = order;
@@ -213,6 +223,14 @@ public class RemoteAttributeMetadata implements Serializable {
         this.mandatory = mandatory;
     }
 
+    public Boolean isMultiple() {
+        return multiple;
+    }
+
+    public void setMultiple(Boolean multiple) {
+        this.multiple = multiple;
+    }
+
     public Boolean isNoCopy() {
         return noCopy;
     }
@@ -235,5 +253,24 @@ public class RemoteAttributeMetadata implements Serializable {
 
     public void setOrder(Integer order) {
         this.order = order;
+    }
+    
+    /**
+     * Converts a list of AttributeMetadata instances (as in the Persistence Service layer) to a list of RemoteAttributeMetadata instances
+     * @param toBeWrapped The list of original AttributeMetadata instances
+     * @return The list of converted RemoteAttributeMetadata instances
+     */
+    public static List<RemoteAttributeMetadata> toRemoteAttributeList(List<AttributeMetadata> toBeWrapped) {
+        if (toBeWrapped == null)
+            return null;
+        
+        List<RemoteAttributeMetadata> res = new ArrayList<>();
+        
+        for (AttributeMetadata toBeWrapped1 : toBeWrapped) 
+            res.add(new RemoteAttributeMetadata(toBeWrapped1.getName(), toBeWrapped1.getDisplayName(), toBeWrapped1.getType(), 
+                    toBeWrapped1.isAdministrative(), toBeWrapped1.isVisible(), toBeWrapped1.isUnique(), toBeWrapped1.isMandatory(), 
+                    toBeWrapped1.isMultiple(), toBeWrapped1.getDescription(), toBeWrapped1.getOrder()));
+        
+        return res;
     }
 }

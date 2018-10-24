@@ -2787,8 +2787,11 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         }
                     }
                     
-                    if (attributes.get(attributeName) != null) { //If the new value is different than null, then create the new relationships
-                        try {
+                    if (attributes.get(attributeName) == null || attributes.get(attributeName).trim().isEmpty()) {
+                        if(classMetadata.getAttribute(attributeName).isMandatory())
+                                throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set to null", attributeName));
+                    } else {
+                        try { //If the new value is different than null, then create the new relationships
                             List<Long> listTypeItemIds = new ArrayList<>();
                             for (String listTypeItemIdAsString : attributes.get(attributeName).split(";")) //If the attribute is multiple, the ids will be separated by ";", otherwise, it will be a single long value
                                 listTypeItemIds.add(Long.valueOf(listTypeItemIdAsString));
@@ -2796,7 +2799,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                             Node listTypeNodeClass = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, classMetadata.getType(attributeName));
                             List<Node> listTypeItemNodes = Util.getListTypeItemNodes(listTypeNodeClass, listTypeItemIds);
                             
-                            if(!listTypeItemNodes.isEmpty()){
+                            if(!listTypeItemNodes.isEmpty()) {
                                 //Create the new relationships
                                 for (Node listTypeItemNode : listTypeItemNodes) {
                                     newValues += listTypeItemNode.getProperty(Constants.PROPERTY_NAME) + " ";
@@ -2810,8 +2813,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         } catch(NumberFormatException ex) {
                             throw new InvalidArgumentException(String.format("The value %s is not a valid list type item id", attributes.get(attributeName)));
                         }
-                    } else if(classMetadata.getAttribute(attributeName).isMandatory())
-                                throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set to null", attributeName));
+                    } 
                 }
             } else
                 throw new InvalidArgumentException(

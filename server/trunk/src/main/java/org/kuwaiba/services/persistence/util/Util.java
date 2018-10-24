@@ -577,7 +577,10 @@ public class Util {
             boolean hasRelationship = false;
             for (AttributeMetadata myAtt : myClass.getAttributes()) {
                 if (myAtt.getName().equals(relationshipName)) {
-                    attributes.put(relationshipName, String.valueOf(relationship.getEndNode().getId()));
+                    if (attributes.containsKey(relationshipName))
+                        attributes.put(relationshipName, attributes.get(relationshipName) + ";" + String.valueOf(relationship.getEndNode().getId())); //A multiple selection list type
+                    else    
+                        attributes.put(relationshipName, String.valueOf(relationship.getEndNode().getId()));
                     hasRelationship = true;
                     break;
                 }                  
