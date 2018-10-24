@@ -39,9 +39,7 @@ public class WarehouseManagerComponent extends AbstractTopComponent {
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent event) {
         setStyleName("dashboards");
-        
         MenuBar mnuMain = ((IndexUI)getUI()).getMainMenu();
-        
         //WarehouseManagerDashboard warehouseManagerDashboard = new WarehouseManagerDashboard(webserviceBean);
         SpareInventoryObjectsDashboardWidget spareInventoryObjectsDashboardWidget = new SpareInventoryObjectsDashboardWidget(webserviceBean);
 
@@ -51,8 +49,6 @@ public class WarehouseManagerComponent extends AbstractTopComponent {
         setMargin(false);
         setExpandRatio(mnuMain, 0.3f);
         setExpandRatio(spareInventoryObjectsDashboardWidget, 9.7f);
-        setId("outter");
-        //setSizeFull();
     }
 
     @Override
