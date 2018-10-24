@@ -387,6 +387,10 @@ public class Constants {
      * Defines if the attribute of a class is mandatory or not
      */
     public static final String PROPERTY_MANDATORY = "mandatory"; //NOI18N
+    /** 
+     * Defines if an attribute is a multiple selection list type
+     */
+    public static final String PROPERTY_MULTIPLE = "multiple"; //NOI18N
     /**
      * Property visible
      */

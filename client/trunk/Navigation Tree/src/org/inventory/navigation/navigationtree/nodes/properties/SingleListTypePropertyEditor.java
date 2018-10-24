@@ -30,16 +30,16 @@ import org.openide.explorer.propertysheet.PropertySheetView;
  * Provides a custom property editor for list-type values
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ItemListPropertyEditor extends PropertyEditorSupport {
+public class SingleListTypePropertyEditor extends PropertyEditorSupport {
     
-    private ListTypeProperty parentProperty;
+    private SingleListTypeProperty parentProperty;
     private List<LocalObjectListItem> list;
 
-    public ItemListPropertyEditor(List<LocalObjectListItem> list){        
+    public SingleListTypePropertyEditor(List<LocalObjectListItem> list){        
         this.list = list;
     }
     
-    public ItemListPropertyEditor(List<LocalObjectListItem> list, ListTypeProperty parentProperty){        
+    public SingleListTypePropertyEditor(List<LocalObjectListItem> list, SingleListTypeProperty parentProperty){        
         this.list = list;
         this.parentProperty = parentProperty;
     }

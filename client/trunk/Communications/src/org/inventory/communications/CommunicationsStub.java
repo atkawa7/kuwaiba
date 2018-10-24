@@ -17,7 +17,6 @@ package org.inventory.communications;
 
 import com.neotropic.inventory.modules.sdh.LocalSDHContainerLinkDefinition;
 import com.neotropic.inventory.modules.sdh.LocalSDHPosition;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1253,7 +1252,8 @@ public class CommunicationsStub {
                                                 ci.getAttributesNames().toArray(new String[0]),
                                                 ci.getAttributesTypes().toArray(new String[0]),
                                                 ci.getAttributesDisplayNames().toArray(new String[0]), ci.getAttributesDescriptions().toArray(new String[0]),
-                                                ci.getAttributesMandatories(), ci.getAttributesUniques(),
+                                                ci.getAttributesMandatories(), ci.getAttributesMultiples(), 
+                                                ci.getAttributesUniques(),
                                                 ci.getAttributesVisibles(), ci.getAttributesOrders());
                 i++;
             }
@@ -1299,6 +1299,7 @@ public class CommunicationsStub {
                     cm.getAttributesDisplayNames().toArray(new String[0]), 
                     cm.getAttributesDescriptions().toArray(new String[0]),
                     cm.getAttributesMandatories(),
+                    cm.getAttributesMultiples(),
                     cm.getAttributesUniques(),
                     cm.getAttributesVisibles(),
                     cm.getAttributesOrders());
@@ -1344,6 +1345,7 @@ public class CommunicationsStub {
                     cm.getAttributesDisplayNames().toArray(new String[0]), 
                     cm.getAttributesDescriptions().toArray(new String[0]),
                     cm.getAttributesMandatories(),
+                    cm.getAttributesMultiples(),
                     cm.getAttributesUniques(),
                     cm.getAttributesVisibles(),
                     cm.getAttributesOrders());
@@ -1381,7 +1383,8 @@ public class CommunicationsStub {
                         cm.getAttributesTypes().toArray(new String[0]),
                         cm.getAttributesDisplayNames().toArray(new String[0]), 
                         cm.getAttributesDescriptions().toArray(new String[0]),
-                        cm.getAttributesMandatories(), cm.getAttributesUniques(),
+                        cm.getAttributesMandatories(), cm.getAttributesMultiples(),
+                        cm.getAttributesUniques(),
                         cm.getAttributesVisibles(),
                         cm.getAttributesOrders());
             cache.addMeta(new LocalClassMetadata[]{res});
@@ -1417,6 +1420,7 @@ public class CommunicationsStub {
             LocalAttributeMetadata lam = new LocalAttributeMetadata(
                 attrInfo.getId(), attrInfo.getName(), attrInfo.getType(), 
                 attrInfo.getDisplayName(), attrInfo.getDescription(), attrInfo.isVisible(), attrInfo.isMandatory(), 
+                attrInfo.isMultiple(),
                 attrInfo.isUnique(), attrInfo.getOrder());
             
             return lam;
@@ -2203,7 +2207,7 @@ public class CommunicationsStub {
                 mandatoryObjectAttributes.add(new LocalAttributeMetadata(mandatoryObjectAttributeInfo.getId(),
                         mandatoryObjectAttributeInfo.getName(), mandatoryObjectAttributeInfo.getType(), 
                         mandatoryObjectAttributeInfo.getDisplayName(), mandatoryObjectAttributeInfo.getDescription(), 
-                        mandatoryObjectAttributeInfo.isVisible(), mandatoryObjectAttributeInfo.isMandatory(), 
+                        mandatoryObjectAttributeInfo.isVisible(), mandatoryObjectAttributeInfo.isMandatory(), mandatoryObjectAttributeInfo.isMultiple(),
                         mandatoryObjectAttributeInfo.isUnique(), mandatoryObjectAttributeInfo.getOrder()));
             return mandatoryObjectAttributes;
         }catch(Exception ex){
@@ -2845,7 +2849,8 @@ public class CommunicationsStub {
                             cm.getAttributesTypes().toArray(new String[0]),
                             cm.getAttributesDisplayNames().toArray(new String[0]), 
                             cm.getAttributesDescriptions().toArray(new String[0]),
-                            cm.getAttributesMandatories(), cm.getAttributesUniques(),
+                            cm.getAttributesMandatories(), cm.getAttributesMultiples(),
+                            cm.getAttributesUniques(),
                             cm.getAttributesVisibles(),
                             cm.getAttributesOrders());
                     
@@ -2888,13 +2893,13 @@ public class CommunicationsStub {
     
     public boolean setAttributeProperties(long classId, String className, 
             long attributeId, String name, String displayName, String type,
-            String description, Boolean administrative, Boolean mandatory, 
+            String description, Boolean administrative, Boolean mandatory, Boolean multiple,
             Boolean noCopy, Boolean readOnly, Boolean unique,  Boolean visible, Integer order)
     {
         try{
             service.setAttributePropertiesForClassWithId(classId, attributeId, 
                     name, displayName, description, type, administrative, 
-                    mandatory, noCopy, readOnly, unique, visible, order,
+                    mandatory, multiple, noCopy, readOnly, unique, visible, order,
                     this.session.getSessionId());
             return true;
         }catch(Exception ex){
@@ -2926,11 +2931,11 @@ public class CommunicationsStub {
     public boolean createAttribute(long classId, String name, String displayName, 
                                 String description, String type, boolean administrative, 
                                 boolean readOnly, boolean visible, boolean noCopy, 
-                                boolean unique, boolean mandatory, int order){
+                                boolean unique, boolean mandatory, boolean multiple, int order){
         try{
             service.createAttributeForClassWithId(classId, name, displayName, 
                     type, description, administrative, visible, readOnly, 
-                    noCopy, unique, mandatory, order, this.session.getSessionId());
+                    noCopy, unique, mandatory, multiple, order, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;
@@ -2941,11 +2946,11 @@ public class CommunicationsStub {
     public boolean createAttribute(String className, String name, String displayName, 
                                 String description, String type, boolean administrative,
                                 boolean readOnly, boolean visible, boolean noCopy, 
-                                boolean unique, boolean mandatory, int order){
+                                boolean unique, boolean mandatory, boolean multiple, int order){
         try {
             service.createAttribute(className, name, displayName, type, 
                     description, administrative, visible, readOnly, noCopy, 
-                    unique, mandatory, order, this.session.getSessionId());
+                    unique, mandatory, multiple, order, this.session.getSessionId());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return false;

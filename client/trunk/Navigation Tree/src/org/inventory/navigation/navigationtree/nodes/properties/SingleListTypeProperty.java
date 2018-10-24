@@ -30,15 +30,15 @@ import org.openide.nodes.PropertySupport;
  * A dedicated property class for list type attributes
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ListTypeProperty extends PropertySupport.ReadWrite<LocalObjectListItem> {
+public class SingleListTypeProperty extends PropertySupport.ReadWrite<LocalObjectListItem> {
     private PropertyEditor propertyEditor;
     private LocalObjectListItem value;
     private ObjectNode node;
 
-    public ListTypeProperty(String name, String displayName, String toolTextTip, 
+    public SingleListTypeProperty(String name, String displayName, String toolTextTip, 
             List<LocalObjectListItem> list, ObjectNode node, LocalObjectListItem value) {
         super(name, LocalObjectListItem.class, displayName, toolTextTip);
-        this.propertyEditor = new ItemListPropertyEditor(list, this);
+        this.propertyEditor = new SingleListTypePropertyEditor(list, this);
         this.value = value == null ? new LocalObjectListItem() : value;
         this.node = node;
     }

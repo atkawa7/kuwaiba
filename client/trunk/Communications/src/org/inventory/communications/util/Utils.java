@@ -185,7 +185,7 @@ public class Utils {
                     throw new IllegalArgumentException(String.format("The type %s has a wrong mapping and will be ignored", type));
                 case Constants.MAPPING_MANYTOMANY:
                     List<LocalObjectListItem> res = new ArrayList<>();
-                    for (String value : valueAsString.split(","))
+                    for (String value : valueAsString.split(";"))
                         res.add(Utils.getListTypeItem(type, Long.valueOf(value)));
                     return res;
                 case Constants.MAPPING_MANYTOONE:

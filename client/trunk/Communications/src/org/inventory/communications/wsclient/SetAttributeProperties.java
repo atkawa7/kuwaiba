@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="administrative" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="mandatory" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;element name="multiple" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="noCopy" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="readOnly" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="unique" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
@@ -48,6 +49,7 @@ import javax.xml.bind.annotation.XmlType;
     "type",
     "administrative",
     "mandatory",
+    "multiple",
     "noCopy",
     "readOnly",
     "unique",
@@ -65,6 +67,7 @@ public class SetAttributeProperties {
     protected String type;
     protected Boolean administrative;
     protected Boolean mandatory;
+    protected Boolean multiple;
     protected Boolean noCopy;
     protected Boolean readOnly;
     protected Boolean unique;
@@ -254,6 +257,30 @@ public class SetAttributeProperties {
      */
     public void setMandatory(Boolean value) {
         this.mandatory = value;
+    }
+
+    /**
+     * Gets the value of the multiple property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public Boolean isMultiple() {
+        return multiple;
+    }
+
+    /**
+     * Sets the value of the multiple property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setMultiple(Boolean value) {
+        this.multiple = value;
     }
 
     /**

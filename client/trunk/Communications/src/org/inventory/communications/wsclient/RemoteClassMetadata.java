@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="attributesTypes" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributesDisplayNames" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributesMandatories" type="{http://www.w3.org/2001/XMLSchema}boolean" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="attributesMultiples" type="{http://www.w3.org/2001/XMLSchema}boolean" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributesUniques" type="{http://www.w3.org/2001/XMLSchema}boolean" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributesVisibles" type="{http://www.w3.org/2001/XMLSchema}boolean" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="attributesDescriptions" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
@@ -47,6 +48,7 @@ import javax.xml.bind.annotation.XmlType;
     "attributesTypes",
     "attributesDisplayNames",
     "attributesMandatories",
+    "attributesMultiples",
     "attributesUniques",
     "attributesVisibles",
     "attributesDescriptions",
@@ -70,6 +72,8 @@ public class RemoteClassMetadata
     protected List<String> attributesDisplayNames;
     @XmlElement(nillable = true)
     protected List<Boolean> attributesMandatories;
+    @XmlElement(nillable = true)
+    protected List<Boolean> attributesMultiples;
     @XmlElement(nillable = true)
     protected List<Boolean> attributesUniques;
     @XmlElement(nillable = true)
@@ -226,6 +230,35 @@ public class RemoteClassMetadata
             attributesMandatories = new ArrayList<Boolean>();
         }
         return this.attributesMandatories;
+    }
+
+    /**
+     * Gets the value of the attributesMultiples property.
+     * 
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the attributesMultiples property.
+     * 
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getAttributesMultiples().add(newItem);
+     * </pre>
+     * 
+     * 
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link Boolean }
+     * 
+     * 
+     */
+    public List<Boolean> getAttributesMultiples() {
+        if (attributesMultiples == null) {
+            attributesMultiples = new ArrayList<Boolean>();
+        }
+        return this.attributesMultiples;
     }
 
     /**

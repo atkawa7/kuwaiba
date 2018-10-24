@@ -135,7 +135,7 @@ public class ClassHierarchyReaderImpl implements ClassHierarchyReader {
                 new byte[0], 0, new HashMap(), new byte[0], "", new ArrayList<>(), 
                 attributesNames.toArray(new String[0]), 
                 attributesTypes.toArray(new String[0]), new String[0], new String[0], 
-                new ArrayList<>(),new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+                new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
         
         return lcm;
     }

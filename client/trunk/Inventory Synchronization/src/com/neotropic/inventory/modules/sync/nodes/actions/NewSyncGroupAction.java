@@ -60,8 +60,8 @@ class NewSyncGroupAction extends GenericInventoryAction {
         cmbProviders.setName("cmbProviders");
         cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.reference.ReferenceSnmpSyncProvider", "Hardware/Interfaces from entityMIB", false));
         cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.mpls.SnmpMplsSyncProvider", "General MPLS Information", false));
-        cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.ip.IPAddressesSyncProvider", "IP address mib", true));
-        cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.vlan.SnmpCiscoVlansSyncProvider", "VLANs mib", true));
+        cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.ip.IPAddressesSyncProvider", "IP Addresses", true));
+        cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.vlan.SnmpCiscoVlansSyncProvider", "VLANs", true));
         cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.ssh.bdi.BridgeDomainSyncProvider", "Bridge Domains", true));
         cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.bgp.BgpSyncProvider", "BGP Map", true));
 

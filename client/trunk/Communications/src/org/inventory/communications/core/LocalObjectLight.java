@@ -110,7 +110,7 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
         propertyChangeListeners.add(newListener);
     }
 
-    public void removePropertyChangeListener(PropertyChangeListener listener){
+    public void removePropertyChangeListener(PropertyChangeListener listener) {
         if (propertyChangeListeners == null)
             return;
         propertyChangeListeners.remove(listener);

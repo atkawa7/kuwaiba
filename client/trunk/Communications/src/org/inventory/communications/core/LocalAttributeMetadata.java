@@ -35,6 +35,7 @@ public class LocalAttributeMetadata implements Comparable<LocalAttributeMetadata
     private boolean noCopy;
     private boolean unique;
     private boolean mandatory;
+    private boolean multiple;
     private boolean readOnly;
     private int order;
     private String listAttributeClassName;
@@ -44,16 +45,17 @@ public class LocalAttributeMetadata implements Comparable<LocalAttributeMetadata
     }
 
     public LocalAttributeMetadata(long oid, String name, String type, String displayName, String description,
-            boolean isVisible, boolean mandatory, boolean unique, int order) 
+            boolean isVisible, boolean mandatory, boolean multiple, boolean unique, int order) 
     {
         this.id = oid;
         this.name = name;
         this.type = Utils.getRealType(type);
         this.displayName = displayName;
         this.mandatory = mandatory;
+        this.multiple = multiple;
         this.unique = unique;
         this.isVisible = isVisible;
-        this.mapping = getMappingFromType(type);
+        this.mapping = getMappingFromType(type, multiple);
         this.description = description;
         this.order = order;
         if (this.type.equals(LocalObjectLight.class)) 
@@ -134,6 +136,14 @@ public class LocalAttributeMetadata implements Comparable<LocalAttributeMetadata
     public void setMandatory(boolean mandatory) {
         this.mandatory = mandatory;
     }
+
+    public boolean isMultiple() {
+        return multiple;
+    }
+
+    public void setMultiple(boolean multiple) {
+        this.multiple = multiple;
+    }
     
     public boolean isUnique(){
         return unique;
@@ -169,7 +179,7 @@ public class LocalAttributeMetadata implements Comparable<LocalAttributeMetadata
         return hash;
     }
     
-    public final int getMappingFromType(String type){
+    public final int getMappingFromType(String type, boolean multiple) {
         if (type.equals("String") || type.equals("Integer") || type.equals("Float") || type.equals("Long") || type.equals("Boolean"))
             return Constants.MAPPING_PRIMITIVE;
         if (type.equals("Timestamp"))
@@ -178,7 +188,7 @@ public class LocalAttributeMetadata implements Comparable<LocalAttributeMetadata
             return Constants.MAPPING_DATE;
         if (type.equals("Binary"))
             return Constants.MAPPING_BINARY;
-        return Constants.MAPPING_MANYTOONE;
+        return multiple ? Constants.MAPPING_MANYTOMANY : Constants.MAPPING_MANYTOONE;
     }
 
     @Override

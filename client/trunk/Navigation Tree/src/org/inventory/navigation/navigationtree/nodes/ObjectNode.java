@@ -50,7 +50,8 @@ import org.inventory.navigation.navigationtree.nodes.actions.ExecuteClassLevelRe
 import org.inventory.navigation.navigationtree.nodes.actions.UpdateNodeAction;
 import org.inventory.navigation.navigationtree.nodes.actions.ShowMoreInformationAction;
 import org.inventory.navigation.navigationtree.nodes.properties.DateTypeProperty;
-import org.inventory.navigation.navigationtree.nodes.properties.ListTypeProperty;
+import org.inventory.navigation.navigationtree.nodes.properties.MultipleListTypeProperty;
+import org.inventory.navigation.navigationtree.nodes.properties.SingleListTypeProperty;
 import org.inventory.navigation.navigationtree.nodes.properties.NativeTypeProperty;
 import org.openide.actions.CopyAction;
 import org.openide.actions.CutAction;
@@ -162,7 +163,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                                     lam.getDescription(), this, lo.getAttribute(lam.getName()));
                         }
                         break;
-                    case Constants.MAPPING_MANYTOONE:
+                    case Constants.MAPPING_MANYTOONE: {
                         //If so, this can be a reference to an object list item or a 1:1 to any other RootObject subclass
                         List<LocalObjectListItem> list = com.getList(lam.getListAttributeClassName(), true, false);
                         if (list == null) {
@@ -180,7 +181,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                                 }
                             }
                         }
-                        property = new ListTypeProperty(
+                        property = new SingleListTypeProperty(
                                 lam.getName(),
                                 lam.getDisplayName(),
                                 lam.getDescription(),
@@ -188,6 +189,23 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
                                 this,
                                 val);
                         break;
+                    }
+                    case Constants.MAPPING_MANYTOMANY: {
+                        List<LocalObjectListItem> list = com.getList(lam.getListAttributeClassName(), false, false);
+                        if (list == null) {
+                            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, com.getError());
+                            return sheet;
+                        }
+                        
+                        property = new MultipleListTypeProperty(
+                                lam.getName(),
+                                lam.getDisplayName(),
+                                lam.getDescription(),
+                                list,
+                                this,
+                                (List<LocalObjectListItem>)lo.getAttribute(lam.getName()));
+                        break;
+                    }
                     default:
                         NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, "Mapping not supported");
                         return sheet;

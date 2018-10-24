@@ -88,7 +88,7 @@ public class CreateAttributeAction extends GenericInventoryAction {
                             txtDisplayName.getText(), 
                             txtDescription.getText(), 
                             (String)lstType.getSelectedItem(), 
-                            false, false, true, false, false, false, 1000)){
+                            false, false, true, false, false, false, false, 1000)){
                         NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), NotificationUtil.INFO_MESSAGE, I18N.gm("attributed_added_successfully"));
                         Cache.getInstace().resetAll();
                         classNode.refresh();

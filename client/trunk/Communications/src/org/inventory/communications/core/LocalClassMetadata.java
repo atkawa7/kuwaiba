@@ -37,6 +37,7 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
     private String [] attributesTypes;
     private String [] attributesDisplayNames;
     private boolean [] attributesMandatories;
+    private boolean [] attributesMultiples;
     private boolean [] attributesUniques;
     private boolean [] attributesVisibles;
     private int [] attributesMappings;
@@ -62,6 +63,7 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
             String[] attributesDisplayNames,
             String[] attributesDescriptions, 
             List<Boolean> attributesMandatories, 
+            List<Boolean> attributesMultiples, 
             List<Boolean> attributesUniques,
             List<Boolean> attributesVisibles, 
             List<Integer> attributesOrders) {
@@ -73,15 +75,17 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
         this.attributesIds = new long[attributesIds.size()];
         this.attributesMappings = new int[attributesIds.size()];
         this.attributesMandatories = new boolean[attributesMandatories.size()];
+        this.attributesMultiples = new boolean[attributesMultiples.size()];
         this.attributesUniques = new boolean[attributesUniques.size()];
         this.attributesVisibles = new boolean[attributesVisibles.size()];
         this.attributesOrders = new int[attributesOrders.size()];
         
         for (int i = 0; i < attributesIds.size(); i++) {
             this.attributesIds[i] = attributesIds.get(i);
-            this.attributesMappings[i] = getMappingFromType(attributesTypes[i]);
+            this.attributesMappings[i] = getMappingFromType(attributesTypes[i], attributesMultiples.get(i));
             this.attributesVisibles[i] = attributesVisibles.get(i);
             this.attributesMandatories[i] = attributesMandatories.get(i);
+            this.attributesMultiples[i] = attributesMultiples.get(i);
             this.attributesUniques[i] = attributesUniques.get(i);
             this.attributesOrders[i] = attributesOrders.get(i);
         }
@@ -118,6 +122,10 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
 
     public boolean[] getAttributesMandatories() {
         return attributesMandatories;
+    }
+    
+    public boolean[] getAttributesMultiples() {
+        return attributesMultiples;
     }
 
     public boolean[] getAttributesUniques() {
@@ -185,6 +193,7 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
                                     attributesDescriptions[i],
                                     attributesVisibles[i],
                                     attributesMandatories[i],
+                                    attributesMultiples[i],
                                     attributesUniques[i], attributesOrders[i]));
         }
         return res;
@@ -218,7 +227,7 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
         return false;
     }
 
-    public static final int getMappingFromType(String type){
+    public static final int getMappingFromType(String type, boolean multiple) {
         if (type.equals("String") || type.equals("Integer") || type.equals("Float") || type.equals("Long") || type.equals("Boolean"))
             return Constants.MAPPING_PRIMITIVE;
         if (type.equals("Timestamp"))
@@ -227,6 +236,6 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
             return Constants.MAPPING_DATE;
         if (type.equals("Binary"))
             return Constants.MAPPING_BINARY;
-        return Constants.MAPPING_MANYTOONE;
+        return multiple ? Constants.MAPPING_MANYTOMANY : Constants.MAPPING_MANYTOONE;
     }
 }

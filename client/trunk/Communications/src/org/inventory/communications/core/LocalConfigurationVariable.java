@@ -91,7 +91,7 @@ public class LocalConfigurationVariable {
         this.name = name;
     }
 
-    public boolean isMasked() {
+    public boolean getMasked() {
         return masked;
     }
 
@@ -115,7 +115,7 @@ public class LocalConfigurationVariable {
         this.description = description;
     }
 
-    public String getValueDefinition() {
+    public String getValue() {
         return valueDefinition;
     }
 

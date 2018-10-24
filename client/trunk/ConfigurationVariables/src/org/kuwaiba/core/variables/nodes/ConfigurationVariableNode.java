@@ -16,8 +16,15 @@
 
 package org.kuwaiba.core.variables.nodes;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
 import javax.swing.Action;
+import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalConfigurationVariable;
+import org.inventory.communications.util.Constants;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.kuwaiba.core.variables.nodes.actions.ConfigurationVariablesActionFactory;
 import org.kuwaiba.core.variables.nodes.properties.ConfigurationVariableNativeTypeProperty;
 import org.openide.nodes.AbstractNode;
@@ -29,26 +36,29 @@ import org.openide.util.lookup.Lookups;
  * A node representing a configuration variable
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
-public class ConfigurationVariableNode extends AbstractNode {
+public class ConfigurationVariableNode extends AbstractNode implements VetoableChangeListener {
 
     public ConfigurationVariableNode(LocalConfigurationVariable configVariable) {
         super(Children.LEAF, Lookups.singleton(configVariable));
-    }
-    
-    @Override
-    public String getName() {
-        return getLookup().lookup(LocalConfigurationVariable.class).getName();
-    }
-    
-    @Override
-    public String getDisplayName() {
-        return getLookup().lookup(LocalConfigurationVariable.class).getName();
+        setDisplayName(configVariable.getName());
     }
     
     @Override
     public Action[] getActions(boolean context) {
         return new Action[] { ConfigurationVariablesActionFactory.getDeleteConfigurationVariableAction() };
     }
+
+    @Override
+    public String getDisplayName() {
+        return getLookup().lookup(LocalConfigurationVariable.class).getName();
+    }
+
+    @Override
+    public String getName() {
+        return getLookup().lookup(LocalConfigurationVariable.class).getName();
+    }
+    
+    
     
     @Override
     public Sheet createSheet() {
@@ -58,11 +68,13 @@ public class ConfigurationVariableNode extends AbstractNode {
         
         LocalConfigurationVariable configVariable = getLookup().lookup(LocalConfigurationVariable.class);
         try {
-            aSet.put(new ConfigurationVariableNativeTypeProperty(configVariable, String.class, "name"));
-            aSet.put(new ConfigurationVariableNativeTypeProperty(configVariable, String.class, "description"));
-            aSet.put(new ConfigurationVariableNativeTypeProperty(configVariable, Boolean.class, "masked"));
-            aSet.put(new ConfigurationVariableNativeTypeProperty(configVariable, String.class, "value"));
-        } catch (NoSuchMethodException ex) {} //Should not happen
+            aSet.put(new ConfigurationVariableNativeTypeProperty(configVariable, String.class, "name", this));
+            aSet.put(new ConfigurationVariableNativeTypeProperty(configVariable, String.class, "description", this));
+            aSet.put(new ConfigurationVariableNativeTypeProperty(configVariable, boolean.class, "masked", this));
+            aSet.put(new ConfigurationVariableNativeTypeProperty(configVariable, String.class, "value", this));
+        } catch (NoSuchMethodException ex) {
+        ex.printStackTrace();
+        } //Should not happen
         aSheet.put(aSet);
         
         return aSheet;
@@ -81,5 +93,31 @@ public class ConfigurationVariableNode extends AbstractNode {
     @Override
     public boolean canRename() {
         return true;
+    }
+    
+    @Override
+    public void setName(String name) {
+        try {
+            vetoableChange(new PropertyChangeEvent(getLookup().lookup(LocalConfigurationVariable.class), Constants.PROPERTY_NAME, getName(), name));
+            getLookup().lookup(LocalConfigurationVariable.class).setName(name);
+            
+            if (getSheet() != null)
+                setSheet(createSheet());
+        } catch (PropertyVetoException ex) {
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, ex.getLocalizedMessage());
+        }
+    }
+    
+    @Override
+    public void vetoableChange(PropertyChangeEvent evt) throws PropertyVetoException {
+        if (!CommunicationsStub.getInstance().updateConfigurationVariable(((LocalConfigurationVariable)evt.getSource()).getName(), 
+                evt.getPropertyName(), String.valueOf(evt.getNewValue())))
+            throw new PropertyVetoException(CommunicationsStub.getInstance().getError(), evt);
+        else {
+            if (evt.getPropertyName().equals(Constants.PROPERTY_NAME)) {
+                getLookup().lookup(LocalConfigurationVariable.class).setName((String)evt.getNewValue());
+                fireNameChange("", (String)evt.getNewValue());
+            }
+        }
     }
 }

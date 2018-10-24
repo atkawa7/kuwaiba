@@ -15,8 +15,13 @@
  */
 package org.kuwaiba.core.variables.nodes.properties;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyVetoException;
+import java.beans.VetoableChangeListener;
 import java.lang.reflect.InvocationTargetException;
 import org.inventory.communications.core.LocalConfigurationVariable;
+import org.inventory.core.services.api.notifications.NotificationUtil;
+import org.inventory.core.services.i18n.I18N;
 import org.openide.nodes.PropertySupport;
 
 /**
@@ -24,18 +29,32 @@ import org.openide.nodes.PropertySupport;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ConfigurationVariableNativeTypeProperty extends PropertySupport.Reflection {
+    /**
+     * Main listener for changes in this property
+     */
+    private VetoableChangeListener listenerNode;
     
-    public ConfigurationVariableNativeTypeProperty(LocalConfigurationVariable configVariable, Class type, String propertyName) throws NoSuchMethodException{
+    public ConfigurationVariableNativeTypeProperty(LocalConfigurationVariable configVariable, 
+            Class type, String propertyName, VetoableChangeListener listener) throws NoSuchMethodException{
         super(configVariable, type, propertyName);
+        listenerNode = listener;
     }
 
     @Override
     public Object getValue() throws IllegalAccessException, InvocationTargetException {
-        return ((LocalConfigurationVariable)instance).isMasked() ? "This property is masked" : super.getValue();
+        if (getName().equals("value")) //NOI18N
+            return ((LocalConfigurationVariable)instance).getMasked() ? "This value is masked" : super.getValue();
+        else
+            return super.getValue();
     }
 
     @Override
-    public boolean canRead(){
-        return !((LocalConfigurationVariable)instance).isMasked();
+    public void setValue(Object val) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        try {
+            listenerNode.vetoableChange(new PropertyChangeEvent(instance, getName(), getValue(), val));
+            super.setValue(val);
+        } catch(PropertyVetoException ex) {
+            NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, ex.getLocalizedMessage());
+        }
     }
 }

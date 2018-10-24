@@ -335,7 +335,7 @@ public class SyncActionsFrame extends JFrame {
         String newAttrs = "[";
         String oldAttrs = "[";
         for (String key : attributes.keySet()) {
-            if(LocalClassMetadata.getMappingFromType(key) == Constants.MAPPING_MANYTOONE &&
+            if(LocalClassMetadata.getMappingFromType(key, false) == Constants.MAPPING_MANYTOONE &&
                isNumeric(attributes.getString(key)))
             {
                 LocalClassMetadata objectMetadata = CommunicationsStub.getInstance().getObjectInfo(obj.getString("deviceClassName"), Long.valueOf(obj.getString("deviceId"))).getObjectMetadata();

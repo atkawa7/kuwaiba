@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="locked" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="mandatory" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
+ *         &lt;element name="multiple" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="noCopy" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="order" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0"/>
@@ -45,6 +46,7 @@ import javax.xml.bind.annotation.XmlType;
     "id",
     "locked",
     "mandatory",
+    "multiple",
     "name",
     "noCopy",
     "order",
@@ -61,6 +63,7 @@ public class RemoteAttributeMetadata {
     protected long id;
     protected Boolean locked;
     protected Boolean mandatory;
+    protected Boolean multiple;
     protected String name;
     protected Boolean noCopy;
     protected Integer order;
@@ -203,6 +206,30 @@ public class RemoteAttributeMetadata {
      */
     public void setMandatory(Boolean value) {
         this.mandatory = value;
+    }
+
+    /**
+     * Gets the value of the multiple property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link Boolean }
+     *     
+     */
+    public Boolean isMultiple() {
+        return multiple;
+    }
+
+    /**
+     * Sets the value of the multiple property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link Boolean }
+     *     
+     */
+    public void setMultiple(Boolean value) {
+        this.multiple = value;
     }
 
     /**

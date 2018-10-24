@@ -81,6 +81,13 @@ public class AttributeMetadataNode extends AbstractNode  {
                 I18N.gm("unique.description"), 
                 attribute.isUnique(),this));
         
+        generalPropertySet.put(new AttributeMetadataProperty(
+                classNode.getClassMetadata(), Constants.PROPERTY_MULTIPLE, 
+                Constants.PROPERTY_MULTIPLE, 
+                "Used to set an attribute as a multiple selection list type", 
+                attribute.isMultiple(), this));
+        
+        
         generalPropertySet.put(new AttributeMetadataProperty(classNode.getClassMetadata(), 
                 Constants.PROPERTY_VISIBLE,
                 Constants.PROPERTY_VISIBLE,
