@@ -20,6 +20,7 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.shared.ui.grid.HeightMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
@@ -96,11 +97,6 @@ public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidge
             "}");
         
         VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.addStyleName(title);
-        verticalLayout.setSizeFull();
-        verticalLayout.setSpacing(false);
-        verticalLayout.setMargin(false);
-                
         List<RemoteObject> spareObjects = getSpareObjects();
         
         if (spareObjects != null) {
@@ -148,14 +144,14 @@ public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidge
             buttonRenderer.setHtmlContentAllowed(true);
                         
             Grid<SpareBean> grid = new Grid();
-            grid.setWidth(95, Unit.PERCENTAGE);
-            grid.setHeight(80, Unit.PERCENTAGE);
+            grid.setWidth("100%");
+            grid.setHeightByRows(spareBeans.size());
             grid.setItems(spareBeans);
             grid.addColumn(SpareBean::getName).setCaption("Name").setId(columnName);
             grid.addColumn(SpareBean::getVendor).setCaption("Vendor").setId(columnVendor);
-            grid.addColumn(SpareBean::getState).setCaption("State").setId(columnState);
-            grid.addColumn(SpareBean::getPosition).setCaption("Position").setId(columnPosition);
-            grid.addColumn(SpareBean::getRackName).setCaption("Rack").setId(columnRack);
+            grid.addColumn(SpareBean::getState).setWidth(80).setCaption("State").setId(columnState);
+            grid.addColumn(SpareBean::getPosition).setWidth(80).setCaption("Position").setId(columnPosition);
+            grid.addColumn(SpareBean::getRackName).setWidth(120).setCaption("Rack").setId(columnRack);
             grid.addColumn(SpareBean::getRackViewButtonCaption, buttonRenderer).
                 setMinimumWidth(50f).
                 setMaximumWidth(50f).
@@ -167,8 +163,11 @@ public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidge
             TextField txtName = new TextField();
             TextField txtVendor = new TextField();
             TextField txtState = new TextField();
+            txtState.setWidth("40px");
             TextField txtPosition = new TextField();
+            txtPosition.setWidth("40px");
             TextField txtRack = new TextField();
+            txtRack.setWidth("60px");
             TextField txtWarehouse = new TextField();
             TextField txtBuilding = new TextField();
             TextField txtCity = new TextField();
