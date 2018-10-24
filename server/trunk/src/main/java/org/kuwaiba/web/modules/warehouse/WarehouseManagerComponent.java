@@ -47,9 +47,12 @@ public class WarehouseManagerComponent extends AbstractTopComponent {
 
         addComponent(mnuMain);
         addComponent(spareInventoryObjectsDashboardWidget);
+        setSpacing(false);
+        setMargin(false);
         setExpandRatio(mnuMain, 0.3f);
         setExpandRatio(spareInventoryObjectsDashboardWidget, 9.7f);
-        setSizeFull();
+        setId("outter");
+        //setSizeFull();
     }
 
     @Override
