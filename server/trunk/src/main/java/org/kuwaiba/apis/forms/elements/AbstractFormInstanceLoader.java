@@ -102,7 +102,7 @@ public abstract class AbstractFormInstanceLoader {
                 
                 value = reader.getElementText();//.getAttributeValue(null, Constants.Attribute.VALUE);
                 
-                if (value != null)
+                if (value != null && !value.isEmpty())
                     return LocalDate.parse(value);
             break;
             case Constants.Attribute.DataType.BOOLEAN:
