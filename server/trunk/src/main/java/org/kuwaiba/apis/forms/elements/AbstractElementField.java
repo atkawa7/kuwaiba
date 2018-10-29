@@ -77,7 +77,7 @@ public abstract class AbstractElementField extends AbstractElement {
             if (event.getNewValue() != null || event.getOldValue() != null) {
                 
                 if (Constants.Property.VALUE.equals(event.getPropertyName())) {
-                                        
+                    
                     setValue(event.getNewValue()); // TODO: rollback
                     
                     if (hasProperty(Constants.Function.VALIDATE, Constants.Property.VALUE)) {

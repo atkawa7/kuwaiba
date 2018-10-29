@@ -92,30 +92,38 @@ public abstract class AbstractFormInstanceLoader {
                     return getAttachment(fileName, filePath);
             break;
             case Constants.Attribute.DataType.STRING:
+                String value = reader.getAttributeValue(null, Constants.Attribute.VALUE);
                 
-                String value = reader.getElementText();//.getAttributeValue(null, Constants.Attribute.VALUE);
-                
+                if (value == null)
+                    value = reader.getElementText();//.getAttributeValue(null, Constants.Attribute.VALUE);
+                                
                 if (value != null)
                     return value;
             break;
             case Constants.Attribute.DataType.DATE:
+                value = reader.getAttributeValue(null, Constants.Attribute.VALUE);
                 
-                value = reader.getElementText();//.getAttributeValue(null, Constants.Attribute.VALUE);
+                if (value == null)
+                    value = reader.getElementText();//.getAttributeValue(null, Constants.Attribute.VALUE);
                 
                 if (value != null && !value.isEmpty())
                     return LocalDate.parse(value);
             break;
             case Constants.Attribute.DataType.BOOLEAN:
+                value = reader.getAttributeValue(null, Constants.Attribute.VALUE);
                 
-                value = reader.getElementText();//.getAttributeValue(null, Constants.Attribute.VALUE);
+                if (value == null)
+                    value = reader.getElementText();//.getAttributeValue(null, Constants.Attribute.VALUE);
                 
                 if (value != null)
                     return Boolean.valueOf(value);
             break;
             case Constants.Attribute.DataType.INTEGER:
+                value = reader.getAttributeValue(null, Constants.Attribute.VALUE);
                 
-                value = reader.getElementText();//.getAttributeValue(null, Constants.Attribute.VALUE);
-                
+                if (value == null)
+                    value = reader.getElementText();//.getAttributeValue(null, Constants.Attribute.VALUE);
+                                
                 if (value != null)
                     return Integer.valueOf(value);
             break;

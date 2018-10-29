@@ -207,7 +207,8 @@ public class ProcessInstanceBean {
     }
     
     public String getDeleteButtonCaption() {
-        return deleteEnable() ? "Delete" : "";
+        //return deleteEnable() ? "Delete" : "";
+        return "Delete";
     }
     
     public String getEditButtonCaption() {
