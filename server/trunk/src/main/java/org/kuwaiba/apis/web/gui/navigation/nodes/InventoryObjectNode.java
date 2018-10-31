@@ -44,7 +44,7 @@ public class InventoryObjectNode extends AbstractNode<RemoteObjectLight>{
     public static List<AbstractNode> asNodeList(List<RemoteObjectLight> inventoryObjects) {
         List<AbstractNode> res = new ArrayList<>();
         
-        inventoryObjects.stream().forEach((inventoryObject) -> { 
+        inventoryObjects.stream().forEach(inventoryObject -> { 
                 res.add(new InventoryObjectNode(inventoryObject));
         });
         

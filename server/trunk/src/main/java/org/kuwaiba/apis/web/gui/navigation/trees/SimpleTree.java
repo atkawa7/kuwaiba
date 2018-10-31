@@ -62,6 +62,32 @@ public class SimpleTree extends Tree<AbstractNode> {
     }
     
     /**
+     *  Constructor for trees with only one root node
+     * @param roots The root nodes of the tree
+     * @param childrenProvider The object that will provide the children of an expanded node
+     * @param iconGenerator To generate the icons
+     */
+    public SimpleTree(ChildrenProvider childrenProvider, IconGenerator<AbstractNode> iconGenerator, 
+            List<AbstractNode> roots) {
+        InventoryObjectTreeData treeData = new InventoryObjectTreeData(childrenProvider);
+        treeData.addRootItems(roots);
+        
+        //Enable the tree as a drag source
+        TreeGridDragSource<AbstractNode> dragSource = new TreeGridDragSource<>((TreeGrid<AbstractNode>)this.getCompositionRoot());
+        dragSource.setEffectAllowed(EffectAllowed.MOVE);
+        dragSource.setDragDataGenerator(RemoteObjectLight.DATA_TYPE, new SerializableFunction<AbstractNode, String>() {
+            @Override
+            public String apply(AbstractNode t) { //Now we serialize the object to be transferred
+                return ((RemoteObjectLight)t.getObject()).getId() + "~a~" + ((RemoteObjectLight)t.getObject()).getClassName() + "~a~" + ((RemoteObjectLight)t.getObject()).getName();
+            }
+        });
+        
+        setDataProvider(new TreeDataProvider(treeData));
+        setSizeFull();
+        setItemIconGenerator(iconGenerator);
+    }
+    
+    /**
      * Resets the tree to the roots provided 
      * @param newRoots The roots to replace the current one
      */

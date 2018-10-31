@@ -653,7 +653,7 @@ public class EntPhysicalSynchronizer {
                         newObj = SyncUtil.joBuilder(newObj).add("deviceParentId", Long.toString(oldObj.getId())).build();
                         if(newObj.getString("className").contains("Port"))
                             editNewPortWithDeviceParentId(newObj);
-                        branch.set(oldBranch.size(), newObj);
+                        branch.set(oldBranch.size(), newObj);  
                     }
                     //we remove the part of the branch that already exists, and update the attributes if is necessary
                     int matchesToDelete = 0;

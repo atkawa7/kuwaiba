@@ -22,14 +22,19 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  */
 public class EndpointBean {
     private RemoteObjectLight endpointA;
+    private RemoteObjectLight link;
     private RemoteObjectLight endpointB;
     
-    public EndpointBean() {
-                
-    }
+    public EndpointBean() { }
     
     public EndpointBean(RemoteObjectLight endpointA, RemoteObjectLight endpointB) {
         this.endpointA = endpointA;                
+        this.endpointB = endpointB;
+    }
+
+    public EndpointBean(RemoteObjectLight endpointA, RemoteObjectLight link, RemoteObjectLight endpointB) {
+        this.endpointA = endpointA;
+        this.link = link;
         this.endpointB = endpointB;
     }
     
@@ -48,4 +53,13 @@ public class EndpointBean {
     public void setEndpointB(RemoteObjectLight endpointB) {
         this.endpointB = endpointB;
     }
+
+    public RemoteObjectLight getLink() {
+        return link;
+    }
+
+    public void setLink(RemoteObjectLight link) {
+        this.link = link;
+    }
+       
 }

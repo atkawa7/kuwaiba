@@ -346,9 +346,7 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 ComponentConnectionSource componentConnectionSource = new ComponentConnectionSource(selectedDevices, wsBean);
-////                ComponentConnectionTarget componentConnectionTarget = new ComponentConnectionTarget(getWebserviceBean());
-
-                ComponentConnectionCreator componentConnectionCreator = new ComponentConnectionCreator(componentConnectionSource, wsBean/*, componentConnectionTarget*/);
+                ComponentConnectionCreator componentConnectionCreator = new ComponentConnectionCreator(componentConnectionSource, wsBean);
 
                 Window window = new Window();
                 window.setContent(componentConnectionCreator);

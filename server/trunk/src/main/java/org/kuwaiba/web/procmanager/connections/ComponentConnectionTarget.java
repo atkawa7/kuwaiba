@@ -42,6 +42,7 @@ import org.kuwaiba.apis.web.gui.navigation.nodes.InventoryObjectNode;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.services.persistence.util.Constants;
+
 /**
  *
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
@@ -183,4 +184,9 @@ public class ComponentConnectionTarget extends VerticalLayout {
         setExpandRatio(lytFilter, 0.5f);
         setSizeFull();
     }    
+
+    public SimpleTree getTree() {
+        return tree;
+    }
+
 }
