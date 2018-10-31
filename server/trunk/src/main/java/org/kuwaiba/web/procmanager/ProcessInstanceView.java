@@ -466,11 +466,9 @@ public class ProcessInstanceView extends DynamicComponent {
                                 
                 if (currentActivity.isIdling()) {
                     CheckBox chkIdleActivity = new CheckBox("Complete Activity Confirmation");
+                    chkIdleActivity.setValue(!idleActivity);
                     
                     if (!debugMode) {
-                        
-                        chkIdleActivity.setValue(!idleActivity);
-
                         chkIdleActivity.setEnabled(idleActivity);
                         btnSave.setEnabled(idleActivity);
                     }

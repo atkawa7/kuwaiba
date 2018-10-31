@@ -660,6 +660,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         "Class %s could not be found. Contact your administrator.", className));
             clmt = Util.createClassMetadataFromNode(node);
             cm.putClass(clmt);
+            tx.success();
         }
         return clmt;
     }
