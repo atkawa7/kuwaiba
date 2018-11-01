@@ -191,10 +191,10 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             }//end else not rootNode
             
             buildClassCache();
-            tx.success();
             
             getSubClassesLight(classDefinition.getName(), true, false);
             getSubClassesLightNoRecursive(classDefinition.getName(), true, false);
+            tx.success();
             return classNode.getId();
         }
     }
@@ -536,6 +536,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     
                 classManagerResultList.add(classMetadata);
             }
+            tx.success();
         }
         cm.putSubclasses(className, subclasses);
         
@@ -641,6 +642,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         "The class with id %s could not be found. Contact your administrator.", classId));
             
             clmt = Util.createClassMetadataFromNode(node);
+            tx.success();
         } 
         return clmt;
     }
