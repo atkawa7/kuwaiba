@@ -20,7 +20,6 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.shared.ui.grid.HeightMode;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
@@ -39,36 +38,40 @@ import java.util.List;
 import java.util.Properties;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboard;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
-import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.procmanager.MiniAppRackView;
 
 /**
- * A widget that displays spare inventory objects and allows see its rack view
+ * A widget that displays spare and reserved inventory objects and allows see its rack view
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
-public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidget {
+public class SpareAndReservedInventoryObjectsDashboardWidget extends AbstractDashboardWidget {
     private final WebserviceBean webserviceBean;
     
-    public SpareInventoryObjectsDashboardWidget(WebserviceBean webserviceBean) {
-        super("Spare Inventory Objects");
-        this.webserviceBean = webserviceBean;
+    private RemoteObjectLight selectedObject;
+    
+    public SpareAndReservedInventoryObjectsDashboardWidget(WebserviceBean webserviceBean) {
+        super("Spare and Reserved Inventory Objects");
+        this.webserviceBean = webserviceBean;        
+        selectedObject = null;
         this.createContent();
     }
 
-    public SpareInventoryObjectsDashboardWidget(AbstractDashboard rootComponent, WebserviceBean webserviceBean) {
-        super("Spare Inventory Objects", rootComponent);
+    public SpareAndReservedInventoryObjectsDashboardWidget(AbstractDashboard parentDashboard, RemoteObjectLight selectedObject, WebserviceBean webserviceBean) {
+        super(String.format("Spare and Reserved Objects of %s", selectedObject), parentDashboard);
         this.webserviceBean = webserviceBean;
+        this.selectedObject = selectedObject;
         this.createCover();
     }
     
     @Override
     public void createCover() { 
         VerticalLayout lytViewsWidgetCover = new VerticalLayout();
-        Label lblText = new Label(title);
+        Label lblText = new Label("Spare and Reserved Objects");
         lblText.setStyleName("text-bottomright"); //NOI18N
         lytViewsWidgetCover.addLayoutClickListener((event) -> {
             if (event.getButton() == MouseEventDetails.MouseButton.LEFT) {
@@ -97,14 +100,14 @@ public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidge
             "}");
         
         VerticalLayout verticalLayout = new VerticalLayout();
-        List<RemoteObject> spareObjects = getSpareObjects();
+        List<RemoteObjectLight> spareAndReservedObjects = getSpareAndReservedObjects();
         
-        if (spareObjects != null) {
+        if (spareAndReservedObjects != null && !spareAndReservedObjects.isEmpty()) {
             
-            List<SpareBean> spareBeans = new ArrayList();
+            List<ObjectBean> objectBeans = new ArrayList();
             
-            for (RemoteObject spareObject : spareObjects)
-                spareBeans.add(new SpareBean(spareObject, webserviceBean));
+            for (RemoteObjectLight spareAndReservedObject : spareAndReservedObjects)
+                objectBeans.add(new ObjectBean(spareAndReservedObject, webserviceBean));
             
             final String columnName = "name"; //NOI18N
             final String columnVendor = "vendor"; //NOI18N
@@ -112,14 +115,16 @@ public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidge
             final String columnPosition = "position"; //NOI18N
             final String columnRack = "rack"; //NOI18N
             final String columnWarehouse = "warehouse"; //NOI18N
+            final String columnRoom = "room"; //NOI18N
             final String columnBuilding = "building"; //NOI18N
             final String columnCity = "city"; //NOI18N
+            final String columnCountry = "country"; //NOI18N
             
-            ButtonRenderer buttonRenderer = new ButtonRenderer(new RendererClickListener<SpareBean>() {
+            ButtonRenderer buttonRenderer = new ButtonRenderer(new RendererClickListener<ObjectBean>() {
 
                 @Override
-                public void click(ClickableRenderer.RendererClickEvent<SpareBean> event) {
-                    SpareBean processInstanceBean = (SpareBean) event.getItem();
+                public void click(ClickableRenderer.RendererClickEvent<ObjectBean> event) {
+                    ObjectBean processInstanceBean = (ObjectBean) event.getItem();
                     
                     try {
                         Properties inputParameters = new Properties();
@@ -143,34 +148,37 @@ public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidge
             });
             buttonRenderer.setHtmlContentAllowed(true);
                         
-            Grid<SpareBean> grid = new Grid();
+            Grid<ObjectBean> grid = new Grid();
             grid.setWidth("100%");
-            grid.setHeightByRows(spareBeans.size());
-            grid.setItems(spareBeans);
-            grid.addColumn(SpareBean::getName).setCaption("Name").setId(columnName);
-            grid.addColumn(SpareBean::getVendor).setCaption("Vendor").setId(columnVendor);
-            grid.addColumn(SpareBean::getState).setWidth(80).setCaption("State").setId(columnState);
-            grid.addColumn(SpareBean::getPosition).setWidth(80).setCaption("Position").setId(columnPosition);
-            grid.addColumn(SpareBean::getRackName).setWidth(120).setCaption("Rack").setId(columnRack);
-            grid.addColumn(SpareBean::getRackViewButtonCaption, buttonRenderer).
+            grid.setHeightByRows(objectBeans.size());
+            grid.setItems(objectBeans);
+            grid.addColumn(ObjectBean::getName).setCaption("Name").setId(columnName);
+            grid.addColumn(ObjectBean::getVendor).setCaption("Vendor").setId(columnVendor);
+            grid.addColumn(ObjectBean::getState).setWidth(80).setCaption("State").setId(columnState);
+            grid.addColumn(ObjectBean::getPosition).setWidth(80).setCaption("Position").setId(columnPosition);
+            grid.addColumn(ObjectBean::getRackName).setWidth(120).setCaption("Rack").setId(columnRack);
+            grid.addColumn(ObjectBean::getRackViewButtonCaption, buttonRenderer).
                 setMinimumWidth(50f).
                 setMaximumWidth(50f).
                 setDescriptionGenerator(e -> "<b>Rack View</b>", ContentMode.HTML);
-            grid.addColumn(SpareBean::getWarehouseName).setCaption("Warehouse").setId(columnWarehouse);
-            grid.addColumn(SpareBean::getBuildingName).setCaption("Building").setId(columnBuilding);
-            grid.addColumn(SpareBean::getCityName).setCaption("City").setId(columnCity);
+            grid.addColumn(ObjectBean::getWarehouseName).setCaption("Warehouse").setId(columnWarehouse);
+            grid.addColumn(ObjectBean::getRoomName).setCaption("Room").setId(columnRoom);
+            grid.addColumn(ObjectBean::getBuildingName).setCaption("Building").setId(columnBuilding);
+            grid.addColumn(ObjectBean::getCityName).setCaption("City").setId(columnCity);
+            grid.addColumn(ObjectBean::getCountryName).setCaption("Country").setId(columnCountry);
             
             TextField txtName = new TextField();
             TextField txtVendor = new TextField();
             TextField txtState = new TextField();
-            txtState.setWidth("40px");
             TextField txtPosition = new TextField();
             txtPosition.setWidth("40px");
             TextField txtRack = new TextField();
             txtRack.setWidth("60px");
             TextField txtWarehouse = new TextField();
+            TextField txtRoom = new TextField();
             TextField txtBuilding = new TextField();
             TextField txtCity = new TextField();
+            TextField txtCountry = new TextField();
             
             HeaderRow headerRow = grid.appendHeaderRow();
             
@@ -178,26 +186,29 @@ public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidge
             headerRow.getCell(columnVendor).setComponent(txtVendor);
             headerRow.getCell(columnState).setComponent(txtState);
             headerRow.getCell(columnPosition).setComponent(txtPosition);
-            headerRow.getCell(columnRack).setComponent(txtRack);
+            headerRow.getCell(columnRack).setComponent(txtRack);            
             headerRow.getCell(columnWarehouse).setComponent(txtWarehouse);
+            headerRow.getCell(columnRoom).setComponent(txtRoom);
             headerRow.getCell(columnBuilding).setComponent(txtBuilding);
             headerRow.getCell(columnCity).setComponent(txtCity);
+            headerRow.getCell(columnCountry).setComponent(txtCountry);
             
             ValueChangeListener<String> valueChangeListener = new ValueChangeListener<String>() {
                 @Override
                 public void valueChange(HasValue.ValueChangeEvent<String> event) {
 
-                    if (spareBeans != null) {
-                        List<SpareBean> filteredItems = getSpareBeans(
-                            spareBeans.iterator(), 
+                    if (objectBeans != null) {
+                        List<ObjectBean> filteredItems = getSpareBeans(objectBeans.iterator(), 
                             txtName.getValue(), 
                             txtVendor.getValue(), 
                             txtState.getValue(), 
                             txtPosition.getValue(), 
                             txtRack.getValue(), 
-                            txtWarehouse.getValue(), 
+                            txtWarehouse.getValue(),
+                            txtRoom.getValue(),
                             txtBuilding.getValue(), 
-                            txtCity.getValue());
+                            txtCity.getValue(),
+                            txtCountry.getValue());
 
                         grid.setItems(filteredItems);
                     }
@@ -210,8 +221,10 @@ public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidge
             txtPosition.addValueChangeListener(valueChangeListener);
             txtRack.addValueChangeListener(valueChangeListener);
             txtWarehouse.addValueChangeListener(valueChangeListener);
+            txtRoom.addValueChangeListener(valueChangeListener);
             txtBuilding.addValueChangeListener(valueChangeListener);
             txtCity.addValueChangeListener(valueChangeListener);
+            txtCountry.addValueChangeListener(valueChangeListener);
                         
             verticalLayout.addComponent(grid);
             verticalLayout.setComponentAlignment(grid, Alignment.MIDDLE_CENTER);
@@ -222,12 +235,22 @@ public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidge
         this.contentComponent = verticalLayout;
     }
     
-    private List<SpareBean> getSpareBeans(Iterator<SpareBean> iterator, String filterName, String filterVendor,String filterState,String filterPosition, String filterRack, String filterWarehouse, String filterBuilding,String filterCity) {                
+    private List<ObjectBean> getSpareBeans(Iterator<ObjectBean> iterator, 
+        String filterName, 
+        String filterVendor, 
+        String filterState, 
+        String filterPosition, 
+        String filterRack, 
+        String filterWarehouse, 
+        String filterRoom,
+        String filterBuilding, 
+        String filterCity, 
+        String filterCountry) {                
         
-        List<SpareBean> filteredItems = new ArrayList();
+        List<ObjectBean> filteredItems = new ArrayList();
 
         while (iterator.hasNext()) {
-            SpareBean spereBean = iterator.next();
+            ObjectBean spereBean = iterator.next();
             
             boolean flagName = spereBean.getName().toUpperCase().contains(filterName != null ? filterName.toUpperCase() : "");
             boolean flagVendor = spereBean.getVendor().toUpperCase().contains(filterVendor != null ? filterVendor.toUpperCase() : "");
@@ -235,17 +258,20 @@ public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidge
             boolean flagPosition = spereBean.getPosition().toUpperCase().contains(filterPosition != null ? filterPosition.toUpperCase() : "");
             boolean flagRack = spereBean.getRackName().toUpperCase().contains(filterRack != null ? filterRack.toUpperCase() : "");
             boolean flagWarehouse = spereBean.getWarehouseName().toUpperCase().contains(filterWarehouse != null ? filterWarehouse.toUpperCase() : "");
+            boolean flagRoom = spereBean.getRoomName().toUpperCase().contains(filterRoom != null ? filterRoom.toUpperCase() : "");
             boolean flagBuilding = spereBean.getBuildingName().toUpperCase().contains(filterBuilding != null ? filterBuilding.toUpperCase() : "");
             boolean flagCity = spereBean.getCityName().toUpperCase().contains(filterCity != null ? filterCity.toUpperCase() : "");
+            boolean flagCountry = spereBean.getCountryName().toUpperCase().contains(filterCountry != null ? filterCountry.toUpperCase() : "");
             
-            if (flagName && flagVendor && flagState && flagPosition && flagRack && flagWarehouse && flagBuilding && flagCity)
+            if (flagName && flagVendor && flagState && flagPosition && flagRack && flagWarehouse && flagRoom && flagBuilding && flagCity && flagCountry)
                 filteredItems.add(spereBean);
         }
         return filteredItems;
     }
         
-    private List<RemoteObject> getSpareObjects() {
+    private List<RemoteObjectLight> getSpareAndReservedObjects() {
         RemoteObjectLight stateSpare = null;
+        RemoteObjectLight stateReserved = null;
         try {
             List<RemoteObjectLight> operationalStates = webserviceBean.getListTypeItems(
                     "OperationalState", //NOI18N
@@ -257,38 +283,103 @@ public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidge
                 if ("Spare".equals(operationalState.getName())) { //NOI18N
                     stateSpare = operationalState;                                                                               
                 }
+                if ("Reserved".equals(operationalState.getName())) { //NOI18N
+                    stateReserved = operationalState;                                                                               
+                }
             }
         } catch (ServerSideException ex) {
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
         }
         
-        if (stateSpare != null) {
-            
-            try {
-                List<RemoteObject> spareObjects = webserviceBean.getObjectsWithFilter(
-                        "InventoryObject", //NOI18N
-                        "state", //NOI18N
-                        String.valueOf(stateSpare.getId()),
-                        Page.getCurrent().getWebBrowser().getAddress(),
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+        if (stateSpare != null && stateReserved != null) {
+            if (selectedObject != null) {
+                List<RemoteObjectLight> result = new ArrayList();
                 
-                return spareObjects;
-            } catch (ServerSideException ex) {
-                Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+                List<RemoteObjectLight> children = getObjectChildrenRecursive(selectedObject);
+                
+                for (RemoteObjectLight child : children) {
+                    try {
+                        String attributeValue = webserviceBean.getAttributeValueAsString(
+                            child.getClassName(),
+                            child.getId(), "state", //NOI18N
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+                        
+                        if (attributeValue != null) {
+                            
+                            if (attributeValue.equals(stateSpare.getName()) || 
+                                attributeValue.equals(stateReserved.getName())) {
+                                
+                                result.add(child);
+                            }
+                        }
+                    } catch (ServerSideException ex) {
+                        Notifications.showError(ex.getMessage());
+                    }
+                }
+                return result;
+            }
+            else {
+                try {
+                    List<RemoteObjectLight> spareObjects = webserviceBean.getObjectsWithFilterLight(
+                            "InventoryObject", //NOI18N
+                            "state", //NOI18N
+                            String.valueOf(stateSpare.getId()),
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+
+                    List<RemoteObjectLight> reservedObjects = webserviceBean.getObjectsWithFilterLight(
+                            "InventoryObject", //NOI18N
+                            "state", //NOI18N
+                            String.valueOf(stateReserved.getId()),
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+
+                    spareObjects.addAll(reservedObjects);
+
+                    return spareObjects;
+                } catch (ServerSideException ex) {
+                    Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+                }
             }
         }
         return null;
     }
     
-    private class SpareBean {
+    private List<RemoteObjectLight> getObjectChildrenRecursive(RemoteObjectLight parent) {
+        List<RemoteObjectLight> result = new ArrayList();
+        
+        if (parent != null) {
+            try {
+                List<RemoteObjectLight> children = webserviceBean.getObjectChildren(parent.getClassName(), parent.getId(), -1,
+                        Page.getCurrent().getWebBrowser().getAddress(),
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                
+                if (children != null && !children.isEmpty()) {
+                    
+                    result.addAll(children);
+
+                    for (RemoteObjectLight child : children)
+                        result.addAll(getObjectChildrenRecursive(child));
+                }
+            } catch (ServerSideException ex) {
+                Notifications.showError(ex.getMessage());
+            }
+        }
+        return result;                                                        
+    }
+    
+    private class ObjectBean {
         private final WebserviceBean webserviceBean;
-        private final RemoteObject spareObject;
+        private final RemoteObjectLight spareObject;
         private RemoteObjectLight rackObject;
         private RemoteObjectLight warehouseObject;
+        private RemoteObjectLight roomObject;
         private RemoteObjectLight buildingObject;
         private RemoteObjectLight cityObject;
+        private RemoteObjectLight countryObject;
                         
-        public SpareBean(RemoteObject spareObject, WebserviceBean webserviceBean) {
+        public ObjectBean(RemoteObjectLight spareObject, WebserviceBean webserviceBean) {
             this.spareObject = spareObject;
             this.webserviceBean = webserviceBean;
             
@@ -298,7 +389,7 @@ public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidge
                     List<RemoteObjectLight> parents = webserviceBean.getParentsUntilFirstOfClass(
                             spareObject.getClassName(),
                             spareObject.getId(),
-                            "City", //NOI18N
+                            "Country", //NOI18N
                             Page.getCurrent().getWebBrowser().getAddress(),
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
 
@@ -308,12 +399,18 @@ public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidge
                             case "Rack": //NOI18N
                                 rackObject = parent;
                             break;
+                            case "Room": //NOI18N
+                                roomObject = parent;                                
+                            break;
                             case "Building": //NOI18N
                                 buildingObject = parent;
                             break;
                             case "City": //NOI18N
                                 cityObject = parent;                     
-                            break;                            
+                            break;    
+                            case "Country": //NOI18N
+                                countryObject = parent;
+                            break;
                         }
                     }
                 } catch (Exception exception) {
@@ -338,7 +435,7 @@ public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidge
                             List<RemoteObjectLight> parents = webserviceBean.getParentsUntilFirstOfClass(
                                     physicalNode.getClassName(),
                                     physicalNode.getId(),
-                                    "City", //NOI18N
+                                    "Country", //NOI18N
                                     Page.getCurrent().getWebBrowser().getAddress(),
                                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
                             // A Building can be a physical Node then this is include to get a building
@@ -350,11 +447,17 @@ public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidge
                                     case "Rack": //NOI18N
                                         rackObject = parent;
                                     break;
+                                    case "Room": //NOI18N
+                                        roomObject = parent;                                
+                                    break;
                                     case "Building": //NOI18N
                                         buildingObject = parent;
                                     break;
                                     case "City": //NOI18N
                                         cityObject = parent;                     
+                                    break;
+                                    case "Country": //NOI18N
+                                        countryObject = parent;
                                     break;
                                 }
                             }
@@ -435,12 +538,20 @@ public class SpareInventoryObjectsDashboardWidget extends AbstractDashboardWidge
             return warehouseObject != null && warehouseObject.getName() != null ? warehouseObject.getName() : "";
         }
         
+        public String getRoomName() {
+            return roomObject != null && roomObject.getName() != null ? roomObject.getName() : "";
+        }
+        
         public String getBuildingName() {
             return buildingObject != null && buildingObject.getName() != null ? buildingObject.getName() : "";
         }
         
         public String getCityName() {
             return cityObject != null && cityObject.getName() != null ? cityObject.getName() : "";
+        }
+        
+        public String getCountryName() {
+             return countryObject != null && countryObject.getName() != null ? countryObject.getName() : "";
         }
         
         public String getRackViewButtonCaption() {

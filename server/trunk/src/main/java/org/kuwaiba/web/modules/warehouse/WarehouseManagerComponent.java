@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import org.kuwaiba.apis.web.gui.modules.AbstractTopComponent;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.web.IndexUI;
-import org.kuwaiba.web.modules.warehouse.dashboard.SpareInventoryObjectsDashboardWidget;
+import org.kuwaiba.web.modules.warehouse.dashboard.SpareAndReservedInventoryObjectsDashboardWidget;
 
 /**
  * Main content of the Warehouse Manager Module
@@ -41,7 +41,7 @@ public class WarehouseManagerComponent extends AbstractTopComponent {
         setStyleName("dashboards");
         MenuBar mnuMain = ((IndexUI)getUI()).getMainMenu();
         //WarehouseManagerDashboard warehouseManagerDashboard = new WarehouseManagerDashboard(webserviceBean);
-        SpareInventoryObjectsDashboardWidget spareInventoryObjectsDashboardWidget = new SpareInventoryObjectsDashboardWidget(webserviceBean);
+        SpareAndReservedInventoryObjectsDashboardWidget spareInventoryObjectsDashboardWidget = new SpareAndReservedInventoryObjectsDashboardWidget(webserviceBean);
 
         addComponent(mnuMain);
         addComponent(spareInventoryObjectsDashboardWidget);

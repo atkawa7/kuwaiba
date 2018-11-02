@@ -45,7 +45,9 @@ public class ShelfDashboardLayout extends VerticalLayout {
         pnlMain.setLocked(true);
         pnlMain.setSizeFull();
         lytRightPanel = new VerticalLayout();
-        lytRightPanel.setSizeFull();
+        lytRightPanel.setWidth(100, Unit.PERCENTAGE);
+        lytRightPanel.setHeightUndefined();
+        
         pnlMain.setSecondComponent(lytRightPanel);
         Label lblTitle = new Label(String.format("<b>%s</b><h2>%s</h2>", subtitle, title), ContentMode.HTML);
         addComponents(lblTitle, pnlMain);

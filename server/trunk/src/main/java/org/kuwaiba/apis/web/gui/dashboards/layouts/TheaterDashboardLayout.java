@@ -17,7 +17,9 @@ package org.kuwaiba.apis.web.gui.dashboards.layouts;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.VerticalSplitPanel;
 import org.kuwaiba.apis.web.gui.dashboards.AbstractDashboardWidget;
 
 /**
@@ -44,13 +46,20 @@ public class TheaterDashboardLayout extends VerticalLayout {
     public TheaterDashboardLayout(int lowLevelColumns, int lowLevelRows) {
         this.lytScreen = new HorizontalLayout();
         this.lytScreen.setSizeFull();
+        
         this.lytChairs = new GridLayout(lowLevelColumns, lowLevelRows);
-        this.lytChairs.setSizeFull();
+        this.lytChairs.setWidth(100, Unit.PERCENTAGE);
+        this.lytChairs.setHeightUndefined();
         this.lytChairs.setSpacing(true);
-        this.addComponents(this.lytScreen, this.lytChairs);
+        
+        VerticalSplitPanel verticalSplitPanel = new VerticalSplitPanel();
+        verticalSplitPanel.setSplitPosition(50, Unit.PERCENTAGE);
+        verticalSplitPanel.setFirstComponent(this.lytScreen);
+        verticalSplitPanel.setSecondComponent(this.lytChairs);
+        
         this.setSizeFull();
-        this.setExpandRatio(this.lytScreen, 5);
-        this.setExpandRatio(this.lytChairs, 5);
+        this.addComponents(verticalSplitPanel);
+        this.setExpandRatio(verticalSplitPanel, 5);
     }
     
     /**
