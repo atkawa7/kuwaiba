@@ -74,12 +74,13 @@ public class MessageBox {
             }
         });
         gridLayout.addComponent(message, 0, 0, 1, 0);
-        gridLayout.addComponent(btnNo, 0, 1);
-        gridLayout.addComponent(btnYes, 1, 1);
-                
+        gridLayout.addComponent(btnYes, 0, 1);
+        gridLayout.addComponent(btnNo, 1, 1);
+        
+                        
         gridLayout.setComponentAlignment(message, Alignment.MIDDLE_CENTER);
-        gridLayout.setComponentAlignment(btnNo, Alignment.MIDDLE_RIGHT);
-        gridLayout.setComponentAlignment(btnYes, Alignment.MIDDLE_LEFT);
+        gridLayout.setComponentAlignment(btnYes, Alignment.MIDDLE_RIGHT);
+        gridLayout.setComponentAlignment(btnNo, Alignment.MIDDLE_LEFT);
         
         window.setModal(true);
         window.center();

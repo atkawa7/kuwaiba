@@ -385,7 +385,7 @@ public class ProcessInstanceView extends DynamicComponent {
                 }
             }
             
-            if (currentActivity.isIdling() || interruptedActivity) {
+            if (artifactDefinition.isPrintable() || currentActivity.isIdling() || interruptedActivity) {
                 VerticalLayout artifactPanel = new VerticalLayout();
                 artifactPanel.setSizeFull();
                                 
@@ -512,11 +512,21 @@ public class ProcessInstanceView extends DynamicComponent {
     public void initView() {
         VerticalLayout wrapper = new VerticalLayout();
         wrapper.setStyleName("activitylist");
-        wrapper.setHeight("100%");
+        wrapper.setSizeFull();
         
         activitiesLayout = new VerticalLayout();
         activitiesLayout.setSpacing(false);
-        wrapper.addComponent(activitiesLayout);
+        
+        Panel panel = new Panel();
+        panel.setStyleName("activitylist");
+        panel.setSizeFull();        
+        wrapper.addComponent(panel);
+        wrapper.setExpandRatio(panel, 1);
+        
+        activitiesLayout.setWidth(100, Unit.PERCENTAGE);
+        activitiesLayout.setHeightUndefined();
+        
+        panel.setContent(activitiesLayout);
         
         updateActivities();
         setComponentLeft(wrapper);
