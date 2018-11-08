@@ -26,9 +26,9 @@ import java.util.List;
  */
 public class FormStructure {
     private List<Component> physicalPartA;
-    private Component odfsA;
+    private List<Component> odfsA;
     private List<Component> physicalPartB;
-    private Component odfsB;
+    private List<Component> odfsB;
     private Component logicalPartA;
     private Component logicalPartB;
     private List<Component> logicalConnctions;
@@ -55,19 +55,19 @@ public class FormStructure {
         this.physicalPartB = physicalPartB;
     }
 
-    public Component getOdfsA() {
+    public List<Component> getOdfsA() {
         return odfsA;
     }
 
-    public void setOdfsA(Component odfsA) {
+    public void setOdfsA(List<Component> odfsA) {
         this.odfsA = odfsA;
     }
 
-    public Component getOdfsB() {
+    public List<Component> getOdfsB() {
         return odfsB;
     }
 
-    public void setOdfsB(Component odfsB) {
+    public void setOdfsB(List<Component> odfsB) {
         this.odfsB = odfsB;
     }
 

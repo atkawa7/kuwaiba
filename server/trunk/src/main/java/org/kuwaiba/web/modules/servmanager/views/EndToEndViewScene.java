@@ -125,7 +125,7 @@ public class EndToEndViewScene extends AbstractScene {
                                 if(relationShipName.toLowerCase().contains("endpoint")){
                                     RemoteObjectLightList get = relatedObjects.get(i);
                                     RemoteObjectLight port = get.getList().get(0);
-                                    if(port.getClassName().toLowerCase().contains("port")){
+                                    if(port.getClassName().toLowerCase().contains("port") || port.getClassName().equals("Pseudowire")){
                                         List<RemoteObjectLight> parentsUntilFirstOfClass = 
                                                 wsBean.getParentsUntilFirstOfClass(port.getClassName(), port.getId(), 
                                                         device.getClassName(), Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());

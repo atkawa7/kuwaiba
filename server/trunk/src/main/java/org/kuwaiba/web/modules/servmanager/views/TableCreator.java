@@ -92,7 +92,6 @@ public class TableCreator {
     private Component createTitle(String text, int type){
         HorizontalLayout lytTitle = new HorizontalLayout(new Label(text));
         lytTitle.addStyleName("device-title");
-        lytTitle.addStyleName("device-title");
         switch(type){
             case ROUTER:
                 lytTitle.addStyleName("router");
@@ -199,11 +198,14 @@ public class TableCreator {
                 Page.getCurrent().getWebBrowser().getAddress(),
                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
         //Card
-        List<RemoteObjectLight> parents = wsBean.getParentsUntilFirstOfClass(port.getClassName(), port.getId(), "GenericBoard", 
-                Page.getCurrent().getWebBrowser().getAddress(),
-                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-        
-        String card = parents.get(parents.size() -1).getName();
+        String card = "";
+        if(!port.getClassName().equals("Pseudowire")){
+            List<RemoteObjectLight> parents = wsBean.getParentsUntilFirstOfClass(port.getClassName(), port.getId(), "GenericBoard", 
+                    Page.getCurrent().getWebBrowser().getAddress(),
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+
+            card = parents.get(parents.size() -1).getName();
+        }
         
         String mmr = wsBean.getAttributeValueAsString(port.getClassName(), port.getId(), "meetmeroom", ipAddress, sessionId);
         String rmmr = wsBean.getAttributeValueAsString(port.getClassName(), port.getId(), "remotemeetmeroom", ipAddress, sessionId);
@@ -684,8 +686,8 @@ public class TableCreator {
      * @throws org.kuwaiba.exceptions.ServerSideException
      */
     public Component createSwitch(RemoteObjectLight objLight, RemoteObjectLight port) throws ServerSideException{
-        
-         RemoteObject switch_ = wsBean.getObject(objLight.getClassName(), objLight.getId(),
+
+        RemoteObject switch_ = wsBean.getObject(objLight.getClassName(), objLight.getId(),
                 Page.getCurrent().getWebBrowser().getAddress(),
                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
         

@@ -123,6 +123,8 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
             if (!serviceResources.isEmpty()) {
                 for (RemoteObjectLight serviceResource : serviceResources) {
                     FormStructure tempForm = new FormStructure();
+                    List<Component> listTempODFsA = new ArrayList<>();
+                    List<Component> listTempODFsB = new ArrayList<>();
                     boolean isSideAPeering = false;
                     boolean isSideBPeering = false;
                     if (wsBean.isSubclassOf(serviceResource.getClassName(), "GenericLogicalConnection", ipAddress, sessionId)) {
@@ -232,7 +234,7 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
 
                                 if(aSidePhysicalEquipment != null){
                                     if(aSidePhysicalEquipment.getClassName().equals("ODF"))
-                                        tempForm.setOdfsA(tableCreator.createODF(aSidePhysicalEquipment, nextPhysicalHop));
+                                        listTempODFsA.add(tableCreator.createODF(aSidePhysicalEquipment, nextPhysicalHop));
                                     else
                                         tempForm.getPhysicalPartA().add(createDeviceTable(aSidePhysicalEquipment, nextPhysicalHop, null));
                                 }
@@ -254,22 +256,25 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
                                  
                                 if(bSideEquipmentPhysical != null){
                                     if(bSideEquipmentPhysical.getClassName().equals("ODF"))
-                                        tempForm.setOdfsB(tableCreator.createODF(bSideEquipmentPhysical, nextPhysicalHop));
+                                        listTempODFsB.add(tableCreator.createODF(bSideEquipmentPhysical, nextPhysicalHop));
                                     else
                                         tempForm.getPhysicalPartB().add(createDeviceTable(bSideEquipmentPhysical, nextPhysicalHop, null));
                                 }
                             }
                         }
                     }
+                    tempForm.setOdfsA(listTempODFsA);
+                    tempForm.setOdfsB(listTempODFsB);
                     //This is only for peering, we must reorder an set the peering always in side B
                     if(isSideAPeering && !isSideBPeering){
                         
                         Component tempComponent = tempForm.getLogicalPartB();
                         tempForm.setLogicalPartB(tempForm.getLogicalPartA());
                         tempForm.setLogicalPartA(tempComponent);
-                        tempComponent = tempForm.getOdfsB();
+                        //ODFs
+                        List<Component> tempODFs = tempForm.getOdfsB();
                         tempForm.setOdfsB(tempForm.getOdfsA());
-                        tempForm.setOdfsA(tempComponent);
+                        tempForm.setOdfsA(tempODFs);
                         List<Component> listTempComponent = tempForm.getPhysicalPartB();
                         tempForm.setPhysicalPartB(tempForm.getPhysicalPartA());
                         tempForm.setPhysicalPartA(listTempComponent);
@@ -330,7 +335,8 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
                     }
                     //If the view has Mpls links the ODFs should go between the physical and the logical devices
                     if(table.getOdfsA() != null && !isODFASet && isMplsView){
-                            lytContent.addComponent(table.getOdfsA());
+                        for(Component odfComponentA : table.getOdfsA())
+                            lytContent.addComponent(odfComponentA);
                             isODFASet = true;
                     }
                     //we add the side A - logical part
@@ -341,28 +347,31 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
                         addedDevices.add(table.getLogicalPartA().getId());
                         //We add the ODF side A
                         if(table.getOdfsA() != null && !isODFASet && !isMplsView){
-                            lytContent.addComponent(table.getOdfsA());
-                            isODFASet = true;
+                            for(Component odfComponentA : table.getOdfsA())
+                                lytContent.addComponent(odfComponentA);
+                            //isODFASet = true;
                         }
                     } 
                     //L I N K  We add the link tables
                     table.getLogicalConnctions().forEach(linkTable -> { lytContent.addComponent(linkTable); });
                     
                     //If the view has Mpls links the ODFs should go between the physical and the logical devices
-                    if(table.getOdfsB() != null && !isODFBSet && isMplsView){
-                        lytContent.addComponent(table.getOdfsB());
-                        isODFBSet = true;
+                    if(table.getOdfsB() != null && !isODFBSet && !isMplsView){
+                        for(Component odfComponentB : table.getOdfsB())
+                            lytContent.addComponent(odfComponentB);
+                        //isODFBSet = true;
                     }
-                    
                     //we add the logical side B
                     if(table.getLogicalPartB() != null && !addedDevices.contains(table.getLogicalPartB().getId())){
                         //we add the ODF side B
-                        if(table.getOdfsB() != null && !isODFBSet && !addedDevices.contains(table.getLogicalPartB().getId()) && !isMplsView){
-                            lytContent.addComponent(table.getOdfsB());
-                            isODFBSet = true;
-                        }
                         lytContent.addComponent(table.getLogicalPartB());
                         addedDevices.add(table.getLogicalPartB().getId());
+                        
+                        if(table.getOdfsB() != null && !isODFBSet && isMplsView){
+                            for(Component odfComponentB : table.getOdfsB())
+                                lytContent.addComponent(odfComponentB);
+                            //isODFBSet = true;
+                        }
                         //We add the physical side B
                         if(!table.getPhysicalPartB().isEmpty() && !isPhysicalSideBSet){
                             table.getPhysicalPartB().forEach(physicalTable -> {
