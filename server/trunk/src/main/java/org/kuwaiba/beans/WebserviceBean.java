@@ -699,6 +699,7 @@ public interface WebserviceBean {
     public void updateConfigurationVariable(String name, String propertyToUpdate, String newValue, String ipAddress, String sessionId) throws ServerSideException;
     public void deleteConfigurationVariable(String name, String ipAddress, String sessionId) throws ServerSideException;
     public RemoteConfigurationVariable getConfigurationVariable(String name, String ipAddress, String sessionId) throws ServerSideException;
+    public String getConfigurationVariableValue(String name, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemoteConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId, String ipAddress, String sessionId) throws ServerSideException;
     public List<RemotePool> getConfigurationVariablesPools(String ipAddress, String sessionId) throws ServerSideException;
     public long createConfigurationVariablesPool(String name, String description, String ipAddress, String sessionId) throws ServerSideException;

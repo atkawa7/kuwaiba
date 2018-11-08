@@ -25,12 +25,23 @@ import javax.xml.bind.annotation.XmlAccessorType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteConditionalActivityDefinition extends RemoteActivityDefinition implements Serializable {
-    
+    /**
+     * Next activity for true path.
+     */    
     private RemoteActivityDefinition nextActivityIfTrue;
+    /**
+     * Next activity for false path.
+     */
     private RemoteActivityDefinition nextActivityIfFalse;
+    /**
+     * Artifact of Read Only to show the information necessary which is it used 
+     * by the user to take the decision of use the true or the false path.
+     */
+    private RemoteArtifactDefinition informationArtifact;
         
     public RemoteConditionalActivityDefinition(long id, String name, String description, 
-        int type, RemoteArtifactDefinition arfifact, RemoteActor actor, boolean confirm, String color, List<RemoteKpi> kpis, List<RemoteKpiAction> kpiActions) {
+        int type, RemoteArtifactDefinition arfifact, RemoteActor actor, boolean confirm, 
+        String color, List<RemoteKpi> kpis, List<RemoteKpiAction> kpiActions) {
         
         super(id, name, description, type, arfifact, actor, false, confirm, color, kpis, kpiActions);
     }
@@ -55,5 +66,13 @@ public class RemoteConditionalActivityDefinition extends RemoteActivityDefinitio
     public void setNextActivityIfFalse(RemoteActivityDefinition nextActivityIfFalse) {
         this.nextActivityIfFalse = nextActivityIfFalse;
     }    
+    
+    public RemoteArtifactDefinition getInformationArtifact() {
+        return informationArtifact;
+    }
+    
+    public void setInformationArtifact(RemoteArtifactDefinition informationArtifact) {
+        this.informationArtifact = informationArtifact;
+    }
         
 }

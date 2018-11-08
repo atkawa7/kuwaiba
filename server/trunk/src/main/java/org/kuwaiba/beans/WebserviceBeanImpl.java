@@ -4050,6 +4050,20 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    
+    @Override
+    public String getConfigurationVariableValue(String name, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+
+        try {
+            aem.validateWebServiceCall("getConfigurationVariable", ipAddress, sessionId);
+            ConfigurationVariable configVariable = aem.getConfigurationVariable(name);
+            return configVariable != null ? configVariable.getValueDefinition() : null;
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
 
     @Override
     public List<RemoteConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId, String ipAddress, String sessionId) throws ServerSideException {
@@ -6272,19 +6286,19 @@ public class WebserviceBeanImpl implements WebserviceBean {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
-            aem.validateWebServiceCall("getObjectLight", ipAddress, sessionId);
+            aem.validateWebServiceCall("getPhysicalNodeToObjectInWarehouse", ipAddress, sessionId);
             BusinessObjectLight physicalNode = bem.getPhysicalNodeToObjectInWarehouse(objectClassName, objectId);
             return physicalNode != null ? new RemoteObjectLight(physicalNode) : null;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
-    }
-    
+    }    
+    @Override
     public RemoteObjectLight getWarehouseToObject(String objectClassName, long objectId, String ipAddress, String sessionId) throws ServerSideException {
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
-            aem.validateWebServiceCall("getObjectLight", ipAddress, sessionId);
+            aem.validateWebServiceCall("getWarehouseToObject", ipAddress, sessionId);
             BusinessObjectLight warehouse = bem.getWarehouseToObject(objectClassName, objectId);
             
             return warehouse != null ? new RemoteObjectLight(warehouse) : null;

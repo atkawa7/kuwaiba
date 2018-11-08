@@ -113,7 +113,7 @@ public final class ProcessCache {
     }
     
     public ProcessCache updateArtifacts() throws InventoryException {     
-        String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
+        String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath")); //NOI18N
         File processDefDir = new File(processEnginePath + "/process/definitions"); //NOI18N
         File [] files = processDefDir.listFiles();
         if (files != null) {
@@ -648,7 +648,7 @@ public final class ProcessCache {
                                         if (reader.getEventType() == XMLStreamConstants.START_ELEMENT) {
                                             
                                             if (reader.getName().equals(tagShare)) {
-                                                String key = reader.getAttributeValue(null, ATTR_KEY);;
+                                                String key = reader.getAttributeValue(null, ATTR_KEY);
                                                 String value = reader.getAttributeValue(null, ATTR_VALUE);
                                                 shares.add(new StringPair(key, value));
                                             }

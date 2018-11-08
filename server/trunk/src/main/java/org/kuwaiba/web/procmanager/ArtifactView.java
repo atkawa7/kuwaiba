@@ -21,12 +21,14 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinitio
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
 
 /**
  * View to render the different type of artifacts
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ArtifactView extends Panel {
+    private final RemoteActivityDefinition activityDefinition;
     private final RemoteArtifactDefinition artifactDefinition;
     private final RemoteArtifact artifact;
     private final WebserviceBean wsBean;
@@ -34,7 +36,8 @@ public class ArtifactView extends Panel {
     private ArtifactRenderer artifactRenderer;
     private final RemoteProcessInstance processInstance;
     
-    public ArtifactView(RemoteArtifactDefinition artifactDefinition, RemoteArtifact artifact, WebserviceBean wsBean, RemoteSession session, RemoteProcessInstance processInstance/*, List<RemoteArtifact> remoteArtifacts*/) {
+    public ArtifactView(RemoteActivityDefinition activityDefinition, RemoteArtifactDefinition artifactDefinition, RemoteArtifact artifact, WebserviceBean wsBean, RemoteSession session, RemoteProcessInstance processInstance/*, List<RemoteArtifact> remoteArtifacts*/) {
+        this.activityDefinition = activityDefinition;
         this.artifactDefinition = artifactDefinition;
         this.artifact = artifact;
         this.wsBean = wsBean;
@@ -47,21 +50,38 @@ public class ArtifactView extends Panel {
         initView();
     }
         
-    public void initView() {
+    public void initView() {        
         switch (artifactDefinition.getType()) {
             case ArtifactDefinition.TYPE_ATTACHMENT: 
                 artifactRenderer = new AttachmentArtifactRender(artifactDefinition, artifact);
                 setContent(artifactRenderer.renderArtifact());
             break;
             case ArtifactDefinition.TYPE_CONDITIONAL: 
-                artifactRenderer = new ConditionalArtifactRender(artifactDefinition, artifact, wsBean, session, processInstance);
+                artifactRenderer = new ConditionalArtifactRender(activityDefinition, artifactDefinition, artifact, wsBean, session, processInstance);
                 setContent(artifactRenderer.renderArtifact());
             break;
             case ArtifactDefinition.TYPE_FORM: 
                 artifactRenderer = new FormArtifactRenderer(artifactDefinition, artifact, wsBean, session, processInstance);
                 setContent(artifactRenderer.renderArtifact());
+                
+                if (getContent() != null) {
+                    getContent().setWidthUndefined();
+                    getContent().setHeightUndefined();
+                }
             break;
         }
+    }
+    
+    public ArtifactRenderer getArtifactRenderer(RemoteArtifactDefinition artifactDefinition, RemoteArtifact artifact) {
+        switch (artifactDefinition.getType()) {
+            case ArtifactDefinition.TYPE_ATTACHMENT: 
+                return new AttachmentArtifactRender(artifactDefinition, artifact);
+            case ArtifactDefinition.TYPE_CONDITIONAL: 
+                return new ConditionalArtifactRender(activityDefinition, artifactDefinition, artifact, wsBean, session, processInstance);
+            case ArtifactDefinition.TYPE_FORM: 
+                return new FormArtifactRenderer(artifactDefinition, artifact, wsBean, session, processInstance);
+        }
+        return null;
     }
     
     public ArtifactRenderer getArtifactRenderer() {

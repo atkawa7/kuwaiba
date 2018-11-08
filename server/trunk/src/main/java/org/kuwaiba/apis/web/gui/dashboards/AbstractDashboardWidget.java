@@ -80,7 +80,7 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
     public AbstractDashboardWidget(String title, DashboardEventBus eventBus) {
         this.eventBus = eventBus;
     }
-
+        
     public int getColSpan() {
         return colSpan;
     }

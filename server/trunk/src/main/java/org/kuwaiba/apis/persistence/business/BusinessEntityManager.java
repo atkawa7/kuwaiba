@@ -1022,8 +1022,26 @@ public interface BusinessEntityManager {
     //</editor-fold>
     
     //<editor-fold desc="Warehouse" defaultstate="collapsed">
+    /**
+     * Gets the warehouses in a object
+     * @param objectClassName The class of the object
+     * @param objectId The id of the object
+     * @return Gets the warehouses in a object
+     */
     public List<BusinessObjectLight> getWarehousesInObject(String objectClassName, long objectId) throws MetadataObjectNotFoundException;
+    /**
+     * Gets the physical node of a warehouse item
+     * @param objectClassName The class of the object
+     * @param objectId The id of the object
+     * @return Gets the physical node of a warehouse item
+     */
     public BusinessObjectLight getPhysicalNodeToObjectInWarehouse(String objectClassName, long objectId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
+    /**
+     * Gets warehouse related to object
+     * @param objectClassName The class of the object
+     * @param objectId The id of the object
+     * @return Gets warehouse related to object
+     */
     public BusinessObjectLight getWarehouseToObject(String objectClassName, long objectId) throws MetadataObjectNotFoundException, BusinessObjectNotFoundException;
     //</editor-fold>
 }

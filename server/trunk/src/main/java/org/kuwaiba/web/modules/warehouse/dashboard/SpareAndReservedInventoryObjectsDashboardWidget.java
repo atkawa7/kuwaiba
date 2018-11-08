@@ -20,7 +20,6 @@ import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
 import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Notification;
@@ -52,20 +51,56 @@ import org.kuwaiba.web.procmanager.MiniAppRackView;
 public class SpareAndReservedInventoryObjectsDashboardWidget extends AbstractDashboardWidget {
     private final WebserviceBean webserviceBean;
     
-    private RemoteObjectLight selectedObject;
+    private final RemoteObjectLight selectedObject;
+    private String stateSpare;
+    private String stateReserved;
     
     public SpareAndReservedInventoryObjectsDashboardWidget(WebserviceBean webserviceBean) {
         super("Spare and Reserved Inventory Objects");
         this.webserviceBean = webserviceBean;        
         selectedObject = null;
+        
+        setSizeFull();
+        setSpacing(false);
+        setStates();
         this.createContent();
     }
-
+    
     public SpareAndReservedInventoryObjectsDashboardWidget(AbstractDashboard parentDashboard, RemoteObjectLight selectedObject, WebserviceBean webserviceBean) {
         super(String.format("Spare and Reserved Objects of %s", selectedObject), parentDashboard);
         this.webserviceBean = webserviceBean;
         this.selectedObject = selectedObject;
+        
+        setSizeFull();
+        setSpacing(false);
+        setStates();
         this.createCover();
+    }
+    
+    private void setStates() {
+        try {
+            stateSpare = webserviceBean.getConfigurationVariableValue(
+                    "widget.state.spare",
+                    Page.getCurrent().getWebBrowser().getAddress(),
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            if (stateSpare == null) {
+                Notifications.showWarning("Configuration Variable widget.state.spare Not Set");
+                stateSpare = "Spare";
+            }
+            
+            stateReserved = webserviceBean.getConfigurationVariableValue(
+                    "widget.state.reserved",
+                    Page.getCurrent().getWebBrowser().getAddress(),
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            if (stateReserved == null) {
+                Notifications.showWarning("Configuration Variable widget.state.reserved Not Set");
+                stateReserved = "Reserved";
+            }
+        } catch (ServerSideException ex) {
+            stateSpare = "Spare";
+            stateReserved = "Reserved";
+            Notifications.showError(ex.getMessage());
+        }        
     }
     
     @Override
@@ -100,6 +135,9 @@ public class SpareAndReservedInventoryObjectsDashboardWidget extends AbstractDas
             "}");
         
         VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.setSpacing(false);
+        verticalLayout.setSizeFull();
+        
         List<RemoteObjectLight> spareAndReservedObjects = getSpareAndReservedObjects();
         
         if (spareAndReservedObjects != null && !spareAndReservedObjects.isEmpty()) {
@@ -149,8 +187,8 @@ public class SpareAndReservedInventoryObjectsDashboardWidget extends AbstractDas
             buttonRenderer.setHtmlContentAllowed(true);
                         
             Grid<ObjectBean> grid = new Grid();
-            grid.setWidth("100%");
-            grid.setHeightByRows(objectBeans.size());
+            grid.setWidth(100, Unit.PERCENTAGE);
+            grid.setHeight(720, Unit.PIXELS);            
             grid.setItems(objectBeans);
             grid.addColumn(ObjectBean::getName).setCaption("Name").setId(columnName);
             grid.addColumn(ObjectBean::getVendor).setCaption("Vendor").setId(columnVendor);
@@ -227,10 +265,11 @@ public class SpareAndReservedInventoryObjectsDashboardWidget extends AbstractDas
             txtCountry.addValueChangeListener(valueChangeListener);
                         
             verticalLayout.addComponent(grid);
-            verticalLayout.setComponentAlignment(grid, Alignment.MIDDLE_CENTER);
-            verticalLayout.setExpandRatio(grid, 1f);
+////            verticalLayout.setComponentAlignment(grid, Alignment.MIDDLE_CENTER);
+////            verticalLayout.setExpandRatio(grid, 1f);
         }
-        addComponent(verticalLayout);        
+        addComponent(verticalLayout);   
+        setExpandRatio(verticalLayout, 1f);
         
         this.contentComponent = verticalLayout;
     }
@@ -270,8 +309,8 @@ public class SpareAndReservedInventoryObjectsDashboardWidget extends AbstractDas
     }
         
     private List<RemoteObjectLight> getSpareAndReservedObjects() {
-        RemoteObjectLight stateSpare = null;
-        RemoteObjectLight stateReserved = null;
+        RemoteObjectLight rolStateSpare = null;
+        RemoteObjectLight rolStateReserved = null;
         try {
             List<RemoteObjectLight> operationalStates = webserviceBean.getListTypeItems(
                     "OperationalState", //NOI18N
@@ -280,18 +319,18 @@ public class SpareAndReservedInventoryObjectsDashboardWidget extends AbstractDas
             
             for (RemoteObjectLight operationalState : operationalStates) {
                 
-                if ("Spare".equals(operationalState.getName())) { //NOI18N
-                    stateSpare = operationalState;                                                                               
+                if (stateSpare.equals(operationalState.getName())) { //NOI18N
+                    rolStateSpare = operationalState;                                                                               
                 }
-                if ("Reserved".equals(operationalState.getName())) { //NOI18N
-                    stateReserved = operationalState;                                                                               
+                if (stateReserved.equals(operationalState.getName())) { //NOI18N
+                    rolStateReserved = operationalState;                                                                               
                 }
             }
         } catch (ServerSideException ex) {
             Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
         }
         
-        if (stateSpare != null && stateReserved != null) {
+        if (rolStateSpare != null && rolStateReserved != null) {
             if (selectedObject != null) {
                 List<RemoteObjectLight> result = new ArrayList();
                 
@@ -307,8 +346,8 @@ public class SpareAndReservedInventoryObjectsDashboardWidget extends AbstractDas
                         
                         if (attributeValue != null) {
                             
-                            if (attributeValue.equals(stateSpare.getName()) || 
-                                attributeValue.equals(stateReserved.getName())) {
+                            if (attributeValue.equals(rolStateSpare.getName()) || 
+                                attributeValue.equals(rolStateReserved.getName())) {
                                 
                                 result.add(child);
                             }
@@ -321,17 +360,15 @@ public class SpareAndReservedInventoryObjectsDashboardWidget extends AbstractDas
             }
             else {
                 try {
-                    List<RemoteObjectLight> spareObjects = webserviceBean.getObjectsWithFilterLight(
-                            "InventoryObject", //NOI18N
+                    List<RemoteObjectLight> spareObjects = webserviceBean.getObjectsWithFilterLight("InventoryObject", //NOI18N
                             "state", //NOI18N
-                            String.valueOf(stateSpare.getId()),
+                            String.valueOf(rolStateSpare.getId()),
                             Page.getCurrent().getWebBrowser().getAddress(),
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
 
-                    List<RemoteObjectLight> reservedObjects = webserviceBean.getObjectsWithFilterLight(
-                            "InventoryObject", //NOI18N
+                    List<RemoteObjectLight> reservedObjects = webserviceBean.getObjectsWithFilterLight("InventoryObject", //NOI18N
                             "state", //NOI18N
-                            String.valueOf(stateReserved.getId()),
+                            String.valueOf(rolStateReserved.getId()),
                             Page.getCurrent().getWebBrowser().getAddress(),
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
 

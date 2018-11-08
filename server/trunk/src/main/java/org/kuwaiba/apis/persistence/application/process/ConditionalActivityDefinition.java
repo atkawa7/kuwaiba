@@ -21,11 +21,22 @@ import java.util.List;
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ConditionalActivityDefinition extends ActivityDefinition {
+    /**
+     * Next activity for true path.
+     */
     private ActivityDefinition nextActivityIfTrue;
+    /**
+     * Next activity for false path.
+     */
     private ActivityDefinition nextActivityIfFalse;
+    /**
+     * Artifact of Read Only to show the information necessary which is it used 
+     * by the user to take the decision of use the true or the false path.
+     */
+    private ArtifactDefinition informationArtifact;
     
     public ConditionalActivityDefinition(long id, String name, String description, 
-        int type, boolean confirm, String color, ArtifactDefinition arfifact, Actor actor, List<Kpi> kpis, List<KpiAction> kpiActions) {
+        int type, boolean confirm, String color, ArtifactDefinition arfifact, Actor actor, List<Kpi> kpis, List<KpiAction> kpiActions, ArtifactDefinition informationArfifact) {
         
         super(id, name, description, type, arfifact, actor, kpis, kpiActions, false, confirm, color);
     }
@@ -49,6 +60,14 @@ public class ConditionalActivityDefinition extends ActivityDefinition {
     
     public void setNextActivityIfFalse(ActivityDefinition nextActivityIfFalse) {
         this.nextActivityIfFalse = nextActivityIfFalse;
+    }
+    
+    public ArtifactDefinition getInformationArtifact() {
+        return informationArtifact;
+    }
+    
+    public void setInformationArfifact(ArtifactDefinition informationArtifact) {
+        this.informationArtifact = informationArtifact;
     }
     
     @Override

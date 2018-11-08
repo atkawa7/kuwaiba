@@ -99,7 +99,7 @@ public class ProcessDefinitionLoader {
         HashMap<Long, List<Long>> paths = new HashMap();
         HashMap<Long, List<Kpi>> activityKpis = new HashMap();
         HashMap<Long, List<KpiAction>> activityKpiActions = new HashMap();
-        HashMap<Long, Long> activityartifact = new HashMap();
+        HashMap<Long, List<Long>> activityartifact = new HashMap();
         HashMap<Long, Long> activityactor = new HashMap();
         List<Kpi> processKpis = new ArrayList();
         List<KpiAction> processKpiActions = new ArrayList();
@@ -188,6 +188,7 @@ public class ProcessDefinitionLoader {
                                         activityDefinitionType, 
                                         Boolean.valueOf(reader.getAttributeValue(null, Attribute.CONFIRM)), 
                                         reader.getAttributeValue(null, Attribute.COLOR),
+                                        null, 
                                         null, 
                                         null, 
                                         null, 
@@ -290,6 +291,7 @@ public class ProcessDefinitionLoader {
                                         } else if (type == ArtifactDefinition.TYPE_FORM) {
                                             definition = getFormArtifactDefinition(processDefinitionId, artifactParameters.get("definition")); //NOI18N
                                         }
+                                        
                                         ArtifactDefinition artifactDefinition = new ArtifactDefinition(
                                             artifactDefinitionId,
                                             artifactParameters.get("name"), //NOI18N
@@ -305,7 +307,11 @@ public class ProcessDefinitionLoader {
                                         artifactDefinition.setPostconditionsScript(artifactParameters.containsKey("postconditionsScript") ? artifactParameters.get("postconditionsScript").getBytes() : null);
 
                                         artifactDefinitions.put(artifactDefinition.getId(), artifactDefinition);
-                                        activityartifact.put(activityDefinitionId, artifactDefinition.getId());
+                                        
+                                        if (!activityartifact.containsKey(activityDefinitionId))
+                                            activityartifact.put(activityDefinitionId, new ArrayList());
+                                        
+                                        activityartifact.get(activityDefinitionId).add(artifactDefinition.getId());
                                     }
                                 }
                                 if (reader.getEventType() == XMLStreamConstants.START_ELEMENT && 
@@ -481,11 +487,21 @@ public class ProcessDefinitionLoader {
                 
                 ActivityDefinition activityDefinition = activityDefinitions.get(activityDefinitionId);
                 
-                if (activityartifact.containsKey(activityDefinitionId)) {
-                    long artifactId = activityartifact.get(activityDefinitionId);
+                if (activityartifact.containsKey(activityDefinitionId) && !activityartifact.get(activityDefinitionId).isEmpty()) {
+                    long artifactId = activityartifact.get(activityDefinitionId).get(0);
                     
                     if (artifactDefinitions.containsKey(artifactId))
                         activityDefinition.setArfifact(artifactDefinitions.get(artifactId));
+                    
+                    if (activityDefinition instanceof ConditionalActivityDefinition) {
+                        if (activityartifact.get(activityDefinitionId).size() >= 2) {
+                            
+                            long informationArfifactId = activityartifact.get(activityDefinitionId).get(1);
+                            
+                            if (artifactDefinitions.containsKey(informationArfifactId))
+                                ((ConditionalActivityDefinition) activityDefinition).setInformationArfifact(artifactDefinitions.get(informationArfifactId));
+                        }
+                    }
                 } else {
                     //TODO: exception activity no has artifact
                 }

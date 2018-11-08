@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
+import org.kuwaiba.apis.persistence.application.process.ArtifactDefinition;
 import org.kuwaiba.apis.persistence.application.process.ConditionalActivityDefinition;
 
 /**
@@ -211,11 +212,19 @@ public class RemoteActivityDefinition implements Serializable {
                 RemoteKpi.asRemoteKpis(activityDefinition.getKpis()),
                 RemoteKpiAction.asRemoteKpiActions(activityDefinition.getKpiActions()));
             
-            if (((ConditionalActivityDefinition) activityDefinition).getNextActivityIfTrue() != null) 
-                ((RemoteConditionalActivityDefinition) res).setNextActivityIfTrue(RemoteActivityDefinition.asRemoteActivityDefinition(((ConditionalActivityDefinition) activityDefinition).getNextActivityIfTrue()));
+            ConditionalActivityDefinition conditionalActivityDefinition = (ConditionalActivityDefinition) activityDefinition;
+            RemoteConditionalActivityDefinition remoteConditionalActivityDefinition = (RemoteConditionalActivityDefinition) res;
             
-            if (((ConditionalActivityDefinition) activityDefinition).getNextActivityIfFalse() != null) 
-                ((RemoteConditionalActivityDefinition) res).setNextActivityIfFalse(RemoteActivityDefinition.asRemoteActivityDefinition(((ConditionalActivityDefinition) activityDefinition).getNextActivityIfFalse()));
+            if (conditionalActivityDefinition.getNextActivityIfTrue() != null) 
+                remoteConditionalActivityDefinition.setNextActivityIfTrue(RemoteActivityDefinition.asRemoteActivityDefinition(conditionalActivityDefinition.getNextActivityIfTrue()));
+            
+            if (conditionalActivityDefinition.getNextActivityIfFalse() != null) 
+                remoteConditionalActivityDefinition.setNextActivityIfFalse(RemoteActivityDefinition.asRemoteActivityDefinition(conditionalActivityDefinition.getNextActivityIfFalse()));
+            
+            if (conditionalActivityDefinition.getInformationArtifact() != null) {
+                ArtifactDefinition informationArtifactDef = conditionalActivityDefinition.getInformationArtifact();
+                remoteConditionalActivityDefinition.setInformationArtifact(new RemoteArtifactDefinition(informationArtifactDef.getId(), informationArtifactDef.getName(), informationArtifactDef.getDescription(), informationArtifactDef.getVersion(), informationArtifactDef.getType(), informationArtifactDef.getDefinition(), informationArtifactDef.getPreconditionsScript(), informationArtifactDef.getPostconditionsScript(), informationArtifactDef.isPrintable(), informationArtifactDef.getPrintableTemplate()));
+            }
             
         } else {
             

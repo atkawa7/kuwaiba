@@ -155,7 +155,10 @@ public class TimelineView extends HorizontalLayout {
                 timelineStep.setActivityStartDate(calendar.getTime());
                 timelineStep.setStartDate(calendar.getTime());
                 
-                calendar.setTime(new Date(timelineStep.getArtifact().getCommitDate()));
+                if (timelineStep.getArtifact().getCreationDate() == timelineStep.getArtifact().getCommitDate())
+                    calendar.setTime(new Date());
+                else
+                    calendar.setTime(new Date(timelineStep.getArtifact().getCommitDate()));
                 //calendar.set(Calendar.HOUR, 24);
                 
                 timelineStep.setActivityEndDate(calendar.getTime());
@@ -179,6 +182,11 @@ public class TimelineView extends HorizontalLayout {
                     activityExpectedDuration = Integer.valueOf(timelineStep.getKpi().getThresholds().getProperty("normal")); //NOI18N
                 }
                 timelineStep.setActivityExpectedDuration(activityExpectedDuration);
+            }
+            else {
+                Date date = new Date();
+                timelineStep.setStartDate(date);
+                timelineStep.setEndDate(date);
             }
 ////            timelineStep.setActivityStartDate(calendar.getTime());
 ////            timelineStep.setStartDate(calendar.getTime());
@@ -220,7 +228,10 @@ public class TimelineView extends HorizontalLayout {
                     endDate = timelineStep.getEndDate();
             }
             gantt.setStartDate(new Date(startDate));
-            gantt.setEndDate(new Date(endDate));
+            
+            calendar.setTime(new Date(endDate));
+            calendar.set(Calendar.HOUR, 24);            
+            gantt.setEndDate(calendar.getTime());
 ////            calendar.setTime(new Date(startDate));
 ////            gantt.setStartDate(calendar.getTime());
 ////
@@ -229,7 +240,11 @@ public class TimelineView extends HorizontalLayout {
         } else {
             Date date = new Date();
             gantt.setStartDate(date);
-            gantt.setEndDate(date);
+            
+            calendar.setTime(date);
+            calendar.set(Calendar.HOUR, 24);  
+            
+            gantt.setEndDate(calendar.getTime());
         }
                 
         if (timelineSteps == null)

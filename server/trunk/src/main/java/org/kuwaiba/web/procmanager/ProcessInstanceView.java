@@ -43,6 +43,7 @@ import org.kuwaiba.apis.forms.components.impl.PrintWindow;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.AbstractElementField;
 import org.kuwaiba.apis.persistence.PersistenceService;
+import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.notifications.MessageBox;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -293,6 +294,9 @@ public class ProcessInstanceView extends DynamicComponent {
                 btnSave.setEnabled(false);
                 btnNext.setEnabled(false);
             }
+            if (currentActivity.getType() == ActivityDefinition.TYPE_END) {
+                btnNext.setEnabled(false);                    
+            }
 
             Button.ClickListener clickListener = new Button.ClickListener() {
                 @Override
@@ -359,7 +363,7 @@ public class ProcessInstanceView extends DynamicComponent {
                         
             Panel pnlArtifact = new Panel();
             pnlArtifact.setSizeFull();
-            pnlArtifact.setContent(artifactView = new ArtifactView(artifactDefinition, artifact, wsBean, remoteSession, processInstance));
+            pnlArtifact.setContent(artifactView = new ArtifactView(currentActivity, artifactDefinition, artifact, wsBean, remoteSession, processInstance));
             
             artifactContainer.addComponent(pnlArtifact);
             artifactContainer.addComponent(secondHorizontalLayout);

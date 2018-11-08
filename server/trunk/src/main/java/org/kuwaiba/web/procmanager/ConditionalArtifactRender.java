@@ -14,9 +14,16 @@
  */
 package org.kuwaiba.web.procmanager;
 
+import com.vaadin.data.HasValue;
+import com.vaadin.data.HasValue.ValueChangeListener;
+import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.VerticalSplitPanel;
 import java.io.ByteArrayInputStream;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -25,8 +32,10 @@ import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.forms.ScriptQueryExecutorImpl;
 import org.kuwaiba.apis.forms.elements.FunctionRunner;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifactDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConditionalActivityDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
@@ -35,15 +44,17 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
  * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
  */
 public class ConditionalArtifactRender extends ArtifactRenderer {
+    private final RemoteActivityDefinition activityDefinition;
     private final RemoteArtifactDefinition artifactDefinition;
     private final RemoteArtifact remoteArtifact;
-    private CheckBox checkBox;
+    private CheckBox chkYes;
     
     private final WebserviceBean wsBean;
     private final RemoteSession session;
     private final RemoteProcessInstance processInstance;
     
-    public ConditionalArtifactRender(RemoteArtifactDefinition remoteArtifactDefinition, RemoteArtifact remoteArtifact, WebserviceBean wsBean, RemoteSession session, RemoteProcessInstance processInstance) {
+    public ConditionalArtifactRender(RemoteActivityDefinition activityDefinition, RemoteArtifactDefinition remoteArtifactDefinition, RemoteArtifact remoteArtifact, WebserviceBean wsBean, RemoteSession session, RemoteProcessInstance processInstance) {
+        this.activityDefinition = activityDefinition;
         this.remoteArtifact = remoteArtifact;
         this.artifactDefinition = remoteArtifactDefinition;
         
@@ -64,28 +75,81 @@ public class ConditionalArtifactRender extends ArtifactRenderer {
 
             if (!Boolean.valueOf(result.toString()))
                 return new Label(result.toString());
+        }        
+        // Artifact renderer to the Information Artifact
+        ArtifactRenderer artifactRenderer = null;
+        
+        if (activityDefinition != null && activityDefinition instanceof RemoteConditionalActivityDefinition) {
+            RemoteArtifactDefinition informationArtifact = ((RemoteConditionalActivityDefinition) activityDefinition).getInformationArtifact();
+            
+            if (informationArtifact != null) {
+                ArtifactView artifactView = new ArtifactView(null, informationArtifact, null, wsBean, session, processInstance);
+                artifactRenderer = artifactView.getArtifactRenderer(informationArtifact, null);
+            }
         }
+        boolean yes = getConditionalArtifactContent();
         
-        checkBox = new CheckBox(artifactDefinition != null ? new String(artifactDefinition.getDefinition()) : "<Not Set>");
-        checkBox.setValue(getConditionalArtifactContent());
+        VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.setSpacing(false);
+        verticalLayout.setWidth(99, Unit.PERCENTAGE);
+        verticalLayout.setHeightUndefined();
+
+        Label lblQuestion = new Label(artifactDefinition != null ? new String(artifactDefinition.getDefinition()) : "<Not Set>");
+        chkYes = new CheckBox("Yes");
+        CheckBox chkNo = new CheckBox("No");
+                
+        if (remoteArtifact != null) {
+            chkYes.setValue(yes);
+            chkNo.setValue(!yes);
+        }        
+        chkYes.addValueChangeListener(new ValueChangeListener<Boolean>() {
+            @Override
+            public void valueChange(HasValue.ValueChangeEvent<Boolean> event) {
+                if (event.getValue())
+                    chkNo.setValue(false);
+                else
+                    chkNo.setValue(true);
+            }
+        });
+        chkNo.addValueChangeListener(new ValueChangeListener<Boolean>() {
+            @Override
+            public void valueChange(HasValue.ValueChangeEvent<Boolean> event) {
+                if (event.getValue())
+                    chkYes.setValue(false);
+                else
+                    chkYes.setValue(true);
+            }
+        });
+
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+
+        horizontalLayout.addComponent(chkYes);
+        horizontalLayout.addComponent(chkNo);
+
+        verticalLayout.addComponent(lblQuestion);
+        verticalLayout.addComponent(horizontalLayout);
+
+        verticalLayout.setComponentAlignment(lblQuestion, Alignment.MIDDLE_CENTER);
+        verticalLayout.setComponentAlignment(horizontalLayout, Alignment.MIDDLE_CENTER);
         
-////        if (remoteArtifact != null)
-////            checkBox.setEnabled(false);
-                    
-        return checkBox;
+        if (artifactRenderer != null) {
+            VerticalSplitPanel verticalSplitPanel = new VerticalSplitPanel();
+            verticalSplitPanel.setSizeFull();
+            verticalSplitPanel.setSplitPosition(20, Unit.PERCENTAGE);
+            
+            verticalSplitPanel.setFirstComponent(verticalLayout);
+            verticalSplitPanel.setSecondComponent(artifactRenderer.renderArtifact());
+            return verticalSplitPanel;
+        }
+        return verticalLayout;        
     }
 
     @Override
     public byte[] getContent() throws Exception {
-        String strContent = "<artifact type=\"conditional\"><value>" + checkBox.getValue() + "</value></artifact>";
+        String strContent = "<artifact type=\"conditional\"><value>" + chkYes.getValue() + "</value></artifact>";
         return strContent.getBytes();
     }
-
-////    @Override
-////    public List<StringPair> getSharedInformation() {
-////        return new ArrayList();
-////    }
-    
+        
     private boolean getConditionalArtifactContent() {
         if (remoteArtifact != null) {
             try {
