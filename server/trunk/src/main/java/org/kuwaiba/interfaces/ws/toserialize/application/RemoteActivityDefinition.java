@@ -16,6 +16,7 @@
 package org.kuwaiba.interfaces.ws.toserialize.application;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -24,6 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.application.process.ArtifactDefinition;
 import org.kuwaiba.apis.persistence.application.process.ConditionalActivityDefinition;
+import org.kuwaiba.apis.persistence.application.process.ParallelActivityDefinition;
 
 /**
  * wrapper of ActivityDefinition. An activity is an step in a process. Conditionals are a particular type of activities from the point of view of this API. This class
@@ -226,7 +228,32 @@ public class RemoteActivityDefinition implements Serializable {
                 remoteConditionalActivityDefinition.setInformationArtifact(new RemoteArtifactDefinition(informationArtifactDef.getId(), informationArtifactDef.getName(), informationArtifactDef.getDescription(), informationArtifactDef.getVersion(), informationArtifactDef.getType(), informationArtifactDef.getDefinition(), informationArtifactDef.getPreconditionsScript(), informationArtifactDef.getPostconditionsScript(), informationArtifactDef.isPrintable(), informationArtifactDef.getPrintableTemplate()));
             }
             
-        } else {
+        } 
+        else if (activityDefinition instanceof ParallelActivityDefinition) {
+            res = new RemoteParallelActivityDefinition(activityDefinition.getId(), activityDefinition.getName(), 
+                activityDefinition.getDescription(), activityDefinition.getType(), 
+                new RemoteArtifactDefinition(activityDefinition.getArfifact().getId(), activityDefinition.getArfifact().getName(), activityDefinition.getArfifact().getDescription(), activityDefinition.getArfifact().getVersion(), activityDefinition.getArfifact().getType(), activityDefinition.getArfifact().getDefinition(), activityDefinition.getArfifact().getPreconditionsScript(), activityDefinition.getArfifact().getPostconditionsScript(), activityDefinition.getArfifact().isPrintable(), activityDefinition.getArfifact().getPrintableTemplate()), 
+                new RemoteActor(activityDefinition.getActor().getId(), activityDefinition.getActor().getName(), activityDefinition.getActor().getType()),
+                activityDefinition.confirm(), 
+                activityDefinition.getColor(),
+                RemoteKpi.asRemoteKpis(activityDefinition.getKpis()),
+                RemoteKpiAction.asRemoteKpiActions(activityDefinition.getKpiActions()));
+            
+            ParallelActivityDefinition parallelActivityDef = (ParallelActivityDefinition) activityDefinition;
+            RemoteParallelActivityDefinition remoteParallelActivityDef = (RemoteParallelActivityDefinition) res;
+            if (parallelActivityDef.getPaths() != null) {
+                if (remoteParallelActivityDef.getPaths() == null)
+                    remoteParallelActivityDef.setPaths(new ArrayList());
+                                                                                                                
+                for (ActivityDefinition path : parallelActivityDef.getPaths()) {
+                    remoteParallelActivityDef.getPaths().add(RemoteActivityDefinition.asRemoteActivityDefinition(path));
+                }
+                remoteParallelActivityDef.setSequenceFlow(parallelActivityDef.getSequenceFlow());
+                remoteParallelActivityDef.setOutgoingSequenceFlowId(parallelActivityDef.getOutgoingSequenceFlowId());
+                remoteParallelActivityDef.setIncomingSequenceFlowId(parallelActivityDef.getIncomingSequenceFlowId());
+            }
+        }
+        else {
             
             
             res = new RemoteActivityDefinition(activityDefinition.getId(), activityDefinition.getName(), 

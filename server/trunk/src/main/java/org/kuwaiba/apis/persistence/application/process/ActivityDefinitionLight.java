@@ -42,6 +42,10 @@ public class ActivityDefinitionLight {
      */
     public static int TYPE_CONDITIONAL = 4;
     /**
+     * Activity with parallel paths
+     */
+    public static int TYPE_PARALLEL = 5;
+    /**
      * Activity definition id
      */
     private long id;

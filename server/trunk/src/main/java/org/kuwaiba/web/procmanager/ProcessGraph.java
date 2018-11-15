@@ -15,6 +15,7 @@
 package org.kuwaiba.web.procmanager;
 
 import com.vaadin.pontus.vizcomponent.VizComponent;
+import com.vaadin.pontus.vizcomponent.client.ZoomSettings;
 import com.vaadin.pontus.vizcomponent.model.Graph;
 import com.vaadin.server.Page;
 import com.vaadin.ui.Alignment;
@@ -32,6 +33,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteParallelActivityDefinition;
 
 /**
  * Shows graphically the process definition and the current state of a process instance
@@ -61,7 +63,13 @@ public class ProcessGraph extends Panel {
             if (activity instanceof RemoteConditionalActivityDefinition) {
                 getAllActivities(((RemoteConditionalActivityDefinition) activity).getNextActivityIfTrue());
                 getAllActivities(((RemoteConditionalActivityDefinition) activity).getNextActivityIfFalse());
-            } else {
+            } 
+            else if (activity instanceof RemoteParallelActivityDefinition && 
+                    ((RemoteParallelActivityDefinition) activity).getPaths() != null) {
+                for (RemoteActivityDefinition path : ((RemoteParallelActivityDefinition) activity).getPaths())
+                    getAllActivities(path);                    
+            }
+            else {
                 getAllActivities(activity.getNextActivity());
             }
         }
@@ -99,7 +107,23 @@ public class ProcessGraph extends Panel {
                 
                 addEges(activities, ifFalse, graph);
                                 
-            } else {
+            } 
+            else if (activity instanceof RemoteParallelActivityDefinition && 
+                ((RemoteParallelActivityDefinition) activity).getPaths() != null) {
+                
+                for (RemoteActivityDefinition path : ((RemoteParallelActivityDefinition) activity).getPaths()) {
+                                        
+                    if (graph.getEdge(activities.get(activity), activities.get(path)) != null)
+                        continue;
+                                        
+                    graph.addEdge(activities.get(activity), activities.get(path));
+                    Graph.Edge edge = graph.getEdge(activities.get(activity), activities.get(path));
+                    edge.setParam("color", "black");
+
+                    addEges(activities, path, graph);
+                }
+            }
+            else {
                 RemoteActivityDefinition nextActivity = activity.getNextActivity();
                 
                 if (nextActivity == null)
@@ -125,6 +149,14 @@ public class ProcessGraph extends Panel {
                 
         VizComponent vizComponent = new VizComponent();
         
+        ZoomSettings zoomSetting = new ZoomSettings();
+        zoomSetting.setDblClickZoomEnabled(true);
+        zoomSetting.setPreventMouseEventsDefault(true);
+        zoomSetting.setMaxZoom(100);        
+                
+        vizComponent.setPanZoomSettings(zoomSetting);
+        vizComponent.setSizeFull();        
+        
         Graph graph = new Graph("G" + String.valueOf(processDefinition.getId()), Graph.DIGRAPH);
         
         for (RemoteActivityDefinition currentActivity : allActivities) {
@@ -138,13 +170,14 @@ public class ProcessGraph extends Panel {
             if (currentActivity.getType() == ActivityDefinition.TYPE_CONDITIONAL)
                 currentActivityNode.setParam("shape", "diamond");
             
+            if (currentActivity.getType() == ActivityDefinition.TYPE_PARALLEL)
+                currentActivityNode.setParam("shape", "diamond");
+            
             nodes.put(currentActivityNode, currentActivity);
             activities.put(currentActivity, currentActivityNode);
         }
         addEges(activities, processDefinition.getStartActivity(), graph);
-        
-        vizComponent.setWidth("400px");
-        vizComponent.setHeight("700px");
+                
         vizComponent.drawGraph(graph);
         
         for (Graph.Node node : nodes.keySet())
@@ -175,14 +208,15 @@ public class ProcessGraph extends Panel {
             }
         }
         Label lblProcessName = new Label(processDefinition.getName());
-        
-        setSizeFull();
+                
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.addComponent(lblProcessName);
         verticalLayout.addComponent(vizComponent);
-        verticalLayout.setExpandRatio(vizComponent, 1);
+        verticalLayout.setExpandRatio(lblProcessName, 0.03f);
+        verticalLayout.setExpandRatio(vizComponent, 0.97f);
         verticalLayout.setComponentAlignment(vizComponent, Alignment.MIDDLE_CENTER);
         verticalLayout.setComponentAlignment(lblProcessName, Alignment.MIDDLE_CENTER);
+        verticalLayout.setSizeFull();
                 
         setContent(verticalLayout);
     }

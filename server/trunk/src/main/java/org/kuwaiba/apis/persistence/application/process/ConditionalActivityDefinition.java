@@ -17,7 +17,7 @@ package org.kuwaiba.apis.persistence.application.process;
 import java.util.List;
 
 /**
- *
+ * Representation of a BPMN flow object -Exclusive Gateway-
  * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
  */
 public class ConditionalActivityDefinition extends ActivityDefinition {
@@ -36,9 +36,10 @@ public class ConditionalActivityDefinition extends ActivityDefinition {
     private ArtifactDefinition informationArtifact;
     
     public ConditionalActivityDefinition(long id, String name, String description, 
-        int type, boolean confirm, String color, ArtifactDefinition arfifact, Actor actor, List<Kpi> kpis, List<KpiAction> kpiActions, ArtifactDefinition informationArfifact) {
+        int type, boolean confirm, String color, ArtifactDefinition arfifact, Actor actor, List<Kpi> kpis, List<KpiAction> kpiActions, ArtifactDefinition informationArtifact) {
         
         super(id, name, description, type, arfifact, actor, kpis, kpiActions, false, confirm, color);
+        this.informationArtifact = informationArtifact;
     }
     
     @Override
