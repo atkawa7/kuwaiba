@@ -71,6 +71,9 @@ public class ProcessDefinitionLoader {
         public static final String COLOR = "color"; //NOI18N
         public static final String ACTION = "action"; //NOI18N
         public static final String VALUE = "value"; //NOI18N
+        public static final String SEQUENCE_FLOW = "sequenceFlow"; //NOI18N
+        public static final String OUTGOING_SEQUENCE_FLOW_ID = "outgoingSequenceFlowId"; //NOI18N
+        public static final String INCOMING_SEQUENCE_FLOW_ID = "incomingSequenceFlowId"; //NOI18N
     }
     public class XMLProcessDefinitionException extends Exception {
         
@@ -194,7 +197,34 @@ public class ProcessDefinitionLoader {
                                         null, 
                                         null);
                                     
-                                } else {
+                                } else if (activityDefinitionType == ActivityDefinition.TYPE_PARALLEL) {
+                                    activityDefinition = new ParallelActivityDefinition(
+                                        activityDefinitionId, 
+                                        reader.getAttributeValue(null, Attribute.NAME), 
+                                        reader.getAttributeValue(null, Attribute.DESCRIPTION), 
+                                        activityDefinitionType, 
+                                        null, 
+                                        null,
+                                        null,
+                                        null, 
+                                        Boolean.valueOf(reader.getAttributeValue(null, Attribute.IDLING)),
+                                        Boolean.valueOf(reader.getAttributeValue(null, Attribute.CONFIRM)), 
+                                        reader.getAttributeValue(null, Attribute.COLOR));
+                                    
+                                    String sequenceFlow = reader.getAttributeValue(null, Attribute.SEQUENCE_FLOW);
+                                    String outgoingSequenceFlowId = reader.getAttributeValue(null, Attribute.OUTGOING_SEQUENCE_FLOW_ID);
+                                    String incomingSequenceFlowId = reader.getAttributeValue(null, Attribute.INCOMING_SEQUENCE_FLOW_ID);
+                                    
+                                    if (sequenceFlow != null)
+                                        ((ParallelActivityDefinition) activityDefinition).setSequenceFlow(Integer.valueOf(sequenceFlow));
+                                    
+                                    if (outgoingSequenceFlowId != null)
+                                        ((ParallelActivityDefinition) activityDefinition).setOutgoingSequenceFlowId(Long.valueOf(outgoingSequenceFlowId));
+                                    
+                                    if (incomingSequenceFlowId != null)
+                                        ((ParallelActivityDefinition) activityDefinition).setIncomingSequenceFlowId(Long.valueOf(incomingSequenceFlowId));
+                                }
+                                else {
                                     
                                     activityDefinition = new ActivityDefinition(
                                         activityDefinitionId, 
@@ -214,45 +244,25 @@ public class ProcessDefinitionLoader {
                                                             
                             while (true) {
                                 if (reader.getEventType() == XMLStreamConstants.START_ELEMENT && 
-                                    reader.getName().equals(tagPaths)) {
-                                    
+                                    reader.getName().equals(tagPath)) {
+                                                                        
                                     if (!paths.containsKey(activityDefinitionId))
                                         paths.put(activityDefinitionId, new ArrayList());
-                                                                        
-                                    reader.nextTag();
                                     
-                                    if (reader.getEventType() == XMLStreamConstants.START_ELEMENT && 
-                                        reader.getName().equals(tagPath)) {
-                                        
-                                        long nextActivityDefinitionId = Long.valueOf(reader.getElementText());
-                                        
-                                        if (!paths.get(activityDefinitionId).contains(nextActivityDefinitionId))
-                                            paths.get(activityDefinitionId).add(nextActivityDefinitionId);
-                                        else {
-                                            throw new XMLProcessDefinitionException(String.format(
-                                                "The Process Definition Structure is malformed the Path Next Activity Definition Id %s in the Activity Definition id %s is in used", 
-                                                nextActivityDefinitionId, activityDefinitionId));
-                                        }
+                                    long pathId = Long.valueOf(reader.getElementText());
+                                    
+                                    if (!paths.get(activityDefinitionId).contains(pathId)) {
+                                        paths.get(activityDefinitionId).add(pathId);
                                     }
-                                    if (activityDefinition.getType() == ActivityDefinition.TYPE_CONDITIONAL) {
-                                        reader.nextTag();
-
-                                        if (reader.getEventType() == XMLStreamConstants.START_ELEMENT
-                                                && reader.getName().equals(tagPath)) {
-
-                                            long nextActivityDefinitionId = Long.valueOf(reader.getElementText());
-
-                                            if (!paths.get(activityDefinitionId).contains(nextActivityDefinitionId)) {
-                                                paths.get(activityDefinitionId).add(nextActivityDefinitionId);
-                                            } else {
-                                                throw new XMLProcessDefinitionException(String.format(
-                                                        "The Process Definition Structure is malformed the Path Next Activity Definition Id %s in the Activity Definition id %s is in used",
-                                                        nextActivityDefinitionId, activityDefinitionId));
-                                            }
-                                        }
+                                    else {
+                                        throw new XMLProcessDefinitionException(String.format(
+                                            "The Process Definition Structure is malformed the Path Next Activity Definition Id %s in the Activity Definition id %s is in used", 
+                                            pathId, activityDefinitionId));
                                     }
+                                    reader.next();
+                                    continue;
                                 }
-                                
+                                                                
                                 if (reader.getEventType() == XMLStreamConstants.START_ELEMENT && 
                                     reader.getName().equals(tagArtifactDefinition)) {
                                                 
@@ -546,7 +556,24 @@ public class ProcessDefinitionLoader {
                         }
                     }
 
-                } else {
+                } 
+                else if (activityDefinition.getType() == ActivityDefinition.TYPE_PARALLEL) {
+                    if (paths.containsKey(activityDefinitionId) && paths.get(activityDefinitionId) != null) {
+                        List<Long> activityPaths = paths.get(activityDefinitionId);
+                        for (Long pathId : activityPaths) {
+                            if (activityDefinitions.containsKey(pathId)) {
+                                
+                                ParallelActivityDefinition parallelActivityDef = (ParallelActivityDefinition) activityDefinition;
+                                
+                                if (parallelActivityDef.getPaths() == null)
+                                    parallelActivityDef.setPaths(new ArrayList());
+                                
+                                parallelActivityDef.getPaths().add(activityDefinitions.get(pathId));
+                            }
+                        }
+                    }
+                }
+                else {
                     if (paths.containsKey(activityDefinitionId)) {
                         List<Long> activityPaths = paths.get(activityDefinitionId);
                         if (activityPaths.size() == 1) {

@@ -44,11 +44,11 @@ public class ParallelActivityDefinition extends ActivityDefinition {
     /**
      * Outgoing Sequence Flow Id (Fork Parallel Activity Definition Id)
      */
-    private long outgoingSequenceFlowId;
+    private long outgoingSequenceFlowId = -1;
     /**
      * Incoming Sequence Flow Id (Join Parallel Activity Definition Id)
      */
-    private long incomingSequenceFlowId;
+    private long incomingSequenceFlowId = -1;
     
     public ParallelActivityDefinition(long id, String name, String description, int type, ArtifactDefinition arfifact, Actor actor, List<Kpi> kpis, List<KpiAction> kpiActions, boolean idling, boolean confirm, String color) {
         super(id, name, description, type, arfifact, actor, kpis, kpiActions, idling, confirm, color);

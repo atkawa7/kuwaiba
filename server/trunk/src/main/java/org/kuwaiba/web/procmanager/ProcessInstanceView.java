@@ -42,6 +42,7 @@ import org.kuwaiba.apis.forms.FormRenderer;
 import org.kuwaiba.apis.forms.components.impl.PrintWindow;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.AbstractElementField;
+import org.kuwaiba.apis.forms.elements.ElementGrid;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.util.StringPair;
@@ -92,7 +93,7 @@ public class ProcessInstanceView extends DynamicComponent {
         debugMode = Boolean.valueOf(String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("debugMode")));
         
         setStyleName("processmanager");
-        addStyleName("activitylist");
+////        addStyleName("activitylist");
         setSizeFull();
         this.wsBean = wsBean;
         this.remoteSession = remoteSession;
@@ -307,7 +308,7 @@ public class ProcessInstanceView extends DynamicComponent {
                         
                         Label label = new Label("Are you sure you want to save this Activity?");
                         label.setIcon(VaadinIcons.QUESTION_CIRCLE_O);
-                        
+                                                
                         MessageBox.getInstance().showMessage(label).addClickListener(new Button.ClickListener() {
                             @Override
                             public void buttonClick(Button.ClickEvent event) {
@@ -414,8 +415,28 @@ public class ProcessInstanceView extends DynamicComponent {
                             
                             
                             for (AbstractElement element : elements) {
-
-                                if (element instanceof AbstractElementField) {
+                                
+                                if (element instanceof ElementGrid) {
+                                    
+                                    ElementGrid elementGrid = (ElementGrid) element;
+                                    String id = elementGrid.getId();
+                                    
+                                    if (elementGrid.getRows() != null) {
+                                        List<List<Object>> rows = elementGrid.getRows();
+                                        for (int i = 0; i < rows.size(); i += 1) {
+                                            List row = rows.get(i);
+                                            for (int j = 0; j < row.size(); j += 1) {
+                                                String value = "";
+                                                if (row.get(j) instanceof RemoteObjectLight)
+                                                    value = ((RemoteObjectLight) row.get(j)).getName();
+                                                else
+                                                    value = row.get(j).toString();                                                
+                                                stringTemplate = stringTemplate.replace("${" + id + i + j + "}", value);                                                                                                
+                                            }
+                                        }
+                                    }
+                                }
+                                else if (element instanceof AbstractElementField) {
                                     AbstractElementField elementField = (AbstractElementField) element;
 
                                     if (elementField.getId() != null) {

@@ -33,6 +33,7 @@ import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.application.process.Artifact;
 import org.kuwaiba.apis.persistence.application.process.ArtifactDefinition;
 import org.kuwaiba.apis.persistence.application.process.ConditionalActivityDefinition;
+import org.kuwaiba.apis.persistence.application.process.ParallelActivityDefinition;
 import org.kuwaiba.apis.persistence.application.process.ProcessDefinition;
 import org.kuwaiba.apis.persistence.application.process.ProcessDefinitionLoader;
 import org.kuwaiba.apis.persistence.application.process.ProcessInstance;
@@ -102,7 +103,14 @@ public final class ProcessCache {
             if (activity instanceof ConditionalActivityDefinition) {
                 initActivitiesCache(processDefinition, ((ConditionalActivityDefinition) activity).getNextActivityIfTrue());
                 initActivitiesCache(processDefinition, ((ConditionalActivityDefinition) activity).getNextActivityIfFalse());
-            } else {
+            } 
+            else if (activity instanceof ParallelActivityDefinition && 
+                    ((ParallelActivityDefinition) activity).getPaths() != null) {
+                
+                for (ActivityDefinition activityDef : ((ParallelActivityDefinition) activity).getPaths())
+                    initActivitiesCache(processDefinition, activityDef);                    
+            }
+            else {
                 initActivitiesCache(processDefinition, activity.getNextActivity());
             }
         }
@@ -217,7 +225,7 @@ public final class ProcessCache {
                         return activityDef;
             }
         }
-        throw new InventoryException("Artifact Definition can not be found") {};
+        throw new InventoryException("Activity Definition can not be found") {};
     }
     
     public Artifact getArtifactForActivity(long processInstanceId, long activityId) throws ApplicationObjectNotFoundException {
@@ -225,10 +233,12 @@ public final class ProcessCache {
         
         ProcessDefinition processDef = getProcessDefinition(processInstance.getProcessDefinition());
         
-        ActivityDefinition activity = processDef.getStartActivity();
-        
-        while ((activity != null) && (activity.getId() != activityId))
-            activity = getNextActivityForProcessInstance(processInstanceId, activity.getId());
+        ActivityDefinition activity;
+        try {
+            activity = getActivityDefinition(processDef.getId(), activityId);
+        } catch (InventoryException ex) {
+            throw new ApplicationObjectNotFoundException(ex.getMessage());
+        }
         
         if (activity != null) {
             
@@ -291,73 +301,156 @@ public final class ProcessCache {
         }
         return false;
     }
-    
+        
     public List<ActivityDefinition> getProcessInstanceActivitiesPath(long processInstanceId) throws InventoryException {
         ProcessInstance processInstance = getProcessInstance(processInstanceId);
-        
         ProcessDefinition processDefinition = getProcessDefinition(processInstance.getProcessDefinition());
-        
-        List<ActivityDefinition> result = new ArrayList();
-        
         ActivityDefinition activity = processDefinition.getStartActivity();
         
-        while (activity != null && processInstance.getCurrentActivity() != activity.getId()) {
-            
-            result.add(activity);
-            activity = getNextActivityForProcessInstance(processInstanceId, activity.getId());
-        }
-        if (activity != null && processInstance.getCurrentActivity() == activity.getId())
-            result.add(activity);
-        
+        List<ActivityDefinition> result = new ArrayList();              
+        result.addAll(getPath(processInstanceId, processDefinition.getId(), processInstance.getCurrentActivity(), activity));
+        result.add(getActivityDefinition(processDefinition.getId(), processInstance.getCurrentActivity()));
         return result;
+    }
+    
+    private List<ActivityDefinition> getPath(long processInstanceId, long processDefinitionId, long currentActivityId, ActivityDefinition activityDef) throws InventoryException {
+        List<ActivityDefinition> result = new ArrayList();
+        
+        if (activityDef == null)
+            return result;
+                        
+        if (activityDef.getId() == currentActivityId)
+            return result;
+        
+        if (activityDef instanceof ParallelActivityDefinition &&
+            ((ParallelActivityDefinition) activityDef).getSequenceFlow() ==  ParallelActivityDefinition.JOIN) {
+            
+            return result;
+        }
+        
+        result.add(activityDef);
+        
+        if (activityDef instanceof ParallelActivityDefinition) {
+            
+            ParallelActivityDefinition parallelActivityDef = (ParallelActivityDefinition) activityDef;
+            
+            if (parallelActivityDef.getSequenceFlow() == ParallelActivityDefinition.FORK && 
+                parallelActivityDef.getPaths() != null && 
+                parallelActivityDef.getIncomingSequenceFlowId() != -1) {
+                
+                for (ActivityDefinition path : parallelActivityDef.getPaths())
+                    result.addAll(getPath(processInstanceId, processDefinitionId, currentActivityId, path));
+                
+                ActivityDefinition joinActivityDef = getActivityDefinition(processDefinitionId, parallelActivityDef.getIncomingSequenceFlowId());
+                
+                if (joinActivityDef.getId() == currentActivityId)
+                    return result;
+                
+                result.add(joinActivityDef);
+                
+                if (joinActivityDef instanceof ParallelActivityDefinition) {
+                    parallelActivityDef = (ParallelActivityDefinition) joinActivityDef;
+
+                    if(parallelActivityDef.getSequenceFlow() ==  ParallelActivityDefinition.JOIN && 
+                       parallelActivityDef.getPaths() != null) {
+
+                        for (ActivityDefinition path : parallelActivityDef.getPaths())
+                            result.addAll(getPath(processInstanceId, processDefinitionId, currentActivityId, path));
+                    }
+                }
+            }
+        }
+        else if (activityDef instanceof ConditionalActivityDefinition) {
+            
+            ConditionalActivityDefinition conditionalActivityDef = (ConditionalActivityDefinition) activityDef;
+            
+            boolean isTrue = false;
+            try {
+                Artifact artifact = getArtifactForActivity(processInstanceId, conditionalActivityDef.getId());
+                isTrue = getConditionalArtifactContent(artifact);
+            } catch(Exception ex) {
+            }
+            if (isTrue)
+                result.addAll(getPath(processInstanceId, processDefinitionId, currentActivityId, conditionalActivityDef.getNextActivityIfTrue()));
+            else
+                result.addAll(getPath(processInstanceId, processDefinitionId, currentActivityId, conditionalActivityDef.getNextActivityIfFalse()));
+        }
+        else
+            result.addAll(getPath(processInstanceId, processDefinitionId, currentActivityId, activityDef.getNextActivity()));
+                
+        return result;
+    }
+    
+    public ActivityDefinition getNextActivityToParallelActivity(long processDefinitionId, long activityDefinitionId) throws ApplicationObjectNotFoundException {
+        ActivityDefinition activityDefinition;    
+        
+        try {
+            activityDefinition = getActivityDefinition(processDefinitionId, activityDefinitionId);
+        } catch (InventoryException ex) {
+            throw new ApplicationObjectNotFoundException(ex.getMessage());
+        }
+        
+        if (activityDefinition instanceof ParallelActivityDefinition) {
+            ParallelActivityDefinition parallelActivityDef = (ParallelActivityDefinition) activityDefinition;
+            
+            if (parallelActivityDef.getSequenceFlow() == ParallelActivityDefinition.FORK) {
+                    try {
+                        long incomingSeqFlowId = ((ParallelActivityDefinition) activityDefinition).getIncomingSequenceFlowId();
+                        return getActivityDefinition(processDefinitionId, incomingSeqFlowId);
+                        
+                    } catch (InventoryException ex) {
+                        throw new ApplicationObjectNotFoundException(ex.getMessage());
+                    }
+            }
+        }
+        return activityDefinition;
     }
     
     public ActivityDefinition getNextActivityForProcessInstance(long processInstanceId, long currentActivityId) throws ApplicationObjectNotFoundException {
         
         ProcessInstance processInstance = getProcessInstance(processInstanceId);
-        
         ProcessDefinition processDefinition = getProcessDefinition(processInstance.getProcessDefinition());
         
-        ActivityDefinition activity = processDefinition.getStartActivity();
-        
-        while (activity != null) {
-            
-            if (activity.getId() == currentActivityId) {
+        ActivityDefinition activityDefinition;    
+
+        try {
+            activityDefinition = getActivityDefinition(processDefinition.getId(), currentActivityId);
+        } catch (InventoryException ex) {
+            throw new ApplicationObjectNotFoundException(ex.getMessage());
+        }
                 
-                if (activity instanceof ConditionalActivityDefinition) {
-                    Artifact artifact = null;
-                    
-                    try {
-                        artifact = getArtifactForActivity(processInstanceId, activity.getId());
-                    } catch(Exception ex) {
-                    }
-                    boolean isTrue = false;
-                    
-                    if (artifact != null)
-                        isTrue = getConditionalArtifactContent(artifact);
-                                        
-                    if (isTrue)
-                        return ((ConditionalActivityDefinition) activity).getNextActivityIfTrue();
-                    else
-                        return ((ConditionalActivityDefinition) activity).getNextActivityIfFalse();
-                }
-                return activity.getNextActivity();
+        if (activityDefinition instanceof ConditionalActivityDefinition) {
+            Artifact artifact = null;
+
+            try {
+                artifact = getArtifactForActivity(processInstanceId, activityDefinition.getId());
+            } catch(Exception ex) {
             }
-            
-            if (activity instanceof ConditionalActivityDefinition) {
-                Artifact artifact = getArtifactForActivity(processInstanceId, activity.getId());
-                boolean isTrue = getConditionalArtifactContent(artifact);
-                                        
-                if (isTrue)
-                    activity = ((ConditionalActivityDefinition) activity).getNextActivityIfTrue();
-                else
-                    activity = ((ConditionalActivityDefinition) activity).getNextActivityIfFalse();
-                
-            } else {
-                activity = activity.getNextActivity();
+            boolean isTrue = false;
+
+            if (artifact != null)
+                isTrue = getConditionalArtifactContent(artifact);
+
+            if (isTrue)
+                return getNextActivityToParallelActivity(processDefinition.getId(), ((ConditionalActivityDefinition) activityDefinition).getNextActivityIfTrue().getId());
+            else
+                return getNextActivityToParallelActivity(processDefinition.getId(), ((ConditionalActivityDefinition) activityDefinition).getNextActivityIfFalse().getId());
+        }
+        if (activityDefinition instanceof ParallelActivityDefinition) {
+
+            ParallelActivityDefinition parallelActivityDef = (ParallelActivityDefinition) activityDefinition;
+
+            if (parallelActivityDef.getSequenceFlow() == ParallelActivityDefinition.JOIN && 
+                parallelActivityDef.getPaths() != null && 
+                !parallelActivityDef.getPaths().isEmpty()) {
+
+                return parallelActivityDef.getPaths().get(0);
+            }
+            else {
+                throw new ApplicationObjectNotFoundException("Next Activity can not be found");
             }
         }
-        throw new ApplicationObjectNotFoundException("Next Activity can not be found");
+        return getNextActivityToParallelActivity(processDefinition.getId(), activityDefinition.getNextActivity().getId());
     }
     
     public ActivityDefinition getNextActivityForProcessInstance(long processInstanceId) throws InventoryException {

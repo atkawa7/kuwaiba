@@ -195,13 +195,7 @@ public class ProcessGraph extends Panel {
 
                         Graph.Node b = activities.get(path.get(i));
                         
-                        vizComponent.addCss(b, "fill", "#c0d5f7");
-                        
-                        if (i - 1 >= 0) {
-                            Graph.Node a = activities.get(path.get(i - 1));
-                            Graph.Edge edge = graph.getEdge(a, b);
-                            edge.setParam("color", "red");
-                        }
+                        vizComponent.addCss(b, "fill", "#c0d5f7");                        
                     }
                 }
             } catch (ServerSideException ex) {

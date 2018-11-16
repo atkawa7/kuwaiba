@@ -58,6 +58,7 @@ import com.vaadin.ui.themes.ValoTheme;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.interfaces.ws.toserialize.application.GroupInfoLight;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteParallelActivityDefinition;
 
 /**
  * Shown the instances of a process definition
@@ -524,7 +525,14 @@ public class ProcessInstancesView extends VerticalLayout {
             if (activity instanceof RemoteConditionalActivityDefinition) {
                 getAllActivities(((RemoteConditionalActivityDefinition) activity).getNextActivityIfTrue());
                 getAllActivities(((RemoteConditionalActivityDefinition) activity).getNextActivityIfFalse());
-            } else {
+            } 
+            else if (activity instanceof RemoteParallelActivityDefinition && 
+                    ((RemoteParallelActivityDefinition) activity).getPaths() != null) {
+                for (RemoteActivityDefinition path : ((RemoteParallelActivityDefinition) activity).getPaths()) {
+                    getAllActivities(path);                    
+                }
+            }
+            else {
                 getAllActivities(activity.getNextActivity());
             }
         }
