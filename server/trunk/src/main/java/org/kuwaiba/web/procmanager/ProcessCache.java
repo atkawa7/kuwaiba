@@ -462,11 +462,8 @@ public final class ProcessCache {
         ProcessInstance processInstance = getProcessInstance(processInstanceId);
         
         ProcessDefinition processDefinition = getProcessDefinition(processInstance.getProcessDefinition());
-        
-        ActivityDefinition activity = processDefinition.getStartActivity();
-        
-        while (activity != null && activity.getId() != activityDefinitionId)
-            activity = getNextActivityForProcessInstance(processInstanceId, activity.getId());
+                
+        ActivityDefinition activity = getActivityDefinition(processDefinition.getId(), activityDefinitionId);
         
         if (activity != null && artifact != null) {
             if (processInstanceArtifacts.containsKey(processInstance)) {
@@ -503,11 +500,8 @@ public final class ProcessCache {
         ProcessInstance processInstance = getProcessInstance(processInstanceId);
         
         ProcessDefinition processDefinition = getProcessDefinition(processInstance.getProcessDefinition());
-        
-        ActivityDefinition activity = processDefinition.getStartActivity();
-        
-        while (activity != null && activity.getId() != activityDefinitionId)
-            activity = getNextActivityForProcessInstance(processInstanceId, activity.getId());
+                
+        ActivityDefinition activity = getActivityDefinition(processDefinition.getId(), activityDefinitionId);
         
         if (activity != null) {
             if (processInstanceArtifacts.containsKey(processInstance)) {
