@@ -60,6 +60,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConditionalActivityDefinition;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteParallelActivityDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.util.i18n.I18N;
 import org.openide.util.Exceptions;
@@ -93,7 +94,6 @@ public class ProcessInstanceView extends DynamicComponent {
         debugMode = Boolean.valueOf(String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("debugMode")));
         
         setStyleName("processmanager");
-////        addStyleName("activitylist");
         setSizeFull();
         this.wsBean = wsBean;
         this.remoteSession = remoteSession;
@@ -259,7 +259,16 @@ public class ProcessInstanceView extends DynamicComponent {
         }
         
         if (actorEnabled(currentActivity.getActor())) {
-            
+            if (artifact == null && !enableActivity(currentActivity.getId())) {
+                VerticalLayout verticalLayout = new VerticalLayout();
+                verticalLayout.setSpacing(false);
+                Label label = new Label("<h1 style=\"color:#ff8a80;\">The previous activity must be done in order to start a new one<h1>", ContentMode.HTML);            
+                verticalLayout.addComponent(label);
+                verticalLayout.setComponentAlignment(label, Alignment.MIDDLE_CENTER);
+                verticalLayout.setSizeFull();
+                setComponentCenter(verticalLayout);
+                return;                                                                                                
+            }            
             VerticalLayout artifactWrapperLayout = new VerticalLayout();
             artifactWrapperLayout.setHeight("100%");
             artifactWrapperLayout.setStyleName("formmanager");
@@ -582,5 +591,56 @@ public class ProcessInstanceView extends DynamicComponent {
             Notifications.showError(ex.getMessage());
         }
     }
-       
+    
+    private boolean enableActivity(long activityId) {
+        try {
+            List<RemoteActivityDefinition> lstActivities = wsBean.getProcessInstanceActivitiesPath(
+                processInstance.getId(), 
+                Page.getCurrent().getWebBrowser().getAddress(), 
+                remoteSession.getSessionId());
+            
+            if (lstActivities != null && !lstActivities.isEmpty()) {
+                
+                int activityIndex = -1;
+                
+                for (int i = 0; i < lstActivities.size(); i += 1) {
+                    
+                    if (lstActivities.get(i).getId() == activityId)
+                        activityIndex = i;
+                }
+                if (activityIndex - 1 >= 0) {
+                    for (RemoteActivityDefinition activityDef : lstActivities) {
+                        
+                        if (activityDef instanceof RemoteParallelActivityDefinition) {
+                                                        
+                            RemoteParallelActivityDefinition parallelAcvitityDef = (RemoteParallelActivityDefinition) activityDef;
+                                                        
+                            if (parallelAcvitityDef.getPaths() != null) {
+                                
+                                for (RemoteActivityDefinition anActivityDef : parallelAcvitityDef.getPaths()) {
+                                    if (anActivityDef.getId() == activityId)
+                                        return true;
+                                }
+                            }
+                        }
+                    }
+                    
+                    RemoteActivityDefinition activityDef = lstActivities.get(activityIndex - 1);
+                    
+                    if (!(activityDef instanceof RemoteParallelActivityDefinition)) {
+                        
+                        wsBean.getArtifactForActivity(
+                            processInstance.getId(), 
+                            activityDef.getId(), 
+                            Page.getCurrent().getWebBrowser().getAddress(), 
+                            remoteSession.getSessionId());
+                    }
+                }
+                return true;
+            }
+            
+        } catch (ServerSideException ex) {
+        }
+        return false;
+    }
 }

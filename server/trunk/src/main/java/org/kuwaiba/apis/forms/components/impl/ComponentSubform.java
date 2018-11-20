@@ -67,6 +67,8 @@ public class ComponentSubform extends GraphicalComponent implements ComponentCon
                             if (window == null) {
                                 window = new Window();                        
                                 window.setStyleName("subformpopup"); //NOI18N
+                                window.setCaption("Subform");
+                                window.setDraggable(true);
 
                                 VerticalLayout verticalLayout = new VerticalLayout();
                                 verticalLayout.setWidth(100, Unit.PERCENTAGE);

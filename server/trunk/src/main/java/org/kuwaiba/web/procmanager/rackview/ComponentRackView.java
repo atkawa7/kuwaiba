@@ -211,14 +211,10 @@ public class ComponentRackView extends VerticalLayout {
                     if (dragSource.isPresent() &&  dragSource.get() instanceof ComponentDevice) {
                         
                         ComponentDevice componentDevice = (ComponentDevice) dragSource.get();
-                        
-////                        rackUnit.addComponent(componentDevice);
-////                        rackUnit.removeComponent(componentDevice);
-////                        
-////                        rackUnit.addComponent(componentDevice.getImgDevice());
-                        
+                                                
                         if (rackObject != null && webserviceBean != null && componentDevice.getDevice() != null) {
                             try {
+                                
                                 List<StringPair> attributesToBeUpdated = new ArrayList();
                                 attributesToBeUpdated.add(new StringPair("position", String.valueOf(rackUnit.getRackUnit())));
                                                                 
@@ -236,6 +232,7 @@ public class ComponentRackView extends VerticalLayout {
                                         new long[] {componentDevice.getDevice().getId()},
                                         Page.getCurrent().getWebBrowser().getAddress(),
                                         ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+                                                                
                             } catch (ServerSideException ex) {
                                 //Exceptions.printStackTrace(ex);
                             }

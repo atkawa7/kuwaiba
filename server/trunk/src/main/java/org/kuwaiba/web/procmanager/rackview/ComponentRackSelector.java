@@ -15,26 +15,32 @@
 package org.kuwaiba.web.procmanager.rackview;
 
 import com.vaadin.data.HasValue;
+import com.vaadin.event.FieldEvents;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Alignment;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.ComboBox;
 import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
-import com.vaadin.ui.Notification;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
 import java.util.ArrayList;
 import java.util.List;
 import org.kuwaiba.apis.persistence.util.StringPair;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResultCollection;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
-import org.openide.util.Exceptions;
 
 /**
  *
@@ -43,9 +49,9 @@ import org.openide.util.Exceptions;
 public class ComponentRackSelector extends VerticalLayout {
     private final WebserviceBean webserviceBean;
     
-    public ComponentRackSelector(ComponentDeviceList componentDeviceList, WebserviceBean webserviceBean/*, ComponentRackView componentRackView*/) {
+    public ComponentRackSelector(ComponentDeviceList componentDeviceList, WebserviceBean webserviceBean) {
         this.webserviceBean = webserviceBean;
-        initializeComponent(componentDeviceList, webserviceBean/*, componentRackView*/);                        
+        initializeComponent(componentDeviceList, webserviceBean);                        
     }
     
     private List<RemoteObjectLight> getItems(String parentClassName, long parentId, String childClassName) {
@@ -70,13 +76,12 @@ public class ComponentRackSelector extends VerticalLayout {
             return (List<RemoteObjectLight>) result.getResults();
             
         } catch (ServerSideException ex) {
-            //Exceptions.printStackTrace(ex);
-            Notification.show(ex.getMessage(), Notification.Type.ERROR_MESSAGE);
+            Notifications.showError(ex.getMessage());
         }
         return null;
     }
         
-    private void initializeComponent(ComponentDeviceList componentDeviceList, WebserviceBean webserviceBean/*, ComponentRackView componentRackView*/) {
+    private void initializeComponent(ComponentDeviceList componentDeviceList, WebserviceBean webserviceBean) {
         setSizeFull();
         
         HorizontalLayout horizontalLayout = new HorizontalLayout();        
@@ -101,54 +106,236 @@ public class ComponentRackSelector extends VerticalLayout {
         Label lblRack = new Label("Rack");
         lblRack.addStyleName(ValoTheme.LABEL_BOLD);
         
-        ComboBox cmbCity = new ComboBox();
-        ComboBox cmbBuildings = new ComboBox();
-        ComboBox cmbRacks = new ComboBox();
+        ComboBox<RemoteObjectLight> cmbCity = new ComboBox();
+        ComboBox<RemoteObjectLight> cmbBuildings = new ComboBox();        
+        ComboBox<RemoteObjectLight> cmbRacks = new ComboBox();
+                
+        Button btnCreateBuilding = new Button();
+        btnCreateBuilding.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        btnCreateBuilding.setIcon(VaadinIcons.PLUS);
+        btnCreateBuilding.setDescription("Create Building");
         
-        List<RemoteObjectLight> cities = new ArrayList();
+        Button btnCreateRack = new Button();
+        btnCreateRack.addStyleName(ValoTheme.BUTTON_ICON_ONLY);
+        btnCreateRack.setIcon(VaadinIcons.PLUS);
+        btnCreateRack.setDescription("Create Rack");
         
-        try {
+        cmbBuildings.setEnabled(false);
+        btnCreateBuilding.setEnabled(false);
+        cmbRacks.setEnabled(false);
+        btnCreateRack.setEnabled(false);
+        
+        btnCreateBuilding.addClickListener(new ClickListener() {
             
-            List<StringPair> scriptQueryParameters = new ArrayList();
-            scriptQueryParameters.add(new StringPair("className", "City")); //NOI18N
-                        
-            webserviceBean.updateScriptQueryParameters(
-                "getInstancesOfFinalClass", 
-                scriptQueryParameters, 
-                Page.getCurrent().getWebBrowser().getAddress(), 
-                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                Window window = new Window();                
+                window.setCaptionAsHtml(true);
+                window.setCaption("<b>Create Building</b>");
+                window.setDraggable(true);
+                window.setModal(true);
+                window.center();
+                
+                VerticalLayout content = new VerticalLayout();                
+                content.setWidth(720, Unit.PIXELS);
+                content.setHeightUndefined();
+                content.setSpacing(true);
+                
+                GridLayout lytGrid = new GridLayout();
+                lytGrid.setSpacing(true);
+                lytGrid.setRows(2);
+                lytGrid.setColumns(2);
+                
+                HorizontalLayout lytHorizontal = new HorizontalLayout();
+                                
+                content.addComponent(lytGrid);
+                content.addComponent(lytHorizontal);
+                
+                content.setComponentAlignment(lytGrid, Alignment.MIDDLE_CENTER);
+                content.setComponentAlignment(lytHorizontal, Alignment.MIDDLE_CENTER);
+                
+                TextField txtNewBuildingName = new TextField();
+                
+                lytGrid.addComponent(new Label("City"));
+                lytGrid.addComponent(new Label(cmbCity != null && cmbCity.getValue() != null ? "<b>" + cmbCity.getValue().getName() + "</b>" : "", ContentMode.HTML));
+                lytGrid.addComponent(new Label("New Bulding Name"));
+                lytGrid.addComponent(txtNewBuildingName);
+                
+                Button btnOk = new Button("OK");
+                btnOk.setWidth(120, Unit.PIXELS);
+                
+                Button btnCancel = new Button("Cancel");
+                btnCancel.setWidth(120, Unit.PIXELS);
+                
+                lytHorizontal.addComponent(btnOk);                
+                lytHorizontal.addComponent(btnCancel);
+                
+                btnOk.addClickListener(new ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        if (cmbCity != null && cmbCity.getValue() != null &&
+                            txtNewBuildingName != null && txtNewBuildingName.getValue() != null && !txtNewBuildingName.getValue().equals("")) {
+                                                                                    
+                            RemoteObjectLight rol = cmbCity.getValue();
+                            String name = txtNewBuildingName.getValue();
+                            
+                            try {
+                                webserviceBean.createObject("Building", rol.getClassName(), rol.getId(), new String[] {"name"}, new String[] {name}, -1, 
+                                    Page.getCurrent().getWebBrowser().getAddress(), 
+                                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                            } catch (ServerSideException ex) {
+                                Notifications.showError(ex.getMessage());
+                            }
+                        }
+                        window.close();
+                    }
+                });
+                                    
+                btnCancel.addClickListener(new ClickListener(){
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        window.close();
+                    }
+                });
+                window.setContent(content);
+                
+                UI.getCurrent().addWindow(window);
+            }
+        });
+        
+        btnCreateRack.addClickListener(new ClickListener() {
             
-            RemoteScriptQueryResultCollection result = webserviceBean.executeScriptQueryCollection(
-                "getInstancesOfFinalClass", 
-                Page.getCurrent().getWebBrowser().getAddress(), 
-                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-            
-            cities = (List<RemoteObjectLight>) result.getResults();
-            
-        } catch (ServerSideException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        cmbCity.setItems(cities);
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                Window window = new Window();                
+                window.setCaptionAsHtml(true);
+                window.setCaption("<b>Create Rack</b>");
+                window.setDraggable(true);
+                window.setModal(true);
+                window.center();
+                
+                VerticalLayout content = new VerticalLayout();                
+                content.setWidth(720, Unit.PIXELS);
+                content.setHeightUndefined();
+                content.setSpacing(true);
+                
+                GridLayout lytGrid = new GridLayout();
+                lytGrid.setSpacing(true);
+                lytGrid.setRows(3);
+                lytGrid.setColumns(2);
+                
+                HorizontalLayout lytHorizontal = new HorizontalLayout();
+                                
+                content.addComponent(lytGrid);
+                content.addComponent(lytHorizontal);
+                
+                content.setComponentAlignment(lytGrid, Alignment.MIDDLE_CENTER);
+                content.setComponentAlignment(lytHorizontal, Alignment.MIDDLE_CENTER);
+                
+                TextField txtNewRackName = new TextField();
+                TextField txtRackNameUnits = new TextField();
+                
+                lytGrid.addComponent(new Label("Building"));
+                lytGrid.addComponent(new Label(cmbBuildings != null && cmbBuildings.getValue() != null ? "<b>" + cmbBuildings.getValue().getName() + "</b>" : "", ContentMode.HTML));
+                lytGrid.addComponent(new Label("New Rack Name"));
+                lytGrid.addComponent(txtNewRackName);
+                lytGrid.addComponent(new Label("Rack Units"));
+                lytGrid.addComponent(txtRackNameUnits);
+                
+                Button btnOk = new Button("OK");
+                btnOk.setWidth(120, Unit.PIXELS);
+                
+                Button btnCancel = new Button("Cancel");
+                btnCancel.setWidth(120, Unit.PIXELS);
+                
+                lytHorizontal.addComponent(btnOk);                
+                lytHorizontal.addComponent(btnCancel);
+                
+                btnOk.addClickListener(new ClickListener() {
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        if (cmbBuildings != null && cmbBuildings.getValue() != null &&
+                            txtNewRackName != null && txtNewRackName.getValue() != null && !txtNewRackName.getValue().equals("")) {
+                                                                                    
+                            RemoteObjectLight rol = cmbBuildings.getValue();
+                            String name = txtNewRackName.getValue();
+                            String rackUnits = txtRackNameUnits.getValue();
+                            
+                            try {
+                                webserviceBean.createObject("Rack", rol.getClassName(), rol.getId(), new String[] {"name", "rackUnits"}, new String[] {name, rackUnits}, -1, 
+                                    Page.getCurrent().getWebBrowser().getAddress(), 
+                                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                            } catch (ServerSideException ex) {
+                                Notifications.showError(ex.getMessage());
+                            }
+                        }
+                        window.close();
+                    }
+                });
+                                    
+                btnCancel.addClickListener(new ClickListener(){
+                    @Override
+                    public void buttonClick(Button.ClickEvent event) {
+                        window.close();
+                    }
+                });
+                window.setContent(content);
+                
+                UI.getCurrent().addWindow(window);
+            }
+        });
         
         cmbCity.addValueChangeListener(new HasValue.ValueChangeListener<RemoteObjectLight>() {
             @Override
             public void valueChange(HasValue.ValueChangeEvent<RemoteObjectLight> event) {
-                if (event.getValue() != null && webserviceBean != null) {
-                    List<RemoteObjectLight> buildings = getItems(event.getValue().getClassName(), event.getValue().getId(), "Building"); //NOI18N
-                    cmbBuildings.setItems(buildings);
-                    
-                    List<RemoteObjectLight> racks = getItems(event.getValue().getClassName(), event.getValue().getId(), "Rack"); //NOI18N
-                    cmbRacks.setItems(racks);
+                if (event.getValue() != null) {
+                    cmbBuildings.setEnabled(true);
+                    btnCreateBuilding.setEnabled(true);
+                }
+                else {
+                    cmbBuildings.setEnabled(false);
+                    btnCreateBuilding.setEnabled(false);
                 }
             }
         });
+        cmbCity.addFocusListener(new FieldEvents.FocusListener() {
+            @Override
+            public void focus(FieldEvents.FocusEvent event) {
+                try {
+                    
+                    List<RemoteObjectLight> objects = webserviceBean.getObjectsOfClassLight("City", -1, 
+                        Page.getCurrent().getWebBrowser().getAddress(), 
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+                    
+                    cmbCity.setItems(objects);
+                } catch (ServerSideException ex) {
+                    Notifications.showError(ex.getMessage());
+                }
+            }
+        });  
+        
         cmbBuildings.addValueChangeListener(new HasValue.ValueChangeListener<RemoteObjectLight>() {
             @Override
             public void valueChange(HasValue.ValueChangeEvent<RemoteObjectLight> event) {
                 
-                if (event.getValue() != null && webserviceBean != null) {
-                    List<RemoteObjectLight> racks = getItems(event.getValue().getClassName(), event.getValue().getId(), "Rack"); //NOI18N
-                    cmbRacks.setItems(racks);
+                if (event.getValue() != null) {
+                    cmbRacks.setEnabled(true);
+                    btnCreateRack.setEnabled(true);
+                }
+                else {
+                    cmbRacks.setEnabled(false);
+                    btnCreateRack.setEnabled(false);
+                }
+            }
+        });
+        cmbBuildings.addFocusListener(new FieldEvents.FocusListener() {
+            @Override
+            public void focus(FieldEvents.FocusEvent event) {
+                if (cmbCity != null && cmbCity.getValue() != null && cmbBuildings != null) {
+                    RemoteObjectLight city = cmbCity.getValue();
+                    
+                    List<RemoteObjectLight> buildings = getItems(city.getClassName(), city.getId(), "Building"); //NOI18N
+                    cmbBuildings.setItems(buildings);
                 }
             }
         });
@@ -160,7 +347,19 @@ public class ComponentRackSelector extends VerticalLayout {
                 if (event.getValue() != null && webserviceBean != null)
                     rightPanel.setContent(new ComponentRackView(event.getValue(), webserviceBean));
             }
+        });        
+        cmbRacks.addFocusListener(new FieldEvents.FocusListener() {
+            @Override
+            public void focus(FieldEvents.FocusEvent event) {
+                if (cmbBuildings != null && cmbBuildings.getValue() != null) {
+                    RemoteObjectLight building = cmbBuildings.getValue();
+                    List<RemoteObjectLight> racks = getItems(building.getClassName(), building.getId(), "Rack"); //NOI18N
+                    
+                    cmbRacks.setItems(racks);
+                }
+            }
         });
+        
         rightPanel.setSizeFull();
         
         VerticalLayout rightVerticalLayout = new VerticalLayout();
@@ -170,13 +369,15 @@ public class ComponentRackSelector extends VerticalLayout {
         grdRack.setSizeFull();
         
         grdRack.setRows(1);
-        grdRack.setColumns(6);
+        grdRack.setColumns(8);
         grdRack.addComponent(lblCity);
         grdRack.addComponent(cmbCity);
         grdRack.addComponent(lblBuilding);
         grdRack.addComponent(cmbBuildings);
+        grdRack.addComponent(btnCreateBuilding);
         grdRack.addComponent(lblRack);
         grdRack.addComponent(cmbRacks);
+        grdRack.addComponent(btnCreateRack);
         
         grdRack.setComponentAlignment(lblCity, Alignment.MIDDLE_CENTER);
         grdRack.setComponentAlignment(lblBuilding, Alignment.MIDDLE_CENTER);

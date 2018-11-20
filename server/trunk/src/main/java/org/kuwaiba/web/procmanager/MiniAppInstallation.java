@@ -15,8 +15,11 @@
 package org.kuwaiba.web.procmanager;
 
 import com.neotropic.kuwaiba.modules.reporting.img.SceneExporter;
+import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.FileResource;
 import com.vaadin.server.Page;
+import com.vaadin.server.Sizeable.Unit;
+import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.Component;
@@ -77,118 +80,64 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
         devicesGrid.setItems(materialBeans);
                 
     }
+    
+    private List<RemoteObject> updateMaterials() {
+        List<RemoteObject> materials = new ArrayList();
+        
+        if (getInputParameters() != null) {
+            for (String id : getInputParameters().stringPropertyNames()) {
+                try {
+                    RemoteObject material = wsBean.getObject(
+                            getInputParameters().getProperty(String.valueOf(id)),
+                            Long.valueOf(String.valueOf(id)),
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+                    materials.add(material);
+                } catch (ServerSideException ex) {
+                    Notifications.showError(ex.getMessage());
+                }
+            }
+        }
+        return materials;
+    }
 
     @Override
     public Component launchEmbedded() {
-////        long targetId = 51970;
-////        String targetClassName = "Rack";
         
-////        List<String> objectClasses = new ArrayList();
-////        List<String> objectIds = new ArrayList();
-        
-        List<RemoteObject> selectedDevices = new ArrayList();
-        
-        try {
-////            List<RemoteObjectLight> childrenLight = getWebserviceBean().getObjectChildren(
-////                    "Rack",
-////                    51345,
-////                    0,
-////                    Page.getCurrent().getWebBrowser().getAddress(),
-////                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-////            
-////            for (RemoteObjectLight childLight : childrenLight) {
-////                objectClasses.add(childLight.getClassName());
-////                objectIds.add(String.valueOf(childLight.getId()));
-////                
-////                RemoteObject child = getWebserviceBean().getObject(
-////                    childLight.getClassName(), 
-////                    childLight.getId(), 
-////                    Page.getCurrent().getWebBrowser().getAddress(),
-////                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-////                
-////                selectedDevices.add(child);                
-////            }
-////            
-////            childrenLight = getWebserviceBean().getObjectChildren(
-////                    targetClassName,
-////                    targetId,
-////                    0,
-////                    Page.getCurrent().getWebBrowser().getAddress(),
-////                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-////            
-////            for (RemoteObjectLight childLight : childrenLight) {
-////                objectClasses.add(childLight.getClassName());
-////                objectIds.add(String.valueOf(childLight.getId()));
-////                
-////                RemoteObject child = getWebserviceBean().getObject(
-////                    childLight.getClassName(), 
-////                    childLight.getId(), 
-////                    Page.getCurrent().getWebBrowser().getAddress(),
-////                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-////                
-////                selectedDevices.add(child);                
-////            }
-            if (getInputParameters() != null) {
-                
-                for (Object id : getInputParameters().keySet()) {
-
-                    RemoteObject child = wsBean.getObject(
-                        getInputParameters().getProperty(String.valueOf(id)), 
-                        Long.valueOf(String.valueOf(id)), 
-                        Page.getCurrent().getWebBrowser().getAddress(),
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-
-                    selectedDevices.add(child);                
-                }
-            }
-                        
-        } catch (ServerSideException ex) {
-            //Exceptions.printStackTrace(ex);
-        }
-//        List<String> portClasses = new ArrayList();
-//        List<String> portIds = new ArrayList();
-//        
-//        portClasses.add("OpticalPort");
-//        portIds.add("35583");
-//        
-//        portClasses.add("OpticalPort");
-//        portIds.add("4254");
-//        
-//        portClasses.add("OpticalPort");
-//        portIds.add("14853");
-                
         Panel panel = new Panel();
+        panel.setWidth(1280, Unit.PIXELS);
+        panel.setHeight(720, Unit.PIXELS);
+        
         VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.setSizeUndefined();
         
         Grid<MaterialBean> gridMaterials = new Grid<>();
+        gridMaterials.setSelectionMode(Grid.SelectionMode.SINGLE);
+        gridMaterials.setWidth(1200, Unit.PIXELS);
         
         String columnMaterialId = "columnMaterialId"; //NOI18N
         String columnCityId = "columnCityId"; //NOI18N
+        String columnBuildingId = "columnBuildingId"; //NOI18N
+        String columnWarehouseId = "columnWarehouseId"; //NOI18N
         String columnRackId = "columnRackId"; //NOI18N
         String columnViewRackId = "columnViewRackId"; //NOI18N
-        String columnSelectRackId = "columnSelectRackId"; //NOI18N
+        String columnCountryId = "columnCountryId"; //NOI18N
+////        String columnSelectRackId = "columnSelectRackId"; //NOI18N
+                
+        updateDevicesGrid(updateMaterials(), gridMaterials);
         
-////        List<MaterialBean> materialBeans = new ArrayList();
-////                
-////        for (RemoteObject selectedDevice : selectedDevices) {
-////            MaterialBean materialBean = new MaterialBean(selectedDevice, getWebserviceBean());
-////            materialBeans.add(materialBean);
-////        }
-////        gridMaterials.setItems(materialBeans);
-        updateDevicesGrid(selectedDevices, gridMaterials);
-
-        gridMaterials.setSelectionMode(Grid.SelectionMode.SINGLE);
-        gridMaterials.setWidth("100%");
-
-        gridMaterials.addColumn(MaterialBean::getMaterial).setCaption("Material").setId(columnMaterialId);
-        gridMaterials.addColumn(MaterialBean::getCity).setCaption("City").setId(columnCityId);
-        gridMaterials.addColumn(MaterialBean::getRack).setCaption("Rack").setId(columnRackId);
-        gridMaterials.addColumn(MaterialBean::getBtnRackView, new ButtonRenderer(new RendererClickListener<MaterialBean>() {
+        ButtonRenderer buttonRenderer = new ButtonRenderer(new RendererClickListener<MaterialBean>() {
+            
             @Override
             public void click(ClickableRenderer.RendererClickEvent<MaterialBean> event) {
                 
                 MaterialBean materialBean = (MaterialBean) event.getItem();
-                                
+                
+                if (materialBean == null)
+                    return;
+                else if (materialBean.getRackObject() == null)
+                    return;
+                                                
                 SceneExporter sceneExporter = SceneExporter.getInstance();
                 
                 String oldPath = SceneExporter.PATH;
@@ -227,117 +176,42 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
 
                 UI.getCurrent().addWindow(window);
             }
-        })).setCaption("Actions").setId(columnViewRackId);   
+        });
+        buttonRenderer.setHtmlContentAllowed(true);
         
-////        gridMaterials.addColumn(MaterialBean::getBtnSelectRack, new ButtonRenderer(new RendererClickListener<MaterialBean>() {
-////            @Override
-////            public void click(ClickableRenderer.RendererClickEvent<MaterialBean> event) {
-////                
-////                MaterialBean materialBean = (MaterialBean) event.getItem();
-////            }
-////        })).setCaption("Actions").setId(columnSelectRackId);
-        
-////        Label lblMaterials = new Label("Materials");
-////        lblMaterials.addStyleNames(ValoTheme.LABEL_H1);        
-//        Grid<PortBean> gridPort = new Grid<>();
-//        List<PortBean> portBeans = new ArrayList();
-//        String columnPortId = "columnPortId"; //NOI18N
-//        String columnPortActionsId = "columnPortActionsId"; //NOI18N
-        
-//        for (int i = 0; i < objectClasses.size(); i++) {
-//
-//            PortBean portBean = new PortBean(Long.valueOf(portIds.get(i)), portClasses.get(i), getWebserviceBean());
-//            portBeans.add(portBean);
-//        }
-//        gridPort.setItems(portBeans);
-//        gridPort.setSelectionMode(Grid.SelectionMode.SINGLE);
-//        gridPort.setWidth("100%");
-//
-//        gridPort.addColumn(PortBean::getPort).setCaption("Port").setId(columnPortId);
-//        gridPort.addColumn(PortBean::getBtnViewPhysicalPath, new ButtonRenderer(new RendererClickListener<PortBean>() {
-//            @Override
-//            public void click(ClickableRenderer.RendererClickEvent<PortBean> event) {
-//                PortBean portBean = (PortBean) event.getItem();
-//                
-//                SceneExporter sceneExporter = SceneExporter.getInstance();
-//                
-//                String oldPath = SceneExporter.PATH;
-//                String newPath = "/data/attachments/"; //NOI18N
-//
-//                SceneExporter.PATH = newPath;
-//                try {
-//                    String img = sceneExporter.buildPhysicalPathView(portBean.getObjectClass(), portBean.getObjectId());
-//                    
-//                    
-//
-//                    Panel panel = new Panel();
-//
-//                    FileResource resource = new FileResource(new File(newPath + img + ".png"));                    
-//
-//                    Image image = new Image();
-//                    image.setSource(resource);
-//
-//                    image.setWidth("100%");
-//                    image.setHeight("100%");
-//
-//                    panel.setSizeFull();
-//                    panel.setContent(image);
-//
-//                    Window window = new Window();
-//                    window.setWidth("90%");
-//                    window.setHeight("80%"); 
-//                    window.setContent(panel);
-//                    window.center();
-//
-//                    UI.getCurrent().addWindow(window);
-//                
-//                } catch (MetadataObjectNotFoundException | ObjectNotFoundException | ApplicationObjectNotFoundException | InvalidArgumentException | BusinessObjectNotFoundException ex) {
-//                    Exceptions.printStackTrace(ex);
-//                }
-//                SceneExporter.PATH = oldPath;
-//            }
-//        })).setCaption("Actions").setId(columnPortActionsId);
-//        
-//        Label lblPorts = new Label("Ports");
-//        lblPorts.addStyleName(ValoTheme.LABEL_H1);
-//        
-//        verticalLayout.addComponent(lblPorts);
-//        verticalLayout.addComponent(gridPort);
+        gridMaterials.addColumn(MaterialBean::getMaterial).setCaption("Material").setId(columnMaterialId);
+        gridMaterials.addColumn(MaterialBean::getRack).setCaption("Rack").setId(columnRackId);
+        gridMaterials.addColumn(MaterialBean::getBtnRackView, buttonRenderer).
+            setMinimumWidth(50f).
+            setMaximumWidth(50f).
+            setDescriptionGenerator(e -> "<b>Rack View</b>", ContentMode.HTML).
+            setId(columnViewRackId);
+        gridMaterials.addColumn(MaterialBean::getWarehouse).setCaption("Warehouse").setId(columnWarehouseId);
+        gridMaterials.addColumn(MaterialBean::getBuilding).setCaption("Building").setId(columnBuildingId);
+        gridMaterials.addColumn(MaterialBean::getCity).setCaption("City").setId(columnCityId);
+        gridMaterials.addColumn(MaterialBean::getCountry).setCaption("Country").setId(columnCountryId);
         
         Button btnRackView = new Button();
         btnRackView.setCaption("Rack Configuration");
         btnRackView.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                
-////                try {
+                ComponentDeviceList componentDeviceList = new ComponentDeviceList(updateMaterials(), wsBean);
 
-                                        
-////                    RemoteObject targetObject = getWebserviceBean().getObject(
-////                        targetClassName, 
-////                        targetId, 
-////                        Page.getCurrent().getWebBrowser().getAddress(), 
-////                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-                    
-                    ComponentDeviceList componentDeviceList = new ComponentDeviceList(selectedDevices, wsBean);
-////                    ComponentRackView componentRackView = new ComponentRackView(targetObject, getWebserviceBean());
-                                        
-                    ComponentRackSelector componentRackSelector = new ComponentRackSelector(componentDeviceList, wsBean/*, componentRackView*/);
-                    
-                    Window window = new Window();
-                    window.setContent(componentRackSelector);
-                    window.setSizeFull();
-                    window.addCloseListener(new Window.CloseListener() {
-                        @Override
-                        public void windowClose(Window.CloseEvent e) {                            
-                            updateDevicesGrid(selectedDevices, gridMaterials);
-                        }
-                    });
-                    UI.getCurrent().addWindow(window);
-                
-////                } catch (ServerSideException ex) {
-////                    
-////                }
+                ComponentRackSelector componentRackSelector = new ComponentRackSelector(componentDeviceList, wsBean);
+
+                Window window = new Window();
+                window.setCaption("Rack Configuration");
+                window.setDraggable(true);
+                window.setContent(componentRackSelector);
+                window.setSizeFull();
+                window.addCloseListener(new Window.CloseListener() {
+                    @Override
+                    public void windowClose(Window.CloseEvent e) {                            
+                        updateDevicesGrid(updateMaterials(), gridMaterials);
+                    }
+                });
+                UI.getCurrent().addWindow(window);
             }
         });
         
@@ -345,35 +219,37 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
         btnConnection.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                ComponentConnectionSource componentConnectionSource = new ComponentConnectionSource(selectedDevices, wsBean);
+                ComponentConnectionSource componentConnectionSource = new ComponentConnectionSource(updateMaterials(), wsBean);
                 ComponentConnectionCreator componentConnectionCreator = new ComponentConnectionCreator(componentConnectionSource, wsBean);
 
                 Window window = new Window();
+                window.setCaption("Connect Devices");
+                window.setDraggable(true);
+                
                 window.setContent(componentConnectionCreator);
                 window.setSizeFull();
                 window.addCloseListener(new Window.CloseListener() {
                     @Override
                     public void windowClose(Window.CloseEvent e) {                            
-                        updateDevicesGrid(selectedDevices, gridMaterials);
+                        updateDevicesGrid(updateMaterials(), gridMaterials);
                     }
                 });
                 UI.getCurrent().addWindow(window);                
             }
-        });
-////        verticalLayout.addComponent(lblMaterials);
+        });        
         HorizontalLayout tools = new HorizontalLayout();
         tools.setSpacing(false);
         tools.setSizeUndefined();
         
         tools.addComponent(btnRackView);
         tools.addComponent(btnConnection);
-        
-        //verticalLayout.addComponent(btnRackView);
-        //verticalLayout.addComponent(btnConnection);
+                
         verticalLayout.addComponent(tools);
-        
         verticalLayout.addComponent(gridMaterials);
+        
         panel.setContent(verticalLayout);
+        
+
         return panel;
     }
 
@@ -384,16 +260,16 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
     
     public class MaterialBean {
         private final WebserviceBean webserviceBean;
-//        private final String objectClass;
-//        private final long objectId;
-        private RemoteObject device;
+        private final RemoteObject device;
         private RemoteObjectLight material;
         private RemoteObjectLight city;
         private RemoteObjectLight rack;
+        private RemoteObjectLight building;
+        private RemoteObjectLight warehouse;
+        private RemoteObjectLight physicalNode;
+        private RemoteObjectLight country;
         
-        public MaterialBean(/*long objectId, String objectClass, */RemoteObject device, WebserviceBean webserviceBean) {
-//            this.objectId = objectId;
-//            this.objectClass = objectClass;
+        public MaterialBean(RemoteObject device, WebserviceBean webserviceBean) {
             this.device = device;
             this.webserviceBean = webserviceBean;
         }
@@ -408,25 +284,103 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
                 
                 return material != null ? material.getName() : null;
             } catch (ServerSideException ex) {
-                Notifications.showError(ex.getMessage());
             }
             return null;
         }
         
         public String getCity() {
-            try {
-                city = webserviceBean.getFirstParentOfClass(
-                        device.getClassName(),
-                        device.getId(),
-                        "City", //NOI18N
-                        Page.getCurrent().getWebBrowser().getAddress(),
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-                                
-                return city != null ? city.getName() : null;
-            } catch (ServerSideException ex) {
-                Notifications.showError(ex.getMessage());
+            RemoteObjectLight rol = null;
+            
+            if (physicalNode == null)
+                rol = device;
+            else
+                rol = physicalNode;
+            
+            if (rol != null) {
+                
+                try {
+                    city = webserviceBean.getFirstParentOfClass(
+                            rol.getClassName(),
+                            rol.getId(),
+                            "City", //NOI18N
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+
+                    return city != null ? city.getName() : null;
+                } catch (ServerSideException ex) {
+                }
             }
             return null;
+        }
+        
+        public String getCountry() {
+            RemoteObjectLight rol = null;
+            if (physicalNode == null)
+                rol = device;
+            else
+                rol = physicalNode;
+            
+            if (rol != null) {
+                try {
+                    country = webserviceBean.getFirstParentOfClass(
+                        rol.getClassName(), 
+                        rol.getId(), 
+                        "Country", //NOI18N
+                        Page.getCurrent().getWebBrowser().getAddress(),
+                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+                    
+                    return country != null ? country.getName() : null;
+                } catch (ServerSideException ex) {
+                }
+            }
+            return null;
+        }
+                
+        public String getBuilding() {
+            RemoteObjectLight rol = null;
+            
+            if (physicalNode == null)
+                rol = device;
+            else
+                rol = physicalNode;
+            
+            if (rol != null) {
+                
+                try {
+                    if (rol.getClassName().equals("Building")) //NOI18N
+                        building = rol;
+                    else {
+                        building = webserviceBean.getFirstParentOfClass(
+                                rol.getClassName(),
+                                rol.getId(), "Building", //NOI18N
+                                Page.getCurrent().getWebBrowser().getAddress(),
+                                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+                    }                    
+                    return building != null ? building.getName() : null;
+                } catch (ServerSideException ex) {
+                }
+            }
+            return null;
+        }
+        
+        public String getWarehouse() {
+            try {
+                warehouse = webserviceBean.getWarehouseToObject(
+                    device.getClassName(), 
+                    device.getId(), 
+                    Page.getCurrent().getWebBrowser().getAddress(), 
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+                
+                physicalNode = webserviceBean.getPhysicalNodeToObjectInWarehouse(
+                    device.getClassName(), 
+                    device.getId(), 
+                    Page.getCurrent().getWebBrowser().getAddress(), 
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+                
+                return warehouse != null ? warehouse.getName() : null;
+            } catch (ServerSideException ex) {
+            }
+            return null;            
         }
         
         public RemoteObjectLight getRackObject() {
@@ -445,7 +399,6 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
                                 
                 return rack != null ? rack.getName() : null;
             } catch (ServerSideException ex) {
-                Notifications.showError(ex.getMessage());
             }
             return null;
         }
@@ -455,51 +408,11 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
         }
         
         public String getBtnRackView() {
-            return "Show Rack View";
-        }
-    }
-    
-    public class PortBean {
-        private WebserviceBean webserviceBean;
-        private String objectClass;
-        private long objectId;
-                
-        public PortBean(long objectId, String objectClass, WebserviceBean webserviceBean) {
-            this.objectId = objectId;
-            this.objectClass = objectClass;
-            this.webserviceBean = webserviceBean;
-        }
-        
-        public String getObjectClass() {
-            return objectClass;
-        }
-        
-        public long getObjectId() {
-            return objectId;
-        }
-        
-        private RemoteObjectLight getPortObject() {
-            try {
-                RemoteObjectLight port = webserviceBean.getObjectLight(
-                    objectClass,
-                    objectId,
-                    Page.getCurrent().getWebBrowser().getAddress(),
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-                
-                return port;
-            } catch (ServerSideException ex) {
-                Notifications.showError(ex.getMessage());
-            }
-            return null;
-        }
-        
-        public String getPort() {
-            RemoteObjectLight port =  getPortObject();
-            return port != null ? port.getName() : null;
-        }
-        
-        public String getBtnViewPhysicalPath() {
-            return "Show Physical Path";
+            return "<span class=\"v-icon\" style=\"font-family: " //NOI18N
+                + VaadinIcons.SERVER.getFontFamily() 
+                + "\">&#x" //NOI18N
+                + Integer.toHexString(VaadinIcons.SERVER.getCodepoint())
+                + ";</span>"; //NOI18N
         }
     }
 }
