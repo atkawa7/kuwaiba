@@ -194,8 +194,8 @@ public class ProcessGraph extends Panel {
                     for (int i = 0; i < pathSize; i += 1) {
 
                         Graph.Node b = activities.get(path.get(i));
-                        
-                        vizComponent.addCss(b, "fill", "#c0d5f7");                        
+                        if (b != null)
+                            vizComponent.addCss(b, "fill", "#c0d5f7");                        
                     }
                 }
             } catch (ServerSideException ex) {

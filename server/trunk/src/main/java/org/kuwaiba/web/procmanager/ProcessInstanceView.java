@@ -17,6 +17,7 @@ package org.kuwaiba.web.procmanager;
 import com.vaadin.data.HasValue;
 import com.vaadin.icons.VaadinIcons;
 import com.vaadin.server.Page;
+import com.vaadin.server.Resource;
 import com.vaadin.server.ResourceReference;
 import com.vaadin.server.StreamResource;
 import com.vaadin.shared.ui.ContentMode;
@@ -28,16 +29,23 @@ import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.forms.FormRenderer;
 import org.kuwaiba.apis.forms.components.impl.PrintWindow;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
@@ -45,6 +53,7 @@ import org.kuwaiba.apis.forms.elements.AbstractElementField;
 import org.kuwaiba.apis.forms.elements.ElementGrid;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
+import org.kuwaiba.apis.persistence.application.process.ParallelActivityDefinition;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.notifications.MessageBox;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
@@ -86,9 +95,11 @@ public class ProcessInstanceView extends DynamicComponent {
     /**
      * Debug mode flag
      */
-    public boolean debugMode;
+    private boolean debugMode;
     
-    
+    private Button buttonClicked;
+    private Resource buttonClickedResource;
+        
     public ProcessInstanceView(RemoteProcessInstance processInstance, RemoteProcessDefinition processDefinition, WebserviceBean wsBean, RemoteSession remoteSession) {
         
         debugMode = Boolean.valueOf(String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("debugMode")));
@@ -128,14 +139,9 @@ public class ProcessInstanceView extends DynamicComponent {
     private void renderActivityButton(VerticalLayout activitiesLayout, RemoteActivityDefinition nextActivity) {
         
         Button btnActivity = new Button(nextActivity.getName());
-//        if (nextActivity.isIdling())
-//            btnActivity.setIcon(VaadinIcons.THIN_SQUARE);
-//        else
-            btnActivity.setIcon(VaadinIcons.CHECK_SQUARE_O);
-        
-        btnActivity.setStyleName("activity");
-                
+        btnActivity.addStyleName("activity");
         btnActivity.setWidth("100%");
+        
         activitiesLayout.addComponent(btnActivity);
         activitiesLayout.setComponentAlignment(btnActivity,  Alignment.TOP_CENTER);
 
@@ -143,8 +149,16 @@ public class ProcessInstanceView extends DynamicComponent {
 
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                if (nextActivity != null)
+                if (event.getButton() != null && nextActivity != null) {
+                    if (buttonClicked != null) {
+                        buttonClicked.setIcon(buttonClickedResource);
+                    }
+                    buttonClicked = event.getButton();
+                    buttonClickedResource = event.getButton().getIcon();
+                    event.getButton().setIcon(VaadinIcons.CURSOR_O);
+                    
                     renderArtifact(nextActivity);
+                }
             }
         });   
         
@@ -578,17 +592,179 @@ public class ProcessInstanceView extends DynamicComponent {
                 remoteSession.getSessionId());
             
             for (RemoteActivityDefinition activity : lstActivities)
-                renderActivityButton(activitiesLayout, activity);      
+                renderActivityButton(activitiesLayout, activity);
             
-            if (lstActivities != null && !lstActivities.isEmpty()) {
-                activities.get(lstActivities.get(lstActivities.size() - 1)).setIcon(VaadinIcons.THIN_SQUARE);
-                activities.get(lstActivities.get(lstActivities.size() - 1)).addStyleName("activity-current");
-                renderArtifact(lstActivities.get(lstActivities.size() - 1));
+            boolean isFork = false;
+            boolean even = false;
+            List<RemoteActivityDefinition> paths = new ArrayList();
+                                    
+            for (RemoteActivityDefinition activity : lstActivities) {
+                
+                if (activity instanceof RemoteParallelActivityDefinition) {
+                    RemoteParallelActivityDefinition parallelActivityDef = (RemoteParallelActivityDefinition) activity;
+                                        
+                    if (parallelActivityDef.getSequenceFlow() == ParallelActivityDefinition.FORK) {
+                        isFork = true;
+                        if (parallelActivityDef.getPaths() != null) {
+                            
+                            for (RemoteActivityDefinition path : parallelActivityDef.getPaths())
+                                paths.add(path);
+                        }
+                        
+                    } else if (parallelActivityDef.getSequenceFlow() == ParallelActivityDefinition.JOIN) {
+                        isFork = false;
+                    }
+
+                }
+                Button btnActivity = activities.get(activity);
+                
+                if (isFork && activities.containsKey(activity)) {
+                    
+                    if (paths.contains(activity)) {
+                        even = !even;                                                                                                                                                                                                                                
+                    }
+
+                    if (even) {
+                        UI.getCurrent().getPage().getStyles().add(""+
+                            ".nuqui .processmanager .v-button-activity-" + activity.getId() + " { "+
+                            " background-color: #eceff1; " +
+                            "}");
+                    }
+                    else {
+                        UI.getCurrent().getPage().getStyles().add(""+
+                            ".nuqui .processmanager .v-button-activity-" + activity.getId() + " { "+
+                            " background-color: #cfd8dc; " +
+                            "}");                            
+                    }
+                    btnActivity.setIcon(VaadinIcons.BAN);                        
+                    btnActivity.addStyleName("activity-" + activity.getId());
+                }
+                else {
+                    UI.getCurrent().getPage().getStyles().add(""+
+                        ".nuqui .processmanager .v-button-activity-" + activity.getId() + " { "+
+                        " background-color: #eceff1; " +
+                        "}");                            
+                    btnActivity.addStyleName("activity-" + activity.getId());
+                }
+                if (activityComplete(activity.getId())) {
+                    
+                    if (activity.isIdling() && !idleActivityComplete(activity.getId()))
+                        btnActivity.setIcon(VaadinIcons.STAR_HALF_LEFT_O);                        
+                    else {
+                        if (activity instanceof RemoteConditionalActivityDefinition) {
+                            if (getConditionalValue(activity.getId()))
+                                btnActivity.setIcon(VaadinIcons.THUMBS_UP_O); 
+                            else
+                                btnActivity.setIcon(VaadinIcons.THUMBS_DOWN_O); 
+                        } else
+                            btnActivity.setIcon(VaadinIcons.STAR);
+                    }
+                }
+                else if (!isFork)
+                    btnActivity.setIcon(VaadinIcons.STAR_O);
+                                                                
+                if (activity instanceof RemoteParallelActivityDefinition) {
+                
+                    UI.getCurrent().getPage().getStyles().add(""+
+                        ".nuqui .processmanager .v-button-activity-" + activity.getId() + " { "+
+                        " background-color: #b0bec5; " +
+                        "}");
+                    btnActivity.addStyleName("activity-" + activity.getId());
+                                        
+                    btnActivity.setIcon(VaadinIcons.SPLIT);                                        
+                }
+            }
+                        
+            if (lstActivities != null && !lstActivities.isEmpty()) { 
+                
+                if (activities.containsKey(lstActivities.get(lstActivities.size() - 1))) {
+                    Button btn = activities.get(lstActivities.get(lstActivities.size() - 1));
+                    activities.get(lstActivities.get(lstActivities.size() - 1)).setIcon(VaadinIcons.FLAG_O);
+                    
+                    buttonClicked = btn;
+                    buttonClickedResource = btn.getIcon();
+                    btn.setIcon(VaadinIcons.CURSOR_O);
+                    
+                    renderArtifact(lstActivities.get(lstActivities.size() - 1));
+                }
             }
             
         } catch (ServerSideException ex) {
             
             Notifications.showError(ex.getMessage());
+        }
+    }
+    
+    public boolean idleActivityComplete(long activityId) {
+        try {
+            RemoteArtifact remoteArtifact = wsBean.getArtifactForActivity(
+                processInstance.getId(),
+                activityId,
+                Page.getCurrent().getWebBrowser().getAddress(),
+                remoteSession.getSessionId());
+            
+            if (remoteArtifact != null) {
+                for (StringPair pair : remoteArtifact.getSharedInformation()) {
+                    
+                    if (pair.getKey().equals("__idle__"))
+                        return Boolean.valueOf(pair.getValue());
+                }
+            }
+        } catch (ServerSideException ex) {
+        }
+        return false;
+    }
+    
+    private boolean getConditionalValue(long activityId) {
+        try {
+            RemoteArtifact remoteArtifact = wsBean.getArtifactForActivity(
+                processInstance.getId(),
+                activityId,
+                Page.getCurrent().getWebBrowser().getAddress(),
+                remoteSession.getSessionId());
+            
+            if (remoteArtifact != null) {
+                try {
+                    byte[] content = remoteArtifact.getContent();
+
+                    XMLInputFactory xif = XMLInputFactory.newInstance();
+                    ByteArrayInputStream bais = new ByteArrayInputStream(content);
+                    XMLStreamReader reader = xif.createXMLStreamReader(bais);
+
+                    QName tagValue = new QName("value"); //NOI18N
+
+                    while (reader.hasNext()) {
+
+                        int event = reader.next();
+
+                        if (event == XMLStreamConstants.START_ELEMENT) {
+
+                            if (reader.getName().equals(tagValue))
+                                return Boolean.valueOf(reader.getElementText());
+                        }
+                    }
+
+                } catch (Exception ex) {
+                }
+            }
+        } catch (ServerSideException ex) {
+        }
+        return false;
+    }
+    
+    public boolean activityComplete(long activityId) {
+        try {
+            RemoteArtifact remoteArtifact = wsBean.getArtifactForActivity(
+                processInstance.getId(),
+                activityId,
+                Page.getCurrent().getWebBrowser().getAddress(),
+                remoteSession.getSessionId());
+            
+            
+            return remoteArtifact != null;
+            
+        } catch (ServerSideException ex) {
+            return false;
         }
     }
     
