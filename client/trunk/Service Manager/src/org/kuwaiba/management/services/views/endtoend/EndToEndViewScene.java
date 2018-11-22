@@ -379,55 +379,60 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                     if (com.isSubclassOf(serviceResource.getClassName(), "GenericLogicalConnection")) {
                         
                         LocalLogicalConnectionDetails logicalCircuitDetails = com.getLogicalLinkDetails(serviceResource.getClassName(), serviceResource.getId());
+                        
+                        LocalObjectLight aSideEquipmentLogical = null, bSideEquipmentLogical = null;
                         //Let's create the boxes corresponding to the endpoint A of the logical circuit
-                        List<LocalObjectLight> parentsUntilFirstComEquipmentA; 
-                        if(com.isSubclassOf(logicalCircuitDetails.getEndpointA().getClassName(), Constants.CLASS_GENERICLOGICALPORT)){
-                            List<LocalObjectLight> parentsUntilFirstPhysicalPortA = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
-                                getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericPhysicalPort");
-                            //This is only for pseudowire and will be removed once the MPLS sync has been finished, because vc ends in the device not a port
-                            if(com.isSubclassOf(parentsUntilFirstPhysicalPortA.get(0).getClassName(), "GenericCommunicationsElement"))
-                                parentsUntilFirstComEquipmentA = Arrays.asList(parentsUntilFirstPhysicalPortA.get(0));
+                        if(logicalCircuitDetails.getEndpointA() != null){
+                            List<LocalObjectLight> parentsUntilFirstComEquipmentA; 
+                            if(com.isSubclassOf(logicalCircuitDetails.getEndpointA().getClassName(), Constants.CLASS_GENERICLOGICALPORT)){
+                                List<LocalObjectLight> parentsUntilFirstPhysicalPortA = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
+                                    getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericPhysicalPort");
+                                //This is only for pseudowire and will be removed once the MPLS sync has been finished, because vc ends in the device not a port
+                                if(com.isSubclassOf(parentsUntilFirstPhysicalPortA.get(0).getClassName(), "GenericCommunicationsElement"))
+                                    parentsUntilFirstComEquipmentA = Arrays.asList(parentsUntilFirstPhysicalPortA.get(0));
+                                else
+                                    parentsUntilFirstComEquipmentA = com.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortA.get(0).
+                                        getClassName(), parentsUntilFirstPhysicalPortA.get(0).getId(), "GenericCommunicationsElement");
+                            }
                             else
-                                parentsUntilFirstComEquipmentA = com.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortA.get(0).
-                                    getClassName(), parentsUntilFirstPhysicalPortA.get(0).getId(), "GenericCommunicationsElement");
-                        }
-                        else
-                            parentsUntilFirstComEquipmentA = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
-                                getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericCommunicationsElement");
-                        
-                        
-                        LocalObjectLight aSideEquipmentLogical = parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1);
-                        
-                        lastAddedASideEquipmentLogical = aSideEquipmentLogical;
-                        
-                        if (findWidget(aSideEquipmentLogical) == null)
-                            addNode(aSideEquipmentLogical);
-                       
-                        //Now the other side
-                        List<LocalObjectLight> parentsUntilFirstComEquipmentB;
-                        if(com.isSubclassOf(logicalCircuitDetails.getEndpointB().getClassName(), Constants.CLASS_GENERICLOGICALPORT)){
-                             List<LocalObjectLight> parentsUntilFirstPhysicalPortB = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
-                                getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericPhysicalPort");
-                            //This is only for pseudowire and will be removed once the MPLS sync has been finished, because vc ends in the device not a port
-                            if(com.isSubclassOf(parentsUntilFirstPhysicalPortB.get(0).getClassName(), "GenericCommunicationsElement"))
-                                 parentsUntilFirstComEquipmentB = Arrays.asList(parentsUntilFirstPhysicalPortB.get(0));
-                            else
-                                parentsUntilFirstComEquipmentB = com.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortB.get(0).
-                                getClassName(), parentsUntilFirstPhysicalPortB.get(0).getId(), "GenericCommunicationsElement");
-                        }
-                        else
-                            parentsUntilFirstComEquipmentB = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
-                                getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericCommunicationsElement");
+                                parentsUntilFirstComEquipmentA = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointA().
+                                    getClassName(), logicalCircuitDetails.getEndpointA().getId(), "GenericCommunicationsElement");
 
-                        LocalObjectLight bSideEquipmentLogical = parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1);
-                        
-                        lastAddedBSideEquipmentLogical = bSideEquipmentLogical;
-                        if (findWidget(bSideEquipmentLogical) == null)
-                            addNode(bSideEquipmentLogical);
+
+                            aSideEquipmentLogical = parentsUntilFirstComEquipmentA.get(parentsUntilFirstComEquipmentA.size() - 1);
+
+                            lastAddedASideEquipmentLogical = aSideEquipmentLogical;
+
+                            if (findWidget(aSideEquipmentLogical) == null)
+                                addNode(aSideEquipmentLogical);
+                        }
+                        //Now the other side
+                        if(logicalCircuitDetails.getEndpointB() != null){
+                            List<LocalObjectLight> parentsUntilFirstComEquipmentB;
+                            if(com.isSubclassOf(logicalCircuitDetails.getEndpointB().getClassName(), Constants.CLASS_GENERICLOGICALPORT)){
+                                 List<LocalObjectLight> parentsUntilFirstPhysicalPortB = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
+                                    getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericPhysicalPort");
+                                //This is only for pseudowire and will be removed once the MPLS sync has been finished, because vc ends in the device not a port
+                                if(com.isSubclassOf(parentsUntilFirstPhysicalPortB.get(0).getClassName(), "GenericCommunicationsElement"))
+                                     parentsUntilFirstComEquipmentB = Arrays.asList(parentsUntilFirstPhysicalPortB.get(0));
+                                else
+                                    parentsUntilFirstComEquipmentB = com.getParentsUntilFirstOfClass(parentsUntilFirstPhysicalPortB.get(0).
+                                    getClassName(), parentsUntilFirstPhysicalPortB.get(0).getId(), "GenericCommunicationsElement");
+                            }
+                            else
+                                parentsUntilFirstComEquipmentB = com.getParentsUntilFirstOfClass(logicalCircuitDetails.getEndpointB().
+                                    getClassName(), logicalCircuitDetails.getEndpointB().getId(), "GenericCommunicationsElement");
+
+                            bSideEquipmentLogical = parentsUntilFirstComEquipmentB.get(parentsUntilFirstComEquipmentB.size() - 1);
+
+                            lastAddedBSideEquipmentLogical = bSideEquipmentLogical;
+                            if (findWidget(bSideEquipmentLogical) == null)
+                                addNode(bSideEquipmentLogical);
+                        }
                                                
                         //Now the logical link
                         ObjectConnectionWidget logicalLinkWidget = (ObjectConnectionWidget) findWidget(logicalCircuitDetails.getConnectionObject());
-                        if(logicalLinkWidget == null){
+                        if(logicalLinkWidget == null && aSideEquipmentLogical != null && bSideEquipmentLogical != null){
                             logicalLinkWidget = (ObjectConnectionWidget) addEdge(logicalCircuitDetails.getConnectionObject());
 
                             logicalLinkWidget.getLabelWidget().setLabel(aSideEquipmentLogical.getName() + ":" + logicalCircuitDetails.getEndpointA().getName() + " ** " +
@@ -457,8 +462,8 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                 else{
                                     if(findWidget(aSideEquipmentPhysical) == null)
                                         addNode(aSideEquipmentPhysical);
-                                    //We add the physical link
-                                    if (findWidget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1)) == null){ 
+                                    //We add the physical link, we must check if the physical path has more than the end point
+                                    if (logicalCircuitDetails.getPhysicalPathForEndpointA().size() > 1 && findWidget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1)) == null){ 
                                         ObjectConnectionWidget physicalLinkWidgetA = (ObjectConnectionWidget) findWidget(logicalCircuitDetails.getPhysicalPathForEndpointA().get(1));
                                         //the link not yet added
                                         if(physicalLinkWidgetA == null)
@@ -533,7 +538,7 @@ public class EndToEndViewScene extends AbstractScene<LocalObjectLight, LocalObje
                                     if (findWidget(bSideEquipmentPhysical) == null)
                                         addNode(bSideEquipmentPhysical);
 
-                                    if (findWidget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(logicalCircuitDetails.getPhysicalPathForEndpointB().size()-1)) == null){ 
+                                    if (logicalCircuitDetails.getPhysicalPathForEndpointB().size() > 1 && findWidget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(logicalCircuitDetails.getPhysicalPathForEndpointB().size()-1)) == null){ 
                                         ObjectConnectionWidget physicalLinkWidgetB = (ObjectConnectionWidget) findWidget(logicalCircuitDetails.getPhysicalPathForEndpointB().get(1));
                                         
                                         if(physicalLinkWidgetB == null)
