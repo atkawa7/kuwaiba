@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * Represents the privileges a user profile
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class UserProfile extends UserProfileLight {
    

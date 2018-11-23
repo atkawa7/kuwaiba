@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  * The result of a task execution
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class TaskResult implements Serializable {
     /**

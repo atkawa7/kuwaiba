@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * Wrapper of BusinessRule
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteBusinessRule implements Serializable {

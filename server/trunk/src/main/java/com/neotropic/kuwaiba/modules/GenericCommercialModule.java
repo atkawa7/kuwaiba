@@ -21,7 +21,7 @@ import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 
 /**
  * All third-party commercial modules should implement this interface
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public interface GenericCommercialModule {
     /**

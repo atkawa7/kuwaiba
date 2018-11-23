@@ -26,7 +26,7 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
  * using trees or lists, and when one of their items is selected, the detail shows more information about such item. The aim 
  * of AbstractDashboard is to provide a standard mechanism to implement a detail view in a dashboard fashion, that is, a grid 
  * with widgets displaying detailed information (charts, lists, etc)
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class AbstractDashboard extends Panel {
     /**

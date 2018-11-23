@@ -28,7 +28,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * The root class of all scenes (that is, those components based on Lienzo that display nodes and connections)
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public abstract class AbstractScene extends VerticalLayout {
     /**

@@ -43,7 +43,7 @@ import org.snmp4j.smi.OID;
 
 /**
  * This provider sync the BGP info from routers
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class BgpSyncProvider extends AbstractSyncProvider{
     @Override

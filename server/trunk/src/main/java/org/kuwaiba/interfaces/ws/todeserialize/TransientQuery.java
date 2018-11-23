@@ -23,14 +23,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * This is a representation in a code friendly flavor of a complex query.
- * Pay attention that the JOIN will be treated as small queries, ie.:<br/><br/>
- * <code>SELECT * FROM building b. vendor v WHERE b.name LIKE '%my_building%' INNER JOIN vendor ON v.vendor_id=b.id and v.name ='Nokia'</code><br/>
+ * Pay attention that the JOIN will be treated as small queries, ie.:<br><br>
+ * <code>SELECT * FROM building b. vendor v WHERE b.name LIKE '%my_building%' INNER JOIN vendor ON v.vendor_id=b.id and v.name ='Nokia'</code><br>
  * There will be two queries: One (the master) having the condition "name LIKE '%my_building%'" and a "subquery"
- * with the join information.<br /> <br />
+ * with the join information.<br><br>
  * Don't confuse with the representation of entitity.queries.Query (RemoteQuery). That one is used
  * to <b>store</b> the queries and eventually to send them to the client to be reconstructed, This
  * one is used only for query execution purposes
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TransientQuery implements Serializable {

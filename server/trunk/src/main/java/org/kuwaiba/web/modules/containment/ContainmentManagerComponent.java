@@ -45,7 +45,7 @@ import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * The main component of the Containment Manager module.
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ContainmentManagerComponent extends AbstractTopComponent {
         

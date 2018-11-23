@@ -37,7 +37,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteParallelActivityD
 
 /**
  * Shows graphically the process definition and the current state of a process instance
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ProcessGraph extends Panel {
     private final RemoteProcessDefinition processDefinition;

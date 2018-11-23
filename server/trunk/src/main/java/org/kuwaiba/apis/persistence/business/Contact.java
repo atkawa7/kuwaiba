@@ -18,7 +18,7 @@ package org.kuwaiba.apis.persistence.business;
 /**
  * Represents a contact in the inventory address book. Contacts (technical, commercial and executive) are always 
  * associated to a customer.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class Contact extends BusinessObject {
     

@@ -21,7 +21,7 @@ import org.snmp4j.smi.OID;
 /**
  * List of VLANs configured in a switch
  * ciscoMgmt/ciscoVtpMIB/vtpMIBObjects/vtpVlanTable 
- * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class SnmpVtpVlanTableResourceDefinition extends HashMap<String, OID>{
 

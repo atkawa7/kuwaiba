@@ -28,7 +28,7 @@ import javax.xml.stream.XMLStreamException;
 
 /**
  * Create an instance of a Form layout
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public abstract class AbstractFormInstanceCreator {
     private final FormStructure formStructure;

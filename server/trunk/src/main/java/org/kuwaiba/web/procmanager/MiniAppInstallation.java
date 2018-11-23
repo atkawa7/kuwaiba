@@ -52,7 +52,7 @@ import org.kuwaiba.web.procmanager.rackview.ComponentRackSelector;
 
 /**
  * Wrapped to configure the installation of a device
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class MiniAppInstallation extends AbstractMiniApplication<Component, Component> {
 

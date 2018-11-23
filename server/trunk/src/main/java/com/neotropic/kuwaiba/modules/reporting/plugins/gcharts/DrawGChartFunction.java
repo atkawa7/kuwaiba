@@ -22,7 +22,7 @@ import com.neotropic.kuwaiba.modules.reporting.plugins.gcharts.GChartsFactory.Ch
 
 /**
  * JavaScript function to draw a specified type of chart
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DrawGChartFunction extends JavaScriptFunction {
     /**

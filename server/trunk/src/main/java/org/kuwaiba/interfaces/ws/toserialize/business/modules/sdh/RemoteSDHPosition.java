@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * Wrapper of {@link SDHPosition}
- * @author Charles Edward Bedon Cortazar<charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar{@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteSDHPosition implements Serializable {

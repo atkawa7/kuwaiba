@@ -24,7 +24,7 @@ import org.kuwaiba.apis.persistence.application.CompactQuery;
  * Wrapper for entity.queries.ExtendedQuery class. Don't confuse this with TransientQuery, which is used
  * only for query execution purposes (this one is used as a wrapper for a query which is actually
  * stored at the database)
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteQuery extends RemoteQueryLight{

@@ -18,7 +18,7 @@ package org.kuwaiba.apis.persistence.exceptions;
 
 /**
  * Wrapper for any possible problem when establishing a connection t the selected backend
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ConnectionException extends InventoryException{
 

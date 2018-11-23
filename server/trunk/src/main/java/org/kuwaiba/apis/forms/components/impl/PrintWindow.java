@@ -36,7 +36,7 @@ import org.kuwaiba.web.procmanager.FormArtifactRenderer;
 
 /**
  * Window to show a preview and confirm the print action
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class PrintWindow extends Window {
     private final String templatePath;

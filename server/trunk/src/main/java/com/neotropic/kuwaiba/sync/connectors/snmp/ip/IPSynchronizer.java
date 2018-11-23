@@ -42,7 +42,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * Synchronizer for the ipAddrTable data
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class IPSynchronizer {
     /**

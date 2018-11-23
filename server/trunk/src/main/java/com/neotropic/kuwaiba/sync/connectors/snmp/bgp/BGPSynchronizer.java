@@ -54,7 +54,7 @@ import org.openide.util.Exceptions;
 
 /**
  * Synchronizer for the BGPTable data
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class BGPSynchronizer {
     /**

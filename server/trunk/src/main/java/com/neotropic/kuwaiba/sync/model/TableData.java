@@ -18,7 +18,7 @@ package com.neotropic.kuwaiba.sync.model;
 
 /**
  * Represents a simple table
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class TableData extends AbstractDataEntity {
     public TableData(String name, Object value) {

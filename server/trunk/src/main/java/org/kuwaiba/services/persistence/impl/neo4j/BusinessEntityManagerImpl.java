@@ -73,7 +73,7 @@ import org.neo4j.helpers.collection.Iterators;
 
 /**
  * Business entity manager reference implementation (using Neo4J as backend)
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class BusinessEntityManagerImpl implements BusinessEntityManager {
     /**
@@ -558,7 +558,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         try (Transaction tx = graphDb.beginTx()) {
             ClassMetadata myClass = mem.getClass(className);
             Node instance = getInstanceOfClass(className, oid);
-            BusinessObject res = Util.createRemoteObjectFromNode(instance, myClass);
+            BusinessObject res = createRemoteObjectFromNode(instance, myClass);
             tx.success();
             return res;
         }
@@ -803,18 +803,18 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if (parentNode.hasProperty(Constants.PROPERTY_NAME) && Constants.NODE_DUMMYROOT.equals(parentNode.getProperty(Constants.PROPERTY_NAME)) )
                     return new BusinessObject(Constants.NODE_DUMMYROOT, -1, Constants.NODE_DUMMYROOT);
                 else    
-                    return Util.createRemoteObjectLightFromNode(parentNode);
+                    return createRemoteObjectLightFromNode(parentNode);
             }
             if (objectNode.hasRelationship(Direction.OUTGOING, RelTypes.CHILD_OF_SPECIAL)){
                 Node parentNode = objectNode.getSingleRelationship(RelTypes.CHILD_OF_SPECIAL, Direction.OUTGOING).getEndNode();
-                if (parentNode.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)) {
-                    return Util.createRemoteObjectLightFromNode(parentNode);
-                } else {
+                if (parentNode.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING))
+                    return createRemoteObjectLightFromNode(parentNode);
+                else
                     // Use the dummy root like parent to services, contracts, projects poolNode...
                     return new BusinessObject(Constants.NODE_DUMMYROOT, -1, Constants.NODE_DUMMYROOT);
-                }
+                
             }
-            throw new InvalidArgumentException(String.format("The parent of object with id %s could be found", oid));
+            throw new InvalidArgumentException(String.format("The parent of object with id %s could not be found", oid));
         }
     }
     
@@ -839,7 +839,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     }
                 }
                 if(node.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING))
-                    parents.add(Util.createRemoteObjectLightFromNode(node));
+                    parents.add(createRemoteObjectLightFromNode(node));
                 else //the node has a poolNode as a parent
                     parents.add(Util.createRemoteObjectLightFromPoolNode(node));
             }
@@ -873,7 +873,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 }
                 
                 if(node.hasRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING)) {                    
-                    parents.add(Util.createRemoteObjectLightFromNode(node));
+                    parents.add(createRemoteObjectLightFromNode(node));
                     
                     String parentNodeClass = Util.getClassName(node);
                     if (mem.isSubClass(objectToMatchClassName, parentNodeClass))
@@ -911,7 +911,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     String parentNodeClass = Util.getClassName(parentNode);
                     
                     if (mem.isSubClass(objectToMatchClassName, parentNodeClass))
-                        return Util.createRemoteObjectLightFromNode(parentNode);
+                        return createRemoteObjectLightFromNode(parentNode);
                     
                     objectNode = parentNode;
                 }
@@ -943,7 +943,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     else {
                         String thisNodeClass = Util.getClassName(parentNode);
                         if (mem.isSubClass(parentClass, thisNodeClass))
-                            return Util.createRemoteObjectFromNode(parentNode, mem.getClass(thisNodeClass));
+                            return createRemoteObjectFromNode(parentNode, mem.getClass(thisNodeClass));
                         objectNode = parentNode;
                         continue;
                     }
@@ -968,7 +968,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
                     Node instance = getInstanceOfClass(className, oid);
                     //updates the cache
-                    BusinessObject remoteObject = Util.createRemoteObjectFromNode(instance);
+                    BusinessObject remoteObject = createRemoteObjectFromNode(instance);
                     for(AttributeMetadata attribute : classMetadata.getAttributes()){
                         if(attribute.isUnique()){
                             String attributeValues = remoteObject.getAttributes().get(attribute.getName());
@@ -1467,7 +1467,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         counter ++;
                     else break;
                 }
-                instances.add(Util.createRemoteObjectLightFromNode(instance));                                                                                
+                instances.add(createRemoteObjectLightFromNode(instance));                                                                                
             }
             
             Collections.sort(instances);
@@ -1491,7 +1491,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             boolean isAbstract = (Boolean) classMetadataNode.getProperty(Constants.PROPERTY_ABSTRACT);
             
-            String cypherQuery = null;
+            String cypherQuery;
             
             if (isAbstract) {
                 cypherQuery = "MATCH (class:classes)<-[:EXTENDS*]-(subclass:classes)<-[:INSTANCE_OF]-(instance:inventory_objects) "
@@ -1512,7 +1512,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         counter ++;
                     else break;
                 }
-                instances.add(Util.createRemoteObjectFromNode(instance));                                                                                
+                instances.add(createRemoteObjectFromNode(instance));                                                                                
             }
             
             Collections.sort(instances);
@@ -1544,7 +1544,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
                 ClassMetadata classMetadata = mem.getClass((String)classNode.getProperty(Constants.PROPERTY_NAME));
                 if (mem.isSubClass(classToFilter, classMetadata.getName())){
-                    res.add(Util.createRemoteObjectFromNode(child, classMetadata));
+                    res.add(createRemoteObjectFromNode(child, classMetadata));
                     if (maxResults > 0){
                         if (++counter == maxResults)
                             break;
@@ -1568,7 +1568,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
 
                 ClassMetadata classMetadata = mem.getClass((String)classNode.getProperty(Constants.PROPERTY_NAME));
                 if (mem.isSubClass(classToFilter, classMetadata.getName())){
-                    res.add(Util.createRemoteObjectFromNode(child, classMetadata));
+                    res.add(createRemoteObjectFromNode(child, classMetadata));
                     if (maxResults > 0 && ++counter == maxResults)
                             break;
                 }
@@ -1589,7 +1589,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             int counter = 0;
             
             for (Relationship specialChildRelationships : parentNode.getRelationships(RelTypes.CHILD_OF_SPECIAL, Direction.INCOMING)) {
-                BusinessObjectLight specialChild = Util.createRemoteObjectLightFromNode(specialChildRelationships.getStartNode());
+                BusinessObjectLight specialChild = createRemoteObjectLightFromNode(specialChildRelationships.getStartNode());
                 
                 if (mem.isSubClass(classToFilter, specialChild.getClassName())) {
                     res.add(specialChild);
@@ -1666,7 +1666,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if(rel.hasProperty(Constants.PROPERTY_NAME)){
                     if (rel.getProperty(Constants.PROPERTY_NAME).equals(specialAttributeName))
                         res.add(rel.getEndNode().getId() == objectId ? 
-                            Util.createRemoteObjectLightFromNode(rel.getStartNode()) : Util.createRemoteObjectLightFromNode(rel.getEndNode()));
+                            createRemoteObjectLightFromNode(rel.getStartNode()) : createRemoteObjectLightFromNode(rel.getEndNode()));
                 }
             }
             tx.success();
@@ -1684,7 +1684,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 if(rel.hasProperty(Constants.PROPERTY_NAME)){
                     if (rel.getProperty(Constants.PROPERTY_NAME).equals(specialAttributeName)) {
                         BusinessObjectLight theObject = rel.getEndNode().getId() == objectId ? 
-                            Util.createRemoteObjectLightFromNode(rel.getStartNode()) : Util.createRemoteObjectLightFromNode(rel.getEndNode());
+                            createRemoteObjectLightFromNode(rel.getStartNode()) : createRemoteObjectLightFromNode(rel.getEndNode());
                         res.add(new AnnotatedBusinessObjectLight(theObject, rel.getAllProperties()));
                     }
                 }
@@ -1707,7 +1707,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     currentObjects = new ArrayList<>();
                     res.put(relName, currentObjects);
                 }
-                currentObjects.add(Util.createRemoteObjectLightFromNode(rel.getOtherNode(objectNode)));
+                currentObjects.add(createRemoteObjectLightFromNode(rel.getOtherNode(objectNode)));
             }
             return res;
         }
@@ -1725,7 +1725,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     if(rel.getProperty(Constants.PROPERTY_NAME).equals(Constants.REL_PROPERTY_POOL))
                         return res;
                 }
-                res.add(Util.createRemoteObjectLightFromNode(rel.getStartNode()));
+                res.add(createRemoteObjectLightFromNode(rel.getStartNode()));
             }
             return res;
         }
@@ -1868,7 +1868,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             
             for (Relationship customerRelationship : contactNode.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.INCOMING)) {
                 if (customerRelationship.hasProperty(Constants.PROPERTY_NAME) && customerRelationship.getProperty(Constants.PROPERTY_NAME).equals("contacts"))
-                    return new Contact(Util.createRemoteObjectFromNode(contactNode), Util.createRemoteObjectLightFromNode(customerRelationship.getStartNode()));
+                    return new Contact(createRemoteObjectFromNode(contactNode), createRemoteObjectLightFromNode(customerRelationship.getStartNode()));
             }
             
             throw new InvalidArgumentException("The contact does not have a customer associated to it, please check its relationships");
@@ -1884,7 +1884,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             for (Relationship contactRelationship : customerNode.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.OUTGOING)) {
                 if (contactRelationship.hasProperty(Constants.PROPERTY_NAME) && contactRelationship.getProperty(Constants.PROPERTY_NAME).equals("contacts")) {
                     Node contactNode = contactRelationship.getEndNode();
-                    contacts.add(new Contact(Util.createRemoteObjectFromNode(contactNode), Util.createRemoteObjectLightFromNode(customerNode)));
+                    contacts.add(new Contact(createRemoteObjectFromNode(contactNode), createRemoteObjectLightFromNode(customerNode)));
                 }
             }
             
@@ -1917,7 +1917,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 Node contactNode = contactNodes.next();
                 Node customerNode = contactNode.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.INCOMING).iterator().next().getStartNode();
                 
-                res.add(new Contact(Util.createRemoteObjectFromNode(contactNode), Util.createRemoteObjectLightFromNode(customerNode)));
+                res.add(new Contact(createRemoteObjectFromNode(contactNode), createRemoteObjectLightFromNode(customerNode)));
             }
             
             return res;
@@ -2076,13 +2076,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                              "RETURN path ORDER BY length(path) DESC LIMIT 1";
         try (Transaction tx = graphDb.beginTx()){
             if(logicalPortId > 0)
-                path.add(Util.createRemoteObjectLightFromNode(Util.findNodeByLabelAndId(inventoryObjectLabel, logicalPortId)));
+                path.add(createRemoteObjectLightFromNode(Util.findNodeByLabelAndId(inventoryObjectLabel, logicalPortId)));
             Result result = graphDb.execute(cypherQuery);
             Iterator<List<Node>> column = result.columnAs("path");
             
             for (List<Node> listOfNodes : Iterators.asIterable(column)) {
                 for(Node node : listOfNodes)
-                    path.add(Util.createRemoteObjectLightFromNode(node));
+                    path.add(createRemoteObjectLightFromNode(node));
             }
         }
         return path;
@@ -2103,7 +2103,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             for (Relationship relatedToSpecialRelationship : portNode.getRelationships(RelTypes.RELATED_TO_SPECIAL)) {
                 if (relatedToSpecialRelationship.getProperty(Constants.PROPERTY_NAME).equals("endpointA")  //NOI18N
                         || relatedToSpecialRelationship.getProperty(Constants.PROPERTY_NAME).equals("endpointB")) //NOI18N
-                    return Util.createRemoteObjectFromNode(relatedToSpecialRelationship.getStartNode()); //A port should have only one aEndpoint || bEndpoint relationship
+                    return createRemoteObjectFromNode(relatedToSpecialRelationship.getStartNode()); //A port should have only one aEndpoint || bEndpoint relationship
             }
         }
         
@@ -2130,7 +2130,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                 BusinessObjectLightList aPath = new BusinessObjectLightList();
                 boolean discardPath = false;
                 for (Node aNode : list) {
-                    BusinessObjectLight aHop = Util.createRemoteObjectLightFromNode(aNode);
+                    BusinessObjectLight aHop = createRemoteObjectLightFromNode(aNode);
                     if (aPath.getList().contains(aHop)) {
                         discardPath = true;
                         break;
@@ -2172,7 +2172,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             List<Node> lstWarehouseColumn = Iterators.asList(warehouseColumn);
             
             for (Node warehouse : lstWarehouseColumn)
-                warehouses.add(Util.createRemoteObjectLightFromNode(warehouse));
+                warehouses.add(createRemoteObjectLightFromNode(warehouse));
             
             Collections.sort(warehouses);
             
@@ -2203,7 +2203,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             List<Node> lstWarehouseColumn = Iterators.asList(warehouseColumn);
             
             for (Node warehouse : lstWarehouseColumn)
-                warehouses.add(Util.createRemoteObjectLightFromNode(warehouse));
+                warehouses.add(createRemoteObjectLightFromNode(warehouse));
             
             Collections.sort(warehouses);
             
@@ -2237,7 +2237,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             List<Node> lstphysicalNodeColumn = Iterators.asList(physicalNodeColumn);
             
             for (Node physicalNode : lstphysicalNodeColumn)
-                physicalNodes.add(Util.createRemoteObjectLightFromNode(physicalNode));
+                physicalNodes.add(createRemoteObjectLightFromNode(physicalNode));
             
             Collections.sort(physicalNodes);
             
@@ -2679,7 +2679,10 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         newObject.setProperty(Constants.PROPERTY_NAME, ""); //The default value is an empty string 
 
         newObject.setProperty(Constants.PROPERTY_CREATION_DATE, Calendar.getInstance().getTimeInMillis()); //The default value is right now
-               
+        
+        if (attributes == null)
+            attributes = new HashMap<>();
+        
         for (AttributeMetadata attributeMetadata : classToMap.getAttributes()) {
             if (attributeMetadata.isMandatory() && attributes.get(attributeMetadata.getName()) == null)
                 throw new InvalidArgumentException(String.format("The attribute %s is mandatory, it can not be empty", attributes.get(attributeMetadata.getName())));
@@ -2756,7 +2759,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                     
                     if (attributes.get(attributeName) == null) {
                         if(classMetadata.getAttribute(attributeName).isMandatory())//if attribute is mandatory can be set empty or null
-                            throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set null or empty", attributeName));
+                            throw new InvalidArgumentException(String.format("The attribute %s is mandatory, it can not be set null or empty", attributeName));
                         else
                             instance.removeProperty(attributeName);
                     } else {
@@ -2764,13 +2767,13 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         //if attribute is mandatory string attributes can't be empty or null
                         if (classMetadata.getAttribute(attributeName).isMandatory()){
                             if (attributes.get(attributeName).isEmpty())
-                                throw new InvalidArgumentException(String.format("The attribute %s is mandatory, can not be set null or empty", attributeName));
+                                throw new InvalidArgumentException(String.format("The attribute %s is mandatory, it can not be null or empty", attributeName));
                         }
                         if (classMetadata.getAttribute(attributeName).isUnique()){
                             if(isObjectAttributeUnique(classMetadata.getName(), attributeName, attributes.get(attributeName)))
                                 instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), classMetadata.getType(attributeName)));
                             else
-                                throw new InvalidArgumentException(String.format("The attribute %s is unique in the objects created from this class and its subclasses, is in use in other object", attributeName));
+                                throw new InvalidArgumentException(String.format("The attribute \"%s\" is unique and the value you are trying to set is already in use", attributeName));
                         }
                         else
                             instance.setProperty(attributeName,Util.getRealValue(attributes.get(attributeName), classMetadata.getType(attributeName)));
@@ -2940,7 +2943,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         for (Relationship instanceOfRelationship : classNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF)) {
             Node instance = instanceOfRelationship.getStartNode();
             if (instance.hasProperty(filterName) && instance.getProperty(filterName).equals(filterValue))
-                res.add(Util.createRemoteObjectLightFromNode(instance));
+                res.add(createRemoteObjectLightFromNode(instance));
             else {
                 Iterable<Relationship> iterableRelationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
                 Iterator<Relationship> relationships = iterableRelationships.iterator();
@@ -2952,7 +2955,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         String.valueOf(relationship.getProperty(Constants.PROPERTY_NAME)).equals(filterName) &&
                         String.valueOf(relationship.getEndNode().getId()).equals(filterValue)) {
                         
-                        res.add(Util.createRemoteObjectLightFromNode(instance));                        
+                        res.add(createRemoteObjectLightFromNode(instance));                        
                     }
                 }
             }
@@ -2972,7 +2975,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         for (Relationship instanceOfRelationship : classNode.getRelationships(Direction.INCOMING, RelTypes.INSTANCE_OF)) {
             Node instance = instanceOfRelationship.getStartNode();
             if (instance.hasProperty(filterName) && instance.getProperty(filterName).equals(filterValue))
-                res.add(Util.createRemoteObjectFromNode(instance));
+                res.add(createRemoteObjectFromNode(instance));
             else {
                 Iterable<Relationship> iterableRelationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
                 Iterator<Relationship> relationships = iterableRelationships.iterator();
@@ -2984,7 +2987,7 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
                         String.valueOf(relationship.getProperty(Constants.PROPERTY_NAME)).equals(filterName) &&
                         String.valueOf(relationship.getEndNode().getId()).equals(filterValue)) {
                         
-                        res.add(Util.createRemoteObjectFromNode(instance));                        
+                        res.add(createRemoteObjectFromNode(instance));                        
                     }
                 }
             }
@@ -3049,5 +3052,91 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
             }
             getSpecialChildrenOfClassRecursive(specialChild, classToFilter, maxResults, res);
         }
+    }
+    
+    private BusinessObjectLight createRemoteObjectLightFromNode (Node instance) {
+        Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
+        
+        BusinessObjectLight res = new BusinessObjectLight((String)classNode.getProperty(Constants.PROPERTY_NAME), instance.getId(), 
+            (String)instance.getProperty(Constants.PROPERTY_NAME));
+        
+        
+        
+        return res;
+    }
+       
+    private BusinessObject createRemoteObjectFromNode(Node instance) throws InvalidArgumentException {
+        String className = (String)instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME);
+        try {
+            return createRemoteObjectFromNode(instance, mem.getClass(className));
+        } catch (MetadataObjectNotFoundException mex) {
+            throw new InvalidArgumentException(mex.getLocalizedMessage());
+        }
+    }
+    
+    /**
+     * Builds a RemoteBusinessObject instance from a node representing a business object
+     * @param instance The object as a Node instance.
+     * @param classMetadata The class metadata to map the node's properties into a RemoteBussinessObject.
+     * @return The business object.
+     * @throws InvalidArgumentException If an attribute value can't be mapped into value.
+     */
+    private BusinessObject createRemoteObjectFromNode(Node instance, ClassMetadata classMetadata) throws InvalidArgumentException {
+        
+        HashMap<String, String> attributes = new HashMap<>();
+        String name = "";
+        
+        for (AttributeMetadata myAtt : classMetadata.getAttributes()){
+            //Only set the attributes existing in the current node. Please note that properties can't be null in
+            //Neo4J, so a null value is actually a non-existing relationship/value
+            if (instance.hasProperty(myAtt.getName())){
+               if (AttributeMetadata.isPrimitive(myAtt.getType())) {
+                    if (!myAtt.getType().equals("Binary")) {
+                        String value = String.valueOf(instance.getProperty(myAtt.getName()));
+                        
+                        if (Constants.PROPERTY_NAME.equals(myAtt.getName()))
+                            name = value;
+                        
+                        attributes.put(myAtt.getName(),value);
+                    } else if (myAtt.getType().equals("Binary")) {
+                        byte [] byteArray = (byte []) instance.getProperty(myAtt.getName());
+                        attributes.put(myAtt.getName(), new String(byteArray));
+                    }
+                }
+            }
+        }
+
+        //Iterates through relationships and transform the into "plain" attributes
+        Iterable<Relationship> iterableRelationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
+        Iterator<Relationship> relationships = iterableRelationships.iterator();
+
+        while(relationships.hasNext()){
+            Relationship relationship = relationships.next();
+            if (!relationship.hasProperty(Constants.PROPERTY_NAME))
+                throw new InvalidArgumentException(String.format("The object with id %s is malformed", instance.getId()));
+
+            String relationshipName = (String)relationship.getProperty(Constants.PROPERTY_NAME);              
+            
+            boolean hasRelationship = false;
+            for (AttributeMetadata myAtt : classMetadata.getAttributes()) {
+                if (myAtt.getName().equals(relationshipName)) {
+                    if (attributes.containsKey(relationshipName))
+                        attributes.put(relationshipName, attributes.get(relationshipName) + ";" + String.valueOf(relationship.getEndNode().getId())); //A multiple selection list type
+                    else    
+                        attributes.put(relationshipName, String.valueOf(relationship.getEndNode().getId()));
+                    hasRelationship = true;
+                    break;
+                }                  
+            }
+            
+            if (!hasRelationship) //This verification will help us find potential inconsistencies with list types
+                                  //What this does is to verify if is there is a RELATED_TO relationship that shouldn't exist because its name is not an attribute of the class
+                throw new InvalidArgumentException(String.format("The object with %s (%s) is related to list type %s (%s), but that is not consistent with the data model", 
+                            instance.getProperty(Constants.PROPERTY_NAME), instance.getId(), relationship.getEndNode().getProperty(Constants.PROPERTY_NAME), relationship.getEndNode().getId()));
+        }
+        BusinessObject res = new BusinessObject(classMetadata.getName(), instance.getId(), name, attributes);
+
+        return res;
+        
     }
 }

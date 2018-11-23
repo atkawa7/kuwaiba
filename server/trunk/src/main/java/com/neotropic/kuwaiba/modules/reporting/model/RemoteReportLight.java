@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * A remote representation of a class level report. Class level reports will be available for all instances of a given class -and its subclasses-
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteReportLight implements Serializable, Comparable<RemoteReportLight> {

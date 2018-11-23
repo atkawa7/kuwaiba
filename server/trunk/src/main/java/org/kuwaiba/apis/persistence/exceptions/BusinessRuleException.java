@@ -18,7 +18,7 @@ package org.kuwaiba.apis.persistence.exceptions;
 
 /**
  * This exception should be fired if a business rule is matched and as a result, the action can not be executed
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class BusinessRuleException extends InventoryException {
     public BusinessRuleException(String msg) {

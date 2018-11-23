@@ -36,7 +36,7 @@ import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 /**
  * Patches the database creating the EquipmentModel class and the model attribute to
  * GenericCommunicationsElement
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class Patch09EquipmentModel extends GenericPatch {
 

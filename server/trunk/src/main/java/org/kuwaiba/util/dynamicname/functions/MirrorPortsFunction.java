@@ -24,7 +24,7 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 /**
  * Implements the <code>mirror(a, b)</code> function, that generates pairs of ports numbered from <code>a</code> to <code>b</code>.
  * <code>a</code> and <code>b</code> must be integers greater or equal to 0
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class MirrorPortsFunction extends DynamicSectionFunction {
     public static final String FUNCTION_PATTERN = "mirror\\([0-9]+,[0-9]+\\)";

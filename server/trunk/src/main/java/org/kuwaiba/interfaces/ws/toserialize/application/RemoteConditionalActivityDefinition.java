@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  *
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteConditionalActivityDefinition extends RemoteActivityDefinition implements Serializable {

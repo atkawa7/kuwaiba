@@ -31,7 +31,7 @@ import org.kuwaiba.web.modules.servmanager.views.FormDashboardWidget;
 
 /**
  * The dashboard used to show the information related to a given service
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ServiceManagerDashboard extends AbstractDashboard {
     

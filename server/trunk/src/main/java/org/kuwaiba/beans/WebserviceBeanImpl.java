@@ -102,6 +102,9 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteResultMessage;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQuery;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult;
 import org.kuwaiba.apis.persistence.application.ScriptQuery;
+import org.kuwaiba.apis.persistence.application.TemplateObjectLight;
+import org.kuwaiba.apis.persistence.application.Validator;
+import org.kuwaiba.apis.persistence.application.ValidatorDefinition;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.application.process.Artifact;
 import org.kuwaiba.apis.persistence.application.process.ArtifactDefinition;
@@ -131,7 +134,8 @@ import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescrip
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.UserInfo;
 import org.kuwaiba.interfaces.ws.toserialize.application.UserInfoLight;
-import org.kuwaiba.interfaces.ws.toserialize.application.Validator;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidator;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidatorDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.AssetLevelCorrelatedInformation;
@@ -151,7 +155,7 @@ import org.openide.util.Exceptions;
 
 /**
  * Session bean to give primary support to the web service calls
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Singleton
 public class WebserviceBeanImpl implements WebserviceBean {
@@ -257,7 +261,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("getClass", ipAddress, sessionId);
             ClassMetadata myClass = mem.getClass(className);
-            return new RemoteClassMetadata(myClass, new Validator[0]);
+            return new RemoteClassMetadata(myClass);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -271,7 +275,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.validateWebServiceCall("getClass", ipAddress, sessionId);
             ClassMetadata myClass = mem.getClass(classId);
          
-            return new RemoteClassMetadata(myClass, new Validator[0]);
+            return new RemoteClassMetadata(myClass);
 
          } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -288,7 +292,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<ClassMetadataLight> classLightMetadata = mem.getAllClassesLight(includeListTypes, false);
 
             for (ClassMetadataLight classMetadataLight : classLightMetadata)
-                cml.add(new RemoteClassMetadataLight(classMetadataLight, new Validator[0]));
+                cml.add(new RemoteClassMetadataLight(classMetadataLight));
             
             return cml;
         } catch (InventoryException ex) {
@@ -306,7 +310,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<ClassMetadataLight> classLightMetadata = mem.getSubClassesLight(className, includeAbstractClasses, includeSelf);
 
             for (ClassMetadataLight classMetadataLight : classLightMetadata)
-                cml.add(new RemoteClassMetadataLight(classMetadataLight, new Validator[0]));
+                cml.add(new RemoteClassMetadataLight(classMetadataLight));
             
             return cml;
         } catch (InventoryException ex) {
@@ -324,7 +328,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<ClassMetadataLight> classLightMetadata = mem.getSubClassesLightNoRecursive(className, includeAbstractClasses, includeSelf);
 
             for (ClassMetadataLight classMetadataLight : classLightMetadata)
-                cml.add(new RemoteClassMetadataLight(classMetadataLight, new Validator[0]));
+                cml.add(new RemoteClassMetadataLight(classMetadataLight));
 
             return cml;
         } catch (InventoryException ex) {
@@ -354,7 +358,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<ClassMetadata> classMetadataList = mem.getAllClasses(includeListTypes, false);
 
             for (ClassMetadata classMetadata : classMetadataList)
-                cml.add(new RemoteClassMetadata(classMetadata, new Validator[0]));
+                cml.add(new RemoteClassMetadata(classMetadata));
             
             return cml;
         } catch (InventoryException ex) {
@@ -442,7 +446,6 @@ public class WebserviceBeanImpl implements WebserviceBean {
             cm.setIcon(newClassDefinition.getIcon());
             cm.setSmallIcon(newClassDefinition.getSmallIcon());
             cm.setColor(newClassDefinition.getColor());
-            //cm.setCategory(classDefinition.getCategory());
             
             ChangeDescriptor changeDescriptor = mem.setClassProperties(cm);
             
@@ -627,10 +630,9 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<RemoteClassMetadataLight> cml = new ArrayList<>();
             List<ClassMetadataLight> classMetadataList = mem.getPossibleChildren(parentClassName);
 
-            for (ClassMetadataLight clMtLg : classMetadataList) {
-                RemoteClassMetadataLight ci =  new RemoteClassMetadataLight(clMtLg, new Validator[0]);
-                cml.add(ci);
-            }
+            for (ClassMetadataLight classMetadata : classMetadataList)
+                cml.add(new RemoteClassMetadataLight(classMetadata));
+            
             return cml;
 
         } catch (InventoryException ex) {
@@ -648,10 +650,9 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<RemoteClassMetadataLight> cml = new ArrayList<>();
             List<ClassMetadataLight> classMetadataList = mem.getPossibleSpecialChildren(parentClassName);
 
-            for (ClassMetadataLight clMtLg : classMetadataList) {
-                RemoteClassMetadataLight ci =  new RemoteClassMetadataLight(clMtLg, new Validator[0]);
-                cml.add(ci);
-            }
+            for (ClassMetadataLight classMetadata : classMetadataList)
+                cml.add(new RemoteClassMetadataLight(classMetadata));
+            
             return cml;
 
         } catch (InventoryException ex) {
@@ -668,10 +669,9 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<RemoteClassMetadataLight> cml = new ArrayList<>();
             List<ClassMetadataLight> classMetadataList = mem.getPossibleChildrenNoRecursive(parentClassName);
 
-            for (ClassMetadataLight clMtLg : classMetadataList) {
-                RemoteClassMetadataLight ci =  new RemoteClassMetadataLight(clMtLg, new Validator[0]);
-                cml.add(ci);
-            }
+            for (ClassMetadataLight classMetadata : classMetadataList)
+                cml.add(new RemoteClassMetadataLight(classMetadata));
+            
             return cml;
 
         } catch (InventoryException ex) {
@@ -688,10 +688,9 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<RemoteClassMetadataLight> cml = new ArrayList<>();
             List<ClassMetadataLight> classMetadataList = mem.getPossibleSpecialChildrenNoRecursive(parentClassName);
 
-            for (ClassMetadataLight clMtLg : classMetadataList) {
-                RemoteClassMetadataLight ci =  new RemoteClassMetadataLight(clMtLg, new Validator[0]);
-                cml.add(ci);
-            }
+            for (ClassMetadataLight classMetadata : classMetadataList) 
+                cml.add(new RemoteClassMetadataLight(classMetadata));
+
             return cml;
 
         } catch (InventoryException ex) {
@@ -706,9 +705,9 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("getUpstreamContainmentHierarchy", ipAddress, sessionId);
             List<RemoteClassMetadataLight> res = new ArrayList<>();
-            for (ClassMetadataLight cil : mem.getUpstreamContainmentHierarchy(className, recursive)){
-                res.add(new RemoteClassMetadataLight(cil, new Validator[]{}));
-            }
+            for (ClassMetadataLight cil : mem.getUpstreamContainmentHierarchy(className, recursive))
+                res.add(new RemoteClassMetadataLight(cil));
+            
             return res;
 
         } catch (InventoryException ex) {
@@ -723,9 +722,9 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("getUpstreamSpecialContainmentHierarchy", ipAddress, sessionId);
             List<RemoteClassMetadataLight> res = new ArrayList<>();
-            for (ClassMetadataLight cil : mem.getUpstreamSpecialContainmentHierarchy(className, recursive)){
-                res.add(new RemoteClassMetadataLight(cil, new Validator[]{}));
-            }
+            for (ClassMetadataLight cil : mem.getUpstreamSpecialContainmentHierarchy(className, recursive))
+                res.add(new RemoteClassMetadataLight(cil));
+            
             return res;
 
         } catch (InventoryException ex) {
@@ -1371,7 +1370,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<ClassMetadataLight> instanceableListTypes = aem.getInstanceableListTypes();
             RemoteClassMetadataLight[] res = new RemoteClassMetadataLight[instanceableListTypes.size()];
             for (int i = 0; i < instanceableListTypes.size(); i++)
-                res[i] = new RemoteClassMetadataLight(instanceableListTypes.get(i), new Validator[0]);
+                res[i] = new RemoteClassMetadataLight(instanceableListTypes.get(i));
+            
             return res;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -3923,7 +3923,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
                     
                     for (Object item : collection) {
                         ClassMetadataLight classMetadataLight = (ClassMetadataLight) item;
-                        result.add(new RemoteClassMetadataLight(classMetadataLight, new Validator[0]));
+                        result.add(new RemoteClassMetadataLight(classMetadataLight));
                     }
                     return new RemoteScriptQueryResultCollection(result);
                     
@@ -3972,10 +3972,8 @@ public class WebserviceBeanImpl implements WebserviceBean {
                     
                     List<RemoteClassMetadataLight> result = new ArrayList();
                     
-                    for (Object item : collection) {
-                        ClassMetadataLight classMetadataLight = (ClassMetadataLight) item;
-                        result.add(new RemoteClassMetadataLight(classMetadataLight, new Validator[0]));
-                    }
+                    for (Object item : collection) 
+                        result.add(new RemoteClassMetadataLight((ClassMetadataLight) item));
                     
                     return new RemoteScriptQueryResultCollection(result);
                     
@@ -4148,9 +4146,103 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(ex.getMessage());
         }
     }
-    
-    
     // </editor-fold>
+    //<editor-fold desc="Validators" defaultstate="collapsed">
+
+    @Override
+    public long createValidatorDefinition(String name, String description, String classToBeApplied, String script, 
+            boolean enabled, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("createValidatorDefinition", ipAddress, sessionId);
+            long res = aem.createValidatorDefinition(name, description, classToBeApplied, script, enabled);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT, String.format("Validator definition %s ", name));
+            return res;
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void updateValidatorDefinition(long validatorDefinitionId, String name, String description, String classToBeApplied, 
+            String script, Boolean enabled, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("updateValidatorDefinition", ipAddress, sessionId);
+            aem.updateValidatorDefinition(validatorDefinitionId, name, description, classToBeApplied, script, enabled);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_UPDATE_APPLICATION_OBJECT, String.format("Validator definition with id %s ", validatorDefinitionId));
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<RemoteValidatorDefinition> getValidatorDefinitions(String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            List<RemoteValidatorDefinition> res = new ArrayList<>();
+            aem.validateWebServiceCall("getValidatorDefinitions", ipAddress, sessionId);
+            
+            List<ValidatorDefinition> validatorDefinitions = aem.getValidatorDefinitions();
+            
+            for (ValidatorDefinition validatorDefinition : validatorDefinitions) {
+                res.add(new RemoteValidatorDefinition(validatorDefinition.getName(), validatorDefinition.getDescription(), 
+                        validatorDefinition.getClassToBeApplied(), validatorDefinition.getScript(), validatorDefinition.isEnabled()));
+            }
+            
+            return res;
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<RemoteValidator> runValidationsForObject(String objectClass, long objectId, String ipAddress, 
+            String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            List<RemoteValidator> res = new ArrayList<>();
+            aem.validateWebServiceCall("runValidationsForObject", ipAddress, sessionId);
+            
+            List<Validator> validators = aem.runValidationsForObject(objectClass, objectId);
+            
+            for (Validator validator : validators) {
+                res.add(new RemoteValidator(validator.getName(), validator.getProperties()));
+            }
+            
+            return res;
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteValidatorDefinition(long validatorDefinitionId, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            aem.validateWebServiceCall("deleteValidatorDefinition", ipAddress, sessionId);
+            aem.deleteValidatorDefinition(validatorDefinitionId);
+            aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
+                ActivityLogEntry.ACTIVITY_TYPE_DELETE_APPLICATION_OBJECT, String.format("Validator definition with id %s ", validatorDefinitionId));
+            
+        } catch(InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    //</editor-fold>
     
     // <editor-fold defaultstate="collapsed" desc="Sync/Bulk load data methods">
     @Override
@@ -4303,11 +4395,11 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getTemplatesForClass", ipAddress, sessionId);
-            List<BusinessObjectLight> templates = aem.getTemplatesForClass(className);
+            List<TemplateObjectLight> templates = aem.getTemplatesForClass(className);
             List<RemoteObjectLight> remoteTemplates = new ArrayList<>();
             
-            for (BusinessObjectLight template : templates)
-                remoteTemplates.add(new RemoteObjectLight(template));
+            for (TemplateObjectLight template : templates)
+                remoteTemplates.add(new RemoteObjectLight(template.getClassName(), template.getId(), template.getName()));
             
             return remoteTemplates;
         } catch (InventoryException ex) {
@@ -4322,11 +4414,12 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getTemplateElementChildren", ipAddress, sessionId);
-            List<BusinessObjectLight> templateElementChildren = aem.getTemplateElementChildren(templateElementClass, templateElementId);
+            List<TemplateObjectLight> templateElementChildren = aem.getTemplateElementChildren(templateElementClass, templateElementId);
             List<RemoteObjectLight> remoteTemplateElementChildren = new ArrayList<>();
             
-            for (BusinessObjectLight templateElementChild : templateElementChildren)
-                remoteTemplateElementChildren.add(new RemoteObjectLight(templateElementChild));
+            for (TemplateObjectLight templateElementChild : templateElementChildren)
+                remoteTemplateElementChildren.add(new RemoteObjectLight(templateElementChild.getClassName(), 
+                        templateElementChild.getId(), templateElementChild.getName()));
             
             return remoteTemplateElementChildren;
         } catch (InventoryException ex) {
@@ -4341,11 +4434,12 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getTemplateSpecialElementChildren", ipAddress, sessionId);
-            List<BusinessObjectLight> templateElementChildren = aem.getTemplateSpecialElementChildren(tsElementClass, tsElementId);
+            List<TemplateObjectLight> templateElementChildren = aem.getTemplateSpecialElementChildren(tsElementClass, tsElementId);
             List<RemoteObjectLight> remoteTemplateElementChildren = new ArrayList<>();
             
-            for (BusinessObjectLight templateElementChild : templateElementChildren)
-                remoteTemplateElementChildren.add(new RemoteObjectLight(templateElementChild));
+            for (TemplateObjectLight templateElementChild : templateElementChildren)
+                remoteTemplateElementChildren.add(new RemoteObjectLight(templateElementChild.getClassName(), 
+                        templateElementChild.getId(), templateElementChild.getName()));
             
             return remoteTemplateElementChildren;
         } catch (InventoryException ex) {
@@ -4377,7 +4471,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_APPLICATION_OBJECT,
-                String.format("Copied %s template elements", templateElementsIds.length));
+                String.format("%s template elements copied", templateElementsIds.length));
             return templateElementsIds;
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());

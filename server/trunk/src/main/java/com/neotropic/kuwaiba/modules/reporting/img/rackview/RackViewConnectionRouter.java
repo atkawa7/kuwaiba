@@ -28,7 +28,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * A router implementation for the rack view, to define the control points in a connection
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class RackViewConnectionRouter implements Router {
     /**

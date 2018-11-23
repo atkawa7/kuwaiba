@@ -25,7 +25,7 @@ import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
  * This is a wrapper class for AttributeMetadata, containing the info required for the clients
  * to render the object attributes in the right way
  *
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class RemoteAttributeMetadata implements Serializable {
 

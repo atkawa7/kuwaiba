@@ -29,7 +29,7 @@ import org.kuwaiba.apis.web.gui.notifications.Notifications;
  * A small embeddable component that can be inserted into an AbstractDashboard. A DashboardWidget has two "faces": 
  * A cover that shows a summary or simply a title, and content, with the actual information to be shown. This can be seen as a 
  * Tile in a MS Windows Metro interface
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public abstract class AbstractDashboardWidget extends VerticalLayout {
     /**

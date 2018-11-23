@@ -38,7 +38,7 @@ import org.kuwaiba.web.procmanager.MiniAppPhysicalPath;
 
 /**
  * Creates info tables from an inventory objects like Router, Switch, TributaryLink, etc 
- * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class TableCreator {
     /**

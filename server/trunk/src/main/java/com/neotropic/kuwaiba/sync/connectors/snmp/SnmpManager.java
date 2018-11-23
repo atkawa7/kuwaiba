@@ -49,7 +49,7 @@ import org.snmp4j.util.TableUtils;
 /**
  * A SNMP Manager is a client of an SNMP agent which consume the information given 
  * by the agent, and transform the data to be manage like java objects
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class SnmpManager {
     public static final String NONE = "None";

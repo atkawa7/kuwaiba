@@ -30,7 +30,7 @@ import org.openide.util.Exceptions;
 
 /**
  *
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class RackViewImage {
     private static RackViewImage instance;

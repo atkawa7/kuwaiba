@@ -23,7 +23,7 @@ import org.kuwaiba.apis.persistence.util.StringPair;
 
 /**
  * Remote representation of script query
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteScriptQuery implements Serializable {

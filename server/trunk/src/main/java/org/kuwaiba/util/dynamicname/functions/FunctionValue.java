@@ -32,7 +32,7 @@ import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 /**
  * A dynamic section function used to get an attribute value from an object
  * given the object id.
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class FunctionValue extends DynamicSectionFunction {
     public static final String FUNCTION_PATTERN = "value\\([0-9]+,[a-zA-Z]+\\)";

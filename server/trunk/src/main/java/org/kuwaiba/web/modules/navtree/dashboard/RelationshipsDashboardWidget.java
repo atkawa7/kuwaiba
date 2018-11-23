@@ -34,7 +34,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectSpecialRelatio
 
 /**
  * A widget that mimics the old Relationship Explorer
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class RelationshipsDashboardWidget extends AbstractDashboardWidget {
     /**

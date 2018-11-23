@@ -19,7 +19,7 @@ package com.neotropic.kuwaiba.sync.model;
  * The information from the sync data sources (devices, NMS, third-party databases, etc) 
  * id retrieved and stored in high-level data types to be processed later. This is the root class 
  * of all these high-level data types. 
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public abstract class AbstractDataEntity {
     /**

@@ -31,7 +31,7 @@ import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 /**
  * Patches the database adds the classes and attributes in the data model to allow 
  * that the connector matching rules can be configured
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class Patch06ConnectorMatching extends GenericPatch {    
     

@@ -23,7 +23,7 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
  * An Abstract class used to define the method to get the possible values of the current function
  * A dynamic section are a word between a left square bracket "[" and a right square bracket "]"
  * the content in the brackets are a function, use to define a Dynamic Name see <code>DynamicName</code>
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public abstract class DynamicSectionFunction {
     /**

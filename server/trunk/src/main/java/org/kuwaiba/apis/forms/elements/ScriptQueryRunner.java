@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  *
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ScriptQueryRunner implements Runner {
     private String name;

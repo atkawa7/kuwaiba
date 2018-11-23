@@ -21,7 +21,7 @@ import com.vaadin.ui.VerticalLayout;
 /**
  * The superclass of all components to be embedded in a Kuwaiba module. 
  * Note that you don't need to inherit from this class if you don't plan to use persistence
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public abstract class AbstractTopComponent extends VerticalLayout implements View {
     /**

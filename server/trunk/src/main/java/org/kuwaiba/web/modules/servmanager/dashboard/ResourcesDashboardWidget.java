@@ -30,7 +30,7 @@ import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * A simple dashboard widget that shows the resources associated to a service
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ResourcesDashboardWidget extends AbstractDashboardWidget {
     /**

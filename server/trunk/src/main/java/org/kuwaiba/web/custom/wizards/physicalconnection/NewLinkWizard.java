@@ -35,7 +35,7 @@ import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Wizard to guide the creation of physical connections using links
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class NewLinkWizard extends Window implements WizardProgressListener, WizardInterface {
 

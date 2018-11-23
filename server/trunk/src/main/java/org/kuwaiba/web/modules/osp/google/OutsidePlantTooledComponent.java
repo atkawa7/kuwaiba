@@ -36,7 +36,7 @@ import org.kuwaiba.web.modules.osp.OutsidePlantComponentOld;
 //import org.kuwaiba.web.modules.osp.google.tool.actions.SaveOspViewAction;
 /**
  * The tooled component that wrapped the DragAndDropWrapper GoogleMapWrapper
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class OutsidePlantTooledComponent {//extends AbstractTooledComponent  {
 //    public static final String ACTION_CAPTION_DELETE = "Delete";

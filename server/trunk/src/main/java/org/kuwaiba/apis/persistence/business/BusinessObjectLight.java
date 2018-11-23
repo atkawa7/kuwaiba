@@ -17,10 +17,13 @@
 package org.kuwaiba.apis.persistence.business;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import org.kuwaiba.apis.persistence.application.Validator;
 
 /**
  * Contains a business object basic information
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class BusinessObjectLight implements Serializable, Comparable<BusinessObjectLight> {
 
@@ -36,11 +39,16 @@ public class BusinessObjectLight implements Serializable, Comparable<BusinessObj
      * Class this object is instance of
      */
     private String className;
+    /**
+     * The result of evaluating all the validators associated to the instance
+     */
+    private List<Validator> validators;
 
     public BusinessObjectLight(String className, long id, String name) {
         this.id = id;
         this.name = name;
         this.className = className;
+        this.validators = new ArrayList<>();
     }
 
     public long getId() {
@@ -65,6 +73,14 @@ public class BusinessObjectLight implements Serializable, Comparable<BusinessObj
 
     public void setClassName(String className) {
         this.className = className;
+    }
+
+    public List<Validator> getValidators() {
+        return validators;
+    }
+
+    public void setValidators(List<Validator> validators) {
+        this.validators = validators;
     }
     
     @Override

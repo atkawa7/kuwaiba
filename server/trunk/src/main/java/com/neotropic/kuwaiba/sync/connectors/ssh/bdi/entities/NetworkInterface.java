@@ -20,7 +20,7 @@ import com.neotropic.kuwaiba.sync.model.AbstractDataEntity;
 
 /**
  * An entity class that represents a network interface that can be used in a bridge domain
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class NetworkInterface extends AbstractDataEntity {
     /**

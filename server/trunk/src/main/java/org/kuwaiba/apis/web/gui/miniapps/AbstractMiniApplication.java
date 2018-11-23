@@ -26,7 +26,7 @@ import org.kuwaiba.beans.WebserviceBean;
  * such as window or a panel) that can be used to perform complex tasks. These mini applications are thought to be used in an automated context,
  * so in most cases, the mini applications will be instantiated using reflection in scripts or modules that don't know beforehand what's the class of the miniapplication to be launched
  * 
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  * @param <D> The type of the mini application component to be used in detached mode
  * @param <E> The type of the mini application component to be used in embedded mode
  */

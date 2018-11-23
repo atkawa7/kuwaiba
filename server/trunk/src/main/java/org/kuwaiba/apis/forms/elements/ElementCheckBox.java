@@ -16,7 +16,7 @@ package org.kuwaiba.apis.forms.elements;
 
 /**
  * A POJO wrapper of a Check Box element in a Form Definition
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ElementCheckBox extends AbstractElementField {
     

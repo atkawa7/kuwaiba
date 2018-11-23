@@ -24,7 +24,7 @@ import com.vaadin.ui.TextArea;
 
 /**
  *
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ComponentTextArea extends GraphicalComponent {
     

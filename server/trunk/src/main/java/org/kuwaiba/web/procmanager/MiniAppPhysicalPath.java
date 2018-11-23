@@ -28,7 +28,7 @@ import org.kuwaiba.apis.web.gui.notifications.Notifications;
 
 /**
  * Mini Application used to show the Physical Path View given the object Id and Class Name
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class MiniAppPhysicalPath extends AbstractMiniApplication<Component, Component> {
     

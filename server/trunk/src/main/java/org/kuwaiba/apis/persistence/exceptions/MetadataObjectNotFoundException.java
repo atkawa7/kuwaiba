@@ -18,7 +18,7 @@ package org.kuwaiba.apis.persistence.exceptions;
 
 /**
  * Thrown if a metadata object cannot be found (an instance of ClassMetadata, AttributeMatadata, InterfaceMetadata or categoryMetadata)
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class MetadataObjectNotFoundException extends InventoryException{
     public MetadataObjectNotFoundException(String msg) {

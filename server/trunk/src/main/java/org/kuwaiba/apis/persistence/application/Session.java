@@ -25,7 +25,7 @@ import java.util.Date;
 
 /**
  * Represents a single user session
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class Session implements Serializable {
     /**

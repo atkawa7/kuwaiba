@@ -24,7 +24,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
  * The definition of the Warehouse Manager Module. This module allows to see all the devices with the operational state spare
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class WarehouseManagerModule extends AbstractModule {
         

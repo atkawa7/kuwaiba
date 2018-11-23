@@ -18,7 +18,7 @@ package org.kuwaiba.apis.persistence.application;
 
 /**
  * Base class of all classes representing application users
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class UserProfileLight {
     public static final String PROPERTY_ID = "id"; //NOI18N

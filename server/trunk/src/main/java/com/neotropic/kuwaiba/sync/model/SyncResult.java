@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
  * Instances of this class are intended to inform about the results of a synchronization process. 
  * In principle a simple list of strings would suffice, however this class could be extended in
  * the future to provide mechanisms to retry a sync action
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SyncResult {

@@ -20,7 +20,7 @@ import org.kuwaiba.apis.persistence.util.StringPair;
 
 /**
  * Class used to define a special type of query which execute an script and return a result
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ScriptQuery implements Serializable {
     /**

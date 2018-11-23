@@ -42,7 +42,7 @@ import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 /**
  * Reads the kuwaiba data model from the class_hierarchy.xml file and create 
  * every class and it's attributes in the database.
- * @author Adrian Fernando Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Fernando Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class XMLBackupReader {
 

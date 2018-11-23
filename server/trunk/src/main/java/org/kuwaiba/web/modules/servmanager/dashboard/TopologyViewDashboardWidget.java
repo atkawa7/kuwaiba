@@ -26,7 +26,7 @@ import org.kuwaiba.web.modules.servmanager.views.TopologyView;
 
 /**
  * A simple dashboard widget that displays the Topology View for the selected service
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class TopologyViewDashboardWidget extends AbstractDashboardWidget {
     /**

@@ -29,7 +29,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
  * This component implements the Topology view for SDH services
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public final class TopologyView extends Panel {
     

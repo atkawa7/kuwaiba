@@ -23,7 +23,7 @@ import java.util.Date;
 
 /**
  * Support for date-type properties
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class DateProperty extends AbstractProperty<Date>{
 

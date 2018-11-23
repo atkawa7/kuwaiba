@@ -20,7 +20,7 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * A report that receives raw text and returns its corresponding bytes. It will be used to wrap the old, hard-coded reports
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class RawReport extends InventoryReport {
     private String text;

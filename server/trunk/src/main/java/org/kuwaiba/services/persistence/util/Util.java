@@ -48,7 +48,6 @@ import org.kuwaiba.apis.persistence.application.Task;
 import org.kuwaiba.apis.persistence.application.UserProfile;
 import org.kuwaiba.apis.persistence.application.UserProfileLight;
 import org.kuwaiba.apis.persistence.application.process.ProcessInstance;
-import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
@@ -80,7 +79,7 @@ import org.neo4j.kernel.impl.traversal.MonoDirectionalTraversalDescription;
 
 /**
  * Utility class containing misc methods to perform common tasks
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class Util {
     /**
@@ -417,32 +416,6 @@ public class Util {
                 (String)instance.getProperty(Constants.PROPERTY_NAME));
     }
     
-    public static BusinessObjectLight createRemoteObjectLightFromNode (Node instance) {
-        Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
-        
-        return new BusinessObjectLight((String)classNode.getProperty(Constants.PROPERTY_NAME), instance.getId(), 
-            (String)instance.getProperty(Constants.PROPERTY_NAME));
-    }
-    
-    public static BusinessObjectLight createTemplateElementLightFromNode (Node instance) {
-        Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode();
-        
-        return new BusinessObjectLight((String)classNode.getProperty(Constants.PROPERTY_NAME), instance.getId(), 
-            (String)instance.getProperty(Constants.PROPERTY_NAME));
-    }
-    
-    public static BusinessObject createRemoteObjectFromNode (Node instance) throws InvalidArgumentException {
-        Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
-        ClassMetadata classMetadata = createClassMetadataFromNode(classNode);
-        return createRemoteObjectFromNode(instance, classMetadata);
-    }
-    
-    public static BusinessObject createTemplateElementFromNode (Node instance) throws InvalidArgumentException {
-        Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode();
-        ClassMetadata classMetadata = createClassMetadataFromNode(classNode);
-        return createRemoteObjectFromNode(instance, classMetadata);
-    }
-    
     public static Pool createPoolFromNode(Node poolNode) {
         return new Pool(poolNode.getId(), 
                         poolNode.hasProperty(Constants.PROPERTY_NAME) ? (String)poolNode.getProperty(Constants.PROPERTY_NAME) : null, 
@@ -531,71 +504,7 @@ public class Util {
         return processInstance;
     }
     
-    /**
-     * Builds a RemoteBusinessObject instance from a node representing a business object
-     * @param instance The object as a Node instance.
-     * @param myClass The class metadata to map the node's properties into a RemoteBussinessObject.
-     * @return The business object.
-     * @throws InvalidArgumentException If an attribute value can't be mapped into value.
-     */
-    public static BusinessObject createRemoteObjectFromNode(Node instance, ClassMetadata myClass) throws InvalidArgumentException {
-        
-        HashMap<String, String> attributes = new HashMap<>();
-        String name = "";
-        
-        for (AttributeMetadata myAtt : myClass.getAttributes()){
-            //Only set the attributes existing in the current node. Please note that properties can't be null in
-            //Neo4J, so a null value is actually a non-existing relationship/value
-            if (instance.hasProperty(myAtt.getName())){
-               if (AttributeMetadata.isPrimitive(myAtt.getType())) {
-                    if (!myAtt.getType().equals("Binary")) {
-                        String value = String.valueOf(instance.getProperty(myAtt.getName()));
-                        
-                        if (Constants.PROPERTY_NAME.equals(myAtt.getName()))
-                            name = value;
-                        
-                        attributes.put(myAtt.getName(),value);
-                    } else if (myAtt.getType().equals("Binary")) {
-                        byte [] byteArray = (byte []) instance.getProperty(myAtt.getName());
-                        attributes.put(myAtt.getName(), new String(byteArray));
-                    }
-                }
-            }
-        }
-
-        //Iterates through relationships and transform the into "plain" attributes
-        Iterable<Relationship> iterableRelationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
-        Iterator<Relationship> relationships = iterableRelationships.iterator();
-
-        while(relationships.hasNext()){
-            Relationship relationship = relationships.next();
-            if (!relationship.hasProperty(Constants.PROPERTY_NAME))
-                throw new InvalidArgumentException(String.format("The object with id %s is malformed", instance.getId()));
-
-            String relationshipName = (String)relationship.getProperty(Constants.PROPERTY_NAME);              
-            
-            boolean hasRelationship = false;
-            for (AttributeMetadata myAtt : myClass.getAttributes()) {
-                if (myAtt.getName().equals(relationshipName)) {
-                    if (attributes.containsKey(relationshipName))
-                        attributes.put(relationshipName, attributes.get(relationshipName) + ";" + String.valueOf(relationship.getEndNode().getId())); //A multiple selection list type
-                    else    
-                        attributes.put(relationshipName, String.valueOf(relationship.getEndNode().getId()));
-                    hasRelationship = true;
-                    break;
-                }                  
-            }
-            
-            if (!hasRelationship) //This verification will help us find potential inconsistencies with list types
-                                  //What this does is to verify if is there is a RELATED_TO relationship that shouldn't exist because its name is not an attribute of the class
-                throw new InvalidArgumentException(String.format("The object with %s (%s) is related to list type %s (%s), but that is not consistent with the data model", 
-                            instance.getProperty(Constants.PROPERTY_NAME), instance.getId(), relationship.getEndNode().getProperty(Constants.PROPERTY_NAME), relationship.getEndNode().getId()));
-        }
-        BusinessObject res = new BusinessObject(myClass.getName(), instance.getId(), name, attributes);
-
-        return res;
-        
-    }
+    
 
     /**
      * Creates a UserProfileLight object (a user object without privileges) from a node
@@ -1042,14 +951,22 @@ public class Util {
     }
     
     public static void changeAttributeProperty (Node classNode, String attributeName, String propertyName, Object propertyValue) {        
+        CacheManager cm = CacheManager.getInstance();
+        
         final TraversalDescription UPDATE_TRAVERSAL = classNode.getGraphDatabase().traversalDescription().
                     breadthFirst().
                     relationships(RelTypes.EXTENDS, Direction.INCOMING);
         
         for(Path p : UPDATE_TRAVERSAL.traverse(classNode)){
             for(Relationship rel : p.endNode().getRelationships(RelTypes.HAS_ATTRIBUTE)) {
-                if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeName)){
+                if (rel.getEndNode().getProperty(Constants.PROPERTY_NAME).equals(attributeName)) {
                     rel.getEndNode().setProperty(propertyName, propertyValue);
+                    if (propertyName.equals(Constants.PROPERTY_UNIQUE)) {
+                        if ((boolean)propertyValue)
+                            cm.putUniqueAttributeValuesIndex((String)rel.getStartNode().getProperty(Constants.PROPERTY_NAME), attributeName, new ArrayList<>());
+                        else
+                            cm.removeUniqueAttribute((String)rel.getStartNode().getProperty(Constants.PROPERTY_NAME), attributeName);
+                    }
                     break;
                 }
             }

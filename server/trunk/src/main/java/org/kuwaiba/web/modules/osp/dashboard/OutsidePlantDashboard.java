@@ -22,7 +22,7 @@ import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * The dashboard used in the Outside Plant module
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class OutsidePlantDashboard extends AbstractDashboard {
     

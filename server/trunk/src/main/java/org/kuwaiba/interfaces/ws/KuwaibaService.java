@@ -82,11 +82,13 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConfigurationVariable;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidator;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidatorDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemotePhysicalConnectionDetails;
 
 /**
  * Main web service
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 @Singleton
 @WebService (serviceName = "KuwaibaService")
@@ -2303,7 +2305,7 @@ public class KuwaibaService {
     }
     
     /**
-     * Updates the value of a configuration variable. See #{@link #createConfigurationVariable(long, java.lang.String, java.lang.String, int, java.lang.String) } for value definition syntax
+     * Updates the value of a configuration variable. See #{@link #createConfigurationVariable(long, java.lang.String, java.lang.String, int, boolean, java.lang.String, java.lang.String) } for value definition syntax
      * @param name The current name of the variable that will be modified
      * @param propertyToUpdate The name of the property to be updated. Possible values are: "name", "description", "type", "masked" and "value"
      * @param newValue The new value as string
@@ -2468,6 +2470,125 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in deleteConfigurationVariablesPool: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    //</editor-fold>
+    
+    //<editor-fold desc="Validators" defaultstate="collapsed">
+    /**
+     * Creates a validator definition. 
+     * @param name The name of the validator. It's recommended to use camel case notation (for example thisIsAName). This field is mandatory
+     * @param description The optional description of the validator
+     * @param classToBeApplied The class or super class of the classes whose instances will be checked against this validator
+     * @param script The groovy script containing the logic of the validator , that is, the 
+     * @param enabled If this validador should be applied or not
+     * @param sessionId The session token
+     * @return The id of the newly created validator definition
+     * @throws ServerSideException If the name is null or empty or if the classToBeApplied argument could not be found
+     */
+    @WebMethod(operationName = "createValidatorDefinition")
+    public long createValidatorDefinition(@WebParam(name = "name")String name, @WebParam(name = "description")String description, 
+            @WebParam(name = "classToBeApplied")String classToBeApplied, @WebParam(name = "script")String script, 
+            @WebParam(name = "enabled")boolean enabled, @WebParam(name = "sessionId")String sessionId) 
+            throws ServerSideException {
+        try {
+            return wsBean.createValidatorDefinition(name, description, classToBeApplied, script, enabled, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in createValidatorDefinition: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+
+    /**
+     * Updates the properties of a validator. The null values will be ignored
+     * @param validatorDefinitionId The id of teh validator definition to be updated
+     * @param name The new name, if any, null otherwise
+     * @param description The new description, if any, null otherwise
+     * @param classToBeApplied The new class to be associated to this validator, if any, null otherwise
+     * @param script The new script, if any, null otherwise
+     * @param enabled If the validator should be enabled or not, if any, null otherwise
+     * @param sessionId The session token
+     * @throws ServerSideException If the validator definition could not be found or if the classToBeApplied parameter is not valid or if the name is not null, but it is empty
+     */
+    @WebMethod(operationName = "updateValidatorDefinition")
+    public void updateValidatorDefinition(@WebParam(name = "validatorDefinitionId")long validatorDefinitionId, @WebParam(name = "name")String name, 
+            @WebParam(name = "description")String description, @WebParam(name = "classToBeApplied")String classToBeApplied, 
+            @WebParam(name = "script")String script, @WebParam(name = "enabled")Boolean enabled, @WebParam(name = "sessionId")String sessionId) 
+            throws ServerSideException {
+        try {
+            wsBean.updateValidatorDefinition(validatorDefinitionId, name, description, classToBeApplied, script, enabled, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in updateValidatorDefinition: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    /**
+     * Retrieves all the validator definitions in the system
+     * @param sessionId The session token
+     * @return The list of validator definitions
+     * @throws ServerSideException In case of an unexpected server side error
+     */
+    @WebMethod(operationName = "getValidatorDefinitions")
+    public List<RemoteValidatorDefinition> getValidatorDefinitions(@WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.getValidatorDefinitions(getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in getValidatorDefinitions: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    /**
+     * Runs the existing validations for the class associated to the given object. Validators set to enabled = false will be ignored
+     * @param objectClass The class of the object
+     * @param objectId The id of the object
+     * @param sessionId The session token
+     * @return The list of validators associated to the object and its class
+     * @throws ServerSideException If the object can not be found
+     */
+    @WebMethod(operationName = "runValidationsForObject")
+    public List<RemoteValidator> runValidationsForObject(@WebParam(name = "objectClass")String objectClass, @WebParam(name = "objectId")long objectId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            return wsBean.runValidationsForObject(objectClass, objectId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in runValidationsForObject: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    /**
+     * Deletes a validator definition
+     * @param validatorDefinitionId the id of the validator to be deleted
+     * @param sessionId The session token
+     * @throws ServerSideException If the validator definition could not be found
+     */
+    @WebMethod(operationName = "deleteValidatorDefinition")
+    public void deleteValidatorDefinition(@WebParam(name = "validatorDefinitionId")long validatorDefinitionId, 
+            @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.deleteValidatorDefinition(validatorDefinitionId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in deleteValidatorDefinition: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -3740,7 +3861,7 @@ public class KuwaibaService {
     
     /**
      * Loops through all instances of GenericCommunicationsPort at any level inside the given object and gets the physical path. 
-     * Only the ports with connections (physicalPath.size > 1) are returned
+     * Only the ports with connections {@literal (physicalPath.size > 1)} are returned
      * @param objectClass The class of the object.
      * @param objectId The id of the object.
      * @param sessionId Session token

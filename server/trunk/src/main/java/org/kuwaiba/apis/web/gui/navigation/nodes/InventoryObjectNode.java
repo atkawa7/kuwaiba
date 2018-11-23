@@ -23,7 +23,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * A node representing an inventory object. This node is typically used in navigation trees or special explorers
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class InventoryObjectNode extends AbstractNode<RemoteObjectLight>{
 

@@ -21,7 +21,7 @@ import java.io.Serializable;
 /**
  * The store-friendly version of an ExtendedQuery. Its structure is not meant to be executed, but
  * to be transported and stored
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class CompactQuery implements Serializable{
 

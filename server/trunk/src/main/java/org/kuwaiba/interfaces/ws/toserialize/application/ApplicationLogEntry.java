@@ -22,7 +22,7 @@ import org.kuwaiba.apis.persistence.application.ActivityLogEntry;
 
 /**
  * Wrapper of ActivityLogEntry
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)

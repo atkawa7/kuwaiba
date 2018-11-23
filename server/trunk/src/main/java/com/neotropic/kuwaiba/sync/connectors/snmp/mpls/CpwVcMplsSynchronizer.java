@@ -53,7 +53,7 @@ import org.openide.util.Exceptions;
 
 /**
  * Synchronizes the MPLS data
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class CpwVcMplsSynchronizer {
     /**

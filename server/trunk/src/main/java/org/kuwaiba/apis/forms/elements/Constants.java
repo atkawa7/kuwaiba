@@ -17,7 +17,7 @@ package org.kuwaiba.apis.forms.elements;
 /**
  * Contains some values that are used in a form definition, like tags, 
  * attributes, functions, styles
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class Constants {
     

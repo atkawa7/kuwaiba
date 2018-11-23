@@ -19,7 +19,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Widget to be located in a rack view scene
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class RackViewWidget extends Widget {
 

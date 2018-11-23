@@ -27,7 +27,7 @@ import org.kuwaiba.apis.persistence.business.BusinessObjectLightList;
 /**
  * This class represents a list of RemoteObjectLight instances. It's basically a wrapper for ArrayList&lt;RemoteObjectLight&gt; 
  * It's used only to improve code readability. This class extended from ArrayList of RemoteObjectLight at the beginning, but JAX-WS just refused to treat it as a List
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteObjectLightList implements  Serializable {

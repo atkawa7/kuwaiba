@@ -62,7 +62,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteParallelActivityD
 
 /**
  * Shown the instances of a process definition
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ProcessInstancesView extends VerticalLayout {
     private final RemoteProcessDefinition processDefinition;

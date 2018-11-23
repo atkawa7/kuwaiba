@@ -22,7 +22,7 @@ import org.snmp4j.smi.OID;
  * 
  * 
  * cpwVcMplsInboundTable
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class SnmpCpwVcMplsInboundTableResourceDefinition extends HashMap<String, OID>{
 

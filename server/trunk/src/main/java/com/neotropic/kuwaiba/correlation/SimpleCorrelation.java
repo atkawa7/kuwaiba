@@ -37,7 +37,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.ServiceLevelCorrelatedInfo
 /**
  * This is a temporary implementation that provides methods to find the services affected when 
  * a given device/interface is alarmed
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class SimpleCorrelation {
     public static AssetLevelCorrelatedInformation servicesInDevice(String deviceName, BusinessEntityManager bem) 

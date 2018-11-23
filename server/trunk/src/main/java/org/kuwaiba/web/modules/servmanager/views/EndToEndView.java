@@ -29,7 +29,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
  * This component implements the End to End view for SDH/MPLS services
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public final class EndToEndView extends Panel {
     

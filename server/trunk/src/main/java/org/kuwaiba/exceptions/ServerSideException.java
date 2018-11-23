@@ -18,7 +18,7 @@ package org.kuwaiba.exceptions;
 
 /**
  * A wrapper, convenience exception to all InventoryExceptions
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ServerSideException extends Exception {
 

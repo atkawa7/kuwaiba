@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 /**
  * The light version of a ViewObject
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ViewObjectLight implements Serializable {
     /**

@@ -63,7 +63,7 @@ import org.snmp4j.smi.OID;
  * Synchronization provider to SNMP agents
  * This class implement the logic to connect with a group of SNMP agents to 
  * retrieve the data and compare the differences with the management objects
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
 

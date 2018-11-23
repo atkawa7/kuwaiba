@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 /**
  * Groups an inventory object and the services (and corresponding services) somehow related to it. 
  * It's typically used to present correlated information in correlation-related API methods such as getAffectedServices
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AssetLevelCorrelatedInformation implements Serializable {

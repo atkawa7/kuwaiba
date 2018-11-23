@@ -45,7 +45,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * A wizard that given two initial objects, guides the user through the creation of a physical connection (link or container)
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class NewPhysicalConnectionWizard extends Wizard {
     /**

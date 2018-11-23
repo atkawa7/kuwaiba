@@ -19,7 +19,7 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 
 /**
  * 
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ActionsFactory {
 //    private static NewObjectAction newObjectAction;

@@ -44,7 +44,7 @@ import org.openide.util.Exceptions;
 
 /**
  *
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ComponentRackView extends VerticalLayout {
     public static final float RACK_UNIT_WIDTH_PX = 500;

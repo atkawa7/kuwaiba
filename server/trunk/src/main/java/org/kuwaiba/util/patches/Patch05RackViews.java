@@ -27,7 +27,7 @@ import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 
 /**
  * Patches the database adds the attribute rackUnitsNumberingDescending to the Rack class
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class Patch05RackViews extends GenericPatch {
     

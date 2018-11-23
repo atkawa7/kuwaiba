@@ -27,7 +27,7 @@ import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 
 /**
  * ConnectionManager reference implementation using Neo4J as DBMS
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class ConnectionManagerImpl implements ConnectionManager <GraphDatabaseService>{
 

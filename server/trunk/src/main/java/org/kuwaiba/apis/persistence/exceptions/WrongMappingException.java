@@ -19,7 +19,7 @@ package org.kuwaiba.apis.persistence.exceptions;
 /**
  * This exception is raised when a pair attribute type - attribute value is not valid
  * (i.e. type Integer, value "aaaaa")
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class WrongMappingException extends InventoryException{
 

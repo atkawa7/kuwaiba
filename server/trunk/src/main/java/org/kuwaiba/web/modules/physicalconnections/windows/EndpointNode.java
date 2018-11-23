@@ -25,7 +25,7 @@ import org.kuwaiba.apis.web.gui.navigation.trees.SimpleTree;
 
 /**
  *
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class EndpointNode  {
 //    private boolean free = true;

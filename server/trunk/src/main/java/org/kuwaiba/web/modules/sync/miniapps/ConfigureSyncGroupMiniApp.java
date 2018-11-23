@@ -42,7 +42,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationGr
 
 /**
  * This mini application allows to configure a synchronization group, and add data source configurations to it. It's also possible that instead of creating a sync group from scratch, the user chooses an existing one
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ConfigureSyncGroupMiniApp extends AbstractMiniApplication<Window, Panel>{
 

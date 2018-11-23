@@ -18,7 +18,7 @@ package org.kuwaiba.apis.persistence.exceptions;
 
 /**
  * Thrown when a certain operation can't be performed because a system restriction or illegal state
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class OperationNotPermittedException extends InventoryException{
 

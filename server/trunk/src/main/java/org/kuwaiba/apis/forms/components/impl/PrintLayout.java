@@ -12,7 +12,7 @@ import java.io.InputStream;
 
 /**
  * Custom Layout that contains the printable template
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @StyleSheet({"vaadin://css/printablevaadintemplate.css"})
 public class PrintLayout extends CustomLayout {

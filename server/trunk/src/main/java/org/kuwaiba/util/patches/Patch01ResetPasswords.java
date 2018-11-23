@@ -26,7 +26,7 @@ import org.kuwaiba.util.ChangeDescriptor;
 
 /**
  * Patches the database will have their passwords reset to the same "username" value
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class Patch01ResetPasswords extends GenericPatch {
     

@@ -31,7 +31,7 @@ import org.kuwaiba.util.i18n.I18N;
 
 /**
  * This module allows to manage the process instances for the available process definition previously created
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ProcessManagerModule extends AbstractModule {
     /**

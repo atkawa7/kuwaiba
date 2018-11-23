@@ -22,7 +22,7 @@ import java.io.Serializable;
 
 /**
  * Represents a query designed using the client and having XML as format
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Query implements Serializable{

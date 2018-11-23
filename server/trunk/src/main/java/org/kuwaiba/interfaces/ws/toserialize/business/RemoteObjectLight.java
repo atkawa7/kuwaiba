@@ -21,11 +21,11 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
-import org.kuwaiba.interfaces.ws.toserialize.application.Validator;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidator;
 
 /**
  * This class is a simple representation of an object. It's used for trees and view. This is jus an entity wrapper
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteObjectLight implements Serializable, Comparable<RemoteObjectLight> {
@@ -50,7 +50,7 @@ public class RemoteObjectLight implements Serializable, Comparable<RemoteObjectL
     /**
      * Misc flags used to give more information about the object (i.e. is it already connected?)
      */
-    protected List<Validator> validators;
+    protected List<RemoteValidator> validators;
 
     /**
      * Default constructor. Not used
@@ -102,11 +102,11 @@ public class RemoteObjectLight implements Serializable, Comparable<RemoteObjectL
      * more calls to the webservice
      * @return a list with the validators
      */
-    public List<Validator> getValidators() {
+    public List<RemoteValidator> getValidators() {
         return this.validators;
     }
 
-    public void addValidator(Validator newValidator){
+    public void addValidator(RemoteValidator newValidator){
         if (this.validators == null)
             this.validators = new ArrayList<>();
         this.validators.add(newValidator);

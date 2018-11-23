@@ -24,7 +24,6 @@ import org.kuwaiba.apis.persistence.exceptions.DatabaseException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.ConnectionManager;
-import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
@@ -49,7 +48,7 @@ import org.neo4j.kernel.impl.traversal.MonoDirectionalTraversalDescription;
 
 /**
  * MetadataEntityManager implementation for neo4j
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class MetadataEntityManagerImpl implements MetadataEntityManager {
     /**
@@ -191,9 +190,9 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
             }//end else not rootNode
             
             buildClassCache();
-            
             getSubClassesLight(classDefinition.getName(), true, false);
             getSubClassesLightNoRecursive(classDefinition.getName(), true, false);
+            
             tx.success();
             return classNode.getId();
         }
@@ -801,11 +800,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     String currentAttributeName = (String)attrNode.getProperty(Constants.PROPERTY_NAME);
 
                     if (currentAttributeName.equals(Constants.PROPERTY_CREATION_DATE))
-                        throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be modified", currentAttributeName));
+                        throw new InvalidArgumentException("Attribute \"creationDate\" can not be modified");
 
                     if(newAttributeDefinition.getName() != null){
                         if (currentAttributeName.equals(Constants.PROPERTY_NAME))
-                            throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be renamed", currentAttributeName));
+                            throw new InvalidArgumentException("Attribute \"name\" can not be renamed");
                         if (!newAttributeDefinition.getName().matches("^[a-zA-Z0-9_]*$"))
                             throw new InvalidArgumentException(String.format("Attribute %s contains invalid characters", newAttributeDefinition.getName()));
                         
@@ -831,7 +830,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     }
                     if(newAttributeDefinition.getType() != null){
                         if (currentAttributeName.equals(Constants.PROPERTY_NAME))
-                            throw new InvalidArgumentException(String.format("Attribute \"%s\" can only be a String", currentAttributeName));
+                            throw new InvalidArgumentException("Attribute \"name\" can only be a String");
                         if (AttributeMetadata.isPrimitive((String)attrNode.getProperty(Constants.PROPERTY_TYPE)))
                             Util.changeAttributeTypeIfPrimitive(classNode, currentAttributeName, newAttributeDefinition.getType());
                         else
@@ -870,27 +869,30 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         newValues = newAttributeDefinition.isNoCopy() + " ";
                     }
                     if(newAttributeDefinition.isUnique() != null) {
-                        if(newAttributeDefinition.isUnique()){//checks only if unique changed from false to true
-                            if(canAttributeBeUnique(classNode, Util.getTypeOfAttribute(classNode, currentAttributeName), currentAttributeName))
+                        if(newAttributeDefinition.isUnique()) {//checks only if unique changed from false to true
+                            String attributeType = (String) attrNode.getProperty(Constants.PROPERTY_TYPE);
+                            if (attributeType.equals("Boolean") || !AttributeMetadata.isPrimitive(attributeType))
+                                throw new InvalidArgumentException("Boolean and list type attributes can not be set as unique");
+                            
+                            if(canAttributeBeUnique(classNode, currentAttributeName))
                                 Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
                             else
-                                 throw new InvalidArgumentException(String.format("In order to mark attribute \"%s\" as unique it is necessary to set a unique value for every existing object of this class and its subclasses", currentAttributeName));
+                                throw new InvalidArgumentException(String.format("There are duplicated values of attribute \"%s\" among the existing instances of class %s or its subclasses", currentAttributeName, classNode.getProperty(Constants.PROPERTY_NAME)));
                         }
-                        else{
+                        else
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
-                            cm.removeUniqueAtribute((String)classNode.getProperty(Constants.PROPERTY_NAME), currentAttributeName);
-                        }
+                            
                         affectedProperties = Constants.PROPERTY_UNIQUE + " ";
                         oldValues = " ";
                         newValues = newAttributeDefinition.isUnique() + " ";
                     }       
-                    if(newAttributeDefinition.isMandatory() != null){
+                    if(newAttributeDefinition.isMandatory() != null) {
                         //this check if every object of the class and subclasses has a value in this attribute marked as mandatory
-                        if(newAttributeDefinition.isMandatory()){//checks only if mandatory has changed from false to true
+                        if(newAttributeDefinition.isMandatory()) {//checks only if mandatory has changed from false to true
                             if(objectsOfClassHasValueInMandatoryAttribute((String)classNode.getProperty(Constants.PROPERTY_NAME), currentAttributeName))
                                 Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
                             else
-                                throw new InvalidArgumentException(String.format("Before setting an attribute as mandatory, all instances of this class must have valid values for attribute %s", currentAttributeName));
+                                throw new InvalidArgumentException(String.format("Before setting an attribute as mandatory, all existing instances of this class must have valid values for attribute %s", currentAttributeName));
                         }
                         else
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
@@ -909,7 +911,6 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     }
                     
                     if(newAttributeDefinition.isMultiple() != null) {
-                        
                         if (newAttributeDefinition.isMultiple() && 
                                 AttributeMetadata.isPrimitive((String) attrNode.getProperty(Constants.PROPERTY_TYPE)))
                             throw new InvalidArgumentException("Primitive types can not be set as multiple");
@@ -950,11 +951,11 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     String currentAttributeName = (String)attrNode.getProperty(Constants.PROPERTY_NAME);
 
                     if (currentAttributeName.equals(Constants.PROPERTY_CREATION_DATE))
-                        throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be modified", currentAttributeName));
+                        throw new InvalidArgumentException("Attribute \"creationDate\" can not be modified");
 
                     if(newAttributeDefinition.getName() != null){
                         if (currentAttributeName.equals(Constants.PROPERTY_NAME))
-                            throw new InvalidArgumentException(String.format("Attribute \"%s\" can not be renamed", currentAttributeName));
+                            throw new InvalidArgumentException("Attribute \"name\" can not be renamed");
                         if (!newAttributeDefinition.getName().matches("^[a-zA-Z0-9_]*$"))
                             throw new InvalidArgumentException(String.format("Attribute %s contains invalid characters", newAttributeDefinition.getName()));
 
@@ -980,7 +981,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                     }
                     if(newAttributeDefinition.getType() != null){
                         if (currentAttributeName.equals(Constants.PROPERTY_NAME))
-                            throw new InvalidArgumentException(String.format("Attribute \"%s\" can only be a String", currentAttributeName));
+                            throw new InvalidArgumentException("Attribute \"name\" can only be a String");
                         if (AttributeMetadata.isPrimitive((String)attrNode.getProperty(Constants.PROPERTY_TYPE)))
                             Util.changeAttributeTypeIfPrimitive(classNode, currentAttributeName, newAttributeDefinition.getType());
                         else
@@ -1018,17 +1019,19 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         oldValues = " ";
                         newValues = newAttributeDefinition.isNoCopy() + " ";
                     }
-                    if(newAttributeDefinition.isUnique() != null){
-                        if(newAttributeDefinition.isUnique()){//checks only if unique changed from false to true
-                            if(canAttributeBeUnique(classNode, Util.getTypeOfAttribute(classNode, currentAttributeName), currentAttributeName))
+                    if(newAttributeDefinition.isUnique() != null) {
+                        if(newAttributeDefinition.isUnique()) {//checks only if unique changed from false to true
+                            String attributeType = (String) attrNode.getProperty(Constants.PROPERTY_TYPE);
+                            if (attributeType.equals("Boolean") || !AttributeMetadata.isPrimitive(attributeType))
+                                throw new InvalidArgumentException("Boolean and list type attributes can not be set as unique");
+                            
+                            if(canAttributeBeUnique(classNode, currentAttributeName))
                                 Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
                         else
-                             throw new InvalidArgumentException(String.format("In order to mark attribute \"%s\" as unique it is necessary to set a unique value for every existing object with this attribute name", currentAttributeName));
+                             throw new InvalidArgumentException(String.format("There are duplicated values of attribute \"%s\" among the existing instances of class %s or its subclasses", currentAttributeName, className));
                         }
-                        else{
+                        else
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_UNIQUE, newAttributeDefinition.isUnique());
-                            cm.removeUniqueAtribute(currentAttributeName, currentAttributeName);
-                        }
                         
                         affectedProperties = Constants.PROPERTY_UNIQUE + " ";
                         oldValues = " ";
@@ -1040,7 +1043,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                             if(objectsOfClassHasValueInMandatoryAttribute(className, currentAttributeName))
                                 Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
                             else
-                                throw new InvalidArgumentException(String.format("Before setting it as mandatory, all instances of this class must have valid values for attribute %s", currentAttributeName));
+                                throw new InvalidArgumentException(String.format("Before setting it as mandatory, all existing instances of this class must have valid values for attribute %s", currentAttributeName));
                         }
                         else
                             Util.changeAttributeProperty(classNode, currentAttributeName, Constants.PROPERTY_MANDATORY, newAttributeDefinition.isMandatory());
@@ -1852,7 +1855,7 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
     }
     
     /**
-     * Check if the value of the given attribute name is unique across other 
+     * Checks if the value of the given attribute name is unique across other 
      * objects of the classes and subclasses in the inventory
      * @param className class name
      * @param attributeType attribute type
@@ -1861,47 +1864,68 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
      * @throws MetadataObjectNotFoundException
      * @throws InvalidArgumentException 
      */
-    private boolean canAttributeBeUnique(Node classNode, String attributeType, String attributeName) 
-            throws MetadataObjectNotFoundException, InvalidArgumentException{
-        
-        List<String> values =  new ArrayList<>();
-        String uniqueAttributeValue = null;
-        HashMap<String, List<String>> uniqueValues = new HashMap<>();
+//    private boolean canAttributeBeUnique(Node classNode, String attributeType, String attributeName) 
+//            throws MetadataObjectNotFoundException, InvalidArgumentException{
+//        
+//        List<String> values =  new ArrayList<>();
+//        String uniqueAttributeValue = null;
+//        HashMap<String, List<String>> uniqueValues = new HashMap<>();
+//        String className = (String)classNode.getProperty(Constants.PROPERTY_NAME);
+//        
+//        //List<ClassMetadataLight> subClassesLight = getSubClassesLight(className, false, true);
+//        List<ClassMetadataLight> subClassesLight = getSubClassesLight(classNode, false); //Uses this one to avoid the transaction
+//        subClassesLight.add(Util.createClassMetadataLightFromNode(classNode)); //Add itself, since getSubClassesLight(Node, boolean) does not do it on its own
+//        
+//        for(ClassMetadataLight subClassLight : subClassesLight){
+//            Node subClassNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, subClassLight.getName());
+//            ClassMetadata subClassMetadata = Util.createClassMetadataFromNode(subClassNode);
+//            if(subClassMetadata.hasAttribute(attributeName)){
+//                if(subClassNode.hasRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.INCOMING) ||
+//                        subClassNode.hasRelationship(RelTypes.INSTANCE_OF, Direction.INCOMING)){
+//                    Iterable<Relationship> iterableRelationships = subClassNode.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
+//                    Iterator<Relationship> relationships = iterableRelationships.iterator();
+//                    if(attributeType.equals(Util.getTypeOfAttribute(subClassNode, attributeName))){
+//                        while(relationships.hasNext()){
+//                            Relationship relationship = relationships.next();
+//                            BusinessObject remoteObject = Util.createRemoteObjectFromNode(relationship.getStartNode());
+//                            if(remoteObject.getAttributes().get(attributeName) != null)
+//                                uniqueAttributeValue = remoteObject.getAttributes().get(attributeName);
+//                            if(values.contains(uniqueAttributeValue))
+//                                return false;
+//                            else{
+//                                values.add(uniqueAttributeValue);
+//                                uniqueValues.put(className, values); //Put the className because the attributeName doesn't change
+//                            }
+//                        }
+//                    }
+//                }else
+//                    uniqueValues.put(className, null);//when no object has been created
+//            }
+//        }//end for
+//        
+//        for(String _className : uniqueValues.keySet())
+//            cm.putUniqueAttributeValuesIndex(className, attributeName, uniqueValues.get(_className));
+//        
+//        return true;
+//    }
+    
+    private boolean canAttributeBeUnique(Node classNode, String attributeName) {
         String className = (String)classNode.getProperty(Constants.PROPERTY_NAME);
         
-        //List<ClassMetadataLight> subClassesLight = getSubClassesLight(className, false, true);
-        List<ClassMetadataLight> subClassesLight = getSubClassesLight(classNode, false); //Uses this one to avoid the transaction
-        subClassesLight.add(Util.createClassMetadataLightFromNode(classNode)); //Add itself, since getSubClassesLight(Node, boolean) does not do it on its own
+        if (classNode.hasRelationship(Direction.INCOMING, RelTypes.EXTENDS)) {
+            //First we check the instances of the subclasses 
+            String cypherQuery = String.format("MATCH (subclassInstance)-[:INSTANCE_OF]->(subclass)-[:EXTENDS*]->(class:classes) WHERE class.name='%s' WITH subclassInstance.%s as attributeValue, collect(subclassInstance) as matchingNodes where size(matchingNodes) > 1 RETURN matchingNodes", className, attributeName);
+            if (graphDb.execute(cypherQuery).hasNext())
+                return false;
+            
+            //Then the class itself
+            cypherQuery = String.format("MATCH (instance)-[:INSTANCE_OF]->(class:classes) WHERE class.name='%s' WITH instance.%s as attributeValue, collect(instance) as matchingNodes where size(matchingNodes) > 1 RETURN matchingNodes", className, attributeName);
+            return !graphDb.execute(cypherQuery).hasNext();
+        } else {
+            String cypherQuery = String.format("MATCH (instance)-[:INSTANCE_OF]->(class:classes) WHERE class.name='%s' WITH instance.%s as attributeValue, collect(instance) as matchingNodes where size(matchingNodes) > 1 RETURN matchingNodes", className, attributeName);
+            return !graphDb.execute(cypherQuery).hasNext();
+        }        
         
-        for(ClassMetadataLight subClassLight : subClassesLight){
-            Node subClassNode = graphDb.findNode(classLabel, Constants.PROPERTY_NAME, subClassLight.getName());
-            ClassMetadata subClassMetadata = Util.createClassMetadataFromNode(subClassNode);
-            if(subClassMetadata.hasAttribute(attributeName)){
-                if(subClassNode.hasRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.INCOMING) ||
-                        subClassNode.hasRelationship(RelTypes.INSTANCE_OF, Direction.INCOMING)){
-                    Iterable<Relationship> iterableRelationships = subClassNode.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
-                    Iterator<Relationship> relationships = iterableRelationships.iterator();
-                    if(attributeType.equals(Util.getTypeOfAttribute(subClassNode, attributeName))){
-                        while(relationships.hasNext()){
-                            Relationship relationship = relationships.next();
-                            BusinessObject remoteObject = Util.createRemoteObjectFromNode(relationship.getStartNode());
-                            if(remoteObject.getAttributes().get(attributeName) != null)
-                                uniqueAttributeValue = remoteObject.getAttributes().get(attributeName);
-                            if(values.contains(uniqueAttributeValue))
-                                return false;
-                            else{
-                                values.add(uniqueAttributeValue);
-                                uniqueValues.put(className, values); //Put the className because the attributeName doesn't changes
-                            }
-                        }
-                    }
-                }else
-                    uniqueValues.put(className, null);//when no object has been created
-            }
-        }//end for
-        for(String _className : uniqueValues.keySet())
-            cm.putUniqueAttributeValuesIndex(className, attributeName, uniqueValues.get(_className));
-        return true;
     }
     
     /**
@@ -1926,13 +1950,13 @@ public class MetadataEntityManagerImpl implements MetadataEntityManager {
                         subClassNode.hasRelationship(RelTypes.INSTANCE_OF, Direction.INCOMING)){
                         Iterable<Relationship> iterableRelationships = subClassNode.getRelationships(RelTypes.INSTANCE_OF, Direction.INCOMING);
                         Iterator<Relationship> relationships = iterableRelationships.iterator();
-                        while(relationships.hasNext()){
-                            Relationship relationship = relationships.next();
-                            BusinessObject remoteObject = Util.createRemoteObjectFromNode(relationship.getStartNode());
-                            if(remoteObject.getAttributes().get(attribute.getName()) != null)
+                        while(relationships.hasNext()) {
+                            Node objectNode = relationships.next().getStartNode();
+                            
+                            if(objectNode.hasProperty(attribute.getName()))
                                 cm.putUniqueAttributeValueIndex(subClassMetadata.getName(), 
                                         attribute.getName(), 
-                                        remoteObject.getAttributes().get(attribute.getName()));
+                                        String.valueOf(objectNode.getProperty(attribute.getName())));
                         }
                     }else//there are no created objects, but this attribute is unique
                         cm.putUniqueAttributeValueIndex(subClassMetadata.getName(), 

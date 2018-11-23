@@ -31,7 +31,7 @@ import org.openide.util.Exceptions;
 
 /**
  * 
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ComponentMiniApplication extends GraphicalComponent {
     private Window window;

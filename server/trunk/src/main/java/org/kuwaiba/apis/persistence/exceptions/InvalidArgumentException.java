@@ -18,7 +18,7 @@ package org.kuwaiba.apis.persistence.exceptions;
 
 /**
  * Wrapper for IllegalArgumentException to permit to set the severity
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class InvalidArgumentException extends InventoryException {
 

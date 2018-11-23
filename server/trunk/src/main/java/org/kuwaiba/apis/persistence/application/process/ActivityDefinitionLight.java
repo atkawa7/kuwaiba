@@ -22,7 +22,7 @@ import java.util.Objects;
  * is a representation of a definition of an activity, which is basically a description of what it does (like presenting a form for the user 
  * to fill it in). The activity definition has at least one artifact definition, which contains (in our example) the actual form. This is a simplified
  * version of a step
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ActivityDefinitionLight {
     /**

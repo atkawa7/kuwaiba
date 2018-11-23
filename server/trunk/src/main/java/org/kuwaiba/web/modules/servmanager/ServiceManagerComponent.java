@@ -43,7 +43,7 @@ import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Main view for the Service Manager module
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @CDIView("servmanager")
 public class ServiceManagerComponent extends AbstractTopComponent {

@@ -21,7 +21,7 @@ import org.kuwaiba.apis.persistence.application.FavoritesFolder;
 
 /**
  * Wrapper for entity class favoritesFolder
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteFavoritesFolder {

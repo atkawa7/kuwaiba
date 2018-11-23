@@ -19,7 +19,7 @@ package org.kuwaiba.apis.persistence.application;
 /**
  * Represents a view. A view is a graphical representation of a context. Examples are: a view describing
  * how buildings are connected in a city or the equipment inside a rack
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ViewObject extends ViewObjectLight {
 

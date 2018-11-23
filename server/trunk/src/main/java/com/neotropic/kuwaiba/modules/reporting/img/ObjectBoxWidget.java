@@ -27,7 +27,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Represents a node in the Graphical Physical Path view
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ObjectBoxWidget extends Widget {
     public static Color[] colorPalette = new Color[]{Color.PINK, Color.LIGHT_GRAY, Color.ORANGE,

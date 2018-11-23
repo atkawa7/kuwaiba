@@ -23,7 +23,7 @@ import org.kuwaiba.web.modules.osp.google.OSPTopComponent;
 
 /**
  * Action to delete a polygon overlay
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeletePolygonAction {//extends AbstractAction {
     

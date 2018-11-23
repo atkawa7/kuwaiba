@@ -24,7 +24,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
  * The root class of all the pluggable modules (like Navigation Tree, Physical View, etc)
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public abstract class AbstractModule {
     /**

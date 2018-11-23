@@ -20,7 +20,7 @@ import org.kuwaiba.apis.web.gui.actions.AbstractAction;
 
 /**
  * Action to delete a inventory object
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeleteInventoryObjectAction extends AbstractAction {
         

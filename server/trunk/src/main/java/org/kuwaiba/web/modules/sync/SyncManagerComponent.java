@@ -26,7 +26,7 @@ import org.kuwaiba.web.modules.sync.miniapps.ConfigureSyncGroupMiniApp;
 
 /**
  * Main view for the Synchronization Manager module
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @CDIView("syncmanager")
 public class SyncManagerComponent extends AbstractTopComponent {

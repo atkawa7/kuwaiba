@@ -38,7 +38,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Is the graphical representation in the scene of a rack object
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class RackWidget extends SelectableRackViewWidget {
     public static final int DEVICE_LAYOUT_RESIZE_BORDER_SIZE = 4;

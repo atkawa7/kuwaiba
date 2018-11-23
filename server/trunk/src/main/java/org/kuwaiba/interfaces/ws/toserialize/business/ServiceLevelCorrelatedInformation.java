@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 /**
  * Groups a customer and the services associated to it that are related somehow to an interface/device 
  * provided in the <code>getAffectedServices</code> method. It's actually a replacement for a Hashmap, but more <i>web service-friendly</i>
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceLevelCorrelatedInformation implements Serializable {

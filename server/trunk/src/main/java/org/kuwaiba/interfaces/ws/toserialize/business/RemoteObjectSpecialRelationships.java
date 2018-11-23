@@ -25,7 +25,7 @@ import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 
 /**
  * Wraps the special relationships of an object so a Hashmap doesn't have to be used
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteObjectSpecialRelationships implements Serializable {

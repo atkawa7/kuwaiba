@@ -31,7 +31,7 @@ import java.util.Set;
 
 /**
  * A list select with a field to filter the listed items
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ListSelectFilter<T> extends VerticalLayout {
     private int width = 400;

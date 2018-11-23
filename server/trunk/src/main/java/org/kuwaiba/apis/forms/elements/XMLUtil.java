@@ -28,7 +28,7 @@ import javax.xml.stream.XMLStreamException;
 
 /**
  *
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class XMLUtil {
     private static XMLUtil instance;

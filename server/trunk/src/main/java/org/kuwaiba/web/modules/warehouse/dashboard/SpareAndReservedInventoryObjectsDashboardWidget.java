@@ -46,7 +46,7 @@ import org.kuwaiba.web.procmanager.MiniAppRackView;
 
 /**
  * A widget that displays spare and reserved inventory objects and allows see its rack view
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class SpareAndReservedInventoryObjectsDashboardWidget extends AbstractDashboardWidget {
     private final WebserviceBean webserviceBean;

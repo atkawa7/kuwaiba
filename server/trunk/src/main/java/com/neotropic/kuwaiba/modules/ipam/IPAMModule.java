@@ -38,7 +38,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * IP address manager module
- * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class IPAMModule implements GenericCommercialModule{
 

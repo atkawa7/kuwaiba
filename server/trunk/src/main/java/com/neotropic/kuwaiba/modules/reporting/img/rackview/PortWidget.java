@@ -28,7 +28,7 @@ import org.openide.util.Exceptions;
 /**
  * A widget to represent a port object which in the future will have actions like 
  * connect and disconnect or be a more complex representation
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class PortWidget extends SelectableRackViewWidget implements NestedDevice {
     private boolean isNested = false;

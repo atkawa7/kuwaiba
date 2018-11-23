@@ -28,7 +28,7 @@ import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 /**
  * Instances of this class represent the details of a physical connection and the complete structure of both sides 
  * This information is useful to build reports and end-to-end views
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemotePhysicalConnectionDetails implements Serializable {

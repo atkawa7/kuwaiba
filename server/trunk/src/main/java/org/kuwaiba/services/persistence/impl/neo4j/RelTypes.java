@@ -20,7 +20,7 @@ import org.neo4j.graphdb.RelationshipType;
 
 /**
  * Possible relationship types
- * @author Adrian Fernando Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Fernando Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public enum RelTypes implements RelationshipType {
     

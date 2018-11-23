@@ -33,7 +33,7 @@ import org.kuwaiba.util.ChangeDescriptor;
 
 /**
  * Patches the database updates the classes ElectricalPort and OpticalPort
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class Patch07PortTypeFix extends GenericPatch {
     

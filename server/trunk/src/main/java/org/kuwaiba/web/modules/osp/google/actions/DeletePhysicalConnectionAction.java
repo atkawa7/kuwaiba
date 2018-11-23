@@ -22,7 +22,7 @@ import org.kuwaiba.web.modules.osp.google.overlays.ConnectionPolyline;
 
 /**
  * Action to delete a edge overlay of a physical connection
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeletePhysicalConnectionAction {//extends AbstractAction {
     

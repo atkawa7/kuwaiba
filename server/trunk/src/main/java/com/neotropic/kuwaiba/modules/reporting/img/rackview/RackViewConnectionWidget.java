@@ -25,7 +25,7 @@ import org.netbeans.api.visual.widget.Scene;
 /**
  * A implementation for the rack view, when a connection is selected show the
  * name of the connection
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class RackViewConnectionWidget extends ConnectionWidget {
     protected LabelWidget labelWidget;

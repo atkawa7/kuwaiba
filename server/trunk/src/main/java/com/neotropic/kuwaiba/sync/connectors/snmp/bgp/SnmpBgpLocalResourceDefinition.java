@@ -27,7 +27,7 @@ import org.snmp4j.smi.OID;
  *     └─bgp
  *       └─bgpLocalAs oid(1.3.6.1.2.1.15.3)
  * 
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class SnmpBgpLocalResourceDefinition extends HashMap<String, OID>{
 

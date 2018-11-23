@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Creates a Synchronization Group. A Sync Group is a set of Synchronization 
  * Configurations that will be processed by the same Synchronization Provider
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class SynchronizationGroup implements Serializable {
     /**

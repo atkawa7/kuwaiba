@@ -23,7 +23,7 @@ import org.kuwaiba.beans.WebserviceBean;
 
 /**
  *
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @CDIView("forminstance")
 public class FormInstanceView extends CustomComponent implements View {

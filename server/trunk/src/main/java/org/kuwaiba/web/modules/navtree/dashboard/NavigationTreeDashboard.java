@@ -27,7 +27,7 @@ import org.kuwaiba.web.modules.warehouse.dashboard.SpareAndReservedInventoryObje
 
 /**
  * The dashboard for the Navigation Tree module
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class NavigationTreeDashboard extends AbstractDashboard {
     public NavigationTreeDashboard(RemoteObjectLight selectedObject, WebserviceBean wsBean) {

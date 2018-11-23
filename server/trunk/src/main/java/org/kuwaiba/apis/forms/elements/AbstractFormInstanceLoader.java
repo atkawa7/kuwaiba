@@ -29,7 +29,7 @@ import javax.xml.stream.XMLStreamReader;
 
 /**
  * Abstract class to define the procedure to load a form instance
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public abstract class AbstractFormInstanceLoader {
     private String formid;

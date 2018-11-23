@@ -36,7 +36,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * A simple widget that allows to embed a navigation tree into a dashboard widget. Other widgets can be subscribed to the selection and drag/drop events
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class NavigationTreeDashboardWidget extends AbstractDashboardWidget {
     /**

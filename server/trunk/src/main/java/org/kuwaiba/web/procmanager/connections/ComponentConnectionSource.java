@@ -26,7 +26,7 @@ import org.kuwaiba.web.procmanager.rackview.ComponentDevice;
 
 /**
  *
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ComponentConnectionSource extends VerticalLayout {
     private final WebserviceBean webserviceBean;

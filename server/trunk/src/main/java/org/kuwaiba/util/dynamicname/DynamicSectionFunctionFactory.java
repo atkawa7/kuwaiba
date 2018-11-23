@@ -25,7 +25,7 @@ import org.kuwaiba.util.dynamicname.functions.MirrorPortsFunction;
 
 /**
  * Factory to dynamic name functions
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DynamicSectionFunctionFactory {
     

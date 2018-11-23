@@ -26,7 +26,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * Wrapper of {@link SDHContainerLinkDefinition}
- * @author Charles Edward Bedon Cortazar<charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar{@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteSDHContainerLinkDefinition implements Serializable {

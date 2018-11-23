@@ -39,7 +39,7 @@ import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
  * <li>The sync job performs the actions with external intervention (e.g. human approval) 
  * or automatically, depending on how the sync provider is configured</li>
  * </ul>
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public abstract class AbstractSyncProvider implements Serializable {
     /**

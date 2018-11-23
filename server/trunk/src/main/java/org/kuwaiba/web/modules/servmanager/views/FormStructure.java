@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Allows to represents a node and its connections from an end to end 
  * view as a table 
- * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class FormStructure {
     private List<Component> physicalPartA;

@@ -23,7 +23,7 @@ import org.kuwaiba.apis.persistence.application.Pool;
 
 /**
  * Wrapper for a simple pool
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemotePool {

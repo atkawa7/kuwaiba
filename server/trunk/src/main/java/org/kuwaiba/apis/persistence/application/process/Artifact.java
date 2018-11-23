@@ -21,7 +21,7 @@ import org.kuwaiba.apis.persistence.util.StringPair;
 /**
  * Every process activity has at least one artifact. An artifact is the result of 
  * executing an activity. Most of the times, an artifact is simply a form filled in by a user
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class Artifact {
     /**

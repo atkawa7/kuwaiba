@@ -31,7 +31,7 @@ import org.kuwaiba.apis.persistence.exceptions.WrongMappingException;
 
 /**
  * Synchronization manager 
- * @author adrian martinez molina <adrian.martinez@kuwaiba.org>
+ * @author adrian martinez molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class SyncManager{
     

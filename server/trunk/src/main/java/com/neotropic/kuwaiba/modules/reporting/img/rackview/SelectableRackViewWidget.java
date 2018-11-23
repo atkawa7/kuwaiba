@@ -21,7 +21,7 @@ import org.netbeans.api.visual.widget.Widget;
 /**
  * Represents device that can be selected, like a racks, routers, ports, ...
  * in a rack view scene
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class SelectableRackViewWidget extends Widget {
     private final Object lookupReplace;

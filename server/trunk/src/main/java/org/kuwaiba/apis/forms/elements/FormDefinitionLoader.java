@@ -31,7 +31,7 @@ import org.kuwaiba.apis.persistence.application.process.ProcessDefinitionLoader;
 /**
  * This class reads an structure xml and create the form elements containment 
  * hierarchy.
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class FormDefinitionLoader {
     public static final QName TAG_ROOT = new QName(Constants.Tag.ROOT);

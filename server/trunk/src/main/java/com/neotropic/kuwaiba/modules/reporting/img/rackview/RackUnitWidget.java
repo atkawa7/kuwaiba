@@ -21,7 +21,7 @@ import java.awt.Dimension;
 /**
  * Widget used to represent an empty rack unit which listen drop node actions 
  * when the user wants add an equipment in the rack view
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class RackUnitWidget extends RackViewWidget {
     private static final Color COLOR_RACKUNIT = new Color(112, 112, 112);

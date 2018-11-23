@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * Wrapper of ProcessDefinition. A process definition is the metadata of a process. It contains the set of 
  * activities, conditionals and the flow that connects everything
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlRootElement(name = "remoteProcessDefinition")
 @XmlAccessorType(XmlAccessType.FIELD)

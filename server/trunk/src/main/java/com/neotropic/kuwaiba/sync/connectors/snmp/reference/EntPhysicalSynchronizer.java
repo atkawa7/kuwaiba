@@ -55,7 +55,7 @@ import org.openide.util.Exceptions;
 /**
  * Loads data from a SNMP file to replace/update an existing element in the
  * inventory
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class EntPhysicalSynchronizer {
     /**

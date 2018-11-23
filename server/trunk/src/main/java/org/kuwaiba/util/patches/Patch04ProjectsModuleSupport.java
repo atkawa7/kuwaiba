@@ -31,7 +31,7 @@ import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 /**
  * Patches the database adds the abstract classes GenericProject, GenericActivity 
  * and some sample subclasses to allow that the Projects Module to work correctly
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class Patch04ProjectsModuleSupport extends GenericPatch {
     

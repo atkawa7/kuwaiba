@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * All patches to update the database model must inherit from this class
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class GenericPatch implements Serializable {

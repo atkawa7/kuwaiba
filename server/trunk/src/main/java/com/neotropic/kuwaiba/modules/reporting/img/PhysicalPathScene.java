@@ -35,7 +35,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Service class for this module
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class PhysicalPathScene extends GraphScene<BusinessObjectLight, BusinessObjectLight>{
     public static final int X_OFFSET = 50;

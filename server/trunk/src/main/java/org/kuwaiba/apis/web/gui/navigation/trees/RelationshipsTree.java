@@ -29,7 +29,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLightList;
 
 /**
  * The tree that is used in the Relationship Explorer and can be embedded anywhere
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class RelationshipsTree extends Tree<AbstractNode> {
 

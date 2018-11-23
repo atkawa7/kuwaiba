@@ -22,12 +22,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
-import org.kuwaiba.interfaces.ws.toserialize.application.Validator;
 
 /**
  * This is a wrapper class for ClassMetadata, containing the info required for 
  * the clients to render the object attributes in the right way
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteClassMetadata extends RemoteClassMetadataLight {
@@ -92,8 +91,8 @@ public class RemoteClassMetadata extends RemoteClassMetadataLight {
     private Boolean countable;
 
     public RemoteClassMetadata(){}
-    public RemoteClassMetadata(ClassMetadata myClass, Validator[] validators){
-        super (myClass, validators);
+    public RemoteClassMetadata(ClassMetadata myClass) {
+        super (myClass);
         this._abstract = myClass.isAbstract();
         this.icon = myClass.getIcon();
         List<AttributeMetadata> ar = new ArrayList<>(myClass.getAttributes());

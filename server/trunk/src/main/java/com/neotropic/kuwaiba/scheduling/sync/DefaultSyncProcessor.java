@@ -25,7 +25,7 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
  * Contains the logic that finds the differences between the polled device and the element in the inventory
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class DefaultSyncProcessor implements ItemProcessor {
     @Inject

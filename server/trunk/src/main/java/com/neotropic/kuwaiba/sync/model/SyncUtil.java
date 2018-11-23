@@ -46,7 +46,7 @@ import org.snmp4j.smi.OID;
 
 /**
  *
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class SyncUtil {
     /**

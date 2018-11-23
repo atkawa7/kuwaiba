@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 /**
  * Wrapper of ProcessInstance. A process instance is an instance of process definition. It contains the set of 
  * activities, conditionals and the flow that connects everything
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteProcessInstance implements Serializable {

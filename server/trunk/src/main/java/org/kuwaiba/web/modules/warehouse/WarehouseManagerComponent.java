@@ -25,7 +25,7 @@ import org.kuwaiba.web.modules.warehouse.dashboard.SpareAndReservedInventoryObje
 
 /**
  * Main content of the Warehouse Manager Module
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @CDIView("warehousemanager")
 public class WarehouseManagerComponent extends AbstractTopComponent {

@@ -31,7 +31,7 @@ import org.kuwaiba.apis.web.gui.notifications.Notifications;
 
 /**
  * A simple, general purpose wizard implementation that can be easily embedded in miniapplications and dashboard widgets
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class Wizard extends VerticalLayout {
     /**

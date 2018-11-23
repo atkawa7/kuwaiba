@@ -24,7 +24,7 @@ import org.kuwaiba.apis.persistence.application.process.Kpi;
 
 /**
  * Wrapper of KPI
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteKpi implements Serializable {

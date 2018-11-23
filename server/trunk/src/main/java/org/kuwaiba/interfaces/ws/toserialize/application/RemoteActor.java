@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 /**
  * Wrapper of {@link org.kuwaiba.apis.persistence.application.process.Actor}. An actor is someone (a person, organizational unit or external agent, like a customer) 
  * who is responsible to cary on with an activity.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteActor implements Serializable {

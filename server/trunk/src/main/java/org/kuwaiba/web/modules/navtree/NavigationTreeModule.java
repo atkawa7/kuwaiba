@@ -27,7 +27,7 @@ import org.kuwaiba.beans.WebserviceBean;
 /**
  * This is the next generation equivalent of the old navigation tree, which provides a quick way to 
  * navigate through the containment hierarchy
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class NavigationTreeModule extends AbstractModule {
     /**

@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * A simple HTML table.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class HTMLTable extends HTMLComponent {
         

@@ -21,7 +21,7 @@ import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * An contextual action that has a submenu
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public abstract class AbstractComposedAction extends AbstractAction {
     

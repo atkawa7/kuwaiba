@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * Describes how the results of a task should be notified to the users associated to it
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)

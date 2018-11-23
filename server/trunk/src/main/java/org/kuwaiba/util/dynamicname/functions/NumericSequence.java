@@ -22,7 +22,7 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
  * Class to get an ascending numeric sequence, given the start and end of the sequence
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class NumericSequence extends DynamicSectionFunction {
     public static final String FUNCTION_PATTERN = "sequence\\([0-9]+,[0-9]+\\)";

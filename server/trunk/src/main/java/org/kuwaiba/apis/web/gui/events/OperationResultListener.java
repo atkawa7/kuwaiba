@@ -21,7 +21,7 @@ import java.io.Serializable;
  * A simple interface that defines a listener to operation results. The aim of this 
  * listener (very similar to AWT's ActionListener) is to help actors waiting for some operation 
  * or action to be performed to update their respective GUI
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @FunctionalInterface
 public interface OperationResultListener extends Serializable {

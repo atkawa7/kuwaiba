@@ -22,7 +22,7 @@ import java.util.Map;
  * using the method BusinessEntityManager.getSpecialAttribute or BusinessEntityManager.getSpecialAttributes. However, in some cases, 
  * the relationship itself has its own properties, and it's called an annotated relationship. In order to be able to retrieve not only the 
  * other side of the relationship, but also the annotated property, use this type.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class AnnotatedBusinessObjectLight {
     /**

@@ -18,7 +18,7 @@ package com.neotropic.kuwaiba.modules.reporting.img.rackview;
 
 /**
  * Class used to represent rectangles
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class RectangleShape extends Shape {
     public static final String SHAPE_TYPE = "rectangle";  //NOI18N

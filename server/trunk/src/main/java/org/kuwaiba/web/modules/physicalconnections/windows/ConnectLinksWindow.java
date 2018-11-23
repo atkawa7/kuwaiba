@@ -41,7 +41,7 @@ import org.kuwaiba.apis.web.gui.navigation.trees.SimpleTree;
 
 /**
  * Connection Link Tool to connect ports with physical links
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ConnectLinksWindow extends Window {
 //    private TopComponent parentComponent;

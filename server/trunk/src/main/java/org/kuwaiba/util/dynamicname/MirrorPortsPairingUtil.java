@@ -28,7 +28,7 @@ import org.kuwaiba.apis.persistence.util.StringPair;
 
 /**
  * Splits a given list of ports into side A and B in order to relate mirror ports
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class MirrorPortsPairingUtil {
     

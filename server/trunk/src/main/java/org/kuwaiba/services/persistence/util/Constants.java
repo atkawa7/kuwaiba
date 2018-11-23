@@ -18,7 +18,7 @@ package org.kuwaiba.services.persistence.util;
 
 /**
  * Misc constants
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class Constants {
     /**
@@ -186,7 +186,11 @@ public class Constants {
      */
     public static final String LABEL_CONFIG_VARIABLES = "configVariables";
     /**
-     * label used for contacts
+     * The validator definitions
+     */
+    public static final String LABEL_VALIDATOR_DEFINITIONS = "validatorDefinitions";
+    /**
+     * Label used for contacts
      */
     public static final String LABEL_CONTACTS = "contacts";
     /**

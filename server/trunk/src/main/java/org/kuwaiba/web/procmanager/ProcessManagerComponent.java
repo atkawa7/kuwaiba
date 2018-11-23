@@ -30,7 +30,7 @@ import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.web.IndexUI;
 /**
  * The main component of the Process Manager module.
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @CDIView("procmanager")
 public class ProcessManagerComponent extends AbstractTopComponent {

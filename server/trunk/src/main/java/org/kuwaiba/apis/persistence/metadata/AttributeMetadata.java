@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 /**
  * Contains the detailed metadata information about a class attribute
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class AttributeMetadata implements Serializable, Comparable<AttributeMetadata> {
     /**

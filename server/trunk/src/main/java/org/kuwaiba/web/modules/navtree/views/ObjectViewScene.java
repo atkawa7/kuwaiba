@@ -41,7 +41,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * The scene in the ObjectView component
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ObjectViewScene extends AbstractScene {
     /**

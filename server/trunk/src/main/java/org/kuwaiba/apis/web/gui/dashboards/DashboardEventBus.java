@@ -23,7 +23,7 @@ import java.util.List;
  * In many cases, dashboard widgets need to exchange information between each other. This class manages the interactions between widgets.
  * With this implementation, the widgets are never aware of the other widgets, they just subscribe to the bus and start sending and receiving events, unlike 
  * the conventional observer pattern approach.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class DashboardEventBus {
     /**

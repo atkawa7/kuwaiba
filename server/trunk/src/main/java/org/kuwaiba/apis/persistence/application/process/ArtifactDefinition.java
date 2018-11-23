@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Represents an artifact associated to an activity. An artifact is the product of the execution of an activity. 
  * Most of the times, it will be a form filled in by the user.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ArtifactDefinition {
     /**

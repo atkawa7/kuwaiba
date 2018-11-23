@@ -30,7 +30,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * TThe embeddable component that displays an object view.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ObjectView extends Panel {
     public ObjectView(RemoteObjectLight businessObject, WebserviceBean wsBean) {

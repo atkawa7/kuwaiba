@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * Provides a set of methods to access to a hierarchy
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  * @param <T> The data type of the hierarchy
  */
 public interface HierarchyProvider<T> {

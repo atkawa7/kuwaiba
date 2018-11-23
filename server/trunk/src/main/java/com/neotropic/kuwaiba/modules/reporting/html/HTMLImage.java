@@ -17,7 +17,7 @@ package com.neotropic.kuwaiba.modules.reporting.html;
 
 /**
  * An HTML image tag
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class HTMLImage extends HTMLComponent {
         

@@ -34,7 +34,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 /**
  * This wrapper contain the GoogleMap.
  * Give the power of drag and drop elements to the map
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class MapComponentWrapper extends DragAndDropWrapper {
 //    private DropHandler dropHandler = new DropHandler() {

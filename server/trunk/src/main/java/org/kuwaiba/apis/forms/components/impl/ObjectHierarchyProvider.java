@@ -24,7 +24,7 @@ import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Provides a set of methods to access to a hierarchy of inventory objects
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ObjectHierarchyProvider implements HierarchyProvider<RemoteObjectLight> {
     private static ObjectHierarchyProvider instance;

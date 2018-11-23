@@ -18,7 +18,7 @@ package org.kuwaiba.apis.persistence.metadata;
 
 /**
   * Contains the basic meta data information about a InterfaceMetadata
- *  @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ *  @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class InterfaceMetadata extends ClassMetadataLight{
     

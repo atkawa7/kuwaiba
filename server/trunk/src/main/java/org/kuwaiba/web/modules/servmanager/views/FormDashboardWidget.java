@@ -42,7 +42,7 @@ import org.openide.util.Exceptions;
 
 /**
  * Has methods to create form tables for end to end view
- * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class FormDashboardWidget extends AbstractDashboardWidget{
     /**

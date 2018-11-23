@@ -29,7 +29,7 @@ import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * The definition of the List Types Manager module
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ListTypeManagerModule  extends AbstractModule {
     /**

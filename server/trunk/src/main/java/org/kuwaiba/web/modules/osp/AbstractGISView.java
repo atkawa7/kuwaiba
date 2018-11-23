@@ -18,7 +18,7 @@ package org.kuwaiba.web.modules.osp;
 
 /**
  * This interface should be implemented by all map components to be used for OSP (Outside Plant) support
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public interface AbstractGISView {
     /**

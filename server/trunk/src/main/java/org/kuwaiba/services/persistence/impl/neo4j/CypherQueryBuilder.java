@@ -30,7 +30,7 @@ import org.neo4j.graphdb.Transaction;
 
 /**
  * Creates cypher Query
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class CypherQueryBuilder {
     public static final String INSTANCE = "instance"; //NOI18N
@@ -154,7 +154,6 @@ public class CypherQueryBuilder {
     /**
      * Reads the query main recursively
      * @param query
-     * @throws InvalidArgumentException
      */
     public void readQuery(ExtendedQuery query) {
         _return = cp.createReturn();

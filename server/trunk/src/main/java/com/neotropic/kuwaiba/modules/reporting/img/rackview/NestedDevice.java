@@ -17,7 +17,7 @@ package com.neotropic.kuwaiba.modules.reporting.img.rackview;
 
 /**
  * A interface to represents a nested device in a containment hierarchy
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public interface NestedDevice {
     /**

@@ -22,7 +22,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * Utility methods for building reports
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class Util {
     public static String formatLocation (List<BusinessObjectLight> containmentHierarchy) {

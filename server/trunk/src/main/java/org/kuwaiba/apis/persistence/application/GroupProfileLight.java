@@ -18,7 +18,7 @@ package org.kuwaiba.apis.persistence.application;
 
 /**
  * Simplified version of a group of users. It contains only the basic information, without the users or privileges
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class GroupProfileLight {
     public static final String PROPERTY_NAME = "name";

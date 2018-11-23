@@ -32,7 +32,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * This class implements the functionality corresponding to the MPLS module
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class MPLSModule implements GenericCommercialModule {
 

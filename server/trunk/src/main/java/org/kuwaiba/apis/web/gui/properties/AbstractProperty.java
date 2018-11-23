@@ -20,7 +20,7 @@ import com.vaadin.ui.Component;
 
 /**
  * A property in a property sheet
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  * @param <T> The type of the property
  */
 public abstract class AbstractProperty<T> {

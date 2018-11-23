@@ -28,7 +28,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  *
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class CircleWidget extends Widget {
     private Color ellipseColor = Color.BLACK;

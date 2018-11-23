@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Useful methods to build HTML reports.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class HTMLReport extends InventoryReport {
     /**

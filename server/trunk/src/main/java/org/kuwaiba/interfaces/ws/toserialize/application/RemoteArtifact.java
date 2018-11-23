@@ -24,7 +24,7 @@ import org.kuwaiba.apis.persistence.util.StringPair;
 /**
  * Wrapper of {@link org.kuwaiba.apis.persistence.application.process.Artifact}. Every process activity has at least one artifact. An artifact is the result of 
  * executing an activity. Most of the times, an artifact is simply a form filled in by a user
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteArtifact implements Serializable {

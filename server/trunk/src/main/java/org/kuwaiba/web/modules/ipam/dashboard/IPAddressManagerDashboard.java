@@ -28,7 +28,7 @@ import org.kuwaiba.web.modules.navtree.dashboard.SpecialChildrenDashboardWidget;
 
 /**
  * The dashboard for the IP Address Manager module
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class IPAddressManagerDashboard extends AbstractDashboard {
     public IPAddressManagerDashboard(RemoteObjectLight selectedObject, WebserviceBean wsBean) {

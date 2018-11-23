@@ -22,7 +22,7 @@ import com.vaadin.ui.Component;
 
 /**
  * A wrapper to Vaadin components
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public abstract class GraphicalComponent implements ElementEventListener {
     private ComponentEventListener componentEventListener;

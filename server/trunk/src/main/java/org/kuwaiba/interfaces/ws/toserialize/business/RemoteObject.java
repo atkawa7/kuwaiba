@@ -20,13 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.kuwaiba.apis.persistence.application.TemplateObject;
 import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.util.StringPair;
 
 /**
  * Instances of this class are proxies that represents the entities in the database. This is a wrapper of
  * the idem class in the Persistence Abstraction API
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteObject extends RemoteObjectLight implements Serializable {
@@ -48,6 +49,14 @@ public class RemoteObject extends RemoteObjectLight implements Serializable {
      * @param object The object to be serialized
      */
     public RemoteObject(BusinessObject object) {
+        super(object.getClassName(), object.getId(), object.getName());
+        this.attributes = new ArrayList<>();
+        
+        for (String attribute : object.getAttributes().keySet())
+            attributes.add(new StringPair(attribute, object.getAttributes().get(attribute)));
+    }
+    
+    public RemoteObject(TemplateObject object) {
         super(object.getClassName(), object.getId(), object.getName());
         this.attributes = new ArrayList<>();
         
@@ -82,15 +91,6 @@ public class RemoteObject extends RemoteObjectLight implements Serializable {
             res.add(new RemoteObject(rawObject));
         
         return res;
-    }
-    @Override
-    public int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return super.equals(obj);
     }
         
     @Override

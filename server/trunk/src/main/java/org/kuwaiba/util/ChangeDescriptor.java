@@ -18,7 +18,7 @@ package org.kuwaiba.util;
 /**
  * This class is used to summarize a changed made to an object or a set of objects. It's mainly used by those 
  * methods that modify objects, and should log those changes in the application's audit trail
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ChangeDescriptor {
     private String affectedProperties;

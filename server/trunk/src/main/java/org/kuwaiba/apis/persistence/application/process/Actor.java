@@ -17,7 +17,7 @@ package org.kuwaiba.apis.persistence.application.process;
 
 /**
  * An actor is someone (a person, organizational unit or external agent, like a customer) who is responsible to cary on with an activity.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class Actor {
     /**

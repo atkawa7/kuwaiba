@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * An instance of this class define an action to be performed upon a sync finding
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SyncAction {

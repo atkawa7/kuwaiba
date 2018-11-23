@@ -38,8 +38,8 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * The welcome screen
- * @author Charles Edward Bedon Cortazar<charles.bedon@kuwaiba.org>
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar{@literal <charles.bedon@kuwaiba.org>}
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @CDIView("welcome")
 class WelcomeView extends VerticalLayout implements View {
@@ -68,7 +68,7 @@ class WelcomeView extends VerticalLayout implements View {
                 String language = (String)context.lookup("java:comp/env/mapLanguage");
                 
                 
-                GoogleMapsComponent mapMain = new GoogleMapsComponent(apiKey, null, language);
+                GoogleMapsComponent mapMain = new GoogleMapsComponent(apiKey.isEmpty() ? null : apiKey, null, language);
                 
                 mapMain.setSizeFull();
                 mapMain.showMarkerLabels(true);

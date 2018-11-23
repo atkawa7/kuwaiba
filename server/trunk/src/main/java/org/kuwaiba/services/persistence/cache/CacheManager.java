@@ -28,7 +28,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * Manages the caching strategy
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class CacheManager {
     /**
@@ -71,7 +71,6 @@ public class CacheManager {
      * List of the classes with unique attributes and its values index
      */
     private HashMap<String, HashMap<String, List<String>>> uniqueClassAttributesIndex;
-
 
     private CacheManager(){
         classIndex = new HashMap<>();
@@ -165,7 +164,7 @@ public class CacheManager {
      */
     public void putUniqueAttributeValueIndex(String className, String attributeName, String value) {
         HashMap<String, List<String>> uniqueClassAttributes = uniqueClassAttributesIndex.get(className);
-        if(uniqueClassAttributes == null){
+        if(uniqueClassAttributes == null) {
             uniqueClassAttributes = new HashMap<>();
             List<String> values = new ArrayList<>();
             if(value != null) //maybe still there is no object of this class with this unique attribute
@@ -175,13 +174,13 @@ public class CacheManager {
         }
         else{
             List<String> values = uniqueClassAttributes.get(attributeName);
-            if(values == null){
+            if(values == null) {
                 values = new ArrayList<>();
                 values.add(value);
                 uniqueClassAttributes.put(attributeName, values);
                 uniqueClassAttributesIndex.put(className, uniqueClassAttributes);
             }
-            else{
+            else {
                 values.add(value);
                 uniqueClassAttributes.put(attributeName, values);
                 uniqueClassAttributesIndex.put(className, uniqueClassAttributes);
@@ -318,9 +317,9 @@ public class CacheManager {
         userIndex.remove(groupName);
     }
     
-    public void removeUniqueAtribute(String className, String attributeName){
-        HashMap<String, List<String>> uniqueClassAttributes = uniqueClassAttributesIndex.get(className);
-        uniqueClassAttributes.remove(attributeName);
+    public void removeUniqueAttribute(String className, String attributeName){
+        if (uniqueClassAttributesIndex.containsKey(className))
+            uniqueClassAttributesIndex.get(className).remove(attributeName);
     }    
     
     public void removeUniqueAttributeValue(String className, String attributeName, String attributeValue){

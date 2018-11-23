@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * Class used to represent a generic shape
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public abstract class Shape implements Transferable {
     public static final int DEVICE_LAYOUT_RESIZE_BORDER_SIZE = 4;

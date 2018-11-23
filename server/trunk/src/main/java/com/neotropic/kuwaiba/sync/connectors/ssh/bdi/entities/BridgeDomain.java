@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Entity class that represents a Cisco's bridge domain
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class BridgeDomain extends AbstractDataEntity {
     /**

@@ -26,7 +26,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
  * The definition of the Outside Plant module. This module allows to manage premises, connections and devices in a geographical perspective
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class OutsidePlantModule extends AbstractModule {
 

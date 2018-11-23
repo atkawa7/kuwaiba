@@ -20,7 +20,7 @@ import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Load the view of an element in the view
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class GetViewAction extends AbstractAction {
     

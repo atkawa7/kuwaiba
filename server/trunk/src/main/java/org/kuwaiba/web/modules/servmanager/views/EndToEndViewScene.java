@@ -52,8 +52,8 @@ import org.openide.util.Exceptions;
  * Shows an end-to-end view of a service by trying to match the endpoints of the logical circuits
  * directly associated to the selected instance. The view looks a lot like the Physical Path view, but they're totally different: It's intended to deal exclusively 
  * with logical connections, though it uses the physical path to fill the gaps between different logical segments
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
- * @author Adrian Fernando Martinez Molina <adrian.martinez@kuwiaba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
+ * @author Adrian Fernando Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class EndToEndViewScene extends AbstractScene {
     
@@ -191,8 +191,8 @@ public class EndToEndViewScene extends AbstractScene {
                         long nodeId = Long.valueOf(reader.getElementText());
                         SrvNodeWidget aSavedNode = findNodeWidget(nodeId);
                         if (aSavedNode != null) { //If it's null, it means that the node wasn't added by the default rendering method, so the node no longer exists and shouldn't be rendered
-                            aSavedNode.setX(xCoordinate);
-                            aSavedNode.setY(yCoordinate);
+                            aSavedNode.setX(xCoordinate / 2); //The position is scaled (in this case to a half the original size) so they diagram can fit in a single screen 
+                            aSavedNode.setY(yCoordinate / 2);
                         }
                         
                     } else {
@@ -206,7 +206,7 @@ public class EndToEndViewScene extends AbstractScene {
 
                                     if (reader.getName().equals(qControlPoint)) {
                                         if (reader.getEventType() == XMLStreamConstants.START_ELEMENT)
-                                            localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")), Integer.valueOf(reader.getAttributeValue(null,"y"))));
+                                            localControlPoints.add(new Point(Integer.valueOf(reader.getAttributeValue(null,"x")) / 2, Integer.valueOf(reader.getAttributeValue(null,"y")) / 2));
                                     } else {
                                         aSavedEdge.setControlPoints(localControlPoints);
                                         break;

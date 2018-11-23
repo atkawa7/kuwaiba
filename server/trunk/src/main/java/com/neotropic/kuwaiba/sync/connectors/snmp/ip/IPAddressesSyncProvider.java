@@ -44,7 +44,7 @@ import org.snmp4j.smi.OID;
 
 /**
  * This provider finds IP address and relates them to physical interfaces, organizing them in subnets 
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class IPAddressesSyncProvider extends AbstractSyncProvider {
 

@@ -44,7 +44,7 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 /**
  * Shows a topology view of a service by detecting the STMX and physical connections between the GenericCOmmunicationsElement instances 
  * with logical connections, though it uses the physical path to fill the gaps between different logical segments
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class TopologyViewScene extends AbstractScene {
     

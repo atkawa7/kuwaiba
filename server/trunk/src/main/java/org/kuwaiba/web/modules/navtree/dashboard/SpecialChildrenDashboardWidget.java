@@ -36,7 +36,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * A widget that shows the special children (as in the special containment hierarchy)
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class SpecialChildrenDashboardWidget extends AbstractDashboardWidget {
     /**

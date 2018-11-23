@@ -24,7 +24,7 @@ import org.kuwaiba.apis.persistence.application.GroupProfileLight;
 /**
  * Wrapper for entity class GroupProfile. This light version has the basic info necessary
  * to display in a table or list. Members of each group can be retrieved querying for a UserGroupInfo object
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GroupInfoLight implements Serializable {

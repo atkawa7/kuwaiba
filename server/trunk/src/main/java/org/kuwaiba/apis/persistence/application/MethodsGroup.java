@@ -19,7 +19,7 @@ package org.kuwaiba.apis.persistence.application;
 
 /**
  * Represents the privileges associated to a user
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class MethodsGroup {
     

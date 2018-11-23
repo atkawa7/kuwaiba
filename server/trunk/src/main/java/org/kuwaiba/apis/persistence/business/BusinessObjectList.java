@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 /**
  * This class represents a list of RemoteBusinessObject. It's basically a wrapper for ArrayList&lt;RemoteBusinessbject&gt; 
  * It's used only to improve code readability. This class extended from ArrayList of RemoteBusinessObjectLight at the beginning, but JAX-WS just refused to treat it as a List
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BusinessObjectList implements  Serializable {

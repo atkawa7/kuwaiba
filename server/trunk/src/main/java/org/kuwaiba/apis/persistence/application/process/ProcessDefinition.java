@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * Wraps the definition of a process. The activities are represented as a linked list
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ProcessDefinition {
     /**

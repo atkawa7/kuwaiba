@@ -23,7 +23,7 @@ import java.util.List;
  * Represents a single record resulting from a query. It basically contains the very basic
  * information about an object, as well extra columns based on the "visibleAttributes" argument
  * provided when the query was executed
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ResultRecord extends BusinessObjectLight {
     private List<String> extraColumns;

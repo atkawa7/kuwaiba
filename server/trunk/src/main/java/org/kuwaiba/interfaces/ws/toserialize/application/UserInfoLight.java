@@ -23,7 +23,7 @@ import org.kuwaiba.apis.persistence.application.UserProfileLight;
 
 /**
  * Wrapper for entity class UserProfile.
- * @author Adrian Fernando Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Fernando Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserInfoLight implements Serializable {

@@ -69,7 +69,11 @@ import org.kuwaiba.apis.persistence.application.ScriptQueryResult;
 import org.kuwaiba.apis.persistence.application.Session;
 import org.kuwaiba.apis.persistence.application.Task;
 import org.kuwaiba.apis.persistence.application.TaskResult;
+import org.kuwaiba.apis.persistence.application.TemplateObject;
+import org.kuwaiba.apis.persistence.application.TemplateObjectLight;
 import org.kuwaiba.apis.persistence.application.UserProfile;
+import org.kuwaiba.apis.persistence.application.Validator;
+import org.kuwaiba.apis.persistence.application.ValidatorDefinition;
 import org.kuwaiba.apis.persistence.application.ViewObject;
 import org.kuwaiba.apis.persistence.application.ViewObjectLight;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
@@ -112,10 +116,9 @@ import org.openide.util.Exceptions;
 
 /**
  * Application Entity Manager reference implementation
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
-    
     /**
      * Graph db service
      */
@@ -201,6 +204,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
      */
     private Label configurationVariables;
     /**
+     * Label to tag the nodes corresponding to validators. Validators are pieces of logic that validate is a given object matches certain condition, 
+     * for example, if the state of an object matches particular value, or if an object has a relationship with another. Validators are attached to 
+     * BusinessObjectLight instances and are used mostly to render the objects in a certain way depending on the value of the validator. For example,
+     * a client would like to show a green icon besides the name of an object whose state is "operational"
+     */
+    private Label validatorDefinitions;
+    /**
      * Reference to the singleton instance of CacheManager
      */
     private CacheManager cm;
@@ -246,6 +256,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         processInstanceLabel = Label.label(Constants.LABEL_PROCESS_INSTANCE);
         configurationVariablesPools = Label.label(Constants.LABEL_CONFIG_VARIABLES_POOLS);
         configurationVariables = Label.label(Constants.LABEL_CONFIG_VARIABLES);
+        validatorDefinitions = Label.label(Constants.LABEL_VALIDATOR_DEFINITIONS);
         
         try (Transaction tx = graphDb.beginTx()) {
             
@@ -1153,9 +1164,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             objectsThatUseListType.forEachRemaining((node) -> {
                 if (node.hasRelationship(RelTypes.INSTANCE_OF))
-                    res.add(Util.createRemoteObjectLightFromNode(node));
-                else if (node.hasRelationship(RelTypes.INSTANCE_OF_SPECIAL))
-                    res.add(Util.createTemplateElementLightFromNode(node));
+                    res.add(createRemoteObjectLightFromNode(node));
+                else if (node.hasRelationship(RelTypes.INSTANCE_OF_SPECIAL)) {
+                    Node templateObjectClassNode = node.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode();
+                    res.add(new BusinessObjectLight((String)templateObjectClassNode.getProperty(Constants.PROPERTY_NAME), 
+                            node.getId(), (String)node.getProperty(Constants.PROPERTY_NAME)));
+                }
             });
 
             tx.success();
@@ -1179,8 +1193,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             List<BusinessObjectLight> templateElements = new ArrayList();
             
-            for (Node templateElementNode : Iterators.asIterable(column))
-                templateElements.add(Util.createTemplateElementLightFromNode(templateElementNode));
+            for (Node templateElementNode : Iterators.asIterable(column)) {
+                Node templateObjectClassNode = templateElementNode.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode();
+                templateElements.add(new BusinessObjectLight((String)templateObjectClassNode.getProperty(Constants.PROPERTY_NAME), 
+                        templateElementNode.getId(), (String)templateElementNode.getProperty(Constants.PROPERTY_NAME)));
+            }
+                
                         
             return templateElements;
         }
@@ -3526,23 +3544,25 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     @Override
-    public List<BusinessObjectLight> getTemplatesForClass(String className) throws MetadataObjectNotFoundException {
+    public List<TemplateObjectLight> getTemplatesForClass(String className) throws MetadataObjectNotFoundException {
         try (Transaction tx = graphDb.beginTx()) {
-            List<BusinessObjectLight> templates = new ArrayList<>();
+            List<TemplateObjectLight> templates = new ArrayList<>();
                         
             String query = "MATCH (classNode)-[:" + RelTypes.HAS_TEMPLATE + "]->(templateObject) WHERE classNode.name={className} RETURN templateObject ORDER BY templateObject.name ASC"; //NOI18N
             HashMap<String, Object> parameters = new HashMap<>();
             parameters.put("className", className); //NOI18N
             ResourceIterator<Node> queryResult = graphDb.execute(query, parameters).columnAs("templateObject");
             
-            while (queryResult.hasNext())
-                templates.add(Util.createTemplateElementLightFromNode(queryResult.next()));
+            while (queryResult.hasNext()) {
+                Node templateNode = queryResult.next();
+                templates.add(new TemplateObjectLight(className, templateNode.getId(), (String)templateNode.getProperty(Constants.PROPERTY_NAME)));
+            }
             return templates;
         }
     }
     
     @Override
-    public List<BusinessObjectLight> getTemplateElementChildren(String templateElementClass, long templateElementId)  {
+    public List<TemplateObjectLight> getTemplateElementChildren(String templateElementClass, long templateElementId)  {
         try (Transaction tx = graphDb.beginTx()) {
             
             String query = "MATCH (classNode)<-[:" + RelTypes.INSTANCE_OF_SPECIAL + 
@@ -3554,16 +3574,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             parameters.put("templateElementId", templateElementId); //NOI18N
             ResourceIterator<Node> queryResult = graphDb.execute(query, parameters).columnAs("templateElementChild");
             
-            List<BusinessObjectLight> templateElementChildren = new ArrayList<>();
-            while (queryResult.hasNext()) 
-                templateElementChildren.add(Util.createTemplateElementLightFromNode(queryResult.next()));
+            List<TemplateObjectLight> templateElementChildren = new ArrayList<>();
+            while (queryResult.hasNext()) {
+                Node templateChildNode = queryResult.next();
+                templateElementChildren.add(new TemplateObjectLight((String)templateChildNode.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getStartNode().getProperty(Constants.PROPERTY_NAME), 
+                        templateChildNode.getId(), (String)templateChildNode.getProperty(Constants.PROPERTY_NAME)));
+            }
             
             return templateElementChildren; 
         }
     }
     
     @Override
-    public List<BusinessObjectLight> getTemplateSpecialElementChildren(String tsElementClass, long tsElementId) {
+    public List<TemplateObjectLight> getTemplateSpecialElementChildren(String tsElementClass, long tsElementId) {
         try (Transaction tx = graphDb.beginTx()) {
             
             
@@ -3576,16 +3599,19 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             parameters.put("templateElementId", tsElementId); //NOI18N
             ResourceIterator<Node> queryResult = graphDb.execute(query, parameters).columnAs("templateElementChild");
             
-            List<BusinessObjectLight> templateElementChildren = new ArrayList<>();
-            while (queryResult.hasNext()) 
-                templateElementChildren.add(Util.createTemplateElementLightFromNode(queryResult.next()));
+            List<TemplateObjectLight> templateElementChildren = new ArrayList<>();
+            while (queryResult.hasNext()) {
+                Node templateChildNode = queryResult.next();
+                templateElementChildren.add(new TemplateObjectLight((String)templateChildNode.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getStartNode().getProperty(Constants.PROPERTY_NAME), 
+                        templateChildNode.getId(), (String)templateChildNode.getProperty(Constants.PROPERTY_NAME)));
+            }
             
-            return templateElementChildren;  
+            return templateElementChildren; 
         }
     }
     
     @Override
-    public BusinessObject getTemplateElement(String templateElementClass, long templateElementId)
+    public TemplateObject getTemplateElement(String templateElementClass, long templateElementId)
         throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
@@ -3607,7 +3633,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             if (templateObjectNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Template object %s of class %s could not be found", templateElementId, templateElementClass));
             
-            return Util.createTemplateElementFromNode(templateObjectNode);
+            return createTemplateElementFromNode(templateObjectNode, templateElementClass);
         }
     }
 
@@ -3687,7 +3713,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     while (theResult.hasNext()) {
                         Map<String, Object> row = theResult.next();
                         for (String column : row.keySet()) 
-                            thePaths.get(column).add(Util.createRemoteObjectFromNode((Node)row.get(column)));
+                            thePaths.get(column).add(createRemoteObjectFromNode((Node)row.get(column)));
                     }
                 } catch (InvalidArgumentException ex) {} //this should not happen
 
@@ -5059,6 +5085,129 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
 
     //</editor-fold>
+    
+    //<editor-fold desc="Validators" defaultstate="collapsed">
+    @Override
+    public long createValidatorDefinition(String name, String description, String classToBeApplied, String script, boolean enabled) 
+            throws InvalidArgumentException, MetadataObjectNotFoundException {
+        
+        if (name == null || name.trim().isEmpty())
+            throw new InvalidArgumentException("The validator name can not be empty or null");
+        
+        if (classToBeApplied == null || classToBeApplied.trim().isEmpty())
+            throw new InvalidArgumentException("The validator has to be applied to instances of a valid class");
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            Node newValidatorNode = graphDb.createNode(validatorDefinitions);
+            
+            newValidatorNode.setProperty(Constants.PROPERTY_NAME, name);
+            newValidatorNode.setProperty(Constants.PROPERTY_DESCRIPTION, description == null ? "" : description);
+            newValidatorNode.setProperty(Constants.PROPERTY_SCRIPT, script == null ? "" : script.trim());
+            newValidatorNode.setProperty(Constants.PROPERTY_ENABLED, enabled);
+            
+            mem.getClass(classToBeApplied); //Checks that the class provided does exist
+            newValidatorNode.setProperty(Constants.PROPERTY_CLASS_NAME, classToBeApplied);
+            
+            tx.success();
+            return newValidatorNode.getId();
+        }
+    }
+    
+    @Override
+    public void updateValidatorDefinition(long validatorDefinitionId, String name, String description, String classToBeApplied, String script, Boolean enabled) 
+            throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            
+            Node validatorDefinitionNode = graphDb.findNodes(validatorDefinitions).stream().filter((aValidatorDefinitionNode) -> {
+                return aValidatorDefinitionNode.getId() == validatorDefinitionId; 
+            }).findFirst().get();
+            
+            if (validatorDefinitionNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Validator definition with id %s could not be found", validatorDefinitionId));
+            
+            if (name != null) {
+                if (name.trim().isEmpty())
+                    throw new InvalidArgumentException("The validator name can not be null or empty");
+                
+                validatorDefinitionNode.setProperty(Constants.PROPERTY_NAME, name);
+            }
+            
+            if (description != null)
+                validatorDefinitionNode.setProperty(Constants.PROPERTY_DESCRIPTION, description);
+            
+            if (classToBeApplied != null) {
+                mem.getClass(classToBeApplied); //Check if the class does exist
+                validatorDefinitionNode.setProperty(Constants.PROPERTY_CLASS_NAME, classToBeApplied);
+            }
+            
+            if (script != null)
+                validatorDefinitionNode.setProperty(Constants.PROPERTY_SCRIPT, script);
+            
+            if (enabled != null)
+                validatorDefinitionNode.setProperty(Constants.PROPERTY_ENABLED, enabled);
+            
+            tx.success();
+        }
+    }
+    
+    @Override
+    public List<ValidatorDefinition> getValidatorDefinitions() {
+        try (Transaction tx = graphDb.beginTx()) {
+            List<ValidatorDefinition> res = new ArrayList<>();
+            graphDb.findNodes(validatorDefinitions).stream().forEach((aValidatorDefinitionNode) -> {
+                res.add(new ValidatorDefinition((String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_NAME), 
+                        (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_DESCRIPTION), 
+                        (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_CLASS_NAME), 
+                        (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_SCRIPT), 
+                        (boolean)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_ENABLED)));
+            });
+            tx.success();
+            return res;
+        }
+    }
+    
+    @Override
+    public List<Validator> runValidationsForObject(String objectClass, long objectId) throws BusinessObjectNotFoundException {
+        
+        try (Transaction tx = graphDb.beginTx()) {
+            List<Validator> res = new ArrayList<>();
+            graphDb.findNodes(validatorDefinitions).forEachRemaining((aValidatorDefinitionNode) -> { // Is it worth to cache this?
+                String script = (String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_SCRIPT);
+                Binding environmentParameters = new Binding();
+                environmentParameters.setVariable("className", objectClass);
+                environmentParameters.setVariable("id", objectId);
+                try {
+                    if (!script.isEmpty() && (boolean)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_ENABLED) && 
+                            mem.isSubClass((String)aValidatorDefinitionNode.getProperty(Constants.PROPERTY_CLASS_NAME), objectClass)) {
+                        GroovyShell shell = new GroovyShell(ApplicationEntityManager.class.getClassLoader(), environmentParameters);
+                        Object theResult = shell.evaluate(script);
+
+                        if (theResult instanceof Validator) //The script must return a validator, otherwise, the result will be ignored
+                            res.add((Validator)theResult);
+                    }
+                } catch (MetadataObjectNotFoundException ex) { } // The validators referring to inexistent classes are ignored
+            });
+            tx.failure(); //Rollback any non-nested transaction just in case
+            return res;
+        }
+    }
+    
+    @Override
+    public void deleteValidatorDefinition(long validatorDefinitionId) throws ApplicationObjectNotFoundException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node validatorDefinitionNode = graphDb.findNodes(validatorDefinitions).stream().filter((aValidatorDefinitionNode) -> {
+                return aValidatorDefinitionNode.getId() == validatorDefinitionId; 
+            }).findFirst().get();
+            
+            if (validatorDefinitionNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Validator definition with id %s could not be found", validatorDefinitionId));
+            
+            validatorDefinitionNode.delete();
+            tx.success();
+        }
+    }
+    //</editor-fold>
     //<editor-fold desc="Outside Plant" defaultstate="collapsed">
     @Override    
     public void deleteOSPView(long viewId) throws ApplicationObjectNotFoundException {
@@ -5096,5 +5245,133 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             }
         }
         return null; //The user doesn't seem to have a favorites folder with that id
+    }
+      
+    public TemplateObject createTemplateElementFromNode (Node templateInstanceNode, String className) throws InvalidArgumentException, 
+            MetadataObjectNotFoundException {
+        ClassMetadata classMetadata = mem.getClass(className);
+        HashMap<String, String> attributes = new HashMap<>();
+        String name = "";
+        
+        for (AttributeMetadata attribute : classMetadata.getAttributes()){
+            //Only set the attributes existing in the current node. Please note that properties can't be null in
+            //Neo4J, so a null value is actually a non-existing relationship/value
+            if (templateInstanceNode.hasProperty(attribute.getName())) {
+               String value = String.valueOf(templateInstanceNode.getProperty(attribute.getName()));
+                        
+                if (Constants.PROPERTY_NAME.equals(attribute.getName()))
+                    name = value;
+
+                attributes.put(attribute.getName(),value);
+            }
+        }
+        
+        for(Relationship aRelatedToRelationship : templateInstanceNode.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING)) {
+            if (!aRelatedToRelationship.hasProperty(Constants.PROPERTY_NAME))
+                throw new InvalidArgumentException(String.format("The object with id %s is malformed", templateInstanceNode.getId()));
+            
+            String relationshipName = (String)aRelatedToRelationship.getProperty(Constants.PROPERTY_NAME);              
+            
+            if (classMetadata.hasAttribute(relationshipName)) { 
+                if (attributes.containsKey(relationshipName))
+                    attributes.put(relationshipName, attributes.get(relationshipName) + ";" + aRelatedToRelationship.getEndNode().getId());
+                else
+                    attributes.put(relationshipName, String.valueOf(aRelatedToRelationship.getEndNode().getId()));
+            } else //This verification will help us find potential inconsistencies with list types
+                                  //What this does is to verify if is there is a RELATED_TO relationship that shouldn't exist because its name is not an attribute of the class
+                throw new InvalidArgumentException(String.format("The object with %s (%s) is related to list type %s (%s), but that is not consistent with the data model", 
+                            templateInstanceNode.getProperty(Constants.PROPERTY_NAME), templateInstanceNode.getId(), aRelatedToRelationship.getEndNode().getProperty(Constants.PROPERTY_NAME), 
+                            aRelatedToRelationship.getEndNode().getId()));
+        } 
+
+        return new TemplateObject(classMetadata.getName(), templateInstanceNode.getId(), name, attributes);
+    }
+   
+    /**
+     * TODO: The following methods are duplicated in BEM, this should be re-designed
+     */
+    
+    private BusinessObjectLight createRemoteObjectLightFromNode (Node instance) {
+        Node classNode = instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode();
+        
+        BusinessObjectLight res = new BusinessObjectLight((String)classNode.getProperty(Constants.PROPERTY_NAME), instance.getId(), 
+            (String)instance.getProperty(Constants.PROPERTY_NAME));
+        
+        return res;
+    }
+    
+    private BusinessObject createRemoteObjectFromNode(Node instance) throws InvalidArgumentException {
+        String className = (String)instance.getSingleRelationship(RelTypes.INSTANCE_OF, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME);
+        try {
+            return createRemoteObjectFromNode(instance, mem.getClass(className));
+        } catch (MetadataObjectNotFoundException mex) {
+            throw new InvalidArgumentException(mex.getLocalizedMessage());
+        }
+    }
+    
+    /**
+     * Builds a RemoteBusinessObject instance from a node representing a business object
+     * @param instance The object as a Node instance.
+     * @param classMetadata The class metadata to map the node's properties into a RemoteBussinessObject.
+     * @return The business object.
+     * @throws InvalidArgumentException If an attribute value can't be mapped into value.
+     */
+    private BusinessObject createRemoteObjectFromNode(Node instance, ClassMetadata classMetadata) throws InvalidArgumentException {
+        
+        HashMap<String, String> attributes = new HashMap<>();
+        String name = "";
+        
+        for (AttributeMetadata myAtt : classMetadata.getAttributes()){
+            //Only set the attributes existing in the current node. Please note that properties can't be null in
+            //Neo4J, so a null value is actually a non-existing relationship/value
+            if (instance.hasProperty(myAtt.getName())){
+               if (AttributeMetadata.isPrimitive(myAtt.getType())) {
+                    if (!myAtt.getType().equals("Binary")) {
+                        String value = String.valueOf(instance.getProperty(myAtt.getName()));
+                        
+                        if (Constants.PROPERTY_NAME.equals(myAtt.getName()))
+                            name = value;
+                        
+                        attributes.put(myAtt.getName(),value);
+                    } else if (myAtt.getType().equals("Binary")) {
+                        byte [] byteArray = (byte []) instance.getProperty(myAtt.getName());
+                        attributes.put(myAtt.getName(), new String(byteArray));
+                    }
+                }
+            }
+        }
+
+        //Iterates through relationships and transform the into "plain" attributes
+        Iterable<Relationship> iterableRelationships = instance.getRelationships(RelTypes.RELATED_TO, Direction.OUTGOING);
+        Iterator<Relationship> relationships = iterableRelationships.iterator();
+
+        while(relationships.hasNext()){
+            Relationship relationship = relationships.next();
+            if (!relationship.hasProperty(Constants.PROPERTY_NAME))
+                throw new InvalidArgumentException(String.format("The object with id %s is malformed", instance.getId()));
+
+            String relationshipName = (String)relationship.getProperty(Constants.PROPERTY_NAME);              
+            
+            boolean hasRelationship = false;
+            for (AttributeMetadata myAtt : classMetadata.getAttributes()) {
+                if (myAtt.getName().equals(relationshipName)) {
+                    if (attributes.containsKey(relationshipName))
+                        attributes.put(relationshipName, attributes.get(relationshipName) + ";" + String.valueOf(relationship.getEndNode().getId())); //A multiple selection list type
+                    else    
+                        attributes.put(relationshipName, String.valueOf(relationship.getEndNode().getId()));
+                    hasRelationship = true;
+                    break;
+                }                  
+            }
+            
+            if (!hasRelationship) //This verification will help us find potential inconsistencies with list types
+                                  //What this does is to verify if is there is a RELATED_TO relationship that shouldn't exist because its name is not an attribute of the class
+                throw new InvalidArgumentException(String.format("The object with %s (%s) is related to list type %s (%s), but that is not consistent with the data model", 
+                            instance.getProperty(Constants.PROPERTY_NAME), instance.getId(), relationship.getEndNode().getProperty(Constants.PROPERTY_NAME), relationship.getEndNode().getId()));
+        }
+        BusinessObject res = new BusinessObject(classMetadata.getName(), instance.getId(), name, attributes);
+
+        return res;
+        
     }
 }

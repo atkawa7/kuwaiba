@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * Executes a function which return something
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public interface Runner {
     ScriptQueryExecutor getScriptQueryExecutor();

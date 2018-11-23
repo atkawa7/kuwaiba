@@ -23,7 +23,7 @@ import org.kuwaiba.web.modules.osp.google.actions.ActionsFactory;
 
 /**
  *
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class Polygon {//extends GoogleMapPolygon {
 //    public static final String DEFAULT_POLYGON_COLOR = "#AAD400";

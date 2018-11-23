@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * A parser for the output of the command "sh bridge-domain" in the Cisco ME3600 router series
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class BridgeDomainsME3600Parser {
     /**

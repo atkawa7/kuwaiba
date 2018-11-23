@@ -19,12 +19,11 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
-import org.kuwaiba.interfaces.ws.toserialize.application.Validator;
 
 /**
  * Same as ClassInfo, but lighter, since it's intended to provide the information to
  * render a node in a view (usually a tree) at client side.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteClassMetadataLight implements Serializable {
@@ -34,7 +33,6 @@ public class RemoteClassMetadataLight implements Serializable {
     protected Boolean custom;
     protected Boolean inDesign;
     protected Boolean listType;
-    protected Validator[] validators;
     protected String className;
     protected String displayName;
     protected String parentClassName;
@@ -44,16 +42,18 @@ public class RemoteClassMetadataLight implements Serializable {
      */
     protected byte[] smallIcon;
 
-    public RemoteClassMetadataLight(){}
+    /**
+     * Mandatory parameter-less constructor
+     */
+    public RemoteClassMetadataLight() {}
 
-    public RemoteClassMetadataLight(ClassMetadataLight myClassLight, Validator[] validators) {
+    public RemoteClassMetadataLight(ClassMetadataLight myClassLight) {
         this.id = myClassLight.getId();
         this.className = myClassLight.getName();
         this.parentClassName = myClassLight.getParentClassName();
         this.smallIcon = myClassLight.getSmallIcon();
         this._abstract = myClassLight.isAbstract();
         this.displayName = myClassLight.getDisplayName();
-        this.validators = validators;
         this.viewable = myClassLight.isViewable();
         this.listType = myClassLight.isListType();
         this.custom = myClassLight.isCustom();
@@ -61,8 +61,7 @@ public class RemoteClassMetadataLight implements Serializable {
         this.color = myClassLight.getColor();
     }
 
-    public RemoteClassMetadataLight (long id, String className, String displayName, 
-            Validator[] validators, boolean viewable, boolean _abstract, boolean custom, 
+    public RemoteClassMetadataLight (long id, String className, String displayName, boolean viewable, boolean _abstract, boolean custom, 
             boolean inDesign, String parentClassName, boolean listType, byte[] smallIcon, int color){
         this.id = id;
         this.className = className;
@@ -72,7 +71,6 @@ public class RemoteClassMetadataLight implements Serializable {
         this.custom = custom;
         this.inDesign = inDesign;
         this.parentClassName = parentClassName;
-        this.validators = validators;
         this.smallIcon = smallIcon;
         this.listType = listType;
         this.color = color;
@@ -116,14 +114,6 @@ public class RemoteClassMetadataLight implements Serializable {
 
     public void setParentClassName(String parentClassName) {
         this.parentClassName = parentClassName;
-    }
-
-    public Validator[] getValidators() {
-        return validators;
-    }
-
-    public void setValidators(Validator[] validators) {
-        this.validators = validators;
     }
 
     public Boolean isAbstract() {

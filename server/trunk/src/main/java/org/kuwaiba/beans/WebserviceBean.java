@@ -58,6 +58,8 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationCo
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationGroup;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteTask;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteTaskResult;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidator;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidatorDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.application.ResultRecord;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskNotificationDescriptor;
 import org.kuwaiba.interfaces.ws.toserialize.application.TaskScheduleDescriptor;
@@ -705,5 +707,18 @@ public interface WebserviceBean {
     public long createConfigurationVariablesPool(String name, String description, String ipAddress, String sessionId) throws ServerSideException;
     public void updateConfigurationVariablesPool(long poolId, String propertyToUpdate, String value, String ipAddress, String sessionId) throws ServerSideException;
     public void deleteConfigurationVariablesPool(long poolId, String ipAddress, String sessionId) throws ServerSideException;
+    //</editor-fold>
+    //<editor-fold desc="Validators" defaultstate="collapsed">
+    public long createValidatorDefinition(String name, String description, String classToBeApplied, String script, boolean enabled, String ipAddress, String sessionId) 
+            throws ServerSideException;
+
+    public void updateValidatorDefinition(long validatorDefinitionId, String name, String description, String classToBeApplied, String script, Boolean enabled, String ipAddress, String sessionId) 
+            throws ServerSideException;
+
+    public List<RemoteValidatorDefinition> getValidatorDefinitions(String ipAddress, String sessionId) throws ServerSideException;
+
+    public List<RemoteValidator> runValidationsForObject(String objectClass, long objectId, String ipAddress, String sessionId) throws ServerSideException;
+    
+    public void deleteValidatorDefinition(long validatorDefinitionId, String ipAddress, String sessionId) throws ServerSideException;
     //</editor-fold>
 }

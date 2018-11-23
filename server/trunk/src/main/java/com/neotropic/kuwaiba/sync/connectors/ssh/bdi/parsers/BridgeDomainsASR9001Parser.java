@@ -24,7 +24,7 @@ import java.util.List;
 
 /**
  * A parser for the output of the command "sh l2vpn bridge-domain" in the Cisco ASR9001 router series
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class BridgeDomainsASR9001Parser {
     /**

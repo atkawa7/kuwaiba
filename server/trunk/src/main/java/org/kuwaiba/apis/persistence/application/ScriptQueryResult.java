@@ -16,7 +16,7 @@ package org.kuwaiba.apis.persistence.application;
 
 /**
  * The result of the script query result
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  * @param <T> The result type
  */
 public class ScriptQueryResult<T> {

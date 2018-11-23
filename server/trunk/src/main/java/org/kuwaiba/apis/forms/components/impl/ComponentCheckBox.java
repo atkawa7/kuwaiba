@@ -23,7 +23,7 @@ import org.kuwaiba.apis.forms.elements.EventDescriptor;
 
 /**
  * Vaadin component wrapper used to render a ElementCheckBox
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ComponentCheckBox extends GraphicalComponent {
 

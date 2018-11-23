@@ -23,7 +23,7 @@ import org.snmp4j.smi.OID;
  *       └─ciscoVtpMIB
  *                └─vtpMIBObjects
  *                             └─vlanTrunkPorts
- * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class SnmpVlanTrunkPortsTableResourceDefinition extends HashMap<String, OID>{
     //Here you find the info to sync the VLANs for ports in trunk mode

@@ -25,7 +25,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
  * Manage the way the inventory will keep up-to-date by syncing against external sources, such as NMS, legacy systems and devices
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class SyncManagerModule extends AbstractModule {
     

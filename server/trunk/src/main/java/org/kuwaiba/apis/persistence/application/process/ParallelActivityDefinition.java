@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * Representation of a BPMN flow object -Parallel Gateway-
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ParallelActivityDefinition extends ActivityDefinition {
     /**

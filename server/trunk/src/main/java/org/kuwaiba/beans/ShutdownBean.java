@@ -22,7 +22,7 @@ import org.kuwaiba.apis.persistence.PersistenceService;
 
 /**
  * This bean holds the application's shutdown logic
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Singleton
 @Startup

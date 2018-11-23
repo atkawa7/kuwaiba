@@ -20,7 +20,7 @@ import org.kuwaiba.apis.persistence.application.process.KpiAction;
 
 /**
  * Wrapper of KPI Action
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class RemoteKpiAction {
     private int type;

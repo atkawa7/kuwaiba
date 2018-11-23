@@ -21,7 +21,7 @@ import java.util.Random;
 
 /**
  * Factory to create charts
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class GChartsFactory {
     private final HTMLReport report;

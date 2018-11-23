@@ -19,7 +19,7 @@ import com.vaadin.ui.VerticalLayout;
 
 /**
  * Use this layout if you want a single widget to use all the available space for the dashboard
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class SingleWidgetDashboardLayout extends VerticalLayout {
 

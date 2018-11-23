@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 /**
  * This class represents a single result from comparing the info from a sync data 
  * source and the corresponding information in the inventory database
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SyncFinding {

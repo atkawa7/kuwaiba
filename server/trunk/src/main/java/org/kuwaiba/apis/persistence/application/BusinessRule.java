@@ -23,7 +23,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 /**
  * A class representing a business rule. A business rule is composed by constraints, which 
  * are conditions that must be met in order to allow certain actions to be executed.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class BusinessRule {
     /**

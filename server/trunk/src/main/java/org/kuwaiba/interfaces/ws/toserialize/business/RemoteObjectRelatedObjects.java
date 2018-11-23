@@ -26,7 +26,7 @@ import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 /**
  * Wraps the object and objects related with it so a Hashmap doesn't have to be used
  * e.g. a list of ports and its parents when vlan maps its generated
- * @author Adrian Martinez Molina <adrian.matinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteObjectRelatedObjects implements Serializable {

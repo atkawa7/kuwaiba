@@ -17,7 +17,7 @@ package org.kuwaiba.web.custom.wizards.physicalconnection;
 
 /**
  *
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public interface WizardInterface {
     boolean isWizardCompleted();    

@@ -22,7 +22,7 @@ import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 
 /**
  * The result of polling a given sync data source
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class PollResult {
     /**

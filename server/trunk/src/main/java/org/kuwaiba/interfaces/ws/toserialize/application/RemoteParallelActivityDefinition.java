@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 /**
  * This is just an Parallel Activity Definition wrapper
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteParallelActivityDefinition extends RemoteActivityDefinition implements Serializable {

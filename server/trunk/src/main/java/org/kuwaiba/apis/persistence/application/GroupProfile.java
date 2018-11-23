@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  * A group of users
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class GroupProfile extends GroupProfileLight {
     /**

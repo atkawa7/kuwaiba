@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * The result of the execution of script query
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  * @param <T> The result type
  */
 @XmlAccessorType(XmlAccessType.FIELD)

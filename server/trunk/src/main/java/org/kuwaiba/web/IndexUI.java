@@ -50,7 +50,7 @@ import org.kuwaiba.web.procmanager.ProcessManagerModule;
 
 /**
  * Main application entry point. It also serves as the fallback controller
- * @author Charles Edward Bedon Cortazar<charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar{@literal <charles.bedon@kuwaiba.org>}
  */
 @Theme("nuqui")
 @CDIUI("")

@@ -44,7 +44,7 @@ import org.openide.util.Exceptions;
 
 /**
  * Cache of Process Definitions, Process Instances and Form Definitions
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public final class ProcessCache {
     public static long artifactCounter = 1;

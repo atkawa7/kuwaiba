@@ -17,7 +17,7 @@ package com.neotropic.kuwaiba.modules.reporting.html;
 
 /**
  * A simple HTML h1, h2, h3, ... tag.
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class HTMLHx extends HTMLComponent {
     private String text;

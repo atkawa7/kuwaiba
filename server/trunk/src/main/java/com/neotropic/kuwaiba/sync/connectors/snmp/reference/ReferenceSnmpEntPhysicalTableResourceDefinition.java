@@ -21,7 +21,7 @@ import org.snmp4j.smi.OID;
 /**
  * Contains the OIDs that will be retrieved from the agent for this reference implementation. 
  * In this case, the OIDs correspond to columns in the tables  entPhysicalTable (branch 1.3.6.1.2.1.47.1.1.1.)
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ReferenceSnmpEntPhysicalTableResourceDefinition extends HashMap<String, OID>{
 

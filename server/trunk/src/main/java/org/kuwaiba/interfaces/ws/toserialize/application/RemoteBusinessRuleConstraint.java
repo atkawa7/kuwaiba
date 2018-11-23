@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * The actual logic behind a business rule. The contents of the constraint definition say what the present rule is matching
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteBusinessRuleConstraint implements Serializable {

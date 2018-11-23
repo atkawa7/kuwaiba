@@ -20,7 +20,7 @@ import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 
 /**
  * Instances of this class define a container
- * @author Charles Edward Bedon Cortazar<charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar{@literal <charles.bedon@kuwaiba.org>}
  */
 public class SDHContainerLinkDefinition {
     /**

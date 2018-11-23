@@ -30,7 +30,7 @@ import java.util.Optional;
 
 /**
  *
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ComponentGrid extends GraphicalComponent {
     private class IndexedHashMap<V, K> extends HashMap<V, K> {

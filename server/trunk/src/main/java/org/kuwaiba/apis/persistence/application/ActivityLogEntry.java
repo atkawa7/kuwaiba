@@ -19,7 +19,7 @@ import java.io.Serializable;
 
 /**
  * Represents an activity log entry
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ActivityLogEntry implements Serializable {
     /**

@@ -52,7 +52,7 @@ import org.kuwaiba.web.modules.navtree.dashboard.NavigationTreeDashboard;
 
 /**
  * The main component of the Navigation Tree module.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @CDIView("navtree")
 class NavigationTreeComponent extends AbstractTopComponent {

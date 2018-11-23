@@ -54,7 +54,7 @@ import org.kuwaiba.util.i18n.I18N;
 /**
  * This provider connects to Cisco routers via SSH, retrieves the bridge domain configuration, and creates/updates the relationships between
  * the bridge domains and the logical/physical 
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class BridgeDomainSyncProvider extends AbstractSyncProvider {
 

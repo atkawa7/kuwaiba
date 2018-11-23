@@ -27,7 +27,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * A widget to wrap a RackWidget. Used to fix the position in the scene of the RackWidget
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class RackWidgetWrapper extends RackViewWidget {
     private final RemoteObjectLight rackLight;    

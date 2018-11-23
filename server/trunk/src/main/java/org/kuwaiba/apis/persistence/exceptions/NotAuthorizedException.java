@@ -17,7 +17,7 @@ package org.kuwaiba.apis.persistence.exceptions;
 
 /**
  * Raised when is not 
- * @author Adrián Fernando Martínez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrián Fernando Martínez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class NotAuthorizedException extends InventoryException{
     

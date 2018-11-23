@@ -18,7 +18,7 @@ package org.kuwaiba.apis.persistence.application;
 
 /**
  * Represents an entry registering an event related to an object. It's usually related to updates
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class HistorycEntry {
     

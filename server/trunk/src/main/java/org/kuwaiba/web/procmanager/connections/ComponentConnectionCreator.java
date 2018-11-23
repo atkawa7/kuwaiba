@@ -50,8 +50,8 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
  * ports of the devices and links can be drag/drop into a connections table
  * to create relationships between endpoints.
  * 
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class ComponentConnectionCreator extends VerticalLayout {
     private final WebserviceBean webserviceBean;

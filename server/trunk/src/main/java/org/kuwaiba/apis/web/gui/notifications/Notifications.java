@@ -22,7 +22,7 @@ import com.vaadin.ui.Notification;
 
 /**
  * A simple utility class that extends the functionality of notifications and popups in Vaadin
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class Notifications {
     /**

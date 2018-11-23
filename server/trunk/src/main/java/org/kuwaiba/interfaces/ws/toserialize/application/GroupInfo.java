@@ -22,7 +22,7 @@ import org.kuwaiba.apis.persistence.application.GroupProfile;
 
 /**
  * Wrapper for entity class UserGroup
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GroupInfo extends GroupInfoLight {

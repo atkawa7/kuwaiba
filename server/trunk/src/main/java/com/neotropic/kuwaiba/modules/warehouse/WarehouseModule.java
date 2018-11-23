@@ -25,9 +25,8 @@ import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 import org.kuwaiba.services.persistence.util.Constants;
 
 /**
- * Warehouse module preliminary implementation. Used to manage the objects out of 
- * the production or not installed
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * Warehouse module preliminary implementation. Used to manage the elements that are not in operation
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class WarehouseModule implements GenericCommercialModule {
     /**

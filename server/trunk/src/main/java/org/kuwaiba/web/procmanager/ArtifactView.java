@@ -25,7 +25,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteActivityDefinitio
 
 /**
  * View to render the different type of artifacts
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ArtifactView extends Panel {
     private final RemoteActivityDefinition activityDefinition;

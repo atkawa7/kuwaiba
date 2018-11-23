@@ -32,7 +32,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * 
- * @author Adrian Fernando Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Fernando Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class PrivilegesReader {
 

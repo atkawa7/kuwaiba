@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
  * This is a record in a query result. It's composed of a RemoteObjectLight column
  * and a number of extra columns based on the visibleAttributes parameter provided in the
  * execute query call
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ResultRecord implements Serializable {

@@ -23,7 +23,7 @@ import org.kuwaiba.apis.persistence.metadata.GenericObjectList;
 
 /**
  * Wrapper of GenericObjectList
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -37,7 +37,7 @@ public class ObjectList implements Serializable {
      */
     private String displayName;
     /**
-     * 1 for Many to One<br/>
+     * 1 for Many to One<br>
      * 2 for Many to Many
      */
     private int type;

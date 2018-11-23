@@ -66,7 +66,7 @@ import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Custom GoogleMapsComponent for Kuwaiba
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class OSPTopComponent {//extends GoogleMapsComponent implements AbstractGISView, Window.CloseListener {
         

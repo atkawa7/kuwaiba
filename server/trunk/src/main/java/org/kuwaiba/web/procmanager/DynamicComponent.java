@@ -24,7 +24,7 @@ import com.vaadin.ui.themes.ValoTheme;
 
 /**
  *
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DynamicComponent extends HorizontalLayout {
     private Component componentLeft;

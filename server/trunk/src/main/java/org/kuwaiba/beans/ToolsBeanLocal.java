@@ -23,7 +23,7 @@ import org.kuwaiba.util.patches.GenericPatch;
 
 /**
  * Misc management tools
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @Local
 public interface ToolsBeanLocal {

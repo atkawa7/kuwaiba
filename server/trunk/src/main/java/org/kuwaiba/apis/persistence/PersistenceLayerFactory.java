@@ -26,7 +26,7 @@ import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 
 /**
  * Factory used to create entity managers independent from the underlying implementation
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class PersistenceLayerFactory{
 

@@ -29,7 +29,7 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
  * Executes the actions after having analyzed the differences between the
  * information in the SNMP agents and the information in Kuwaiba. These actions 
  * were defined in the ItemProcessor. In practical terms, what this does is to call the finalize() method in the sync provider
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class DefaultSyncWriter implements ItemWriter {
     @Inject

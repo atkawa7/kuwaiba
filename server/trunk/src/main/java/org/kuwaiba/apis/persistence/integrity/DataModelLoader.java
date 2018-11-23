@@ -33,7 +33,7 @@ import org.neo4j.graphdb.Transaction;
 
 /**
  * Creates the initial schema needed to load the Kuwaiba data model in a neo4j implementation
- * @author Adrian Fernando Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Fernando Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class DataModelLoader {
 

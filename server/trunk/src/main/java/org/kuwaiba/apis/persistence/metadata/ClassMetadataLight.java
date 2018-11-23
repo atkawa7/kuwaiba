@@ -21,7 +21,7 @@ import java.util.Objects;
 
 /**
  * Contains the basic meta data information about a class
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class ClassMetadataLight implements Serializable{
     /**

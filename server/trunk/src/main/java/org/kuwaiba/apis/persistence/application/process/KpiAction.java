@@ -16,7 +16,7 @@ package org.kuwaiba.apis.persistence.application.process;
 
 /**
  * Key Performance Indicator Action definition to Processes or Activities
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class KpiAction  {
     public static final int TYPE_PROCESS = 1;

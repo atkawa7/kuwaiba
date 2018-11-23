@@ -33,7 +33,7 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
  * This reader will poll one by one the queued sync groups and retrieve the 
  * information declared in the polling definition and map it to a generic 
  * structure in memory 
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class DefaultSyncReader implements ItemReader {
     @Inject

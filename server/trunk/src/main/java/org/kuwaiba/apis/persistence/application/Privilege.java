@@ -23,7 +23,7 @@ import java.util.Objects;
  * A privilege is composed by a string token (unique id of the module or method 
  * the privilege refers to, for example "nav-tree" or "create-object") and a number 
  * that specifies the access level (see ACCESS_LEVEL* for possible values)
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class Privilege {
 

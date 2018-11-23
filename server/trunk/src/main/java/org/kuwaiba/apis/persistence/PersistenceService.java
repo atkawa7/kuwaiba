@@ -35,7 +35,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * This class provides a singleton object that handles the persistence service lifecycle
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class PersistenceService {
     

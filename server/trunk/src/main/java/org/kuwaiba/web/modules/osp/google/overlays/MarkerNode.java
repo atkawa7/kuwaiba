@@ -24,7 +24,7 @@ import org.kuwaiba.web.modules.osp.google.actions.ActionsFactory;
 
 /**
  * Custom GoogleMapMarker for Kuwaiba
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class MarkerNode {//extends GoogleMapMarker {
 //    List<AbstractAction> actions;

@@ -24,7 +24,7 @@ import org.snmp4j.smi.OID;
  *                └─ciscoVlanMembershipMIB
  *                               └─ciscoVlanMembershipMIBObjects
  *                                                        └─vmMembershipTable
- * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class SnmpvmMembershipTableResourceDefinition extends HashMap<String, OID>{
     //Here you find info about the VLANs to sync ports in access mode.

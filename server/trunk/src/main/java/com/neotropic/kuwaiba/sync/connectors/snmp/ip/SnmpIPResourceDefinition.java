@@ -27,7 +27,7 @@ import org.snmp4j.smi.OID;
  *     └─ip
  *       └─ipAddrTable oid(1.3.6.1.2.1.4.20)
  * 
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class SnmpIPResourceDefinition extends HashMap<String, OID>{
 

@@ -27,7 +27,7 @@ import org.snmp4j.smi.OID;
  *        └─cpwVcMIB
  *          └─cpwVcObjects 
  *            └─cpwVcTable
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class SnmpCpwVcTableMibResourceDefinition extends HashMap<String, OID>{
 

@@ -22,7 +22,7 @@ import org.kuwaiba.apis.persistence.util.StringPair;
 
 /**
  * Renders an artifact type
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public abstract class ArtifactRenderer {
     private final List<StringPair> sharedInformation = new ArrayList();

@@ -20,7 +20,7 @@ import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 
 /**
  * Class to get an ascending alphabetic uppercase sequence, given the start and end of the sequence
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class AlphabeticUppercaseSequence extends AlphabeticLowercaseSequence {
     public static final String FUNCTION_PATTERN = "sequence\\([A-Z],[A-Z]\\)";

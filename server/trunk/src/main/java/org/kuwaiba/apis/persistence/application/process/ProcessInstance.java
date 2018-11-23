@@ -17,7 +17,7 @@ package org.kuwaiba.apis.persistence.application.process;
 
 /**
  * The representation of a a running process
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ProcessInstance {
     /**

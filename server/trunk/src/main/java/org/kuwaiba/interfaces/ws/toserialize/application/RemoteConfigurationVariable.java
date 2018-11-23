@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
  * A wrapper of {@link org.kuwaiba.apis.persistence.application.ConfigurationVariable}
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteConfigurationVariable implements Serializable {

@@ -42,7 +42,7 @@ import org.kuwaiba.util.i18n.I18N;
 
 /**
  *
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ComponentUpload extends GraphicalComponent {
     private Upload upload;

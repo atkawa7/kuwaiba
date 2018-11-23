@@ -17,7 +17,7 @@ package com.neotropic.kuwaiba.modules.reporting.html;
 
 /**
  * A simple HTML table row (<code>tr</code>)
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class HTMLRow extends HTMLComponent {
     private HTMLColumn[] columns;

@@ -27,8 +27,8 @@ import org.openide.util.Exceptions;
 
 /**
  * A widget used to represent a containment hierarchy in a device
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class NestedDeviceWidget extends SelectableRackViewWidget implements NestedDevice {
     private NestedDeviceWidget parent;

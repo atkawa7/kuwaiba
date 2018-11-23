@@ -32,8 +32,8 @@ import org.openide.util.Exceptions;
 
 /**
  * Scene for Rack view, shows the front view of the rack
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class RackViewScene extends GraphScene<RemoteObjectLight, RemoteObjectLight> {
     public static int STROKE_WIDTH = 3;

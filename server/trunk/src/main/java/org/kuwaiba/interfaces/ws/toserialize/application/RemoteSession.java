@@ -24,7 +24,7 @@ import org.kuwaiba.apis.persistence.application.UserProfile;
 /**
  * Represents the information to be exchanged when a call to createSeesion is successful. This is more or less
  * a wrapper of UserProfile plus a session id
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteSession implements Serializable {

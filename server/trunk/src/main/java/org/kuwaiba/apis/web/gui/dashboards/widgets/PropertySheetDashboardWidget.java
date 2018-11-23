@@ -27,7 +27,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 
 /**
  * A simple dashboard widget that contains a property sheet that listen for selection events
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class PropertySheetDashboardWidget extends AbstractDashboardWidget implements DashboardEventListener {
     /**

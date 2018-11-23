@@ -43,7 +43,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * Temporary class that provides methods to build class reports
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class DefaultReports {
     

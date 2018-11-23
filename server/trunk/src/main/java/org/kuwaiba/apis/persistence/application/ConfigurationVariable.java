@@ -19,7 +19,7 @@ package org.kuwaiba.apis.persistence.application;
 /**
  * Simple POJO that represents a configuration variable. A configuration variable is a place where a value will be stored so it can retrieved by whomever need it. 
  * These variables are typically used to store values that help other modules to work, such as URLs, user names, dimensions, etc
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ConfigurationVariable {
     /**

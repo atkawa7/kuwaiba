@@ -37,7 +37,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * The dashboard widget to be used as the main widget in the Navigation Tree dashboard
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class IPAddressManagerExplorerDashboardWidget extends AbstractDashboardWidget {
     /**

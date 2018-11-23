@@ -28,7 +28,7 @@ import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 /**
  * Instances of this class represent the details of a logical connection and the physical resources associated to the endpoints of such connection.
  * This information is useful to build reports and end-to-end views
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteLogicalConnectionDetails implements Serializable {

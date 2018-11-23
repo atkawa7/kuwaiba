@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Represents a complex query to be executed. This is the code friendly version of the query.
  * The store-friendly can is @CompactQuery.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ExtendedQuery implements Serializable{
     /**

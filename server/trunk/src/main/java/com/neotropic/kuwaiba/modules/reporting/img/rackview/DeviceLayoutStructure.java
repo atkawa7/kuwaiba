@@ -34,7 +34,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 /**
  * Class used to storage device information like the device layout, hierarchy 
  * and nested devices layouts
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeviceLayoutStructure { 
     private final HashMap<RemoteObjectLight, List<RemoteObjectLight>> hierarchy;

@@ -30,7 +30,6 @@ import org.kuwaiba.apis.persistence.application.process.Artifact;
 import org.kuwaiba.apis.persistence.application.process.ArtifactDefinition;
 import org.kuwaiba.apis.persistence.application.process.ProcessDefinition;
 import org.kuwaiba.apis.persistence.application.process.ProcessInstance;
-import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.apis.persistence.business.BusinessObjectList;
 import org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException;
@@ -50,7 +49,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.UserInfoLight;
 
 /**
  * This is the entity in charge of manipulating application objects such as users, views, etc
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public interface ApplicationEntityManager {
     /**
@@ -1209,21 +1208,21 @@ public interface ApplicationEntityManager {
      * @return A list of templates (actually, the top element) as a list of RemoteOObjects
      * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If the class provided could not be found.
      */
-    public List<BusinessObjectLight> getTemplatesForClass(String className) throws MetadataObjectNotFoundException;
+    public List<TemplateObjectLight> getTemplatesForClass(String className) throws MetadataObjectNotFoundException;
     /**
      * Retrieves the children of a given template element.
      * @param templateElementClass Template element class.
      * @param templateElementId Template element id.
      * @return The template element's children as a list of RemoteBusinessObjectLight instances.
      */
-    public List<BusinessObjectLight> getTemplateElementChildren(String templateElementClass, long templateElementId);
+    public List<TemplateObjectLight> getTemplateElementChildren(String templateElementClass, long templateElementId);
     /**
      * Retrieves the children of a given template special element.
      * @param tsElementClass Template special element class.
      * @param tsElementId Template special element id.
      * @return The template element's children as a list of RemoteBusinessObjectLight instances.
      */
-    public List<BusinessObjectLight> getTemplateSpecialElementChildren(String tsElementClass, long tsElementId);
+    public List<TemplateObjectLight> getTemplateSpecialElementChildren(String tsElementClass, long tsElementId);
     /**
      * Retrives all the information of a given template element.
      * @param templateElementClass Template element class.
@@ -1233,7 +1232,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the template element could not be found.
      * @throws InvalidArgumentException If an attribute value can't be mapped into value.
      */
-    public BusinessObject getTemplateElement(String templateElementClass, long templateElementId)
+    public TemplateObject getTemplateElement(String templateElementClass, long templateElementId)
         throws MetadataObjectNotFoundException, ApplicationObjectNotFoundException, InvalidArgumentException;
     
     /**
@@ -1655,7 +1654,7 @@ public interface ApplicationEntityManager {
      */
     public long createConfigurationVariable(long configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition) throws ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
-     * Updates the value of a configuration variable. See #{@link #createConfigurationVariable(long, java.lang.String, java.lang.String, int, java.lang.String) } for value definition syntax
+     * Updates the value of a configuration variable. See #{@link #createConfigurationVariable(long, java.lang.String, java.lang.String, int, boolean, java.lang.String)  } for value definition syntax
      * @param name The current name of the variable that will be modified
      * @param propertyToUpdate The name of the property to be updated. Possible values are: "name", "description", "type", "masked" and "value"
      * @param newValue The new value as string
@@ -1711,7 +1710,54 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the pool could not be found
      */
     public void deleteConfigurationVariablesPool(long poolId) throws ApplicationObjectNotFoundException;
-    
+    //<editor-fold desc="Validators" defaultstate="collapsed">
+    /**
+     * Creates a validator definition. 
+     * @param name The name of the validator. It's recommended to use camel case notation (for example thisIsAName). This field is mandatory
+     * @param description The optional description of the validator
+     * @param classToBeApplied The class or super class of the classes whose instances will be checked against this validator
+     * @param script The groovy script containing the logic of the validator , that is, the 
+     * @param enabled If this validador should be applied or not
+     * @return The id of the newly created validator definition
+     * @throws InvalidArgumentException If the name is null or empty
+     * @throws MetadataObjectNotFoundException If the classToBeApplied argument could not be found
+     */
+    public long createValidatorDefinition(String name, String description, String classToBeApplied, String script, boolean enabled) 
+            throws InvalidArgumentException, MetadataObjectNotFoundException;
+    /**
+     * Updates the properties of a validator. The null values will be ignored
+     * @param validatorDefinitionId The id of teh validator definition to be updated
+     * @param name The new name, if any, null otherwise
+     * @param description The new description, if any, null otherwise
+     * @param classToBeApplied The new class to be associated to this validator, if any, null otherwise
+     * @param script The new script, if any, null otherwise
+     * @param enabled If the validator should be enabled or not, if any, null otherwise
+     * @throws ApplicationObjectNotFoundException If the validator definition could not be found
+     * @throws MetadataObjectNotFoundException If the classToBeApplied parameter is not valid
+     * @throws InvalidArgumentException If the name is not null, but it is empty
+     */
+    public void updateValidatorDefinition(long validatorDefinitionId, String name, String description, String classToBeApplied, String script, Boolean enabled) 
+            throws ApplicationObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Retrieves all the validator definitions in the system
+     * @return The list of validator definitions
+     */
+    public List<ValidatorDefinition> getValidatorDefinitions();
+    /**
+     * Runs the existing validations for the class associated to the given object. Validators set to enabled = false will be ignored
+     * @param objectClass The class of the object
+     * @param objectId The id of the object
+     * @return The list of validators associated to the object and its class
+     * @throws org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException If the object can not be found
+     */
+    public List<Validator> runValidationsForObject(String objectClass, long objectId) throws BusinessObjectNotFoundException;
+    /**
+     * Deletes a validator definition
+     * @param validatorDefinitionId the id of the validator to be deleted
+     * @throws ApplicationObjectNotFoundException If the validator definition could not be found
+     */
+    public void deleteValidatorDefinition(long validatorDefinitionId) throws ApplicationObjectNotFoundException;
+    //</editor-fold>
     //<editor-fold desc="Outside Plant" defaultstate="collapsed">
     /**
     * Creates an Outside Plant View

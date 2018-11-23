@@ -23,7 +23,7 @@ import org.kuwaiba.apis.persistence.application.ViewObject;
 /**
  * This is a wrapper class for the entity class ViewObject (see Persistence Abstraction Layer API docs for details). It's the object returned
  * when a view is requested
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemoteViewObject extends RemoteViewObjectLight {

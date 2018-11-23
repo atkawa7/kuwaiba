@@ -18,7 +18,7 @@ import java.util.List;
 
 /**
  * Representation of a BPMN flow object -Exclusive Gateway-
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ConditionalActivityDefinition extends ActivityDefinition {
     /**

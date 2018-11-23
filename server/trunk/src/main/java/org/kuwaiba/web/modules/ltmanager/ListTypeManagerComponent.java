@@ -41,7 +41,7 @@ import org.kuwaiba.web.modules.ltmanager.dashboard.ListTypeManagerDashboard;
 
 /**
  * The main component of the List Manager module.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @CDIView("ltmanager")
 public class ListTypeManagerComponent extends AbstractTopComponent {

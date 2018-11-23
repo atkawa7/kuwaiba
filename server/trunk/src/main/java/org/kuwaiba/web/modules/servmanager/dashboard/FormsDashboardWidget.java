@@ -25,7 +25,7 @@ import org.kuwaiba.util.i18n.I18N;
 
 /**
  * Information forms for services resources
- * @author Adrian Martinez <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class FormsDashboardWidget extends AbstractDashboardWidget{
     

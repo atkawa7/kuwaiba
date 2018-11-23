@@ -27,7 +27,7 @@ import org.kuwaiba.web.modules.navtree.views.ObjectView;
 
 /**
  * Implements an object view. That is, a view that show the direct children of an object that the connections between them
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ObjectViewDashboardWidget extends AbstractDashboardWidget {
     /**

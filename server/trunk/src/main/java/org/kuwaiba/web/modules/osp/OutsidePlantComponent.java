@@ -32,7 +32,7 @@ import org.kuwaiba.web.modules.osp.dashboard.OutsidePlantViewDashboardWidget;
 
 /**
  * Main window of the Outside Plant module
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @CDIView("osp")
 public class OutsidePlantComponent extends AbstractTopComponent {

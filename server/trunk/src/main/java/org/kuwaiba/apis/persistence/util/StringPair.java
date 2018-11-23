@@ -20,9 +20,9 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * A StringPair mimics the behavior of a HashSet<String, String> entry, but with a webservice-friendly implementation. A normal HashMap is 
+ * A StringPair mimics the behavior of a {@literal HashSet<String, String>} entry, but with a webservice-friendly implementation. A normal HashMap is 
  * serialized in a weird way. The typical use case for this class is when you need to provide a set of parameters in a key-value fashion
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 
 public class StringPair implements Serializable {

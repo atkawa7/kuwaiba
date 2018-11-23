@@ -22,7 +22,7 @@ import org.kuwaiba.apis.web.gui.notifications.Notifications;
 
 /**
  * A field is a terminal element that contain data
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public abstract class AbstractElementField extends AbstractElement {
     private Object value;

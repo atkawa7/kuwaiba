@@ -18,7 +18,7 @@ import java.util.Locale;
 
 /**
  * A wrapper to fetch the internationalization keys using a short syntax 
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class I18N {
 

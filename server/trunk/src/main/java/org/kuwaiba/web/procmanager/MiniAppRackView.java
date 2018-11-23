@@ -30,7 +30,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 
 /**
  * Mini Application used to show the Rack View given the object Id and Class Name
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class MiniAppRackView extends AbstractMiniApplication<Component, Component> {
     

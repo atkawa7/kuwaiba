@@ -17,7 +17,7 @@ package com.neotropic.kuwaiba.modules.reporting.html;
 
 /**
  * The root of all HTML components.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public abstract class HTMLComponent {
     /**

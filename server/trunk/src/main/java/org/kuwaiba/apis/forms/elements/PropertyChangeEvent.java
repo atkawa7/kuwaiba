@@ -16,7 +16,7 @@ package org.kuwaiba.apis.forms.elements;
 
 /**
  * TODO: deletes this class
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class PropertyChangeEvent {
     private AbstractElement source;

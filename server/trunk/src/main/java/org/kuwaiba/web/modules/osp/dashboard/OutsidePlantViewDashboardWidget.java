@@ -73,7 +73,7 @@ import org.kuwaiba.web.modules.physicalcon.wizards.NewPhysicalConnectionWizard;
 
 /**
  * A widget that displays a map and allows to drop elements from a navigation tree and create physical connections
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
     /**

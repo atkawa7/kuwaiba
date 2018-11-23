@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * A data table are a matrix to storage the data set to be shown in a chart.
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DataTable {
     /**

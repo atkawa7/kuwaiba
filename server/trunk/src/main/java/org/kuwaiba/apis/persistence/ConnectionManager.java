@@ -22,7 +22,7 @@ import org.kuwaiba.apis.persistence.exceptions.ConnectionException;
 
 /**
  * Interface providing the general methods to manage the db/backend connection
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  * @param <T> The type of database handler being used. In the default implementation using Neo4J, this is a GraphDatabaseService instance
  */
 public interface ConnectionManager<T> {

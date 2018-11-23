@@ -32,7 +32,7 @@ import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
 
 /**
  * Patches the database so that the Device Layout feature can be used
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class Patch08DeviceLayout extends GenericPatch {
     

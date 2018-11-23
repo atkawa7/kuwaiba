@@ -20,7 +20,7 @@ import java.io.File;
 
 /**
  * Misc constants
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public interface Constants {
     /**

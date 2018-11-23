@@ -32,7 +32,7 @@ import org.kuwaiba.web.procmanager.rackview.ComponentRackSelector;
 
 /**
  * Mini Application used to show the Select a Rack to set a material location
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class MiniAppRackSelector extends AbstractMiniApplication<Component, Component> {
 

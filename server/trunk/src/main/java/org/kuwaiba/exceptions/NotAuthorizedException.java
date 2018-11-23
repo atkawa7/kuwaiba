@@ -19,7 +19,7 @@ package org.kuwaiba.exceptions;
 
 /**
  * Should be thrown when an operation is not permitted due to privilege/authentication issues
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class NotAuthorizedException extends ServerSideException{
 

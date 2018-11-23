@@ -25,7 +25,7 @@ import org.netbeans.api.visual.widget.Scene;
 
 /**
  * A connection widget representing a link or a container
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ObjectConnectionWidget extends ConnectionWidget {
     /**

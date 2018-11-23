@@ -29,7 +29,7 @@ import org.kuwaiba.util.ChangeDescriptor;
 
 /**
  * Patches the database so all users without group will be moved to a default group
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class Patch03MigrateGroupLessUsers extends GenericPatch {
     

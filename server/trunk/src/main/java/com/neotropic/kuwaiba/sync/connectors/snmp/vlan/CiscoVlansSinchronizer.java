@@ -41,7 +41,7 @@ import org.kuwaiba.services.persistence.util.Constants;
 
 /**
  * Synchronize VLANs data
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class CiscoVlansSinchronizer {
     

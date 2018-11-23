@@ -76,7 +76,7 @@ import org.openide.util.Exceptions;
 
 /**
  * Renders the current activity and all activities of a process instance
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ProcessInstanceView extends DynamicComponent {
     private final RemoteProcessDefinition processDefinition;

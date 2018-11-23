@@ -21,7 +21,7 @@ import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 
 /**
  * This class represents a list type attribute (packing many list items) (people in charge of an equipment, antenna types, etc)
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class GenericObjectList {
     /**
@@ -37,7 +37,7 @@ public class GenericObjectList {
      */
     private String displayName;
     /**
-     * Type of relationship:<br/>
+     * Type of relationship:<br>
      * 1 for Many To One
      * 2 for Many To Many
      */
