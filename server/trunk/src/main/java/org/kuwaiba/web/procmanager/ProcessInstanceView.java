@@ -217,8 +217,7 @@ public class ProcessInstanceView extends DynamicComponent {
                     processInstance.getId(), 
                     Page.getCurrent().getWebBrowser().getAddress(),
                     remoteSession.getSessionId());
-
-////                updateActivities();
+                updateActivities(-1);
 
             } else {
 
@@ -229,13 +228,9 @@ public class ProcessInstanceView extends DynamicComponent {
                         Page.getCurrent().getWebBrowser().getAddress(),
                         remoteSession.getSessionId());
                 
-////                if (currentActivity instanceof RemoteConditionalActivityDefinition)
-////                    updateActivities();                                        
-
+                updateActivities(currentActivity.getId());
                 Notifications.showInfo("The activity was updated");
-
             }
-            updateActivities(currentActivity.getId());
             
             processInstance = wsBean.getProcessInstance(
                 processInstance.getId(), 
@@ -600,7 +595,8 @@ public class ProcessInstanceView extends DynamicComponent {
             boolean even = false;
             List<RemoteActivityDefinition> paths = new ArrayList();
                                     
-            for (RemoteActivityDefinition activity : lstActivities) {
+            for (int i = 0; i < lstActivities.size(); i += 1) {
+                RemoteActivityDefinition activity = lstActivities.get(i);
                 
                 if (activity instanceof RemoteParallelActivityDefinition) {
                     RemoteParallelActivityDefinition parallelActivityDef = (RemoteParallelActivityDefinition) activity;
@@ -640,10 +636,12 @@ public class ProcessInstanceView extends DynamicComponent {
                     }
                     if (paths.contains(activity))
                         btnActivity.setIcon(VaadinIcons.STAR_O);                        
-                    else
-                        btnActivity.setIcon(VaadinIcons.BAN);
-                        
-                        
+                    else {
+                        if (i - 1 >= 0 && activityComplete(lstActivities.get(i - 1).getId()))
+                            btnActivity.setIcon(VaadinIcons.STAR_O);
+                        else
+                            btnActivity.setIcon(VaadinIcons.BAN);
+                    }                        
                     btnActivity.addStyleName("activity-" + activity.getId());
                 }
                 else {
