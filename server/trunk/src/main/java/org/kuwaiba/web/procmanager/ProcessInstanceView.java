@@ -218,7 +218,7 @@ public class ProcessInstanceView extends DynamicComponent {
                     Page.getCurrent().getWebBrowser().getAddress(),
                     remoteSession.getSessionId());
 
-                updateActivities();
+////                updateActivities();
 
             } else {
 
@@ -229,12 +229,14 @@ public class ProcessInstanceView extends DynamicComponent {
                         Page.getCurrent().getWebBrowser().getAddress(),
                         remoteSession.getSessionId());
                 
-                if (currentActivity instanceof RemoteConditionalActivityDefinition)
-                    updateActivities();                                        
+////                if (currentActivity instanceof RemoteConditionalActivityDefinition)
+////                    updateActivities();                                        
 
                 Notifications.showInfo("The activity was updated");
 
             }
+            updateActivities(currentActivity.getId());
+            
             processInstance = wsBean.getProcessInstance(
                 processInstance.getId(), 
                 Page.getCurrent().getWebBrowser().getAddress(),
@@ -330,7 +332,7 @@ public class ProcessInstanceView extends DynamicComponent {
                     if (currentActivity.confirm()) {
                         
                         Label label = new Label("Are you sure you want to save this Activity?");
-                        label.setIcon(VaadinIcons.QUESTION_CIRCLE_O);
+////                        label.setIcon(VaadinIcons.QUESTION_CIRCLE_O);
                                                 
                         MessageBox.getInstance().showMessage(label).addClickListener(new Button.ClickListener() {
                             @Override
@@ -576,12 +578,12 @@ public class ProcessInstanceView extends DynamicComponent {
         
         panel.setContent(activitiesLayout);
         
-        updateActivities();
+        updateActivities(-1);
         setComponentLeft(wrapper);
         initializeComponent();
     }
     
-    private void updateActivities() {
+    private void updateActivities(long activityId) {
         activities.clear();
         activitiesLayout.removeAllComponents();
                 
@@ -618,7 +620,7 @@ public class ProcessInstanceView extends DynamicComponent {
                 }
                 Button btnActivity = activities.get(activity);
                 
-                if (isFork && activities.containsKey(activity)) {
+                if (isFork) {
                     
                     if (paths.contains(activity)) {
                         even = !even;                                                                                                                                                                                                                                
@@ -636,7 +638,12 @@ public class ProcessInstanceView extends DynamicComponent {
                             " background-color: #cfd8dc; " +
                             "}");                            
                     }
-                    btnActivity.setIcon(VaadinIcons.BAN);                        
+                    if (paths.contains(activity))
+                        btnActivity.setIcon(VaadinIcons.STAR_O);                        
+                    else
+                        btnActivity.setIcon(VaadinIcons.BAN);
+                        
+                        
                     btnActivity.addStyleName("activity-" + activity.getId());
                 }
                 else {
@@ -645,6 +652,8 @@ public class ProcessInstanceView extends DynamicComponent {
                         " background-color: #eceff1; " +
                         "}");                            
                     btnActivity.addStyleName("activity-" + activity.getId());
+                    
+                    btnActivity.setIcon(VaadinIcons.STAR_O);
                 }
                 if (activityComplete(activity.getId())) {
                     
@@ -660,9 +669,7 @@ public class ProcessInstanceView extends DynamicComponent {
                             btnActivity.setIcon(VaadinIcons.STAR);
                     }
                 }
-                else if (!isFork)
-                    btnActivity.setIcon(VaadinIcons.STAR_O);
-                                                                
+                
                 if (activity instanceof RemoteParallelActivityDefinition) {
                 
                     UI.getCurrent().getPage().getStyles().add(""+
@@ -673,18 +680,26 @@ public class ProcessInstanceView extends DynamicComponent {
                                         
                     btnActivity.setIcon(VaadinIcons.SPLIT);                                        
                 }
+                
+                if (activity.getId() == activityId) {
+                    buttonClicked = btnActivity;
+                    buttonClickedResource = btnActivity.getIcon();
+                    btnActivity.setIcon(VaadinIcons.CURSOR_O);
+                }
             }
                         
-            if (lstActivities != null && !lstActivities.isEmpty()) { 
+            if (lstActivities != null && !lstActivities.isEmpty() && activityId == -1) { 
                 
-                if (activities.containsKey(lstActivities.get(lstActivities.size() - 1))) {
-                    Button btn = activities.get(lstActivities.get(lstActivities.size() - 1));
-                    activities.get(lstActivities.get(lstActivities.size() - 1)).setIcon(VaadinIcons.FLAG_O);
-                    
+                RemoteActivityDefinition activityDef = lstActivities.get(lstActivities.size() - 1);
+                
+                if (activities.containsKey(activityDef)) {
+                    Button btn = activities.get(activityDef);
+                    activities.get(activityDef).setIcon(VaadinIcons.FLAG_O);
+                                        
                     buttonClicked = btn;
                     buttonClickedResource = btn.getIcon();
                     btn.setIcon(VaadinIcons.CURSOR_O);
-                    
+                        
                     renderArtifact(lstActivities.get(lstActivities.size() - 1));
                 }
             }
@@ -707,7 +722,7 @@ public class ProcessInstanceView extends DynamicComponent {
                 for (StringPair pair : remoteArtifact.getSharedInformation()) {
                     
                     if (pair.getKey().equals("__idle__"))
-                        return Boolean.valueOf(pair.getValue());
+                        return !Boolean.valueOf(pair.getValue());
                 }
             }
         } catch (ServerSideException ex) {
