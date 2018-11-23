@@ -22,11 +22,12 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.util.Constants;
+import org.inventory.communications.wsclient.RemoteValidator;
 
 /**
  * This class is a simple representation of a business object with a very basic information
@@ -47,7 +48,7 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
     /**
      * Collection of flags
      */
-    protected HashMap<String, Integer> validators;
+    protected List<LocalValidator> validators;
 
     /**
      * This constructor is called to create dummy objects where the id is not important
@@ -62,12 +63,21 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
         this.id = oid;
         this.name = name;
         this.className = className;
-        this.validators = new HashMap<>();
+        this.validators = new ArrayList<>();
     }
 
-    public LocalObjectLight(String className, String name, long id, HashMap<String, Integer> validators){
-        this(id, name, className);        
-        this.validators = validators;
+    public LocalObjectLight(String className, String name, long id, List<RemoteValidator> validators){
+        this(id, name, className);      
+        if (validators != null) {
+            this.validators = new ArrayList<>();
+            validators.forEach((remoteValidator) -> {
+                Properties localValidatorProperties = new Properties();
+                remoteValidator.getProperties().forEach((t) -> {
+                    localValidatorProperties.put(t.getKey(), t.getValue());
+                });
+                this.validators.add(new LocalValidator(remoteValidator.getName(), localValidatorProperties));
+            });
+        }
     }
 
     public String getClassName() {
@@ -82,14 +92,21 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
         this.id = id;
     }
 
-    public int getValidator(String label){
+    /**
+     * Returns a validator given its name
+     * @param name Returns a validator with the given name
+     * @return The validator instance or null of the validator was not found
+     */
+    public LocalValidator getValidator(String name) {
         if (this.validators == null)
-            return 0;
-        Integer res = this.validators.get(label);
-        if(res == null)
-            return 0;
-        else
-            return res;
+            return null;
+        
+        for (LocalValidator validator : this.validators) {
+            if (validator.getName().equals(name))
+                return validator;
+        }
+        
+        return null;
     }
 
     public String getName() {

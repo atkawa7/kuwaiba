@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="validators" type="{http://ws.interfaces.kuwaiba.org/}validator" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="validators" type="{http://ws.interfaces.kuwaiba.org/}remoteValidator" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -48,7 +48,7 @@ public class RemoteObjectLight {
     protected String name;
     protected String className;
     @XmlElement(nillable = true)
-    protected List<Validator> validators;
+    protected List<RemoteValidator> validators;
 
     /**
      * Gets the value of the id property.
@@ -132,13 +132,13 @@ public class RemoteObjectLight {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Validator }
+     * {@link RemoteValidator }
      * 
      * 
      */
-    public List<Validator> getValidators() {
+    public List<RemoteValidator> getValidators() {
         if (validators == null) {
-            validators = new ArrayList<Validator>();
+            validators = new ArrayList<RemoteValidator>();
         }
         return this.validators;
     }

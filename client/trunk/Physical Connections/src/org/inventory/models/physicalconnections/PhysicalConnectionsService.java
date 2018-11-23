@@ -56,7 +56,7 @@ public class PhysicalConnectionsService {
                             ((ObjectBoxWidget)possibleParent).addBox(lastWidget);
                             break;
                         }
-                        if (com.getMetaForClass(ancestors.get(i).getClassName(), false).getValidator(Constants.VALIDATOR_PHYSICAL_NODE) == 1 || //Only parents up to the first physical node (say a building) will be displayed
+                        if (com.isSubclassOf(ancestors.get(i).getClassName(), Constants.VALIDATOR_PHYSICAL_NODE) || //Only parents up to the first physical node (say a building) will be displayed
                                                 i == ancestors.size() - 2){ //Or if the next level is the dummy root
                             scene.addRootWidget(lastWidget);
                             scene.validate();

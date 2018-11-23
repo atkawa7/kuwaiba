@@ -95,18 +95,8 @@ public class ActionsGroup extends GenericObjectNodeAction implements Presenter.P
                             break;
                         }
                     }
-                } else {
-                    if (action.getValidators() != null) {
-                        for (String validator : action.getValidators()) {
-                            if (CommunicationsStub.getInstance().getMetaForClass(objectNode.getObject().getClassName(), false).getValidator(validator) == 1) {
-                                actions.add(action);
-                                break;
-                            }
-                        }                                                
-                    } else {
-                        actions.add(action);
-                    }                
-                }
+                } else 
+                    actions.add(action);                
             }
         }
         if (actions.isEmpty())

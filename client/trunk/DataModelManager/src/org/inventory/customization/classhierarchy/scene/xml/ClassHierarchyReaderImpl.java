@@ -19,7 +19,6 @@ import java.io.ByteArrayInputStream;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -132,7 +131,7 @@ public class ClassHierarchyReaderImpl implements ClassHierarchyReader {
         LocalClassMetadata lcm = new LocalClassMetadata(
                 id, className, "", parentName, 
                 Modifier.isAbstract(javaModifiers), false, false, false, false, 
-                new byte[0], 0, new HashMap(), new byte[0], "", new ArrayList<>(), 
+                new byte[0], 0, new byte[0], "", new ArrayList<>(), 
                 attributesNames.toArray(new String[0]), 
                 attributesTypes.toArray(new String[0]), new String[0], new String[0], 
                 new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());

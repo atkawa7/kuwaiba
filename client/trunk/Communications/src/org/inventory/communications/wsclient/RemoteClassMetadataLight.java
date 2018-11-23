@@ -1,11 +1,8 @@
 
 package org.inventory.communications.wsclient;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
@@ -26,7 +23,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="custom" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="inDesign" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="listType" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
- *         &lt;element name="validators" type="{http://ws.interfaces.kuwaiba.org/}validator" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="displayName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="parentClassName" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -48,7 +44,6 @@ import javax.xml.bind.annotation.XmlType;
     "custom",
     "inDesign",
     "listType",
-    "validators",
     "className",
     "displayName",
     "parentClassName",
@@ -66,8 +61,6 @@ public class RemoteClassMetadataLight {
     protected Boolean custom;
     protected Boolean inDesign;
     protected Boolean listType;
-    @XmlElement(nillable = true)
-    protected List<Validator> validators;
     protected String className;
     protected String displayName;
     protected String parentClassName;
@@ -208,35 +201,6 @@ public class RemoteClassMetadataLight {
      */
     public void setListType(Boolean value) {
         this.listType = value;
-    }
-
-    /**
-     * Gets the value of the validators property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the validators property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getValidators().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link Validator }
-     * 
-     * 
-     */
-    public List<Validator> getValidators() {
-        if (validators == null) {
-            validators = new ArrayList<Validator>();
-        }
-        return this.validators;
     }
 
     /**

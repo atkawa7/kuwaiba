@@ -18,7 +18,6 @@ package org.inventory.communications.core;
 import java.awt.Color;
 import java.awt.Image;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
@@ -54,7 +53,7 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
     
     public LocalClassMetadata (long id, String className, String displayName, 
             String parentName, boolean _abstract, boolean viewable, boolean listType, 
-            boolean custom, boolean inDesign, byte[] smallIcon, int color, HashMap<String, Integer> validators,
+            boolean custom, boolean inDesign, byte[] smallIcon, int color,
             byte[] icon, 
             String description, 
             List<Long> attributesIds, 
@@ -69,7 +68,7 @@ public class LocalClassMetadata extends LocalClassMetadataLight {
             List<Integer> attributesOrders) {
         
         super(id, className, displayName, parentName, _abstract, viewable, listType, 
-            custom, inDesign, smallIcon, color, validators);
+            custom, inDesign, smallIcon, color);
         this.icon = Utils.getIconFromByteArray(icon, new Color(color), 24, 24);
         this.description = description;
         this.attributesIds = new long[attributesIds.size()];

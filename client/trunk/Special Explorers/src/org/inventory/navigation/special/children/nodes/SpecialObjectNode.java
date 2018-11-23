@@ -64,18 +64,9 @@ public class SpecialObjectNode extends ObjectNode {
                         break;
                     }
                 }
-            } else {
-                if (action.getValidators() != null) {
-                    for (String validator : action.getValidators()) {
-                        if (com.getMetaForClass(getObject().getClassName(), false).getValidator(validator) == 1) {
-                            actions.add(action);
-                            break;
-                        }
-                    }                                                
-                } else {
-                    actions.add(action);
-                }                
-            }
+            } else 
+                actions.add(action);                
+            
         }
         actions.add(ActionGroupActionsFactory.getInstanceOfOpenViewGroupActions());
         actions.add(ActionGroupActionsFactory.getInstanceOfRelateToGroupActions());

@@ -129,7 +129,6 @@ import org.inventory.communications.wsclient.TaskScheduleDescriptor;
 import org.inventory.communications.wsclient.TransientQuery;
 import org.inventory.communications.wsclient.UserInfo;
 import org.inventory.communications.wsclient.UserInfoLight;
-import org.inventory.communications.wsclient.Validator;
 import org.inventory.communications.wsclient.RemoteViewObject;
 import org.inventory.communications.wsclient.RemoteViewObjectLight;
 import org.inventory.communications.wsclient.SyncAction;
@@ -250,13 +249,9 @@ public class CommunicationsStub {
             List <RemoteObjectLight> children = service.getObjectChildrenForClassWithId(oid, objectClassId, 0, this.session.getSessionId());
             List <LocalObjectLight> res = new ArrayList<>();
 
-            for (RemoteObjectLight rol : children){
-                HashMap<String, Integer> validators = new HashMap<>();
-                for (Validator validator : rol.getValidators())
-                    validators.put(validator.getLabel(), validator.getValue());
-                
-                res.add(new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getId(), validators));
-            }
+            for (RemoteObjectLight rol : children)
+                res.add(new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getId(), rol.getValidators()));
+            
             return res;
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -292,12 +287,8 @@ public class CommunicationsStub {
             LocalObjectLight[] res = new LocalObjectLight[siblings.size()];
             
             int i = 0;
-            for (RemoteObjectLight rol : siblings){
-                HashMap<String, Integer> validators = new HashMap<>();
-                for (Validator validator : rol.getValidators())
-                    validators.put(validator.getLabel(), validator.getValue());
-                
-                res[i] = new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getId(), validators);
+            for (RemoteObjectLight rol : siblings) {
+                res[i] = new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getId(), rol.getValidators());
                 i++;
             }
             return res;
@@ -670,12 +661,8 @@ public class CommunicationsStub {
     public LocalObjectLight getObjectInfoLight(String objectClass, long oid){
         try{
             RemoteObjectLight myLocalObject = service.getObjectLight(objectClass, oid,this.session.getSessionId());
-            HashMap<String, Integer> validators = new HashMap<>();
-                for (Validator validator : myLocalObject.getValidators())
-                    validators.put(validator.getLabel(), validator.getValue());
-            
-                return new LocalObjectLight(myLocalObject.getClassName(), myLocalObject.getName(), 
-                        myLocalObject.getId(), validators);
+            return new LocalObjectLight(myLocalObject.getClassName(), myLocalObject.getName(), 
+                        myLocalObject.getId(), myLocalObject.getValidators());
         }catch(Exception ex){
             this.error = ex.getMessage();
             return null;
@@ -774,11 +761,7 @@ public class CommunicationsStub {
                 resAsLocal = new ArrayList<>();
                 List<RemoteClassMetadataLight> resAsRemote = service.getPossibleChildren(className,this.session.getSessionId());
 
-                for (RemoteClassMetadataLight cil : resAsRemote){
-                    HashMap<String, Integer> validators = new HashMap<>();
-                    for (Validator validator : cil.getValidators())
-                        validators.put(validator.getLabel(), validator.getValue());
-                    
+                for (RemoteClassMetadataLight cil : resAsRemote)
                     resAsLocal.add(new LocalClassMetadataLight(cil.getId(),
                                                 cil.getClassName(),
                                                 cil.getDisplayName(),
@@ -786,8 +769,8 @@ public class CommunicationsStub {
                                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                                 cil.isCustom(), cil.isInDesign(),
                                                 cil.getSmallIcon(), 
-                                                cil.getColor(), validators));
-                }
+                                                cil.getColor()));
+                
                 cache.addPossibleChildrenCached(className, resAsLocal);
             }
             return resAsLocal;
@@ -808,20 +791,16 @@ public class CommunicationsStub {
             List<RemoteClassMetadataLight> resAsRemote = service.getPossibleChildrenNoRecursive(className,this.session.getSessionId());
             List<LocalClassMetadataLight> resAsLocal = new ArrayList<>();
 
-            for (RemoteClassMetadataLight cil : resAsRemote){
-               HashMap<String, Integer> validators = new HashMap<>();
-                    for (Validator validator : cil.getValidators())
-                        validators.put(validator.getLabel(), validator.getValue());
-                    
-                    resAsLocal.add(new LocalClassMetadataLight(cil.getId(),
-                                                cil.getClassName(),
-                                                cil.getDisplayName(),
-                                                cil.getParentClassName(),
-                                                cil.isAbstract(),cil.isViewable(), cil.isListType(),
-                                                cil.isCustom(), cil.isInDesign(),
-                                                cil.getSmallIcon(), 
-                                                cil.getColor(), validators));
-            }
+            for (RemoteClassMetadataLight cil : resAsRemote)
+                resAsLocal.add(new LocalClassMetadataLight(cil.getId(),
+                                            cil.getClassName(),
+                                            cil.getDisplayName(),
+                                            cil.getParentClassName(),
+                                            cil.isAbstract(),cil.isViewable(), cil.isListType(),
+                                            cil.isCustom(), cil.isInDesign(),
+                                            cil.getSmallIcon(), 
+                                            cil.getColor()));
+            
             return resAsLocal;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -845,11 +824,7 @@ public class CommunicationsStub {
                 resAsLocal = new ArrayList<>();
                 List<RemoteClassMetadataLight> resAsRemote = service.getPossibleSpecialChildren(className, session.getSessionId());
 
-                for (RemoteClassMetadataLight cil : resAsRemote){
-                    HashMap<String, Integer> validators = new HashMap<>();
-                    for (Validator validator : cil.getValidators())
-                        validators.put(validator.getLabel(), validator.getValue());
-
+                for (RemoteClassMetadataLight cil : resAsRemote)
                     resAsLocal.add(new LocalClassMetadataLight(cil.getId(),
                         cil.getClassName(),
                         cil.getDisplayName(),
@@ -857,8 +832,8 @@ public class CommunicationsStub {
                         cil.isAbstract(),cil.isViewable(), cil.isListType(),
                         cil.isCustom(), cil.isInDesign(),
                         cil.getSmallIcon(), 
-                        cil.getColor(), validators));
-                }
+                        cil.getColor()));
+                
                 cache.addPossibleSpecialChildrenCached(className, resAsLocal);
             }
             return resAsLocal;
@@ -878,11 +853,7 @@ public class CommunicationsStub {
             List<RemoteClassMetadataLight> resAsRemote = service.getPossibleSpecialChildrenNoRecursive(className, session.getSessionId());
             List<LocalClassMetadataLight> resAsLocal = new ArrayList<>();
             
-            for (RemoteClassMetadataLight cil : resAsRemote){
-                HashMap<String, Integer> validators = new HashMap<>();
-                for (Validator validator : cil.getValidators())
-                    validators.put(validator.getLabel(), validator.getValue());
-                    
+            for (RemoteClassMetadataLight cil : resAsRemote)
                 resAsLocal.add(new LocalClassMetadataLight(cil.getId(),
                     cil.getClassName(),
                     cil.getDisplayName(),
@@ -890,8 +861,8 @@ public class CommunicationsStub {
                     cil.isAbstract(),cil.isViewable(), cil.isListType(),
                     cil.isCustom(), cil.isInDesign(),
                     cil.getSmallIcon(), 
-                    cil.getColor(), validators));
-            }
+                    cil.getColor()));
+
             return resAsLocal;
         } catch (Exception ex) {
             this.error = ex.getMessage();
@@ -909,19 +880,15 @@ public class CommunicationsStub {
     public List<LocalClassMetadataLight> getUpstreamContainmentHierarchy(String className, boolean recursive){
         try{
             List<LocalClassMetadataLight> res = new ArrayList<>();
-            for (RemoteClassMetadataLight cil : service.getUpstreamContainmentHierarchy(className, recursive, this.session.getSessionId())){
-                HashMap<String, Integer> validators = new HashMap<>();
-                    for (Validator validator : cil.getValidators())
-                        validators.put(validator.getLabel(), validator.getValue());
-                    
+            for (RemoteClassMetadataLight cil : service.getUpstreamContainmentHierarchy(className, recursive, this.session.getSessionId()))
                     res.add(new LocalClassMetadataLight(cil.getId(),
                                                 cil.getClassName(),
                                                 cil.getDisplayName(),
                                                 cil.getParentClassName(),
                                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                                 cil.isCustom(), cil.isInDesign(),
-                                                cil.getSmallIcon(), cil.getColor(), validators));
-            }
+                                                cil.getSmallIcon(), cil.getColor()));
+            
             return res;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -939,19 +906,14 @@ public class CommunicationsStub {
     public List<LocalClassMetadataLight> getUpstreamSpecialContainmentHierarchy(String className, boolean recursive) {
         try {
             List<LocalClassMetadataLight> res = new ArrayList<>();
-            for (RemoteClassMetadataLight cil : service.getUpstreamSpecialContainmentHierarchy(className, recursive, session.getSessionId())) {
-                HashMap<String, Integer> validators = new HashMap<>();
-                for (Validator validator : cil.getValidators())
-                    validators.put(validator.getLabel(), validator.getValue());
-                    
+            for (RemoteClassMetadataLight cil : service.getUpstreamSpecialContainmentHierarchy(className, recursive, session.getSessionId()))
                 res.add(new LocalClassMetadataLight(cil.getId(),
                     cil.getClassName(),
                     cil.getDisplayName(),
                     cil.getParentClassName(),
                     cil.isAbstract(),cil.isViewable(), cil.isListType(),
                     cil.isCustom(), cil.isInDesign(),
-                    cil.getSmallIcon(), cil.getColor(), validators));
-            }
+                    cil.getSmallIcon(), cil.getColor()));
             return res;
         } catch (Exception ex) {
             error = ex.getMessage();
@@ -1198,21 +1160,16 @@ public class CommunicationsStub {
 
             LocalClassMetadataLight[] lm = new LocalClassMetadataLight[metas.size()];
             int i = 0;
-            for (RemoteClassMetadataLight cil : metas){
-                HashMap<String, Integer> validators = new HashMap<>();
-                    for (Validator validator : cil.getValidators())
-                        validators.put(validator.getLabel(), validator.getValue());
-                    
+            for (RemoteClassMetadataLight cil : metas) {
                 lm[i] = new LocalClassMetadataLight(cil.getId(),
                                                 cil.getClassName(),
                                                 cil.getDisplayName(),
                                                 cil.getParentClassName(),
                                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                                 cil.isCustom(), cil.isInDesign(),
-                                                cil.getSmallIcon(), cil.getColor(), validators);
+                                                cil.getSmallIcon(), cil.getColor());
                 i++;
             }
-
             cache.addLightMeta(lm);
             return lm;
         }catch(Exception ex){
@@ -1236,10 +1193,7 @@ public class CommunicationsStub {
             List<RemoteClassMetadata> metas = service.getAllClasses(includeListTypes, this.session.getSessionId());
             LocalClassMetadata[] lm = new LocalClassMetadata[metas.size()];
             int i = 0;
-            for (RemoteClassMetadata ci : metas){
-                HashMap<String, Integer> validators = new HashMap<>();
-                for (Validator validator : ci.getValidators())
-                    validators.put(validator.getLabel(), validator.getValue());
+            for (RemoteClassMetadata ci : metas) {
                 
                 lm[i] = new LocalClassMetadata(ci.getId(),
                                                 ci.getClassName(),
@@ -1247,7 +1201,7 @@ public class CommunicationsStub {
                                                 ci.getParentClassName(),
                                                 ci.isAbstract(),ci.isViewable(), ci.isListType(),
                                                 ci.isCustom(), ci.isInDesign(),
-                                                ci.getSmallIcon(), ci.getColor(), validators, ci.getIcon(),
+                                                ci.getSmallIcon(), ci.getColor(), ci.getIcon(),
                                                 ci.getDescription(), ci.getAttributesIds(), 
                                                 ci.getAttributesNames().toArray(new String[0]),
                                                 ci.getAttributesTypes().toArray(new String[0]),
@@ -1281,9 +1235,6 @@ public class CommunicationsStub {
             }
 
             RemoteClassMetadata cm = service.getClass(className,this.session.getSessionId());
-            HashMap<String, Integer> validators = new HashMap<>();
-            for (Validator validator : cm.getValidators())
-                validators.put(validator.getLabel(), validator.getValue());
 
             res = new LocalClassMetadata(cm.getId(),
                                             cm.getClassName(),
@@ -1291,7 +1242,7 @@ public class CommunicationsStub {
                                             cm.getParentClassName(),
                                             cm.isAbstract(),cm.isViewable(), cm.isListType(),
                                             cm.isCustom(), cm.isInDesign(),
-                                            cm.getSmallIcon(), cm.getColor(), validators, cm.getIcon(),
+                                            cm.getSmallIcon(), cm.getColor(), cm.getIcon(),
                                             cm.getDescription(), 
                     cm.getAttributesIds(),                         
                     cm.getAttributesNames().toArray(new String[0]),
@@ -1327,17 +1278,13 @@ public class CommunicationsStub {
             
             RemoteClassMetadata cm = getClassResponse.getReturn();
             
-            HashMap<String, Integer> validators = new HashMap<>();
-            for (Validator validator : cm.getValidators())
-                validators.put(validator.getLabel(), validator.getValue());
-
             res = new LocalClassMetadata(cm.getId(),
                                             cm.getClassName(),
                                             cm.getDisplayName(),
                                             cm.getParentClassName(),
                                             cm.isAbstract(),cm.isViewable(), cm.isListType(),
                                             cm.isCustom(), cm.isInDesign(),
-                                            cm.getSmallIcon(), cm.getColor(), validators, cm.getIcon(),
+                                            cm.getSmallIcon(), cm.getColor(), cm.getIcon(),
                                             cm.getDescription(), 
                     cm.getAttributesIds(),                         
                     cm.getAttributesNames().toArray(new String[0]),
@@ -1367,9 +1314,6 @@ public class CommunicationsStub {
         try{
             LocalClassMetadata res;
             RemoteClassMetadata cm = service.getClassWithId(classId,this.session.getSessionId());
-            HashMap<String, Integer> validators = new HashMap<>();
-            for (Validator validator : cm.getValidators())
-                validators.put(validator.getLabel(), validator.getValue());
             
             res = new LocalClassMetadata(cm.getId(),
                         cm.getClassName(),
@@ -1377,7 +1321,7 @@ public class CommunicationsStub {
                         cm.getParentClassName(),
                         cm.isAbstract(),cm.isViewable(), cm.isListType(),
                         cm.isCustom(), cm.isInDesign(),
-                        cm.getSmallIcon(), cm.getColor(), validators, cm.getIcon(),
+                        cm.getSmallIcon(), cm.getColor(), cm.getIcon(),
                         cm.getDescription(), cm.getAttributesIds(), 
                         cm.getAttributesNames().toArray(new String[0]),
                         cm.getAttributesTypes().toArray(new String[0]),
@@ -1387,7 +1331,7 @@ public class CommunicationsStub {
                         cm.getAttributesUniques(),
                         cm.getAttributesVisibles(),
                         cm.getAttributesOrders());
-            cache.addMeta(new LocalClassMetadata[]{res});
+            cache.addMeta(new LocalClassMetadata[]{ res });
             return res;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -1451,9 +1395,6 @@ public class CommunicationsStub {
 
             int i = 0;
             for (RemoteClassMetadataLight cil : subClasses){
-                HashMap<String, Integer> validators = new HashMap<>();
-                    for (Validator validator : cil.getValidators())
-                        validators.put(validator.getLabel(), validator.getValue());
                     
                 res.add(new LocalClassMetadataLight(cil.getId(),
                                 cil.getClassName(),
@@ -1461,7 +1402,7 @@ public class CommunicationsStub {
                                 cil.getParentClassName(),
                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                 cil.isCustom(), cil.isInDesign(),
-                                cil.getSmallIcon(), cil.getColor(), validators));
+                                cil.getSmallIcon(), cil.getColor()));
                 i++;
             }
             return res;
@@ -1476,19 +1417,15 @@ public class CommunicationsStub {
             List<RemoteClassMetadataLight> subClasses = service.getSubClassesLightNoRecursive(className, includeAbstractSubClasses, includeSelf, session.getSessionId());
             List<LocalClassMetadataLight> res = new ArrayList<>();
 
-            for (RemoteClassMetadataLight cil : subClasses){
-                HashMap<String, Integer> validators = new HashMap<>();
-                    for (Validator validator : cil.getValidators())
-                        validators.put(validator.getLabel(), validator.getValue());
-                    
+            for (RemoteClassMetadataLight cil : subClasses)
                 res.add(new LocalClassMetadataLight(cil.getId(),
                                 cil.getClassName(),
                                 cil.getDisplayName(),
                                 cil.getParentClassName(),
                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                 cil.isCustom(), cil.isInDesign(),
-                                cil.getSmallIcon(), cil.getColor(), validators));
-            }
+                                cil.getSmallIcon(), cil.getColor()));
+            
             return res;
         }catch(Exception ex){
             this.error =  ex.getMessage();
@@ -2572,13 +2509,9 @@ public class CommunicationsStub {
             LocalResultRecord[] res = new LocalResultRecord[myResult.size()];
             //The first record is used to store the table headers
             res[0] = new LocalResultRecord(null, myResult.get(0).getExtraColumns());
-            for (int i = 1; i < res.length ; i++){
-                HashMap<String, Integer> validators = new HashMap<>();
-                for (Validator validator : myResult.get(i).getObject().getValidators())
-                    validators.put(validator.getLabel(), validator.getValue());
-                
+            for (int i = 1; i < res.length ; i++) {
                 LocalObjectLight anObjectLight = new LocalObjectLight(myResult.get(i).getObject().getClassName(),
-                        myResult.get(i).getObject().getName(), myResult.get(i).getObject().getId(), validators);
+                        myResult.get(i).getObject().getName(), myResult.get(i).getObject().getId(), myResult.get(i).getObject().getValidators());
                 
                 res[i] = new LocalResultRecord(
                         anObjectLight, myResult.get(i).getExtraColumns());
@@ -2833,9 +2766,6 @@ public class CommunicationsStub {
             if (refreshMeta){
                 for (LocalClassMetadata lcm : cache.getMetadataIndex()){
                     RemoteClassMetadata cm = service.getClass(lcm.getClassName(),this.session.getSessionId());
-                    HashMap<String, Integer> validators = new HashMap<>();
-                    for (Validator validator : cm.getValidators())
-                        validators.put(validator.getLabel(), validator.getValue());
             
                     LocalClassMetadata myLocal = new LocalClassMetadata(cm.getId(),
                             cm.getClassName(),
@@ -2843,7 +2773,7 @@ public class CommunicationsStub {
                             cm.getParentClassName(),
                             cm.isAbstract(),cm.isViewable(), cm.isListType(),
                             cm.isCustom(), cm.isInDesign(),
-                            cm.getSmallIcon(), cm.getColor(), validators, cm.getIcon(),
+                            cm.getSmallIcon(), cm.getColor(), cm.getIcon(),
                             cm.getDescription(), cm.getAttributesIds(), 
                             cm.getAttributesNames().toArray(new String[0]),
                             cm.getAttributesTypes().toArray(new String[0]),
@@ -3026,19 +2956,15 @@ public class CommunicationsStub {
             listTypes = service.getInstanceableListTypes(this.session.getSessionId());
             
             List<LocalClassMetadataLight> res = new ArrayList<>();
-            for (RemoteClassMetadataLight cil : listTypes){
-                HashMap<String, Integer> validators = new HashMap<>();
-                    for (Validator validator : cil.getValidators())
-                        validators.put(validator.getLabel(), validator.getValue());
-                    
+            for (RemoteClassMetadataLight cil : listTypes)
                 res.add(new LocalClassMetadataLight(cil.getId(),
                                 cil.getClassName(),
                                 cil.getDisplayName(),
                                 cil.getParentClassName(),
                                 cil.isAbstract(),cil.isViewable(), cil.isListType(),
                                 cil.isCustom(), cil.isInDesign(), 
-                                cil.getSmallIcon(), cil.getColor(), validators));
-            }
+                                cil.getSmallIcon(), cil.getColor()));
+            
             return res;
         }catch(Exception ex){
             this.error = ex.getMessage();
@@ -3846,12 +3772,8 @@ public class CommunicationsStub {
             List<RemoteObjectLight> items = service.getPoolItems(oid, -1, this.session.getSessionId());
             List<LocalObjectLight> res = new ArrayList<>();
 
-            for (RemoteObjectLight rol : items) {
-                HashMap<String, Integer> validators = new HashMap<>();
-                for (Validator validator : rol.getValidators())
-                    validators.put(validator.getLabel(), validator.getValue());
-                res.add(new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getId(), validators));
-            }
+            for (RemoteObjectLight rol : items) 
+                res.add(new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getId(), rol.getValidators()));
 
             return res;
         } catch (Exception ex) {
@@ -4591,13 +4513,9 @@ public class CommunicationsStub {
             List<RemoteObjectLight> items = service.getSubnets(oid, -1, this.session.getSessionId());
             List<LocalObjectLight> res = new ArrayList<>();
 
-            for (RemoteObjectLight rol : items) {
-                HashMap<String, Integer> validators = new HashMap<>();
-                for (Validator validator : rol.getValidators())
-                    validators.put(validator.getLabel(), validator.getValue());
-                res.add(new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getId(), validators));
-            }
-
+            for (RemoteObjectLight rol : items)
+                res.add(new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getId(), rol.getValidators()));
+            
             return res;
         } catch (Exception ex) {
             this.error = ex.getMessage();
@@ -5326,12 +5244,8 @@ public class CommunicationsStub {
 
             List<LocalObjectLight> res = new ArrayList<>();
 
-            for (RemoteObjectLight rol : bookmarkItems) {
-                HashMap<String, Integer> validators = new HashMap<>();
-                for (Validator validator : rol.getValidators())
-                    validators.put(validator.getLabel(), validator.getValue());
-                res.add(new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getId(), validators));
-            }
+            for (RemoteObjectLight rol : bookmarkItems)
+                res.add(new LocalObjectLight(rol.getClassName(), rol.getName(), rol.getId(), rol.getValidators()));
 
             return res;
         } catch (Exception ex) {
