@@ -2100,10 +2100,10 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 physicalPathA = bem.getPhysicalPath(endpointA.getClassName(), endpointA.getId());
             }
             //we check VLANs continuity for side A
-            HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForVlansEndpointA;
+            HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForVlansEndpointA = new HashMap<>(); 
             if(physicalPathA != null && !physicalPathA.isEmpty())
                 physicalPathForVlansEndpointA = getPhysycalpathVlans(physicalPathA.get(physicalPathA.size() -1));
-            else
+            else if(endpointA != null)
                 physicalPathForVlansEndpointA = getPhysycalpathVlans(endpointA);
            
             List<BusinessObjectLight> endpointBRelationship = bem.getSpecialAttribute(linkClass, linkId, endpointBRelationshipName); //NOI18N
@@ -2112,15 +2112,16 @@ public class WebserviceBeanImpl implements WebserviceBean {
                 physicalPathB = bem.getPhysicalPath(endpointB.getClassName(), endpointB.getId());
             }
             //we check VLANs continuity for side B
-            HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForVlansEndpointB;    
+            HashMap<BusinessObjectLight, List<BusinessObjectLight>> physicalPathForVlansEndpointB = new HashMap<>();    
             if(physicalPathB != null && !physicalPathB.isEmpty())
                 physicalPathForVlansEndpointB = getPhysycalpathVlans(physicalPathB.get(physicalPathB.size() -1));
             
-            else
+            else if(endpointB != null)
                 physicalPathForVlansEndpointB = getPhysycalpathVlans(endpointB);
             
             return new RemoteLogicalConnectionDetails(linkObject, endpointA, endpointB, 
-                    physicalPathA, physicalPathB, 
+                    physicalPathA == null ? new ArrayList<BusinessObjectLight>() : physicalPathA, 
+                    physicalPathB == null ? new ArrayList<BusinessObjectLight>() : physicalPathB, 
                     physicalPathForVlansEndpointA, physicalPathForVlansEndpointB);
             
         } catch (InventoryException ex) {

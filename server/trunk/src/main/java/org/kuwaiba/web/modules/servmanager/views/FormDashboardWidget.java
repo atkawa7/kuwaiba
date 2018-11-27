@@ -299,15 +299,15 @@ public class FormDashboardWidget extends AbstractDashboardWidget{
             //We create the fom title and the state
             Label lblTitle = new Label(service.getName());
             lblTitle.setId("report-forms-title");
-            RemoteObject obj = wsBean.getObject(service.getClassName(), service.getId(),
-                    Page.getCurrent().getWebBrowser().getAddress(),
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
             //We get the service attributes
             String status = wsBean.getAttributeValueAsString(service.getClassName(), service.getId(), "Status",
                     Page.getCurrent().getWebBrowser().getAddress(),
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); 
+                       
+            String bandwidth = wsBean.getAttributeValueAsString(service.getClassName(), service.getId(), "Bandwidth",
+                    Page.getCurrent().getWebBrowser().getAddress(),
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
             
-            String bandwidth = obj.getAttribute("Bandwidth"); 
             Label lblServStatus = new Label(String.format("Status: %s - Bandwidth: %s" , status != null ? status : " ", bandwidth != null ? bandwidth : " "));
             lblServStatus.setId("report-forms-properties");
             //we set the form header

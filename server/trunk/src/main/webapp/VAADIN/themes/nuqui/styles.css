@@ -15337,6 +15337,10 @@ div.v-layout.v-horizontal.v-widget {
 	font-weight: 300;
 }
 
+.nuqui .warehouse-grid {
+	height: 100%;
+}
+
 .nuqui .dashboards .v-verticallayout-dashboard_cover_widget-darkblue {
 	background: #375187;
 	color: white;
@@ -15471,6 +15475,10 @@ div.v-layout.v-horizontal.v-widget {
 	z-index: 2;
 }
 
+.nuqui * {
+	box-sizing: border-box;
+}
+
 .nuqui #report-forms-header {
 	text-align: left;
 }
@@ -15487,14 +15495,9 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui #report-forms-content {
 	text-align: center;
 	width: 100%;
-	min-height: 420px;
+	min-height: 550px;
 	overflow-y: auto;
 	padding-top: 20px;
-}
-
-.nuqui #report-forms-content .v-gridlayout-report-forms-box {
-	min-height: 450px;
-	border: solid 1px black;
 }
 
 .nuqui #report-forms-container:after {
@@ -15520,6 +15523,56 @@ div.v-layout.v-horizontal.v-widget {
 	-moz-user-select: none;
 	-ms-user-select: none;
 	-o-user-select: no;
+}
+
+.nuqui .report-data-container {
+	min-height: 355px;
+	border-left: solid 1px black;
+	border-right: solid 1px black;
+	min-width: 250px;
+}
+
+.nuqui .row {
+	border-bottom: 1px solid black;
+	width: 100%;
+}
+
+.nuqui .empty-row {
+	height: 2px;
+	background: #A66131;
+}
+
+.nuqui .v-slot-empty-row {
+	height: 2px;
+}
+
+.nuqui .cell {
+	text-align: left !important;
+	padding: 0 2px 0 2px;
+}
+
+.nuqui .cell-normal {
+	width: 50%;
+	min-width: 120px;
+}
+
+.nuqui .cell-short {
+	width: 20%;
+	min-width: 20px;
+}
+
+.nuqui .cell-large {
+	width: 80%;
+	min-width: 130px;
+}
+
+.nuqui .device-icon-container {
+	height: 135px;
+	width: 100%;
+	text-align: center;
+	border-left: 1px solid black;
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;
 }
 
 .nuqui .report-forms .device-title {
@@ -15618,10 +15671,6 @@ div.v-layout.v-horizontal.v-widget {
 .nuqui .report-forms .cell-with-img {
 	text-align: center;
 	width: 100%;
-}
-
-.nuqui .report-forms .device-img {
-	bottom: 0;
 }
 
 .nuqui .report-forms .v-slot-foot {

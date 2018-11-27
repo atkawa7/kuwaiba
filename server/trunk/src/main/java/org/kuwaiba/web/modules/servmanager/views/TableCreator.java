@@ -25,9 +25,11 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.UI;
+import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import java.util.List;
 import java.util.Properties;
+import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -178,11 +180,7 @@ public class TableCreator {
     private Component createIcon(String icon){
         Image image = new Image("", new ExternalResource("/icons/" + icon + ".png"));
         image.setWidth("100px");
-        image.addStyleNames("device-img");
-        HorizontalLayout lytCell = new HorizontalLayout();
-        lytCell.addStyleNames("cell-with-img");
-        lytCell.addComponent(image);
-        return lytCell;
+        return image;
     }
     
     /**
@@ -213,19 +211,10 @@ public class TableCreator {
         String rackPosition = networkDevice.getAttribute("position");
         String moreInformation = networkDevice.getAttribute("moreinformation");
         
-        //We create the table with a grid layout
-        GridLayout grdRouter = new GridLayout(2, 18);
-        grdRouter.addStyleName("report-forms-box");
-        
-        grdRouter.addComponent(createTitle(objLight.getName(), ROUTER), 0, 0, 1, 0);
-        
-        grdRouter.addComponent(createCell("CARD", true, true, true, false), 0, 1);
-        grdRouter.addComponent(createCell("PORT", true, true, false, false), 1, 1);
-        
         Properties properties = new Properties();
         properties.setProperty("id", Long.toString(port.getId()));
         properties.setProperty("className", port.getClassName());
-       
+        
         MiniAppPhysicalPath physicalPath = new MiniAppPhysicalPath(properties);
         Button portBtn = new Button(port.getName());
         portBtn.addStyleNames("v-button-link", "button-in-cell");
@@ -236,54 +225,138 @@ public class TableCreator {
             formWindow.center();
             UI.getCurrent().addWindow(formWindow);
         });
-        grdRouter.addComponent(createCell(card, false, false, true, false), 0, 2);
-        grdRouter.addComponent(createCell(portBtn, false, false, false, false), 1, 2);
-                
-        grdRouter.addComponent(createCell(" ", false, false, false, false), 0, 3, 1, 3);
+
+        VerticalLayout lytData = new VerticalLayout();
+        lytData.setSpacing(false);
+        lytData.addStyleName("report-data-container");
+ 
+        lytData.addComponent(createTitle(objLight.getName(), ROUTER));
+        
+        Component cardRow = createTitleValueRow("CARD", card);
+        cardRow.addStyleName("cell-with-border-top");
+        
+        lytData.addComponent(cardRow);        
+        lytData.addComponent(createTitleValueRow("PORT", portBtn));        
+        lytData.addComponent(createTitleValueRow(""));
+        
         String hoster = getHoster(networkDevice);
-        if(hoster != null && !hoster.isEmpty()){
-            grdRouter.addComponent(createCell("DEVICE HOSTER", true, false, true, false), 0, 5);
-            grdRouter.addComponent(createCell(hoster , false, false, false, false), 1, 5);
-        }
-        String owner = getOwner(networkDevice);
-        if(owner != null && !owner.isEmpty()){
-            grdRouter.addComponent(createCell("DEVICE OWNER", true, false, true, false), 0, 6);
-            grdRouter.addComponent(createCell(owner, false, false, false, false), 1, 6);
-        }
+        if(hoster != null && !hoster.isEmpty())
+           lytData.addComponent(createTitleValueRow("DEVICE OWNER", hoster));
+
         String he = getHandE(networkDevice);
-        if(he != null && !he.isEmpty()){
-            grdRouter.addComponent(createCell("DEVICE H&E", true, false, true, false), 0, 7);
-            grdRouter.addComponent(createCell(he, false, false, false, false), 1, 7);
-        }
-        grdRouter.addComponent(createCell("DEVICE LOCATION", true, false, false, false), 0, 8, 1, 8);
-        grdRouter.addComponent(createCell(getLocation(objLight), false, false, false, false), 0, 9, 1, 9);
+        if(he != null && !he.isEmpty())
+            lytData.addComponent(createTitleValueRow("DEVICE H&E", he));
+            
+        lytData.addComponent(createMergedCellsRow("DEVICE LOCATION", getLocation(objLight)));
+        lytData.addComponent(createTitleValueRow(""));
         
-        grdRouter.addComponent(createCell(" ", false, false, false, false), 0, 10, 1, 10);
+        if(rackPosition != null && isNumeric(rackPosition) && Integer.valueOf(rackPosition) > 0)
+            lytData.addComponent(createTitleValueRow("RACK POSITION", (String)rackPosition));
         
-        if(rackPosition != null && isNumeric(rackPosition) && Integer.valueOf(rackPosition) > 0){
-            grdRouter.addComponent(createCell("RACK POSITION", true, false, true, false), 0, 11);
-            grdRouter.addComponent(createCell(rackPosition, false, false, false, false), 1, 11);
-        }
-        if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0){
-            grdRouter.addComponent(createCell("RACK UNITS", true, false, true, false), 0, 12);
-            grdRouter.addComponent(createCell(rackUnits, false, false, false, false), 1, 12);
-        }
-        if(mmr != null && !mmr.isEmpty()){
-            grdRouter.addComponent(createCell("MMR", true, false, true, false), 0, 13);
-            grdRouter.addComponent(createCell(mmr, false, false, false, false), 1, 13);
-        }
-        if(rmmr != null && !rmmr.isEmpty()){
-            grdRouter.addComponent(createCell("RMMR", true, false, true, false), 0, 14);
-            grdRouter.addComponent(createCell(rmmr, false, false, false, false), 1, 14);
-        }
-        if(moreInformation != null && !moreInformation.isEmpty()){
-            grdRouter.addComponent(createCell("MORE INFO", true, false, false, false), 0, 15, 1, 15);
-            grdRouter.addComponent(createCell(moreInformation, false, false, false, false), 0, 16, 1, 16);
-        }
-        grdRouter.addComponent(createIcon(objLight.getClassName()), 0, 17, 1, 17);
-        return grdRouter;
+        if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0)
+            lytData.addComponent(createTitleValueRow("RACK UNITS", (String)rackUnits));
+
+        if(mmr != null && !mmr.isEmpty())
+            lytData.addComponent(createTitleValueRow("MMR", mmr));
+        
+        if(rmmr != null && !rmmr.isEmpty())
+            lytData.addComponent(createTitleValueRow("RMMR", rmmr));
+
+        if(moreInformation != null && !moreInformation.isEmpty())
+            lytData.addComponent(createTitleValueRow("MORE INFO", moreInformation));
+        //we add the device icon at the bottom of the table
+        VerticalLayout lytIcon =  new VerticalLayout(createIcon(objLight.getClassName()));
+        lytIcon.addStyleName("device-icon-container");
+        
+        VerticalLayout lytRouterTable = new VerticalLayout(lytData, lytIcon);   
+        lytRouterTable.setSpacing(false);
+
+        return lytRouterTable;
     }
     
+    private Component createMergedCellsRow(Object ...values){
+        VerticalLayout lytRow = new VerticalLayout();
+        lytRow.addStyleName("row");
+        lytRow.setSpacing(false);
+        boolean title = true;
+        
+        for(Object value : values){
+            if(value instanceof String){
+                Label label = new Label(((String)value).replace("\n", "<br>"), ContentMode.HTML);
+                if(title){
+                    label.addStyleNames("cell-with-bold-text");
+                    title = false;
+                }
+                lytRow.addComponent(label);
+            }
+        }
+        return lytRow;
+    }
+    
+    private Component createTitleValueRow(Object ...values){
+        HorizontalLayout lytRow = new HorizontalLayout();
+        lytRow.addStyleName("row");
+        lytRow.setSpacing(false);
+        boolean isFirst = true;
+        boolean odd = true;
+        
+        for(Object value : values){
+           if(value instanceof String && ((String)value).isEmpty()){
+                lytRow.addStyleName("empty-row");
+                return lytRow;
+            }
+            HorizontalLayout lytCell = createCell(value);
+            //title right side
+            if(odd){
+                lytCell.addStyleName("cell-with-bold-text");
+                odd = false;
+                if(!isFirst)
+                    lytCell.addStyleName("cell-with-border-left");
+            }//value left side
+            else{
+                lytCell.addStyleName("cell-with-border-left");
+                odd = true;
+                isFirst = false;
+            }
+           
+           lytRow.addComponent(lytCell);
+        }
+        return lytRow;
+    }
+    
+    private Component createRow(Object ...values){
+        HorizontalLayout lytRow = new HorizontalLayout();
+        lytRow.addStyleName("row");
+        lytRow.setSpacing(false);
+        boolean odd = true;
+        for(Object value : values){
+            HorizontalLayout lytCell = createCell(value);
+            lytCell.addStyleName("cell-test");
+            if(odd)
+                odd = false;
+            else{
+                lytCell.addStyleName("cell-with-border-left");
+                odd = true;
+            }
+           lytRow.addComponent(lytCell);
+        }
+        return lytRow;
+    }
+    
+    private HorizontalLayout createCell(Object value){
+         HorizontalLayout lytCell = new HorizontalLayout();
+            lytCell.addStyleNames("cell" ,"cell-normal");
+            if(value instanceof String){
+                if(((String)value).length() == 2){
+                    lytCell.removeStyleName("cell-normal");
+                    lytCell.addStyleNames("cell" ,"cell-short");
+                }
+                lytCell.addComponent(new Label(((String)value).replace("\n", "<br>"), ContentMode.HTML));
+            }
+            else if(value instanceof Button)
+                lytCell.addComponent((Button)value);
+            return lytCell;
+    }
     /**
      * Creates a table for a Peering
      * @param objLight the given object
@@ -297,32 +370,54 @@ public class TableCreator {
 
         String peeringIp = obj.getAttribute("PeeringIP");
         String providerASN = obj.getAttribute("ProviderASN");
-        String circuitID = obj.getAttribute("CircuitID");
-        String providerCircuitID = obj.getAttribute("ProviderCircuitID");
+        String circuitId = obj.getAttribute("CircuitID");
+        String providerCircuitId = obj.getAttribute("ProviderCircuitID");
+        boolean isFirstRow = true;
+        //values
+        VerticalLayout lytData = new VerticalLayout();
+        lytData.setSpacing(false);
+        lytData.addStyleName("report-data-container");
+        lytData.addComponent(createTitle(objLight.getName(), PEERING));
+        //first row
+        if(peeringIp!= null && !peeringIp.isEmpty()){
+            Component ipPeeringRow = createTitleValueRow("IP PEERING", peeringIp);
+            ipPeeringRow.addStyleName("cell-with-border-top");
+            lytData.addComponent(ipPeeringRow);
+            lytData.addComponent(createTitleValueRow(""));
+            isFirstRow = false;
+        }
         
-        GridLayout grdPeering = new GridLayout(2, 7);
-        grdPeering.addStyleName("report-forms-box");
-        grdPeering.addComponent(createTitle(objLight.getName(), PEERING), 0, 0, 1, 0);
+        if(circuitId != null && !circuitId.isEmpty()){
+            Component circuitIdRow = createTitleValueRow("CIRCUIT ID", circuitId);
+            if(isFirstRow){
+                circuitIdRow.addStyleName("cell-with-border-top");
+                isFirstRow = false;
+            }
+            lytData.addComponent(circuitIdRow);
+        }
         
-        if(peeringIp != null && !peeringIp.isEmpty()){
-            grdPeering.addComponent(createCell("IP PEERING", true, true, true, false), 0, 1);
-            grdPeering.addComponent(createCell(peeringIp, false, true, false, false), 1, 1);
+        if(providerCircuitId != null && !providerCircuitId.isEmpty()){
+            Component providerCircuitIdRow = createTitleValueRow("INTERNAL ID", providerCircuitId);
+            if(isFirstRow){
+                providerCircuitIdRow.addStyleName("cell-with-border-top");
+                isFirstRow = false;
+            }
+            lytData.addComponent(providerCircuitIdRow);
         }
-        grdPeering.addComponent(createCell(" ", false, false, false, false), 0, 2, 1, 2);
-        if(circuitID != null && !circuitID.isEmpty()){
-            grdPeering.addComponent(createCell("CIRCUIT ID", true, false, true, false), 0, 3);     
-            grdPeering.addComponent(createCell(circuitID, false, false, false, false), 1, 3);        
+        if(providerASN != null && !providerASN.isEmpty()){
+            Component providerASNRow = createTitleValueRow("ASN NUMBER", providerASN);
+            if(isFirstRow)
+                providerASNRow.addStyleName("cell-with-border-top");
+            lytData.addComponent(providerASNRow);
         }
-        if(providerCircuitID != null && !providerCircuitID.isEmpty()){
-            grdPeering.addComponent(createCell("INTERNAL ID", true, false, true, false), 0, 4);
-            grdPeering.addComponent(createCell(providerCircuitID, false, false, false, false), 1, 4);
-        }
-        if(providerASN != null && providerASN.isEmpty()){
-            grdPeering.addComponent(createCell("ASN NUMBER", true, false, true, false), 0, 5);
-            grdPeering.addComponent(createCell(providerASN, false, false, false, false), 1, 5);
-        }
-        grdPeering.addComponent(createIcon(objLight.getClassName()), 0, 6, 1, 6);
-        return grdPeering;
+        //Provider Icon
+        VerticalLayout lytIcon =  new VerticalLayout(createIcon(objLight.getClassName()));
+        lytIcon.addStyleName("device-icon-container");
+        //Table
+        VerticalLayout lytPeeringTable = new VerticalLayout(lytData, lytIcon);   
+        lytPeeringTable.setSpacing(false);
+        
+        return lytPeeringTable;
     }
     
     /**
@@ -344,6 +439,7 @@ public class TableCreator {
         
         RemoteObjectSpecialRelationships specialAttributes = wsBean.getSpecialAttributes(port.getClassName(), port.getId(), ipAddress, sessionId);
         List<String> relationships = specialAttributes.getRelationships();
+        //the X cross conection
         for(int i=0; i<relationships.size(); i++){
             if(relationships.get(i).equals("endpointA") || relationships.get(i).equals("endpointB")){
                 if(relationships.get(i).equals("endpointA")){
@@ -376,25 +472,30 @@ public class TableCreator {
             }
         }
         
-        String mmr, rmmr, mmr2, rmmr2;
+        String mmr = null, rmmr = null, mmr2 = null, rmmr2 = null;
+        Button port1Btn = null, port2Btn = null;
         Properties properties = new Properties();
+         //values
+        VerticalLayout lytData = new VerticalLayout();
+        lytData.setSpacing(false);
+        lytData.addStyleName("report-data-container");
+        lytData.addComponent(createTitle(objLight.getName(), ADM));
+        //cards title
+        Component titleRow = createRow("CARD1", "CARD2");
+        titleRow.addStyleNames("cell-with-border-top", "cell-with-bold-text");
+        lytData.addComponent(titleRow);
+        //row cadrs values
+        lytData.addComponent(createRow(card1 != null ? card1.getName() : "", card2 != null ? card2.getName() : ""));
         
-        GridLayout grdADM = new GridLayout(2, 20);
-        grdADM.addStyleName("report-forms-box");
-        grdADM.addComponent(createTitle(objLight.getName(), ADM), 0, 0, 1, 0);
-         
         if(port1 != null){
             mmr = wsBean.getAttributeValueAsString(port1.getClassName(), port1.getId(), "meetmeroom", ipAddress, sessionId);
             rmmr = wsBean.getAttributeValueAsString(port1.getClassName(), port1.getId(), "remotemeetmeroom", ipAddress, sessionId);
-            //Column 1
-            grdADM.addComponent(createCell("CARD 1", true, true, true, false), 0, 1);
-            grdADM.addComponent(createCell("PORT 1", true, false, true, false), 0, 3);
-
+           
             properties.setProperty("id", Long.toString(port1.getId()));
             properties.setProperty("className", port1.getClassName());
 
             MiniAppPhysicalPath physicalPath = new MiniAppPhysicalPath(properties);
-            Button port1Btn = new Button(port1.getName());
+            port1Btn = new Button(port1.getName());
             port1Btn.addStyleNames("v-button-link", "button-in-cell");
             port1Btn.addClickListener(event -> {
                 Window formWindow = new Window(" ");
@@ -403,32 +504,16 @@ public class TableCreator {
                 formWindow.center();
                 UI.getCurrent().addWindow(formWindow);
             });
-            //values
-            grdADM.addComponent(createCell(card1 != null ? card1.getName() : "", false, false, true, false), 0, 2);
-            grdADM.addComponent(createCell(port1.getName(), false, false, true, false), 0, 4);
-
-            if(mmr != null && !mmr.isEmpty()){
-                grdADM.addComponent(createCell("MMR", true, false, true, false), 0, 5);
-                grdADM.addComponent(createCell(!mmr.isEmpty() ? mmr : "", false, false, true, false), 0, 6);
-            }
-            if(rmmr != null && !rmmr.isEmpty()){
-                grdADM.addComponent(createCell("RMMR", true, false, true, false), 0, 7);
-                grdADM.addComponent(createCell(!rmmr.isEmpty() ? rmmr : "", false, false, false, false), 0, 8);
-            }
         }
         if(port2 != null){
             mmr2 = wsBean.getAttributeValueAsString(port2.getClassName(), port2.getId(), "meetmeroom", ipAddress, sessionId);
             rmmr2 = wsBean.getAttributeValueAsString(port2.getClassName(), port2.getId(), "remotemeetmeroom", ipAddress, sessionId);
-            
-            //Column 2
-            grdADM.addComponent(createCell("CARD 2", true, true, false, false), 1, 1);
-            grdADM.addComponent(createCell("PORT 2", true, false, false, false), 1, 3);
             //values
             properties.setProperty("id", Long.toString(port2.getId()));
             properties.setProperty("className", port2.getClassName());
 
             MiniAppPhysicalPath physicalPath2 = new MiniAppPhysicalPath(properties);
-            Button port2Btn = new Button(port2.getName());
+            port2Btn = new Button(port2.getName());
             port2Btn.addStyleNames("v-button-link", "button-in-cell");
             port2Btn.addClickListener(event -> {
                 Window formWindow = new Window(" ");
@@ -437,59 +522,58 @@ public class TableCreator {
                 formWindow.center();
                 UI.getCurrent().addWindow(formWindow);
             });
-            grdADM.addComponent(createCell(card2 != null ? card2.getName() : "", false, false, false, false), 1, 2);
-            grdADM.addComponent(createCell(port2.getName(), false, false, false, false), 1, 4);
-
-            if(rmmr2 != null && !rmmr2.isEmpty()){
-                grdADM.addComponent(createCell("RMMR", true, false, true, false), 1, 5);
-                grdADM.addComponent(createCell(!rmmr2.isEmpty() ? rmmr2 : "", false, false, true, false), 1, 6);
-
-                if(mmr2 != null && !mmr2.isEmpty()){
-                    grdADM.addComponent(createCell(mmr2, false, false, false, false), 1, 8);
-                    grdADM.addComponent(createCell("MMR", true, false, false, false), 1, 7);
-                }
-            }
-            //the right column has values, but left are empty
-            else if(mmr2 != null && !mmr2.isEmpty()){
-                grdADM.addComponent(createCell(" ", true, false, true, false), 0, 8);
-                grdADM.addComponent(createCell(" ", false, false, true, false), 0, 7);
-
-                grdADM.addComponent(createCell(mmr2, false, false, false, false), 1, 8);
-                grdADM.addComponent(createCell("MMR", true, false, false, false), 1, 7);
-            }
         }
-          
-        grdADM.addComponent(createCell(" ", false, false, false, false), 0, 9, 1, 9);
+        //Ports title
+        titleRow = createRow("PORT1", "PORT2");
+        titleRow.addStyleNames("cell-with-bold-text");
+        lytData.addComponent(titleRow);
+        //row
+        lytData.addComponent(createRow(port1Btn != null ? port1Btn : "-", port2Btn != null ? port2Btn : "-"));
+        if(mmr != null && rmmr != null){
+            //row
+            titleRow = createRow("MMR", "RMMR");
+            titleRow.addStyleNames("cell-with-bold-text");
+            lytData.addComponent(titleRow);
+            //row
+            lytData.addComponent(createRow(mmr, rmmr));
+        }
+        if(mmr2 != null && rmmr2 != null){
+            //row
+            titleRow = createRow("RMMR", "MMR");
+            titleRow.addStyleNames("cell-with-bold-text");
+            lytData.addComponent(titleRow);
+            //row
+            lytData.addComponent(createTitleValueRow(mmr2, rmmr2));
+        }
+        //row
         String hoster = getHoster(obj);
-        if(hoster != null && !hoster.isEmpty()){
-            grdADM.addComponent(createCell("DEVICE HOSTER", true, false, true, false), 0, 10);
-            grdADM.addComponent(createCell(hoster, false, false, false, false), 1, 10);
-        }
+        if(hoster != null && !hoster.isEmpty())
+            lytData.addComponent(createTitleValueRow("DEVICE HOSTER", hoster));
+        //row    
         String owner = getOwner(obj);
-        if(owner != null && !owner.isEmpty()){
-            grdADM.addComponent(createCell("DEVICE OWNER", true, false, true, false), 0, 11);
-            grdADM.addComponent(createCell(owner, false, false, false, false), 1, 11);
-        }
+        if(owner != null && !owner.isEmpty())
+            lytData.addComponent(createTitleValueRow("DEVICE OWNER", owner));
+        //row
         String he = getHandE(obj);
-        if(he != null && !he.isEmpty()){
-            grdADM.addComponent(createCell("DEVICE H&E", true, false, true, false), 0, 12);
-            grdADM.addComponent(createCell(he, false, false, false, false), 1, 12);
-        }
+        if(he != null && !he.isEmpty())
+            lytData.addComponent(createTitleValueRow("DEVICE H&E", he));
+        //row
+        lytData.addComponent(createMergedCellsRow("DEVICE LOCATION", getLocation(objLight)));
+        lytData.addComponent(createTitleValueRow(""));
+        //row
+        if(rackPosition != null && isNumeric(rackPosition) && Integer.valueOf(rackPosition) > 0)
+            lytData.addComponent(createTitleValueRow("RACK POSITION", (String)rackPosition));
+        //row
+        if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0)
+            lytData.addComponent(createTitleValueRow("RACK UNITS", (String)rackUnits));
         
-        grdADM.addComponent(createCell("DEVICE LOCATION", true, false, false, false), 0, 14, 1, 14);
-        grdADM.addComponent(createCell(getLocation(objLight), false, false, false, false), 0, 15, 1, 15);
+        //ODF Icon
+        VerticalLayout lytIcon =  new VerticalLayout(createIcon(objLight.getClassName()));
+        lytIcon.addStyleName("device-icon-container");
         
-        grdADM.addComponent(createCell(" ", false, false, false, false), 0, 16, 1, 16);
-        if(rackPosition != null && isNumeric(rackPosition) && Integer.valueOf(rackPosition) > 0){
-            grdADM.addComponent(createCell("RACK POSITION", true, false, true, false), 0, 17);
-            grdADM.addComponent(createCell(rackPosition, false, false, false, false), 1, 17);
-        }
-        if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0){
-            grdADM.addComponent(createCell("RACK UNITS", true, false, true, false), 0, 18);
-            grdADM.addComponent(createCell(rackUnits, false, false, false, false), 1, 18);
-        }
-        grdADM.addComponent(createIcon(objLight.getClassName()), 0, 19, 1, 19);
-        return grdADM;
+        VerticalLayout lytADMTable = new VerticalLayout(lytData, lytIcon);   
+        lytADMTable.setSpacing(false);
+        return lytADMTable;
     }
     
     /**
@@ -508,25 +592,35 @@ public class TableCreator {
         String rackPostion = odf.getAttribute("position");
         String rackUnits = odf.getAttribute("rackUnits");
         
-        GridLayout grdODF = new GridLayout(2, 9);
-        grdODF.addStyleName("report-forms-box");
-        grdODF.addComponent(createTitle(objLight.getName(), ODF), 0, 0, 1, 0);
-        grdODF.addComponent(createCell("ODF-PORT", true, true, true, false), 0, 1);
-        grdODF.addComponent(createCell(port.getName(), false, true, false, false), 1, 1);
-        grdODF.addComponent(createCell(" ", false, false, false, false), 0, 2, 1, 2);
-        if(rackPostion != null && isNumeric(rackPostion) && Integer.valueOf(rackPostion) > 0){
-            grdODF.addComponent(createCell("RACK POSTION", true, false, true, false), 0, 3);
-            grdODF.addComponent(createCell(rackPostion, false, false, false, false), 1, 3);
-        }
-        if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0){
-            grdODF.addComponent(createCell("RACK UNITS", true, false, true, false), 0, 4);
-            grdODF.addComponent(createCell(rackUnits, false, false, false, false), 1, 4);
-        }
-        grdODF.addComponent(createCell(" ", false, false, false, false), 0, 5, 1, 5);
-        grdODF.addComponent(createCell("DEVICE LOCATION", true, false, false, false), 0, 6, 1, 6);
-        grdODF.addComponent(createCell(getLocation(objLight), false, false, false, false), 0, 7, 1, 7);
-        grdODF.addComponent(createIcon(objLight.getClassName()), 0, 8, 1, 8);
-        return grdODF;
+        VerticalLayout lytData = new VerticalLayout();
+        lytData.setSpacing(false);
+        lytData.addStyleName("report-data-container");
+        lytData.addComponent(createTitle(objLight.getName(), ODF));
+        Component portRow = createTitleValueRow("ODF-PORT", port.getName());
+        portRow.addStyleName("cell-with-border-top");
+        
+        lytData.addComponent(portRow);
+        lytData.addComponent(createTitleValueRow("ODF-PORT", port.getName()));
+        //row
+        lytData.addComponent(createTitleValueRow(""));
+        //row
+        if(rackPostion != null && isNumeric(rackPostion) && Integer.valueOf(rackPostion) > 0)
+            lytData.addComponent(createTitleValueRow("RACK POSTION", (String)rackPostion));
+        //row
+        if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0)
+            lytData.addComponent(createTitleValueRow("RACK UNITS", (String)rackUnits));
+        //row
+        lytData.addComponent(createTitleValueRow(""));
+        //row
+        lytData.addComponent(createMergedCellsRow("DEVICE LOCATION", getLocation(objLight)));
+        //ODF Icon
+        VerticalLayout lytIcon =  new VerticalLayout(createIcon(objLight.getClassName()));
+        lytIcon.addStyleName("device-icon-container");
+        
+        VerticalLayout lytODFTable = new VerticalLayout(lytData, lytIcon);   
+        lytODFTable.setSpacing(false);
+        
+        return lytODFTable;
     }
     
     /**
@@ -537,21 +631,26 @@ public class TableCreator {
      * @return a grid layout with the provider's information
      */
     public Component createProviderTable(String providerName, String providerId, String legalOwner){
-        
-        GridLayout grdProvider = new GridLayout(2, 4);
-        grdProvider.addComponent(createTitle(providerName, PROVIDER), 0, 0, 1, 0);
-        grdProvider.addStyleName("report-forms-box");
-        //Titles
-        grdProvider.addComponent(createCell("PROVIDER ID", true, true, true, false), 0, 1);
-        grdProvider.addComponent(createCell("LEGAL OWNER", true, false, true, false), 0, 2);
         //values
-        if(!legalOwner.isEmpty()){
-            grdProvider.addComponent(createCell(providerId, false, true, false, false), 1, 1);
-            grdProvider.addComponent(createCell(legalOwner, false, false, false, false), 1, 2);
-
-            grdProvider.addComponent(createIcon(providerName.toLowerCase()), 0, 3, 1, 3);
-        }
-        return grdProvider;
+        VerticalLayout lytData = new VerticalLayout();
+        lytData.setSpacing(false);
+        lytData.addStyleName("report-data-container");
+        lytData.addComponent(createTitle(providerName, PROVIDER));
+        //first row
+        Component providerRow = createTitleValueRow("PROVIDER ID", providerId);
+        providerRow.addStyleName("cell-with-border-top");
+        lytData.addComponent(providerRow);
+        
+        if(!legalOwner.isEmpty())
+            lytData.addComponent(createTitleValueRow("LEGAL OWNER", legalOwner));
+        //Provider Icon
+        VerticalLayout lytIcon =  new VerticalLayout(createIcon(providerName.toLowerCase()));
+        lytIcon.addStyleName("device-icon-container");
+        //Table
+        VerticalLayout lytProviderTable = new VerticalLayout(lytData, lytIcon);   
+        lytProviderTable.setSpacing(false);
+        
+        return lytProviderTable;
     }
 
     /**
@@ -587,43 +686,64 @@ public class TableCreator {
         String hop1LegalOwner = wsBean.getAttributeValueAsString(provider.getClassName(), provider.getId(), "hop1LegalOwner", 
                 Page.getCurrent().getWebBrowser().getAddress(), 
                     ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-                            
-        GridLayout grdProviderSubmarineCable = new GridLayout(2, 10);
-        grdProviderSubmarineCable.addStyleName("report-forms-box");
-        grdProviderSubmarineCable.addComponent(createTitle(hop1Name, PROVIDER), 0, 0, 1, 0);
-
-        grdProviderSubmarineCable.addComponent(createCell(" ", false, false, false, false), 0, 4, 1, 4);
+        
+        boolean isFirstRow = true;
+        //values
+        VerticalLayout lytData = new VerticalLayout();
+        lytData.setSpacing(false);
+        lytData.addStyleName("report-data-container");
+        lytData.addComponent(createTitle(hop1Name, PROVIDER));
+        
         if(hop1LegalOwner != null && !hop1LegalOwner.isEmpty()){
-            grdProviderSubmarineCable.addComponent(createCell("LEGAL OWNER", true, true, true, false), 0, 1);
-            grdProviderSubmarineCable.addComponent(createCell(hop1LegalOwner, false, true, false, false), 1, 1);
+            Component legalOwneRow = createTitleValueRow("LEGAL OWNER", hop1LegalOwner);
+            legalOwneRow.addStyleName("cell-with-border-top");
+            lytData.addComponent(legalOwneRow);
+            isFirstRow = false;
         }
         if(hop1Id != null && !hop1Id.isEmpty()){
-            grdProviderSubmarineCable.addComponent(createCell("PROVIDER ID", true, false, true, false), 0, 2);
-            grdProviderSubmarineCable.addComponent(createCell(hop1Id, false, false, false, false), 1, 2);
+            Component row = createTitleValueRow("PROVIDER ID", hop1Id);
+            if(isFirstRow)
+                row.addStyleName("cell-with-border-top");
+            lytData.addComponent(row);
         }
         if(carfNumber != null && !carfNumber.isEmpty()){
-            grdProviderSubmarineCable.addComponent(createCell("CARF NUMBER", true, false, true, false), 0, 3);
-            grdProviderSubmarineCable.addComponent(createCell(carfNumber, false, false, false, false), 1, 3);
+            Component row = createTitleValueRow("CARF NUMBER", carfNumber);
+             if(isFirstRow)
+                row.addStyleName("cell-with-border-top");
+            lytData.addComponent(row);
         }
-        if(euNode != null){
-            grdProviderSubmarineCable.addComponent(createCell("EUROPEAN NODE", true, false, true, false), 0, 5);
-            grdProviderSubmarineCable.addComponent(createCell(euNode, false, false, false, false), 1, 5);
+        if(euNode != null && !euNode.isEmpty()){
+            Component row = createTitleValueRow("EUROPEAN NODE", euNode);
+            if(isFirstRow)
+                row.addStyleName("cell-with-border-top");
+            lytData.addComponent(row);
         }
-        if(endNode != null){
-            grdProviderSubmarineCable.addComponent(createCell("LANDING NODE", true, false, true, false), 0, 6);
-            grdProviderSubmarineCable.addComponent(createCell(endNode, false, false, false, false), 1, 6);
+        if(endNode != null && !endNode.isEmpty()){
+            Component row = createTitleValueRow("LANDING NODE", endNode);
+            if(isFirstRow)
+                row.addStyleName("cell-with-border-top");
+            lytData.addComponent(row);
         }
         if(segment != null && !segment.isEmpty()){
-            grdProviderSubmarineCable.addComponent(createCell("SEGMENT", true, false, true, false), 0, 7);
-            grdProviderSubmarineCable.addComponent(createCell(segment, false, false, false, false), 1, 7);
+            Component row = createTitleValueRow("SEGMENT", segment);
+            if(isFirstRow)
+                row.addStyleName("cell-with-border-top");
+            lytData.addComponent(row);
         }
         if(moreInformation != null && !moreInformation.isEmpty()){
-            grdProviderSubmarineCable.addComponent(createCell("MORE INFO", true, false, true, false), 0, 8);
-            grdProviderSubmarineCable.addComponent(createCell(moreInformation, false, false, false, false), 1, 8);
+            Component row = createTitleValueRow("MORE INFO", moreInformation);
+            if(isFirstRow)
+                row.addStyleName("cell-with-border-top");
+            lytData.addComponent(row);
         }
-        grdProviderSubmarineCable.addComponent(createIcon(hop1Name.toLowerCase()), 0, 9, 1, 9);
+        //Provider Icon
+        VerticalLayout lytIcon =  new VerticalLayout(createIcon(hop1Name.toLowerCase()));
+        lytIcon.addStyleName("device-icon-container");
+        //Table
+        VerticalLayout lytProviderTable = new VerticalLayout(lytData, lytIcon);   
+        lytProviderTable.setSpacing(false);    
         
-        return grdProviderSubmarineCable;
+        return lytProviderTable;
     }
     
     public Component createVC(RemoteObjectLight vcMplsLink) throws ServerSideException{
@@ -643,39 +763,40 @@ public class TableCreator {
      * @throws org.kuwaiba.exceptions.ServerSideException could not find the attribute
      */
     public Component createVC(RemoteObjectLight vcMPLSLink, RemoteObjectLight sideA, RemoteObjectLight sideB) throws ServerSideException{
-        GridLayout grdVC = new GridLayout(4, 3);
-        grdVC.addStyleName("report-forms-box");
-        grdVC.addComponent(createTitle(vcMPLSLink.getName(), VC), 0, 0, 3, 0);
         
         String ipSource = wsBean.getAttributeValueAsString(vcMPLSLink.getClassName(), vcMPLSLink.getId(), "ipSource", ipAddress, sessionId);
-        if(sideA != null){
-            grdVC.addComponent(createShortCell(createCell("PW", true, true, true, false)), 0, 1);
-            grdVC.addComponent(createCell(sideA.getName(), false, true, true, false), 1, 1);
-            
-            if(ipSource != null)
-                grdVC.addComponent(createShortCell(createCell("IP", true, false, true, false)), 0, 2);
-        }
-        else{
-            if(ipSource != null && !ipSource.isEmpty()){
-                grdVC.addComponent(createShortCell(createCell("IP", true, true, true, false)), 0, 2);   
-                grdVC.addComponent(createCell(ipSource, false, false, true, false), 1, 2);
-            }
+        String ipDestiny = wsBean.getAttributeValueAsString(vcMPLSLink.getClassName(), vcMPLSLink.getId(), "ipDestiny", ipAddress, sessionId);
+        boolean isFirstRow = true;
+        //values
+        VerticalLayout lytData = new VerticalLayout();
+        lytData.setSpacing(false);
+        lytData.addStyleName("report-data-container");
+        lytData.addComponent(createTitle(vcMPLSLink.getName(), VC));
+        
+        if(sideA != null && sideB != null){
+            Component pwRow = createTitleValueRow(
+                    "PW", sideA !=null ? sideA.getName() : "-", 
+                    "PW",  sideB != null ? sideB.getName() : "-");
+            pwRow.addStyleName("cell-with-border-top");
+            lytData.addComponent(pwRow);
+            isFirstRow = false;
         }
         
-        String ipDestiny = wsBean.getAttributeValueAsString(vcMPLSLink.getClassName(), vcMPLSLink.getId(), "ipDestiny", ipAddress, sessionId);
-        if(sideB != null){
-            grdVC.addComponent(createShortCell(createCell("PW", true, true, true, false)), 2, 1);
-            grdVC.addComponent(createCell(sideB.getName(), false, true, false, false), 3, 1);
-            if(ipDestiny != null)
-                grdVC.addComponent(createShortCell(createCell("IP", true, false, true, false)), 2, 2);
+        if(ipSource!= null && !ipSource.isEmpty() && ipDestiny != null && !ipDestiny.isEmpty()){
+            Component ipsRow = createTitleValueRow(
+                    "IP" , ipSource != null && !ipSource.isEmpty() ? ipSource : "-", 
+                    "IP" , ipDestiny != null && !ipDestiny.isEmpty() ? ipDestiny : "-");
+            if(isFirstRow)
+                ipsRow.addStyleName("cell-with-border-top");
+            lytData.addComponent(ipsRow);
         }
-        else{
-            if(ipDestiny != null && !ipDestiny.isEmpty()){  
-                grdVC.addComponent(createShortCell(createCell("IP", true, true, true, false)), 2, 2);
-                grdVC.addComponent(createCell(ipDestiny, false, false, false, false), 3, 2);
-            }
-        }
-        return grdVC;
+        VerticalLayout lytIcon =  new VerticalLayout();
+        lytIcon.addStyleName("device-icon-container");
+        //Table
+        VerticalLayout lytVcTable = new VerticalLayout(lytData, lytIcon);   
+        lytVcTable.setSpacing(false);
+
+        return lytVcTable;
     }
     
     /**
@@ -702,69 +823,69 @@ public class TableCreator {
             card = parents.get(parents.size() -1).getName();
         
         String mmr = wsBean.getAttributeValueAsString(port.getClassName(), port.getId(), "meetmeroom", ipAddress, sessionId);
-        
-        GridLayout grdSwitch = new GridLayout(2, 13);
-        grdSwitch.addStyleName("report-forms-box");
-        grdSwitch.addComponent(createTitle(objLight.getName(), SWITCH), 0, 0, 1, 0);
-       
         Properties properties = new Properties();
         properties.setProperty("id", Long.toString(port.getId()));
         properties.setProperty("className", port.getClassName());
        
         MiniAppPhysicalPath physicalPath = new MiniAppPhysicalPath(properties);
-        Button portBtn = new Button(port.getName());
-        portBtn.addStyleNames("v-button-link", "button-in-cell");
-        portBtn.addClickListener(event -> {
+        Button btnPort = new Button(port.getName());
+        btnPort.addStyleNames("v-button-link", "button-in-cell");
+        btnPort.addClickListener(event -> {
             Window formWindow = new Window(" ");
             Component launchEmbedded = physicalPath.launchEmbedded();
             formWindow.setContent(launchEmbedded);
             formWindow.center();
             UI.getCurrent().addWindow(formWindow);
         });
-        grdSwitch.addComponent(createCell("PORT", true, true, true, false), 1, 1);
-        grdSwitch.addComponent(createCell(portBtn, false, false, true, false), 1, 2);
+        boolean isFirstRow = true;
+        //values
+        VerticalLayout lytData = new VerticalLayout();
+        lytData.setSpacing(false);
+        lytData.addStyleName("report-data-container");
+        lytData.addComponent(createTitle(objLight.getName(), SWITCH));
         
-        if(card != null){
-            grdSwitch.addComponent(createCell("CARD", true, true, true, false), 0, 1);
-            grdSwitch.addComponent(createCell(card, false, false, false, false), 0, 2);
+        if(card != null && !card.isEmpty()){
+            Component cardRow = createTitleValueRow("CARD", card);
+            cardRow.addStyleName("cell-with-border-top");
+            lytData.addComponent(cardRow);
+            isFirstRow =false;
         }
-        
-        grdSwitch.addComponent(createCell(" ", false, false, false, false), 0, 3, 1, 3);
-       
+        Component portRow = createTitleValueRow("PORT", btnPort);
+        if(isFirstRow)
+            portRow.addStyleName("cell-with-border-top");
+        lytData.addComponent(portRow);
+        lytData.addComponent(createTitleValueRow(""));
+        //row
         String hoster = getHoster(objLight);
-        if(hoster != null && !hoster.isEmpty()){
-            grdSwitch.addComponent(createCell("DEVICE HOSTER", true, false, true, false), 0, 4);
-            grdSwitch.addComponent(createCell(hoster, false, false, false, false), 1, 4);
-        }
+        if(hoster != null && !hoster.isEmpty())
+            lytData.addComponent(createTitleValueRow("DEVICE HOSTER", hoster));
+        //row
         String owner = getHoster(objLight);
-        if(owner != null && !owner.isEmpty()){
-            grdSwitch.addComponent(createCell("DEVICE OWNER", true, false, true, false), 0, 5);
-            grdSwitch.addComponent(createCell(owner, false, false, false, false), 1, 5);
-        }
+        if(owner != null && !owner.isEmpty())
+            lytData.addComponent(createTitleValueRow("DEVICE OWNER" , owner));      
+        //row
         String he = getHandE(objLight);
-        if(he != null && !he.isEmpty()){
-            grdSwitch.addComponent(createCell("DEVICE H&E", true, false, true, false), 0, 6);
-            grdSwitch.addComponent(createCell(he, true, false, false, false), 1, 6);
-        }
-        
-        if(rackPostion != null && isNumeric(rackPostion) && Integer.valueOf(rackPostion) > 0){
-            grdSwitch.addComponent(createCell("RACK POSITION", true, false, true, false), 0, 7);
-            grdSwitch.addComponent(createCell(rackPostion, false, false, false, false), 1, 7);
-        }
-        if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0){
-            grdSwitch.addComponent(createCell("RACK UNITS", true, false, true, false), 0, 8);
-            grdSwitch.addComponent(createCell(rackUnits, false, false, false, false), 1, 8);
-        }
-        if(mmr != null && !mmr.isEmpty()){
-            grdSwitch.addComponent(createCell("MMR", true, false, true, false), 0, 9);
-            grdSwitch.addComponent(createCell(mmr, false, false, false, false), 1, 9);
-        }
-        
-        grdSwitch.addComponent(createCell("DEVICE LOCATION", true, false, true, false), 0, 10, 1, 10);
-        grdSwitch.addComponent(createCell(getLocation(objLight), false, false, false, false), 0, 11, 1, 11);
-        
-        grdSwitch.addComponent(createIcon(objLight.getClassName()), 0, 12, 1, 12);
-        return grdSwitch;
+        if(he != null && !he.isEmpty())
+            lytData.addComponent(createTitleValueRow("DEVICE H&E" , he));
+        //row
+        if(rackPostion != null && isNumeric(rackPostion) && Integer.valueOf(rackPostion) > 0)
+            lytData.addComponent(createTitleValueRow("RACK POSITION" , (String)rackPostion));
+        //row
+        if(rackUnits != null && isNumeric(rackUnits) && Integer.valueOf(rackUnits) > 0)
+            lytData.addComponent(createTitleValueRow("RACK UNNITS" , (String)rackUnits));
+        //row
+        if(mmr != null && !mmr.isEmpty())
+            lytData.addComponent(createTitleValueRow("MMR", mmr));
+        //row
+        lytData.addComponent(createMergedCellsRow("DEVICE LOCATION", getLocation(objLight)));
+        //Provider Icon
+        VerticalLayout lytIcon =  new VerticalLayout(createIcon(objLight.getClassName()));
+        lytIcon.addStyleName("device-icon-container");
+        //Table data + icon
+        VerticalLayout lytSwitchTable = new VerticalLayout(lytData, lytIcon);   
+        lytSwitchTable.setSpacing(false);  
+
+        return lytSwitchTable;
     }
 
     /**
@@ -774,22 +895,27 @@ public class TableCreator {
      * @throws ServerSideException if an attribute need it to create the table could get retrieved 
      */
     public Component createExternalEquipment(RemoteObjectLight objLight) throws ServerSideException{
-        
-        GridLayout grdExternalEquipment = new GridLayout(2, 5);
-        grdExternalEquipment.addStyleName("report-forms-box");
-        grdExternalEquipment.addComponent(createTitle(objLight.getName(), EXTERNAL_EQUIPMENT), 0, 0, 1, 0);
-        grdExternalEquipment.addComponent(createCell(getLocation(objLight), false, false, false, false), 0, 2, 1, 2);
+        //values
+        VerticalLayout lytData = new VerticalLayout();
+        lytData.setSpacing(false);
+        lytData.addStyleName("report-data-container");
+        lytData.addComponent(createTitle(objLight.getName(), EXTERNAL_EQUIPMENT));
+        Component deviceLocationRow = createMergedCellsRow("DEVICE LOCATION", getLocation(objLight));
+        deviceLocationRow.addStyleName("cell-with-border-top");
+        //first Row
+        lytData.addComponent(deviceLocationRow);
+        //Row
         String owner = getOwner(objLight);
-        if(owner != null && !owner.isEmpty()){
-            grdExternalEquipment.addComponent(createCell("DEVICE LOCATION", true, true, false, false), 0, 1, 1, 1);
-            grdExternalEquipment.addComponent(createCell("DEVICE OWNER", true, false, true, false), 0, 3);
-            grdExternalEquipment.addComponent(createCell(owner, false, false, false, false), 1, 3);
-        }
-        else
-            grdExternalEquipment.addComponent(createExtraWidthCell(createCell("DEVICE LOCATION", true, true, false, false)), 0, 1, 1, 1);
-        grdExternalEquipment.addComponent(createIcon(objLight.getClassName()), 0, 4, 1, 4);
-
-        return grdExternalEquipment;
+        if(owner != null && !owner.isEmpty())
+            lytData.addComponent(createTitleValueRow("DEVICE OWNER", owner));
+        //Provider Icon
+        VerticalLayout lytIcon =  new VerticalLayout(createIcon(objLight.getClassName()));
+        lytIcon.addStyleName("device-icon-container");
+        //Table
+        VerticalLayout lytExternalEquipmentTable = new VerticalLayout(lytData, lytIcon);   
+        lytExternalEquipmentTable.setSpacing(false);    
+        
+        return lytExternalEquipmentTable;
     }
     /**
      * Creates the location of a given object until the City

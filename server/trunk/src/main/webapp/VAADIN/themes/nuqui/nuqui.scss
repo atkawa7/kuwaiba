@@ -403,6 +403,12 @@ $v-field-background-color: #ccffe6;
        
     }//end login-form   
     
+    //start-grid
+    .warehouse-grid{
+        height: 100%;
+    }
+    //end-grid
+    
     /* Dashboards */
     .dashboards {
         /*The following style are mostly used for cover components for dashboard windows using a dark theme*/
@@ -554,22 +560,19 @@ $v-field-background-color: #ccffe6;
 	z-index: 2;
     }
     //START of end to end view forms
-    #report-forms-header{ text-align: left;}
+    //To include the padding, marging, border inside the div size  
+    *{ box-sizing: border-box; }
 
+    #report-forms-header{ text-align: left;}
     #report-forms-title{ font-size: 1.8em; color: #548235; }
     #report-forms-properties{ font-size: 1.4em; }
     
     #report-forms-content{
         text-align: center;
         width: 100%;
-        min-height: 420px;
+        min-height: 550px;
         overflow-y: auto;
         padding-top: 20px;
-        
-        .v-gridlayout-report-forms-box{
-            min-height: 450px;
-            border: solid 1px black;
-        }
     }
     
     #report-forms-container:after{
@@ -600,6 +603,51 @@ $v-field-background-color: #ccffe6;
         -o-user-select: no
     }
     
+    .report-data-container{
+        min-height: 355px;
+        border-left: solid 1px black;
+        border-right: solid 1px black;
+        min-width: 250px;
+    }
+    
+    .row{ 
+        border-bottom: 1px solid black; 
+        width: 100%;
+    }
+    
+    .empty-row{height: 2px; background: #A66131;}
+    .v-slot-empty-row{height: 2px;}
+
+    .cell{
+        text-align: left !important;
+        padding: 0 2px 0 2px;
+    }
+    
+    .cell-normal{
+        width: 50%;
+        min-width: 120px;
+    }
+    
+    .cell-short{
+        width: 20%;
+        min-width: 20px;
+    }
+    
+    .cell-large{
+        width: 80%;
+        min-width: 130px;
+    }
+        
+    //bottom of the tables in a form
+    .device-icon-container{
+        height: 135px;
+        width: 100%;
+        text-align: center;
+        border-left: 1px solid black;
+        border-right: 1px solid black; 
+        border-bottom: 1px solid black;
+    }
+       
     .report-forms{
         .device-title{
             border-top-right-radius: 8px; 
@@ -619,24 +667,15 @@ $v-field-background-color: #ccffe6;
         }
 
         .peering{ background: #00cc99; }
-
         .router{ background: #66ff66; }
-        
         .switch{ background: #8080ff; }
-
         .adm{ background: #33cc33; }
-
         .odf{ background: #aae600; }
-
         .provider{ background: #008000; }
-
         .external_equipment{ background: #a6a6a6; }
-
         .vc{ background: #ffcc00; }
 
-        .v-window-center{
-            text-align: center;
-        }
+        .v-window-center{ text-align: center; }
     
         .cell-with-border{
             text-align: left !important;
@@ -654,6 +693,7 @@ $v-field-background-color: #ccffe6;
             width: 100%;
             min-width: 250px;
         }
+        
         .cell-with-border-bottom{ border-bottom: solid 1px black;}
         .cell-with-border-right{ border-right: solid 1px black;}
         .cell-with-border-top{border-top: solid 1px black;}
@@ -664,7 +704,6 @@ $v-field-background-color: #ccffe6;
             text-align: center;
             width: 100%;
         }
-        .device-img{ bottom:0; }
 
         .v-slot-foot {
             //position: fixed;
@@ -678,6 +717,11 @@ $v-field-background-color: #ccffe6;
             height: auto !important;
         }
     }
+    
+    
+    
+    
+    
     //END of end to end View forms
     //Start Rack View
     .selector {
