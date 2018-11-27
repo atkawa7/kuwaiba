@@ -226,17 +226,24 @@ public class TableCreator {
             UI.getCurrent().addWindow(formWindow);
         });
 
+        boolean isFirstRow = true;
         VerticalLayout lytData = new VerticalLayout();
         lytData.setSpacing(false);
         lytData.addStyleName("report-data-container");
  
         lytData.addComponent(createTitle(objLight.getName(), ROUTER));
         
-        Component cardRow = createTitleValueRow("CARD", card);
-        cardRow.addStyleName("cell-with-border-top");
-        
-        lytData.addComponent(cardRow);        
-        lytData.addComponent(createTitleValueRow("PORT", portBtn));        
+        if(!card.isEmpty()){
+            Component cardRow = createTitleValueRow("CARD", card);
+            cardRow.addStyleName("cell-with-border-top");
+            lytData.addComponent(cardRow); 
+            isFirstRow = false;
+        }
+         
+        Component portRow = createTitleValueRow("PORT", portBtn);
+        if(isFirstRow)
+            portRow.addStyleName("cell-with-border-top");
+        lytData.addComponent(portRow);        
         lytData.addComponent(createTitleValueRow(""));
         
         String hoster = getHoster(networkDevice);
