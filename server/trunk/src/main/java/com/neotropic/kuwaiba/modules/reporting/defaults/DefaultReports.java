@@ -468,8 +468,25 @@ public class DefaultReports {
                     "    <meta charset=\"utf-8\">\n" +
                     "    <title>" + title + "</title>\n</head>\n";
             tributaryLinkUsageReportText += "<div class=\"error\">No information about this tributary link could be found</div>";
-        }
-        else {
+        } else {
+            String serverName, serverPort, logoURL;
+            try {
+                serverName = (String)aem.getConfigurationVariableValue("general.misc.serverName");
+            } catch (ApplicationObjectNotFoundException ex) {
+                serverName = "127.0.0.1";
+            }
+            try {
+                serverPort = String.valueOf(aem.getConfigurationVariableValue("general.misc.serverPort"));
+            } catch (ApplicationObjectNotFoundException ex) {
+                serverPort = "8181";
+            }
+//            try {
+//                logoURL = (String)aem.getConfigurationVariableValue("general.misc.logoURL");
+//            } catch (ApplicationObjectNotFoundException ex) {
+//                logoURL = "http://neotropic.co/img/logo_blue.png";
+//            }
+            
+            
             theTributaryLink = theResult.get("tributaryLink").getList().get(0);
             title = "Tributary Link Details Report for " + theTributaryLink.getName();
             tributaryLinkUsageReportText = "<!DOCTYPE html>\n" +
@@ -478,10 +495,10 @@ public class DefaultReports {
                     "    <meta charset=\"utf-8\">\n" +
                     "    <title>" + title + "</title>\n</head>\n";
             tributaryLinkUsageReportText += 
-                                "  <body><table><tr><td><h1>" + title + "</h1></td><td align=\"center\"><img src=\"" + corporateLogo + "\"/></td></tr></table>\n";
+                                "  <body><h1>" + title + "</h1>\n";
             
-            tributaryLinkUsageReportText += "<link rel=\"stylesheet\" href=\"https://149.6.144.166:9191/css/report_01.css\" type=\"text/css\">";
-            tributaryLinkUsageReportText += "<script type=\"text/javascript\" src=\"https://149.6.144.166:9191/js/jsplumb.min.js\"></script>";
+            tributaryLinkUsageReportText += "<link rel=\"stylesheet\" href=\"https://" + serverName + ":" + serverPort + "/css/report_01.css\" type=\"text/css\">";
+            tributaryLinkUsageReportText += "<script type=\"text/javascript\" src=\"https://" + serverName + ":" + serverPort + "/js/jsplumb.min.js\"></script>";
             
             //Demarcation points
             query = String.format("MATCH (tributaryLink)-[relationA:%s]-(equipmentPort)-[relationB:%s]-(physicalConnection)-[relationC:%s]-(nextEquipmentPort)-[:%s*]->(nextEquipment)-[:%s]->(class)-[:%s*]->(superClass) "
@@ -497,13 +514,8 @@ public class DefaultReports {
             String demarcationPointsAsSring = "";
             for (int i = 0; i < demarcationPoints.get("nextEquipmentPort").getList().size(); i++)
                 demarcationPointsAsSring += "<b>" + demarcationPoints.get("nextEquipment").getList().get(i) + "</b>:" + demarcationPoints.get("nextEquipmentPort").getList().get(i) + "<br/>";
-
-            //General Info
-            tributaryLinkUsageReportText += "<table><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoValue\">" + theTributaryLink.getName() + "</td><td class=\"generalInfoLabel\">Demarcation Points</td><td class=\"generalInfoValue\">" + demarcationPointsAsSring + "</td></tr>"
-                    + "<tr><td class=\"generalInfoLabel\">Type</td><td class=\"generalInfoValue\">" + theTributaryLink.getClassName() + "</td><td class=\"generalInfoLabel\">Service</td><td class=\"generalInfoValue\">" + theResult.get("service").getList().get(0).getName() + "</td></tr>"
-                    + "<tr><td class=\"generalInfoLabel\">Endpoint A</td><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(0) + "</b>:" + theResult.get("port").getList().get(0).getName() + "</td><td class=\"generalInfoLabel\">Customer</td><td class=\"generalInfoValue\">" + theResult.get("customer").getList().get(0).getName() + "</td></tr>"
-                    + "<tr><td class=\"generalInfoLabel\">Endpoint B</td><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(1) + "</b>:" + theResult.get("port").getList().get(1).getName() + "</td><td></td></tr></table>";
-        
+            
+            //The connections diagram
             tributaryLinkUsageReportText += "<div class=\"container\">\n" +
 "        <div class=\"crossconnection\">\n" +
 "            <div id=\"43703\" class=\"connectable\"><div class=\"label\">Cape Town <br />(Teraco)</div></div>\n" +
@@ -550,6 +562,16 @@ public class DefaultReports {
 "            <div class=\"segment-text\" style=\"left:0\">Segment 1</div> \n" +
 "        </div>\n" +
 "    </div>\n";
+
+            //General Info
+            tributaryLinkUsageReportText += "<table><tr><th colspan=\"2\">General Information</th></tr><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoLabel\">Service</td></tr>"
+                    + "<tr><td class=\"generalInfoValue\">" + theTributaryLink.getName() + "</td><td class=\"generalInfoValue\">" + theResult.get("service").getList().get(0).getName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Endpoint A</td><td class=\"generalInfoLabel\">Endpoint B</td></tr>"
+                    + "<tr><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(0) + "</b>:" + theResult.get("port").getList().get(0).getName() + "</td><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(1) + "</b>:" + theResult.get("port").getList().get(1).getName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">CARF</td><td class=\"generalInfoLabel\">Legal Owner</td></tr>"
+                    + "<tr><td class=\"generalInfoValue\">" + (theTributaryLink.getAttributes().get("hopCarf") == null ? "Not Set" : theTributaryLink.getAttributes().get("hopCarf")) + "</td><td class=\"generalInfoValue\">" + (theTributaryLink.getAttributes().get("hop2LegalOwner") == null ? "Not Set" : bem.getAttributeValueAsString(tributaryLinkClass, tributaryLinkId, "hop2LegalOwner")) + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">Customer</td><td class=\"generalInfoLabel\">Demarcation Points</td></tr>"
+                    + "<tr><td class=\"generalInfoValue\">" + theResult.get("customer").getList().get(0).getName() + "</td><td class=\"generalInfoValue\">" + demarcationPointsAsSring + "</td></tr></table>";
             
             //Used resources
             List<BusinessObjectLight> container = bem.getSpecialAttribute(tributaryLinkClass, tributaryLinkId, SDHModule.RELATIONSHIP_SDHDELIVERS);
@@ -562,12 +584,10 @@ public class DefaultReports {
                         container.get(0).getId(), SDHModule.RELATIONSHIP_SDHTRANSPORTS);
                 usedResources = "<table><tr><th>Transport Link List</th></tr>";
                
-                int i = 0;
                 String transportLinksToBeHighlighted = "";
                 for (AnnotatedBusinessObjectLight transportLink : transportLinks) {
-                    usedResources += "<tr class=\"" + (i % 2 == 0 ? "even" : "odd") +"\"><td>" + transportLink.getObject() + "</td></tr>";
+                    usedResources += "<tr><td>" + transportLink.getObject() + "</td></tr>";
                     transportLinksToBeHighlighted += (transportLink.getObject().getId() + ",");
-                    i ++;
                 }
                 usedResources += "</table>";
                 usedResources += "<script>\n"
@@ -672,7 +692,7 @@ public class DefaultReports {
         }
         tributaryLinkUsageReportText += getFooter();
         
-        return new RawReport("Tributary Link Details", "Neotropic SAS","1.1", tributaryLinkUsageReportText);
+        return new RawReport("Tributary Link Details", "Neotropic SAS","1.2", tributaryLinkUsageReportText);
     }
     
     public RawReport buildNetworkEquipmentInLocationReport(String locationClass, long locationId) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, ApplicationObjectNotFoundException, NotAuthorizedException {

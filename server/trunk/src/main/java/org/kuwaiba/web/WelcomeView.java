@@ -68,7 +68,7 @@ class WelcomeView extends VerticalLayout implements View {
                 String language = (String)context.lookup("java:comp/env/mapLanguage");
                 
                 
-                GoogleMapsComponent mapMain = new GoogleMapsComponent(apiKey.isEmpty() ? null : apiKey, null, language);
+                GoogleMapsComponent mapMain = new GoogleMapsComponent(apiKey.trim().isEmpty() ? null : apiKey, null, language);
                 
                 mapMain.setSizeFull();
                 mapMain.showMarkerLabels(true);

@@ -4784,7 +4784,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     @Override
     public long createConfigurationVariable(long configVariablesPoolId, String name, String description, int type, boolean masked, String valueDefinition) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         
-        if (type > 5 || type < 1)
+        if (type > 5 || type < 0)
             throw new InvalidArgumentException(String.format("The specified type (%s) is not valid", type));
 
         if (name == null || name.trim().isEmpty())
@@ -4833,7 +4833,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     try {
                         int type = Integer.valueOf(newValue);
                         
-                        if (type > 5 || type < 1)
+                        if (type > 5 || type < 0)
                             throw new InvalidArgumentException(String.format("The specified type (%s) is not valid", type));
                         
                         configVariableNode.setProperty(Constants.PROPERTY_TYPE, type);
@@ -4886,6 +4886,44 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                      (int)configVariableNode.getProperty(Constants.PROPERTY_TYPE));
         }
     }
+
+    @Override
+    public Object getConfigurationVariableValue(String name) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node configVariableNode = graphDb.findNode(configurationVariables, Constants.PROPERTY_NAME, name);
+            
+            if (configVariableNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("Can not find a configuration variable named %s", name));
+            
+            String configVariableValue = (String)configVariableNode.getProperty(Constants.PROPERTY_VALUE);
+            switch ((int)configVariableNode.getProperty(Constants.PROPERTY_TYPE)) {
+                case ConfigurationVariable.TYPE_STRING:
+                    return configVariableValue;
+                case ConfigurationVariable.TYPE_INTEGER:
+                    try {
+                        return Integer.valueOf(configVariableValue);
+                    } catch (NumberFormatException nfex) {
+                        throw new InvalidArgumentException(String.format("%s can not be converted to integer", configVariableValue));
+                    }
+                case ConfigurationVariable.TYPE_FLOAT:
+                    try {
+                        return Float.valueOf(configVariableValue);
+                    } catch (NumberFormatException nfex) {
+                        throw new InvalidArgumentException(String.format("%s can not be converted to float", configVariableValue));
+                    }
+                case ConfigurationVariable.TYPE_BOOLEAN:
+                    return Boolean.valueOf(configVariableValue);
+                case ConfigurationVariable.TYPE_ARRAY: //Not implemented yet
+                case ConfigurationVariable.TYPE_MATRIX:
+                    return new ArrayList<>();
+            }
+            
+            throw new InvalidArgumentException(String.format("Unknown data type for variable %s", name));
+            
+        }
+    }
+    
+    
 
     @Override
     public List<ConfigurationVariable> getConfigurationVariablesInPool(long parentPoolId) throws ApplicationObjectNotFoundException {
