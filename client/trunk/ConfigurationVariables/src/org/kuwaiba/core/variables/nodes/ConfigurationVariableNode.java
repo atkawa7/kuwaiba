@@ -72,9 +72,7 @@ public class ConfigurationVariableNode extends AbstractNode implements VetoableC
             aSet.put(new ConfigurationVariableNativeTypeProperty(configVariable, String.class, "description", this));
             aSet.put(new ConfigurationVariableNativeTypeProperty(configVariable, boolean.class, "masked", this));
             aSet.put(new ConfigurationVariableNativeTypeProperty(configVariable, String.class, "value", this));
-        } catch (NoSuchMethodException ex) {
-        ex.printStackTrace();
-        } //Should not happen
+        } catch (NoSuchMethodException ex) { ex.printStackTrace(); } //Should not happen
         aSheet.put(aSet);
         
         return aSheet;

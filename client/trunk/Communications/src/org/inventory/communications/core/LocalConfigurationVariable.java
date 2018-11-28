@@ -22,9 +22,13 @@ package org.inventory.communications.core;
  */
 public class LocalConfigurationVariable {
     /**
-     * The variable is a number
+     * The variable is an integer
      */
-    public final static int TYPE_NUMBER = 1;
+    public final static int TYPE_INTEGER = 0;
+    /**
+     * The variable is a float
+     */
+    public final static int TYPE_FLOAT = 1;
     /**
      * The variable is a string
      */

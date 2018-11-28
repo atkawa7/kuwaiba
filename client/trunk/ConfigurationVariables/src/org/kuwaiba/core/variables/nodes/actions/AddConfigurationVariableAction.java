@@ -65,7 +65,8 @@ public class AddConfigurationVariableAction extends GenericInventoryAction {
             JCheckBox chkMasked = new JCheckBox();
             
             JComboBox<ConfigVariableType> cmbTypes = new JComboBox<>(new ConfigVariableType[] { new ConfigVariableType("String", LocalConfigurationVariable.TYPE_STRING),
-                                                                     new ConfigVariableType("Number", LocalConfigurationVariable.TYPE_NUMBER),
+                                                                     new ConfigVariableType("Integer", LocalConfigurationVariable.TYPE_INTEGER),
+                                                                     new ConfigVariableType("Float", LocalConfigurationVariable.TYPE_FLOAT),
                                                                      new ConfigVariableType("Boolean", LocalConfigurationVariable.TYPE_BOOLEAN),    
                                                                      new ConfigVariableType("Array", LocalConfigurationVariable.TYPE_ARRAY),    
                                                                      new ConfigVariableType("Table", LocalConfigurationVariable.TYPE_MATRIX)
