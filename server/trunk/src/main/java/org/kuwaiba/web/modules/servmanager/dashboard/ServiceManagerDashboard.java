@@ -49,21 +49,26 @@ public class ServiceManagerDashboard extends AbstractDashboard {
         ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(0, 2, new ContactsDashboardWidget(customer, wsBean));
         
         try {
-            String reportIdAsString = wsBean.getConfigurationVariableValue("org.kuwaiba.report.shortcut.report1", 
+            Object object = wsBean.getConfigurationVariableValue("org.kuwaiba.report.shortcut.report1", 
                 Page.getCurrent().getWebBrowser().getAddress(), 
                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
             
-            long reportId = Long.valueOf(reportIdAsString);
-            
-            RemoteReport remoteReport = wsBean.getReport(reportId, 
-                Page.getCurrent().getWebBrowser().getAddress(), 
-                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
-            
-            if (remoteReport != null)
-                ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 2, new ReportShortcutWidget(service, remoteReport, wsBean));
+            if (object != null) {
+                String reportIdAsString = object.toString();
+
+                long reportId = Long.valueOf(reportIdAsString);
+
+                RemoteReport remoteReport = wsBean.getReport(reportId, 
+                    Page.getCurrent().getWebBrowser().getAddress(), 
+                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+
+                if (remoteReport != null)
+                    ((TheaterDashboardLayout)getDashboardLayout()).setChairWidget(1, 2, new ReportShortcutWidget(service, remoteReport, wsBean));
+            }
                         
         } catch (ServerSideException | NumberFormatException ex) {
             Notifications.showError(ex.getMessage());
         }
+        
     }
 }

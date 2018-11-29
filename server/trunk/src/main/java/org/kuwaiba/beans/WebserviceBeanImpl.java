@@ -4051,14 +4051,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
-    public String getConfigurationVariableValue(String name, String ipAddress, String sessionId) throws ServerSideException {
+    public Object getConfigurationVariableValue(String name, String ipAddress, String sessionId) throws ServerSideException {
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
 
         try {
             aem.validateWebServiceCall("getConfigurationVariable", ipAddress, sessionId);
-            ConfigurationVariable configVariable = aem.getConfigurationVariable(name);
-            return configVariable != null ? configVariable.getValueDefinition() : null;
+            return aem.getConfigurationVariableValue(name);
         } catch(InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }

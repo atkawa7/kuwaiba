@@ -79,19 +79,25 @@ public class SpareAndReservedInventoryObjectsDashboardWidget extends AbstractDas
     
     private void setStates() {
         try {
-            stateSpare = webserviceBean.getConfigurationVariableValue(
-                    "widget.state.spare",
-                    Page.getCurrent().getWebBrowser().getAddress(),
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            Object configVariableValue = webserviceBean.getConfigurationVariableValue(
+                "widget.state.spare",
+                Page.getCurrent().getWebBrowser().getAddress(),
+                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            
+            if (configVariableValue != null) {
+                stateSpare = configVariableValue.toString();
+            }
             if (stateSpare == null) {
                 Notifications.showWarning("Configuration Variable widget.state.spare Not Set");
                 stateSpare = "Spare";
             }
-            
-            stateReserved = webserviceBean.getConfigurationVariableValue(
-                    "widget.state.reserved",
-                    Page.getCurrent().getWebBrowser().getAddress(),
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            configVariableValue = webserviceBean.getConfigurationVariableValue(
+                "widget.state.reserved",
+                Page.getCurrent().getWebBrowser().getAddress(),
+                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            if (configVariableValue != null) {
+                stateReserved = configVariableValue.toString();
+            }
             if (stateReserved == null) {
                 Notifications.showWarning("Configuration Variable widget.state.reserved Not Set");
                 stateReserved = "Reserved";
