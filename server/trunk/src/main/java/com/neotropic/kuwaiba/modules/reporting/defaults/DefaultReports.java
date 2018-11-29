@@ -495,7 +495,7 @@ public class DefaultReports {
                     "    <meta charset=\"utf-8\">\n" +
                     "    <title>" + title + "</title>\n</head>\n";
             tributaryLinkUsageReportText += 
-                                "  <body><h1>" + title + "</h1>\n";
+                                "  <body>\n";
             
             tributaryLinkUsageReportText += "<link rel=\"stylesheet\" href=\"https://" + serverName + ":" + serverPort + "/css/report_01.css\" type=\"text/css\">";
             tributaryLinkUsageReportText += "<script type=\"text/javascript\" src=\"https://" + serverName + ":" + serverPort + "/js/jsplumb.min.js\"></script>";
@@ -513,61 +513,64 @@ public class DefaultReports {
             HashMap<String, BusinessObjectList> demarcationPoints = aem.executeCustomDbCode(query, true);
             String demarcationPointsAsSring = "";
             for (int i = 0; i < demarcationPoints.get("nextEquipmentPort").getList().size(); i++)
-                demarcationPointsAsSring += "<b>" + demarcationPoints.get("nextEquipment").getList().get(i) + "</b>:" + demarcationPoints.get("nextEquipmentPort").getList().get(i) + "<br/>";
+                demarcationPointsAsSring += demarcationPoints.get("nextEquipment").getList().get(i) + ":" + demarcationPoints.get("nextEquipmentPort").getList().get(i) + "<br/>";
             
             //The connections diagram
             tributaryLinkUsageReportText += "<div class=\"container\">\n" +
 "        <div class=\"crossconnection\">\n" +
-"            <div id=\"43703\" class=\"connectable\"><div class=\"label\">Cape Town <br />(Teraco)</div></div>\n" +
-"            <div id=\"43690\" class=\"connectable important\"><div class=\"label\">Cape Town <br />(Duynefontein)</div></div>\n" +
+"            <div id=\"43703\" class=\"connectable\"><div class=\"label\">TERACO    <span class=\"note\">South Africa</span></div></div>\n" +
+"            <div id=\"43690\" class=\"connectable important\"><div class=\"label\"><b>Cape Town</b>    <span class=\"note\">South Africa</span></div></div>\n" +
 "        </div>\n" +
 "        <div class=\"segment segment1\">\n" +
-"            <div id=\"43994\" class=\"connectable\"><div class=\"label\">Namibia <br />(Swakopmund)</div></div>\n" +
-"            <div id=\"43655\" class=\"connectable\"><div class=\"label\">Angola <br />(Luanda)</div></div>\n" +
-"            <div id=\"43721\" class=\"connectable\"><div class=\"label\">D.R. Congo <br />(Muanda)</div></div>\n" +
+"            <div id=\"43994\" class=\"connectable\"><div class=\"label\">Swakopmund     <span class=\"note\">Namibia</span></div></div>\n" +
+"            <div id=\"43655\" class=\"connectable\"><div class=\"label\">Luanda    <span class=\"note\">Angola</span></div></div>\n" +
+"            <div id=\"43721\" class=\"connectable\"><div class=\"label\">Muanda    <span class=\"note\">Congo DR</span></div></div>\n" +
 "            <div class=\"segment-text\">Segment 4</div> \n" +
 "        </div>\n" +
 "        <div class=\"crossconnection\">\n" +
-"            <div id=\"44085\" class=\"connectable important\"><div class=\"label\">Saint Tome <br/>(Saint Tome)</div></div>\n" +
+"            <div id=\"44085\" class=\"connectable important\"><div class=\"label\"><b>São Tomé</b>    <span class=\"note\">Sao Tome and Principe</span></div></div>\n" +
 "        </div>\n" +
 "        <div class=\"segment segment2\">\n" +
-"            <div id=\"43796\" class=\"connectable\"><div class=\"label\">Gabon <br />(Ubreville)</div></div>\n" +
-"            <div id=\"43923\" class=\"connectable\"><div class=\"label\">Eq. Guinea <br />(Bata)</div></div>\n" +
-"            <div id=\"44008\" class=\"connectable\"><div class=\"label\">Nigeria <br />(Lagos)</div></div>\n" +
-"            <div id=\"43671\" class=\"connectable\"><div class=\"label\">Benin <br />(Porto Novo)</div></div>\n" +
-"            <div id=\"43873\" class=\"connectable\"><div class=\"label\">Ghana <br />(Accra)</div></div>\n" +
+"            <div id=\"43796\" class=\"connectable\"><div class=\"label\">Libreville    <span class=\"note\">Gabon</span></div></div>\n" +
+"            <div id=\"43923\" class=\"connectable\"><div class=\"label\">Bata    <span class=\"note\">Equatorial Guinea</span></div></div>\n" +
+"            <div id=\"44008\" class=\"connectable\"><div class=\"label\">Lagos    <span class=\"note\">Nigeria</span></div></div>\n" +
+"            <div id=\"43671\" class=\"connectable\"><div class=\"label\">Porto Novo    <span class=\"note\">Benin</span></div></div>\n" +
+"            <div id=\"43873\" class=\"connectable\"><div class=\"label\">Accra    <span class=\"note\">Ghana</span></div></div>\n" +
 "            <div class=\"segment-text\">Segment 3</div> \n" +
 "        </div>\n" +
 "        <div class=\"crossconnection\">\n" +
-"            <div id=\"43938\" class=\"connectable important\"><div class=\"label\">Ivory Coast <br/>(Abidjan)</div></div>\n" +
+"            <div id=\"43938\" class=\"connectable important\"><div class=\"label\"><b>Abidjan</b>    <span class=\"note\">Côte D'Ivoire</span></div></div>\n" +
 "        </div>\n" +
 "        <div class=\"segment segment3\">\n" +
-"            <div id=\"43951\" class=\"connectable\"><div class=\"label\">Liberia <br />(Monrovia)</div></div>\n" +
-"            <div id=\"44052\" class=\"connectable\"><div class=\"label\">Sierra Leone <br />(Freetown)</div></div>\n" +
-"            <div id=\"43888\" class=\"connectable\"><div class=\"label\">Guinea <br />(Conakry)</div></div>\n" +
-"            <div id=\"43909\" class=\"connectable\"><div class=\"label\">Guinea Bissau <br />(Bissau)</div></div>\n" +
-"            <div id=\"43811\" class=\"connectable\"><div class=\"label\">Gambia <br />(Banjul)</div></div>\n" +
+"            <div id=\"43951\" class=\"connectable\"><div class=\"label\">Monrovia    <span class=\"note\">Liberia</span></div></div>\n" +
+"            <div id=\"44052\" class=\"connectable\"><div class=\"label\">Freetown    <span class=\"note\">Sierra Leone</span></div></div>\n" +
+"            <div id=\"43888\" class=\"connectable\"><div class=\"label\">Conakry    <span class=\"note\">Guinea</span></div></div>\n" +
+"            <div id=\"43909\" class=\"connectable\"><div class=\"label\">Bissau    <span class=\"note\">Guinea Bissau</span></div></div>\n" +
+"            <div id=\"43811\" class=\"connectable\"><div class=\"label\">Banjul    <span class=\"note\">Gambia</span></div></div>\n" +
 "            <div class=\"segment-text\">Segment 2</div> \n" +
 "        </div>\n" +
 "        <div class=\"crossconnection\">\n" +
-"            <div id=\"43735\" class=\"connectable important\"><div class=\"label\">Senegal <br/>(Dakar)</div></div>\n" +
+"            <div id=\"43735\" class=\"connectable important\"><div class=\"label\"><b>Dakar</b>    <span class=\"note\">Senegal</span></div></div>\n" +
 "        </div>\n" +
 "        <div class=\"segment segment4\">\n" +
-"            <div id=\"43970\" class=\"connectable\"><div class=\"label\">Mauritania <br />(Nouakchott)</div></div>\n" +
-"            <div id=\"44071\" class=\"connectable\"><div class=\"label\">Spain <br />(Tenerife)</div></div>\n" +
-"            <div id=\"44025\" class=\"connectable\"><div class=\"label\">Portugal <br />(Carcavellos)</div></div>\n" +
-"            <div id=\"44038\" class=\"connectable\"><div class=\"label\">Portugal <br />(Televent/ITConic)</div></div>\n" +
-"            <div id=\"43770\" class=\"connectable important\"><div class=\"label\">France <br />(Penmarch)</div></div>\n" +
-"            <div id=\"43749\" class=\"connectable important\"><div class=\"label\">France <br />(Paris TH2)</div></div>\n" +
+"            <div id=\"43970\" class=\"connectable\"><div class=\"label\">Nouakchott    <span class=\"note\">Mauritania</span></div></div>\n" +
+"            <div id=\"44071\" class=\"connectable\"><div class=\"label\">Tenerife    <span class=\"note\">Spain</span></div></div>\n" +
+"            <div id=\"44025\" class=\"connectable\"><div class=\"label\">Carcavellos    <span class=\"note\">Portugal</span></div></div>\n" +
+"            <div id=\"44038\" class=\"connectable\"><div class=\"label\">ITConic/Telvent    <span class=\"note\">Portugal</span></div></div>\n" +
+"            <div id=\"43770\" class=\"connectable important\"><div class=\"label\"><b>Penmarch</b>    <span class=\"note\">France</span></div></div>\n" +
+"            <div id=\"43749\" class=\"connectable important\"><div class=\"label\">Paris TH2    <span class=\"note\">South Africa</span></div></div>\n" +
 "            <div class=\"segment-text\" style=\"left:0\">Segment 1</div> \n" +
 "        </div>\n" +
 "    </div>\n";
 
+            //Title
+            tributaryLinkUsageReportText += "<h1>" + title + "</h1>\n";
+            
             //General Info
             tributaryLinkUsageReportText += "<table><tr><th colspan=\"2\">General Information</th></tr><tr><td class=\"generalInfoLabel\">Name</td><td class=\"generalInfoLabel\">Service</td></tr>"
                     + "<tr><td class=\"generalInfoValue\">" + theTributaryLink.getName() + "</td><td class=\"generalInfoValue\">" + theResult.get("service").getList().get(0).getName() + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Endpoint A</td><td class=\"generalInfoLabel\">Endpoint B</td></tr>"
-                    + "<tr><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(0) + "</b>:" + theResult.get("port").getList().get(0).getName() + "</td><td class=\"generalInfoValue\"><b>" + theResult.get("equipment").getList().get(1) + "</b>:" + theResult.get("port").getList().get(1).getName() + "</td></tr>"
+                    + "<tr><td class=\"generalInfoValue\">" + theResult.get("equipment").getList().get(0) + ":" + theResult.get("port").getList().get(0).getName() + "</td><td class=\"generalInfoValue\">" + theResult.get("equipment").getList().get(1) + ":" + theResult.get("port").getList().get(1).getName() + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">CARF</td><td class=\"generalInfoLabel\">Legal Owner</td></tr>"
                     + "<tr><td class=\"generalInfoValue\">" + (theTributaryLink.getAttributes().get("hopCarf") == null ? "Not Set" : theTributaryLink.getAttributes().get("hopCarf")) + "</td><td class=\"generalInfoValue\">" + (theTributaryLink.getAttributes().get("hop2LegalOwner") == null ? "Not Set" : bem.getAttributeValueAsString(tributaryLinkClass, tributaryLinkId, "hop2LegalOwner")) + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Customer</td><td class=\"generalInfoLabel\">Demarcation Points</td></tr>"
@@ -586,7 +589,7 @@ public class DefaultReports {
                
                 String transportLinksToBeHighlighted = "";
                 for (AnnotatedBusinessObjectLight transportLink : transportLinks) {
-                    usedResources += "<tr><td>" + transportLink.getObject() + "</td></tr>";
+                    usedResources += "<tr><td class=\"generalInfoValue\">" + transportLink.getObject() + "</td></tr>";
                     transportLinksToBeHighlighted += (transportLink.getObject().getId() + ",");
                 }
                 usedResources += "</table>";
@@ -594,26 +597,27 @@ public class DefaultReports {
                 +    "jsPlumb.ready(function() {\n" +
         "    var connections = {};\n" +                    
 "            var topRightLeft = {\n" +
-"                connector: [\"Flowchart\"],\n" +
-"                anchor:[[ 0.75, 0, 0, -1 ], [ 0.25, 0, 0, -1 ]],\n" +
-"                endpoint:[ \"Rectangle\", { width:1, height:1 } ]\n" +
+"                connector: [\"Bezier\", { curviness:30 }],\n" +
+"                anchors:[\"Left\", \"Left\"],\n" +
+"                endpoint:[ \"Dot\", { radius:5 } ]\n" +
 "            };\n" +
 "            var topCenter = {\n" +
-"                connector: [\"Bezier\", { curviness:80 }],\n" +
-"                anchor:[[ 0.5, 1, 0, -1 ], [ 0.5, 1, 0, -1 ]],\n" +
-"                endpoint:[ \"Rectangle\", { width:1, height:1 } ]\n" +
+"                connector: [\"Bezier\", { curviness:30 }],\n" +
+"                anchors:[\"Right\", \"Right\"],\n" +
+"                endpoint:[ \"Dot\", { radius:5 } ]\n" +
 "            };\n" +    
 "\n" +
 "            var bottomRightLeftBlue = {\n" +
-"                connector: [\"Flowchart\"],\n" +
-"                anchor:[[ 0.75, 1, 0, 1 ], [ 0.25, 1, 0, 1 ]],\n" +
-"                endpoint:[ \"Rectangle\", { width:1, height:1 } ]\n" +
+"                connector: [\"Straight\"],\n" +
+//"                anchor:[[ 0.75, 1, 0, 1 ], [ 0.25, 1, 0, 1 ]],\n" +
+"                anchors:[\"Left\", \"Left\"],\n" +
+"                endpoint:[ \"Dot\", { radius:5 } ]\n" +
 "            };\n" +
 "\n" +
 "            var bottomCenter = {\n" +
 "                connector: [\"Flowchart\"],\n" +
 "                anchor:[[ 0.75, 1, 0, 1 ], [ 0.25, 1, 0, 1 ]],\n" +
-"                endpoint:[ \"Rectangle\", { width:1, height:1 } ]\n" +
+"                endpoint:[ \"Dot\", { radius:5 } ]\n" +
 "            };\n" +
 "\n" +
 "            //The non express connections\n" +
@@ -644,8 +648,8 @@ public class DefaultReports {
 "                var aConnection = jsPlumb.connect({\n" +
 "                    source: nonExpressTriplets[i + 1].toString(),\n" +
 "                    target: nonExpressTriplets[i + 2].toString(),\n" +
-"                    paintStyle:{ stroke:\"blue\", strokeWidth: 3  },\n" +
-"                    endpointStyle:{ fill:\"blue\", outlineStroke:\"blue\", outlineWidth: 1 }\n" +
+"                    paintStyle:{ stroke:\"gray\", strokeWidth: 2  },\n" +
+"                    endpointStyle:{ fill:\"gray\", outlineStroke:\"gray\", outlineWidth: 1 }\n" + //formerly blue
 "                }, bottomRightLeftBlue);\n" +
 "\n" +
 "                connections[nonExpressTriplets[i].toString()] = aConnection;\n" +
@@ -660,8 +664,8 @@ public class DefaultReports {
 "                var aConnection = jsPlumb.connect({\n" +
 "                    source: expressTriplets[i + 1].toString(),\n" +
 "                    target: expressTriplets[i + 2].toString(),\n" +
-"                    paintStyle:{ stroke:\"black\", strokeWidth: 5  },\n" +
-"                    endpointStyle:{ fill:\"black\", outlineStroke:\"black\", outlineWidth: 1 }\n" +
+"                    paintStyle:{ stroke:\"gray\", strokeWidth: 2  },\n" +
+"                    endpointStyle:{ fill:\"gray\", outlineStroke:\"gray\", outlineWidth: 1 }\n" + //formerly black
 "                }, topRightLeft);\n" +
 "                connections[expressTriplets[i].toString()] = aConnection;\n" +
 "            }\n" +
@@ -673,15 +677,15 @@ public class DefaultReports {
 "                var aConnection = jsPlumb.connect({\n" +
 "                    source: nonExpressNonDirectTriplets[i + 1].toString(),\n" +
 "                    target: nonExpressNonDirectTriplets[i + 2].toString(),\n" +
-"                    paintStyle:{ stroke:\"blue\", strokeWidth: 3  },\n" +
-"                    endpointStyle:{ fill:\"blue\", outlineStroke:\"blue\", outlineWidth: 1 }\n" +
+"                    paintStyle:{ stroke:\"gray\", strokeWidth: 2  },\n" +
+"                    endpointStyle:{ fill:\"gray\", outlineStroke:\"gray\", outlineWidth: 1 }\n" +//formerly blue
 "                }, topCenter);\n" +
 "                connections[nonExpressNonDirectTriplets[i].toString()] = aConnection;\n" +
 "            }\n" 
                         + "var transportLinksToBeHighlighted = [" + transportLinksToBeHighlighted + "];\n"
                     + "for (var i = 0; i < transportLinksToBeHighlighted.length; i++) {\n"
                     + "if (connections[transportLinksToBeHighlighted[i].toString()] != undefined) //Transport links outside the ACE network will be ignored\n"
-                    + "connections[transportLinksToBeHighlighted[i].toString()].setPaintStyle({ stroke:\"green\", strokeWidth: 5  });\n"
+                    + "connections[transportLinksToBeHighlighted[i].toString()].setPaintStyle({ stroke:\"red\", strokeWidth: 2  });\n"
                     + "}\n" +
 "        });\n" +
                     
