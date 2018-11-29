@@ -20,7 +20,6 @@ import com.vaadin.server.Page;
 import com.vaadin.shared.ui.ContentMode;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
-import com.vaadin.ui.GridLayout;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Image;
 import com.vaadin.ui.Label;
@@ -29,7 +28,6 @@ import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import java.util.List;
 import java.util.Properties;
-import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -179,7 +177,7 @@ public class TableCreator {
      */
     private Component createIcon(String icon){
         Image image = new Image("", new ExternalResource("/icons/" + icon + ".png"));
-        image.setWidth("100px");
+        image.setWidth("90px");
         return image;
     }
     
@@ -353,6 +351,8 @@ public class TableCreator {
     private HorizontalLayout createCell(Object value){
          HorizontalLayout lytCell = new HorizontalLayout();
             lytCell.addStyleNames("cell" ,"cell-normal");
+            if(value == null)
+                value = "-";
             if(value instanceof String){
                 if(((String)value).length() == 2){
                     lytCell.removeStyleName("cell-normal");
@@ -536,7 +536,7 @@ public class TableCreator {
         lytData.addComponent(titleRow);
         //row
         lytData.addComponent(createRow(port1Btn != null ? port1Btn : "-", port2Btn != null ? port2Btn : "-"));
-        if(mmr != null && rmmr != null){
+        if(mmr != null && !mmr.isEmpty() || rmmr != null && !rmmr.isEmpty()){
             //row
             titleRow = createRow("MMR", "RMMR");
             titleRow.addStyleNames("cell-with-bold-text");
@@ -544,7 +544,7 @@ public class TableCreator {
             //row
             lytData.addComponent(createRow(mmr, rmmr));
         }
-        if(mmr2 != null && rmmr2 != null){
+        if(mmr2 != null && !mmr2.isEmpty() || rmmr2 != null && !rmmr2.isEmpty()){
             //row
             titleRow = createRow("RMMR", "MMR");
             titleRow.addStyleNames("cell-with-bold-text");
@@ -552,6 +552,8 @@ public class TableCreator {
             //row
             lytData.addComponent(createTitleValueRow(mmr2, rmmr2));
         }
+        //row
+        lytData.addComponent(createTitleValueRow(""));
         //row
         String hoster = getHoster(obj);
         if(hoster != null && !hoster.isEmpty())
