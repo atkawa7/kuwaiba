@@ -604,7 +604,7 @@ $v-field-background-color: #ccffe6;
     }
     
     .report-data-container{
-        min-height: 355px;
+        min-height: 360px;
         border-left: solid 1px black;
         border-right: solid 1px black;
         min-width: 250px;
@@ -615,8 +615,9 @@ $v-field-background-color: #ccffe6;
         width: 100%;
     }
     
-    .empty-row{height: 2px; background: #A66131;}
-    .v-slot-empty-row{height: 2px;}
+    .empty-row{height: 3px; background: #d1d1d1;}
+    
+    .v-slot-empty-row{height: 3px;}
 
     .cell{
         text-align: left !important;
@@ -628,9 +629,8 @@ $v-field-background-color: #ccffe6;
         min-width: 120px;
     }
     
-    .cell-short{
-        width: 20%;
-        min-width: 20px;
+    .v-slot-cell-short{
+        min-width: 35px;
     }
     
     .cell-large{
@@ -640,12 +640,13 @@ $v-field-background-color: #ccffe6;
         
     //bottom of the tables in a form
     .device-icon-container{
-        height: 135px;
+        height: 140px;
         width: 100%;
         text-align: center;
         border-left: 1px solid black;
         border-right: 1px solid black; 
         border-bottom: 1px solid black;
+        padding-bottom: 5px;
     }
        
     .report-forms{
@@ -676,37 +677,14 @@ $v-field-background-color: #ccffe6;
         .vc{ background: #ffcc00; }
 
         .v-window-center{ text-align: center; }
-    
-        .cell-with-border{
-            text-align: left !important;
-            padding: 0 2px 0 2px;
-        }
-        .cell-with-border-short-width{
-            width: 100%;
-            min-width: 25px;
-        }
-        .cell-with-border-normal-width{
-            width: 100%;
-            min-width: 125px;
-        }
-        .cell-with-border-long-width{
-            width: 100%;
-            min-width: 250px;
-        }
-        
+           
         .cell-with-border-bottom{ border-bottom: solid 1px black;}
         .cell-with-border-right{ border-right: solid 1px black;}
         .cell-with-border-top{border-top: solid 1px black;}
         .cell-with-border-left{border-left: solid 1px black;}
         .cell-with-bold-text{font-weight: bolder;}
-        
-        .cell-with-img{
-            text-align: center;
-            width: 100%;
-        }
-
+       
         .v-slot-foot {
-            //position: fixed;
             left: 0;
             bottom: 0;
             width: 100%;
@@ -717,10 +695,6 @@ $v-field-background-color: #ccffe6;
             height: auto !important;
         }
     }
-    
-    
-    
-    
     
     //END of end to end View forms
     //Start Rack View
