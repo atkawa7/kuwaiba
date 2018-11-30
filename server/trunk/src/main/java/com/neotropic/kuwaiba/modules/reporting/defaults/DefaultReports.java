@@ -545,7 +545,7 @@ public class DefaultReports {
 "            <div id=\"43951\" class=\"connectable\"><div class=\"label\">Monrovia    <span class=\"note\">Liberia</span></div></div>\n" +
 "            <div id=\"44052\" class=\"connectable\"><div class=\"label\">Freetown    <span class=\"note\">Sierra Leone</span></div></div>\n" +
 "            <div id=\"43888\" class=\"connectable\"><div class=\"label\">Conakry    <span class=\"note\">Guinea</span></div></div>\n" +
-"            <div id=\"43909\" class=\"connectable\"><div class=\"label\">Bissau    <span class=\"note\">Guinea Bissau</span></div></div>\n" +
+"            <div class=\"padding\"><div id=\"43909\" class=\"connectable\"><div class=\"label\">Bissau    <span class=\"note\">Guinea Bissau</span></div></div></div>\n" +
 "            <div id=\"43811\" class=\"connectable\"><div class=\"label\">Banjul    <span class=\"note\">Gambia</span></div></div>\n" +
 "            <div class=\"segment-text\">Segment 2</div> \n" +
 "        </div>\n" +
@@ -556,9 +556,9 @@ public class DefaultReports {
 "            <div id=\"43970\" class=\"connectable\"><div class=\"label\">Nouakchott    <span class=\"note\">Mauritania</span></div></div>\n" +
 "            <div id=\"44071\" class=\"connectable\"><div class=\"label\">Tenerife    <span class=\"note\">Spain</span></div></div>\n" +
 "            <div id=\"44025\" class=\"connectable\"><div class=\"label\">Carcavellos    <span class=\"note\">Portugal</span></div></div>\n" +
-"            <div id=\"44038\" class=\"connectable\"><div class=\"label\">ITConic/Telvent    <span class=\"note\">Portugal</span></div></div>\n" +
+"            <div class=\"padding\"><div id=\"44038\" class=\"connectable\"><div class=\"label\">ITConic/Telvent    <span class=\"note\">Portugal</span></div></div></div>\n" +
 "            <div id=\"43770\" class=\"connectable important\"><div class=\"label\"><b>Penmarch</b>    <span class=\"note\">France</span></div></div>\n" +
-"            <div id=\"43749\" class=\"connectable important\"><div class=\"label\">Paris TH2    <span class=\"note\">South Africa</span></div></div>\n" +
+"            <div id=\"43749\" class=\"connectable important\"><div class=\"label\">Paris TH2    <span class=\"note\">France</span></div></div>\n" +
 "            <div class=\"segment-text\" style=\"left:0\">Segment 1</div> \n" +
 "        </div>\n" +
 "    </div>\n";
@@ -572,7 +572,9 @@ public class DefaultReports {
                     + "<tr><td class=\"generalInfoLabel\">Endpoint A</td><td class=\"generalInfoLabel\">Endpoint B</td></tr>"
                     + "<tr><td class=\"generalInfoValue\">" + theResult.get("equipment").getList().get(0) + ":" + theResult.get("port").getList().get(0).getName() + "</td><td class=\"generalInfoValue\">" + theResult.get("equipment").getList().get(1) + ":" + theResult.get("port").getList().get(1).getName() + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">CARF</td><td class=\"generalInfoLabel\">Legal Owner</td></tr>"
-                    + "<tr><td class=\"generalInfoValue\">" + (theTributaryLink.getAttributes().get("hopCarf") == null ? "Not Set" : theTributaryLink.getAttributes().get("hopCarf")) + "</td><td class=\"generalInfoValue\">" + (theTributaryLink.getAttributes().get("hop2LegalOwner") == null ? "Not Set" : bem.getAttributeValueAsString(tributaryLinkClass, tributaryLinkId, "hop2LegalOwner")) + "</td></tr>"
+                    + "<tr><td class=\"generalInfoValue\">" + (theTributaryLink.getAttributes().get("hopCarf") == null ? "Not Set" : theTributaryLink.getAttributes().get("hopCarf")) + "</td><td class=\"generalInfoValue\">" + (theTributaryLink.getAttributes().get("hop1LegalOwner") == null ? "Not Set" : bem.getAttributeValueAsString(tributaryLinkClass, tributaryLinkId, "hop1LegalOwner")) + "</td></tr>"
+                    + "<tr><td class=\"generalInfoLabel\">MMR</td><td class=\"generalInfoLabel\">Provider ID</td></tr>"
+                    + "<tr><td class=\"generalInfoValue\">" + (theTributaryLink.getAttributes(). get("MMR") == null ? "Not Set" : theTributaryLink.getAttributes().get("MMR")) + "</td><td class=\"generalInfoValue\">" + (theTributaryLink.getAttributes().get("hop1Id") == null ? "Not Set" : theTributaryLink.getAttributes().get("hop1Id")) + "</td></tr>"
                     + "<tr><td class=\"generalInfoLabel\">Customer</td><td class=\"generalInfoLabel\">Demarcation Points</td></tr>"
                     + "<tr><td class=\"generalInfoValue\">" + theResult.get("customer").getList().get(0).getName() + "</td><td class=\"generalInfoValue\">" + demarcationPointsAsSring + "</td></tr></table>";
             
@@ -596,27 +598,20 @@ public class DefaultReports {
                 usedResources += "<script>\n"
                 +    "jsPlumb.ready(function() {\n" +
         "    var connections = {};\n" +                    
-"            var topRightLeft = {\n" +
-"                connector: [\"Bezier\", { curviness:30 }],\n" +
+"            var expressConnections = {\n" +
+"                connector: [\"Flowchart\", { cornerRadius:40 }],\n" +
 "                anchors:[\"Left\", \"Left\"],\n" +
 "                endpoint:[ \"Dot\", { radius:5 } ]\n" +
 "            };\n" +
-"            var topCenter = {\n" +
-"                connector: [\"Bezier\", { curviness:30 }],\n" +
-"                anchors:[\"Right\", \"Right\"],\n" +
+"            var extraConnections = {\n" +
+"                connector: [\"Flowchart\", { stub: [10, 10], cornerRadius: 5, alwaysRespectStubs: true }],\n" +
+"                anchors:[\"Left\", \"Left\"],\n" +
 "                endpoint:[ \"Dot\", { radius:5 } ]\n" +
 "            };\n" +    
 "\n" +
-"            var bottomRightLeftBlue = {\n" +
+"            var nonExpressConnections = {\n" +
 "                connector: [\"Straight\"],\n" +
-//"                anchor:[[ 0.75, 1, 0, 1 ], [ 0.25, 1, 0, 1 ]],\n" +
 "                anchors:[\"Left\", \"Left\"],\n" +
-"                endpoint:[ \"Dot\", { radius:5 } ]\n" +
-"            };\n" +
-"\n" +
-"            var bottomCenter = {\n" +
-"                connector: [\"Flowchart\"],\n" +
-"                anchor:[[ 0.75, 1, 0, 1 ], [ 0.25, 1, 0, 1 ]],\n" +
 "                endpoint:[ \"Dot\", { radius:5 } ]\n" +
 "            };\n" +
 "\n" +
@@ -633,10 +628,10 @@ public class DefaultReports {
 "                   44135,43888,43811,\n" +
 "                   44148,43735,43970,\n" +
 "                   44142,44008,43923,\n" +
-"                   44155,44025,44038,\n" +
 "                   44153,44071,44025,\n" +
 "                   44150,43970,44071,\n" +
 "                   44099,43703,43690,\n" +
+"                   44159,44025,43770,\n" +
 "                   44157,43770,43749,\n" +
 "                   44102,43690,43994,\n" +
 "                   44107,43994,43655,\n" +
@@ -648,9 +643,9 @@ public class DefaultReports {
 "                var aConnection = jsPlumb.connect({\n" +
 "                    source: nonExpressTriplets[i + 1].toString(),\n" +
 "                    target: nonExpressTriplets[i + 2].toString(),\n" +
-"                    paintStyle:{ stroke:\"gray\", strokeWidth: 2  },\n" +
-"                    endpointStyle:{ fill:\"gray\", outlineStroke:\"gray\", outlineWidth: 1 }\n" + //formerly blue
-"                }, bottomRightLeftBlue);\n" +
+"                    paintStyle:{ stroke:\"lightgray\", strokeWidth: 2  },\n" +
+"                    endpointStyle:{ fill:\"lightgray\", outlineStroke:\"lightgray\", outlineWidth:1 }\n" + //formerly blue
+"                }, nonExpressConnections);\n" +
 "\n" +
 "                connections[nonExpressTriplets[i].toString()] = aConnection;\n" +
 "            }\n" +
@@ -664,29 +659,30 @@ public class DefaultReports {
 "                var aConnection = jsPlumb.connect({\n" +
 "                    source: expressTriplets[i + 1].toString(),\n" +
 "                    target: expressTriplets[i + 2].toString(),\n" +
-"                    paintStyle:{ stroke:\"gray\", strokeWidth: 2  },\n" +
-"                    endpointStyle:{ fill:\"gray\", outlineStroke:\"gray\", outlineWidth: 1 }\n" + //formerly black
-"                }, topRightLeft);\n" +
+"                    paintStyle:{ stroke:\"lightgray\", strokeWidth: 2  },\n" +
+"                    endpointStyle:{ fill:\"lightgray\", outlineStroke:\"lightgray\", outlineWidth: 1 }\n" + //formerly black
+"                }, expressConnections);\n" +
 "                connections[expressTriplets[i].toString()] = aConnection;\n" +
 "            }\n" +
 "            \n" +
 "            //The non-express connections that connect the endpoints using the bottom anchors\n" +
 "            var nonExpressNonDirectTriplets = [44146,43735,43909,\n" +
-"                                             44159,44025,43770];\n" +
+"                                             44155,44025,44038 ];\n" +
 "            for (var i = 0; i < nonExpressNonDirectTriplets.length; i = i + 3) {\n" +
 "                var aConnection = jsPlumb.connect({\n" +
 "                    source: nonExpressNonDirectTriplets[i + 1].toString(),\n" +
 "                    target: nonExpressNonDirectTriplets[i + 2].toString(),\n" +
-"                    paintStyle:{ stroke:\"gray\", strokeWidth: 2  },\n" +
-"                    endpointStyle:{ fill:\"gray\", outlineStroke:\"gray\", outlineWidth: 1 }\n" +//formerly blue
-"                }, topCenter);\n" +
+"                    paintStyle:{ stroke:\"lightgray\", strokeWidth: 2  },\n" +
+"                    endpointStyle:{ fill:\"lightgray\", outlineStroke:\"lightgray\", outlineWidth: 1 }\n" +//formerly blue
+"                }, extraConnections);\n" +
 "                connections[nonExpressNonDirectTriplets[i].toString()] = aConnection;\n" +
 "            }\n" 
                         + "var transportLinksToBeHighlighted = [" + transportLinksToBeHighlighted + "];\n"
                     + "for (var i = 0; i < transportLinksToBeHighlighted.length; i++) {\n"
-                    + "if (connections[transportLinksToBeHighlighted[i].toString()] != undefined) //Transport links outside the ACE network will be ignored\n"
-                    + "connections[transportLinksToBeHighlighted[i].toString()].setPaintStyle({ stroke:\"red\", strokeWidth: 2  });\n"
-                    + "}\n" +
+                    + "if (connections[transportLinksToBeHighlighted[i].toString()] != undefined) { //Transport links outside the ACE network will be ignored\n"
+                    + "     connections[transportLinksToBeHighlighted[i].toString()].setPaintStyle({ stroke:\"red\", strokeWidth: 2  });\n"
+                    + "     connections[transportLinksToBeHighlighted[i].toString()].endpoints.forEach(function(endpoint) { endpoint.setPaintStyle({ fill:\"red\" }); });\n"
+                    + "}}\n" +
 "        });\n" +
                     
                     "</script>\n";
@@ -695,7 +691,6 @@ public class DefaultReports {
             
         }
         tributaryLinkUsageReportText += getFooter();
-        
         return new RawReport("Tributary Link Details", "Neotropic SAS","1.2", tributaryLinkUsageReportText);
     }
     
