@@ -3577,7 +3577,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             List<TemplateObjectLight> templateElementChildren = new ArrayList<>();
             while (queryResult.hasNext()) {
                 Node templateChildNode = queryResult.next();
-                templateElementChildren.add(new TemplateObjectLight((String)templateChildNode.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getStartNode().getProperty(Constants.PROPERTY_NAME), 
+                templateElementChildren.add(new TemplateObjectLight((String)templateChildNode.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME), 
                         templateChildNode.getId(), (String)templateChildNode.getProperty(Constants.PROPERTY_NAME)));
             }
             
@@ -3602,7 +3602,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             List<TemplateObjectLight> templateElementChildren = new ArrayList<>();
             while (queryResult.hasNext()) {
                 Node templateChildNode = queryResult.next();
-                templateElementChildren.add(new TemplateObjectLight((String)templateChildNode.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getStartNode().getProperty(Constants.PROPERTY_NAME), 
+                templateElementChildren.add(new TemplateObjectLight((String)templateChildNode.getSingleRelationship(RelTypes.INSTANCE_OF_SPECIAL, Direction.OUTGOING).getEndNode().getProperty(Constants.PROPERTY_NAME), 
                         templateChildNode.getId(), (String)templateChildNode.getProperty(Constants.PROPERTY_NAME)));
             }
             

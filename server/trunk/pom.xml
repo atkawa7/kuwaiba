@@ -51,13 +51,6 @@
             <version>3.0-alpha-2</version>
         </dependency>
         
-        <!-- Used to create interactive wizards, mainly while creating conections -->
-        <dependency>
-           <groupId>org.vaadin.addons</groupId>
-           <artifactId>wizards-for-vaadin</artifactId>
-           <version>1.1.0</version>
-            <type>jar</type>
-        </dependency>
         <!-- Used to support the EventBus implementation -->
         <dependency>
             <groupId>com.google.guava</groupId>

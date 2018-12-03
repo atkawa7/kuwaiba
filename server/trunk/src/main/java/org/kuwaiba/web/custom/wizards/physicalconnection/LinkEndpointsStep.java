@@ -24,36 +24,14 @@ import com.vaadin.ui.VerticalLayout;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.apis.web.gui.navigation.trees.SimpleTree;
-import org.vaadin.teemu.wizards.WizardStep;
 
 /**
  *
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class LinkEndpointsStep implements WizardStep {
+public class LinkEndpointsStep {
 
-    @Override
-    public String getCaption() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Component getContent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean onAdvance() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public boolean onBack() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    
-    
+     
 //    private final NewLinkWizard newLinkWizard;
 //    private DynamicTree treeEndPointA;
 //    private DynamicTree treeEndPointB;

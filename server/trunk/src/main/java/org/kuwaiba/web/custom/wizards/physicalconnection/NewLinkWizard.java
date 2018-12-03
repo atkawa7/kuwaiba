@@ -25,39 +25,14 @@ import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.web.modules.osp.google.overlays.ConnectionPolyline;
-import org.vaadin.teemu.wizards.Wizard;
-import org.vaadin.teemu.wizards.event.WizardCancelledEvent;
-import org.vaadin.teemu.wizards.event.WizardCompletedEvent;
-import org.vaadin.teemu.wizards.event.WizardProgressListener;
-import org.vaadin.teemu.wizards.event.WizardStepActivationEvent;
-import org.vaadin.teemu.wizards.event.WizardStepSetChangedEvent;
+;
 import org.kuwaiba.beans.WebserviceBean;
 
 /**
  * Wizard to guide the creation of physical connections using links
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-public class NewLinkWizard extends Window implements WizardProgressListener, WizardInterface {
-
-    @Override
-    public void activeStepChanged(WizardStepActivationEvent event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void stepSetChanged(WizardStepSetChangedEvent event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void wizardCompleted(WizardCompletedEvent event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void wizardCancelled(WizardCancelledEvent event) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+public class NewLinkWizard extends Window implements WizardInterface {
 
     @Override
     public boolean isWizardCompleted() {
