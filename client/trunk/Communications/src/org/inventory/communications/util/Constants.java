@@ -40,26 +40,6 @@ public class Constants {
      */
     public static final int IPV6_TYPE = 6;
     /**
-     * Name of the validator to indicate if a given class is a container
-     */
-    public static final String VALIDATOR_PHYSICAL_CONTAINER = "physicalContainer";
-    /**
-     * Name of the validator to indicate if a given class is the endpoint to a connection
-     */
-    public static final String VALIDATOR_PHYSICAL_NODE = "physicalNode";
-    /**
-     * Name of the validator to indicate if a given class is the endpoint to a link
-     */
-    public static final String VALIDATOR_SERVICE_INSTANCE = "serviceInstance";
-    /**
-     * All instances of classes tagged with this validator may be related to a subnet
-     */
-    public static final String VALIDATOR_SUBNET = "subnet";
-    /**
-     * The validator to indicate if a given class is a GenericCommunicationsElement
-     */
-    public static final String VALIDATOR_GENERIC_COMMUNICATIONS_ELEMENT = "communicationsElement";
-    /**
      * DummyRoot constant. It's a pseudo class
      */
     public static final String DUMMYROOT = "DummyRoot";
@@ -106,7 +86,11 @@ public class Constants {
     /**
      * Root class of all communications equipment (GenericDataLinkLayerElement, GenericNetworkElement, etc)
      */
-    public static final String CLASS_GENERICCOMMUNICATIONSELEMENT = "GenericCommunicationsElement";    
+    public static final String CLASS_GENERICCOMMUNICATIONSELEMENT = "GenericCommunicationsElement";   
+    /**
+     * Class GenericPhysicalNode
+     */
+    public static final String CLASS_GENERICPHYSICALNODE = "GenericPhysicalNode";
     /**
      * Root class of all network element
      */
