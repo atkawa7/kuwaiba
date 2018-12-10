@@ -198,7 +198,7 @@ public class OutsidePlantViewDashboardWidget extends AbstractDashboardWidget {
                             ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                     
                     if (ospViews.isEmpty())
-                        Notifications.showInfo("There is no saved OSP views");
+                        Notifications.showInfo("There are not OSP views saved at the moment");
                     else {
                         Window wdwOpen = new Window("Open OSP View");
                         VerticalLayout lytContent = new VerticalLayout();

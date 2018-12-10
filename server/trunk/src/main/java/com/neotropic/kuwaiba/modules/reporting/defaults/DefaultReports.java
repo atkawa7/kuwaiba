@@ -596,8 +596,7 @@ public class DefaultReports {
                 }
                 usedResources += "</table>";
                 usedResources += "<script>\n"
-                +    "jsPlumb.ready(function() {\n" +
-        "    var connections = {};\n" +                    
+                +    "jsPlumb.ready(function() {\n" +            
 "            var expressConnections = {\n" +
 "                connector: [\"Flowchart\", { cornerRadius:40 }],\n" +
 "                anchors:[\"Left\", \"Left\"],\n" +
@@ -615,6 +614,7 @@ public class DefaultReports {
 "                endpoint:[ \"Dot\", { radius:5 } ]\n" +
 "            };\n" +
 "\n" +
+"            var transportLinksToBeHighlighted = [" + transportLinksToBeHighlighted + "];\n\n" +
 "            //The non express connections\n" +
 "            var nonExpressTriplets = [\n" +
 "                   44121,43938,43951,\n" +
@@ -638,53 +638,75 @@ public class DefaultReports {
 "                   44111,43721,44085,\n" +
 "                   44109,43655,43721,\n" +
 "                   44113,44085,43796\n" +
-"            ];\n" +
+"            ];\n\n" +
+"            var nonExpressHighlighted = [];\n" +
 "            for (var i = 0; i < nonExpressTriplets.length; i = i + 3) {\n" +
-"                var aConnection = jsPlumb.connect({\n" +
-"                    source: nonExpressTriplets[i + 1].toString(),\n" +
-"                    target: nonExpressTriplets[i + 2].toString(),\n" +
-"                    paintStyle:{ stroke:\"lightgray\", strokeWidth: 2  },\n" +
-"                    endpointStyle:{ fill:\"lightgray\", outlineStroke:\"lightgray\", outlineWidth:1 }\n" + //formerly blue
-"                }, nonExpressConnections);\n" +
-"\n" +
-"                connections[nonExpressTriplets[i].toString()] = aConnection;\n" +
+"                if (transportLinksToBeHighlighted.indexOf(nonExpressTriplets[i]) == -1)\n" +
+"                    jsPlumb.connect({\n" +
+"                        source: nonExpressTriplets[i + 1].toString(),\n" +
+"                        target: nonExpressTriplets[i + 2].toString(),\n" +
+"                        paintStyle:{ stroke:\"lightgray\", strokeWidth: 2  },\n" +
+"                        endpointStyle:{ fill:\"lightgray\", outlineStroke:\"lightgray\", outlineWidth:1 }\n" +
+"                    }, nonExpressConnections);\n" +
+"                else\n" +
+"                    nonExpressHighlighted.push({\n" +
+"                        source: nonExpressTriplets[i + 1].toString(),\n" +
+"                        target: nonExpressTriplets[i + 2].toString(),\n" +
+"                        paintStyle:{ stroke:\"red\", strokeWidth: 2  },\n" +
+"                        endpointStyle:{ fill:\"red\", outlineStroke:\"red\", outlineWidth:1 }\n" +
+"                    });\n" +
 "            }\n" +
 "\n" +
 "            //The express connections\n" +
 "            var expressTriplets = [44104, 43690, 44085,\n" +
 "                                 44116, 44085, 43938, \n" +
 "                                 44119, 43938, 43735, \n" +
-"                                 44162, 43735, 43770];\n" +
+"                                 44162, 43735, 43770];\n\n" +
+"            var expressHighlighted = [];\n" +
 "            for (var i = 0; i < expressTriplets.length; i = i + 3) {\n" +
-"                var aConnection = jsPlumb.connect({\n" +
-"                    source: expressTriplets[i + 1].toString(),\n" +
-"                    target: expressTriplets[i + 2].toString(),\n" +
-"                    paintStyle:{ stroke:\"lightgray\", strokeWidth: 2  },\n" +
-"                    endpointStyle:{ fill:\"lightgray\", outlineStroke:\"lightgray\", outlineWidth: 1 }\n" + //formerly black
-"                }, expressConnections);\n" +
-"                connections[expressTriplets[i].toString()] = aConnection;\n" +
+"                if (transportLinksToBeHighlighted.indexOf(expressTriplets[i]) == -1)\n" +
+"                    jsPlumb.connect({\n" +
+"                        source: expressTriplets[i + 1].toString(),\n" +
+"                        target: expressTriplets[i + 2].toString(),\n" +
+"                        paintStyle:{ stroke:\"lightgray\", strokeWidth: 2  },\n" +
+"                        endpointStyle:{ fill:\"lightgray\", outlineStroke:\"lightgray\", outlineWidth: 1 }\n" +
+"                    }, expressConnections);\n" +
+"                else\n" +
+"                    expressHighlighted.push({\n" +
+"                        source: expressTriplets[i + 1].toString(),\n" +
+"                        target: expressTriplets[i + 2].toString(),\n" +
+"                        paintStyle:{ stroke:\"red\", strokeWidth: 2  },\n" +
+"                        endpointStyle:{ fill:\"red\", outlineStroke:\"red\", outlineWidth: 1 }\n" +
+"                    });\n" +
 "            }\n" +
 "            \n" +
 "            //The non-express connections that connect the endpoints using the bottom anchors\n" +
 "            var nonExpressNonDirectTriplets = [44146,43735,43909,\n" +
 "                                             44155,44025,44038 ];\n" +
+"            var nonExpressNonDirectHighlighted = [];\n" +
 "            for (var i = 0; i < nonExpressNonDirectTriplets.length; i = i + 3) {\n" +
-"                var aConnection = jsPlumb.connect({\n" +
-"                    source: nonExpressNonDirectTriplets[i + 1].toString(),\n" +
-"                    target: nonExpressNonDirectTriplets[i + 2].toString(),\n" +
-"                    paintStyle:{ stroke:\"lightgray\", strokeWidth: 2  },\n" +
-"                    endpointStyle:{ fill:\"lightgray\", outlineStroke:\"lightgray\", outlineWidth: 1 }\n" +//formerly blue
-"                }, extraConnections);\n" +
-"                connections[nonExpressNonDirectTriplets[i].toString()] = aConnection;\n" +
-"            }\n" 
-                        + "var transportLinksToBeHighlighted = [" + transportLinksToBeHighlighted + "];\n"
-                    + "for (var i = 0; i < transportLinksToBeHighlighted.length; i++) {\n"
-                    + "if (connections[transportLinksToBeHighlighted[i].toString()] != undefined) { //Transport links outside the ACE network will be ignored\n"
-                    + "     connections[transportLinksToBeHighlighted[i].toString()].setPaintStyle({ stroke:\"red\", strokeWidth: 2  });\n"
-                    + "     connections[transportLinksToBeHighlighted[i].toString()].endpoints.forEach(function(endpoint) { endpoint.setPaintStyle({ fill:\"red\" }); });\n"
-                    + "}}\n" +
-"        });\n" +
-                    
+"                if (transportLinksToBeHighlighted.indexOf(nonExpressNonDirectTriplets[i]) == -1)\n" +
+"                    jsPlumb.connect({\n" +
+"                        source: nonExpressNonDirectTriplets[i + 1].toString(),\n" +
+"                        target: nonExpressNonDirectTriplets[i + 2].toString(),\n" +
+"                        paintStyle:{ stroke:\"lightgray\", strokeWidth: 2  },\n" +
+"                        endpointStyle:{ fill:\"lightgray\", outlineStroke:\"lightgray\", outlineWidth: 1 }\n" +
+"                    }, extraConnections);\n" +
+"                else\n" +
+"                    nonExpressNonDirectHighlighted.push({\n" +
+"                        source: nonExpressNonDirectTriplets[i + 1].toString(),\n" +
+"                        target: nonExpressNonDirectTriplets[i + 2].toString(),\n" +
+"                        paintStyle:{ stroke:\"red\", strokeWidth: 2  },\n" +
+"                        endpointStyle:{ fill:\"red\", outlineStroke:\"red\", outlineWidth: 1 }\n" +
+"                    });\n" +
+"            }\n" + 
+"            for (var i = 0; i < nonExpressHighlighted.length; i++)\n" +
+"               jsPlumb.connect(nonExpressHighlighted[i], nonExpressConnections);\n" +
+"            for (var i = 0; i < expressHighlighted.length; i++)\n" +
+"               jsPlumb.connect(expressHighlighted[i], expressConnections);\n" +
+"            for (var i = 0; i < nonExpressNonDirectHighlighted.length; i++) \n" +
+"               jsPlumb.connect(nonExpressNonDirectHighlighted[i], extraConnections);\n" +
+"        });\n" +                    
                     "</script>\n";
             }
             tributaryLinkUsageReportText += usedResources;
