@@ -1,10 +1,20 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
+ * 
+ *   Licensed under the EPL License, Version 1.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *        http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
  */
 package com.neotropic.kuwaiba.modules.reporting.img;
 
+import com.neotropic.kuwaiba.modules.reporting.img.endtoend.EndToEndViewScene;
 import com.neotropic.kuwaiba.modules.reporting.img.rackview.DeviceLayoutRenderer;
 import com.neotropic.kuwaiba.modules.reporting.img.rackview.DeviceLayoutScene;
 import com.neotropic.kuwaiba.modules.reporting.img.rackview.RackViewImage;
@@ -24,10 +34,14 @@ import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException;
 import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.metadata.MetadataEntityManager;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObject;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteViewObjectLight;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
+import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.kuwaiba.web.procmanager.rackview.ComponentRackView;
 import org.netbeans.api.visual.anchor.AnchorFactory;
@@ -37,7 +51,7 @@ import org.openide.util.Exceptions;
 
 /**
  *
- * @author adrian
+ * @author Adrian Martinez {@literal <adrian.martinez@kuwaiba.org>}, Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class SceneExporter {
     
@@ -55,6 +69,57 @@ public class SceneExporter {
             SceneExporter.mem = PersistenceService.getInstance().getMetadataEntityManager();//mem;
         }
         return sceneExporter;
+    }
+    
+    public String buildEndToEndView(String ipAddress, RemoteSession remoteSession, WebserviceBean webserviceBean, String serviceClassName, long serviceId) {
+        RemoteObjectLight rol = null;
+        try {
+            rol = webserviceBean.getObjectLight(serviceClassName, serviceId, ipAddress, remoteSession.getSessionId());
+        } catch (ServerSideException ex) {
+            Notifications.showError(ex.getMessage());
+            return null;
+        }
+        EndToEndViewScene scene = new EndToEndViewScene(ipAddress, remoteSession, webserviceBean); 
+        
+        List<RemoteViewObjectLight> serviceViews = null;
+        try {
+            serviceViews = webserviceBean.getObjectRelatedViews(serviceId, serviceClassName, -1, 10, ipAddress, remoteSession.getSessionId());
+        } catch (ServerSideException ex) {
+            Notifications.showError(ex.getMessage());
+        }
+        
+        if (serviceViews != null) {
+            RemoteViewObject currentView = null;
+            
+            for (RemoteViewObjectLight serviceView : serviceViews) {
+                if (EndToEndViewScene.VIEW_CLASS.equals(serviceView.getViewClassName())) {
+                    try {
+                        currentView = webserviceBean.getObjectRelatedView(serviceId, serviceClassName, serviceView.getId(), ipAddress, remoteSession.getSessionId());
+                    } catch (ServerSideException ex) {
+                        Notifications.showError(ex.getMessage());
+                        return null;
+                    }
+                    break;
+                }
+            }
+            if (currentView != null)
+                scene.render(currentView.getStructure());
+            scene.render(rol);
+                        
+            try {
+                org.netbeans.api.visual.export.SceneExporter.createImage(scene,
+                        new File(PATH + serviceClassName + "_" + serviceId +".png"),
+                        org.netbeans.api.visual.export.SceneExporter.ImageType.PNG,
+                        org.netbeans.api.visual.export.SceneExporter.ZoomType.ACTUAL_SIZE,
+                        false, false, 100,
+                        0,  //Not used
+                        0); //Not used
+                return serviceClassName + "_" + serviceId +".png";
+            } catch (Exception ex) {
+                Notifications.showError(ex.getMessage());
+            }
+        }
+        return null;        
     }
     
     public String buildRackView(

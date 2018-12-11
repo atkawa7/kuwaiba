@@ -208,7 +208,12 @@ public class ProcessInstanceBean {
     
     public String getDeleteButtonCaption() {
         //return deleteEnable() ? "Delete" : "";
-        return "Delete";
+        //return "Delete";
+        return "<span class=\"v-icon\" style=\"font-family: "
+            + VaadinIcons.TRASH.getFontFamily()
+            + "\">&#x"
+            + Integer.toHexString(VaadinIcons.TRASH.getCodepoint())
+            + ";</span>";
     }
     
     public String getEditButtonCaption() {
