@@ -22,4 +22,9 @@ import java.util.List;
  */
 public interface ScriptQueryExecutor {
     Object execute(String scriptQueryName, List<String> parameterNames, List<String> parameterValues);
+    /**
+     * Sets debug equal true to show the error messages
+     * @param debug true to enable error messages
+     */
+    void setDebug(boolean debug);
 }

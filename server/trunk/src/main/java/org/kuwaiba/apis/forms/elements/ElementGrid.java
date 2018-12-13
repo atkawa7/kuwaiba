@@ -202,9 +202,11 @@ public class ElementGrid extends AbstractElement {
                 
                 if (Constants.Property.SELECTED_ROW.equals(event.getPropertyName())) {
                     setSelectedRow((long) event.getNewValue());
+                    firePropertyChangeEvent();
                 }
                 if (Constants.Property.ROWS.equals(event.getPropertyName())) {
                     setRows((List<List<Object>>) event.getNewValue());
+                    firePropertyChangeEvent();
                 }
             }
         }

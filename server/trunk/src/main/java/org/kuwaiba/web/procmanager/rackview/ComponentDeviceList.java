@@ -15,12 +15,16 @@
 package org.kuwaiba.web.procmanager.rackview;
 
 import com.vaadin.event.LayoutEvents;
+import com.vaadin.server.Page;
 import com.vaadin.shared.ui.dnd.EffectAllowed;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.dnd.DragSourceExtension;
 import java.util.List;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.exceptions.ServerSideException;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 
 /**
@@ -29,9 +33,11 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
  */
 public class ComponentDeviceList extends VerticalLayout {
     private final WebserviceBean webserviceBean;
+    private final RemoteSession remoteSession;
     
-    public ComponentDeviceList(List<RemoteObject> deviceList, WebserviceBean webserviceBean) {
+    public ComponentDeviceList(List<RemoteObject> deviceList, WebserviceBean webserviceBean, RemoteSession remoteSession) {
         this.webserviceBean = webserviceBean;
+        this.remoteSession = remoteSession;
         
         setWidth(100, Unit.PERCENTAGE);
         setHeightUndefined();
@@ -49,6 +55,15 @@ public class ComponentDeviceList extends VerticalLayout {
         }
                 
         for (RemoteObject device : deviceList) {
+            
+            try {
+                if (!webserviceBean.hasAttribute(device.getClassName(), "rackUnits", Page.getCurrent().getWebBrowser().getAddress(), remoteSession.getSessionId()) ||
+                    !webserviceBean.hasAttribute(device.getClassName(), "position", Page.getCurrent().getWebBrowser().getAddress(), remoteSession.getSessionId())) {
+                    continue;
+                }
+            } catch (ServerSideException ex) {
+                Notifications.showError(ex.getMessage());
+            }
             
             ComponentDevice componentDevice = new ComponentDevice(device, webserviceBean);
             

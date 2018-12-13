@@ -43,6 +43,7 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
     private final RemoteSession session;
     private final RemoteProcessInstance processInstance;
     private final List<RemoteScriptQuery> scriptQueries;
+    private boolean debug = true;
         
     public ScriptQueryExecutorImpl(WebserviceBean wsBean, RemoteSession session, RemoteProcessInstance processInstance) {
         this.wsBean = wsBean;
@@ -60,6 +61,11 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
     }
     
     @Override
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+    
+    @Override
     public Object execute(String scriptQueryName, List<String> parameterNames, List<String> parameterValues) {
         // The Keyword "shared" is used as Function Name to get to the execution 
         // of a Script Query the Artifacts shared values
@@ -69,6 +75,8 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
             
             if (paramValue0.equals("__processInstanceId__"))
                 return String.valueOf(processInstance.getId());
+            if (paramValue0.equals("__userName__") && session != null)
+                return session.getUsername();
             
             if (parameterValues.size() == 2) {
                                                 
@@ -97,7 +105,8 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                         }
                     }
                 } catch (ServerSideException ex) {
-                    Notifications.showError(ex.getMessage());
+                    if (debug)
+                        Notifications.showError(ex.getMessage());                    
                     return null;
                 }
                 if (remoteArtifact != null) {
@@ -130,8 +139,8 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                                         return wsBean.getObjectLight(objClassName, objId, Page.getCurrent().getWebBrowser().getAddress(), session.getSessionId());
                                         
                                     } catch (ServerSideException ex) {
-                                        
-                                        Notifications.showError(ex.getMessage());
+                                        if (debug)
+                                            Notifications.showError(ex.getMessage());
                                         return sharedInfo.get(sharedId + Constants.Attribute.OBJECT_NAME);
                                     }
                                 }
@@ -184,7 +193,8 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                             }
 
                         } catch (ServerSideException ex) {
-                            Notifications.showError(ex.getMessage());
+                            if (debug)
+                                Notifications.showError(ex.getMessage());
                         }
                     }
                 }

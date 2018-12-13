@@ -69,8 +69,9 @@ public class MiniAppRackSelector extends AbstractMiniApplication<Component, Comp
                     selectedDevices.add(child);                
                 }
                 if (!selectedDevices.isEmpty()) {
+                    RemoteSession remoteSession = (RemoteSession) UI.getCurrent().getSession().getAttribute("session");
                     
-                    ComponentDeviceList componentDeviceList = new ComponentDeviceList(selectedDevices, wsBean);
+                    ComponentDeviceList componentDeviceList = new ComponentDeviceList(selectedDevices, wsBean, remoteSession);
                     ComponentRackSelector componentRackSelector = new ComponentRackSelector(componentDeviceList, wsBean);
 
                     return componentRackSelector;

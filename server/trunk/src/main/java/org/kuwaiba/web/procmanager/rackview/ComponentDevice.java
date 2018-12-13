@@ -1,7 +1,16 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
+ * 
+ *   Licensed under the EPL License, Version 1.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *        http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
  */
 package org.kuwaiba.web.procmanager.rackview;
 
@@ -14,46 +23,46 @@ import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 
 /**
- *
- * @author johnyortega
+ * Graphical representation of a device.
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
-    public class ComponentDevice extends VerticalLayout {
-        private Label lblDevice;
-        private Image imgDevice;
-        private final WebserviceBean webserviceBean;        
-        private final RemoteObject device;
-        
-        public ComponentDevice(RemoteObject device, WebserviceBean webserviceBean) {
-            this.webserviceBean = webserviceBean;
-            this.device = device;
-            initializeComponent();
-        }
-        
-        private void initializeComponent() {
-            lblDevice = new Label(device.getName() + " [" + device.getClassName() + "]");
-            lblDevice.addStyleName(ValoTheme.LABEL_LARGE);
-            lblDevice.addStyleName(ValoTheme.LABEL_BOLD);
-                                
-            addComponent(lblDevice);
-            setComponentAlignment(lblDevice, Alignment.MIDDLE_CENTER);
-            
-            int rackUnits = device.getAttribute("rackUnits") != null ? Integer.valueOf(device.getAttribute("rackUnits")) : 0;
-            
-            if (rackUnits > 0) {
-                imgDevice = ComponentRackView.getImage(device, rackUnits, webserviceBean);
-                
-                if (imgDevice != null) {
-                    addComponent(imgDevice);
-                    setComponentAlignment(imgDevice, Alignment.MIDDLE_CENTER);
-                }
+public class ComponentDevice extends VerticalLayout {
+    private Label lblDevice;
+    private Image imgDevice;
+    private final WebserviceBean webserviceBean;        
+    private final RemoteObject device;
+
+    public ComponentDevice(RemoteObject device, WebserviceBean webserviceBean) {
+        this.webserviceBean = webserviceBean;
+        this.device = device;
+        initializeComponent();
+    }
+
+    private void initializeComponent() {
+        lblDevice = new Label(device.getName() + " [" + device.getClassName() + "]");
+        lblDevice.addStyleName(ValoTheme.LABEL_LARGE);
+        lblDevice.addStyleName(ValoTheme.LABEL_BOLD);
+
+        addComponent(lblDevice);
+        setComponentAlignment(lblDevice, Alignment.MIDDLE_CENTER);
+
+        int rackUnits = device.getAttribute("rackUnits") != null ? Integer.valueOf(device.getAttribute("rackUnits")) : 0;
+
+        if (rackUnits > 0) {
+            imgDevice = ComponentRackView.getImage(device, rackUnits, webserviceBean);
+
+            if (imgDevice != null) {
+                addComponent(imgDevice);
+                setComponentAlignment(imgDevice, Alignment.MIDDLE_CENTER);
             }
         }
-        
-        public Image getImgDevice() {
-            return imgDevice;
-        }
-        
-        public RemoteObject getDevice() {
-            return device;
-        }
     }
+
+    public Image getImgDevice() {
+        return imgDevice;
+    }
+
+    public RemoteObject getDevice() {
+        return device;
+    }
+}

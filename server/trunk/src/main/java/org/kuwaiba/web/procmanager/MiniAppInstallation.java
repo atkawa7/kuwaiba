@@ -196,7 +196,8 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
         btnRackView.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                ComponentDeviceList componentDeviceList = new ComponentDeviceList(updateMaterials(), wsBean);
+                RemoteSession remoteSession = (RemoteSession) UI.getCurrent().getSession().getAttribute("session");
+                ComponentDeviceList componentDeviceList = new ComponentDeviceList(updateMaterials(), wsBean, remoteSession);
 
                 ComponentRackSelector componentRackSelector = new ComponentRackSelector(componentDeviceList, wsBean);
 

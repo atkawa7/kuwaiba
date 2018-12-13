@@ -33,6 +33,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessDefinition
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteProcessInstance;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteArtifact;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteParallelActivityDefinition;
 
 /**
@@ -194,8 +195,18 @@ public class ProcessGraph extends Panel {
                     for (int i = 0; i < pathSize; i += 1) {
 
                         Graph.Node b = activities.get(path.get(i));
-                        if (b != null)
-                            vizComponent.addCss(b, "fill", "#c0d5f7");                        
+                        if (b != null) {
+                            try {                            
+                                RemoteArtifact ra = wsBean.getArtifactForActivity(
+                                    processInstance.getId(), 
+                                    path.get(i).getId(), 
+                                    Page.getCurrent().getWebBrowser().getAddress(), 
+                                    remoteSession.getSessionId());
+                                if (ra != null)
+                                    vizComponent.addCss(b, "fill", "#c0d5f7");
+                            } catch (ServerSideException ex) {
+                            }
+                        }
                     }
                 }
             } catch (ServerSideException ex) {
