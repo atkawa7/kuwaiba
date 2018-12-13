@@ -22,6 +22,7 @@ import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.core.LocalValidator;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
@@ -82,7 +83,7 @@ public class MoveLinksIntoContainerAction  extends GenericObjectNodeAction{
             parent = parents.get(0);
             for (int i=1; i<parents.size(); i++) {
                 if (!parent.equals(parents.get(i))) {
-                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, "no same parent");
+                    NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, "There is no common parent between the selected objects");
                     return;
                 }
             }
@@ -167,7 +168,7 @@ public class MoveLinksIntoContainerAction  extends GenericObjectNodeAction{
     }
     
     @Override
-    public String[] getValidators() {
+    public LocalValidator[] getValidators() {
         return null;
     }
 
@@ -178,7 +179,7 @@ public class MoveLinksIntoContainerAction  extends GenericObjectNodeAction{
 
     @Override
     public String[] appliesTo() {
-        return new String[] {Constants.CLASS_GENERICPHYSICALLINK};
+        return new String[] { Constants.CLASS_GENERICPHYSICALLINK };
     }    
     
     @Override

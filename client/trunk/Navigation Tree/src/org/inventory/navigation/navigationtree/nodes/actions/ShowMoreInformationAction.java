@@ -22,6 +22,7 @@ import javax.swing.JTextPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.core.LocalValidator;
 
 /**
  * Shows the database id of the selected object. Useful for troubleshooting purposes. It will also show the object's complete containment structure.
@@ -67,7 +68,7 @@ public final class ShowMoreInformationAction extends GenericObjectNodeAction {
     }
 
     @Override
-    public String[] getValidators() {
+    public LocalValidator[] getValidators() {
         return null; //Enable this action for any object
     }
 

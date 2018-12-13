@@ -18,6 +18,7 @@ package com.neotropic.inventory.modules.contracts.nodes.actions.generic;
 import java.awt.event.ActionEvent;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.core.LocalValidator;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
@@ -44,7 +45,7 @@ public class GeneralPurposeDeleteContractAction extends GenericObjectNodeAction 
     }
 
     @Override
-    public String[] getValidators() {
+    public LocalValidator[] getValidators() {
         return null;
     }
     

@@ -28,6 +28,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalContact;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.core.LocalValidator;
 import org.inventory.core.contacts.ContactsTable;
 import org.inventory.core.contacts.ContactsTableModel;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -93,7 +94,7 @@ public class ShowContactsAction extends GenericObjectNodeAction {
     }
 
     @Override
-    public String[] getValidators() {
+    public LocalValidator[] getValidators() {
         return null;
     }
 }

@@ -19,6 +19,7 @@ package org.kuwaiba.management.services.nodes.actions;
 import java.awt.event.ActionEvent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.core.LocalValidator;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.i18n.I18N;
 import org.inventory.navigation.navigationtree.nodes.actions.ActionsGroupType;
@@ -52,7 +53,7 @@ public class ShowServiceTopologyViewAction extends GenericObjectNodeAction {
     }
     
     @Override
-    public String[] getValidators() {
+    public LocalValidator[] getValidators() {
         return null;
     }
 

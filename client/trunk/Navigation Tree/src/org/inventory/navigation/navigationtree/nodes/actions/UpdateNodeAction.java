@@ -20,6 +20,7 @@ import java.awt.event.ActionEvent;
 import static javax.swing.Action.SMALL_ICON;
 import javax.swing.JMenuItem;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.core.LocalValidator;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.util.ImageUtilities;
 import org.openide.util.actions.Presenter;
@@ -54,7 +55,7 @@ public final class UpdateNodeAction extends GenericObjectNodeAction implements P
     }
 
     @Override
-    public String[] getValidators() {
+    public LocalValidator[] getValidators() {
         return null; //Enable this action for any object
     }
 

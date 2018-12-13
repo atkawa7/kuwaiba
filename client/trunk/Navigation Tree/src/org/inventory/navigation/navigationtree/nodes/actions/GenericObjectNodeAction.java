@@ -18,6 +18,7 @@ package org.inventory.navigation.navigationtree.nodes.actions;
 import java.util.ArrayList;
 import java.util.List;
 import org.inventory.communications.core.LocalObjectLight;
+import org.inventory.communications.core.LocalValidator;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.openide.util.Lookup;
@@ -56,7 +57,7 @@ public abstract class GenericObjectNodeAction extends GenericInventoryAction {
      * @return A validator. A string that declares a particular condition in an object (for example, saying that a port is already connected). Use null if this action can be applied to any object
      * You can add your own if the server supports them
      */
-    public abstract String[] getValidators();
+    public abstract LocalValidator[] getValidators();
     /**
      * Instances of these classes are eligible to perform this action. Abstract and super classes are allowed
      * @return An array with the class names

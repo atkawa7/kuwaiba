@@ -19,6 +19,7 @@ package org.inventory.navigation.navigationtree.nodes.actions;
 import java.awt.event.ActionEvent;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.core.LocalValidator;
 import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.inventory.navigation.navigationtree.windows.ObjectEditorTopComponent;
 
@@ -58,7 +59,7 @@ public final class EditObjectAction extends GenericObjectNodeAction {
     }
 
     @Override
-    public String[] getValidators() {
+    public LocalValidator[] getValidators() {
         return null; //Enable this action for any object
     }
 

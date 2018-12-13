@@ -21,6 +21,7 @@ import java.util.List;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.core.LocalValidator;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.util.Utils;
 import org.inventory.navigation.navigationtree.nodes.actions.GenericObjectNodeAction;
@@ -98,7 +99,7 @@ public class ConnectMultipleMirrorPortAction extends GenericObjectNodeAction {
     }
    
     @Override
-    public String[] getValidators() {
+    public LocalValidator[] getValidators() {
         return null;
     }  
 

@@ -569,7 +569,7 @@ public class CommunicationsStub {
      * @param objectClass Class of the object to get the parent from
      * @param objectId Id of the object to get the parent from
      * @param objectToMatchClassName Class of the object that will limit the search. It can be a superclass, if you want to match many classes at once
-     * @return The the first occurrence of a parent with a given class. If no instance of that class is found, the child of Dummy Root related in this hierarchy will be returned
+     * @return The the first occurrence of a parent with a given class. If no instance of that class is found, the Dummy Root will be returned
      */
     public LocalObjectLight getFirstParentOfClass(String objectClass, long objectId, String objectToMatchClassName) {
         try {
@@ -2430,6 +2430,33 @@ public class CommunicationsStub {
     public boolean disconnectPhysicalConnection(String connectionClass, long connectionId, int sideToDisconnect) {
         try {
             service.disconnectPhysicalConnection(connectionClass, connectionId, sideToDisconnect, session.getSessionId());
+            return true;
+        }catch(Exception ex){
+            this.error =  ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Changes one or both sides (endpoints) of a physical connection (link or container). Use this method carefully in containers, as it does not check 
+     * if the endpoints of the links inside the container that was reconnected are consistent with its new endpoints. Also note that 
+     * when used in physical links, the link will NOT be moved (as in the special containment hierarchy) to the nearest common parent of both endpoints. 
+     * This method can not be used to <i>disconnect</i> connections, to do that use {@link #disconnectPhysicalConnection(java.lang.String, long, int, java.lang.String) }.
+     * @param connectionClass The class of the connection to be modified
+     * @param connectionId The id of the connection to be modified
+     * @param newASideClass The class of the new side A of the connection. Use null if this side is not to be changed.
+     * @param newASideId The id of the new side A of the connection. Use -1 if this side is not to be changed.
+     * @param newBSideClass The class of the new side B of the connection. Use null if this side is not to be changed.
+     * @param newBSideId The id of the new side B of the connection. Use -1 if this side is not to be changed.
+     * @return false, If any of the objects provided could not be found or if the new endpoint is not a port (if reconnecting a link) or if it is a port 
+     * (if reconnecting a container). True in case of success
+     */
+    public boolean reconnectPhysicalConnection(String connectionClass, long connectionId, 
+                                      String newASideClass, long newASideId,
+                                      String newBSideClass, long newBSideId) {
+        try {
+            service.reconnectPhysicalConnection(connectionClass, connectionId, newASideClass, newASideId,
+                                      newBSideClass, newBSideId, session.getSessionId());
             return true;
         }catch(Exception ex){
             this.error =  ex.getMessage();

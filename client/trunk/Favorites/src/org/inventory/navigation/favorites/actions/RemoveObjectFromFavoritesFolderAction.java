@@ -26,6 +26,7 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalFavoritesFolder;
 import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.communications.core.LocalPrivilege;
+import org.inventory.communications.core.LocalValidator;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.actions.ComposedAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
@@ -51,7 +52,7 @@ public class RemoveObjectFromFavoritesFolderAction extends GenericObjectNodeActi
     }
     
     @Override
-    public String[] getValidators() {
+    public LocalValidator[] getValidators() {
         return null; //Enable this action for any object
     }
 
