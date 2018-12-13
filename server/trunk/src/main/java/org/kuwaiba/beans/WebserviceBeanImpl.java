@@ -1815,13 +1815,13 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("createPhysicalConnection", ipAddress, sessionId);
             
-            if (!mem.isSubClass("GenericPhysicalConnection", connectionClass)) //NOI18N
+            if (!mem.isSubClass(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not subclass of GenericPhysicalConnection", connectionClass)); //NOI18N
 
             boolean isLink = false;
             
             //Check if the endpoints are already connected, but only if the connection is a link (the endpoints are ports)
-            if (mem.isSubClass("GenericPhysicalLink", connectionClass)) { //NOI18N
+            if (mem.isSubClass(Constants.CLASS_GENERICPHYSICALLINK, connectionClass)) { //NOI18N
                 
                 if (!mem.isSubClass("GenericPort", aObjectClass) || !mem.isSubClass("GenericPort", bObjectClass)) //NOI18N
                     throw new ServerSideException("One of the endpoints provided is not a port");
@@ -1873,7 +1873,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("getConnectionEndpoints", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericPhysicalConnection", connectionClass)) //NOI18N
+            if (!mem.isSubClass(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a physical connection", connectionClass));
 
             List<BusinessObjectLight> endpointA = bem.getSpecialAttribute(connectionClass, connectionId, "endpointA"); //NOI18N
@@ -1888,7 +1888,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public void connectPhysicalLinks(String[] sideAClassNames, Long[] sideAIds, 
-                String[] linksClassNames, Long[] linksIds, String[] sideBClassNames, 
+                String[] linksClassNames, long[] linksIds, String[] sideBClassNames, 
                 Long[] sideBIds, String ipAddress, String sessionId) throws ServerSideException{
 
         if (bem == null || aem == null)
@@ -1897,7 +1897,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.validateWebServiceCall("connectPhysicalLinks", ipAddress, sessionId);
             for (int i = 0; i < sideAClassNames.length; i++){
                 
-                if (linksClassNames[i] != null && !mem.isSubClass("GenericPhysicalLink", linksClassNames[i])) //NOI18N
+                if (linksClassNames[i] != null && !mem.isSubClass(Constants.CLASS_GENERICPHYSICALLINK, linksClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Class %s is not a physical link", linksClassNames[i]));
                 if (sideAClassNames[i] != null && !mem.isSubClass("GenericPort", sideAClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Class %s is not a port", sideAClassNames[i]));
@@ -1944,6 +1944,10 @@ public class WebserviceBeanImpl implements WebserviceBean {
                     else
                         throw new ServerSideException(String.format("Link %s already has an endpoint B", bem.getObjectLight(linksClassNames[i], linksIds[i])));
                 }
+                
+                //Once the link has been connected, we have to check if the parent is consistent with the new endpoints
+                //(that is, unless the link is inside a container. In that case, the container is respected as parent)
+                //getParent(ipAddress, i, ipAddress, sessionId)
             }
             aem.createGeneralActivityLogEntry(getUserNameFromSession(sessionId), 
                 ActivityLogEntry.ACTIVITY_TYPE_CREATE_RELATIONSHIP_INVENTORY_OBJECT, 
@@ -1955,7 +1959,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
     
     @Override
     public void connectPhysicalContainers(String[] sideAClassNames, Long[] sideAIds, 
-                String[] containersClassNames, Long[] containersIds, String[] sideBClassNames, 
+                String[] containersClassNames, long[] containersIds, String[] sideBClassNames, 
                 Long[] sideBIds, String ipAddress, String sessionId) throws ServerSideException{
 
         if (bem == null || aem == null)
@@ -1964,11 +1968,11 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.validateWebServiceCall("connectPhysicalContainers", ipAddress, sessionId);
             for (int i = 0; i < sideAClassNames.length; i++){
                 
-                if (containersClassNames[i] != null && !mem.isSubClass("GenericPhysicalContainer", containersClassNames[i])) //NOI18N
+                if (containersClassNames[i] != null && !mem.isSubClass(Constants.CLASS_GENERICPHYSICALCONTAINER, containersClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Class %s is not a physical container", containersClassNames[i]));
                 if (sideAClassNames[i] != null && mem.isSubClass("GenericPort", sideAClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Can not connect an instance of %s to a port", containersClassNames[i]));
-                if (sideBClassNames[i] != null && mem.isSubClass("GenericPort", sideBClassNames[i])) //NOI18N
+                if (sideBClassNames[i] != null && mem.isSubClass(Constants.CLASS_GENERICPHYSICALPORT, sideBClassNames[i])) //NOI18N
                     throw new ServerSideException(String.format("Can not connect an instance of %s to a port", containersClassNames[i]));
                 
                 if (Objects.equals(sideAIds[i], sideBIds[i]))
@@ -1997,6 +2001,48 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(ex.getMessage());
         }
     }
+
+    @Override
+    public void reconnectPhysicalConnection(String connectionClass, long connectionId, String newASideClass, long newASideId, String newBSideClass, long newBSideId, String ipAddress, String sessionId) throws ServerSideException {
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("reconnectPhysicalConnection", ipAddress, sessionId);
+            if (!mem.isSubClass(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)) //NOI18N
+                throw new ServerSideException(String.format("Class %s is not a physical connection", connectionClass));
+            
+            boolean isLink = mem.isSubClass(Constants.CLASS_GENERICPHYSICALLINK, connectionClass);
+            
+            if (newASideClass != null && newASideId != -1) { //Reconnect the A side
+                disconnectPhysicalConnection(connectionClass, connectionId, 1 /*Disconnect A side*/, ipAddress, sessionId);
+                if (isLink)
+                    connectPhysicalLinks(new String[] { newASideClass }, new Long[] { newASideId }, new String[] { connectionClass }, 
+                            new long[] { connectionId }, new String[] { null }, 
+                            new Long[] { null }, ipAddress, sessionId);
+                else
+                    connectPhysicalContainers(new String[] { newASideClass }, new Long[] { newASideId }, new String[] { connectionClass }, 
+                            new long[] { connectionId }, new String[] { null }, 
+                            new Long[] { null }, ipAddress, sessionId);
+            }
+            
+            if (newBSideClass != null && newBSideId != -1) { //Reconnect the B side
+                disconnectPhysicalConnection(connectionClass, connectionId, 2 /*Disconnect B side*/, ipAddress, sessionId);
+                if (isLink)
+                    connectPhysicalLinks(new String[] { null }, new Long[] { null }, new String[] { connectionClass }, 
+                            new long[] { connectionId }, new String[] { newBSideClass }, 
+                            new Long[] { newBSideId }, ipAddress, sessionId);
+                else
+                    connectPhysicalContainers(new String[] { null }, new Long[] { null }, new String[] { connectionClass }, 
+                            new long[] { connectionId }, new String[] { newBSideClass }, 
+                            new Long[] { newBSideId }, ipAddress, sessionId);
+            }
+            
+            //getCommonParent(connectionClass, newASideId, connectionClass, newBSideId, ipAddress, sessionId)
+            //moveSpecialObjects(newASideClass, connectionId, objectClasses, objectOids, ipAddress, sessionId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
     
     @Override
     public void disconnectPhysicalConnection(String connectionClass, long connectionId, 
@@ -2006,7 +2052,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("disconnectPhysicalConnection", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericPhysicalConnection", connectionClass)) //NOI18N
+            if (!mem.isSubClass(Constants.CLASS_GENERICPHYSICALCONNECTION, connectionClass)) //NOI18N
                 throw new ServerSideException(String.format("Class %s is not a physical connection", connectionClass));
             
             String  affectedProperties = "", oldValues = "";
@@ -2144,7 +2190,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             List<BusinessObjectLight> physicalPathA = null, physicalPathB = null;
             String endpointARelationshipName, endpointBRelationshipName;
             
-            if (mem.isSubClass("GenericPhysicalLink", linkClass)) { //NOI18N
+            if (mem.isSubClass(Constants.CLASS_GENERICPHYSICALLINK, linkClass)) { //NOI18N
                 endpointARelationshipName = "endpointA"; //NOI18N
                 endpointBRelationshipName = "endpointB"; //NOI18N
             }else 
@@ -2302,7 +2348,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("deletePhysicalConnection", ipAddress, sessionId);
-            if (!mem.isSubClass("GenericPhysicalConnection", objectClassName))
+            if (!mem.isSubClass(Constants.CLASS_GENERICPHYSICALCONNECTION, objectClassName))
                 throw new ServerSideException(String.format("Class %s is not a physical connection", objectClassName));
             
             bem.deleteObject(objectClassName, objectId, true);
@@ -6176,7 +6222,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             }
             
             if (resourceType == 3) { //Same as 2, but use a GenericPhysicalConnection
-                List<BusinessObject> matchedConnections = bem.getObjectsWithFilter("GenericPhysicalConnection", "name", resourceDefinitionTokens[0]);
+                List<BusinessObject> matchedConnections = bem.getObjectsWithFilter(Constants.CLASS_GENERICPHYSICALCONNECTION, "name", resourceDefinitionTokens[0]);
                 if (matchedConnections.isEmpty())
                     throw new ServerSideException(String.format("No physical connection with name %s could be found", resourceDefinitionTokens[0]));
                 

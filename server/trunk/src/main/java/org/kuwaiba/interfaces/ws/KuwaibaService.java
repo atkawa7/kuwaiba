@@ -3951,7 +3951,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "connectPhysicalLinks")
     public void connectPhysicalLinks (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")Long[] sideAIds,
-                                      @WebParam(name = "linksClassNames")String[] linksClassNames, @WebParam(name = "linksIds")Long[] linksIds,
+                                      @WebParam(name = "linksClassNames")String[] linksClassNames, @WebParam(name = "linksIds")long[] linksIds,
                                       @WebParam(name = "sideBClassNames")String[] sideBClassNames, @WebParam(name = "sideBIds")Long[] sideBIds,
                                       @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -3982,7 +3982,7 @@ public class KuwaibaService {
      */
     @WebMethod(operationName = "connectPhysicalContainers")
     public void connectPhysicalContainers (@WebParam(name = "sideAClassNames")String[] sideAClassNames, @WebParam(name = "sideAIds")Long[] sideAIds,
-                                      @WebParam(name = "containersClassNames")String[] containersClassNames, @WebParam(name = "containersIds")Long[] containersIds,
+                                      @WebParam(name = "containersClassNames")String[] containersClassNames, @WebParam(name = "containersIds")long[] containersIds,
                                       @WebParam(name = "sideBClassNames")String[] sideBClassNames, @WebParam(name = "sideBIds")Long[] sideBIds,
                                       @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
         try {
@@ -4024,6 +4024,41 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in disconnectPhysicalConnection: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Changes one or both sides (endpoints) of a physical connection (link or container). Use this method carefully in containers, as it does not check 
+     * if the endpoints of the links inside the container that was reconnected are consistent with its new endpoints. Also note that 
+     * when used in physical links, the link will NOT be moved (as in the special containment hierarchy) to the nearest common parent of both endpoints. 
+     * This method can not be used to <i>disconnect</i> connections, to do that use {@link #disconnectPhysicalConnection(java.lang.String, long, int, java.lang.String) }.
+     * @param connectionClass The class of the connection to be modified
+     * @param connectionId The id of the connection to be modified
+     * @param newASideClass The class of the new side A of the connection. Use null if this side is not to be changed.
+     * @param newASideId The id of the new side A of the connection. Use -1 if this side is not to be changed.
+     * @param newBSideClass The class of the new side B of the connection. Use null if this side is not to be changed.
+     * @param newBSideId The id of the new side B of the connection. Use -1 if this side is not to be changed.
+     * @param sessionId The session token
+     * @throws ServerSideException If any of the objects provided could not be found or if the new endpoint is not a port (if reconnecting a link) or if it is a port 
+     * (if reconnecting a container)
+     */
+    @WebMethod(operationName = "reconnectPhysicalConnection")
+    public void reconnectPhysicalConnection(@WebParam(name = "connectionClass")String connectionClass,
+                                      @WebParam(name = "connectionId")long connectionId, 
+                                      @WebParam(name = "newASideClass")String newASideClass,
+                                      @WebParam(name = "newASideId")long newASideId,
+                                      @WebParam(name = "newBSideClass")String newBSideClass,
+                                      @WebParam(name = "newBSideId")long newBSideId,
+                                      @WebParam(name = "sessionId")String sessionId) throws ServerSideException {
+        try {
+            wsBean.reconnectPhysicalConnection(connectionClass, connectionId, newASideClass, newASideId, newBSideClass, newBSideId, getIPAddress(), sessionId);
+        } catch(Exception e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in reconnectPhysicalConnection: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }

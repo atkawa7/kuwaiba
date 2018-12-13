@@ -106,7 +106,7 @@ public class ComponentConnectionCreator extends VerticalLayout {
                         
                         Long[] sideAIds =  new Long[endpointsA.size()];
                         Long[] sideBIds =  new Long[endpointsA.size()];
-                        Long[] linksIds =  new Long[endpointsA.size()];
+                        long[] linksIds =  new long[endpointsA.size()];
                         List<RemoteObjectLight> newLinksParents = new ArrayList<>();
                         
                         for (int i = 0; i < endpointsA.size(); i++) {

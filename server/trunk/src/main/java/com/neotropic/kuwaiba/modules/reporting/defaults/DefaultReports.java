@@ -469,7 +469,7 @@ public class DefaultReports {
                     "    <title>" + title + "</title>\n</head>\n";
             tributaryLinkUsageReportText += "<div class=\"error\">No information about this tributary link could be found</div>";
         } else {
-            String serverName, serverPort, logoURL;
+            String serverName, serverPort;
             try {
                 serverName = (String)aem.getConfigurationVariableValue("general.misc.serverName");
             } catch (ApplicationObjectNotFoundException ex) {
