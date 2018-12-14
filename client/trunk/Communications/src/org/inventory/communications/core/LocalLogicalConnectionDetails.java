@@ -24,7 +24,6 @@ import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.wsclient.RemoteLogicalConnectionDetails;
 import org.inventory.communications.wsclient.RemoteObjectLight;
 import org.inventory.communications.wsclient.RemoteObjectLightList;
-import org.inventory.communications.wsclient.RemoteObjectRelatedObjects;
 
 /**
  * This is the local representation of the RemoteLocalConnectionsDetails class
@@ -96,10 +95,10 @@ public class LocalLogicalConnectionDetails {
                         Arrays.asList(relatedLocalObjects));
             }
         }
-        if(remoteCircuitDetails.getPhysicalPathForVlansEndpointA() != null){
+        if(remoteCircuitDetails.getPhysicalPathForVlansEndpointB() != null){
             this.physicalPathForVlansEndpointB = new HashMap<>();
-            List<RemoteObjectLight> objsB = remoteCircuitDetails.getPhysicalPathForVlansEndpointA().getObjs();
-            List<RemoteObjectLightList> relatedObjectsB = remoteCircuitDetails.getPhysicalPathForVlansEndpointA().getRelatedObjects();
+            List<RemoteObjectLight> objsB = remoteCircuitDetails.getPhysicalPathForVlansEndpointB().getObjs();
+            List<RemoteObjectLightList> relatedObjectsB = remoteCircuitDetails.getPhysicalPathForVlansEndpointB().getRelatedObjects();
         
             for (int i = 0; i < objsB.size(); i++){
                 RemoteObjectLightList relatedRemoteObjects = relatedObjectsB.get(i);
