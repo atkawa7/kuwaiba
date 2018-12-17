@@ -161,6 +161,31 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
             }
             return null;
         }
+        else if ("notifications".equals(scriptQueryName) && 
+            parameterNames != null && parameterNames.size() >= 1 &&
+            parameterValues != null && parameterValues.size() >= 1 &&
+            parameterNames.size() == parameterValues.size()) {
+            
+            for (int i = 0; i < parameterNames.size(); i += 1) {
+                String parameterName = parameterNames.get(i);
+                
+                if (null != parameterName) {
+                    switch (parameterName) {
+                        case "error":
+                            Notifications.showError(parameterValues.get(i));
+                            break;
+                        case "info":
+                            Notifications.showInfo(parameterValues.get(i));
+                            break;
+                        case "warning":
+                            Notifications.showWarning(parameterValues.get(i));
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
         
         if (scriptQueries != null) {
             
