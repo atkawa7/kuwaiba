@@ -20,6 +20,7 @@ import com.vaadin.shared.MouseEventDetails;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 import com.vaadin.ui.themes.ValoTheme;
@@ -132,7 +133,7 @@ public abstract class AbstractDashboardWidget extends VerticalLayout {
             wnwContent.setModal(true);
             wnwContent.setContent(contentComponent);
             wnwContent.center();
-            getUI().addWindow(wnwContent);
+            UI.getCurrent().addWindow(wnwContent);
         } else Notifications.showError("The content component has not been set. Please check your createContent method");
     }
     

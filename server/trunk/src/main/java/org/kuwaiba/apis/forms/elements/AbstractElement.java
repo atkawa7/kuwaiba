@@ -257,6 +257,14 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
                     Logger.getLogger(AbstractElement.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            else if (Constants.Property.HIDDEN.equals(event.getPropertyName())) {
+                try {
+                    setHidden(Boolean.valueOf(String.valueOf(event.getNewValue())));
+                    firePropertyChangeEvent();
+                } catch (Exception ex) {
+                    Logger.getLogger(AbstractElement.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
     }
     
@@ -330,6 +338,7 @@ public abstract class AbstractElement implements Tag, ComponentEventListener, Pr
             Constants.EventAttribute.ONPROPERTYCHANGE, 
             Constants.EventAttribute.ONLOAD,
             Constants.EventAttribute.ONLAZYLOAD, 
+            Constants.EventAttribute.ONUPLOADSUCCEEDED, 
             Constants.Function.VALIDATE};
         
         for (String eventAttr : eventAttrs) {

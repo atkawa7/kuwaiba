@@ -39,7 +39,9 @@ public class ElementButton extends AbstractElement {
     
     @Override
     public void onComponentEvent(EventDescriptor event) {
-        if (hasEventAttribute(Constants.EventAttribute.ONCLICK) && getEvents().get(Constants.EventAttribute.ONCLICK) != null) {
+        if (Constants.EventAttribute.ONCLICK.equals(event.getEventName()) && 
+            hasEventAttribute(Constants.EventAttribute.ONCLICK) && 
+            getEvents().get(Constants.EventAttribute.ONCLICK) != null) {
             
             for (String key : getEvents().get(Constants.EventAttribute.ONCLICK).keySet()) {
                 
