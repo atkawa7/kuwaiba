@@ -34,6 +34,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.kuwaiba.apis.forms.components.ComponentEventListener;
@@ -67,7 +68,7 @@ public class ComponentUpload extends GraphicalComponent {
             
             getComponent().addComponent(upload = new Upload());
             
-            Uploader uploader = new Uploader();
+            Uploader uploader = new Uploader(elementUpload);
             upload.setReceiver(uploader);
             upload.addSucceededListener(uploader);
             
@@ -91,9 +92,13 @@ public class ComponentUpload extends GraphicalComponent {
     }
     
     private class Uploader implements Receiver, SucceededListener {
+                      
         private File file;
-        
-        public Uploader() {
+        private String fileName;
+        private final ElementUpload elementUpload;
+                
+        public Uploader(ElementUpload elementUpload) {
+            this.elementUpload = elementUpload;
         }
         
         @Override
@@ -101,8 +106,8 @@ public class ComponentUpload extends GraphicalComponent {
             FileOutputStream fileOutputStream = null;
             try {
                 String processesPath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processesPath"));
-                
-                file = new File(processesPath + "/" + filename);
+                fileName = filename;
+                file = new File(processesPath + "/" + UUID.randomUUID());                
                 fileOutputStream = new FileOutputStream(file);
 
             } catch (FileNotFoundException ex) {
@@ -114,18 +119,28 @@ public class ComponentUpload extends GraphicalComponent {
         @Override
         public void uploadSucceeded(Upload.SucceededEvent event) {
             if (file != null) {
+                String oldFilePath = elementUpload.getValue() != null ? elementUpload.getValue().toString() : null;
+                
                 fireComponentEvent(new EventDescriptor(
                     Constants.EventAttribute.ONPROPERTYCHANGE, 
-                    Constants.Property.CAPTION, file.getName(), null));
+                    Constants.Property.CAPTION, fileName, null));
                 
                 fireComponentEvent(new EventDescriptor(
                     Constants.EventAttribute.ONPROPERTYCHANGE, 
                     Constants.Property.VALUE, file.getPath(), null));
-                                
+                                                
                 ComponentEventListener componentEventListener = getComponentEventListener();
                                 
                 if (componentEventListener instanceof ElementUpload)
                     configureComponent((ElementUpload) componentEventListener, false);
+                
+                fireComponentEvent(new EventDescriptor(Constants.EventAttribute.ONUPLOADSUCCEEDED));
+                
+                if (oldFilePath != null) 
+                {
+                    File oldfile = new File(oldFilePath);
+                    oldfile.delete();
+                }
             }
         }
     }

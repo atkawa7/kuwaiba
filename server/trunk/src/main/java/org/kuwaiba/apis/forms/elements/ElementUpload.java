@@ -60,7 +60,69 @@ public class ElementUpload extends AbstractElementField {
     
     @Override
     public void onComponentEvent(EventDescriptor event) {
-        if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
+        if (hasEventAttribute(Constants.EventAttribute.ONUPLOADSUCCEEDED) &&  Constants.EventAttribute.ONUPLOADSUCCEEDED.equals(event.getEventName())) {
+            
+            for (String key : getEvents().get(Constants.EventAttribute.ONUPLOADSUCCEEDED).keySet()) {
+                
+                if (key != null && key.contains(Constants.Function.PROPERTY_CHANGE)) {
+                    List<String> propertyChangeLine = getEvents().get(Constants.EventAttribute.ONUPLOADSUCCEEDED).get(key);
+                    
+                    if (propertyChangeLine != null && propertyChangeLine.size() >= 3) {
+                        
+                        String elementId = propertyChangeLine.get(0);
+                        String propertyName = propertyChangeLine.get(1);
+                        String functionName = propertyChangeLine.get(2);
+                        
+                        AbstractElement element = getFormStructure().getElementById(elementId);
+                        Runner runner = getFormStructure().getElementScript().getFunctionByName(functionName);
+                                                
+                        if (element != null && runner != null && element.hasProperty(propertyName)) {
+                            
+                            List parameterValues = new ArrayList();
+
+                            for (int i = 3; i < propertyChangeLine.size(); i += 1) {
+                                AbstractElement anElement = getFormStructure().getElementById(propertyChangeLine.get(i));
+
+                                if (anElement == null) {
+                                    if (getFormStructure().getElementScript() != null && 
+                                        getFormStructure().getElementScript().getFunctions() != null) {
+
+                                        if (getFormStructure().getElementScript().getFunctions().containsKey(propertyChangeLine.get(i))) {
+
+                                            Runner paramRunner = getFormStructure().getElementScript().getFunctions().get(propertyChangeLine.get(i));
+
+                                            if (paramRunner != null) {
+                                                parameterValues.add(paramRunner);
+                                                continue;
+                                            }
+                                        }
+                                    }
+                                }
+                                parameterValues.add(anElement != null ? anElement : propertyChangeLine.get(i));
+                            }
+                            Object newValue = runner.run(parameterValues);
+                            Object oldValue = element.getPropertyValue(propertyName);
+
+                            element.onComponentEvent(new EventDescriptor(
+                                Constants.EventAttribute.ONPROPERTYCHANGE, 
+                                propertyName, 
+                                newValue, 
+                                oldValue
+                            ));
+                            
+                            element.fireElementEvent(new EventDescriptor(
+                                Constants.EventAttribute.ONPROPERTYCHANGE, 
+                                propertyName, 
+                                newValue, 
+                                oldValue
+                            ));
+//                            element.firePropertyChangeEvent();
+                        }
+                    }
+                }                
+            }
+        }
+        else if (Constants.EventAttribute.ONPROPERTYCHANGE.equals(event.getEventName())) {
             if (Constants.Property.CAPTION.equals(event.getPropertyName())) {
                 
                 if (event.getNewValue() instanceof String) {
