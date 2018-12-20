@@ -2889,6 +2889,16 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
         }
         return newInstance;
     }
+
+    @Override
+    public boolean canDeleteObject(String className, long oid, boolean releaseRelationships) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
+        if (!mem.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
+            throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
+        
+        Node instance = getInstanceOfClass(className, oid);
+        boolean safeDeletion = Util.canDeleteObject(instance, releaseRelationships);
+        return safeDeletion;
+    }
     
     /**
      * This class wraps a set of attribute definitions necessary to create objects with default values

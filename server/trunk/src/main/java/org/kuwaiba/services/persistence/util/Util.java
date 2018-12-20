@@ -163,19 +163,9 @@ public class Util {
      * @throws org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException If the object already has relationships
      */
     public static void deleteObject(Node instance, boolean unsafeDeletion) throws OperationNotPermittedException {
-        if(!unsafeDeletion){
-            if (instance.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING).iterator().hasNext())
-                throw new OperationNotPermittedException(String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
-
-            if (instance.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.INCOMING).iterator().hasNext())
-                throw new OperationNotPermittedException(String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
-            
-            if (instance.getRelationships(RelTypes.HAS_PROCESS_INSTANCE, Direction.OUTGOING).iterator().hasNext())
-                throw new OperationNotPermittedException(String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
-        }
-
-        for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL))
-            deleteObject(rel.getStartNode(), unsafeDeletion);
+        boolean isDeletionSafe = canDeleteObject(instance, unsafeDeletion);
+        if(!isDeletionSafe)
+            throw new OperationNotPermittedException(String.format("The object with id %s can not be deleted since it has relationships", instance.getId()));
         
         // Searches the related views to delete the nodes in the data base
         List<Node> relatedViews = new ArrayList();
@@ -195,6 +185,31 @@ public class Util {
             // Removing the node to the current related view
             relatedViews.remove(0).delete();
         }
+    }
+    
+    /**
+     * Checks if it's safe to deletes recursively an object and all its children. Note that the transaction should be handled by the caller
+     * @param instance The object to be deleted
+     * @param unsafeDeletion True if you want the object to be deleted no matter if it has RELATED_TO and RELATED_TO_SPECIAL relationships
+     * @return true if the deletion of the object is safe or 
+     */
+    public static boolean canDeleteObject(Node instance, boolean unsafeDeletion) throws OperationNotPermittedException {
+        boolean result = true;
+        if(!unsafeDeletion){
+            if (instance.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING).iterator().hasNext())
+                result = false;
+
+            if (instance.getRelationships(RelTypes.RELATED_TO_SPECIAL, Direction.INCOMING).iterator().hasNext())
+                result = false;
+            
+            if (instance.getRelationships(RelTypes.HAS_PROCESS_INSTANCE, Direction.OUTGOING).iterator().hasNext())
+                result = false;
+        }
+
+        for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL))
+            canDeleteObject(rel.getStartNode(), unsafeDeletion);
+        
+        return result;
     }
     
     public static void deleteTemplateObject(Node instance) {

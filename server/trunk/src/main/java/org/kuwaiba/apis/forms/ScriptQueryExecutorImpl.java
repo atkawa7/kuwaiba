@@ -14,13 +14,20 @@
  */
 package org.kuwaiba.apis.forms;
 
+import com.neotropic.kuwaiba.modules.reporting.img.SceneExporter;
 import com.vaadin.server.Page;
+import com.vaadin.ui.UI;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import org.kuwaiba.apis.forms.elements.Constants;
 import org.kuwaiba.apis.forms.elements.FileInformation;
 import org.kuwaiba.apis.forms.elements.ScriptQueryExecutor;
+import org.kuwaiba.apis.forms.elements.XMLUtil;
+import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.util.StringPair;
 import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.exceptions.ServerSideException;
@@ -33,6 +40,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
+import org.openide.util.Exceptions;
 
 /**
  * An Implementation of Script Query Executor to the Web Client of Kuwaiba
@@ -184,6 +192,30 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                             break;
                     }
                 }
+            }
+        } else if ("endToEndViewAsByteArray".equals(scriptQueryName)&& 
+            parameterNames != null && parameterNames.size() == 2 &&
+            parameterValues != null && parameterValues.size() == 2 &&
+            parameterNames.size() == parameterValues.size()) {
+            /*parameterNames ["id", "className"];
+            parameterValues ["service.getClassName()", "service.getId()"];*/
+            
+            String processEnginePath = String.valueOf(PersistenceService.getInstance().getApplicationEntityManager().getConfiguration().get("processEnginePath"));
+            String newPath = processEnginePath + "/temp/";
+            
+            String oldPath = SceneExporter.PATH;
+            SceneExporter.PATH = newPath;
+            String pathEndToEndView = SceneExporter.getInstance().buildEndToEndView(
+                Page.getCurrent().getWebBrowser().getAddress(), 
+                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")), 
+                wsBean, 
+                parameterValues.get(0), 
+                Long.valueOf(parameterValues.get(1)));
+            SceneExporter.PATH = oldPath;
+            try {
+                return Files.readAllBytes(new File(newPath + pathEndToEndView).toPath());
+            } catch (IOException ex) {
+                Exceptions.printStackTrace(ex);
             }
         }
         

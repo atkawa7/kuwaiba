@@ -1429,6 +1429,18 @@ public class WebserviceBeanImpl implements WebserviceBean {
     }
     
     @Override
+    public boolean canDeleteObject(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
+        if (bem == null || aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        
+        try {
+            return bem.canDeleteObject(className, oid, releaseRelationships);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
     public void deleteObject(String className, long oid, boolean releaseRelationships, String ipAddress, String sessionId) throws ServerSideException{
         if (bem == null || aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));

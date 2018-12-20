@@ -340,6 +340,19 @@ public interface BusinessEntityManager {
      */
     public BusinessObject getParentOfClass(String objectClass, long oid, String parentClass)
             throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException;
+    
+    /**
+     * Checks if it's safe to delete a single object
+     * @param className Object's class name
+     * @param oid Objects oid
+     * @param releaseRelationships Release relationships automatically. If set to false, it will fail if the object already has incoming relationships
+     * @throws BusinessObjectNotFoundException If the object couldn't be found
+     * @throws MetadataObjectNotFoundException If the requested object class can't be found
+     * @throws OperationNotPermittedException If the object could not be deleted because there's some business rules that avoids it or it has incoming relationships.
+     */
+    public boolean canDeleteObject(String className, long oid, boolean releaseRelationships)
+            throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException;
+    
     /**
      * Deletes a set of objects
      * @param releaseRelationships If all the relationships should be release upon deleting the objects. If false, an OperationNotPermittedException  will be raised if the object has incoming relationships.
