@@ -388,7 +388,7 @@ public class ProcessInstancesView extends VerticalLayout {
         
         ComboBox cmbActor = new ComboBox();
         
-        cmbActor.setItems(allActors);
+        cmbActor.setItems(allActors);                
         actorHeaderCell.setComponent(cmbActor);
         
         cmbActor.addValueChangeListener(new ValueChangeListener<RemoteActor>() {
@@ -402,7 +402,7 @@ public class ProcessInstancesView extends VerticalLayout {
                 while (iterator.hasNext()) {
                     ProcessInstanceBean element = iterator.next();
 
-                    if (captionFilter.test(element != null ? element.getCurrentActivityActor() : null, event.getValue() != null ? event.getValue().toString() : ""))
+                    if (captionFilter.test(element != null && element.getCurrentActivityActor() != null ? element.getCurrentActivityActor() : null, event.getValue() != null ? event.getValue().toString() : ""))
                         filteredItems.add(element);
                 }
                 grid.setItems(filteredItems);                
@@ -457,14 +457,9 @@ public class ProcessInstancesView extends VerticalLayout {
         RemoteActivityDefinition startActivity = processDef.getStartActivity();
         if (startActivity != null) {
             RemoteActor remoteActor = startActivity.getActor();
-            if (remoteActor != null) {
-                if(!actorEnabled(webserviceBean, remoteSession, remoteActor)) {
-                    Notifications.showError(I18N.gm("procmanager.user_is_not_authorized_to_perform_this_action"));
-                    return;
-                }
-            }
-            else {
-                Notifications.showError("The actor of the start activity cannot be found");
+            
+            if(!actorEnabled(webserviceBean, remoteSession, remoteActor)) {
+                Notifications.showError(I18N.gm("procmanager.user_is_not_authorized_to_perform_this_action"));
                 return;
             }
         }
@@ -523,7 +518,7 @@ public class ProcessInstancesView extends VerticalLayout {
         if (activity != null && !allActivities.contains(activity)) {
             allActivities.add(activity);
             
-            if (!allActors.contains(activity.getActor()))
+            if (activity.getActor() != null && !allActors.contains(activity.getActor()))
                 allActors.add(activity.getActor());
             
             if (activity instanceof RemoteConditionalActivityDefinition) {
@@ -543,19 +538,19 @@ public class ProcessInstancesView extends VerticalLayout {
     }
     
     private static boolean actorEnabled(WebserviceBean webserviceBean, RemoteSession remoteSession, RemoteActor actor) {
+        if (actor == null)
+            return true;
+        
         try {
             List<GroupInfoLight> groups = webserviceBean.getGroupsForUser(
                 remoteSession.getUserId(),
                 Page.getCurrent().getWebBrowser().getAddress(),
                 remoteSession.getSessionId());
             
-            if (actor != null) {
-                
-                for (GroupInfoLight group : groups) {
+            for (GroupInfoLight group : groups) {
 
-                    if (actor.getName().equals(group.getName()))
-                        return true;
-                }
+                if (actor.getName().equals(group.getName()))
+                    return true;
             }
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());

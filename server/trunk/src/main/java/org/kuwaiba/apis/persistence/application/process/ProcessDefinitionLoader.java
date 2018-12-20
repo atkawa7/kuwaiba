@@ -240,8 +240,11 @@ public class ProcessDefinitionLoader {
                                         reader.getAttributeValue(null, Attribute.COLOR));
                                 }
                                 activityDefinitions.put(activityDefinitionId, activityDefinition);
-                                activityactor.put(activityDefinitionId, Long.valueOf(reader.getAttributeValue(null, Attribute.ACTOR_ID)));
-                                                            
+                                
+                                String strActorId = reader.getAttributeValue(null, Attribute.ACTOR_ID);
+                                if (strActorId != null)
+                                    activityactor.put(activityDefinitionId, Long.valueOf(strActorId));
+                                                                                            
                             while (true) {
                                 if (reader.getEventType() == XMLStreamConstants.START_ELEMENT && 
                                     reader.getName().equals(tagPath)) {

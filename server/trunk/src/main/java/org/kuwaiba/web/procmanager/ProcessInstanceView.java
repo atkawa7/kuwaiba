@@ -95,7 +95,7 @@ public class ProcessInstanceView extends DynamicComponent {
     /**
      * Debug mode flag
      */
-    private boolean debugMode;
+    private final boolean debugMode;
     
     private Button buttonClicked;
     private Resource buttonClickedResource;
@@ -115,21 +115,20 @@ public class ProcessInstanceView extends DynamicComponent {
         initView();
     }
     
-    private boolean actorEnabled(RemoteActor actor) {
+    private boolean actorEnabled(RemoteActor actor) {    
+        if (actor == null)
+            return true;
+        
         try {
             List<GroupInfoLight> groups = wsBean.getGroupsForUser(
                 remoteSession.getUserId(),
                 Page.getCurrent().getWebBrowser().getAddress(),
                 remoteSession.getSessionId());
-            
-            if (actor != null) {
-                
-                for (GroupInfoLight group : groups) {
-
-                    if (actor.getName().equals(group.getName()))
-                        return true;
-                }
-            }
+                            
+            for (GroupInfoLight group : groups) {
+                if (actor.getName().equals(group.getName()))
+                    return true;
+            }                
         } catch (ServerSideException ex) {
             Notifications.showError(ex.getMessage());
         }
