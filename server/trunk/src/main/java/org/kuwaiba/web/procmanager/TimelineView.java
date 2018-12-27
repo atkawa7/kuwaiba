@@ -103,8 +103,16 @@ public class TimelineView extends HorizontalLayout {
             return null;
         
         List<TimelineStep> timelineSteps = new ArrayList();
-                
-        for (RemoteActivityDefinition activityDefinition : activityDefinitions) {
+                        
+        for (int i = 0; i < activityDefinitions.size(); i += 1) {
+            
+            RemoteActivityDefinition activityDefinition = activityDefinitions.get(i);
+            
+            if (activityDefinition.getType() == ActivityDefinition.TYPE_START || 
+                activityDefinition.getType() == ActivityDefinition.TYPE_CONDITIONAL || 
+                activityDefinition.getType() == ActivityDefinition.TYPE_END)
+                continue;
+            
             RemoteArtifact artifact = null;
             try {
                 artifact = webserviceBean.getArtifactForActivity(
@@ -115,11 +123,24 @@ public class TimelineView extends HorizontalLayout {
             } catch (ServerSideException ex) {
                 // Activity does not have artifact
             }
+            RemoteArtifact previousArtifact = null;
+            try {
+                if (i - 1 >= 0) {
+                    previousArtifact = webserviceBean.getArtifactForActivity(
+                            processInstance.getId(),
+                            activityDefinitions.get(i - 1).getId(),
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            session.getSessionId());
+                }
+            } catch (ServerSideException ex) {
+                // Activity does not have artifact
+            }
             TimelineStep timelineStep = new TimelineStep(
                 webserviceBean, 
                 processInstance.getProcessDefinition(), 
                 activityDefinition, 
-                artifact);
+                artifact,
+                previousArtifact);
             
             if (activityDefinition.getColor() != null)
                 timelineStep.setBackgroundColor(activityDefinition.getColor().replace("#", "")); //NOI18N                
@@ -142,15 +163,21 @@ public class TimelineView extends HorizontalLayout {
     private Grid<TimelineStep> getGrid() {
         List<TimelineStep> timelineSteps = getTimelineSteps();
         
+        if (timelineSteps == null)
+            return null;
+        
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
         
         for (TimelineStep timelineStep : timelineSteps) {
-            if (timelineStep.getArtifact() != null && 
+            if (timelineStep.getPreviousArtifact() != null &&
+                timelineStep.getPreviousArtifact().getCreationDate() > 0 &&
+                timelineStep.getPreviousArtifact().getCommitDate() > 0 &&
+                timelineStep.getArtifact() != null && 
                 timelineStep.getArtifact().getCreationDate() > 0 &&
                 timelineStep.getArtifact().getCommitDate() > 0) {
                 
-                calendar.setTime(new Date(timelineStep.getArtifact().getCreationDate()));
+                calendar.setTime(new Date(timelineStep.getPreviousArtifact().getCommitDate()));
                 
                 timelineStep.setActivityStartDate(calendar.getTime());
                 timelineStep.setStartDate(calendar.getTime());
@@ -159,8 +186,7 @@ public class TimelineView extends HorizontalLayout {
                     calendar.setTime(new Date());
                 else
                     calendar.setTime(new Date(timelineStep.getArtifact().getCommitDate()));
-                //calendar.set(Calendar.HOUR, 24);
-                
+                                
                 timelineStep.setActivityEndDate(calendar.getTime());
                 timelineStep.setEndDate(calendar.getTime());
                 
@@ -168,11 +194,7 @@ public class TimelineView extends HorizontalLayout {
                 float days = (difference / (1000*60*60*24));            
 
                 timelineStep.setActivityRealDurationActivity((int) days);
-
-////                int activityExpectedDuration = 0;
-////
-////                while (activityExpectedDuration <= 0)
-////                    activityExpectedDuration = new Random().nextInt(6);
+                
                 int activityExpectedDuration = -1;
                 
                 if (timelineStep.getKpi() != null && 
@@ -188,30 +210,6 @@ public class TimelineView extends HorizontalLayout {
                 timelineStep.setStartDate(date);
                 timelineStep.setEndDate(date);
             }
-////            timelineStep.setActivityStartDate(calendar.getTime());
-////            timelineStep.setStartDate(calendar.getTime());
-            
-////            int i = 0;
-////            
-////            while (i <= 0)
-////                i = new Random().nextInt(10);
-////                        
-////            calendar.set(Calendar.HOUR, i * 24);
-            
-////            timelineStep.setActivityEndDate(calendar.getTime());
-////            timelineStep.setEndDate(calendar.getTime());
-            
-////            long difference = timelineStep.getEndDate() - timelineStep.getStartDate();
-////            float days = (difference / (1000*60*60*24));            
-////            
-////            timelineStep.setActivityRealDurationActivity((int) days);
-////            
-////            int activityExpectedDuration = 0;
-////            
-////            while (activityExpectedDuration <= 0)
-////                activityExpectedDuration = new Random().nextInt(6);
-////                        
-////            timelineStep.setActivityExpectedDuration(activityExpectedDuration);
         }
         // Prevents a java.lang.IndexOutOfBoundsException
         if (timelineSteps.size() > 0) {
@@ -228,15 +226,10 @@ public class TimelineView extends HorizontalLayout {
                     endDate = timelineStep.getEndDate();
             }
             gantt.setStartDate(new Date(startDate));
-            
+            //Fix the end date of gantt to next day
             calendar.setTime(new Date(endDate));
             calendar.set(Calendar.HOUR, 24);            
             gantt.setEndDate(calendar.getTime());
-////            calendar.setTime(new Date(startDate));
-////            gantt.setStartDate(calendar.getTime());
-////
-////            calendar.setTime(new Date(endDate));
-////            gantt.setEndDate(calendar.getTime());
         } else {
             Date date = new Date();
             gantt.setStartDate(date);
@@ -247,9 +240,6 @@ public class TimelineView extends HorizontalLayout {
             gantt.setEndDate(calendar.getTime());
         }
                 
-        if (timelineSteps == null)
-            return null;
-        
         listDataProvider = new ListDataProvider<>(timelineSteps);
         Grid<TimelineStep> grid = new Grid<>(listDataProvider);
         grid.setWidth(100, Unit.PERCENTAGE);
@@ -311,15 +301,9 @@ public class TimelineView extends HorizontalLayout {
         }
         List<RemoteActivityDefinition> filteredActivities = new ArrayList();
         // Ignoring the activities with type start, conditional, and end        
-        for (RemoteActivityDefinition activity : activities) {
-            
-            if (activity.getType() == ActivityDefinition.TYPE_START || 
-                activity.getType() == ActivityDefinition.TYPE_CONDITIONAL || 
-                activity.getType() == ActivityDefinition.TYPE_END)
-                continue;
-            
+        for (RemoteActivityDefinition activity : activities)
             filteredActivities.add(activity);
-        }
+        
         return filteredActivities;
     }
     
@@ -328,22 +312,28 @@ public class TimelineView extends HorizontalLayout {
         private final long processDefinitionId;
         private final RemoteActivityDefinition activityDefinition;
         private final RemoteArtifact artifact;
+        private final RemoteArtifact previousArtifact;
         private final RemoteKpi kpi;
         private Date activityStartDate;
         private Date activityEndDate;
         private int activityRealDuration = 0;
         private int activityExpectedDuration = 0;
         
-        public TimelineStep(WebserviceBean webserviceBean, long processDefinitionId, RemoteActivityDefinition activityDefinition, RemoteArtifact artifact) {
+        public TimelineStep(WebserviceBean webserviceBean, long processDefinitionId, RemoteActivityDefinition activityDefinition, RemoteArtifact artifact, RemoteArtifact previousArtifact) {
             this.webserviceBean = webserviceBean;
             this.processDefinitionId = processDefinitionId;
             this.activityDefinition = activityDefinition;
             this.artifact = artifact;
+            this.previousArtifact = previousArtifact;
             kpi = findKpi(activityDefinition);
         }
         
         public RemoteArtifact getArtifact() {
             return artifact;
+        }
+        
+        public RemoteArtifact getPreviousArtifact() {
+            return previousArtifact;
         }
         
         public RemoteKpi getKpi() {
@@ -376,16 +366,6 @@ public class TimelineView extends HorizontalLayout {
                 
         public String getTimelineIndicatorColor() {
             String color = "#000000";
-            
-////            if (getActivityRealDuration() > getActivityExpectedDuration()) {
-////                
-////                if (getActivityRealDuration() <= 7)
-////                    color = "#f7eea0"; //warning
-////                else
-////                    color = "#db9090"; //critical;
-////            }
-////            else
-////                color = "#bffcb3"; //normal
             
             try {
                 RemoteKpiResult kpiResult = webserviceBean.executeActivityKpiAction(

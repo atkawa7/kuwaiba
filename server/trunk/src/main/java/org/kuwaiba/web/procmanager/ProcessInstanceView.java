@@ -47,10 +47,12 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 import org.kuwaiba.apis.forms.FormRenderer;
+import org.kuwaiba.apis.forms.ScriptQueryExecutorImpl;
 import org.kuwaiba.apis.forms.components.impl.PrintWindow;
 import org.kuwaiba.apis.forms.elements.AbstractElement;
 import org.kuwaiba.apis.forms.elements.AbstractElementField;
 import org.kuwaiba.apis.forms.elements.ElementGrid;
+import org.kuwaiba.apis.forms.elements.FunctionRunner;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.application.process.ActivityDefinition;
 import org.kuwaiba.apis.persistence.application.process.ParallelActivityDefinition;
@@ -204,33 +206,45 @@ public class ProcessInstanceView extends DynamicComponent {
 
         try {
             if (eventBtn.equals(btnNext)) {
+                boolean performOperation = true;
+                
+                if (artifactDefinition.getPostconditionsScript() != null) {
+                    ScriptQueryExecutorImpl scriptQueryExecutorImpl = new ScriptQueryExecutorImpl(wsBean, remoteSession, processInstance);
+                    String script = new String(artifactDefinition.getPostconditionsScript());
+                    FunctionRunner functionRunner = new FunctionRunner("postconditions", null, script);
+                    functionRunner.setScriptQueryExecutor(scriptQueryExecutorImpl);
 
-                wsBean.commitActivity(
-                        processInstance.getId(),
-                        currentActivity.getId(),
-                        remoteArtifact,
+                    Object result = functionRunner.run(null);
+
+                    performOperation = result instanceof Boolean ? (Boolean) result : Boolean.valueOf(result.toString());
+                }
+                if (performOperation) {
+                    wsBean.commitActivity(
+                            processInstance.getId(),
+                            currentActivity.getId(),
+                            remoteArtifact,
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            remoteSession.getSessionId());
+
+                    processInstance = wsBean.getProcessInstance(
+                        processInstance.getId(), 
                         Page.getCurrent().getWebBrowser().getAddress(),
                         remoteSession.getSessionId());
-
-                processInstance = wsBean.getProcessInstance(
-                    processInstance.getId(), 
-                    Page.getCurrent().getWebBrowser().getAddress(),
-                    remoteSession.getSessionId());
-                updateActivities(-1);
-
+                    updateActivities(-1);
+                } else {
+                    Notifications.showInfo("Can not perform the next activity meanwhile the postcondition is not true");
+                }
             } else {
-
                 wsBean.updateActivity(
                         processInstance.getId(),
                         currentActivity.getId(),
                         remoteArtifact,
                         Page.getCurrent().getWebBrowser().getAddress(),
                         remoteSession.getSessionId());
-                
+
                 updateActivities(currentActivity.getId());
                 Notifications.showInfo("The activity was updated");
-            }
-            
+            }            
             processInstance = wsBean.getProcessInstance(
                 processInstance.getId(), 
                 Page.getCurrent().getWebBrowser().getAddress(),
@@ -440,17 +454,23 @@ public class ProcessInstanceView extends DynamicComponent {
                                     ElementGrid elementGrid = (ElementGrid) element;
                                     String id = elementGrid.getId();
                                     
+                                    int columnsSize = elementGrid.getColums() != null ? elementGrid.getColums().size() : 0;
+                                    
                                     if (elementGrid.getRows() != null) {
                                         List<List<Object>> rows = elementGrid.getRows();
                                         for (int i = 0; i < rows.size(); i += 1) {
                                             List row = rows.get(i);
-                                            for (int j = 0; j < row.size(); j += 1) {
-                                                String value = "";
-                                                if (row.get(j) instanceof RemoteObjectLight)
-                                                    value = ((RemoteObjectLight) row.get(j)).getName();
-                                                else
-                                                    value = row.get(j).toString();                                                
-                                                stringTemplate = stringTemplate.replace("${" + id + i + j + "}", value);                                                                                                
+                                                                                        
+                                            for (int j = 0; j < columnsSize; j += 1) {
+                                                String value = null;
+                                                
+                                                if (j < row.size()) {
+                                                    if (row.get(j) instanceof RemoteObjectLight)
+                                                        value = ((RemoteObjectLight) row.get(j)).getName();
+                                                    else
+                                                        value = row.get(j).toString();
+                                                }
+                                                stringTemplate = stringTemplate.replace("${" + id + i + j + "}", value != null ? value : "");
                                             }
                                         }
                                     }
