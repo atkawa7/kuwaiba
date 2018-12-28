@@ -40,6 +40,7 @@ import org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.NotAuthorizedException;
 import org.kuwaiba.apis.persistence.exceptions.BusinessObjectNotFoundException;
 import org.kuwaiba.apis.persistence.exceptions.OperationNotPermittedException;
+import org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
 import org.kuwaiba.util.ChangeDescriptor;
 import org.kuwaiba.apis.persistence.util.StringPair;
@@ -1410,31 +1411,44 @@ public interface ApplicationEntityManager {
      * @return The sync group
      * @throws org.kuwaiba.apis.persistence.exceptions.ApplicationObjectNotFoundException If the sync group could not be found
      * @throws org.kuwaiba.apis.persistence.exceptions.InvalidArgumentException If the sync data group information is somehow malformed in the database
+     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException If can not find the class name of the device related with the data source configuration
+     * @throws org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException
      */
-    public SynchronizationGroup getSyncGroup(long syncGroupId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public SynchronizationGroup getSyncGroup(long syncGroupId) throws ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException, UnsupportedPropertyException;
     /**
      * Gets the list of available sync groups 
      * @return The list of available sync groups
      * @throws InvalidArgumentException If any of the sync groups is malformed in the database
+     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException
+     * @throws org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException
      */
-    public List<SynchronizationGroup> getSyncGroups() throws InvalidArgumentException;
+    public List<SynchronizationGroup> getSyncGroups() throws InvalidArgumentException, MetadataObjectNotFoundException, UnsupportedPropertyException;
     /**
+     * Gets the data source configuration of the object (there is only one data source configuration per object)
+     * @param objectId the object id (a GenericCommunicationElement)
+     * @return the SyncDataSourceConfiguration that belongs to the object
+     * @throws InvalidArgumentException If the the configurations is malformed in the database
+     * @throws ApplicationObjectNotFoundException If the sync data source configuration  could not be found
+     * @throws OperationNotPermittedException If the object has no sync data source configuration group could not be found
+     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException
+     * @throws org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException
+     */
+    public  SyncDataSourceConfiguration getSyncDataSourceConfiguration(long objectId) throws InvalidArgumentException, ApplicationObjectNotFoundException, OperationNotPermittedException, MetadataObjectNotFoundException, UnsupportedPropertyException;   /**
      * Gets the data source configurations associated to a sync group. A data source configuration is a set of parameters to access a sync data source
      * @param syncGroupId The sync group the requested configurations belong to
      * @return A list of data source configurations
      * @throws ApplicationObjectNotFoundException If the sync group could not be found
      * @throws InvalidArgumentException If any of the configurations is malformed in the database
      */
-    public List<SyncDataSourceConfiguration> getSyncDataSourceConfigurations(long syncGroupId) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public List<SyncDataSourceConfiguration> getSyncDataSourceConfigurations(long syncGroupId) throws ApplicationObjectNotFoundException, InvalidArgumentException, MetadataObjectNotFoundException, UnsupportedPropertyException;
     /**
      * Creates a synchronization group
      * @param name The name of the new group
-     * @param syncProvider The FQN of the synchronization provider (that is, the name of the class and the package)
      * @return The id of the newly created group
      * @throws InvalidArgumentException If any of the parameters is invalid
      * @throws ApplicationObjectNotFoundException If the sync provider could not be found
      */
-    public long createSyncGroup(String name, String syncProvider) throws InvalidArgumentException, ApplicationObjectNotFoundException;
+    public long createSyncGroup(String name) throws InvalidArgumentException, ApplicationObjectNotFoundException;
     /**
      * Updates the data source configurations associated to a given sync group
      * @param syncGroupId The Id of the sync group to be updated
@@ -1452,14 +1466,15 @@ public interface ApplicationEntityManager {
     public void deleteSynchronizationGroup(long syncGroupId) throws ApplicationObjectNotFoundException;
     /**
      * Creates a data source configuration and associates it to a sync group
+     * @param objectId  the id of the object(GenericCommunicationsElement) the data source configuration will belong to
      * @param syncGroupId The id of the sync group the data source configuration will be related to
      * @param name The name of the configuration
      * @param parameters The list of parameters that will be part of the new configuration. A sync data source configuration is a set of parameters that allow the synchronization provider to access a sync data source
      * @return The id of the newly created data source
-     * @throws ApplicationObjectNotFoundException If the sync group could not be found
+     * @throws ApplicationObjectNotFoundException If the object has no sync data source configuration group could not be found
      * @throws InvalidArgumentException  If any of the parameters is not valid
      */
-    public long createSyncDataSourceConfig(long syncGroupId, String name, List<StringPair> parameters)throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public long createSyncDataSourceConfig(long objectId, long syncGroupId, String name, List<StringPair> parameters)throws ApplicationObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException;
     /**
      * Updates a synchronization data source
      * @param syncDataSourceConfigId The id of an synchronization data source
@@ -1482,16 +1497,23 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If some of the sync group cannot be found or If the provider of the sync group cannot be found
      * @throws InvalidArgumentException If the sync group is malformed
      */
-    public List<SynchronizationGroup> copySyncGroup(long[] syncGroupIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    //public List<SynchronizationGroup> copySyncGroup(long[] syncGroupIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
-     * Copy a set of sync data source configuration into a given sync group
+     * Creates "copy" a relation between a set of sync data source configurations and a given sync group
      * @param syncGroupId The Sync Group Id target
      * @param syncDataSourceConfigurationIds Set of sync data source configuration ids
-     * @return A list of new sync data source configuration
      * @throws ApplicationObjectNotFoundException If the sync group cannot be found, or some sync data source configuration cannot be found
      * @throws InvalidArgumentException If the sync group cannot be found, or some sync data source configuration cannot be found
      */
-    public List<SyncDataSourceConfiguration> copySyncDataSourceConfiguration(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public void relateSyncDataSourceConfigToSyncGroup(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    /**
+     * Release a set of sync data source configuration from a given sync group
+     * @param syncGroupId The Sync Group Id target
+     * @param syncDataSourceConfigurationIds Set of sync data source configuration ids
+     * @throws ApplicationObjectNotFoundException If the sync group cannot be found, or some sync data source configuration cannot be found
+     * @throws InvalidArgumentException If the sync group cannot be found, or some sync data source configuration cannot be found
+     */
+    public void releaseSyncDataSourceConfigFromSyncGroup(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
      * Moves a sync data source configuration from a sync group to another sync group
      * @param syncGroupId The Sync Group Id target
@@ -1499,7 +1521,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the sync group cannot be found, or some sync data source configuration cannot be found
      * @throws InvalidArgumentException If the sync group is malformed, or some sync data source configuration is malformed
      */
-    public void moveSyncDataSourceConfiguration(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    //public void moveSyncDataSourceConfiguration(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
     * Gets the artifact associated to an activity (for example, a form that was already filled in by a user in a previous, already committed activity)
     * @param processInstanceId The id of the process instance. This process may have been ended already.

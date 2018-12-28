@@ -127,6 +127,7 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteScriptQueryResult
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationConfiguration;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationGroup;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationProvider;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteTask;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteTaskResult;
 import org.kuwaiba.interfaces.ws.toserialize.application.ResultRecord;
@@ -5560,26 +5561,26 @@ public class WebserviceBeanImpl implements WebserviceBean {
         // </editor-fold>    
         //<editor-fold desc="Synchronization API" defaultstate="collapsed">
     @Override
-    public long createSynchronizationDataSourceConfig(long syngGroupId, String name, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException{
+    public long createSynchronizationDataSourceConfig(long objectId, long syngGroupId, String name, List<StringPair> parameters, String ipAddress, String sessionId) throws ServerSideException{
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("createSynchronizationDataSourceConfig", ipAddress, sessionId);
             //TODO: audit entry
-            return aem.createSyncDataSourceConfig(syngGroupId, name, parameters);
+            return aem.createSyncDataSourceConfig(objectId, syngGroupId, name, parameters);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
 
     @Override
-    public long createSynchronizationGroup(String name,String syncProviderId, String ipAddress, String sessionId)throws ServerSideException{
+    public long createSynchronizationGroup(String name, String ipAddress, String sessionId)throws ServerSideException{
         if (aem == null)
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("createSynchronizationGroup", ipAddress, sessionId);
             //TODO: audit entry
-            return aem.createSyncGroup(name, syncProviderId);
+            return aem.createSyncGroup(name);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -5610,7 +5611,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(ex.getMessage());
         }
     }
-
+   
     @Override
     public List<RemoteSynchronizationGroup> getSynchronizationGroups(String ipAddress, String sessionId)throws ServerSideException{
         if (aem == null)
@@ -5637,6 +5638,27 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
 
+    @Override
+    public RemoteSynchronizationConfiguration getSyncDataSourceConfiguration(long objectId, String ipAddress, String sessionId)throws ServerSideException{
+        if (aem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("getSyncDataSourceConfigurations", ipAddress, sessionId);
+
+            SyncDataSourceConfiguration syncDataSourceConfiguration = aem.getSyncDataSourceConfiguration(objectId);
+            
+            List<StringPair> params = new ArrayList<>();
+            for(String key : syncDataSourceConfiguration.getParameters().keySet())
+                params.add(new StringPair(key, syncDataSourceConfiguration.getParameters().get(key)));
+
+            return new RemoteSynchronizationConfiguration(
+                    syncDataSourceConfiguration.getId(), syncDataSourceConfiguration.getName(), params);
+
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
     @Override
     public List<RemoteSynchronizationConfiguration> getSyncDataSourceConfigurations(long syncGroupId, String ipAddress, String sessionId)throws ServerSideException{
         if (aem == null)
@@ -5696,7 +5718,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("launchAutomatedSynchronizationTask", ipAddress, sessionId);
             Properties parameters = new Properties();
-            parameters.put("syncGroupId", Long.toString(syncGroupId)); //NOI18N                   
+            parameters.put("syncGroupId", Long.toString(syncGroupId)); //NOI18N
             
             BackgroundJob backgroundJob = new BackgroundJob("DefaultSyncJob", false, parameters); //NOI18N
             JobManager.getInstance().launch(backgroundJob);
@@ -5723,7 +5745,52 @@ public class WebserviceBeanImpl implements WebserviceBean {
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
-    }        
+    }     
+    
+    @Override
+    public BackgroundJob launchAdHocAutomatedSynchronizationTask(long[] syncDataSourceConfigIds, String syncProvidersName, String ipAddress, String sessionId) throws ServerSideException{
+        if (aem == null || bem == null || mem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("copySyncDataSourceConfiguration", ipAddress, sessionId);
+            Properties parameters = new Properties();
+            
+            parameters.put("sessionId", sessionId); //NOI18N
+            parameters.put("provider", syncProvidersName); //NOI18N  
+            String syncDSConfigIds= "";
+            for (long syncDataSourceConfigId : syncDataSourceConfigIds) 
+                syncDSConfigIds += Long.toString(syncDataSourceConfigId) +";";
+            
+            parameters.put("dataSourceConfigIds", syncDSConfigIds); //NOI18N  
+            
+            BackgroundJob backgroundJob = new BackgroundJob("DefaultSyncJob", false, parameters); //NOI18N
+            JobManager.getInstance().launch(backgroundJob);
+            return backgroundJob;
+            
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public BackgroundJob launchAdHocAutomatedSynchronizationTask(long syncGroupId, String syncProvidersName, String ipAddress, String sessionId) throws ServerSideException{
+        if (aem == null || bem == null || mem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("launchAdHocAutomatedSynchronizationTask", ipAddress, sessionId);
+                        
+            Properties parameters = new Properties();
+            parameters.put("syncGroupId", Long.toString(syncGroupId)); //NOI18N
+            parameters.put("sessionId", sessionId); //NOI18N
+            parameters.put("provider", syncProvidersName); //NOI18N  
+            
+            BackgroundJob backgroundJob = new BackgroundJob("DefaultSyncJob", false, parameters); //NOI18N
+            JobManager.getInstance().launch(backgroundJob);
+            return backgroundJob;
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
     
     @Override
     public List<SyncResult> executeSyncActions(long syncGroupId, List<SyncAction> actions, String ipAddress, String sessionId)throws ServerSideException{
@@ -5732,7 +5799,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("executeSyncActions", ipAddress, sessionId);
             SynchronizationGroup syncGroup = PersistenceService.getInstance().getApplicationEntityManager().getSyncGroup(syncGroupId);
-            return syncGroup.getProvider().finalize(actions);
+            return null; //syncGroup.getProvider().finalize(actions);
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
@@ -5745,13 +5812,25 @@ public class WebserviceBeanImpl implements WebserviceBean {
         try {
             aem.validateWebServiceCall("copySyncGroup", ipAddress, sessionId);
             
-            List<SynchronizationGroup> syncGroups = aem.copySyncGroup(syncGroupIds);
-            return RemoteSynchronizationGroup.toArray(syncGroups);
+            //List<SynchronizationGroup> syncGroups = aem.copySyncGroup(syncGroupIds);
+            return new ArrayList<>();//RemoteSynchronizationGroup.toArray(syncGroups);
             //TODO: audit entry
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
         }
     }
+    
+    public void releaseSyncDataSourceConfigToSyncGroup(List<Long> syncDataSourceConfigIds, long syncGroupId, String ipAddress, String sessionId) throws ServerSideException{
+        if (aem == null || bem == null || mem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("copySyncDataSourceConfiguration", ipAddress, sessionId);
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    
     
     @Override
     public List<RemoteSynchronizationConfiguration> copySyncDataSourceConfiguration(long syncGroupId, long[] syncDataSourceConfigurationIds, String ipAddress, String sessionId) throws ServerSideException {
@@ -5761,17 +5840,31 @@ public class WebserviceBeanImpl implements WebserviceBean {
             aem.validateWebServiceCall("copySyncDataSourceConfiguration", ipAddress, sessionId);
             List<RemoteSynchronizationConfiguration> RemoteSynchronizationConfigurations = new ArrayList<>();
 
-            List<SyncDataSourceConfiguration> syncDataSourceConfigurations = aem.copySyncDataSourceConfiguration(syncGroupId, syncDataSourceConfigurationIds);
+            //List<SyncDataSourceConfiguration> syncDataSourceConfigurations = aem.copySyncDataSourceConfiguration(syncGroupId, syncDataSourceConfigurationIds);
 
-            for (SyncDataSourceConfiguration syncDataSourceConfiguration : syncDataSourceConfigurations) {
-                List<StringPair> params = new ArrayList<>();
-                for(String key : syncDataSourceConfiguration.getParameters().keySet())
-                    params.add(new StringPair(key, syncDataSourceConfiguration.getParameters().get(key)));
-
-                RemoteSynchronizationConfigurations.add(new RemoteSynchronizationConfiguration(
-                        syncDataSourceConfiguration.getId(), syncDataSourceConfiguration.getName(), params));
-            }
+//            for (SyncDataSourceConfiguration syncDataSourceConfiguration : syncDataSourceConfigurations) {
+//                List<StringPair> params = new ArrayList<>();
+//                for(String key : syncDataSourceConfiguration.getParameters().keySet())
+//                    params.add(new StringPair(key, syncDataSourceConfiguration.getParameters().get(key)));
+//
+//                RemoteSynchronizationConfigurations.add(new RemoteSynchronizationConfiguration(
+//                        syncDataSourceConfiguration.getId(), syncDataSourceConfiguration.getName(), params));
+//            }
             return RemoteSynchronizationConfigurations;
+            //TODO: audit entry
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    
+    @Override
+    public void relateSyncDataSourceConfigToSyncGroup(long syncGroupId, long[] syncDataSourceConfigurationIds, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null || bem == null || mem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("moveSyncDataSourceConfiguration", ipAddress, sessionId);
+            aem.relateSyncDataSourceConfigToSyncGroup(syncGroupId, syncDataSourceConfigurationIds);
             //TODO: audit entry
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -5784,7 +5877,20 @@ public class WebserviceBeanImpl implements WebserviceBean {
             throw new ServerSideException(I18N.gm("cannot_reach_backend"));
         try {
             aem.validateWebServiceCall("moveSyncDataSourceConfiguration", ipAddress, sessionId);
-            aem.moveSyncDataSourceConfiguration(syncGroupId, syncDataSourceConfigurationIds);
+            aem.relateSyncDataSourceConfigToSyncGroup(syncGroupId, syncDataSourceConfigurationIds);
+            //TODO: audit entry
+        } catch (InventoryException ex) {
+            throw new ServerSideException(ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void releaseSyncDataSourceConfigFromSyncGroup(long syncGroupId, long[] syncDataSourceConfigurationIds, String ipAddress, String sessionId) throws ServerSideException {
+        if (aem == null || bem == null || mem == null)
+            throw new ServerSideException(I18N.gm("cannot_reach_backend"));
+        try {
+            aem.validateWebServiceCall("moveSyncDataSourceConfiguration", ipAddress, sessionId);
+            aem.releaseSyncDataSourceConfigFromSyncGroup(syncGroupId, syncDataSourceConfigurationIds);
             //TODO: audit entry
         } catch (InventoryException ex) {
             throw new ServerSideException(ex.getMessage());
@@ -6459,7 +6565,7 @@ public class WebserviceBeanImpl implements WebserviceBean {
         }
     }
         // </editor-fold>
-    //  <editor-fold desc="Outside Plant" defaultstate="collapsed">
+        //  <editor-fold desc="Outside Plant" defaultstate="collapsed">
 
     @Override
     public long createOSPView(String name, String description, byte[] content, String ipAddress, String sessionId) throws ServerSideException {

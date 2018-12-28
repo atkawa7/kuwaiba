@@ -88,9 +88,16 @@ public class DrawGChartFunction extends JavaScriptFunction {
                         getFunctionName()));
                 }
             }
-            
+            String colors = "";
+            if(dataTable.getColors() != null){
+                colors = ",\ncolors: [";
+                for(String color : dataTable.getColors())
+                    colors += "'"+ color + "', ";
+                colors = colors.substring(0, colors.length()-2) + "]";
+            }
             codeBlock += "\nvar options = {"; //NOI18N
             codeBlock += "'title':'" + chartTitle + "'"; //NOI18N
+            codeBlock +=   colors;
             codeBlock += "};";
             
             codeBlock += "\nvar chart = new google.visualization." + chartType.getValue() + "(document.getElementById('" + htmlDiv.getId() + "'));"; //NOI18N

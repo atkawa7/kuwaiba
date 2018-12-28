@@ -87,6 +87,7 @@ import org.kuwaiba.apis.persistence.business.BusinessObjectList;
 import org.kuwaiba.apis.persistence.exceptions.ArraySizeMismatchException;
 import org.kuwaiba.apis.persistence.exceptions.BusinessRuleException;
 import org.kuwaiba.apis.persistence.exceptions.InventoryException;
+import org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException;
 import org.kuwaiba.apis.persistence.metadata.AttributeMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadata;
 import org.kuwaiba.apis.persistence.metadata.ClassMetadataLight;
@@ -4259,19 +4260,18 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
 
     //<editor-fold desc="Synchronization API" defaultstate="collapsed">
     @Override
-    public SynchronizationGroup getSyncGroup(long syncGroupId) throws InvalidArgumentException, ApplicationObjectNotFoundException {
+    public SynchronizationGroup getSyncGroup(long syncGroupId) throws InvalidArgumentException, ApplicationObjectNotFoundException, MetadataObjectNotFoundException, UnsupportedPropertyException {
         try (Transaction tx = graphDb.beginTx()) {
         
             Node syncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, syncGroupId);
             if (syncGroupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("Sync group with id %s could not be found", syncGroupId));
             return Util.createSyncGroupFromNode(syncGroupNode);
-
         } 
     }
-    
+   
     @Override
-    public List<SynchronizationGroup> getSyncGroups() throws InvalidArgumentException {
+    public List<SynchronizationGroup> getSyncGroups() throws InvalidArgumentException, MetadataObjectNotFoundException, UnsupportedPropertyException {
         
         List<SynchronizationGroup> synchronizationGroups = new ArrayList<>();
         
@@ -4287,7 +4287,22 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public  List<SyncDataSourceConfiguration> getSyncDataSourceConfigurations(long syncGroupId) throws InvalidArgumentException, ApplicationObjectNotFoundException {
+    public  SyncDataSourceConfiguration getSyncDataSourceConfiguration(long objectId) 
+            throws InvalidArgumentException, ApplicationObjectNotFoundException, 
+            OperationNotPermittedException, MetadataObjectNotFoundException, UnsupportedPropertyException {
+        try (Transaction tx = graphDb.beginTx()) {
+            Node syncDataSourceConfigurationNode = graphDb.getNodeById(objectId);
+            if(!syncDataSourceConfigurationNode.hasRelationship(Direction.OUTGOING, RelTypes.HAS_CONFIGURATION))
+                throw new OperationNotPermittedException(String.format("The object id: %s does not have a sync datasource configuration", objectId));
+            
+            return Util.createSyncDataSourceConfigFromNode(syncDataSourceConfigurationNode);
+        }
+    }
+    
+    @Override
+    public  List<SyncDataSourceConfiguration> getSyncDataSourceConfigurations(long syncGroupId) 
+            throws InvalidArgumentException, ApplicationObjectNotFoundException,
+            MetadataObjectNotFoundException, UnsupportedPropertyException{
         List<SyncDataSourceConfiguration> syncDataSourcesConfigurations = new ArrayList<>();
         
         try (Transaction tx = graphDb.beginTx()) {
@@ -4303,24 +4318,14 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public long createSyncGroup(String name, String syncProvider) throws InvalidArgumentException, ApplicationObjectNotFoundException {
+    public long createSyncGroup(String name) throws InvalidArgumentException, ApplicationObjectNotFoundException {
         if (name == null || name.trim().isEmpty())
                 throw new InvalidArgumentException("The name of the sync group can not be empty");
-        
-        if (syncProvider == null || syncProvider.trim().isEmpty())
-                throw new InvalidArgumentException("The syncProvider of the sync group can not be empty");
-        
-        try {
-            Class.forName(syncProvider);
-        } catch (ClassNotFoundException ex) {
-            throw new ApplicationObjectNotFoundException(String.format("Provider %s could not be found", syncProvider));
-        }
         
         try (Transaction tx = graphDb.beginTx()) {
             Node syncGroupNode = graphDb.createNode(syncGroupsLabel);
             syncGroupNode.setProperty(Constants.PROPERTY_NAME, name);
-            syncGroupNode.setProperty(Constants.PROPERTY_SYNCPROVIDER, syncProvider);
-            
+           
             tx.success();
 
             return syncGroupNode.getId();
@@ -4361,6 +4366,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             for (Relationship relationship : syncGroupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP)) {
                 relationshipsToDelete.add(relationship);
                 nodesToDelete.add(relationship.getStartNode());
+                relationshipsToDelete.add(relationship.getStartNode().getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.OUTGOING));
             }
             while (!relationshipsToDelete.isEmpty())
                 relationshipsToDelete.remove(0).delete();
@@ -4374,7 +4380,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
     }
     
     @Override
-    public long createSyncDataSourceConfig(long syncGroupId, String configName, List<StringPair> parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+    public long createSyncDataSourceConfig(long objectId, long syncGroupId, String configName, List<StringPair> parameters) throws ApplicationObjectNotFoundException, InvalidArgumentException, OperationNotPermittedException {
         if (configName == null || configName.trim().isEmpty())
                 throw new InvalidArgumentException("The sync configuration name can not be empty");
         
@@ -4383,6 +4389,13 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             Node syncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, syncGroupId);
             if(syncGroupNode == null)
                 throw new ApplicationObjectNotFoundException(String.format("The sync group with id %s could not be find", syncGroupId));
+                       
+            Node objectNode = Util.findNodeByLabelAndId(inventoryObjectLabel, objectId);
+            if(syncGroupNode == null)
+                throw new ApplicationObjectNotFoundException(String.format("The object with id %s could not be find", objectId));
+            
+            if(objectNode.hasRelationship(Direction.OUTGOING, RelTypes.HAS_CONFIGURATION))
+                throw new OperationNotPermittedException(String.format("The object id %s already has a sync datasource configuration", objectId));
             
             Node syncDataSourceConfigNode =  graphDb.createNode();
             syncDataSourceConfigNode.setProperty(Constants.PROPERTY_NAME, configName);
@@ -4393,7 +4406,9 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                     throw new InvalidArgumentException(String.format("Parameter %s in configuration %s is duplicated", configName, parameter.getKey()));
             }
             
+            syncDataSourceConfigNode.createRelationshipTo(objectNode, RelTypes.HAS_CONFIGURATION);
             syncDataSourceConfigNode.createRelationshipTo(syncGroupNode, RelTypes.BELONGS_TO_GROUP);
+            
             tx.success();
             return syncDataSourceConfigNode.getId();
         }           
@@ -4424,9 +4439,12 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             List<Relationship> relationshipsToDelete = new ArrayList();
            
-            for (Relationship relationship : syncDataSourceConfigNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP)) {
+            for (Relationship relationship : syncDataSourceConfigNode.getRelationships(Direction.OUTGOING, RelTypes.HAS_CONFIGURATION)) 
                 relationshipsToDelete.add(relationship);
-            }
+            
+            for (Relationship relationship : syncDataSourceConfigNode.getRelationships(Direction.OUTGOING, RelTypes.BELONGS_TO_GROUP)) 
+                relationshipsToDelete.add(relationship);
+            
             while (!relationshipsToDelete.isEmpty())
                 relationshipsToDelete.remove(0).delete();
             
@@ -4435,77 +4453,96 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
         }
     }
     
-    @Override
-    public List<SynchronizationGroup> copySyncGroup(long[] syncGroupIds) throws ApplicationObjectNotFoundException, InvalidArgumentException {
-        try (Transaction tx = graphDb.beginTx()) {
-            List<SynchronizationGroup> result = new ArrayList();
-            
-            for (long syncGroupId : syncGroupIds) {
-                
-                Node syncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, syncGroupId);
-                if (syncGroupNode == null)
-                    throw new ApplicationObjectNotFoundException(String.format("The sync group with id %s could not be find", syncGroupId));
-                
-                SynchronizationGroup syncGroup = Util.createSyncGroupFromNode(syncGroupNode);
-                long newSyncGroupId = createSyncGroup(syncGroup.getName(), syncGroup.getProvider().getClass().getName());//TODO: review the second parameter
-                
-                List<SyncDataSourceConfiguration> syncDataSources = syncGroup.getSyncDataSourceConfigurations();
-                for (SyncDataSourceConfiguration syncDataSource : syncDataSources) {
-                    List<StringPair> parameters = new ArrayList();
-                    for (String paramKey : syncDataSource.getParameters().keySet()) {
-                        String paramValue = syncDataSource.getParameters().get(paramKey);
-                        parameters.add(new StringPair(paramKey, paramValue));
-                    }
-                    createSyncDataSourceConfig(newSyncGroupId, syncDataSource.getName(), parameters);
-                }
-                
-                Node newSyncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, newSyncGroupId);
-                if (newSyncGroupNode == null)
-                    throw new ApplicationObjectNotFoundException(String.format("The sync group with id %s could not be find", newSyncGroupId));
-                result.add(Util.createSyncGroupFromNode(newSyncGroupNode));
-            }
-            tx.success();
-            return result;
-        }
-    }
+//    @Override
+//    public List<SynchronizationGroup> copySyncGroup(long[] syncGroupIds) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+//        try (Transaction tx = graphDb.beginTx()) {
+//            List<SynchronizationGroup> result = new ArrayList();
+//            
+//            for (long syncGroupId : syncGroupIds) {
+//                
+//                Node syncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, syncGroupId);
+//                if (syncGroupNode == null)
+//                    throw new ApplicationObjectNotFoundException(String.format("The sync group with id %s could not be find", syncGroupId));
+//                
+//                SynchronizationGroup syncGroup = Util.createSyncGroupFromNode(syncGroupNode);
+//                long newSyncGroupId = createSyncGroup(syncGroup.getName(), syncGroup.getProvider().getClass().getName());//TODO: review the second parameter
+//                
+//                List<SyncDataSourceConfiguration> syncDataSources = syncGroup.getSyncDataSourceConfigurations();
+//                for (SyncDataSourceConfiguration syncDataSource : syncDataSources) {
+//                    List<StringPair> parameters = new ArrayList();
+//                    for (String paramKey : syncDataSource.getParameters().keySet()) {
+//                        String paramValue = syncDataSource.getParameters().get(paramKey);
+//                        parameters.add(new StringPair(paramKey, paramValue));
+//                    }
+//                    createSyncDataSourceConfig(newSyncGroupId, syncDataSource.getName(), parameters);
+//                }
+//                
+//                Node newSyncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, newSyncGroupId);
+//                if (newSyncGroupNode == null)
+//                    throw new ApplicationObjectNotFoundException(String.format("The sync group with id %s could not be find", newSyncGroupId));
+//                result.add(Util.createSyncGroupFromNode(newSyncGroupNode));
+//            }
+//            tx.success();
+//            return result;
+//        }
+//    }
+    
+//    @Override
+//    public List<SyncDataSourceConfiguration> copySyncDataSourceConfiguration(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+//        try (Transaction tx = graphDb.beginTx()) {
+//            
+//            Node syncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, syncGroupId);
+//            if (syncGroupNode == null)
+//                throw new ApplicationObjectNotFoundException(String.format("The sync group with id %s could not be find", syncGroupId));
+//            
+//            List<SyncDataSourceConfiguration> result = new ArrayList();
+//            
+//            for (long syncDataSrcId : syncDataSourceConfigurationIds) {
+//                Node syncDataSrcNode = graphDb.getNodeById(syncDataSrcId);
+//                if (syncDataSrcNode == null)
+//                    throw new ApplicationObjectNotFoundException(String.format("Synchronization Data Source Configuration with id %s could not be found", syncDataSrcId));
+//                
+//                SyncDataSourceConfiguration syncDataSrc = Util.createSyncDataSourceConfigFromNode(syncDataSrcNode);
+//                
+//                List<StringPair> parameters = new ArrayList();
+//                
+//                for (String paramKey : syncDataSrc.getParameters().keySet()) {
+//                    String paramValue = syncDataSrc.getParameters().get(paramKey);
+//                    parameters.add(new StringPair(paramKey, paramValue));
+//                }
+//                
+//                long newSyncDataSrcId = createSyncDataSourceConfig(syncGroupId, syncDataSrc.getName(), parameters);
+//                Node newSyncDataSrcNode = graphDb.getNodeById(newSyncDataSrcId);
+//                if (newSyncDataSrcNode == null)
+//                    throw new ApplicationObjectNotFoundException(String.format("Synchronization Data Source Configuration with id %s could not be found", newSyncDataSrcId));
+//                result.add(Util.createSyncDataSourceConfigFromNode(newSyncDataSrcNode));
+//            }
+//            tx.success();
+//            return result;
+//        }
+//    }
     
     @Override
-    public List<SyncDataSourceConfiguration> copySyncDataSourceConfiguration(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+    public void releaseSyncDataSourceConfigFromSyncGroup(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
-            
-            Node syncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, syncGroupId);
-            if (syncGroupNode == null)
-                throw new ApplicationObjectNotFoundException(String.format("The sync group with id %s could not be find", syncGroupId));
-            
-            List<SyncDataSourceConfiguration> result = new ArrayList();
-            
+                        
             for (long syncDataSrcId : syncDataSourceConfigurationIds) {
                 Node syncDataSrcNode = graphDb.getNodeById(syncDataSrcId);
                 if (syncDataSrcNode == null)
                     throw new ApplicationObjectNotFoundException(String.format("Synchronization Data Source Configuration with id %s could not be found", syncDataSrcId));
-                
-                SyncDataSourceConfiguration syncDataSrc = Util.createSyncDataSourceConfigFromNode(syncDataSrcNode);
-                
-                List<StringPair> parameters = new ArrayList();
-                
-                for (String paramKey : syncDataSrc.getParameters().keySet()) {
-                    String paramValue = syncDataSrc.getParameters().get(paramKey);
-                    parameters.add(new StringPair(paramKey, paramValue));
+
+                Iterable<Relationship> relationships = syncDataSrcNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP);
+                for (Relationship relationship : relationships) {
+                    if(relationship.getStartNodeId() == syncGroupId)
+                        relationship.delete();
                 }
-                
-                long newSyncDataSrcId = createSyncDataSourceConfig(syncGroupId, syncDataSrc.getName(), parameters);
-                Node newSyncDataSrcNode = graphDb.getNodeById(newSyncDataSrcId);
-                if (newSyncDataSrcNode == null)
-                    throw new ApplicationObjectNotFoundException(String.format("Synchronization Data Source Configuration with id %s could not be found", newSyncDataSrcId));
-                result.add(Util.createSyncDataSourceConfigFromNode(newSyncDataSrcNode));
             }
             tx.success();
-            return result;
         }
     }
     
     @Override
-    public void moveSyncDataSourceConfiguration(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException {
+    public void relateSyncDataSourceConfigToSyncGroup(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException {
         try (Transaction tx = graphDb.beginTx()) {
             
             Node syncGroupNode = Util.findNodeByLabelAndId(syncGroupsLabel, syncGroupId);
@@ -4517,16 +4554,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 if (syncDataSrcNode == null)
                     throw new ApplicationObjectNotFoundException(String.format("Synchronization Data Source Configuration with id %s could not be found", syncDataSrcId));
                 
-                SyncDataSourceConfiguration syncDataSrc = Util.createSyncDataSourceConfigFromNode(syncDataSrcNode);
-                
-                List<StringPair> parameters = new ArrayList();
-                
-                for (String paramKey : syncDataSrc.getParameters().keySet()) {
-                    String paramValue = syncDataSrc.getParameters().get(paramKey);
-                    parameters.add(new StringPair(paramKey, paramValue));
-                }
-                createSyncDataSourceConfig(syncGroupId, syncDataSrc.getName(), parameters);
-                deleteSynchronizationDataSourceConfig(syncDataSrcId);
+                syncGroupNode.createRelationshipTo(syncDataSrcNode, RelTypes.BELONGS_TO_GROUP);
             }
             tx.success();
         }

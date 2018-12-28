@@ -707,29 +707,23 @@ public class Util {
      * @return A SynchronizationGroup object built from the source node information
      * @throws InvalidArgumentException if some element of the list of 
      * syncDataSourceConfiguration has more paramNames than paramValues
+     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException
+     * @throws org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException
      */
     public static SynchronizationGroup createSyncGroupFromNode(Node syncGroupNode)  
-            throws InvalidArgumentException {    
+            throws InvalidArgumentException, MetadataObjectNotFoundException, UnsupportedPropertyException {    
         
-        if (!syncGroupNode.hasProperty(Constants.PROPERTY_NAME) || !syncGroupNode.hasProperty(Constants.PROPERTY_SYNCPROVIDER))
+        if (!syncGroupNode.hasProperty(Constants.PROPERTY_NAME))
             throw new InvalidArgumentException(String.format("The sync group with id %s is malformed. Check its properties", syncGroupNode.getId()));
-        
-        String providerName = (String)syncGroupNode.getProperty(Constants.PROPERTY_SYNCPROVIDER);
-        
-        try {
-            Class providerClass = Class.forName(providerName);
-            AbstractSyncProvider syncProvider = (AbstractSyncProvider)providerClass.getConstructor().newInstance();
-            List<SyncDataSourceConfiguration> syncDataSourceConfiguration = new ArrayList<>();
-            
-            for(Relationship rel : syncGroupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP))
-                syncDataSourceConfiguration.add(createSyncDataSourceConfigFromNode(rel.getStartNode()));
-            
-            return  new SynchronizationGroup(syncGroupNode.getId(),
-                    (String)syncGroupNode.getProperty(Constants.PROPERTY_NAME),
-                    syncProvider, syncDataSourceConfiguration);
-        }catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
-            throw new InvalidArgumentException(String.format("Provider %s could not be instanciated: %s", providerName, ex.getMessage()));
-        }
+
+        List<SyncDataSourceConfiguration> syncDataSourceConfiguration = new ArrayList<>();
+
+        for(Relationship rel : syncGroupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP))
+            syncDataSourceConfiguration.add(createSyncDataSourceConfigFromNode(rel.getStartNode()));
+
+        return  new SynchronizationGroup(syncGroupNode.getId(),
+                (String)syncGroupNode.getProperty(Constants.PROPERTY_NAME),
+                syncDataSourceConfiguration);
     }
 
     /**
@@ -737,14 +731,25 @@ public class Util {
      * @param syncDataSourceConfigNode The source node
      * @return A SyncDataSourceConfiguration object built from the source node information
      * @throws InvalidArgumentException if the size of the list of paramNames and paramValues are not the same 
+     * @throws org.kuwaiba.apis.persistence.exceptions.MetadataObjectNotFoundException if the node of the device has its relationship with the class node is malformed
+     * @throws org.kuwaiba.apis.persistence.exceptions.UnsupportedPropertyException if node of the device has its class node is malformed
      */
-    public static SyncDataSourceConfiguration createSyncDataSourceConfigFromNode(Node syncDataSourceConfigNode) throws InvalidArgumentException{   
+    public static SyncDataSourceConfiguration createSyncDataSourceConfigFromNode(Node syncDataSourceConfigNode) throws InvalidArgumentException, 
+            MetadataObjectNotFoundException, UnsupportedPropertyException{   
         
         if (!syncDataSourceConfigNode.hasProperty(Constants.PROPERTY_NAME))
             throw new InvalidArgumentException(String.format("The sync configuration with id %s is malformed. Check its properties", syncDataSourceConfigNode.getId()));
         
+        if(!syncDataSourceConfigNode.hasRelationship(RelTypes.HAS_CONFIGURATION))
+            throw new InvalidArgumentException(String.format("The sync configuration with id %s is malformed. its not related with a inventory object", syncDataSourceConfigNode.getId()));
+        
+        Node inventoryObjectNode = syncDataSourceConfigNode.getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.OUTGOING).getEndNode();
+        String deviceClass = getObjectClassName(inventoryObjectNode);
+        
         HashMap<String, String> parameters = new HashMap<>();
         String configName = "";
+        parameters.put("deviceId", Long.toString(inventoryObjectNode.getId()));
+        parameters.put("deviceClass", deviceClass);
         
         for (String property : syncDataSourceConfigNode.getPropertyKeys()) {
             if (property.equals(Constants.PROPERTY_NAME))
@@ -1160,7 +1165,7 @@ public class Util {
     }
     
     /**
-     * Finds a node tagged witha label and with a particular id
+     * Finds a node tagged with a label and with a particular id
      * @param label The label used to tag the node
      * @param id The id of the node to find
      * @return The node or null if no node with with that label and id could be found

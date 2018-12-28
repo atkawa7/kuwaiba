@@ -15,6 +15,7 @@
  */
 package org.kuwaiba.interfaces.ws.toserialize.application;
 
+import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,7 +27,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
  * Wrapper of SynchronizationGroup
  * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
-
 @XmlAccessorType(XmlAccessType.FIELD)
 public final class RemoteSynchronizationGroup implements Serializable {
      /**
@@ -40,21 +40,26 @@ public final class RemoteSynchronizationGroup implements Serializable {
     /**
      * Group provider
      */
-    private RemoteSynchronizationProvider provider;
+    private List<RemoteSynchronizationProvider> lastSelectedProviders;
     
     public RemoteSynchronizationGroup() { }
     
     public RemoteSynchronizationGroup(SynchronizationGroup syncGroup) {
         this.id = syncGroup.getId();
         this.name = syncGroup.getName();
-        this.provider = new RemoteSynchronizationProvider(syncGroup.getProvider().getId(), 
-                syncGroup.getProvider().getDisplayName(), syncGroup.getProvider().isAutomated());
+        this.lastSelectedProviders = new ArrayList<>();
+
+        for(AbstractSyncProvider provider : syncGroup.getLastSelectedProviders()){
+            this.lastSelectedProviders.add(new RemoteSynchronizationProvider(provider.getId(), 
+               provider.getDisplayName(), provider.isAutomated()));
+        }
     }
-    
-    public RemoteSynchronizationGroup(long id, String name, RemoteSynchronizationProvider provider) {
+
+    public RemoteSynchronizationGroup(long id, String name, 
+            List<RemoteSynchronizationProvider> lastSelectedProviders) {
         this.id = id;
         this.name = name;
-        this.provider = provider;
+        this.lastSelectedProviders = lastSelectedProviders;
     }
 
     public long getId() {
@@ -73,22 +78,26 @@ public final class RemoteSynchronizationGroup implements Serializable {
         this.name = name;
     }
 
-    public RemoteSynchronizationProvider getProvider() {
-        return provider;
+    public List<RemoteSynchronizationProvider> getLastSelectedProviders() {
+        return lastSelectedProviders;
     }
 
-    public void setProvider(RemoteSynchronizationProvider provider) {
-        this.provider = provider;
+    public void setLastSelectedProviders(List<RemoteSynchronizationProvider> lastSelectedProviders) {
+        this.lastSelectedProviders = lastSelectedProviders;
     }
     
     public static List<RemoteSynchronizationGroup> toArray(List<SynchronizationGroup> syncGroups) {
         List<RemoteSynchronizationGroup> res = new ArrayList<>();
-        for (SynchronizationGroup syncGroup : syncGroups)
-            res.add(new RemoteSynchronizationGroup(syncGroup.getId(), syncGroup.getName(), 
-                    new RemoteSynchronizationProvider(syncGroup.getProvider().getId(), 
-                            syncGroup.getProvider().getDisplayName(), syncGroup.getProvider().isAutomated())));
-        
+        List<RemoteSynchronizationProvider> lastSelectedRemoteProviders = new ArrayList<>();
+        for (SynchronizationGroup syncGroup : syncGroups){
+            if(syncGroup.getLastSelectedProviders() != null){
+                for(AbstractSyncProvider provider : syncGroup.getLastSelectedProviders())
+                    lastSelectedRemoteProviders.add(new RemoteSynchronizationProvider(provider.getId(), 
+                            provider.getDisplayName(), provider.isAutomated()));
+            }
+            res.add(new RemoteSynchronizationGroup(syncGroup.getId(),
+                    syncGroup.getName(), lastSelectedRemoteProviders));
+        }
         return res;
     }
-    
 }

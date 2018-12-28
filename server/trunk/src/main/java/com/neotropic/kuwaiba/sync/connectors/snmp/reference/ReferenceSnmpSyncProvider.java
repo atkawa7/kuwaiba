@@ -93,7 +93,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
     
     @Override
     public boolean isAutomated() {
-        return false;
+        return true;
     }
     
     @Override
@@ -217,12 +217,27 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
     
     @Override
     public List<SyncFinding> supervisedSync(PollResult pollResult) {
+         throw new UnsupportedOperationException("This provider does not support unmapped polling");
+    }
+
+    @Override
+    public List<SyncFinding> supervisedSync(List<AbstractDataEntity> originalData) {
+        throw new UnsupportedOperationException("This provider does not support unmapped polling");
+    }
+
+    @Override
+    public List<SyncResult> automatedSync(List<AbstractDataEntity> originalData) {
+        throw new UnsupportedOperationException("This provider does not support supervised sync for unmapped pollings");
+    }
+
+    @Override
+    public  List<SyncResult> automatedSync(PollResult pollResult) {
         HashMap<SyncDataSourceConfiguration, List<AbstractDataEntity>> originalData = pollResult.getResult();
-        List<SyncFinding> findings = new ArrayList<>();
+        List<SyncResult> results = new ArrayList<>();
         // Adding to findings list the not blocking execution exception found during the mapped poll
         for (SyncDataSourceConfiguration agent : pollResult.getExceptions().keySet()) {
             for (Exception exception : pollResult.getExceptions().get(agent))
-                findings.add(new SyncFinding(agent.getId(), SyncFinding.EVENT_ERROR, 
+                results.add(new SyncResult(agent.getId(), SyncFinding.EVENT_ERROR, 
                         exception.getMessage(), 
                         Json.createObjectBuilder().add("type","ex").build().toString()));
         }
@@ -238,28 +253,13 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
                     mibTables);
             
             try {
-                findings.addAll(x.sync());
+                results.addAll(x.sync());
             } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException | ArraySizeMismatchException | NotAuthorizedException | ServerSideException ex) {
                 Exceptions.printStackTrace(ex);
             }
            
         }
-        return findings;
-    }
-
-    @Override
-    public List<SyncFinding> supervisedSync(List<AbstractDataEntity> originalData) {
-        throw new UnsupportedOperationException("This provider does not support unmapped polling");
-    }
-
-    @Override
-    public List<SyncResult> automatedSync(List<AbstractDataEntity> originalData) {
-        throw new UnsupportedOperationException("This provider does not support supervised sync for unmapped pollings");
-    }
-
-    @Override
-    public  List<SyncResult> automatedSync(PollResult pollResult) {
-        throw new UnsupportedOperationException("This provider does not support automated sync");
+        return results;
     }
 
     @Override

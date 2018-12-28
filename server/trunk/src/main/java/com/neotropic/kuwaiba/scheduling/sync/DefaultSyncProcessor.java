@@ -40,10 +40,10 @@ public class DefaultSyncProcessor implements ItemProcessor {
         
         if (item == null)
             throw new InvalidArgumentException("The result from the first stage of the synchronization process failed. Check the logs for details");
-        if (syncGroup.getProvider().isAutomated())
-            return syncGroup.getProvider().automatedSync((PollResult) item);
-        
-        return syncGroup.getProvider().supervisedSync((PollResult) item);
+         
+        if (syncGroup.getCurrentProvider().isAutomated())
+            return syncGroup.getCurrentProvider().automatedSync((PollResult) item);
+         
+        return syncGroup.getCurrentProvider().supervisedSync((PollResult) item);
     }
-
 }

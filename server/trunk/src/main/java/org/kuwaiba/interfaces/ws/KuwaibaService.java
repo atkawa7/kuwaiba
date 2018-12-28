@@ -82,6 +82,7 @@ import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadata;
 import org.kuwaiba.interfaces.ws.toserialize.metadata.RemoteClassMetadataLight;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteConfigurationVariable;
+import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSynchronizationProvider;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidator;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteValidatorDefinition;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemotePhysicalConnectionDetails;
@@ -6488,6 +6489,7 @@ public class KuwaibaService {
         try {
             BackgroundJob managedJob = wsBean.launchSupervisedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);                      
             int retries = 0;
+            
             while (!managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.FINISHED) && retries < 20) {
                 try {                
                     //For some reason (probably thread-concurrency related), the initial "managedJob" instance is different from the one
@@ -6537,11 +6539,70 @@ public class KuwaibaService {
      * @return The set of results 
      * @throws ServerSideException If the sync group could not be found
      */
+//    @WebMethod(operationName = "launchAutomatedSynchronizationTask")
+//    public List<SyncResult> launchAutomatedSynchronizationTask(@WebParam(name = "syncGroupId") long syncGroupId, 
+//            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+//        try {
+//            BackgroundJob managedJob = wsBean.launchAutomatedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);                      
+//            int retries = 0;
+//            while (!managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.FINISHED) && retries < 20) {
+//                try {                
+//                    //For some reason (probably thread-concurrency related), the initial "managedJob" instance is different from the one
+//                    //updated in the SyncProcessor/Writer, so we have to constantly fetch it again.
+//                    managedJob = JobManager.getInstance().getJob(managedJob.getId());
+//
+//                    if (managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.ABORTED)) {
+//                        Exception exceptionThrownByTheJob = managedJob.getExceptionThrownByTheJob();
+//
+//                        if (exceptionThrownByTheJob != null) {
+//                            if (exceptionThrownByTheJob instanceof InventoryException)
+//                                throw new ServerSideException(managedJob.getExceptionThrownByTheJob().getMessage());
+//                            else {
+//                                System.out.println("[KUWAIBA] An unexpected error occurred in launchAutomatedSynchronizationTask: " + exceptionThrownByTheJob.getMessage());
+//                                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+//                            }
+//                        }
+//                    }
+//                    Thread.sleep(2000);
+//                }catch (Exception ex) {
+//                    throw new RuntimeException(ex.getMessage());
+//                }
+//                retries ++;
+//            }
+//            if (retries == 20)
+//                throw new ServerSideException("The automated synchronization task can no be executed");
+//                
+//            return (List<SyncResult>)managedJob.getJobResult();
+//            
+//        } catch(ServerSideException | RuntimeException e){
+//            if (e instanceof ServerSideException)
+//                throw e;
+//            else {
+//                System.out.println("[KUWAIBA] An unexpected error occurred in launchAutomatedSynchronizationTask: " + e.getMessage());
+//                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+//            }
+//        }
+//    }
+    
+    /**
+     * Executes an automated synchronization job, which consist on connecting to the sync data source 
+     * using the configuration attached to the given sync group and finding the differences 
+     * between the information currently in the inventory platform and what's in the sync data source. 
+     * An automated sync job does not need human intervention it automatically decides what to do based 
+     * on built-in business rules
+     * @param syncGroupId The sync group id
+     * @param providersName
+     * @param sessionId The session token
+     * @return The set of results 
+     * @throws ServerSideException If the sync group could not be found
+     */
     @WebMethod(operationName = "launchAutomatedSynchronizationTask")
-    public List<SyncResult> launchAutomatedSynchronizationTask(@WebParam(name = "syncGroupId") long syncGroupId, 
+    public List<SyncResult> launchAutomatedSynchronizationTask(
+            @WebParam(name = "syncGroupId") long syncGroupId, 
+            @WebParam(name = "providersName")  String providersName, 
             @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
         try {
-            BackgroundJob managedJob = wsBean.launchAutomatedSynchronizationTask(syncGroupId, getIPAddress(), sessionId);                      
+            BackgroundJob managedJob = wsBean.launchAdHocAutomatedSynchronizationTask(syncGroupId, providersName, getIPAddress(), sessionId);                      
             int retries = 0;
             while (!managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.FINISHED) && retries < 20) {
                 try {                
@@ -6577,6 +6638,65 @@ public class KuwaibaService {
                 throw e;
             else {
                 System.out.println("[KUWAIBA] An unexpected error occurred in launchAutomatedSynchronizationTask: " + e.getMessage());
+                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+            }
+        }
+    }
+    
+    /**
+     * Executes an automated synchronization job, which consist on connecting to the sync data source 
+     * using the configuration attached to the given sync group and finding the differences 
+     * between the information currently in the inventory platform and what's in the sync data source. 
+     * An automated sync job does not need human intervention it automatically decides what to do based 
+     * on built-in business rules
+     * @param synDsConfigIds The sync data source configurations ids
+     * @param providersName
+     * @param sessionId The session token
+     * @return The set of results 
+     * @throws ServerSideException If the sync group could not be found
+     */
+    @WebMethod(operationName = "launchAdHocAutomatedSynchronizationTask")
+    public List<SyncResult> launchAdHocAutomatedSynchronizationTask(
+            @WebParam(name = "synDsConfigIds") long[] synDsConfigIds, 
+            @WebParam(name = "providersName")  String providersName, 
+            @WebParam(name = "sessionId") String sessionId) throws ServerSideException {
+        try {
+            BackgroundJob managedJob = wsBean.launchAdHocAutomatedSynchronizationTask(synDsConfigIds, providersName, getIPAddress(), sessionId);                      
+            int retries = 0;
+            while (!managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.FINISHED) && retries < 20) {
+                try {                
+                    //For some reason (probably thread-concurrency related), the initial "managedJob" instance is different from the one
+                    //updated in the SyncProcessor/Writer, so we have to constantly fetch it again.
+                    managedJob = JobManager.getInstance().getJob(managedJob.getId());
+
+                    if (managedJob.getStatus().equals(BackgroundJob.JOB_STATUS.ABORTED)) {
+                        Exception exceptionThrownByTheJob = managedJob.getExceptionThrownByTheJob();
+
+                        if (exceptionThrownByTheJob != null) {
+                            if (exceptionThrownByTheJob instanceof InventoryException)
+                                throw new ServerSideException(managedJob.getExceptionThrownByTheJob().getMessage());
+                            else {
+                                System.out.println("[KUWAIBA] An unexpected error occurred in launchAdHocAutomatedSynchronizationTask: " + exceptionThrownByTheJob.getMessage());
+                                throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                            }
+                        }
+                    }
+                    Thread.sleep(2000);
+                }catch (Exception ex) {
+                    throw new RuntimeException(ex.getMessage());
+                }
+                retries ++;
+            }
+            if (retries == 20)
+                throw new ServerSideException("The automated synchronization task can no be executed");
+                
+            return (List<SyncResult>)managedJob.getJobResult();
+            
+        } catch(ServerSideException | RuntimeException e){
+            if (e instanceof ServerSideException)
+                throw e;
+            else {
+                System.out.println("[KUWAIBA] An unexpected error occurred in launchAdHocAutomatedSynchronizationTask: " + e.getMessage());
                 throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
             }
         }
@@ -6652,7 +6772,7 @@ public class KuwaibaService {
     }
     //</editor-fold>
     
-        // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
+    // <editor-fold defaultstate="collapsed" desc="SDH Networks Module">
     /**
      * Creates an SDH transport link (STMX)
      * @param classNameEndpointA The class name of the endpoint A (some kind of port)
@@ -6951,7 +7071,7 @@ public class KuwaibaService {
     
         // </editor-fold>    
     
-        // <editor-fold defaultstate="collapsed" desc="IPAM Module"> 
+    // <editor-fold defaultstate="collapsed" desc="IPAM Module"> 
     /**
      * Retrieves all the pools of subnets
      * @param parentId parent id parent id of the pool, -1 to retrieve the pools from the root nodes
@@ -7436,7 +7556,7 @@ public class KuwaibaService {
     }
         //</editor-fold>
     
-        // <editor-fold defaultstate="collapsed" desc="Contract Manager">
+    // <editor-fold defaultstate="collapsed" desc="Contract Manager">
     /**
      * Associates a list of objects (instances of a subclass of InventoryObject) to an existing contract (most probably a support contract)
      * @param objectClass Object class
@@ -7497,7 +7617,7 @@ public class KuwaibaService {
     }    
         // </editor-fold>
     
-        // <editor-fold defaultstate="collapsed" desc="MPLS Module">
+    // <editor-fold defaultstate="collapsed" desc="MPLS Module">
     /**
      * Creates an MPLS link
      * @param classNameEndpointA The class name of the endpoint A (some kind of port)
@@ -7620,7 +7740,7 @@ public class KuwaibaService {
     
         // </editor-fold>
     
-        // <editor-fold defaultstate="collapsed" desc="Projects Module">
+    // <editor-fold defaultstate="collapsed" desc="Projects Module">
     /**
      * Gets the project pools
      * @param sessionId Session id token
@@ -8037,23 +8157,26 @@ public class KuwaibaService {
         /**
          * Creates a Synchronization Data Source Configuration. A Sync data source configuration is a set of parameters 
          * used to connect to a sync data source (usually IPs, paths, etc)
+         * @param objectId Id of the object that the configuration is attached to         
+         * @param syncGroupId Id of the sync group this configuration is related to         
          * @param name The name of the new sync data source configuration
          * @param parameters The list of parameters to be stored as pairs name/value. 
          * Note that the Sync provider provides metadata definition to check if the number 
          * and format of the parameters correct, so it can be checked at server side
-         * @param syncGroupId Id of the sync group this configuration is attached to
          * @param sessionId Session token
          * @return The id of the newly created sync config
          * @throws ServerSideException If the sync group could not be found or if 
          * the any of the parameters does not comply with the expected format
          */
         @WebMethod(operationName = "createSynchronizationDataSourceConfig")
-        public long createSynchronizationDataSourceConfig(@WebParam(name="name")String name, 
+        public long createSynchronizationDataSourceConfig(
+                @WebParam(name="objectId")long objectId, 
+                @WebParam(name="syncGroupId")long syncGroupId,
+                @WebParam(name="name")String name, 
                 @WebParam(name="parameters")List<StringPair> parameters, 
-                @WebParam(name="syncGroupId")long syncGroupId, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
             try {
-                return wsBean.createSynchronizationDataSourceConfig(syncGroupId, name, parameters, getIPAddress(), sessionId);
+                return wsBean.createSynchronizationDataSourceConfig(objectId, syncGroupId, name, parameters, getIPAddress(), sessionId);
             } catch (Exception ex) {
                 if (ex instanceof ServerSideException)
                     throw ex;
@@ -8068,18 +8191,15 @@ public class KuwaibaService {
          * Creates a Synchronization Group. A Sync Group is a set of Synchronization Configurations that will be processed by the same
          * Synchronization Provider. Take into account that the schedule for the SG to be executed is not configured here, but in Task Manager's task
          * @param name The name of the new sync group
-         * @param syncProviderId The id of the provider that will process the configurations. 
-         * All sync providers have a method called <code>getId</code>. This is the value that should be used here
          * @param sessionId Session token
          * @return The id of the newly created sync group
          * @throws ServerSideException If the name or the sync provider are invalid 
          */
         @WebMethod(operationName = "createSynchronizationGroup")
         public long createSynchronizationGroup(@WebParam(name="name")String name, 
-                @WebParam(name="syncProviderId")String syncProviderId, 
                 @WebParam(name="sessionId")String sessionId) throws ServerSideException {
             try {
-                return wsBean.createSynchronizationGroup(name, syncProviderId, getIPAddress(), sessionId);
+                return wsBean.createSynchronizationGroup(name, getIPAddress(), sessionId);
             } catch (Exception ex) {
                 if (ex instanceof ServerSideException)
                     throw ex;
@@ -8154,6 +8274,29 @@ public class KuwaibaService {
                     throw ex;
                 else {
                     System.out.println("[KUWAIBA] An unexpected error occurred in getSynchronizationGroups: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            } 
+        }
+        
+        /**
+         * Gets the synchronization data source configurations for an object
+         * @param objectId the objectId
+         * @param sessionId Session token
+         * @return The list of available sync groups
+         * @throws ServerSideException If something unexpected goes wrong
+         */
+        @WebMethod(operationName = "getSyncDataSourceConfiguration")
+        public RemoteSynchronizationConfiguration getSyncDataSourceConfiguration(
+                @WebParam(name="objectId")long objectId, 
+                @WebParam(name="sessionId")String sessionId) throws ServerSideException {
+            try {
+                return wsBean.getSyncDataSourceConfiguration(objectId, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in getSyncDataSourceConfiguration: " + ex.getMessage());
                     throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
                 }
             } 
@@ -8257,38 +8400,37 @@ public class KuwaibaService {
          * @throws ServerSideException If some of the sync group cannot be found or If the provider of the sync group cannot be found
          *                             If the sync group is malformed
          */
-        @WebMethod(operationName = "copySyncGroup")        
-        public List<RemoteSynchronizationGroup> copySyncGroup(
-            @WebParam(name="syncGroupIds") long[] syncGroupIds, 
-            @WebParam(name="sessionId") String sessionId) throws ServerSideException {
-            try {
-                return wsBean.copySyncGroup(syncGroupIds, getIPAddress(), sessionId);
-            } catch (Exception ex) {
-                if (ex instanceof ServerSideException)
-                    throw ex;
-                else {
-                    System.out.println("[KUWAIBA] An unexpected error occurred in copySyncGroup: " + ex.getMessage());
-                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
-                }
-            }
-        }
+//        @WebMethod(operationName = "copySyncGroup")        
+//        public List<RemoteSynchronizationGroup> copySyncGroup(
+//            @WebParam(name="syncGroupIds") long[] syncGroupIds, 
+//            @WebParam(name="sessionId") String sessionId) throws ServerSideException {
+//            try {
+//                return wsBean.copySyncGroup(syncGroupIds, getIPAddress(), sessionId);
+//            } catch (Exception ex) {
+//                if (ex instanceof ServerSideException)
+//                    throw ex;
+//                else {
+//                    System.out.println("[KUWAIBA] An unexpected error occurred in copySyncGroup: " + ex.getMessage());
+//                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+//                }
+//            }
+//        }
         
         /**
-         * Copy a set of sync data source configuration into a given sync group
+         * Creates "copy" a relation between a set of sync data source configurations and a given sync group
          * @param syncGroupId The Sync Group Id target
          * @param syncDataSourceConfigurationIds Set of sync data source configuration ids
          * @param sessionId Session Token
-         * @return A list of new sync data source configuration
          * @throws ServerSideException If the sync group cannot be found, or some sync data source configuration cannot be found
          *                             If the sync group is malformed, or some sync data source configuration is malformed
          */
-        @WebMethod(operationName = "copySyncDataSourceConfiguration")
-        public List<RemoteSynchronizationConfiguration> copySyncDataSourceConfiguration(
+        @WebMethod(operationName = "relateSyncDataSourceConfigToSyncGroup")
+        public void relateSyncDataSourceConfigToSyncGroup(
             @WebParam(name="syncGroupId") long syncGroupId, 
             @WebParam(name="syncDataSourceConfigurationId") long[] syncDataSourceConfigurationIds, 
             @WebParam(name="sessionId") String sessionId) throws ServerSideException {
             try {
-                return wsBean.copySyncDataSourceConfiguration(syncGroupId, syncDataSourceConfigurationIds, getIPAddress(), sessionId);
+                wsBean.relateSyncDataSourceConfigToSyncGroup(syncGroupId, syncDataSourceConfigurationIds, getIPAddress(), sessionId);
             } catch (Exception ex) {
                 if (ex instanceof ServerSideException)
                     throw ex;
@@ -8299,6 +8441,31 @@ public class KuwaibaService {
             }
         }
         
+        /**
+         * Release a set of sync data source configuration from a given sync group
+         * @param syncGroupId The Sync Group Id target
+         * @param syncDataSourceConfigurationIds Set of sync data source configuration ids
+         * @param sessionId Session Token
+         * @throws ServerSideException If the sync group cannot be found, or some sync data source configuration cannot be found
+         *                             If the sync group is malformed, or some sync data source configuration is malformed
+         */
+        @WebMethod(operationName = "relateSyncDataSourceConfigFromSyncGroup")
+        public void releaseSyncDataSourceConfigFromSyncGroup(
+            @WebParam(name="syncGroupId") long syncGroupId, 
+            @WebParam(name="syncDataSourceConfigurationId") long[] syncDataSourceConfigurationIds, 
+            @WebParam(name="sessionId") String sessionId) throws ServerSideException {
+            try {
+                wsBean.releaseSyncDataSourceConfigFromSyncGroup(syncGroupId, syncDataSourceConfigurationIds, getIPAddress(), sessionId);
+            } catch (Exception ex) {
+                if (ex instanceof ServerSideException)
+                    throw ex;
+                else {
+                    System.out.println("[KUWAIBA] An unexpected error occurred in copySyncDataSourceConfiguration: " + ex.getMessage());
+                    throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
+                }
+            }
+        }
+
         /**
          * Moves a sync data source configuration from a sync group to another sync group
          * @param syncGroupId The Sync Group Id target
@@ -8313,7 +8480,7 @@ public class KuwaibaService {
             @WebParam(name="syncDataSourceConfiguration") long[] syncDataSourceConfigurationIds, 
             @WebParam(name="sessionId") String sessionId) throws ServerSideException {
             try {
-                wsBean.moveSyncDataSourceConfiguration(syncGroupId, syncDataSourceConfigurationIds, getIPAddress(), sessionId);
+                //wsBean.moveSyncDataSourceConfiguration(syncGroupId, syncDataSourceConfigurationIds, getIPAddress(), sessionId);
             } catch (Exception ex) {
                 if (ex instanceof ServerSideException)
                     throw ex;
@@ -8714,6 +8881,7 @@ public class KuwaibaService {
             }
         }
         // </editor-fold>
+        
         //<editor-fold desc="Routing Explorer Module" defaultstate="collapsed">
         /**
          * Creates/updates a map of the BGPLinks

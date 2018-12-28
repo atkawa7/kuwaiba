@@ -47,7 +47,7 @@ public class GChartsFactory {
      * @param data The data to show in the chart
      * @return A HTML Div tag that wrapped the chart
      */
-    public HTMLDiv createHTMLDivWrapperChart(ChartType chartType,String chartDivId, String chartTitle, DataTable data) {
+    public HTMLDiv createHTMLDivWrapperChart(ChartType chartType, String chartDivId, String chartTitle, DataTable data) {
         Random random = new Random();
         
         String functionName = "createChartFunction" + random.nextInt(1000); //NOI18N

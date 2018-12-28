@@ -18,8 +18,13 @@ package com.neotropic.kuwaiba.scheduling.sync;
 
 import com.neotropic.kuwaiba.scheduling.BackgroundJob;
 import com.neotropic.kuwaiba.scheduling.JobManager;
+import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
+import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import javax.batch.api.chunk.ItemReader;
 import javax.batch.operations.JobOperator;
@@ -51,10 +56,28 @@ public class DefaultSyncReader implements ItemReader {
     public void open(Serializable checkpoint) throws Exception {
         JobOperator jobOperator = BatchRuntime.getJobOperator();
         Properties jobParameters = jobOperator.getParameters(jobContext.getExecutionId());
-        if (!jobParameters.containsKey("syncGroupId"))
+        if (!jobParameters.containsKey("syncGroupId") && !jobParameters.containsKey("dataSourceConfigIds"))
             throw new InvalidArgumentException("No synchronization group was provided as parameter for the current sync job");
-        Long syncGroupId = Long.valueOf((String) jobParameters.get("syncGroupId"));
-        syncGroup = PersistenceService.getInstance().getApplicationEntityManager().getSyncGroup(syncGroupId);
+        //Is a created SyncGroup   
+        if(jobParameters.get("syncGroupId") != null){
+            Long syncGroupId = Long.valueOf((String) jobParameters.get("syncGroupId"));
+            syncGroup = PersistenceService.getInstance().getApplicationEntityManager().getSyncGroup(syncGroupId);
+        }//Is an adhocSyncGroup, the SyncDatacource configuration were selected invidually 
+        else if(jobParameters.get("dataSourceConfigIds") != null){ 
+            List<SyncDataSourceConfiguration> syncDataSourceConfigurations = new ArrayList<>();
+            for(String syncDsConfigId : ((String) jobParameters.get("dataSourceConfigIds")).split(";"))
+                syncDataSourceConfigurations.add(PersistenceService.getInstance().getApplicationEntityManager().getSyncDataSourceConfiguration(Long.valueOf(syncDsConfigId)));
+            syncGroup = new SynchronizationGroup(-1, "AdhocSyncGroup", syncDataSourceConfigurations);
+        }
+        String providerName = (String)jobParameters.get("provider");
+        try{
+            //then we set the provider
+            Class providerClass = Class.forName(providerName);
+            AbstractSyncProvider syncProvider = (AbstractSyncProvider)providerClass.getConstructor().newInstance();
+            syncGroup.setCurrentProvider(syncProvider);
+        }catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
+            throw new InvalidArgumentException(String.format("Provider %s could not be instanciated: %s", providerName, ex.getMessage()));
+        }
     }
     
     @Override
@@ -64,7 +87,7 @@ public class DefaultSyncReader implements ItemReader {
             jobContext.setTransientUserData(syncGroup);
             
             try {
-                return syncGroup.getProvider().mappedPoll(syncGroup);
+                return syncGroup.getCurrentProvider().mappedPoll(syncGroup);
             } catch(Exception ex) {
                 BackgroundJob managedJob = JobManager.getInstance().getJob(jobContext.getExecutionId());
                 managedJob.setStatus(BackgroundJob.JOB_STATUS.ABORTED);
@@ -81,6 +104,6 @@ public class DefaultSyncReader implements ItemReader {
 
     @Override
     public Serializable checkpointInfo() throws Exception {
-        return syncGroup; //Nothing to do 
+        return null; //Nothing to do 
     }
 }

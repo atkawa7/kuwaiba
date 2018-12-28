@@ -34,23 +34,25 @@ public class SynchronizationGroup implements Serializable {
      */
     private String name;
     /**
+     * Running provider
+     */
+    private AbstractSyncProvider currentProvider;
+    /**
      * Group provider
      */
-    private AbstractSyncProvider provider;
+    private List<AbstractSyncProvider> lastSelectedProviders;
     /**
      * The configurations to be processed
      */
     private List<SyncDataSourceConfiguration> syncDataSourceConfigurations;
-    
+
     public SynchronizationGroup(long id, String name, 
-            AbstractSyncProvider provider, 
             List<SyncDataSourceConfiguration> syncDataSourceConfigurations) {
         this.id = id;
         this.name = name;
-        this.provider = provider;
         this.syncDataSourceConfigurations = syncDataSourceConfigurations;
     }
-        
+      
     public long getId() {
         return id;
     }
@@ -67,12 +69,20 @@ public class SynchronizationGroup implements Serializable {
         this.name = name;
     }
 
-    public AbstractSyncProvider getProvider() {
-        return provider;
+    public AbstractSyncProvider getCurrentProvider() {
+        return currentProvider;
     }
 
-    public void setProvider(AbstractSyncProvider provider) {
-        this.provider = provider;
+    public void setCurrentProvider(AbstractSyncProvider currentProvider) {
+        this.currentProvider = currentProvider;
+    }
+
+    public List<AbstractSyncProvider> getLastSelectedProviders() {
+        return lastSelectedProviders;
+    }
+
+    public void setLastSelectedProviders(List<AbstractSyncProvider> lastSelectedProviders) {
+        this.lastSelectedProviders = lastSelectedProviders;
     }
 
     public List<SyncDataSourceConfiguration> getSyncDataSourceConfigurations() {

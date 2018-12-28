@@ -74,7 +74,6 @@ public class IPAddressesSyncProvider extends AbstractSyncProvider {
         
         for (SyncDataSourceConfiguration agent : syncGroup.getSyncDataSourceConfigurations()) {
 
-
             if (!agent.getParameters().containsKey("deviceId")) { //NOI18N
                 pollResult.getSyncDataSourceConfigurationExceptions(agent).add(
                     new InvalidArgumentException(String.format(I18N.gm("parameter_deviceId_no_defined"), syncGroup.getName(), syncGroup.getId())));

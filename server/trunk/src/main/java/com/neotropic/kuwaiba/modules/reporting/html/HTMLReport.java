@@ -169,18 +169,20 @@ public class HTMLReport extends InventoryReport {
     }
     
     public static String getDefaultStyleSheet() {
-        return      "   body {\n" +
-                    "            font-family: Helvetica, Arial, sans-serif;\n" +
+        return      "   @import url('https://fonts.googleapis.com/css?family=Open+Sans');\n"+    
+                    "   body {\n" +
+                    "            font-family: 'Open Sans', sans-serif;\n" +
                     "            font-size: small;\n" +
                     "            padding: 5px 10px 5px 10px;\n" +
-                    "            background-color: white;\n" +
+                    "            background-color: #FFF;\n" +
+                    "            color: #003C42;\n"+
                     "   }\n" +
                     "   table {\n" +
                     "            border: hidden;\n" +
                     "            width: 100%;\n" +
                     "          }\n" +
                     "   th {\n" +
-                    "            background-color: #94b155;\n" +
+                    "            background-color: #88AA00;\n" +
                     "            padding: 7px 7px 7px 7px;\n" +
                     "            color: white;\n" +
                     "            font-weight: normal;\n" +
@@ -217,17 +219,17 @@ public class HTMLReport extends InventoryReport {
                     "            color: red;\n" +
                     "   }\n" +
                     "   td.generalInfoLabel {\n" +
-                    "            background-color: #c2da8e;\n" +
+                    "            background-color: #FF9167;\n" +
                     "            width: 20%;\n" +
                     "   }\n" +
                     "   td.generalInfoValue {\n" +
                     "            background-color: white;\n" +
                     "   }\n" +
                     "   tr.even {\n" +
-                    "            background-color: #f3e270;\n" +
+                    "            background-color: #F5FFF8;\n" +
                     "   }\n" +
                     "   tr.odd {\n" +
-                    "            background-color: #D1F680;\n" +
+                    "            background-color: #FFF;\n" +
                     "   }" +
                     "   hr { \n" +
                     "            display: block; \n"+

@@ -15538,12 +15538,12 @@ div.v-layout.v-horizontal.v-widget {
 }
 
 .nuqui .empty-row {
-	height: 2px;
-	background: #A66131;
+	height: 3px;
+	background: #d1d1d1;
 }
 
 .nuqui .v-slot-empty-row {
-	height: 2px;
+	height: 3px;
 }
 
 .nuqui .cell {
@@ -15628,26 +15628,6 @@ div.v-layout.v-horizontal.v-widget {
 	text-align: center;
 }
 
-.nuqui .report-forms .cell-with-border {
-	text-align: left !important;
-	padding: 0 2px 0 2px;
-}
-
-.nuqui .report-forms .cell-with-border-short-width {
-	width: 100%;
-	min-width: 25px;
-}
-
-.nuqui .report-forms .cell-with-border-normal-width {
-	width: 100%;
-	min-width: 125px;
-}
-
-.nuqui .report-forms .cell-with-border-long-width {
-	width: 100%;
-	min-width: 250px;
-}
-
 .nuqui .report-forms .cell-with-border-bottom {
 	border-bottom: solid 1px black;
 }
@@ -15666,11 +15646,6 @@ div.v-layout.v-horizontal.v-widget {
 
 .nuqui .report-forms .cell-with-bold-text {
 	font-weight: bolder;
-}
-
-.nuqui .report-forms .cell-with-img {
-	text-align: center;
-	width: 100%;
 }
 
 .nuqui .report-forms .v-slot-foot {

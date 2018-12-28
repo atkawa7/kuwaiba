@@ -39,6 +39,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Attribute;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
+import org.kuwaiba.apis.persistence.business.BusinessObject;
 import org.kuwaiba.apis.persistence.business.BusinessObjectLight;
 import org.kuwaiba.services.persistence.util.Constants;
 import org.openide.util.Exceptions;
@@ -94,6 +95,22 @@ public class SyncUtil {
             }      
         }
         return SyncUtil.joBuilder(port).add("attributes", newJsntAttrs).build();
+    }
+    
+    /**
+     * Checks if the object is a port an wraps the name into a 
+     * standardized name
+     * @param obj a given object
+     * @return the object with the port name wrapped
+     */
+    public static BusinessObject wrapPortName(BusinessObject obj){
+        if(SyncUtil.isSynchronizable(obj.getName()) && 
+                obj.getClassName().toLowerCase().contains("port") && 
+                !obj.getName().contains("Power") && 
+                !obj.getClassName().contains("Power"))
+            obj.setName(wrapPortName(obj.getName()));
+       
+        return obj;
     }
     
     /**
@@ -300,7 +317,7 @@ public class SyncUtil {
         return jsonObj;
     }
     
-     /**
+    /**
      * Parse a hash map with the attributes of the objects to a JSON format
      * @param attributes the attributes to create the JSON
      * @return a JSON object with the attributes

@@ -34,6 +34,10 @@ public class DataTable {
      * The data set
      */
     private List<String[]> rows;
+    /**
+     * The data colors
+     */
+    private String[] colors;
     
     public DataTable(DataType[] types, String[] labels) {
         if (types.length != labels.length)
@@ -43,6 +47,17 @@ public class DataTable {
         
         this.types = types;
         this.labels = labels;
+    }
+    
+    public DataTable(DataType[] types, String[] labels, String [] colors) {
+        if (types.length != labels.length)
+            return;
+        
+        rows = new ArrayList();
+        
+        this.types = types;
+        this.labels = labels;
+        this.colors = colors;
     }
     
     public void addRow(String[] row) {
@@ -66,6 +81,14 @@ public class DataTable {
 
     public void setLabels(String[] labels) {
         this.labels = labels;
+    }
+
+    public String[] getColors() {
+        return colors;
+    }
+
+    public void setColors(String[] colors) {
+        this.colors = colors;
     }
 
     public List<String[]> getRows() {
