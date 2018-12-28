@@ -91,6 +91,7 @@ import org.inventory.communications.wsclient.GetSpecialAttributesResponse;
 import org.inventory.communications.wsclient.GroupInfo;
 import org.inventory.communications.wsclient.KuwaibaService;
 import org.inventory.communications.wsclient.KuwaibaService_Service;
+import org.inventory.communications.wsclient.LaunchAdHocAutomatedSynchronizationTaskResponse;
 import org.inventory.communications.wsclient.LaunchAutomatedSynchronizationTaskResponse;
 import org.inventory.communications.wsclient.LaunchSupervisedSynchronizationTaskResponse;
 import org.inventory.communications.wsclient.PrivilegeInfo;
@@ -5391,13 +5392,12 @@ public class CommunicationsStub {
     /**
      * Create a Sync Group
      * @param syncGroupName The name of the Sync group
-     * @param provider The provider that will be used
      * @return The local representation of the Favorites folder
      */        
-    public LocalSyncGroup createSyncGroup(String syncGroupName, LocalSyncProvider provider) {
+    public LocalSyncGroup createSyncGroup(String syncGroupName) {
         try {
-            long id = service.createSynchronizationGroup(syncGroupName, provider.getId(), session.getSessionId());
-            return new LocalSyncGroup(id, syncGroupName, provider);
+            long id = service.createSynchronizationGroup(syncGroupName, session.getSessionId());
+            return null; // new LocalSyncGroup(id, syncGroupName);
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -5446,14 +5446,14 @@ public class CommunicationsStub {
      * @param parameters the parameters associated to the configuration
      * @return The local representation of the sync configuration
      */        
-    public LocalSyncDataSourceConfiguration createSyncDataSourceConfiguration(long syncGroupId, String syncDataSourceConfigName, HashMap<String, String> parameters) {
+    public LocalSyncDataSourceConfiguration createSyncDataSourceConfiguration(long objectId, long syncGroupId, String syncDataSourceConfigName, HashMap<String, String> parameters) {
         try {
             List<StringPair> remoteParameters = new ArrayList<>();
             
             for (String paramName : parameters.keySet()) 
                 remoteParameters.add(new StringPair(paramName, parameters.get(paramName)));
             
-            long id = service.createSynchronizationDataSourceConfig(syncDataSourceConfigName, remoteParameters, syncGroupId, session.getSessionId());
+            long id = service.createSynchronizationDataSourceConfig(objectId, syncGroupId, syncDataSourceConfigName, remoteParameters, session.getSessionId());
             return new LocalSyncDataSourceConfiguration(id, syncDataSourceConfigName, parameters);
         } catch (Exception ex) {
             this.error = ex.getMessage();
@@ -5504,24 +5504,26 @@ public class CommunicationsStub {
      * @return A list with the new sync groups
      */
     public List<LocalSyncGroup> copySyncGroup(LocalSyncGroup[] syncGroups) {
-        try {
-            List<Long> syncGroupsIds = new ArrayList<>();
-            for (LocalSyncGroup syncGroup : syncGroups)
-                syncGroupsIds.add(syncGroup.getId());
-            List<RemoteSynchronizationGroup> remoteSyncGroups = service.copySyncGroup(syncGroupsIds, session.getSessionId());
-            
-            List<LocalSyncGroup> localSyncGroups = new ArrayList<>();
-            for (RemoteSynchronizationGroup remoteSyncGroup : remoteSyncGroups) {
-                localSyncGroups.add(new LocalSyncGroup(remoteSyncGroup.getId(), 
-                    remoteSyncGroup.getName(), 
-                    new LocalSyncProvider(remoteSyncGroup.getProvider().getId(), remoteSyncGroup.getProvider().getDisplayName(), 
-                            remoteSyncGroup.getProvider().isAutomated())));
-            }
-            return localSyncGroups;
-        } catch (Exception ex) {
-            this.error = ex.getMessage();
-            return null;
-        }
+//        try {
+//            List<Long> syncGroupsIds = new ArrayList<>();
+//            for (LocalSyncGroup syncGroup : syncGroups)
+//                syncGroupsIds.add(syncGroup.getId());
+//            //List<RemoteSynchronizationGroup> remoteSyncGroups = service.copySyncGroup(syncGroupsIds, session.getSessionId());
+//            
+//            List<LocalSyncGroup> localSyncGroups = new ArrayList<>();
+//            for (RemoteSynchronizationGroup remoteSyncGroup : remoteSyncGroups) {
+//                localSyncGroups.add(new LocalSyncGroup(remoteSyncGroup.getId(), 
+//                    remoteSyncGroup.getName(), 
+//                    new LocalSyncProvider(remoteSyncGroup.getProvider().getId(), remoteSyncGroup.getProvider().getDisplayName(), 
+//                            remoteSyncGroup.getProvider().isAutomated())));
+//            }
+//            return localSyncGroups;
+//        } catch (Exception ex) {
+//            this.error = ex.getMessage();
+//            return null;
+//        }
+
+        return null;
     }
     
     /**
@@ -5531,31 +5533,33 @@ public class CommunicationsStub {
      * @return The list of copied sync data source configuration
      */
     public List<LocalSyncDataSourceConfiguration> copySyncDataSourceConfiguration(long syncGroupId, LocalSyncDataSourceConfiguration[] syncDataSourceConfiguration) {
-        try {
-            List<Long> syncDataSrcConfigIds = new ArrayList<>();
-            for (LocalSyncDataSourceConfiguration syncDataSrcConfig : syncDataSourceConfiguration)
-                syncDataSrcConfigIds.add(syncDataSrcConfig.getId());
-                            
-            List<RemoteSynchronizationConfiguration> lstRemoteSyncDataSrcConfig = service.copySyncDataSourceConfiguration(syncGroupId, syncDataSrcConfigIds, session.getSessionId());
-            
-            List<LocalSyncDataSourceConfiguration> lstLocalSyncDataSrcConfig = new ArrayList<>();
-            
-            for (RemoteSynchronizationConfiguration remoteSyncDataSrcConfig : lstRemoteSyncDataSrcConfig) {
-                HashMap<String, String> parameters = new HashMap<>();
-                for (StringPair parameter : remoteSyncDataSrcConfig.getParameters())
-                    parameters.put(parameter.getKey(), parameter.getValue());
-                
-                lstLocalSyncDataSrcConfig.add(new LocalSyncDataSourceConfiguration(
-                    remoteSyncDataSrcConfig.getId(), 
-                    remoteSyncDataSrcConfig.getName(), 
-                    parameters));
-                                
-            }
-            return lstLocalSyncDataSrcConfig;
-        } catch (Exception ex) {
-            this.error = ex.getMessage();
-            return null;
-        }
+//        try {
+//            List<Long> syncDataSrcConfigIds = new ArrayList<>();
+//            for (LocalSyncDataSourceConfiguration syncDataSrcConfig : syncDataSourceConfiguration)
+//                syncDataSrcConfigIds.add(syncDataSrcConfig.getId());
+//                            
+//            List<RemoteSynchronizationConfiguration> lstRemoteSyncDataSrcConfig = service.copySyncDataSourceConfiguration(syncGroupId, syncDataSrcConfigIds, session.getSessionId());
+//            
+//            List<LocalSyncDataSourceConfiguration> lstLocalSyncDataSrcConfig = new ArrayList<>();
+//            
+//            for (RemoteSynchronizationConfiguration remoteSyncDataSrcConfig : lstRemoteSyncDataSrcConfig) {
+//                HashMap<String, String> parameters = new HashMap<>();
+//                for (StringPair parameter : remoteSyncDataSrcConfig.getParameters())
+//                    parameters.put(parameter.getKey(), parameter.getValue());
+//                
+//                lstLocalSyncDataSrcConfig.add(new LocalSyncDataSourceConfiguration(
+//                    remoteSyncDataSrcConfig.getId(), 
+//                    remoteSyncDataSrcConfig.getName(), 
+//                    parameters));
+//                                
+//            }
+//            return lstLocalSyncDataSrcConfig;
+//        } catch (Exception ex) {
+//            this.error = ex.getMessage();
+//            return null;
+//        }
+
+        return null;
     }
     
     /**
@@ -5623,13 +5627,34 @@ public class CommunicationsStub {
                     
             List<RemoteSynchronizationGroup> synchronizationGroups = service.getSynchronizationGroups(session.getSessionId());
             for (RemoteSynchronizationGroup synchronizationGroup : synchronizationGroups) {
-                localSyncGroup.add(new LocalSyncGroup(synchronizationGroup.getId(), 
-                        synchronizationGroup.getName(),
-                        new LocalSyncProvider(synchronizationGroup.getProvider().getId(), 
-                                synchronizationGroup.getProvider().getDisplayName(), synchronizationGroup.getProvider().isAutomated())));
+                localSyncGroup.add(new LocalSyncGroup(synchronizationGroup.getId(), synchronizationGroup.getName()));
             }
             return localSyncGroup;
             
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Returns a data source configurations that belongs to a inventory object group
+     * @param objectId the synchronization group id
+     * @return a list of the data source configurations
+     */
+    public LocalSyncDataSourceConfiguration getSyncDataSourceConfiguration(long objectId) {
+        try {
+            List<LocalSyncDataSourceConfiguration> res = new ArrayList<>();
+            RemoteSynchronizationConfiguration remoteConfiguration = 
+                    service.getSyncDataSourceConfiguration(objectId, session.getSessionId());
+            
+            
+            HashMap<String, String> parameters = new HashMap<>();
+            for (StringPair parameter : remoteConfiguration.getParameters())
+                parameters.put(parameter.getKey(), parameter.getValue());
+
+            return new LocalSyncDataSourceConfiguration(remoteConfiguration.getId(), remoteConfiguration.getName(), parameters);
+
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -5663,40 +5688,79 @@ public class CommunicationsStub {
     }
     
     
-    public void launchAutomatedSynchronizationTask(final LocalSyncGroup syncGroup, final AbstractRunnableSyncResultsManager progress) {
+    public void launchAutomatedSynchronizationTask(final LocalSyncGroup syncGroup, String providerId, int x, final AbstractRunnableSyncResultsManager progress) {
         try {
-            service.launchAutomatedSynchronizationTaskAsync(syncGroup.getId(), session.getSessionId(), 
+            service.launchAutomatedSynchronizationTaskAsync(syncGroup.getId(), providerId, session.getSessionId(), 
             new AsyncHandler<LaunchAutomatedSynchronizationTaskResponse>() {
                 @Override
                 public void handleResponse(Response<LaunchAutomatedSynchronizationTaskResponse> res) {
                     try {
                         LaunchAutomatedSynchronizationTaskResponse get = res.get();
-                        
+            
                         List<LocalSyncResult> syncResults = new ArrayList<>();
                         for (SyncResult syncResult : get.getReturn())
                             syncResults.add(new LocalSyncResult(syncResult.getDataSourceId(), 
                                     syncResult.getType(), syncResult.getActionDescription(), syncResult.getResult()));
-                        
-                        progress.setLocalSyncGroup(syncGroup);
+
                         progress.setSyncResults(syncResults);
-                        progress.getProgressHandle().finish();
-                        progress.handleSyncResults();                        
+                        progress.handleSyncResults();    
+                        
                     } catch (InterruptedException | ExecutionException ex) {
                         String message = ex.getMessage();
                         int idxOfSpace = message.indexOf(": ");
                         String kindMessage = message.substring(idxOfSpace + 1);
-                        
+            
                         CommunicationsStub.this.error = kindMessage;
                         progress.setSyncResults(null);
                         progress.getProgressHandle().finish();                        
                         progress.handleSyncResults();
                     }
                 }
-            });
-            progress.getProgressHandle().start();
+            });           
         } catch (Exception ex) {
             this.error = ex.getMessage();
+    
+        }
+    }
+    
+    public void launchAdHocAutomatedSynchronizationTask(final List<LocalSyncDataSourceConfiguration> syncdsConfigs, String providerId, int x, final AbstractRunnableSyncResultsManager progress) {
+        try {
+            List<Long> syncDsConfigIds = new ArrayList<>();
+            syncdsConfigs.forEach(syncdsConfig -> {
+                syncDsConfigIds.add(syncdsConfig.getId());
+            });
+                       
+            service.launchAdHocAutomatedSynchronizationTaskAsync(syncDsConfigIds, providerId, session.getSessionId(), 
+            new AsyncHandler<LaunchAdHocAutomatedSynchronizationTaskResponse>() {
+                @Override
+                public void handleResponse(Response<LaunchAdHocAutomatedSynchronizationTaskResponse> res) {
+                    try {
+                        LaunchAdHocAutomatedSynchronizationTaskResponse get = res.get();
             
+                        List<LocalSyncResult> syncResults = new ArrayList<>();
+                        for (SyncResult syncResult : get.getReturn())
+                            syncResults.add(new LocalSyncResult(syncResult.getDataSourceId(), 
+                                    syncResult.getType(), syncResult.getActionDescription(), syncResult.getResult()));
+           
+                        progress.setSyncResults(syncResults);
+                        progress.handleSyncResults();    
+                        
+                    } catch (InterruptedException | ExecutionException ex) {
+                        String message = ex.getMessage();
+                        int idxOfSpace = message.indexOf(": ");
+                        String kindMessage = message.substring(idxOfSpace + 1);
+            
+                        CommunicationsStub.this.error = kindMessage;
+                        progress.setSyncResults(null);
+                        progress.getProgressHandle().finish();                        
+                        progress.handleSyncResults();
+                    }
+                }
+            });           
+
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+    
         }
     }
     

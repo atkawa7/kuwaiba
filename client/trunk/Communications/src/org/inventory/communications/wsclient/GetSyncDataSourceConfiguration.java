@@ -7,16 +7,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for createSynchronizationGroup complex type.
+ * <p>Java class for getSyncDataSourceConfiguration complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="createSynchronizationGroup">
+ * &lt;complexType name="getSyncDataSourceConfiguration">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -27,37 +27,29 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "createSynchronizationGroup", propOrder = {
-    "name",
+@XmlType(name = "getSyncDataSourceConfiguration", propOrder = {
+    "objectId",
     "sessionId"
 })
-public class CreateSynchronizationGroup {
+public class GetSyncDataSourceConfiguration {
 
-    protected String name;
+    protected long objectId;
     protected String sessionId;
 
     /**
-     * Gets the value of the name property.
+     * Gets the value of the objectId property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
      */
-    public String getName() {
-        return name;
+    public long getObjectId() {
+        return objectId;
     }
 
     /**
-     * Sets the value of the name property.
+     * Sets the value of the objectId property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
      */
-    public void setName(String value) {
-        this.name = value;
+    public void setObjectId(long value) {
+        this.objectId = value;
     }
 
     /**

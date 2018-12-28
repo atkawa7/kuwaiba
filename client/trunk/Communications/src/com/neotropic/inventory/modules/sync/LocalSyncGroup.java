@@ -33,12 +33,23 @@ public class LocalSyncGroup implements Transferable, Comparable<LocalSyncGroup> 
     private LocalSyncProvider provider;
     private List<LocalSyncDataSourceConfiguration> dataSourceConfig;
 
+    public LocalSyncGroup(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+    
     public LocalSyncGroup(long id, String name, LocalSyncProvider provider) {
         this.id = id;
         this.name = name;
         this.provider = provider;
     }
 
+    public LocalSyncGroup(long id, String name, List<LocalSyncDataSourceConfiguration> dataSourceConfig) {
+        this.id = id;
+        this.name = name;
+        this.dataSourceConfig = dataSourceConfig;
+    }
+        
     public long getId() {
         return id;
     }

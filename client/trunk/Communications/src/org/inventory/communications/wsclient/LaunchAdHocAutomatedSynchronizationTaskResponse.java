@@ -10,16 +10,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for copySyncGroupResponse complex type.
+ * <p>Java class for launchAdHocAutomatedSynchronizationTaskResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="copySyncGroupResponse">
+ * &lt;complexType name="launchAdHocAutomatedSynchronizationTaskResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}remoteSynchronizationGroup" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="return" type="{http://ws.interfaces.kuwaiba.org/}syncResult" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -29,13 +29,13 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "copySyncGroupResponse", propOrder = {
+@XmlType(name = "launchAdHocAutomatedSynchronizationTaskResponse", propOrder = {
     "_return"
 })
-public class CopySyncGroupResponse {
+public class LaunchAdHocAutomatedSynchronizationTaskResponse {
 
     @XmlElement(name = "return")
-    protected List<RemoteSynchronizationGroup> _return;
+    protected List<SyncResult> _return;
 
     /**
      * Gets the value of the return property.
@@ -55,13 +55,13 @@ public class CopySyncGroupResponse {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link RemoteSynchronizationGroup }
+     * {@link SyncResult }
      * 
      * 
      */
-    public List<RemoteSynchronizationGroup> getReturn() {
+    public List<SyncResult> getReturn() {
         if (_return == null) {
-            _return = new ArrayList<RemoteSynchronizationGroup>();
+            _return = new ArrayList<SyncResult>();
         }
         return this._return;
     }

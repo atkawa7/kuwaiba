@@ -26,15 +26,15 @@ public abstract class AbstractRunnableSyncResultsManager implements Runnable {
     /**
       * Used to manage the progress bar in the UI
       */
-    private ProgressHandle progressHandle;
+    protected ProgressHandle progressHandle;
     /**
      * The list of sync results to be displayed
      */
-    private List<LocalSyncResult> syncResults;    
+    protected List<LocalSyncResult> syncResults;    
     /**
      * The sync groups the results are related to
      */
-    private LocalSyncGroup localSyncGroup;
+    protected LocalSyncGroup localSyncGroup;
 
     public List<LocalSyncResult> getSyncResults() {
         return syncResults;

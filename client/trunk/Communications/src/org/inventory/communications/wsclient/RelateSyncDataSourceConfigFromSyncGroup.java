@@ -10,16 +10,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for copySyncGroup complex type.
+ * <p>Java class for relateSyncDataSourceConfigFromSyncGroup complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="copySyncGroup">
+ * &lt;complexType name="relateSyncDataSourceConfigFromSyncGroup">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="syncGroupIds" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="syncGroupId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="syncDataSourceConfigurationId" type="{http://www.w3.org/2001/XMLSchema}long" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -30,29 +31,47 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "copySyncGroup", propOrder = {
-    "syncGroupIds",
+@XmlType(name = "relateSyncDataSourceConfigFromSyncGroup", propOrder = {
+    "syncGroupId",
+    "syncDataSourceConfigurationId",
     "sessionId"
 })
-public class CopySyncGroup {
+public class RelateSyncDataSourceConfigFromSyncGroup {
 
+    protected long syncGroupId;
     @XmlElement(nillable = true)
-    protected List<Long> syncGroupIds;
+    protected List<Long> syncDataSourceConfigurationId;
     protected String sessionId;
 
     /**
-     * Gets the value of the syncGroupIds property.
+     * Gets the value of the syncGroupId property.
+     * 
+     */
+    public long getSyncGroupId() {
+        return syncGroupId;
+    }
+
+    /**
+     * Sets the value of the syncGroupId property.
+     * 
+     */
+    public void setSyncGroupId(long value) {
+        this.syncGroupId = value;
+    }
+
+    /**
+     * Gets the value of the syncDataSourceConfigurationId property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the syncGroupIds property.
+     * This is why there is not a <CODE>set</CODE> method for the syncDataSourceConfigurationId property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getSyncGroupIds().add(newItem);
+     *    getSyncDataSourceConfigurationId().add(newItem);
      * </pre>
      * 
      * 
@@ -62,11 +81,11 @@ public class CopySyncGroup {
      * 
      * 
      */
-    public List<Long> getSyncGroupIds() {
-        if (syncGroupIds == null) {
-            syncGroupIds = new ArrayList<Long>();
+    public List<Long> getSyncDataSourceConfigurationId() {
+        if (syncDataSourceConfigurationId == null) {
+            syncDataSourceConfigurationId = new ArrayList<Long>();
         }
-        return this.syncGroupIds;
+        return this.syncDataSourceConfigurationId;
     }
 
     /**

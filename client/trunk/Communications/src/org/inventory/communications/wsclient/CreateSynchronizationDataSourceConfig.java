@@ -18,9 +18,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="objectId" type="{http://www.w3.org/2001/XMLSchema}long"/>
+ *         &lt;element name="syncGroupId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="name" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="parameters" type="{http://ws.interfaces.kuwaiba.org/}stringPair" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="syncGroupId" type="{http://www.w3.org/2001/XMLSchema}long"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -32,17 +33,51 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "createSynchronizationDataSourceConfig", propOrder = {
+    "objectId",
+    "syncGroupId",
     "name",
     "parameters",
-    "syncGroupId",
     "sessionId"
 })
 public class CreateSynchronizationDataSourceConfig {
 
+    protected long objectId;
+    protected long syncGroupId;
     protected String name;
     protected List<StringPair> parameters;
-    protected long syncGroupId;
     protected String sessionId;
+
+    /**
+     * Gets the value of the objectId property.
+     * 
+     */
+    public long getObjectId() {
+        return objectId;
+    }
+
+    /**
+     * Sets the value of the objectId property.
+     * 
+     */
+    public void setObjectId(long value) {
+        this.objectId = value;
+    }
+
+    /**
+     * Gets the value of the syncGroupId property.
+     * 
+     */
+    public long getSyncGroupId() {
+        return syncGroupId;
+    }
+
+    /**
+     * Sets the value of the syncGroupId property.
+     * 
+     */
+    public void setSyncGroupId(long value) {
+        this.syncGroupId = value;
+    }
 
     /**
      * Gets the value of the name property.
@@ -95,22 +130,6 @@ public class CreateSynchronizationDataSourceConfig {
             parameters = new ArrayList<StringPair>();
         }
         return this.parameters;
-    }
-
-    /**
-     * Gets the value of the syncGroupId property.
-     * 
-     */
-    public long getSyncGroupId() {
-        return syncGroupId;
-    }
-
-    /**
-     * Sets the value of the syncGroupId property.
-     * 
-     */
-    public void setSyncGroupId(long value) {
-        this.syncGroupId = value;
     }
 
     /**
