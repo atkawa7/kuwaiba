@@ -34,7 +34,7 @@ public class SyncManagerActionFactory {
      * Action that adds data source configurations to a given sync group
      */
     private static NewSyncDataSourceConfigurationAction newSyncDataSourceConfigurationAction;
-        
+       
     public static GenericInventoryAction getNewSyncGroupAction() {
         return newSyncGroupAction == null ? newSyncGroupAction = new NewSyncGroupAction() : newSyncGroupAction;
     }

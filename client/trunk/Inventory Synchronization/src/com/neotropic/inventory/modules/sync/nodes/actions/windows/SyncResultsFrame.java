@@ -83,7 +83,7 @@ public class SyncResultsFrame extends JFrame {
             }
         });
         add(btnExport, BorderLayout.NORTH);
-        List<LocalSyncDataSourceConfiguration> dataSourceConfigurations = CommunicationsStub.getInstance().getSyncDataSourceConfigurations(syncGroup.getId());
+        List<LocalSyncDataSourceConfiguration> dataSourceConfigurations = syncGroup.getDataSourceConfig();
         for(LocalSyncResult result : results){
             for (LocalSyncDataSourceConfiguration dataSourceConfiguration : dataSourceConfigurations) {
                 if(result.getDataSourceId() == dataSourceConfiguration.getId()){
@@ -92,8 +92,6 @@ public class SyncResultsFrame extends JFrame {
                 }
             }
         }
-        
-        
         
         lstSyncResults = new SyncResultsList<>(results.toArray(new LocalSyncResult[0]));
         lstSyncResults.setCellRenderer(new SyncResultsCellRenderer());

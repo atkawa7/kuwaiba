@@ -15,6 +15,7 @@
  */
 package com.neotropic.inventory.modules.sync.nodes;
 
+import com.neotropic.inventory.modules.sync.LocalSyncDataSourceConfiguration;
 import com.neotropic.inventory.modules.sync.nodes.actions.SyncManagerActionFactory;
 import java.awt.Image;
 import java.awt.datatransfer.Transferable;
@@ -55,7 +56,8 @@ public class SyncGroupRootNode extends AbstractNode {
         pasteAction.putValue(Action.NAME, I18N.gm("lbl_paste_action"));
             
         return new Action[] {
-            SyncManagerActionFactory.getNewSyncGroupAction()
+            SyncManagerActionFactory.getNewSyncGroupAction(),
+            SyncManagerActionFactory.getNewSyncDataSourceConfigurationAction()
         };
     }
     
@@ -117,7 +119,7 @@ public class SyncGroupRootNode extends AbstractNode {
         return getIcon(i);
     }
     
-    public static class SyncGroupRootChildren extends Children.Keys<LocalSyncGroup> {
+    public static class SyncGroupRootChildren extends Children.Keys<Object> {
         
         @Override
         public void addNotify() {
@@ -138,8 +140,12 @@ public class SyncGroupRootNode extends AbstractNode {
         }
 
         @Override
-        protected Node[] createNodes(LocalSyncGroup key) {
-            return new Node [] { new SyncGroupNode(key) };
+        protected Node[] createNodes(Object key) {
+            if(key instanceof LocalSyncGroup)
+                return new Node[] { new SyncGroupNode((LocalSyncGroup)key) };
+            if(key instanceof LocalSyncDataSourceConfiguration)
+                return new Node[] { new SyncDataSourceConfigurationNode((LocalSyncDataSourceConfiguration)key) };
+            return null;
         }
     }
 }

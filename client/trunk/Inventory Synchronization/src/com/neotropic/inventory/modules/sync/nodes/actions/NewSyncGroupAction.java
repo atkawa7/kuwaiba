@@ -19,7 +19,6 @@ import com.neotropic.inventory.modules.sync.nodes.SyncGroupRootNode;
 import com.neotropic.inventory.modules.sync.nodes.SyncGroupRootNode.SyncGroupRootChildren;
 import java.awt.event.ActionEvent;
 import java.util.Iterator;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
@@ -28,7 +27,6 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.utils.JComplexDialogPanel;
 import org.inventory.communications.core.LocalPrivilege;
 import com.neotropic.inventory.modules.sync.LocalSyncGroup;
-import com.neotropic.inventory.modules.sync.LocalSyncProvider;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.i18n.I18N;
 import org.openide.util.Utilities;
@@ -45,36 +43,27 @@ class NewSyncGroupAction extends GenericInventoryAction {
         
     @Override
     public void actionPerformed(ActionEvent e) {
-        Iterator<? extends SyncGroupRootNode> selectedNodes = Utilities.actionsGlobalContext()
+         Iterator<? extends SyncGroupRootNode> selectedNodes = Utilities.actionsGlobalContext()
             .lookupResult(SyncGroupRootNode.class).allInstances().iterator();
         
         if (!selectedNodes.hasNext())
             return;
         
         SyncGroupRootNode selectedNode = selectedNodes.next();
-        
+                 
         JTextField txtSyncGroupName = new JTextField();
         txtSyncGroupName.setName("txtSyncGroupName");
         txtSyncGroupName.setColumns(10);
-        JComboBox<LocalSyncProvider> cmbProviders = new JComboBox<>();
-        cmbProviders.setName("cmbProviders");
-        cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.reference.ReferenceSnmpSyncProvider", "Hardware/Interfaces from entityMIB", false));
-        cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.mpls.SnmpMplsSyncProvider", "General MPLS Information", false));
-        cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.ip.IPAddressesSyncProvider", "IP Addresses", true));
-        cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.vlan.SnmpCiscoVlansSyncProvider", "VLANs", true));
-        cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.ssh.bdi.BridgeDomainSyncProvider", "Bridge Domains", true));
-        cmbProviders.addItem(new LocalSyncProvider("com.neotropic.kuwaiba.sync.connectors.snmp.bgp.BgpSyncProvider", "BGP Map", true));
-
         
         JComplexDialogPanel pnlPoolProperties = new JComplexDialogPanel(
-            new String[] {I18N.gm("sync_group_name"), I18N.gm("sync_provider")}, 
-            new JComponent[] {txtSyncGroupName, cmbProviders});
-        
+            new String[] {I18N.gm("sync_group_name")}, 
+            new JComponent[] {txtSyncGroupName});
+             
         if (JOptionPane.showConfirmDialog(null, pnlPoolProperties, I18N.gm("new_sync_group"), 
             JOptionPane.OK_CANCEL_OPTION) == JOptionPane.OK_OPTION) {
-            
+    
             LocalSyncGroup newSyncGroup = CommunicationsStub.getInstance().createSyncGroup(
-                ((JTextField) pnlPoolProperties.getComponent("txtSyncGroupName")).getText(),(LocalSyncProvider)cmbProviders.getSelectedItem());
+                ((JTextField) pnlPoolProperties.getComponent("txtSyncGroupName")).getText());
             
             if (newSyncGroup == null) {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, 
@@ -85,7 +74,7 @@ class NewSyncGroupAction extends GenericInventoryAction {
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("information"), 
                     NotificationUtil.INFO_MESSAGE, I18N.gm("new_sync_group_created_successfully"));
             }
-        }
+        }       
     }
 
     @Override

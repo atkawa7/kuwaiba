@@ -16,20 +16,19 @@
 package com.neotropic.inventory.modules.sync.nodes;
 
 import com.neotropic.inventory.modules.sync.nodes.actions.DeleteSyncAction;
-import com.neotropic.inventory.modules.sync.nodes.properties.DeviceTypeProperty;
-import com.neotropic.inventory.modules.sync.nodes.properties.NoneObject;
 import com.neotropic.inventory.modules.sync.nodes.properties.SyncConfigurationNativeTypeProperty;
 import java.awt.Image;
 import java.awt.datatransfer.Transferable;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import com.neotropic.inventory.modules.sync.LocalSyncDataSourceConfiguration;
+import com.neotropic.inventory.modules.sync.nodes.actions.RunSynchronizationProcessAction;
+import com.neotropic.inventory.modules.sync.nodes.properties.DevicePropertyReadEditor;
 import org.inventory.communications.util.Constants;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
@@ -54,7 +53,7 @@ public class SyncDataSourceConfigurationNode extends AbstractNode implements Pro
     public SyncDataSourceConfigurationNode(LocalSyncDataSourceConfiguration syncConfig) {
         super(Children.LEAF, Lookups.singleton(syncConfig));
     }
-    
+
     @Override
     public Image getOpenedIcon(int type) {
         return NODE_ICON;
@@ -151,23 +150,27 @@ public class SyncDataSourceConfigurationNode extends AbstractNode implements Pro
             !parameters.containsKey("password") ? null : parameters.get("password"));
         /*End SSH Properties*/
         
-        Long deviceId = parameters.containsKey("deviceId") ? Long.valueOf(parameters.get("deviceId")) : null;
+        String deviceId = parameters.containsKey("deviceId") ? parameters.get("deviceId") : null;
         String deviceClass = parameters.containsKey("deviceClass") ? parameters.get("deviceClass") : null;
+        LocalObjectLight deviceObj = CommunicationsStub.getInstance().getObjectInfoLight(deviceClass, Long.valueOf(deviceId));
         
-        PropertySupport.ReadWrite propertyDeviceId = new SyncConfigurationNativeTypeProperty("deviceId", String.class, "deviceId", "deviceId", this, null);
-        PropertySupport.ReadWrite propertyDevice = new DeviceTypeProperty(this, NoneObject.getInstance(), propertyDeviceId);
+        PropertySupport.ReadOnly propertyDeviceId = new DevicePropertyReadEditor("deviceId", String.class, "deviceId", "deviceId", deviceId);
+        PropertySupport.ReadOnly propertyDevice = new DevicePropertyReadEditor("device", String.class, "device", "device", deviceObj.toString());
+
+        
+//new DeviceTypeProperty(this, NoneObject.getInstance(), propertyDeviceId);
         
         generalPropertySet.put(propertyName);
-        if (deviceClass != null && deviceId != null) {
-            LocalObjectLight deviceObj = CommunicationsStub.getInstance().getObjectInfoLight(deviceClass, deviceId);
-            if (deviceObj != null) {
-                try {
-                    propertyDevice.setValue(deviceObj);
-                    propertyDeviceId.setValue(parameters.get("deviceId"));
-                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                }
-            }
-        }
+//        if (deviceClass != null && deviceId != null) {
+//            LocalObjectLight deviceObj = CommunicationsStub.getInstance().getObjectInfoLight(deviceClass, deviceId);
+//            if (deviceObj != null) {
+//                try {
+//                    propertyDevice.setValue(deviceObj);
+//                    propertyDeviceId.setValue(parameters.get("deviceId"));
+//                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+//                }
+//            }
+//        }
         generalPropertySet.put(propertyDevice);
         generalPropertySet.put(propertyDeviceId);
         generalPropertySet.put(propertyIpAddress);
@@ -210,10 +213,9 @@ public class SyncDataSourceConfigurationNode extends AbstractNode implements Pro
 
         Action cutAction = SystemAction.get(CutAction.class);
         cutAction.putValue(Action.NAME, I18N.gm("lbl_cut_action"));
-        
+
         return new Action[] {
-            copyAction, 
-            cutAction, 
+            RunSynchronizationProcessAction.getInstance(),
             null, 
             DeleteSyncAction.getInstance()};
     }

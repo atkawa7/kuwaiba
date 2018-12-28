@@ -198,10 +198,10 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
         LocalSyncGroup localSyncGroup = getLookup().lookup(LocalSyncGroup.class);                
         
         PropertySupport.ReadWrite propertyName = new SyncGroupNativeTypeProperty(Constants.PROPERTY_NAME, String.class, Constants.PROPERTY_NAME, Constants.PROPERTY_NAME, this, localSyncGroup.getName());
-        PropertySupport.ReadWrite propertySyncProvider = new SyncGroupNativeTypeProperty("syncProvider", String.class, I18N.gm("sync_provider"), "", this, localSyncGroup.getProvider());
+        //PropertySupport.ReadWrite propertySyncProvider = new SyncGroupNativeTypeProperty("syncProvider", String.class, I18N.gm("sync_provider"), "", this, localSyncGroup.getProvider());
                 
         generalPropertySet.put(propertyName);
-        generalPropertySet.put(propertySyncProvider);
+        //generalPropertySet.put(propertySyncProvider);
         
         generalPropertySet.setName(I18N.gm("general_properties"));
         generalPropertySet.setDisplayName(I18N.gm("general_properties"));
