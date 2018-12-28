@@ -195,6 +195,8 @@ public class Util {
      */
     public static boolean canDeleteObject(Node instance, boolean unsafeDeletion) throws OperationNotPermittedException {
         boolean result = true;
+        GraphDatabaseService graphDb = (GraphDatabaseService) PersistenceService.getInstance().getConnectionManager().getConnectionHandler();
+        try (Transaction tx = graphDb.beginTx()) {
         if(!unsafeDeletion){
             if (instance.getRelationships(RelTypes.RELATED_TO, Direction.INCOMING).iterator().hasNext())
                 result = false;
@@ -208,8 +210,9 @@ public class Util {
 
         for (Relationship rel : instance.getRelationships(Direction.INCOMING, RelTypes.CHILD_OF, RelTypes.CHILD_OF_SPECIAL))
             canDeleteObject(rel.getStartNode(), unsafeDeletion);
-        
+        tx.success();
         return result;
+        }
     }
     
     public static void deleteTemplateObject(Node instance) {

@@ -2894,10 +2894,12 @@ public class BusinessEntityManagerImpl implements BusinessEntityManager {
     public boolean canDeleteObject(String className, long oid, boolean releaseRelationships) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, OperationNotPermittedException {
         if (!mem.isSubClass(Constants.CLASS_INVENTORYOBJECT, className))
             throw new OperationNotPermittedException(String.format("Class %s is not a business-related class", className));
-        
-        Node instance = getInstanceOfClass(className, oid);
-        boolean safeDeletion = Util.canDeleteObject(instance, releaseRelationships);
-        return safeDeletion;
+        try (Transaction tx = graphDb.beginTx()) {   
+            Node instance = getInstanceOfClass(className, oid);
+            boolean safeDeletion = Util.canDeleteObject(instance, releaseRelationships);
+            tx.success();
+            return safeDeletion;
+        }
     }
     
     /**
