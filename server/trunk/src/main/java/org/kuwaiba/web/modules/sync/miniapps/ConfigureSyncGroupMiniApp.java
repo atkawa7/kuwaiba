@@ -241,7 +241,7 @@ public class ConfigureSyncGroupMiniApp extends AbstractMiniApplication<Window, P
             if (txtName.getValue().trim().isEmpty() || !cmbSyncProviders.getSelectedItem().isPresent())
                 throw new InvalidArgumentException("Make sure you provided a valid name and provider");
             try {
-                properties.put("syncGroupId", wsBean.createSynchronizationGroup(txtName.getValue(), cmbSyncProviders.getSelectedItem().get().getProviderId(), 
+                properties.put("syncGroupId", wsBean.createSynchronizationGroup(txtName.getValue(), 
                         Page.getCurrent().getWebBrowser().getAddress(),
                         ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()));
                 return new NewDataSourceConfigurationStep(properties);
@@ -340,17 +340,18 @@ public class ConfigureSyncGroupMiniApp extends AbstractMiniApplication<Window, P
         public Wizard.Step next() throws InvalidArgumentException {
             if (txtName.getValue().trim().isEmpty())
                 throw new InvalidArgumentException("Make sure you provided a valid name for this Data Source Configuration");
-            try {
-                wsBean.createSynchronizationDataSourceConfig((long)properties.get("syncGroupId"), txtName.getValue(), 
-                        Arrays.asList(new StringPair("deviceId", properties.getProperty("deviceId")), new StringPair("deviceClass", properties.getProperty("deviceClass")), 
-                                new StringPair("ipAddress", txtIpAddress.getValue()), new StringPair("port", txtPort.getValue()),
-                                new StringPair("user", txtUser.getValue()), new StringPair("password", txtPassword.getValue())), 
-                        Page.getCurrent().getWebBrowser().getAddress(),
-                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+            //TODO modify this
+//            try {
+//                wsBean.createSynchronizationDataSourceConfig((long)properties.get("syncGroupId"), txtName.getValue(), 
+//                        Arrays.asList(new StringPair("deviceId", properties.getProperty("deviceId")), new StringPair("deviceClass", properties.getProperty("deviceClass")), 
+//                                new StringPair("ipAddress", txtIpAddress.getValue()), new StringPair("port", txtPort.getValue()),
+//                                new StringPair("user", txtUser.getValue()), new StringPair("password", txtPassword.getValue())), 
+//                        Page.getCurrent().getWebBrowser().getAddress(),
+//                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
                 return null;
-            } catch (ServerSideException ex) {
-                throw new InvalidArgumentException(ex.getLocalizedMessage());
-            }
+//            } catch (ServerSideException ex) {
+//                throw new InvalidArgumentException(ex.getLocalizedMessage());
+//            }
         }
 
         @Override
@@ -384,7 +385,7 @@ public class ConfigureSyncGroupMiniApp extends AbstractMiniApplication<Window, P
                         ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()));
                 
                 tblSyncGroups.addColumn(RemoteSynchronizationGroup::getName).setCaption("Name");
-                tblSyncGroups.addColumn(RemoteSynchronizationGroup::getProvider).setCaption("Provider");
+                //TODO tblSyncGroups.addColumn(RemoteSynchronizationGroup::getProvider).setCaption("Provider");
             } catch (ServerSideException ex) {
                 Notifications.showError(ex.getLocalizedMessage());
             }
