@@ -28,12 +28,13 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 
 /**
- *
+ * Layout to show a list of available devices
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ComponentDeviceList extends VerticalLayout {
     private final WebserviceBean webserviceBean;
     private final RemoteSession remoteSession;
+    private List<RemoteObject> devices;
     
     public ComponentDeviceList(List<RemoteObject> deviceList, WebserviceBean webserviceBean, RemoteSession remoteSession) {
         this.webserviceBean = webserviceBean;
@@ -43,9 +44,16 @@ public class ComponentDeviceList extends VerticalLayout {
         setHeightUndefined();
         setStyleName("selector");
         initializeComponent(deviceList);
-    }    
+    }
+    
+    public List<RemoteObject> getDevices() {
+        return devices;        
+    }
+    
+    public void initializeComponent(List<RemoteObject> deviceList) {
+        this.devices = deviceList;
+        removeAllComponents();
         
-    private void initializeComponent(List<RemoteObject> deviceList) {
         setWidth(100, Unit.PERCENTAGE);
         setHeightUndefined();
         

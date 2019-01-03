@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Optional;
 import org.kuwaiba.apis.persistence.PersistenceService;
 import org.kuwaiba.apis.persistence.util.StringPair;
+import org.kuwaiba.apis.web.gui.notifications.Notifications;
 import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.exceptions.ServerSideException;
 import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
@@ -49,7 +50,7 @@ import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.openide.util.Exceptions;
 
 /**
- *
+ * A Layout used to show the rack front view with its devices front views
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ComponentRackView extends VerticalLayout {
@@ -216,130 +217,135 @@ public class ComponentRackView extends VerticalLayout {
 
                     if (dragSource.isPresent() &&  dragSource.get() instanceof ComponentDevice) {
                         
-                        ComponentDevice componentDevice = (ComponentDevice) dragSource.get();
-                                                
+                        ComponentDevice componentDevice = (ComponentDevice) dragSource.get();                    
+                                                                                                
                         if (rackObject != null && webserviceBean != null && componentDevice.getDevice() != null) {
-////                            try {
-                                RemoteObject device = componentDevice.getDevice();
-                                String rackUnits = device.getAttribute("rackUnits"); //NOI18N
-                                
-                                int intRackUnits = -1;
-                                
-                                try {
-                                    intRackUnits = Integer.valueOf(rackUnits);
-                                } catch(NumberFormatException nfe) {
-                                }
-                                
-                                if (rackUnits == null || intRackUnits == 0) {
-                                    Window window = new Window();
-                                    window.setCaption("Set Rack Units");
-                                    window.setDraggable(true);
-                                    window.setModal(true);
-                                    window.center();
-                                    
-                                    GridLayout gridLayout = new GridLayout();
-                                    gridLayout.setColumns(2);
-                                    gridLayout.setRows(3);
-                                    gridLayout.setSpacing(true);
-                                    
-                                    Label lblRackUnit = new Label("Rack Units");
-                                    TextField txtRackUnit = new TextField();
-                                    Label lblError = new Label("Is not a valid integer value");
-                                    lblError.addStyleName(ValoTheme.LABEL_FAILURE);
-                                    lblError.setVisible(false);
-                                    
-                                    Button btnOK = new Button("OK");
-                                    btnOK.setEnabled(false);
-                                    Button btnCancel = new Button("Cancel");
-                                    
-                                    HorizontalLayout hlButtons = new HorizontalLayout();
-                                    hlButtons.addComponent(btnOK);
-                                    hlButtons.addComponent(btnCancel);
-                                    hlButtons.setComponentAlignment(btnOK, Alignment.MIDDLE_CENTER);
-                                    hlButtons.setComponentAlignment(btnCancel, Alignment.MIDDLE_CENTER);
-                                    
-                                    gridLayout.addComponent(lblRackUnit, 0, 0);
-                                    gridLayout.addComponent(txtRackUnit, 1, 0);
-                                    gridLayout.addComponent(lblError, 0, 1, 1, 1);
-                                    gridLayout.addComponent(hlButtons, 0, 2, 1, 2);
-                                    
-                                    txtRackUnit.addValueChangeListener(new HasValue.ValueChangeListener<String>() {
-                                        @Override
-                                        public void valueChange(HasValue.ValueChangeEvent<String> event) {
-                                            if (event.getValue() == null)
-                                                return;
-                                                                                        
+                            RemoteObject device = componentDevice.getDevice();
+                            String rackUnits = device.getAttribute("rackUnits"); //NOI18N
+
+                            int intRackUnits = -1;
+
+                            try {
+                                intRackUnits = Integer.valueOf(rackUnits);
+                            } catch(NumberFormatException nfe) {
+                            }
+
+                            if (rackUnits == null || intRackUnits == 0) {
+                                Window window = new Window();
+                                window.setCaption("Set Rack Units");
+                                window.setDraggable(true);
+                                window.setModal(true);
+                                window.center();
+
+                                GridLayout gridLayout = new GridLayout();
+                                gridLayout.setColumns(2);
+                                gridLayout.setRows(3);
+                                gridLayout.setSpacing(true);
+
+                                Label lblRackUnit = new Label("Rack Units");
+                                TextField txtRackUnit = new TextField();
+                                Label lblError = new Label("Is not a valid integer value");
+                                lblError.addStyleName(ValoTheme.LABEL_FAILURE);
+                                lblError.setVisible(false);
+
+                                Button btnOK = new Button("OK");
+                                btnOK.setEnabled(false);
+                                Button btnCancel = new Button("Cancel");
+
+                                HorizontalLayout hlButtons = new HorizontalLayout();
+                                hlButtons.addComponent(btnOK);
+                                hlButtons.addComponent(btnCancel);
+                                hlButtons.setComponentAlignment(btnOK, Alignment.MIDDLE_CENTER);
+                                hlButtons.setComponentAlignment(btnCancel, Alignment.MIDDLE_CENTER);
+
+                                gridLayout.addComponent(lblRackUnit, 0, 0);
+                                gridLayout.addComponent(txtRackUnit, 1, 0);
+                                gridLayout.addComponent(lblError, 0, 1, 1, 1);
+                                gridLayout.addComponent(hlButtons, 0, 2, 1, 2);
+
+                                txtRackUnit.addValueChangeListener(new HasValue.ValueChangeListener<String>() {
+                                    @Override
+                                    public void valueChange(HasValue.ValueChangeEvent<String> event) {
+                                        if (event.getValue() == null)
+                                            return;
+
+                                        try {
+                                            Integer.valueOf(event.getValue());
+                                            lblError.setVisible(false);
+                                            btnOK.setEnabled(true);
+                                        } catch(NumberFormatException nfe) {
+                                            lblError.setVisible(true);
+                                            btnOK.setEnabled(false);
+                                        }
+                                    }
+                                });
+
+                                gridLayout.setComponentAlignment(lblRackUnit, Alignment.MIDDLE_LEFT);
+                                gridLayout.setComponentAlignment(txtRackUnit, Alignment.MIDDLE_LEFT);
+                                gridLayout.setComponentAlignment(lblError, Alignment.MIDDLE_CENTER);
+                                gridLayout.setComponentAlignment(hlButtons, Alignment.MIDDLE_CENTER);
+
+                                btnOK.addClickListener(new Button.ClickListener() {
+                                    @Override
+                                    public void buttonClick(Button.ClickEvent event) {
+                                        updateAndMoveObject(device, txtRackUnit.getValue(), String.valueOf(rackUnit.getRackUnit()));
+
+                                        if (componentDevice.getParent() instanceof ComponentDeviceList) {
+                                            ComponentDeviceList componentDeviceList = (ComponentDeviceList) componentDevice.getParent();
+
                                             try {
-                                                Integer.valueOf(event.getValue());
-                                                lblError.setVisible(false);
-                                                btnOK.setEnabled(true);
-                                            } catch(NumberFormatException nfe) {
-                                                lblError.setVisible(true);
-                                                btnOK.setEnabled(false);
+                                                List<RemoteObject> oldChildren = componentDeviceList.getDevices();
+
+                                                if (oldChildren != null) {
+                                                    List<RemoteObject> children = new ArrayList();
+
+                                                    for (RemoteObjectLight childLight : oldChildren) {
+
+                                                        RemoteObject child = webserviceBean.getObject(
+                                                            childLight.getClassName(), 
+                                                            childLight.getId(), 
+                                                            Page.getCurrent().getWebBrowser().getAddress(), 
+                                                            ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId());
+
+                                                        children.add(child);
+                                                    }
+                                                    componentDeviceList.initializeComponent(children);
+                                                }
+                                            } catch (ServerSideException ex) {
+                                                Notifications.showError(ex.getMessage());
                                             }
                                         }
-                                    });
-                                    
-                                    gridLayout.setComponentAlignment(lblRackUnit, Alignment.MIDDLE_LEFT);
-                                    gridLayout.setComponentAlignment(txtRackUnit, Alignment.MIDDLE_LEFT);
-                                    gridLayout.setComponentAlignment(lblError, Alignment.MIDDLE_CENTER);
-                                    gridLayout.setComponentAlignment(hlButtons, Alignment.MIDDLE_CENTER);
-                                                                        
-                                    btnOK.addClickListener(new Button.ClickListener() {
-                                        @Override
-                                        public void buttonClick(Button.ClickEvent event) {
-                                            updateAndMoveObject(device, txtRackUnit.getValue(), String.valueOf(rackUnit.getRackUnit()));
-                                            window.close();
-                                        }
-                                    });
-                                    btnCancel.addClickListener(new Button.ClickListener() {
-                                        @Override
-                                        public void buttonClick(Button.ClickEvent event) {
-                                            window.close();
-                                        }
-                                    });
-                                    btnOK.setWidth(70, Unit.PIXELS);
-                                    btnCancel.setWidth(70, Unit.PIXELS);
-                                    
-                                    window.setWidth(300, Unit.PIXELS);
-                                    window.setHeight(300, Unit.PIXELS);
-                                    
-                                    VerticalLayout verticalLayout = new VerticalLayout();
-                                    verticalLayout.setSizeFull();
-                                    
-                                    verticalLayout.addComponent(gridLayout);
-                                    verticalLayout.setComponentAlignment(gridLayout, Alignment.MIDDLE_CENTER);
-                                            
-                                    window.setContent(verticalLayout);
-                                    
-                                    UI.getCurrent().addWindow(window);
-                                }
-                                else
-                                    updateAndMoveObject(device, null, String.valueOf(rackUnit.getRackUnit()));                                
-////                                List<StringPair> attributesToBeUpdated = new ArrayList();
-////                                attributesToBeUpdated.add(new StringPair("position", String.valueOf(rackUnit.getRackUnit())));
-////                                                                
-////                                webserviceBean.updateObject(
-////                                    componentDevice.getDevice().getClassName(), 
-////                                    componentDevice.getDevice().getId(), 
-////                                    attributesToBeUpdated, 
-////                                    Page.getCurrent().getWebBrowser().getAddress(),
-////                                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-////                                                                
-////                                webserviceBean.moveObjects(
-////                                        rackObject.getClassName(),
-////                                        rackObject.getId(),
-////                                        new String[] {componentDevice.getDevice().getClassName()}, 
-////                                        new long[] {componentDevice.getDevice().getId()},
-////                                        Page.getCurrent().getWebBrowser().getAddress(),
-////                                        ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
-                                                                
-////                            } catch (ServerSideException ex) {
-                                //Exceptions.printStackTrace(ex);
-////                            }
-                        }                        
-                        
-                        initializeComponent();
+                                        initializeComponent();                                            
+                                        window.close();
+                                    }
+                                });
+                                btnCancel.addClickListener(new Button.ClickListener() {
+                                    @Override
+                                    public void buttonClick(Button.ClickEvent event) {
+                                        window.close();
+                                    }
+                                });
+                                btnOK.setWidth(70, Unit.PIXELS);
+                                btnCancel.setWidth(70, Unit.PIXELS);
+
+                                window.setWidth(300, Unit.PIXELS);
+                                window.setHeight(300, Unit.PIXELS);
+
+                                VerticalLayout verticalLayout = new VerticalLayout();
+                                verticalLayout.setSizeFull();
+
+                                verticalLayout.addComponent(gridLayout);
+                                verticalLayout.setComponentAlignment(gridLayout, Alignment.MIDDLE_CENTER);
+
+                                window.setContent(verticalLayout);
+
+                                UI.getCurrent().addWindow(window);
+                            }
+                            else {
+                                updateAndMoveObject(device, null, String.valueOf(rackUnit.getRackUnit()));
+                                initializeComponent();
+                            }
+                        }
                     }
                 }
             });
@@ -370,7 +376,7 @@ public class ComponentRackView extends VerticalLayout {
                 attributesToBeUpdated.add(new StringPair("rackUnits", rackUnits)); //NOI18N
             if (position != null)
                 attributesToBeUpdated.add(new StringPair("position", position)); //NOI18N
-
+                                  
             webserviceBean.updateObject(
                 object.getClassName(), 
                 object.getId(), 
@@ -379,12 +385,12 @@ public class ComponentRackView extends VerticalLayout {
                 ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
 
             webserviceBean.moveObjects(
-                    rackObject.getClassName(),
-                    rackObject.getId(),
-                    new String[] {object.getClassName()}, 
-                    new long[] {object.getId()},
-                    Page.getCurrent().getWebBrowser().getAddress(),
-                    ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
+                rackObject.getClassName(),
+                rackObject.getId(),
+                new String[] {object.getClassName()}, 
+                new long[] {object.getId()},
+                Page.getCurrent().getWebBrowser().getAddress(),
+                ((RemoteSession) UI.getCurrent().getSession().getAttribute("session")).getSessionId()); //NOI18N
 
         } catch (ServerSideException ex) {
             //Exceptions.printStackTrace(ex);

@@ -23,22 +23,28 @@ import org.kuwaiba.beans.WebserviceBean;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 
 /**
- * Graphical representation of a device.
+ * Graphical representation of a device front view.
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ComponentDevice extends VerticalLayout {
     private Label lblDevice;
     private Image imgDevice;
     private final WebserviceBean webserviceBean;        
-    private final RemoteObject device;
+    private RemoteObject device;
 
     public ComponentDevice(RemoteObject device, WebserviceBean webserviceBean) {
         this.webserviceBean = webserviceBean;
         this.device = device;
         initializeComponent();
     }
-
-    private void initializeComponent() {
+    
+    public void setDevice(RemoteObject device) {
+        this.device = device;        
+    }
+        
+    public void initializeComponent() {
+        removeAllComponents();
+        
         lblDevice = new Label(device.getName() + " [" + device.getClassName() + "]");
         lblDevice.addStyleName(ValoTheme.LABEL_LARGE);
         lblDevice.addStyleName(ValoTheme.LABEL_BOLD);

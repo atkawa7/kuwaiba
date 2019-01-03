@@ -213,7 +213,9 @@ public class ScriptQueryExecutorImpl implements ScriptQueryExecutor {
                 Long.valueOf(parameterValues.get(1)));
             SceneExporter.PATH = oldPath;
             try {
-                return Files.readAllBytes(new File(newPath + pathEndToEndView).toPath());
+                if (pathEndToEndView != null)
+                    return Files.readAllBytes(new File(newPath + pathEndToEndView).toPath());
+                
             } catch (IOException ex) {
                 Exceptions.printStackTrace(ex);
             }

@@ -86,7 +86,7 @@ public class ComponentUpload extends GraphicalComponent {
                 ComponentEventListener componentEventListener = getComponentEventListener();
                                                 
                 if (componentEventListener instanceof ElementUpload)
-                    configureComponent((ElementUpload) componentEventListener, false);
+                    configureComponent((ElementUpload) componentEventListener, true);
             }
         }
     }
