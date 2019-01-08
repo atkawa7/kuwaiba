@@ -31,8 +31,10 @@ import javax.swing.JScrollPane;
 import javax.swing.ListCellRenderer;
 import javax.swing.border.EmptyBorder;
 import com.neotropic.inventory.modules.sync.LocalSyncGroup;
+import com.neotropic.inventory.modules.sync.LocalSyncProvider;
 import com.neotropic.inventory.modules.sync.LocalSyncResult;
 import java.util.HashMap;
+import javax.swing.JTabbedPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.core.services.api.export.ExportTablePanel;
 import org.inventory.core.services.api.export.ExportableTable;
@@ -53,19 +55,16 @@ public class SyncResultsFrame extends JFrame {
     private static final ImageIcon ICON_SUCCESS = ImageUtilities.loadImageIcon("com/neotropic/inventory/modules/sync/res/success.png", false);
     private static final ImageIcon ICON_INFORMATION = ImageUtilities.loadImageIcon("com/neotropic/inventory/modules/sync/res/information.png", false);
     
-    private JScrollPane pnlScrollMain;
+    //private JScrollPane pnlScrollMain;
     private SyncResultsList<LocalSyncResult> lstSyncResults;
-    private HashMap<Long, String> mapDataSourceConfigNames;
+    //private HashMap<Long, String> mapDataSourceConfigNames;
+    private JTabbedPane jTabbedPane;
 
-    public SyncResultsFrame(LocalSyncGroup syncGroup, List<LocalSyncResult> results) {
-        mapDataSourceConfigNames = new HashMap<>();
+    public SyncResultsFrame() {
         setLayout(new BorderLayout());
-        setTitle(String.format(I18N.gm("sync_list_of_results"), syncGroup.getName()));
-        pnlScrollMain = new JScrollPane();
         setSize(800, 650);
         setLocationRelativeTo(null);
-
-        JPanel pnlListOfResults = new JPanel();
+         JPanel pnlListOfResults = new JPanel();
         pnlListOfResults.setLayout(new GridLayout(1, 1));
         JButton btnExport = new JButton();
         btnExport.setText(I18N.gm("export")); // NOI18N
@@ -83,6 +82,19 @@ public class SyncResultsFrame extends JFrame {
             }
         });
         add(btnExport, BorderLayout.NORTH);
+        
+        
+        jTabbedPane = new JTabbedPane();
+                
+        jTabbedPane.setVisible(true);
+        add(jTabbedPane);
+    }
+   
+    public void addTab(LocalSyncGroup syncGroup, LocalSyncProvider LocalSyncProvider, List<LocalSyncResult> results){
+        HashMap<Long, String> mapDataSourceConfigNames = new HashMap<>();
+
+        JScrollPane pnlScrollMain = new JScrollPane();
+        
         List<LocalSyncDataSourceConfiguration> dataSourceConfigurations = syncGroup.getDataSourceConfig();
         for(LocalSyncResult result : results){
             for (LocalSyncDataSourceConfiguration dataSourceConfiguration : dataSourceConfigurations) {
@@ -94,14 +106,22 @@ public class SyncResultsFrame extends JFrame {
         }
         
         lstSyncResults = new SyncResultsList<>(results.toArray(new LocalSyncResult[0]));
-        lstSyncResults.setCellRenderer(new SyncResultsCellRenderer());
+        lstSyncResults.setCellRenderer(new SyncResultsCellRenderer(mapDataSourceConfigNames));
         
         pnlScrollMain.setViewportView(lstSyncResults);
-        add(pnlScrollMain);
+        
+        jTabbedPane.addTab(syncGroup.getName() + " " +LocalSyncProvider.getDisplayName(), pnlScrollMain);
+       
     }
-   
+    
     private class SyncResultsCellRenderer implements ListCellRenderer<LocalSyncResult> {
         
+        private final HashMap<Long, String>  mapDataSourceConfigNames;
+
+        public SyncResultsCellRenderer(HashMap<Long, String> mapDataSourceConfigNames) {
+            this.mapDataSourceConfigNames = mapDataSourceConfigNames;
+        }
+                
         @Override
         public Component getListCellRendererComponent(JList<? extends LocalSyncResult> list, 
                 LocalSyncResult value, int index, boolean isSelected, boolean cellHasFocus) {

@@ -158,7 +158,7 @@ public class SyncDataSourceConfigurationNode extends AbstractNode implements Pro
         PropertySupport.ReadOnly propertyDevice = new DevicePropertyReadEditor("device", String.class, "device", "device", deviceObj.toString());
 
         
-//new DeviceTypeProperty(this, NoneObject.getInstance(), propertyDeviceId);
+        //new DeviceTypeProperty(this, NoneObject.getInstance(), propertyDeviceId);
         
         generalPropertySet.put(propertyName);
 //        if (deviceClass != null && deviceId != null) {

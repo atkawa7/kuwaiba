@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ import org.openide.util.Utilities;
 
 /**
  * This action launches the synchronization process for a given sync group
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class RunSynchronizationProcessAction extends GenericInventoryAction{
     
@@ -91,10 +91,10 @@ public class RunSynchronizationProcessAction extends GenericInventoryAction{
         final LocalSyncGroup localSyncGroup;
         
         List<AbstractNode> nodes = new ArrayList<>();
-        while(selectedNodes.hasNext()){
+        while(selectedNodes.hasNext())
             nodes.add(selectedNodes.next());
-        }
-            
+        
+        //If the sync process is launch from a syncGroup
         if(nodes.size() == 1 &&  nodes.get(0) instanceof SyncGroupNode){
             localSyncGroup = ((SyncGroupNode)nodes.get(0)).getLookup().lookup(LocalSyncGroup.class);
             for (Node child : ((SyncGroupNode)nodes.get(0)).getChildren().getNodes())
@@ -102,10 +102,10 @@ public class RunSynchronizationProcessAction extends GenericInventoryAction{
             
             localSyncGroup.setDataSourceConfig(syncDataSources);
         }
-        else{
+        else{//The sync process has been launch from individual syn data source configuration files
             for(AbstractNode selectedNode : nodes){
                  if(selectedNode instanceof SyncDataSourceConfigurationNode)
-                     syncDataSources.add(((SyncDataSourceConfigurationNode)selectedNode).getLookup().lookup(LocalSyncDataSourceConfiguration.class));
+                    syncDataSources.add(((SyncDataSourceConfigurationNode)selectedNode).getLookup().lookup(LocalSyncDataSourceConfiguration.class));
             }
             localSyncGroup = new LocalSyncGroup(-1, "adhocSyncGroup", syncDataSources);
         }        
@@ -215,6 +215,7 @@ public class RunSynchronizationProcessAction extends GenericInventoryAction{
     
     private class DefaultSyncResultsManager extends AbstractRunnableSyncResultsManager {
         
+        SyncResultsFrame frmSyncResults;
         LocalSyncGroup syncGroup; 
         List<LocalSyncProvider> syncProviders;
         List<Long> syncDataSourceConfigIds;
@@ -226,6 +227,7 @@ public class RunSynchronizationProcessAction extends GenericInventoryAction{
             RequestProcessor.getDefault().post(this);
             this.syncGroup = syncGroup;
             this.syncProviders = syncProviders;
+            frmSyncResults = new SyncResultsFrame();
         }
         
         public void runFirst() {
@@ -247,9 +249,10 @@ public class RunSynchronizationProcessAction extends GenericInventoryAction{
                     NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
             else {
                 if(results.isEmpty())
-                    JOptionPane.showMessageDialog(null, I18N.gm("sync_no_findings"), I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(null, I18N.gm("sync_no_findings") + ", for provider: "+ syncProviders.get(0), I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
                 else{
-                    SyncResultsFrame frmSyncResults = new SyncResultsFrame(syncGroup, results);
+                   
+                    frmSyncResults.addTab(syncGroup, syncProviders.get(0), results);
                     frmSyncResults.setVisible(true);
                 }
             }

@@ -15,13 +15,9 @@
  */
 package org.inventory.navigation.navigationtree.nodes.properties;
 
-import com.neotropic.inventory.modules.sync.LocalSyncDataSourceConfiguration;
 import java.awt.BorderLayout;
-import java.beans.PropertyEditor;
-import java.lang.reflect.InvocationTargetException;
 import org.openide.explorer.propertysheet.PropertySheetView;
 import org.openide.nodes.Node;
-import org.openide.nodes.PropertySupport;
 import org.openide.windows.Mode;
 import org.openide.windows.TopComponent;
 import org.openide.windows.WindowManager;

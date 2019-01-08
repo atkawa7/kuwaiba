@@ -146,8 +146,8 @@ public class SyncActionsFrame extends JFrame {
                         @Override
                         public void run() {
                             List<LocalSyncResult> executedSyncActions = CommunicationsStub.getInstance().executeSyncActions(syncGroup.getId(), findingsToBeProcessed);
-                            SyncResultsFrame syncResultFrame = new SyncResultsFrame(SyncActionsFrame.this.syncGroup, executedSyncActions);
-                            syncResultFrame.setVisible(true);
+//                            SyncResultsFrame syncResultFrame = new SyncResultsFrame(SyncActionsFrame.this.syncGroup, executedSyncActions);
+//                            syncResultFrame.setVisible(true);
                             progr.finish();
                         }
                     };
@@ -178,8 +178,8 @@ public class SyncActionsFrame extends JFrame {
                         JOptionPane.showMessageDialog(SyncActionsFrame.this, 
                                 "You have reviewed all the synchronization findings. The selected actions will be performed now", "Information", JOptionPane.INFORMATION_MESSAGE);
                         List<LocalSyncResult> executSyncActions = CommunicationsStub.getInstance().executeSyncActions(syncGroup.getId(), findingsToBeProcessed);
-                        SyncResultsFrame syncResultFrame = new SyncResultsFrame(SyncActionsFrame.this.syncGroup, executSyncActions);
-                        syncResultFrame.setVisible(true);
+//                        SyncResultsFrame syncResultFrame = new SyncResultsFrame(SyncActionsFrame.this.syncGroup, executSyncActions);
+//                        syncResultFrame.setVisible(true);
                     }
                     dispose();
                 } else {
