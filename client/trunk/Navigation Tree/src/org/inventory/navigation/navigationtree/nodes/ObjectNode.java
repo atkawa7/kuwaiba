@@ -297,6 +297,9 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
             actions.add(null); //Separator
         }
         
+        actions.add(ActionGroupActionsFactory.getInstanceSyncActions());
+        
+        
         actions.add(ExecuteClassLevelReportAction.getInstance());
                         
         for (GenericObjectNodeAction action : Lookup.getDefault().lookupAll(GenericObjectNodeAction.class)) {
@@ -331,6 +334,7 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         actions.add(ActionGroupActionsFactory.getInstanceOfReleaseFromGroupActions());
         actions.add(ActionGroupActionsFactory.getInstanceMirrorPortActions());
         actions.add(ActionGroupActionsFactory.getInstanceDiagnosticActions());
+        
         
         actions.add(null); //Separator
         actions.add(explorerAction);

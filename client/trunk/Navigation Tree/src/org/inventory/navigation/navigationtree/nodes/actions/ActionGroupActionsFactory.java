@@ -1,5 +1,5 @@
-/**
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+/*
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ public class ActionGroupActionsFactory {
     private static ActionsGroup releaseFromGroupActions;
     private static ActionsGroup mirrorPortActions;
     private static ActionsGroup diagnosticActions;
+    private static ActionsGroup syncpActions;
     
     public static ActionsGroup getInstanceOfOpenViewGroupActions() {
         if (openViewGroupActions == null)
@@ -60,5 +61,14 @@ public class ActionGroupActionsFactory {
         return diagnosticActions == null ? diagnosticActions = new ActionsGroup("Diagnostics", 
             "org/inventory/navigation/navigationtree/res/diagnostic_actions_group.png", 
             ActionsGroupType.Group.DIAGNOSTIC) : diagnosticActions;
+    }
+    
+    public static ActionsGroup getInstanceSyncActions() {
+       if (syncpActions == null)
+            syncpActions = new ActionsGroup("Sync", 
+                "org/inventory/navigation/navigationtree/res/show_view_actions_group.png", 
+                ActionsGroupType.Group.HAS_CONFIGURATION);
+        return syncpActions;
+        
     }
 }
