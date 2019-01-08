@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -685,6 +685,7 @@ public class ReferenceSnmpSyncProvider extends AbstractSyncProvider {
             parentId = Long.valueOf(json.getString("deviceParentId"));
         else
             parentId = createdIdsToMap.get(tempParentId);
+        
         if(parentId == null){
                 results.add(new SyncResult(find.getDataSourceId(), SyncResult.TYPE_WARNING, find.getDescription(),  
                     "The port could not be created because the parent doesn't "

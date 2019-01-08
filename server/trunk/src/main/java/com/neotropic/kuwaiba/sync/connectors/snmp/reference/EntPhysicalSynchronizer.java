@@ -546,16 +546,6 @@ public class EntPhysicalSynchronizer {
                                 newAttributes.get(Constants.PROPERTY_NAME), 
                                 newAttributes);
                         
-//                        JsonObject jsonNewObj = Json.createObjectBuilder()
-//                                .add("type", "object")
-//                                .add("childId", childId)
-//                                .add("parentId", parentId)
-//                                .add("parentName", parentName)
-//                                .add("parentClassName", parentClassName)
-//                                .add("className", mappedClass)
-//                                .add("attributes", SyncUtil.parseAttributesToJson(newAttributes))
-//                                .build();
-
                         if (mappedClass.contains("Port") && !objectName.contains("Power") && !mappedClass.contains("Power"))
                             newPorts.add(newObj);
 
@@ -972,9 +962,6 @@ public class EntPhysicalSynchronizer {
     
 
     private void createBranch(List<BusinessObject> branch) {
-        
-       
-        
         for (BusinessObject businessObject : branch) {
             long parentId = 0;
             boolean segmentDependsOfPort = false; 
@@ -987,11 +974,11 @@ public class EntPhysicalSynchronizer {
                 nameOfCreatedPorts.add(new StringPair(businessObject.getName(), Long.toString(businessObject.getId())));
             }
             else {
-                if(businessObject.getAttributes().get("deviceParentId") == null){
+                if(businessObject.getAttributes().get("deviceParentId") == null)
                     parentId = createdIdsToMap.get(tempParentId) != null ? createdIdsToMap.get(tempParentId) : tempParentId;
-                }
+                
                 else{//if we are updating a branch
-                        createdIdsToMap.put(tempParentId, parentId);
+                    createdIdsToMap.put(tempParentId, parentId);
                 }
                 if(!businessObject.getClassName().contains("Port") || businessObject.getAttributes().get("name").contains("Power") || businessObject.getClassName().contains("PowerPort")){
                     try {
@@ -1164,22 +1151,41 @@ public class EntPhysicalSynchronizer {
                             String.format("%s [%s] no deleted", oldPort.getName(), oldPort.getClassName()),
                             ex.getLocalizedMessage()));
             }
-            
         }
 
         for (BusinessObject newPort : newPorts) {
             Long parentId;
             if(newPort.getAttributes().get("deviceParentId") != null)
                 parentId = Long.valueOf(newPort.getAttributes().get("deviceParentId"));
+
             else
                 parentId = createdIdsToMap.get(Long.valueOf(newPort.getAttributes().get("parentId")));
+            
             if(parentId == null)
                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,
                     String.format("%s" , newPort),
                    "Can not determinate the parent id"));
+            else{
+                newPort.getAttributes().remove("deviceParentId");
+                newPort.getAttributes().remove("parentId");
+                String parentClassName = newPort.getAttributes().remove("parentClassName");
+                newPort.getAttributes().remove("parentName");
+                
+                try {
+                    //newCreatedPortsToCreate.put(businessObject.getId(), businessObject);
+                //nameOfCreatedPorts.add(new StringPair(businessObject.getName(), Long.toString(businessObject.getId())));
                     
-
-            
+                    bem.createObject(newPort.getClassName(), parentClassName, parentId, newPort.getAttributes(), -1);
+                    results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,
+                                    String.format("%s" , newPort),
+                                    "Port Created"));
+                    
+                } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
+                    results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,
+                                    String.format("%s" , newPort),
+                                    "Can not create port"));
+                }
+            }
         }
     }
 
@@ -1227,19 +1233,13 @@ public class EntPhysicalSynchronizer {
                                 long[] ids = {portFound.getId()} ;
                                 objectsToMove.put(className, ids);
 
-                                
                                 bem.updateObject(portFound.getClassName(), portFound.getId(), portFound.getAttributes());
                                 bem.moveObjects(portFound.getAttributes().remove("parentClassName"), parentId, objectsToMove);
-                                
-                                
+
                                 results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS, 
                                         String.format("%s", portFound), 
                                         "Moved to an updated position"));
-                            
-                            
-                            
                             }
-                           
                         }
                         else{//The port its in the rigth place but its attributes needs to be updated
                             HashMap<String, String> oldAttributes = bem.getObject(oldPort.getId()).getAttributes();

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -4282,20 +4282,33 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
                 Node syncGroup = syncGroupsNodes.next();
                 synchronizationGroups.add(Util.createSyncGroupFromNode(syncGroup));            
             }            
+            tx.success();
             return synchronizationGroups;
+            
         }
     }
     
     @Override
-    public  SyncDataSourceConfiguration getSyncDataSourceConfiguration(long objectId) 
+    public SyncDataSourceConfiguration getSyncDataSourceConfiguration(long objectId) 
             throws InvalidArgumentException, ApplicationObjectNotFoundException, 
             OperationNotPermittedException, MetadataObjectNotFoundException, UnsupportedPropertyException {
         try (Transaction tx = graphDb.beginTx()) {
-            Node syncDataSourceConfigurationNode = graphDb.getNodeById(objectId);
-            if(!syncDataSourceConfigurationNode.hasRelationship(Direction.OUTGOING, RelTypes.HAS_CONFIGURATION))
-                throw new OperationNotPermittedException(String.format("The object id: %s does not have a sync datasource configuration", objectId));
-            
-            return Util.createSyncDataSourceConfigFromNode(syncDataSourceConfigurationNode);
+            Node inventoryObjectNode = Util.findNodeByLabelAndId(inventoryObjectLabel, objectId);
+
+            Node syncDatasourceConfiguration;
+            if(inventoryObjectNode != null){ 
+                if(!inventoryObjectNode.hasRelationship(RelTypes.HAS_CONFIGURATION))
+                   throw new OperationNotPermittedException(String.format("The object id: %s does not have a sync datasource configuration", objectId));
+                
+                syncDatasourceConfiguration = inventoryObjectNode.getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.INCOMING).getStartNode();
+            }
+            else{ 
+                syncDatasourceConfiguration = graphDb.getNodeById(objectId);
+                if(!syncDatasourceConfiguration.hasRelationship(RelTypes.HAS_CONFIGURATION))
+                    throw new OperationNotPermittedException(String.format("The sync data source configuration with id: %s is not related with anything", objectId));
+            }
+            tx.success();
+            return Util.createSyncDataSourceConfigFromNode(syncDatasourceConfiguration);
         }
     }
     
@@ -4313,7 +4326,10 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             for(Relationship rel : syncGroupNode.getRelationships(Direction.INCOMING, RelTypes.BELONGS_TO_GROUP))
                 syncDataSourcesConfigurations.add(Util.createSyncDataSourceConfigFromNode(rel.getStartNode()));
+            
+            tx.success();
         }
+        
         return syncDataSourcesConfigurations;
     }
     
@@ -4399,6 +4415,7 @@ public class ApplicationEntityManagerImpl implements ApplicationEntityManager {
             
             Node syncDataSourceConfigNode =  graphDb.createNode();
             syncDataSourceConfigNode.setProperty(Constants.PROPERTY_NAME, configName);
+            
             for (StringPair parameter : parameters) {
                 if (!syncDataSourceConfigNode.hasProperty(parameter.getKey()))
                     syncDataSourceConfigNode.setProperty(parameter.getKey(), parameter.getValue() == null ? "" : parameter.getValue());

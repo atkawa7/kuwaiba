@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package org.kuwaiba.services.persistence.util;
 
-import com.neotropic.kuwaiba.sync.model.AbstractSyncProvider;
 import com.neotropic.kuwaiba.sync.model.SyncDataSourceConfiguration;
 import com.neotropic.kuwaiba.sync.model.SynchronizationGroup;
 import java.io.File;
@@ -25,7 +24,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.text.SimpleDateFormat;
@@ -740,20 +738,18 @@ public class Util {
         if (!syncDataSourceConfigNode.hasProperty(Constants.PROPERTY_NAME))
             throw new InvalidArgumentException(String.format("The sync configuration with id %s is malformed. Check its properties", syncDataSourceConfigNode.getId()));
         
-        if(!syncDataSourceConfigNode.hasRelationship(RelTypes.HAS_CONFIGURATION))
-            throw new InvalidArgumentException(String.format("The sync configuration with id %s is malformed. its not related with a inventory object", syncDataSourceConfigNode.getId()));
-        
-        Node inventoryObjectNode = syncDataSourceConfigNode.getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.OUTGOING).getEndNode();
-        String deviceClass = getObjectClassName(inventoryObjectNode);
-        
+//        if(!syncDataSourceConfigNode.hasRelationship(RelTypes.HAS_CONFIGURATION))
+//            throw new InvalidArgumentException(String.format("The sync configuration with id %s is malformed. its not related with a inventory object", syncDataSourceConfigNode.getId()));
+//        Node inventoryObjectNode = syncDataSourceConfigNode.getSingleRelationship(RelTypes.HAS_CONFIGURATION, Direction.OUTGOING).getEndNode();
+
         HashMap<String, String> parameters = new HashMap<>();
         String configName = "";
-        parameters.put("deviceId", Long.toString(inventoryObjectNode.getId()));
-        parameters.put("deviceClass", deviceClass);
-        
+      
         for (String property : syncDataSourceConfigNode.getPropertyKeys()) {
             if (property.equals(Constants.PROPERTY_NAME))
                 configName = (String)syncDataSourceConfigNode.getProperty(property);
+//            if(property.equals("deviceId") && (Long.valueOf((String)syncDataSourceConfigNode.getProperty(property))) != inventoryObjectNode.getId())
+//                throw new InvalidArgumentException(String.format("The sync configuration with id %s is malformed. its not related with correct inventory object", inventoryObjectNode.getId()));   
             else
                 parameters.put(property, (String)syncDataSourceConfigNode.getProperty(property));
         }

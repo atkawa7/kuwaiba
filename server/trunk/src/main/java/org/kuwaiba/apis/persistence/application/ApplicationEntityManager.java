@@ -1424,9 +1424,9 @@ public interface ApplicationEntityManager {
      */
     public List<SynchronizationGroup> getSyncGroups() throws InvalidArgumentException, MetadataObjectNotFoundException, UnsupportedPropertyException;
     /**
-     * Gets the data source configuration of the object (there is only one data source configuration per object)
-     * @param objectId the object id (a GenericCommunicationElement)
-     * @return the SyncDataSourceConfiguration that belongs to the object
+     * Gets a data source configuration of the object (there is only one data source configuration per object)
+     * @param objectId the object id (a GenericCommunicationElement) or the SyncDataSourceConfig id
+     * @return a SyncDataSourceConfiguration
      * @throws InvalidArgumentException If the the configurations is malformed in the database
      * @throws ApplicationObjectNotFoundException If the sync data source configuration  could not be found
      * @throws OperationNotPermittedException If the object has no sync data source configuration group could not be found
