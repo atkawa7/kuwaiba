@@ -46,12 +46,11 @@ import org.kuwaiba.interfaces.ws.toserialize.application.RemoteSession;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObject;
 import org.kuwaiba.interfaces.ws.toserialize.business.RemoteObjectLight;
 import org.kuwaiba.web.procmanager.connections.ComponentConnectionCreator;
-import org.kuwaiba.web.procmanager.connections.ComponentConnectionSource;
 import org.kuwaiba.web.procmanager.rackview.ComponentDeviceList;
 import org.kuwaiba.web.procmanager.rackview.ComponentRackSelector;
 
 /**
- * Wrapped to configure the installation of a device
+ * Mini application used to configure the installation of a device
  * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class MiniAppInstallation extends AbstractMiniApplication<Component, Component> {
@@ -220,9 +219,10 @@ public class MiniAppInstallation extends AbstractMiniApplication<Component, Comp
         btnConnection.addClickListener(new ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
-                ComponentConnectionSource componentConnectionSource = new ComponentConnectionSource(updateMaterials(), wsBean);
-                ComponentConnectionCreator componentConnectionCreator = new ComponentConnectionCreator(componentConnectionSource, wsBean);
-
+////                ComponentConnectionSource componentConnectionSource = new ComponentConnectionSource(updateMaterials(), wsBean);
+////                ComponentConnectionCreator componentConnectionCreator = new ComponentConnectionCreator(componentConnectionSource, wsBean);
+                ComponentConnectionCreator componentConnectionCreator = new ComponentConnectionCreator(updateMaterials(), wsBean);
+                
                 Window window = new Window();
                 window.setCaption("Connect Devices");
                 window.setDraggable(true);

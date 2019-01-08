@@ -219,6 +219,13 @@ public class ProcessInstanceView extends DynamicComponent {
                     performOperation = result instanceof Boolean ? (Boolean) result : Boolean.valueOf(result.toString());
                 }
                 if (performOperation) {
+                    wsBean.updateActivity(
+                            processInstance.getId(),
+                            currentActivity.getId(),
+                            remoteArtifact,
+                            Page.getCurrent().getWebBrowser().getAddress(),
+                            remoteSession.getSessionId());
+                
                     wsBean.commitActivity(
                             processInstance.getId(),
                             currentActivity.getId(),
