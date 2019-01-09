@@ -148,7 +148,7 @@ public class EntPhysicalSynchronizer {
     private MetadataEntityManager mem;
     
     private HashMap<Long, Long> createdIdsToMap;
-    private HashMap<Long, BusinessObject> newCreatedPortsToCreate;
+    private HashMap<Long, List<BusinessObject>> newCreatedPortsToCreate;
     private List<StringPair> nameOfCreatedPorts;
     /**
      * Helper used to read the actual structure recursively
@@ -535,8 +535,7 @@ public class EntPhysicalSynchronizer {
                         }
                     //all the data except the chassis
                     } else { 
-                        
-                        
+
                         newAttributes.put("parentId", parentId);
                         newAttributes.put("parentName", parentName);
                         newAttributes.put("parentClassName", parentClassName);
@@ -856,11 +855,7 @@ public class EntPhysicalSynchronizer {
             BusinessObject newObj) throws BusinessObjectNotFoundException, MetadataObjectNotFoundException, InvalidArgumentException
     {
         try {
-            newObj.getAttributes().remove("parentId");
-            newObj.getAttributes().remove("parentName");
-            newObj.getAttributes().remove("parentClassName");
-            newObj.getAttributes().remove("deviceParentId");
-            
+         
             HashMap<String, String> attributes = newObj.getAttributes();
             
             HashMap<String, String> attributeChanges = SyncUtil.compareAttributes(oldAttributes, attributes);
@@ -876,7 +871,6 @@ public class EntPhysicalSynchronizer {
                     String.format(I18N.gm("object_attributes_changed"), oldObj.toString()),
                     ex.getLocalizedMessage()));
         }
-
     }
     
     /**
@@ -962,24 +956,27 @@ public class EntPhysicalSynchronizer {
     
 
     private void createBranch(List<BusinessObject> branch) {
+        boolean segmentDependsOfPort = false; 
+        List<BusinessObject> extraBranch = new ArrayList<>();
         for (BusinessObject businessObject : branch) {
             long parentId = 0;
-            boolean segmentDependsOfPort = false; 
+            
             long tempParentId = Long.valueOf(businessObject.getAttributes().get("parentId"));
             if(businessObject.getAttributes().get("deviceParentId") != null)
                 parentId = Long.valueOf(businessObject.getAttributes().get("deviceParentId"));
-                    
-            if(businessObject.getClassName().equals("OpticalPort") || segmentDependsOfPort){
-                newCreatedPortsToCreate.put(businessObject.getId(), businessObject);
-                nameOfCreatedPorts.add(new StringPair(businessObject.getName(), Long.toString(businessObject.getId())));
+            //for transcivers        
+            if(segmentDependsOfPort || businessObject.getClassName().equals("OpticalPort")){
+                segmentDependsOfPort = true;
+                extraBranch.add(businessObject);
+                newCreatedPortsToCreate.put(businessObject.getId(), extraBranch);
             }
             else {
                 if(businessObject.getAttributes().get("deviceParentId") == null)
                     parentId = createdIdsToMap.get(tempParentId) != null ? createdIdsToMap.get(tempParentId) : tempParentId;
                 
-                else{//if we are updating a branch
+                else//if we are updating a branch
                     createdIdsToMap.put(tempParentId, parentId);
-                }
+                
                 if(!businessObject.getClassName().contains("Port") || businessObject.getAttributes().get("name").contains("Power") || businessObject.getClassName().contains("PowerPort")){
                     try {
                         businessObject.getAttributes().remove("parentId");
@@ -1172,14 +1169,34 @@ public class EntPhysicalSynchronizer {
                 newPort.getAttributes().remove("parentName");
                 
                 try {
-                    //newCreatedPortsToCreate.put(businessObject.getId(), businessObject);
-                //nameOfCreatedPorts.add(new StringPair(businessObject.getName(), Long.toString(businessObject.getId())));
                     
-                    bem.createObject(newPort.getClassName(), parentClassName, parentId, newPort.getAttributes(), -1);
+                    parentId = bem.createObject(newPort.getClassName(), parentClassName, parentId, newPort.getAttributes(), -1);
                     results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,
-                                    String.format("%s" , newPort),
-                                    "Port Created"));
-                    
+                                String.format("%s" , newPort),
+                                "Port created"));
+                    createdIdsToMap.put(newPort.getId(), parentId);
+                    //this only applies for ASR9001 here you define the creation order of the ports-transceivers
+                    List<BusinessObject> extraBranch = newCreatedPortsToCreate.get(newPort.getId());
+                    if(extraBranch != null && extraBranch.size() >1){
+                        for (int i = 1; i<extraBranch.size(); i++){
+                            long tempParentId = Long.valueOf(extraBranch.get(i).getAttributes().get("parentId"));
+
+                            if(extraBranch.get(i).getAttributes().remove("deviceParentId") == null);
+                                parentId = createdIdsToMap.get(tempParentId);
+                                
+                            parentClassName = extraBranch.get(i).getAttributes().remove("parentClassName");
+                            extraBranch.get(i).getAttributes().remove("parentName");
+
+                            parentId = bem.createObject(extraBranch.get(i).getClassName(), 
+                                    parentClassName, parentId, extraBranch.get(i).getAttributes(), -1);
+
+                            createdIdsToMap.put(extraBranch.get(i).getId(), parentId);
+                            results.add(new SyncResult(dsConfigId, SyncResult.TYPE_SUCCESS,
+                                String.format("%s" , newPort),
+                                "Inventory object created"));
+                        }
+                    }
+
                 } catch (MetadataObjectNotFoundException | BusinessObjectNotFoundException | InvalidArgumentException | OperationNotPermittedException | ApplicationObjectNotFoundException ex) {
                     results.add(new SyncResult(dsConfigId, SyncResult.TYPE_ERROR,
                                     String.format("%s" , newPort),
@@ -1289,13 +1306,34 @@ public class EntPhysicalSynchronizer {
 
     /**
      * Search by name an old port in the list of the new created ports
+     * @param port_ the old port
+     * @return a String pair key = The new parent Id (in the SNMP map) value = the new port
+     * @throws InvalidArgumentException
+     * @throws BusinessObjectNotFoundException
+     * @throws MetadataObjectNotFoundException
+     */
+    private boolean searchPortInNewPorts(BusinessObjectLight port_) throws InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException {
+        for (BusinessObject port : newPorts) {
+            if (SyncUtil.compareLegacyPortNames(port_.getName(), port_.getClassName(),
+                    port.getName(),
+                    port.getClassName())
+                ) 
+                return true;
+        }
+        return false;
+    }
+    
+    /**
+     * Search by name an old port in the list of the new created ports
      * @param oldPort the old port
      * @return a String pair key = The new parent Id (in the SNMP map) value = the new port
      * @throws InvalidArgumentException
      * @throws BusinessObjectNotFoundException
      * @throws MetadataObjectNotFoundException
      */
-    private BusinessObject searchOldPortInNewPorts(BusinessObjectLight oldPort) throws InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException {
+    private BusinessObject searchOldPortInNewPorts(BusinessObjectLight oldPort) 
+            throws InvalidArgumentException, BusinessObjectNotFoundException, MetadataObjectNotFoundException 
+    {
         for (BusinessObject port : newPorts) {
             if (SyncUtil.compareLegacyPortNames(oldPort.getName(), oldPort.getClassName(),
                     port.getName(),
