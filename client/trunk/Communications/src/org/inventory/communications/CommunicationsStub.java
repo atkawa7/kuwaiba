@@ -77,7 +77,6 @@ import org.inventory.communications.core.views.LocalObjectView;
 import org.inventory.communications.core.views.LocalObjectViewLight;
 import com.neotropic.inventory.modules.sync.AbstractRunnableSyncFindingsManager;
 import com.neotropic.inventory.modules.sync.AbstractRunnableSyncResultsManager;
-import com.neotropic.inventory.modules.sync.LocalSyncProvider;
 import com.neotropic.inventory.modules.sync.LocalSyncAction;
 import org.inventory.communications.core.LocalConfigurationVariable;
 import org.inventory.communications.core.LocalPhysicalConnectionDetails;
@@ -5397,7 +5396,7 @@ public class CommunicationsStub {
     public LocalSyncGroup createSyncGroup(String syncGroupName) {
         try {
             long id = service.createSynchronizationGroup(syncGroupName, session.getSessionId());
-            return null; // new LocalSyncGroup(id, syncGroupName);
+            return new LocalSyncGroup(id, syncGroupName);
         } catch (Exception ex) {
             this.error = ex.getMessage();
             return null;
@@ -5485,6 +5484,22 @@ public class CommunicationsStub {
     
     /**
      * Deletes a Synchronization data source configuration
+     * @param syncGroupId sync group source id
+     * @param syncDataSourceConfigIds sync data source ids
+     * @return True if was deleted successfully
+     */
+    public boolean releaseSyncDataSourceConfigurationFromSyncGroup(long syncGroupId, List<Long> syncDataSourceConfigIds) {
+        try {
+            service.releaseSyncDataSourceConfigFromSyncGroup(syncGroupId, syncDataSourceConfigIds, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Deletes a Synchronization data source configuration
      * @param syncDataSourceConfigId sync data source id
      * @return True if was deleted successfully
      */
@@ -5532,49 +5547,34 @@ public class CommunicationsStub {
      * @param syncDataSourceConfiguration Set of sync data source configuration ids
      * @return The list of copied sync data source configuration
      */
-    public List<LocalSyncDataSourceConfiguration> copySyncDataSourceConfiguration(long syncGroupId, LocalSyncDataSourceConfiguration[] syncDataSourceConfiguration) {
-//        try {
-//            List<Long> syncDataSrcConfigIds = new ArrayList<>();
-//            for (LocalSyncDataSourceConfiguration syncDataSrcConfig : syncDataSourceConfiguration)
-//                syncDataSrcConfigIds.add(syncDataSrcConfig.getId());
-//                            
-//            List<RemoteSynchronizationConfiguration> lstRemoteSyncDataSrcConfig = service.copySyncDataSourceConfiguration(syncGroupId, syncDataSrcConfigIds, session.getSessionId());
-//            
-//            List<LocalSyncDataSourceConfiguration> lstLocalSyncDataSrcConfig = new ArrayList<>();
-//            
-//            for (RemoteSynchronizationConfiguration remoteSyncDataSrcConfig : lstRemoteSyncDataSrcConfig) {
-//                HashMap<String, String> parameters = new HashMap<>();
-//                for (StringPair parameter : remoteSyncDataSrcConfig.getParameters())
-//                    parameters.put(parameter.getKey(), parameter.getValue());
-//                
-//                lstLocalSyncDataSrcConfig.add(new LocalSyncDataSourceConfiguration(
-//                    remoteSyncDataSrcConfig.getId(), 
-//                    remoteSyncDataSrcConfig.getName(), 
-//                    parameters));
-//                                
-//            }
-//            return lstLocalSyncDataSrcConfig;
-//        } catch (Exception ex) {
-//            this.error = ex.getMessage();
-//            return null;
-//        }
-
-        return null;
+    public boolean copySyncDataSourceConfiguration(long syncGroupId, LocalSyncDataSourceConfiguration[] syncDataSourceConfiguration) {
+        try {
+            List<Long> syncDataSrcConfigIds = new ArrayList<>();
+            for (LocalSyncDataSourceConfiguration syncDataSrcConfig : syncDataSourceConfiguration)
+                syncDataSrcConfigIds.add(syncDataSrcConfig.getId());
+                            
+            service.copySyncDataSourceConfiguration(syncGroupId, syncDataSrcConfigIds, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
     }
     
     /**
      * Moves a sync data source configuration from a sync group to another sync group
-     * @param syncGroupId The Sync Group Id target
+     * @param oldSyncGroupId The Sync Group Id target
+     * @param newSyncGroupId The Sync Group Id target
      * @param syncDataSourceConfiguration Set of sync data source configuration ids
      * @return True if the sync data source configuration was moved
      */
-    public boolean moveSyncDataSourceConfiguration(long syncGroupId, LocalSyncDataSourceConfiguration[] syncDataSourceConfiguration) {
+    public boolean moveSyncDataSourceConfiguration(long oldSyncGroupId, long newSyncGroupId, LocalSyncDataSourceConfiguration[] syncDataSourceConfiguration) {
         try {
             List<Long> syncDataSrcConfigIds = new ArrayList<>();
             for (LocalSyncDataSourceConfiguration syncDataSrcConfig : syncDataSourceConfiguration)
                 syncDataSrcConfigIds.add(syncDataSrcConfig.getId());
             
-            service.moveSyncDataSourceConfiguration(syncGroupId, syncDataSrcConfigIds, session.getSessionId());
+            service.moveSyncDataSourceConfiguration(oldSyncGroupId, newSyncGroupId, syncDataSrcConfigIds, session.getSessionId());
             return true;
         } catch (Exception ex) {
             this.error = ex.getMessage();
@@ -5647,8 +5647,7 @@ public class CommunicationsStub {
             List<LocalSyncDataSourceConfiguration> res = new ArrayList<>();
             RemoteSynchronizationConfiguration remoteConfiguration = 
                     service.getSyncDataSourceConfiguration(objectId, session.getSessionId());
-            
-            
+
             HashMap<String, String> parameters = new HashMap<>();
             for (StringPair parameter : remoteConfiguration.getParameters())
                 parameters.put(parameter.getKey(), parameter.getValue());

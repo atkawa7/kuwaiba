@@ -10,12 +10,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for relateSyncDataSourceConfigToSyncGroup complex type.
+ * <p>Java class for copySyncDataSourceConfiguration complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="relateSyncDataSourceConfigToSyncGroup">
+ * &lt;complexType name="copySyncDataSourceConfiguration">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -31,12 +31,12 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "relateSyncDataSourceConfigToSyncGroup", propOrder = {
+@XmlType(name = "copySyncDataSourceConfiguration", propOrder = {
     "syncGroupId",
     "syncDataSourceConfigurationId",
     "sessionId"
 })
-public class RelateSyncDataSourceConfigToSyncGroup {
+public class CopySyncDataSourceConfiguration {
 
     protected long syncGroupId;
     @XmlElement(nillable = true)
