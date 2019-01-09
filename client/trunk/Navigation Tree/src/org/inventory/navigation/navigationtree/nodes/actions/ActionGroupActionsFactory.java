@@ -25,7 +25,7 @@ public class ActionGroupActionsFactory {
     private static ActionsGroup releaseFromGroupActions;
     private static ActionsGroup mirrorPortActions;
     private static ActionsGroup diagnosticActions;
-    private static ActionsGroup syncpActions;
+    private static ActionsGroup syncActions;
     
     public static ActionsGroup getInstanceOfOpenViewGroupActions() {
         if (openViewGroupActions == null)
@@ -64,11 +64,10 @@ public class ActionGroupActionsFactory {
     }
     
     public static ActionsGroup getInstanceSyncActions() {
-       if (syncpActions == null)
-            syncpActions = new ActionsGroup("Sync", 
+       if (syncActions == null)
+            syncActions = new ActionsGroup("Sync", 
                 "org/inventory/navigation/navigationtree/res/show_view_actions_group.png", 
                 ActionsGroupType.Group.HAS_CONFIGURATION);
-        return syncpActions;
-        
+        return syncActions;
     }
 }

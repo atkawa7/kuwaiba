@@ -335,7 +335,6 @@ public class ObjectNode extends AbstractNode implements PropertyChangeListener {
         actions.add(ActionGroupActionsFactory.getInstanceMirrorPortActions());
         actions.add(ActionGroupActionsFactory.getInstanceDiagnosticActions());
         
-        
         actions.add(null); //Separator
         actions.add(explorerAction);
         actions.add(ShowMoreInformationAction.getInstance(getObject().getId(), getObject().getClassName()));
