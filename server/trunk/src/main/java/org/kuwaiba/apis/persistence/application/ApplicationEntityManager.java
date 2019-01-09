@@ -1505,7 +1505,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the sync group cannot be found, or some sync data source configuration cannot be found
      * @throws InvalidArgumentException If the sync group cannot be found, or some sync data source configuration cannot be found
      */
-    public void relateSyncDataSourceConfigToSyncGroup(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public void copySyncDataSourceConfiguration(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
      * Release a set of sync data source configuration from a given sync group
      * @param syncGroupId The Sync Group Id target
@@ -1521,7 +1521,7 @@ public interface ApplicationEntityManager {
      * @throws ApplicationObjectNotFoundException If the sync group cannot be found, or some sync data source configuration cannot be found
      * @throws InvalidArgumentException If the sync group is malformed, or some sync data source configuration is malformed
      */
-    //public void moveSyncDataSourceConfiguration(long syncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
+    public void moveSyncDataSourceConfiguration(long oldSyncGroupId, long newSyncGroupId, long[] syncDataSourceConfigurationIds) throws ApplicationObjectNotFoundException, InvalidArgumentException;
     /**
     * Gets the artifact associated to an activity (for example, a form that was already filled in by a user in a previous, already committed activity)
     * @param processInstanceId The id of the process instance. This process may have been ended already.

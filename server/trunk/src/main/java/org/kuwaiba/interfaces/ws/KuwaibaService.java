@@ -8424,13 +8424,13 @@ public class KuwaibaService {
          * @throws ServerSideException If the sync group cannot be found, or some sync data source configuration cannot be found
          *                             If the sync group is malformed, or some sync data source configuration is malformed
          */
-        @WebMethod(operationName = "relateSyncDataSourceConfigToSyncGroup")
-        public void relateSyncDataSourceConfigToSyncGroup(
+        @WebMethod(operationName = "copySyncDataSourceConfiguration")
+        public void copySyncDataSourceConfiguration(
             @WebParam(name="syncGroupId") long syncGroupId, 
             @WebParam(name="syncDataSourceConfigurationId") long[] syncDataSourceConfigurationIds, 
             @WebParam(name="sessionId") String sessionId) throws ServerSideException {
             try {
-                wsBean.relateSyncDataSourceConfigToSyncGroup(syncGroupId, syncDataSourceConfigurationIds, getIPAddress(), sessionId);
+                wsBean.copySyncDataSourceConfiguration(syncGroupId, syncDataSourceConfigurationIds, getIPAddress(), sessionId);
             } catch (Exception ex) {
                 if (ex instanceof ServerSideException)
                     throw ex;
@@ -8449,7 +8449,7 @@ public class KuwaibaService {
          * @throws ServerSideException If the sync group cannot be found, or some sync data source configuration cannot be found
          *                             If the sync group is malformed, or some sync data source configuration is malformed
          */
-        @WebMethod(operationName = "relateSyncDataSourceConfigFromSyncGroup")
+        @WebMethod(operationName = "releaseSyncDataSourceConfigFromSyncGroup")
         public void releaseSyncDataSourceConfigFromSyncGroup(
             @WebParam(name="syncGroupId") long syncGroupId, 
             @WebParam(name="syncDataSourceConfigurationId") long[] syncDataSourceConfigurationIds, 
@@ -8460,7 +8460,7 @@ public class KuwaibaService {
                 if (ex instanceof ServerSideException)
                     throw ex;
                 else {
-                    System.out.println("[KUWAIBA] An unexpected error occurred in copySyncDataSourceConfiguration: " + ex.getMessage());
+                    System.out.println("[KUWAIBA] An unexpected error occurred in releaseSyncDataSourceConfigFromSyncGroup: " + ex.getMessage());
                     throw new RuntimeException("An unexpected error occurred. Contact your administrator.");
                 }
             }
@@ -8468,7 +8468,8 @@ public class KuwaibaService {
 
         /**
          * Moves a sync data source configuration from a sync group to another sync group
-         * @param syncGroupId The Sync Group Id target
+         * @param oldSyncGroupId The Sync Group Id target to related
+         * @param newSyncGroupId The Sync Group Id target to release
          * @param syncDataSourceConfigurationIds Set of sync data source configuration ids
          * @param sessionId Session token
          * @throws ServerSideException If the sync group cannot be found, or some sync data source configuration cannot be found
@@ -8476,11 +8477,12 @@ public class KuwaibaService {
          */
         @WebMethod(operationName = "moveSyncDataSourceConfiguration")
         public void moveSyncDataSourceConfiguration(
-            @WebParam(name="syncGroupId") long syncGroupId, 
+            @WebParam(name="oldSyncGroupId") long oldSyncGroupId, 
+            @WebParam(name="newSyncGroupId") long newSyncGroupId, 
             @WebParam(name="syncDataSourceConfiguration") long[] syncDataSourceConfigurationIds, 
             @WebParam(name="sessionId") String sessionId) throws ServerSideException {
             try {
-                //wsBean.moveSyncDataSourceConfiguration(syncGroupId, syncDataSourceConfigurationIds, getIPAddress(), sessionId);
+                wsBean.moveSyncDataSourceConfiguration(oldSyncGroupId, newSyncGroupId, syncDataSourceConfigurationIds, getIPAddress(), sessionId);
             } catch (Exception ex) {
                 if (ex instanceof ServerSideException)
                     throw ex;
