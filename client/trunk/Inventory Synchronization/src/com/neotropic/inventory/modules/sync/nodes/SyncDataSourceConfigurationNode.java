@@ -27,6 +27,7 @@ import javax.swing.Action;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalObjectLight;
 import com.neotropic.inventory.modules.sync.LocalSyncDataSourceConfiguration;
+import com.neotropic.inventory.modules.sync.nodes.actions.ReleaseSyncDataSourceConfigurationAction;
 import com.neotropic.inventory.modules.sync.nodes.actions.RunSynchronizationProcessAction;
 import com.neotropic.inventory.modules.sync.nodes.properties.DevicePropertyReadEditor;
 import org.inventory.communications.util.Constants;
@@ -217,6 +218,10 @@ public class SyncDataSourceConfigurationNode extends AbstractNode implements Pro
         return new Action[] {
             RunSynchronizationProcessAction.getInstance(),
             null, 
+            copyAction, 
+            cutAction,
+            null, 
+            ReleaseSyncDataSourceConfigurationAction.getInstance(),
             DeleteSyncAction.getInstance()};
     }
 

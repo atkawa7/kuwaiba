@@ -47,6 +47,7 @@ import org.inventory.communications.core.LocalObjectLight;
 import org.inventory.core.services.api.actions.GenericInventoryAction;
 import org.inventory.core.services.api.notifications.NotificationUtil;
 import org.inventory.core.services.i18n.I18N;
+import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 import org.netbeans.api.progress.ProgressHandleFactory;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Node;
@@ -102,9 +103,14 @@ public class RunSynchronizationProcessAction extends GenericInventoryAction{
             
             localSyncGroup.setDataSourceConfig(syncDataSources);
         }
+        else if(nodes.size() == 1 &&  nodes.get(0) instanceof ObjectNode){
+            LocalSyncDataSourceConfiguration syncDataSourceConfiguration = CommunicationsStub.getInstance().getSyncDataSourceConfiguration(((ObjectNode)nodes.get(0)).getObject().getId());
+            syncDataSources.add(syncDataSourceConfiguration);
+            localSyncGroup = new LocalSyncGroup(-1, "adhocSyncGroup", syncDataSources);
+        }
         else{//The sync process has been launch from individual syn data source configuration files
             for(AbstractNode selectedNode : nodes){
-                 if(selectedNode instanceof SyncDataSourceConfigurationNode)
+                if(selectedNode instanceof SyncDataSourceConfigurationNode)
                     syncDataSources.add(((SyncDataSourceConfigurationNode)selectedNode).getLookup().lookup(LocalSyncDataSourceConfiguration.class));
             }
             localSyncGroup = new LocalSyncGroup(-1, "adhocSyncGroup", syncDataSources);

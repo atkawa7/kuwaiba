@@ -142,5 +142,4 @@ public class ConfigSyncDatasourceAction extends GenericObjectNodeAction implemen
     public LocalValidator[] getValidators() {
         return null;
     }
-    
 }

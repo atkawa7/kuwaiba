@@ -100,11 +100,8 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
         pasteAction.putValue(Action.NAME, I18N.gm("lbl_paste_action"));
             
         return new Action[] {
-            SyncManagerActionFactory.getNewSyncDataSourceConfigurationAction(),
             SyncManagerActionFactory.getNewRunSynchronizationProcessAction(),
             null, 
-            copyAction, 
-            cutAction, 
             pasteAction, 
             null, 
             DeleteSyncAction.getInstance()
@@ -151,12 +148,12 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
             @Override
             public Transferable paste() throws IOException {
                 LocalSyncDataSourceConfiguration dataSrcConfig = dropNode.getLookup().lookup(LocalSyncDataSourceConfiguration.class);
-                LocalSyncGroup syncGroup = getLookup().lookup(LocalSyncGroup.class);
+                LocalSyncGroup oldSyncGroup = dropNode.getParentNode().getLookup().lookup(LocalSyncGroup.class);
+                LocalSyncGroup newSyncGroup = getLookup().lookup(LocalSyncGroup.class);
                 
                 switch(action) {
                     case DnDConstants.ACTION_COPY:
-                        List<LocalSyncDataSourceConfiguration> dataSrcConfigurations = CommunicationsStub.getInstance().copySyncDataSourceConfiguration(syncGroup.getId(), new LocalSyncDataSourceConfiguration[] {dataSrcConfig});
-                        if (dataSrcConfigurations != null) {
+                        if (CommunicationsStub.getInstance().copySyncDataSourceConfiguration(newSyncGroup.getId(), new LocalSyncDataSourceConfiguration[] {dataSrcConfig})) {
                             if (getChildren() instanceof SyncGroupNodeChildren)
                                 ((SyncGroupNodeChildren) getChildren()).addNotify();
                         } else
@@ -164,7 +161,8 @@ public class SyncGroupNode extends AbstractNode implements PropertyChangeListene
                                 NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
                         break;
                     case DnDConstants.ACTION_MOVE:
-                        if (CommunicationsStub.getInstance().moveSyncDataSourceConfiguration(syncGroup.getId(), new LocalSyncDataSourceConfiguration[] {dataSrcConfig})) {
+                        if (CommunicationsStub.getInstance().moveSyncDataSourceConfiguration(oldSyncGroup.getId(), 
+                                newSyncGroup.getId(), new LocalSyncDataSourceConfiguration[] {dataSrcConfig})) {
                             //Refreshes the old parent node
                             if (dropNode.getParentNode().getChildren() instanceof SyncGroupNodeChildren)
                                 ((SyncGroupNodeChildren) dropNode.getParentNode().getChildren()).addNotify();
