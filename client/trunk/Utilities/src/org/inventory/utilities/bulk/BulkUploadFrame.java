@@ -32,7 +32,7 @@ import org.openide.windows.WindowManager;
 
 /**
  * JFrame to select csv files for bulk load
- * @author adrian martinez molina <adrian.martinez@kuwaiba.org>
+ * @author adrian martinez molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class BulkUploadFrame extends javax.swing.JFrame {
 

@@ -37,8 +37,8 @@ import org.openide.windows.WindowManager;
 
 /**
  * Shows a tree with the special relationships of an object
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @ConvertAsProperties(
         dtd = "-//org.inventory.navigation.special.relationships//SpecialRelationships//EN",

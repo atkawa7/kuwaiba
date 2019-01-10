@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import java.util.List;
  * purposes in applications such as the class hierarchy viewer (see module ClassManager). Do mistake this
  * for LocalClassMetadata, which represents the information related to attribute display names, visibility,
  * containment hierarchy and the like. This one is a bare representation of a class
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class LocalClassWrapper {
     

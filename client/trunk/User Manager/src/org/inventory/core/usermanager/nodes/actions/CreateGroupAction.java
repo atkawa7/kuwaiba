@@ -32,7 +32,7 @@ import org.openide.util.Utilities;
 
 /**
  * Creates a group
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 class CreateGroupAction extends GenericInventoryAction {
 

@@ -27,7 +27,7 @@ import org.openide.nodes.AbstractNode;
 
 /**
  * The root node of the custom shapes list type
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class CustomShapeRootNode extends AbstractNode {
     private final LocalClassMetadataLight customShapeClass;

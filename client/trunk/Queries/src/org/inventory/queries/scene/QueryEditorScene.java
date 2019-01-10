@@ -41,7 +41,7 @@
  * Version 2 license, then the option applies only if the new code is
  * made subject to such option by the copyright holder.
  *
- * Modified By Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org> for project Kuwaiba
+ * Modified By Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>} for project Kuwaiba
  */
 
 package org.inventory.queries.scene;
@@ -94,7 +94,7 @@ import org.netbeans.api.visual.widget.Widget;
  * keys as Strings, it's not suitable for our purposes, so we rather inherit from GraphPinScene and use
  * the same base code
  * @author David Kaspar
- * @contributor Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @contributor Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class QueryEditorScene extends GraphPinScene<Object, String, Object>
         implements ItemListener{

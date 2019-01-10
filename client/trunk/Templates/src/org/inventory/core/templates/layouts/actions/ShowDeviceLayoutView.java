@@ -35,7 +35,7 @@ import org.openide.windows.WindowManager;
 
 /**
  * Action used to show how a given device looks like (in the real world)
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @ActionsGroupType(group=ActionsGroupType.Group.OPEN_VIEW)
 @ServiceProvider(service=GenericObjectNodeAction.class)

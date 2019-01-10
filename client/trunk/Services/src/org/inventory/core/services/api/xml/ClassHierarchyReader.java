@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.inventory.communications.core.LocalClassWrapper;
 
 /**
  * This readers reads a class hierarchy descriptor as defined in the <a href="http://sourceforge.net/apps/mediawiki/kuwaiba/index.php?title=XML_Documents">wiki</a> page
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public interface ClassHierarchyReader extends GenericXMLReader{
     public String getDocumentVersion();

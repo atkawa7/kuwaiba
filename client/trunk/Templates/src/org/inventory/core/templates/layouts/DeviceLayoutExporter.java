@@ -34,7 +34,7 @@ import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 
 /**
  * Class to manage the export of device layouts
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeviceLayoutExporter {
     public DeviceLayoutScene scene;

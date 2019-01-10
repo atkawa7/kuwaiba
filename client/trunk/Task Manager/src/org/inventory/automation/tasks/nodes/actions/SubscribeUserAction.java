@@ -33,7 +33,7 @@ import org.openide.util.Utilities;
 
 /**
  * Subscribes a user to a task
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 class SubscribeUserAction extends GenericInventoryAction implements ComposedAction {
     

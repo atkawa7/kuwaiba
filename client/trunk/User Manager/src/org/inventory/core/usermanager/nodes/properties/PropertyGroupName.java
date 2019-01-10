@@ -22,7 +22,7 @@ import org.openide.nodes.PropertySupport;
 
 /**
  * The group name property
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class PropertyGroupName extends PropertySupport.ReadWrite<String>{
     private LocalUserGroupObject group;

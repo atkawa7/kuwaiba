@@ -30,7 +30,7 @@ import org.openide.util.actions.Presenter;
 
 /**
  * Action to delete an <code>ObjectConnectionWidget</code> from topology designer scene
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeleteConnectionAction extends GenericInventoryAction implements Presenter.Popup {
     private static DeleteConnectionAction instance;

@@ -31,7 +31,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Provided used to Move a Container Shape
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class MoveContainerShapeProvider implements MoveProvider {
     private Point startPoint;

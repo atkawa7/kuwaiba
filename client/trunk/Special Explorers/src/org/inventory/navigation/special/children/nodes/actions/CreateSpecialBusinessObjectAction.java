@@ -38,7 +38,7 @@ import org.openide.util.actions.Presenter;
 
 /**
  * Creates a new special object
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public final class CreateSpecialBusinessObjectAction extends GenericObjectNodeAction 
             implements Presenter.Popup {

@@ -34,7 +34,7 @@ import org.openide.windows.WindowManager;
 
 /**
  * Shows the associate layout to a given list type item
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class EditLayoutAction extends GenericInventoryAction {
     

@@ -38,7 +38,7 @@ import org.openide.util.actions.Presenter;
 
 /**
  * Creates a template element
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 class CreateTemplateElementAction extends GenericInventoryAction implements Presenter.Popup {
     

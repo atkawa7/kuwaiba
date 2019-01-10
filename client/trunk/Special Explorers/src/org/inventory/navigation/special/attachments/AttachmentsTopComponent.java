@@ -44,7 +44,7 @@ import org.openide.windows.WindowManager;
 
 /**
  * Displays the files attached to an inventory object
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @ConvertAsProperties(
         dtd = "-//org.inventory.navigation.special.attachments//Attachments//EN",

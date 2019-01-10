@@ -36,7 +36,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Provider used to accept the drag and drop of devices in the scene
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeviceLayoutAcceptProviderToDevices implements AcceptProvider {
 

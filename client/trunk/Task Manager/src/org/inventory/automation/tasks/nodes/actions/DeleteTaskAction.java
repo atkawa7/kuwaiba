@@ -32,7 +32,7 @@ import org.openide.util.actions.Presenter;
 
 /**
  * Deletes a task
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 class DeleteTaskAction extends GenericInventoryAction implements Presenter.Popup {
     

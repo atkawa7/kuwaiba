@@ -30,7 +30,7 @@ import org.openide.util.Utilities;
 
 /**
  * Removes a user from a group (provided that the user is already related to at least one other group)
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class RemoveFromGroupAction extends GenericInventoryAction {
 

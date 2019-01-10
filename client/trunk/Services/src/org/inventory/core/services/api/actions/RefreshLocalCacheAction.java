@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.openide.awt.ActionRegistration;
 
 /**
  * Refreshes the local cache
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @ActionID(id = "org.inventory.core.services.api.actions.RefreshLocalCacheAction", category = "View")
 @ActionRegistration(iconBase = "org/inventory/core/services/res/refresh-cache.png", displayName = "org.inventory.core.services.Bundle#CTL_RefreshLocalCache", iconInMenu = true)

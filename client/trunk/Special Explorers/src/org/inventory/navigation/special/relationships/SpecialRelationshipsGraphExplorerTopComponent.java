@@ -34,7 +34,7 @@ import org.openide.util.NbBundle.Messages;
 
 /**
  * Top component which displays a graphical representation of special relationships.
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @Messages({
     "CTL_GraphicalRepSpecialRelationshipsTopComponent=Graphical Representation",

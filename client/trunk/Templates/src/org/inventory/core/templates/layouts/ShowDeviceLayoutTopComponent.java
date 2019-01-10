@@ -42,7 +42,7 @@ import org.openide.windows.TopComponent;
 
 /**
  * Top component which displays model type view for an object.
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @ConvertAsProperties(
         dtd = "-//org.inventory.core.templates.layouts//ShowDeviceLayout//EN",

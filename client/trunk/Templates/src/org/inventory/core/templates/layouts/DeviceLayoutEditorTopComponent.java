@@ -56,7 +56,7 @@ import org.openide.windows.WindowManager;
 
 /**
  * Top Component used to define the Equipment Layouts
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public final class DeviceLayoutEditorTopComponent extends TopComponent implements ActionListener, Refreshable {
     public static String ID = "DeviceLayoutEditorTopComponent_";

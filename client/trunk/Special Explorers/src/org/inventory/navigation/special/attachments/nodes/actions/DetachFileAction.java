@@ -31,7 +31,7 @@ import org.openide.util.Utilities;
 
 /**
  * Detaches a file from an inventory object
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class DetachFileAction extends GenericInventoryAction {
 

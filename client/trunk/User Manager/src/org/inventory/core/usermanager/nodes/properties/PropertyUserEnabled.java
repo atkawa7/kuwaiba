@@ -22,7 +22,7 @@ import org.openide.nodes.PropertySupport;
 
 /**
  * The user enabled property
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class PropertyUserEnabled extends PropertySupport.ReadWrite<Boolean>{
     private LocalUserObject user;

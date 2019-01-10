@@ -1,5 +1,5 @@
 /**
- * Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ * Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -18,7 +18,7 @@ package org.inventory.core.services.api.behaviors;
 /**
  * This interface is used to verify the compatibility in a top component, for 
  * example if the database is outdated.
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public interface CompatibleTopComponent {
     /**

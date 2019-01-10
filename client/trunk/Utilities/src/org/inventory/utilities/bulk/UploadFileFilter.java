@@ -20,7 +20,7 @@ import javax.swing.filechooser.FileFilter;
 
 /**
  * Image Filter
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class UploadFileFilter extends FileFilter {
 

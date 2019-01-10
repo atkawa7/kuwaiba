@@ -27,7 +27,7 @@ import org.openide.DialogDescriptor;
 
 /**
  * Dialog to save a csv file
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ExporFilePanel extends JPanel implements ActionListener{
 

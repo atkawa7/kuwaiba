@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import org.inventory.communications.util.Utils;
  * Implementation of the common interface to represent the class metadata in a simple
  * way so it can be shown in trees and lists. This is done because to bring the whole
  * metadata is not necessary (ie. Container Hierarchy Manager)
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class LocalClassMetadataLight implements Transferable, Comparable<LocalClassMetadataLight> {
     /**

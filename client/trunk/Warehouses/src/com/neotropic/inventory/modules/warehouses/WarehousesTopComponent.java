@@ -31,7 +31,7 @@ import org.openide.util.NbBundle.Messages;
 
 /**
  * Top component which displays the warehouses and virtual warehouses.
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @ConvertAsProperties(
         dtd = "-//com.neotropic.inventory.modules.warehouses//Warehouses//EN",

@@ -36,7 +36,7 @@ import org.openide.util.Utilities;
 
 /**
  * Relates a user to an existing group
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 class RelateToGroupAction extends GenericInventoryAction implements ComposedAction {
     

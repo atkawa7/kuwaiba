@@ -7,15 +7,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getValidatorDefinitions complex type.
+ * <p>Java class for getValidatorDefinitionsForClass complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getValidatorDefinitions">
+ * &lt;complexType name="getValidatorDefinitionsForClass">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="className" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -26,12 +27,38 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getValidatorDefinitions", propOrder = {
+@XmlType(name = "getValidatorDefinitionsForClass", propOrder = {
+    "className",
     "sessionId"
 })
-public class GetValidatorDefinitions {
+public class GetValidatorDefinitionsForClass {
 
+    protected String className;
     protected String sessionId;
+
+    /**
+     * Gets the value of the className property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getClassName() {
+        return className;
+    }
+
+    /**
+     * Sets the value of the className property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setClassName(String value) {
+        this.className = value;
+    }
 
     /**
      * Gets the value of the sessionId property.

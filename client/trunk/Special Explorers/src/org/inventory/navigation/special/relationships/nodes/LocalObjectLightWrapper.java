@@ -19,7 +19,7 @@ import org.inventory.communications.core.LocalObjectLight;
 
 /**
  * Wrapper used to allow that a LocalObjectLight can be repeated in an AbstractScene
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class LocalObjectLightWrapper {
     private static long idCounter = 0;

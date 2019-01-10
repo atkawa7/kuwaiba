@@ -44,7 +44,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Scene used to do a graphical representation of Special Relationships
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class SpecialRelationshipsGraphExplorerScene extends AbstractScene<LocalObjectLightWrapper, String> {
     /**

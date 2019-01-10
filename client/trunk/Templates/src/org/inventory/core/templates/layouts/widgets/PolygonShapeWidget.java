@@ -29,7 +29,7 @@ import org.openide.util.lookup.Lookups;
 
 /**
  * Selectable polygon widget
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class PolygonShapeWidget extends PolygonWidget implements PropertyChangeListener,  SharedContentLookup {
     private final ShapeNode shapeNode;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.util.HashMap;
 /**
  * A configuration object is a singleton that is used to store and share configuration information (variables, etc) 
  * among components of the same module (for example, an option selected in a TopComponent that is also needed by an action in a graph scene within)
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public abstract class ConfigurationObject {
     protected HashMap<String, Object> properties;

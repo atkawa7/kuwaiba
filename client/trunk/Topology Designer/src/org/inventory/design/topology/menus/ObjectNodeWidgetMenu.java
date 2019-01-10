@@ -24,7 +24,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Create Menu for <code>ObjectNodeWidget</code> inside topology designer scene
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ObjectNodeWidgetMenu implements PopupMenuProvider {
     private JPopupMenu theMenu = null;

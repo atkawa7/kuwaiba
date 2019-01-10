@@ -37,7 +37,7 @@ import org.openide.windows.WindowManager;
 
 /**
  * Used to explore the special children (for example links inside a container) of an inventory object
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @ConvertAsProperties(
         dtd = "-//org.inventory.navigation.special.children//SpecialChildren//EN",

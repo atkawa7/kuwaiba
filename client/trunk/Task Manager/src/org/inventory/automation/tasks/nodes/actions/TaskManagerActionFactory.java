@@ -19,7 +19,7 @@ import javax.swing.AbstractAction;
 
 /**
  * Share singletons of all actions applicable to the nodes in this module
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class TaskManagerActionFactory {
     private static ExecuteTaskAction executeTaskAction;

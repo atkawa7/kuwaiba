@@ -39,7 +39,7 @@ import org.openide.util.lookup.Lookups;
 
 /**
  * Represents a group
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class GroupNode extends AbstractNode implements PropertyChangeListener {
     public static final String ICON_PATH="org/inventory/core/usermanager/res/group.png";

@@ -59,7 +59,7 @@ import org.openide.util.RequestProcessor;
 /**
  * This frame will be used to display the findings in the synchronization process and 
  * launch the respective action
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class SyncActionsFrame extends JFrame {
     /**

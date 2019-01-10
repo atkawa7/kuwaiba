@@ -36,7 +36,7 @@ import org.inventory.core.services.i18n.I18N;
 /**
  * Class used to storage device information like the device layout, hierarchy 
  * and nested devices layouts
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeviceLayoutStructure { 
     private final HashMap<LocalObjectLight, List<LocalObjectLight>> hierarchy;

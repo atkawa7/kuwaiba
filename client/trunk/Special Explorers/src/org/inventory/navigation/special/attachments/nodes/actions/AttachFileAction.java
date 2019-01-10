@@ -42,7 +42,7 @@ import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Attaches a file to a file to an inventory object
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @ServiceProvider(service=GenericObjectNodeAction.class)
 public class AttachFileAction extends GenericObjectNodeAction implements Presenter.Popup {

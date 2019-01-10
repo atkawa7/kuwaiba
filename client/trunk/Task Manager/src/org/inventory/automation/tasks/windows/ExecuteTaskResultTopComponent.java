@@ -33,7 +33,7 @@ import org.openide.windows.TopComponent;
 
 /**
  * Displays the results of a task that was executed on demand
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ExecuteTaskResultTopComponent extends TopComponent {
     private JTable tblResult;

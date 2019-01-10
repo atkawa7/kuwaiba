@@ -31,7 +31,7 @@ import org.openide.util.NbBundle.Messages;
 
 /**
  * Top component which displays the existing device layouts
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @ConvertAsProperties(
         dtd = "-//org.inventory.core.templates.layouts//DeviceLayouts//EN",

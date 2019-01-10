@@ -32,7 +32,7 @@ import org.openide.nodes.Node;
 
 /**
  * A node in the Special Relationships explorer
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class SpecialRelatedObjectNode extends ObjectNode {
 

@@ -41,7 +41,7 @@ import org.openide.util.actions.Presenter;
 
 /**
  * Action that requests multiple business special objects creation
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class CreateMultipleSpecialBusinessObjectAction extends GenericObjectNodeAction 
     implements Presenter.Popup {

@@ -36,7 +36,7 @@ import org.openide.util.lookup.Lookups;
 
 /**
  * A node representing an application user
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class UserNode extends AbstractNode implements PropertyChangeListener {
 

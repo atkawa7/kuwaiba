@@ -31,7 +31,7 @@ import org.openide.util.Utilities;
 
 /**
  * Adds a custom parameter to the task
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 class AddParameterToTaskAction extends GenericInventoryAction {
     

@@ -64,7 +64,7 @@ import org.openide.util.Exceptions;
 
 /**
  * Class used to render a model type portWidget in any scene
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeviceLayoutRenderer {
     /**

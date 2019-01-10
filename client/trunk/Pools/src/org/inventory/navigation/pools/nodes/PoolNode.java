@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ * Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -46,7 +46,7 @@ import org.openide.util.actions.SystemAction;
 import org.openide.util.datatransfer.PasteType;
 /**
  * Represents a pool (a set of objects of a certain kind)
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class PoolNode extends AbstractNode implements PropertyChangeListener {
     private static final Image defaultIcon = ImageUtilities.loadImage("org/inventory/navigation/pools/res/pool.png");

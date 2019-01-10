@@ -25,7 +25,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Scene used to show a model layout
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ShowDeviceLayoutScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
     

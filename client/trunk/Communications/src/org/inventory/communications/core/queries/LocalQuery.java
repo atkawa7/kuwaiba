@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.inventory.communications.wsclient.RemoteQuery;
  * This is the local representation of an entity.queries.Query with the information necessary to store it
  * <b>Note:</b> This query is used ONLY for storing purposes (when an user creates/saves a query).
  * For queries to be executed only see TransientQuery
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class LocalQuery extends LocalQueryLight {
     private byte[] structure;

@@ -22,7 +22,7 @@ import org.openide.nodes.PropertySupport;
 
 /**
  * The user last name property
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class PropertyUserLastName extends PropertySupport.ReadWrite<String>{
     private LocalUserObject user;

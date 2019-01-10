@@ -21,7 +21,7 @@ import org.openide.util.lookup.Lookups;
 
 /**
  * A category in the palette
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class CategoryNode extends AbstractNode {
     

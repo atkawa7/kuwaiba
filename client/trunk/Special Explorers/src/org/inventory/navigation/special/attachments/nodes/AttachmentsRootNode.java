@@ -30,7 +30,7 @@ import org.openide.util.lookup.Lookups;
 
 /**
  * The root node of the Attachment Explorer TC. This node is not visible and its lookup contains the currently selected inventory object as a LocalObjectLight instance 
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class AttachmentsRootNode extends AbstractNode {
 

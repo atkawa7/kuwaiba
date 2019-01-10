@@ -40,7 +40,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Popup Menu to the shape widgets
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ShapeWidgetMenu implements PopupMenuProvider {
     private static ShapeWidgetMenu instance;

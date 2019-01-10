@@ -29,7 +29,7 @@ import org.openide.nodes.Node;
 
 /**
  * The root node of the User Manager module
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class UserManagerRootNode extends AbstractNode {
     

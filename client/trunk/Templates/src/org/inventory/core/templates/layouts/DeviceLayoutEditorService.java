@@ -28,7 +28,7 @@ import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 
 /**
  * The service class associated to the main device layout edition component
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeviceLayoutEditorService {
     private final LocalObjectListItem model;

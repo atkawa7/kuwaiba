@@ -61,7 +61,7 @@ import org.netbeans.api.visual.widget.Widget;
  * track the change and notify the TopComponent to mark the scene as unsaved. 
  * org.netbeans.modules.visual.action.AddRemoveControlPointAction does not report 
  * when the action is performed successfully
-  * @author Alex, modified by Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+  * @author Alex, modified by Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class CustomAddRemoveControlPointAction extends WidgetAction.Adapter {
 

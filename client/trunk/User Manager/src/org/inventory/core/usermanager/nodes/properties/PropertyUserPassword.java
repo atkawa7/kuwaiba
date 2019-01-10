@@ -23,7 +23,7 @@ import org.openide.nodes.PropertySupport;
 
 /**
  * The user password property
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class PropertyUserPassword extends PropertySupport.ReadWrite<String>{
     private LocalUserObject user;

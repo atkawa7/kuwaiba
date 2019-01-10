@@ -20,7 +20,7 @@ import org.inventory.communications.core.LocalObjectListItem;
 
 /**
  * Factory used to get instances of shapes, given a type of shape
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ShapeFactory {
     private static ShapeFactory instance;

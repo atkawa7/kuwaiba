@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ * Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  * Licensed under the EPL License, Version 1.0 (the "License"); you may not use
  * this file except in compliance with the License. You may obtain a copy of the
@@ -23,7 +23,7 @@ import java.awt.event.ActionEvent;
  * as an external JFrame/JDialog instead of an actual sub-menu as in JMenu. When node actions show sub-menus using
  * JMenus, the options are not loaded lazily and if they involve calls to the server to be generated, that might imply
  * extra, unnecessary requests to the server.
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public interface ComposedAction {
     void finalActionPerformed(ActionEvent e);

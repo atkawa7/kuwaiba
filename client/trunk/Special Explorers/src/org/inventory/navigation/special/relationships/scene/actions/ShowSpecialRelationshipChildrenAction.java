@@ -25,7 +25,7 @@ import org.inventory.navigation.special.relationships.scene.SpecialRelationships
 /**
  * Action to Show Special Relationship Children of the selected node
  * into a special relationship graphical representation scene.
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ShowSpecialRelationshipChildrenAction  extends GenericInventoryAction {
     public static final String COMMAND = "showSpecialRelationshipChildren";

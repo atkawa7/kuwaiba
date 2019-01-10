@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,25 +16,46 @@
 
 package org.inventory.communications.core;
 
+import java.util.List;
 import java.util.Properties;
+import org.inventory.communications.wsclient.StringPair;
 
 /**
- * Local represenatation of a remote validator
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * Validators are flags indicating things about objects. Of course, every instance may have
+ * something to expose or not. For instance, a port has an indicator to mark it as "connected physically",
+ * but a Building (so far) has nothing to "indicate". This is done in order to avoid a second call to query
+ * for a particular information that could affect the performance. I.e:
+ * Call 1: getPort (retrieving a LocalObjectLight) <br>
+ * Call 2: isThisPortConnected (retrieving a boolean according to a condition) <br>
+ *
+ * With this method there's only one call
+ * getPort (a LocalObjectLight with a flag to indicate that the port is connected) <br>
+ *
+ * Why not use getPort retrieving a LocalObject? Well, because the condition might be complicated, and
+ * it's easier to compute its value at server side. Besides, it can involve complex queries that would require
+ * more calls to the webservice
+ * @author Charles Edward Bedon Cortazar {@literal {@literal <charles.bedon@kuwaiba.org>}}
  */
 public class LocalValidator {
     /**
-     * Name of the validator
+     * The name of this validator
      */
     private String name;
     /**
-     * Properties associated to the validator
+     * The properties of this validator. The idea behind this, is that a validator should contain a main value (such us "yes, the port is connected") 
+     * but also extra support values relevant mostly for rendering purposes (such as "display the port name red or with a busy icon since is already connected, 
+     * or display it orange if since it's not connected, but it's reserved")
      */
     private Properties properties;
 
-    public LocalValidator(String name, Properties properties) {
+    public LocalValidator(String name, List<StringPair> remoteProperties){
         this.name = name;
-        this.properties = properties;
+        this.properties = new Properties();
+        if (remoteProperties != null) {
+            remoteProperties.forEach((aRemoteProperty) -> {
+                properties.put(aRemoteProperty.getKey(), aRemoteProperty.getValue());
+            });
+        }
     }
 
     public String getName() {

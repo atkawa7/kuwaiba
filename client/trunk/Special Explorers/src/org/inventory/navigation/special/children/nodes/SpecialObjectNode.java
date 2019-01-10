@@ -34,7 +34,7 @@ import org.openide.util.Lookup;
  * It's like an ObjectNode, but you can filter what actions would be shown. Its children
  * are "special children", that is, they're not children as in the standard containment hierarchy but 
  * children as defined by a particular model.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class SpecialObjectNode extends ObjectNode {
     

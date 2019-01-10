@@ -24,7 +24,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Action used to Bring to Back One Step a Shape
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class BringToBackOneStepAction extends GenericShapeAction {
     private static BringToBackOneStepAction instance;

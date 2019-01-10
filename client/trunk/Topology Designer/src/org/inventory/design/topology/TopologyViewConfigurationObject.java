@@ -20,7 +20,7 @@ import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Topology View Module Configuration Object
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @ServiceProvider(service = ConfigurationObject.class)
 public class TopologyViewConfigurationObject extends ConfigurationObject {

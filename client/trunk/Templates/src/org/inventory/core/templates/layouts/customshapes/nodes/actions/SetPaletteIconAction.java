@@ -45,7 +45,7 @@ import org.openide.util.Utilities;
 
 /**
  * This action sets the icon for a Custom shape in the palette
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class SetPaletteIconAction extends GenericInventoryAction {
     public SetPaletteIconAction() {

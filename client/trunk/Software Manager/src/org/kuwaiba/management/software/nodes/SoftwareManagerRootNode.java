@@ -25,7 +25,7 @@ import org.openide.util.ImageUtilities;
 
 /**
  * The root of the Software Management module
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class SoftwareManagerRootNode extends AbstractNode {
     private Image icon;

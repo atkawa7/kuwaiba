@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import org.inventory.core.services.i18n.I18N;
 
 /**
  * A widget that shows the results of a task
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class TaskResultWidget extends AbstractWidget {
     private static Icon ICON_OK = new ImageIcon(Utils.createCircleIcon(DashboardWidgetUtilities.GREEN, 15));

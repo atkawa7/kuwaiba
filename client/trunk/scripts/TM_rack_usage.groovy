@@ -1,9 +1,11 @@
 /**
  * Finds the racks whose occupation level surpasses certain threholds
- * Neotropic SAS - version 1.1
+ * Neotropic SAS - version 1.2
  * Parameters: -thresholdHigh: The upper threshold (usage percentage). It will generate a red notification
  *             -thresholdMid: The lower threshold (usage percentage). It will generate a red notification
  */
+
+ import org.neo4j.graphdb.Label;
 
 //Creates the task result instance using reflection
 def taskResult = TaskResult.newInstance();
@@ -23,7 +25,7 @@ if (thresholdHigh <= thresholdMid)
 	return TaskResult.createErrorResult("thresholdHigh must be greater than thresholdMid");
 
 //Gets the rack node
-def rackClassNode = classIndex.get(Constants.PROPERTY_NAME, "Rack").getSingle();
+def rackClassNode = graphDb.findNode(Label.label("classes"), Constants.PROPERTY_NAME, "Rack");
 
 if (rackClassNode == null)
 	taskResult = TaskResult.createErrorResult("Class Rack not found");
@@ -52,10 +54,10 @@ else {
 		
 		if (percentage > thresholdHigh)
 			taskResult.getMessages().add(TaskResult.createErrorMessage(String.format("The rack %s with serial number %s and id %s has a %s%% occupation", 
-				rackInstanceNode.getProperty("name"), serialNumber, rackInstanceNode.getId(), percentage)));
+				rackInstanceNode.getProperty("name"), serialNumber, rackInstanceNode.getId(), Math.round(percentage))));
 		else if (percentage > thresholdMid)
 			taskResult.getMessages().add(TaskResult.createWarningMessage(String.format("The rack %s with serial number %s and id %s has a %s%% occupation", 
-				rackInstanceNode.getProperty("name"), serialNumber, rackInstanceNode.getId(), percentage)));
+				rackInstanceNode.getProperty("name"), serialNumber, rackInstanceNode.getId(), Math.round(percentage))));
 	}
 }
 

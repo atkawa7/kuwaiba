@@ -34,7 +34,7 @@ import org.openide.util.lookup.ServiceProvider;
 
 /**
  * This action allows the user relate the current object to a Warehouse as a resource
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @ActionsGroupType(group=ActionsGroupType.Group.RELATE_TO)
 @ServiceProvider(service=GenericObjectNodeAction.class)

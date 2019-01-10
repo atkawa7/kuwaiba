@@ -21,7 +21,7 @@ import org.openide.util.lookup.ServiceProvider;
 
 /**
  * Class used to set the calls in the communications stub to initialize the cache to custom shapes
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @ServiceProvider(service=GenericCacheInitializer.class, position=2)
 public class CustomShapeChacheInitializer extends GenericCacheInitializer {

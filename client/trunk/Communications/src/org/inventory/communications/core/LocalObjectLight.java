@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,14 +24,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.wsclient.RemoteValidator;
 
 /**
  * This class is a simple representation of a business object with a very basic information
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class LocalObjectLight implements Transferable, Comparable<LocalObjectLight> { //This class does not implement Transferable because of
                                                                //LocalObjectLight interface extends from it
@@ -71,11 +70,7 @@ public class LocalObjectLight implements Transferable, Comparable<LocalObjectLig
         if (validators != null) {
             this.validators = new ArrayList<>();
             validators.forEach((remoteValidator) -> {
-                Properties localValidatorProperties = new Properties();
-                remoteValidator.getProperties().forEach((t) -> {
-                    localValidatorProperties.put(t.getKey(), t.getValue());
-                });
-                this.validators.add(new LocalValidator(remoteValidator.getName(), localValidatorProperties));
+                this.validators.add(new LocalValidator(remoteValidator.getName(), remoteValidator.getProperties()));
             });
         }
     }

@@ -27,7 +27,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Provided used to Move a Shape
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class MoveShapeWidgetProvider implements MoveProvider {
     private Point startPoint;

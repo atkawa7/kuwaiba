@@ -40,7 +40,7 @@ import org.openide.util.actions.Presenter;
 
 /**
  * Deletes a user
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class DeleteUserAction extends GenericInventoryAction implements Presenter.Popup {
     private final JMenuItem popupPresenter;

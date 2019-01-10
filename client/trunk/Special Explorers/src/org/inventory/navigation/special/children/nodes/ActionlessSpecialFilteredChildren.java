@@ -26,7 +26,7 @@ import org.openide.nodes.Node;
 /**
  * The same SpecialChildren, but creates ActionlessSpecialObjectNodes instead of SpecialObjectNodes
  * in addition this children only show the class WireContainer
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class ActionlessSpecialFilteredChildren extends SpecialChildren {
     

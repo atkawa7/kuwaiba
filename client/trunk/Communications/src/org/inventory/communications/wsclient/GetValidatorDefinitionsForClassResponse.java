@@ -10,12 +10,12 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for getValidatorDefinitionsResponse complex type.
+ * <p>Java class for getValidatorDefinitionsForClassResponse complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getValidatorDefinitionsResponse">
+ * &lt;complexType name="getValidatorDefinitionsForClassResponse">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
@@ -29,10 +29,10 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "getValidatorDefinitionsResponse", propOrder = {
+@XmlType(name = "getValidatorDefinitionsForClassResponse", propOrder = {
     "_return"
 })
-public class GetValidatorDefinitionsResponse {
+public class GetValidatorDefinitionsForClassResponse {
 
     @XmlElement(name = "return")
     protected List<RemoteValidatorDefinition> _return;

@@ -33,7 +33,7 @@ import org.openide.util.actions.Presenter;
 
 /**
  * Deletes a template element or a template itself
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class DeleteTemplateElementAction extends GenericInventoryAction implements Presenter.Popup{
     public static String ACTION_MAP_KEY = "DeleteTemplateElementAction"; //NOI18N

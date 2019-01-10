@@ -61,7 +61,7 @@ import org.netbeans.api.visual.action.WidgetAction;
  * track the change and notify the TopComponent to mark it as unsaved. It's a modified
  * copy of org.netbeans.modules.visual.action.MoveControlPointAction if final and does not notify changes
  * This class was licensed under CDDL and keeps the licensing
- * @author David Kaspar, modified by Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org> for project Kuwaiba 2010
+ * @author David Kaspar, modified by Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>} for project Kuwaiba 2010
  */
 public final class CustomMoveControlPointAction extends WidgetAction.LockedAdapter {
 

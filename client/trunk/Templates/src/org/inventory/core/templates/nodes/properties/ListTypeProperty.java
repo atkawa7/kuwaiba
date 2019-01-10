@@ -24,7 +24,7 @@ import org.openide.nodes.PropertySupport;
 
 /**
  * A dedicated property class for list type attributes
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ListTypeProperty extends PropertySupport.ReadWrite<LocalObjectListItem> {
     private PropertyEditor propertyEditor;

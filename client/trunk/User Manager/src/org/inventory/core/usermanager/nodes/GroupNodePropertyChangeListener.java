@@ -26,7 +26,7 @@ import org.inventory.core.services.api.notifications.NotificationUtil;
 
 /**
  * Listens for property changes in groups and sends them to the server for processing
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class GroupNodePropertyChangeListener implements VetoableChangeListener {
     private static GroupNodePropertyChangeListener instance; //This class is a singleton

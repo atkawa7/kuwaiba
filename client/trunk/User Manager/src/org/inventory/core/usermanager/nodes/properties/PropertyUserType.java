@@ -24,7 +24,7 @@ import org.openide.nodes.PropertySupport;
 
 /**
  * The user type property
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 
 public class PropertyUserType extends PropertySupport.ReadWrite<LocalUserObjectLight.UserType> {

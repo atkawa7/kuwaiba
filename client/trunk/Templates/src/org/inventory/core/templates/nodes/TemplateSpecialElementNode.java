@@ -21,7 +21,7 @@ import org.inventory.communications.util.Utils;
 
 /**
  * A node representing a template special element.
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class TemplateSpecialElementNode extends TemplateElementNode {
     private static final Image defaultSpecialIcon = Utils.createRectangleIcon(new Color(11, 91, 111), 

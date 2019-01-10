@@ -28,7 +28,7 @@ import org.inventory.navigation.special.relationships.scene.SpecialRelationships
 
 /**
  * Provides the business logic for the related TopComponent
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class GraphicalRepSpecialRelationshipService {
     private final SpecialRelationshipsGraphExplorerScene scene;

@@ -28,7 +28,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Shape widget used to contain another shapes widget
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ContainerShapeWidget extends SelectableShapeWidget {
     private List<Shape> shapesSet;

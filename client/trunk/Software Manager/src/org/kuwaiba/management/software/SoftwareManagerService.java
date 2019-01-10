@@ -23,7 +23,7 @@ import org.kuwaiba.management.software.nodes.SoftwareManagerRootNode;
 
 /**
  * Software Manager Service
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class SoftwareManagerService {
     private SoftwareManagerTopComponent smtc;

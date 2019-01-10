@@ -30,7 +30,7 @@ import org.openide.util.NbBundle.Messages;
 
 /**
  * Top component for the User Manager Module.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @ConvertAsProperties(
         dtd = "-//org.inventory.core.usermanager//UserManager//EN",

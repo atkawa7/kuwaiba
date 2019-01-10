@@ -33,7 +33,7 @@ import org.openide.util.Exceptions;
 
 /**
  * Drop. Accept provider to set the name of shapes from template manager
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ShapeNameAcceptProvider implements AcceptProvider {
     

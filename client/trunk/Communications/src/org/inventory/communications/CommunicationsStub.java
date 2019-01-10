@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -80,6 +80,8 @@ import com.neotropic.inventory.modules.sync.AbstractRunnableSyncResultsManager;
 import com.neotropic.inventory.modules.sync.LocalSyncAction;
 import org.inventory.communications.core.LocalConfigurationVariable;
 import org.inventory.communications.core.LocalPhysicalConnectionDetails;
+import org.inventory.communications.core.LocalValidator;
+import org.inventory.communications.core.LocalValidatorDefinition;
 import org.inventory.communications.util.Constants;
 import org.inventory.communications.wsclient.ApplicationLogEntry;
 import org.inventory.communications.wsclient.RemoteAttributeMetadata;
@@ -120,6 +122,8 @@ import org.inventory.communications.wsclient.RemoteSynchronizationConfiguration;
 import org.inventory.communications.wsclient.RemoteSynchronizationGroup;
 import org.inventory.communications.wsclient.RemoteTask;
 import org.inventory.communications.wsclient.RemoteTaskResult;
+import org.inventory.communications.wsclient.RemoteValidator;
+import org.inventory.communications.wsclient.RemoteValidatorDefinition;
 import org.inventory.communications.wsclient.ResultRecord;
 import org.inventory.communications.wsclient.StringPair;
 import org.inventory.communications.wsclient.SyncFinding;
@@ -136,7 +140,7 @@ import org.inventory.communications.wsclient.SyncAction;
 /**
  * Singleton class that provides communication and caching services to the rest of the modules
  * TODO: Make it a thread to support simultaneous operations
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class CommunicationsStub {
     private static CommunicationsStub instance;
@@ -4638,7 +4642,7 @@ public class CommunicationsStub {
      */
     public boolean deleteSDHTributaryLink(String tributaryLinkClass, long tributaryLinkId) {
         try {
-            service.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId, true, session.getSessionId());
+            service.deleteSDHTributaryLink(tributaryLinkClass, tributaryLinkId, session.getSessionId());
             return true;
         } catch (Exception ex) {
             this.error = ex.getMessage();
@@ -6006,6 +6010,108 @@ public class CommunicationsStub {
             return true;
             
         } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    //</editor-fold>
+    
+    //<editor-fold desc="Validators" defaultstate="collapsed">
+    /**
+     * Creates a validator definition. 
+     * @param name The name of the validator. It's recommended to use camel case notation (for example thisIsAName). This field is mandatory
+     * @param description The optional description of the validator
+     * @param classToBeApplied The class or super class of the classes whose instances will be checked against this validator
+     * @param script The groovy script containing the logic of the validator , that is, the 
+     * @param enabled If this validador should be applied or not
+     * @return The id of the newly created validator definition or -1 in case of error, such as when the name is null or empty or if the classToBeApplied argument could not be found
+     */
+    public long createValidatorDefinition(String name, String description, String classToBeApplied, String script, boolean enabled) {
+        try {
+            return service.createValidatorDefinition(name, description, classToBeApplied, script, enabled, session.getSessionId());
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return -1;
+        }
+    }
+    
+    /**
+     * Updates the properties of a validator. The null values will be ignored
+     * @param validatorDefinitionId The id of teh validator definition to be updated
+     * @param name The new name, if any, null otherwise
+     * @param description The new description, if any, null otherwise
+     * @param classToBeApplied The new class to be associated to this validator, if any, null otherwise
+     * @param script The new script, if any, null otherwise
+     * @param enabled If the validator should be enabled or not, if any, null otherwise
+     * @return False if the validator definition could not be found or if the classToBeApplied parameter is not valid or 
+     * if the name is not null, but it is empty. True otherwise
+     */
+    public boolean updateValidatorDefinition(long validatorDefinitionId, String name, String description, 
+            String classToBeApplied, String script, Boolean enabled) { 
+        try {
+            service.updateValidatorDefinition(validatorDefinitionId, name, description, classToBeApplied, script, enabled, session.getSessionId());
+            return true;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return false;
+        }
+    }
+    
+    /**
+     * Retrieves all the validator definitions in the system
+     * @param className The class to be retrieved the validators from
+     * @return The list of validator definitions or null if an unexpected server side error occurred
+     */
+    
+    public List<LocalValidatorDefinition> getValidatorDefinitionsForClass(String className) {
+        try {
+            List<RemoteValidatorDefinition> remoteValidatorDefinitions = service.getValidatorDefinitionsForClass(className, session.getSessionId());
+            List<LocalValidatorDefinition> localValidatorDefinitions = new ArrayList<>();
+            
+            remoteValidatorDefinitions.forEach((aRemoteValidatorDefinition) -> {
+                localValidatorDefinitions.add(new LocalValidatorDefinition(aRemoteValidatorDefinition.getId(), aRemoteValidatorDefinition.getName(), aRemoteValidatorDefinition.getDescription(), 
+                        aRemoteValidatorDefinition.getClassToBeApplied(), aRemoteValidatorDefinition.getScript(), aRemoteValidatorDefinition.isEnabled()));
+            });
+            
+            return localValidatorDefinitions;
+        } catch (Exception ex) {
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Runs the existing validations for the class associated to the given object. Validators set to enabled = false will be ignored
+     * @param objectClass The class of the object
+     * @param objectId The id of the object
+     * @return The list of validators associated to the object and its class or null if the object can not be found
+     */
+    public List<LocalValidator> runValidationsForObject(String objectClass, long objectId) {
+        try {
+            List<RemoteValidator> remoteValidators = service.runValidationsForObject(objectClass, objectId, session.getSessionId());
+            List<LocalValidator> localValidatorDefinitions = new ArrayList<>();
+            
+            remoteValidators.forEach((aRemoteValidatorDefinition) -> {
+                localValidatorDefinitions.add(new LocalValidator(aRemoteValidatorDefinition.getName(), aRemoteValidatorDefinition.getProperties()));
+            });
+            
+            return localValidatorDefinitions;
+        } catch(Exception ex){
+            this.error = ex.getMessage();
+            return null;
+        }
+    }
+    
+    /**
+     * Deletes a validator definition
+     * @param validatorDefinitionId the id of the validator to be deleted
+     * @return false If the validator definition could not be found, true if everything went as expected
+     */
+    public boolean deleteValidatorDefinition(long validatorDefinitionId) {
+        try {
+            service.deleteValidatorDefinition(validatorDefinitionId, session.getSessionId());
+            return true;
+        } catch(Exception ex){
             this.error = ex.getMessage();
             return false;
         }

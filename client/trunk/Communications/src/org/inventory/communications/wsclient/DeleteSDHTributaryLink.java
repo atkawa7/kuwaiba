@@ -18,7 +18,6 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="tributaryLinkClass" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="tributaryLinkId" type="{http://www.w3.org/2001/XMLSchema}long"/>
- *         &lt;element name="forceDelete" type="{http://www.w3.org/2001/XMLSchema}boolean"/>
  *         &lt;element name="sessionId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
@@ -32,14 +31,12 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "deleteSDHTributaryLink", propOrder = {
     "tributaryLinkClass",
     "tributaryLinkId",
-    "forceDelete",
     "sessionId"
 })
 public class DeleteSDHTributaryLink {
 
     protected String tributaryLinkClass;
     protected long tributaryLinkId;
-    protected boolean forceDelete;
     protected String sessionId;
 
     /**
@@ -80,22 +77,6 @@ public class DeleteSDHTributaryLink {
      */
     public void setTributaryLinkId(long value) {
         this.tributaryLinkId = value;
-    }
-
-    /**
-     * Gets the value of the forceDelete property.
-     * 
-     */
-    public boolean isForceDelete() {
-        return forceDelete;
-    }
-
-    /**
-     * Sets the value of the forceDelete property.
-     * 
-     */
-    public void setForceDelete(boolean value) {
-        this.forceDelete = value;
     }
 
     /**

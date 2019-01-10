@@ -1,4 +1,4 @@
-/*
+/**
  *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
@@ -17,7 +17,7 @@ package org.inventory.navigation.navigationtree.nodes.actions;
 
 /**
  * Class as factory to the actions that belong to the same group
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ActionGroupActionsFactory {
     private static ActionsGroup openViewGroupActions;
@@ -60,14 +60,14 @@ public class ActionGroupActionsFactory {
     public static ActionsGroup getInstanceDiagnosticActions() {
         return diagnosticActions == null ? diagnosticActions = new ActionsGroup("Diagnostics", 
             "org/inventory/navigation/navigationtree/res/diagnostic_actions_group.png", 
-            ActionsGroupType.Group.DIAGNOSTIC) : diagnosticActions;
+            ActionsGroupType.Group.DIAGNOSTICS) : diagnosticActions;
     }
     
     public static ActionsGroup getInstanceSyncActions() {
        if (syncActions == null)
             syncActions = new ActionsGroup("Sync", 
                 "org/inventory/navigation/navigationtree/res/show_view_actions_group.png", 
-                ActionsGroupType.Group.HAS_CONFIGURATION);
+                ActionsGroupType.Group.DEVICE_CONFIGURATION);
         return syncActions;
     }
 }

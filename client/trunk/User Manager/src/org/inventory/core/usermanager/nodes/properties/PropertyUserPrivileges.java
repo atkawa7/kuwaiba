@@ -30,7 +30,7 @@ import org.openide.nodes.PropertySupport;
 
 /**
  * Represents the list of privileges of a given user
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class PropertyUserPrivileges extends PropertySupport.ReadWrite<String> {
     private LocalUserObject user;

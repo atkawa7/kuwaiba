@@ -33,7 +33,7 @@ import org.openide.util.Utilities;
 
 /**
  * Deletes a group and all the users within <b>that are not related to another group</b>
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 class DeleteGroupAction extends GenericInventoryAction {
 

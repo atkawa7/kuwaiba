@@ -30,7 +30,7 @@ import org.openide.util.actions.Presenter;
 
 /**
  * Action used to delete a container shape
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeleteContainerShapeAction extends GenericShapeAction implements Presenter.Popup {
     private static DeleteContainerShapeAction instance;

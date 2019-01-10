@@ -29,7 +29,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Provider used to resize shapes
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ResizeShapeWidgetProvider implements ResizeProvider, ResizeStrategy {
     private Point startPoint;

@@ -44,7 +44,7 @@ import org.openide.windows.WindowManager;
 
 /**
  * A Module Installer to execute the auto update and install of modules
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class Installer extends ModuleInstall {
 

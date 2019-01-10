@@ -24,7 +24,7 @@ import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 
 /**
  * Action used to Copy Shapes
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class CopyShapeAction extends GenericShapeAction {
     private static CopyShapeAction instance;

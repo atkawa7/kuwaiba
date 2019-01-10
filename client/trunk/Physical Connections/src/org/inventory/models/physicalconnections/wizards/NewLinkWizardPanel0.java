@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.openide.util.HelpCtx;
 /**
  * Logic of the pre-step of the New Link wizard this step is only shown if there 
  * are already created containers between the two nodes that you are trying to connect.
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class NewLinkWizardPanel0 implements WizardDescriptor.Panel<WizardDescriptor>,
         WizardDescriptor.ValidatingPanel<WizardDescriptor> {

@@ -19,6 +19,6 @@ import org.inventory.core.services.api.behaviors.ConfigurationObject;
 
 /**
  * Configuration object to model layout
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeviceLayoutConfigurationObject extends ConfigurationObject {}

@@ -20,7 +20,7 @@ import org.inventory.core.services.api.actions.GenericInventoryAction;
 
 /**
  * Action factory for the User Manager module
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class UserManagerActionFactory {
     private static CreateUserAction createUserAction;

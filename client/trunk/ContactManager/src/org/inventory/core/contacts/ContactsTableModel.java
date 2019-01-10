@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import org.inventory.communications.core.LocalContact;
  * The table model associated to the contacts table. Although a LocalContact object will contain ALL the 
  * attributes corresponding to the contact class, this table will only show all that are common across the contact classes,
  * that is, the attributes of their superclass, GenericContact
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ContactsTableModel  implements TableModel {
     private List<LocalContact> currentContactList;

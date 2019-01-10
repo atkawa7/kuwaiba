@@ -28,7 +28,7 @@ import org.openide.explorer.propertysheet.PropertySheetView;
 
 /**
  * Provides a custom property editor for list-type values
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class ItemListPropertyEditor extends PropertyEditorSupport {
     

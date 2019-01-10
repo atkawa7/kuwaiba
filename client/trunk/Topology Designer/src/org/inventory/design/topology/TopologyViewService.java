@@ -29,7 +29,7 @@ import org.openide.util.Lookup;
 
 /**
  * Service class for the Topology Designer module
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class TopologyViewService {
     /**

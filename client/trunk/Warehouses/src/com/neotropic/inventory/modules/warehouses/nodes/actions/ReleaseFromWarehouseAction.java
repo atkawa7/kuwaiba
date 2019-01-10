@@ -40,7 +40,7 @@ import org.openide.util.lookup.ServiceProvider;
 
 /**
  * This action releases de relationship between the object and the Warehouse or Virtual Warehouse
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 @ActionsGroupType(group=ActionsGroupType.Group.RELEASE_FROM)
 @ServiceProvider(service=GenericObjectNodeAction.class)

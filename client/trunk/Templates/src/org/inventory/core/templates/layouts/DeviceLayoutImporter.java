@@ -49,7 +49,7 @@ import org.openide.util.Exceptions;
 
 /**
  * Class to manage the import of device layout files
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeviceLayoutImporter {
     private final String path;

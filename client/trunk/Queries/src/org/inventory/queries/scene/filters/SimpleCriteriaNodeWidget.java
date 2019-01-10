@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.inventory.queries.scene.QueryEditorScene;
 /**
  * This class represents a simple searching criteria, this is, related to a simple data type.
  * Subclasses should provide proper filters depending on the data type (numeric, dates, booleans, etc)
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public abstract class SimpleCriteriaNodeWidget extends QueryEditorNodeWidget{
 

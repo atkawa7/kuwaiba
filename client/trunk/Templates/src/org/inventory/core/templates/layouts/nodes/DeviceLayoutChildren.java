@@ -28,7 +28,7 @@ import org.openide.nodes.Node;
 
 /**
  * Set of nodes of device layout
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeviceLayoutChildren extends AbstractChildren {
     

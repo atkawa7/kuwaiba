@@ -22,7 +22,7 @@ import org.inventory.communications.core.LocalObjectLight;
  * The same SpecialObjectNode, but without actions (useful in views inside 
  * wizards, where the selected nodes are not placed in the global lookup, so the 
  * context actions, that are dependant of the selected nodes won't crash)
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ActionlessSpecialObjectNode extends SpecialObjectNode {
 

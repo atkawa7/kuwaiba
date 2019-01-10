@@ -25,7 +25,7 @@ import org.openide.nodes.Node;
 
 /**
  * This node represents a special relationship of the parent node. Its children are the related objects
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class RelationshipNode extends AbstractNode {
     private static final Image DEFAULT_ICON = Utils.createRectangleIcon(new Color(170, 212,0), 10, 10);

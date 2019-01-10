@@ -20,7 +20,7 @@ import java.awt.Color;
 
 /**
  * Class used to represent labels
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class LabelShape extends Shape {
     public static String SHAPE_TYPE = "label"; //NOI18N

@@ -29,7 +29,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Shape widget select provider
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ShapeSelectProvider implements SelectProvider {
     

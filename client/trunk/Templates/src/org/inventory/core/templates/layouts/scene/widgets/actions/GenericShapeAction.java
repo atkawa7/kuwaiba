@@ -22,7 +22,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Generic Shape Action used to define the common features of shapes actions
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public abstract class GenericShapeAction extends GenericInventoryAction {
     protected Widget selectedWidget;

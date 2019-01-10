@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License
@@ -27,7 +27,7 @@ import org.openide.explorer.propertysheet.PropertySheetView;
 
 /**
  * This is the editor to change the class attributes properties
- * @author Adrian Martinez Molina <charles.bedon@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <charles.bedon@kuwaiba.org>}
  */
 public class AttributeEditorSupport extends PropertyEditorSupport
     implements ExPropertyEditor {

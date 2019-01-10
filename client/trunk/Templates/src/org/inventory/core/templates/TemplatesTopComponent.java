@@ -36,7 +36,7 @@ import org.openide.util.NbBundle.Messages;
 
 /**
  * Template Manager Top component.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @ConvertAsProperties(
         dtd = "-//org.inventory.core.templates//Templates//EN",

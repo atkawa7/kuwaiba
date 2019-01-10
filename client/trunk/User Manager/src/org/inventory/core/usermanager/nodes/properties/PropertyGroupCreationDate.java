@@ -24,7 +24,7 @@ import org.openide.nodes.PropertySupport;
 
 /**
  * The group creation date property
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class PropertyGroupCreationDate extends PropertySupport.ReadOnly<String>{
     private LocalUserGroupObject group;

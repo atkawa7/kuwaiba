@@ -20,7 +20,7 @@ import java.awt.Color;
 
 /**
  * Class used to represent polygons 
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class PolygonShape extends Shape {
     public static String SHAPE_TYPE = "polygon"; //NOI18N

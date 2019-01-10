@@ -70,7 +70,7 @@ import org.openide.util.ImageUtilities;
 
 /**
  * Scene used for the Topology View Top Component
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class TopologyViewScene extends AbstractScene<LocalObjectLight, String> {
     /**

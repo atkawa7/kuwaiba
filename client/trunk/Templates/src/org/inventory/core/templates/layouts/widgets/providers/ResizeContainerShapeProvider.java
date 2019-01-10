@@ -33,7 +33,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Provider used to resize container shapes
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ResizeContainerShapeProvider implements ResizeProvider, ResizeStrategy {
     private Point startPoint;

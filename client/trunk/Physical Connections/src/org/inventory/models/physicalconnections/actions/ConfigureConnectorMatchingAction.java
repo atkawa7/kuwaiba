@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import org.openide.awt.ActionRegistration;
 
 /**
  * With this action is possible to configure what kind of links can be connected to certain types of ports (e.g. OpticalLinks should be connected only to OpticalPorts) and how to define connectors compatibility
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 @ActionID(id = "org.inventory.models.physicalconnections.actions.ConfigureConnectorMatchingAction", category = "Tools")
 @ActionRegistration(displayName = "Configure Connection Rules")

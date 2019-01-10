@@ -32,7 +32,7 @@ import org.openide.util.lookup.Lookups;
 
 /**
  * A simple node representing an instanceable inventory class for the Templates module
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class TemplatesModuleClassNode extends AbstractNode {
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>.
+ *  Copyright 2010-2019 Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import org.netbeans.api.visual.widget.Widget;
 /**
  * Provides a move action for multiple objects. Thanks to Geertjan Wielenga, Toni Eppleton et all for this code.
  * Check for details <a href="http://blogs.sun.com/geertjan/entry/multiple_selection_in_small_visual">here</a>
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class MultipleWidgetMoveActionProvider implements MoveProvider,MoveStrategy {
     private HashMap<Widget,Point> originalLocations = new HashMap<> ();

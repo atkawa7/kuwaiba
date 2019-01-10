@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import org.openide.util.actions.Presenter;
  * Delete sync find the appropriate action to execute the delete action. E.g. If the node
  * are a sync group execute to delete sync group action, or if the node are a data source 
  * configuration execute the action to delete it
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeleteSyncAction extends GenericInventoryAction implements Presenter.Popup{
     public static String ACTION_MAP_KEY = "DeleteSync"; //NOI18N

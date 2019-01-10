@@ -26,7 +26,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Action used to Bring to Back a Container
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class BringToBackContainerAction extends GenericShapeAction {
     private static BringToBackContainerAction instance;

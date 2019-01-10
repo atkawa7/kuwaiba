@@ -20,7 +20,7 @@ import org.inventory.core.services.api.actions.GenericInventoryAction;
 
 /**
  * Factory for all actions to be used by nodes in this module
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class TemplateActionsFactory {
     private static CreateTemplateAction createTemplateAction;

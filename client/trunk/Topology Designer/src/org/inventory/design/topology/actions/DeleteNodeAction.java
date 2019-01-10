@@ -33,7 +33,7 @@ import org.openide.util.actions.Presenter;
 
 /**
  * Action to delete an <code>ObjectNodeWidget</code> from topology designer scene
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeleteNodeAction extends GenericInventoryAction implements Presenter.Popup {
     private static DeleteNodeAction instance;

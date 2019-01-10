@@ -28,7 +28,7 @@ import org.openide.util.ImageUtilities;
 
 /**
  * Represents a predefined shape as node
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class CustomShapeNode extends ObjectNode {
     private static final Image defaultIcon = ImageUtilities.loadImage("org/inventory/core/templates/res/list-type-item.png");

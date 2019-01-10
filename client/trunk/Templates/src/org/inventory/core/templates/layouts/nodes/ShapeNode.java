@@ -36,7 +36,7 @@ import org.openide.util.lookup.Lookups;
 
 /**
  * A shape in the palette or a node in the scene
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ShapeNode extends AbstractNode implements PropertyChangeListener {
     public ShapeNode(Shape shape) {

@@ -21,7 +21,7 @@ import org.openide.nodes.PropertySupport;
 
 /**
  * This class allows to edit primitive type properties.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class PrimitiveTypeProperty extends PropertySupport.ReadWrite<Object> {
     private LocalObject businessObject;

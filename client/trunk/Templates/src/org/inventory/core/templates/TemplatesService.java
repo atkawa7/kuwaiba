@@ -27,7 +27,7 @@ import org.openide.nodes.Node;
 
 /**
  * Service class for this module. 
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class TemplatesService  {
     private final TemplatesTopComponent topComponent;

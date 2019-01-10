@@ -18,7 +18,7 @@ package org.inventory.core.templates.layouts.model;
 
 /**
  * A Container Shape is a set of shapes grouped into the container
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ContainerShape extends Shape {
     public static final String SHAPE_TYPE = "container"; //NOI18N

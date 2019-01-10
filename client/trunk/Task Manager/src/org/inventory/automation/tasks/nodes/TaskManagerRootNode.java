@@ -29,7 +29,7 @@ import org.openide.nodes.Node;
 
 /**
  * The root node of the Task Manager module
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class TaskManagerRootNode extends AbstractNode {
     public static final String DEFAULT_ICON_PATH = "org/inventory/automation/tasks/res/root.png";

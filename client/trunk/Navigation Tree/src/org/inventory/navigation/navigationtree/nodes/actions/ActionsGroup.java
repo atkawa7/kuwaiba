@@ -1,4 +1,4 @@
-/*
+/**
  *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
@@ -32,7 +32,7 @@ import org.openide.util.Utilities;
 import org.openide.util.actions.Presenter;
 /**
  * This class represent an action that has a sub menu of actions grouped
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ActionsGroup extends GenericObjectNodeAction implements Presenter.Popup {
     private final ActionsGroupType.Group actionGroupType;

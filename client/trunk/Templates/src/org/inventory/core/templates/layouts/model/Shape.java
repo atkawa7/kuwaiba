@@ -29,7 +29,7 @@ import org.inventory.communications.util.Constants;
 
 /**
  * Class used to represent a generic shape
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public abstract class Shape implements Transferable {    
     public static String PROPERTY_TYPE = "type"; //NOI18N

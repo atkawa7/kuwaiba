@@ -28,7 +28,7 @@ import org.openide.util.lookup.Lookups;
 
 /**
  * Widget used to represent a generic shape in the scene
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class SelectableShapeWidget extends Widget implements PropertyChangeListener, SharedContentLookup {
     ShapeNode shapeNode;

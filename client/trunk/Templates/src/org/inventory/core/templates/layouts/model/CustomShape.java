@@ -21,7 +21,7 @@ import org.inventory.communications.core.LocalObjectListItem;
 
 /**
  * A custom shape is a predefined shape used the custom shape tool
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class CustomShape extends Shape {
     public static String SHAPE_TYPE = "custom"; //NOI18N

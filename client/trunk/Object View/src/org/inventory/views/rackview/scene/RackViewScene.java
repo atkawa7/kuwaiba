@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -51,8 +51,8 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Scene for Rack view, shows the front view of the rack
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class RackViewScene extends AbstractScene<LocalObjectLight, LocalObjectLight> {
     public static int STROKE_WIDTH = 3;

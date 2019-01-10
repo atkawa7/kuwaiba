@@ -25,7 +25,7 @@ import org.inventory.core.templates.layouts.scene.DeviceLayoutScene;
 
 /**
  * Action used to ungroup shapes
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class UngroupShapesAction extends GenericShapeAction {
     private static UngroupShapesAction instance;

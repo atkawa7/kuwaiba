@@ -38,7 +38,7 @@ import org.openide.util.lookup.Lookups;
 
 /**
  * Node that represents a file object (a file attached to an inventory object)
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class FileObjectNode extends AbstractNode implements VetoableChangeListener {
 

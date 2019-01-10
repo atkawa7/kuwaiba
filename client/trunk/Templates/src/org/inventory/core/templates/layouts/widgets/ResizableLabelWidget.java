@@ -31,7 +31,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Class used to represent a label 
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ResizableLabelWidget extends Widget {
     

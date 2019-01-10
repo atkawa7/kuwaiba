@@ -27,7 +27,7 @@ import org.openide.windows.InputOutput;
 
 /**
  * Manager to show in an output top component, messages from the layout designer
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class LayoutOutputManager {
     HashMap<LocalObjectListItem, LayoutOutput> outputs;

@@ -15,13 +15,12 @@
  */
 package com.neotropic.inventory.modules.sync.nodes.actions;
 
-import com.neotropic.inventory.modules.sync.*;
+import com.neotropic.inventory.modules.sync.LocalSyncDataSourceConfiguration;
+import com.neotropic.inventory.modules.sync.LocalSyncGroup;
 import com.neotropic.inventory.modules.sync.nodes.SyncDataSourceConfigurationNode;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 import java.util.List;
-import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import org.inventory.communications.CommunicationsStub;
 import org.inventory.communications.core.LocalPrivilege;
@@ -40,24 +39,14 @@ import org.openide.util.lookup.ServiceProvider;
  * Creates/edits the data source configuration of the object
  * @author Adrian Martinez {@literal <adrian.martinez@kuwaiba.org>}
  */
-@ActionsGroupType(group=ActionsGroupType.Group.HAS_CONFIGURATION)
+@ActionsGroupType(group=ActionsGroupType.Group.DEVICE_CONFIGURATION)
 @ServiceProvider(service=GenericObjectNodeAction.class)
-public class ConfigSyncDatasourceAction extends GenericObjectNodeAction implements ComposedAction{
+public class ConfigSyncDatasourceAction extends GenericObjectNodeAction implements ComposedAction {
  
     SyncDataSourceConfigurationNode syncDataSourceConfigurationNode;
 
     public ConfigSyncDatasourceAction() {
         putValue(NAME, "Config Datasource");
-    }
-    
-    private JComponent setSize(JComponent component) {
-        Dimension size = new Dimension(200, 20);
-        
-        component.setMinimumSize(size);
-        component.setMaximumSize(size);
-        component.setPreferredSize(size);
-        component.setSize(size);
-        return component;
     }
   
     @Override
@@ -86,7 +75,7 @@ public class ConfigSyncDatasourceAction extends GenericObjectNodeAction implemen
             NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), NotificationUtil.ERROR_MESSAGE, CommunicationsStub.getInstance().getError());
         else {
             if (syncGroups.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "There are no sync gropus created. Create at least one using the Sync Manager", 
+                JOptionPane.showMessageDialog(null, "There are no sync groups created. Create at least one using the Sync Manager", 
                     I18N.gm("information"), JOptionPane.INFORMATION_MESSAGE);
             } else {
                 if(syncDataSourceConfiguration == null){    
@@ -117,9 +106,10 @@ public class ConfigSyncDatasourceAction extends GenericObjectNodeAction implemen
             SelectValueFrame frame = (SelectValueFrame) e.getSource();
             Object selectedSyncGroup =  frame.getSelectedValue();
             
-            if (selectedSyncGroup  == null)
+            if (selectedSyncGroup  == null) {
                 JOptionPane.showMessageDialog(null, "Select a sync group from the list");
-
+                return;
+            }
             HashMap<String, String> parameters = new HashMap();
                         parameters.put("deviceId", String.valueOf((selectedObjects.get(0).getId())));
                         parameters.put("deviceClass", (selectedObjects.get(0).getClassName()));
@@ -127,7 +117,7 @@ public class ConfigSyncDatasourceAction extends GenericObjectNodeAction implemen
             LocalSyncDataSourceConfiguration newSyncConfig = CommunicationsStub.getInstance().
                                     createSyncDataSourceConfiguration(
                                             selectedObjects.get(0).getId(),
-                                            ((LocalSyncGroup) selectedSyncGroup ).getId(), 
+                                            ((LocalSyncGroup)selectedSyncGroup).getId(), 
                                             selectedObjects.get(0).getName() + " [Datasource config]", parameters);
             
             syncDataSourceConfigurationNode = new SyncDataSourceConfigurationNode(newSyncConfig);

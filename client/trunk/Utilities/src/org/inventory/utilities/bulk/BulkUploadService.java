@@ -27,7 +27,7 @@ import org.openide.windows.InputOutput;
 
 /**
  * This class provides the business logic to the associated component
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class BulkUploadService implements Runnable {
 

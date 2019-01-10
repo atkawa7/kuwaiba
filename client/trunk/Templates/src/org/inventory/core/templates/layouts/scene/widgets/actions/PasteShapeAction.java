@@ -34,7 +34,7 @@ import org.netbeans.api.visual.widget.Widget;
 
 /**
  * Action used to Paste Shapes
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class PasteShapeAction extends GenericShapeAction {
     private static PasteShapeAction instance;

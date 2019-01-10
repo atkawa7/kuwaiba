@@ -28,7 +28,7 @@ import org.openide.windows.WindowManager;
 
 /**
  * Top component which displays the shape hierarchy of a layout
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public final class ShapeHierarchyTopComponent extends TopComponent implements ExplorerManager.Provider {
     private final ExplorerManager em = new ExplorerManager();

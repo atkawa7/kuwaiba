@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  * 
  *   Licensed under the EPL License, Version 1.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import org.openide.nodes.PropertySupport;
 
 /**
  *
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeviceTypeProperty extends PropertySupport.ReadWrite<LocalObjectLight> {
     private final SyncDataSourceConfigurationNode syncConfigNode;
@@ -57,8 +57,8 @@ public class DeviceTypeProperty extends PropertySupport.ReadWrite<LocalObjectLig
 
             LocalSyncDataSourceConfiguration localSyncDataSrcConfig = syncConfigNode.getLookup().lookup(LocalSyncDataSourceConfiguration.class);
 
-            parameters.put("deviceId", Long.toString(((LocalObjectLight) val).getId()));
-            parameters.put("deviceClass", ((LocalObjectLight) val).getClassName());
+            parameters.put("deviceId", String.valueOf(val.getId()));
+            parameters.put("deviceClass", val.getClassName());
 
             if (!CommunicationsStub.getInstance().updateSyncDataSourceConfiguration(localSyncDataSrcConfig.getId(), parameters))
                 NotificationUtil.getInstance().showSimplePopup(I18N.gm("error"), 

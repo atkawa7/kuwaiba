@@ -30,7 +30,7 @@ import org.openide.explorer.propertysheet.PropertyModel;
 
 /**
  * Property editor support to the name in shapes
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class ShapeNamePropertyEditor extends PropertyEditorSupport implements InplaceEditor.Factory, ExPropertyEditor {
     private static final String [] REGEX_NONE = new String [] {"None", ""};

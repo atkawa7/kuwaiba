@@ -24,7 +24,7 @@ import org.openide.util.Utilities;
 
 /**
  * Actions Factory for Graphical Representation of Special Relationships
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class GraphicalRepSpecialRelationshipsActionsFactory {
     private PopupMenuProvider specialRelatedObjectNodeMenu;

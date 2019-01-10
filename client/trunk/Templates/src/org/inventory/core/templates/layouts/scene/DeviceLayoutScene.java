@@ -79,7 +79,7 @@ import org.openide.util.Lookup;
 
 /**
  * Scene used to design an Equipment Layout 
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class DeviceLayoutScene extends AbstractScene<Shape, String> implements SharedContentLookup {
     private final List<CustomShape> customShapes;

@@ -40,7 +40,7 @@ import org.openide.util.actions.Presenter.Popup;
 
 /**
  * Creates an special object from a template
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public class CreateSpecialBusinessObjectFromTemplateAction extends GenericObjectNodeAction 
     implements Popup, ComposedAction {

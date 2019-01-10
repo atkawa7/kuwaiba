@@ -31,7 +31,7 @@ import org.openide.windows.WindowManager;
 
 /**
  * Displays the custom shapes.
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public final class CustomShapesTopComponent extends TopComponent implements ExplorerManager.Provider {
     private final ExplorerManager em = new ExplorerManager();

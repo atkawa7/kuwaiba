@@ -25,7 +25,7 @@ import org.openide.nodes.Node;
 /**
  * Is a hidden root node for SpecialObjectNode, this node has no actions 
  * (is used in the wizard physical link connection to show the existing wire containers)
- * @author Adrian Martinez Molina <adrian.martinez@kuwaiba.org>
+ * @author Adrian Martinez Molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 public class ActionlessSpecialOnlyContainersRootNode extends AbstractNode{
 

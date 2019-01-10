@@ -35,7 +35,7 @@ import org.openide.util.actions.Presenter;
 
 /**
  * Action to create multiple template elements
- * @author Johny Andres Ortega Ruiz <johny.ortega@kuwaiba.org>
+ * @author Johny Andres Ortega Ruiz {@literal <johny.ortega@kuwaiba.org>}
  */
 public final class CreateMultipleTemplateElementAction extends CreateTemplateElementAction implements Presenter.Popup {
     

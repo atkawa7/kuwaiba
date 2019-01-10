@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Neotropic SAS <contact@neotropic.co>.
+ *  Copyright 2010-2019 Neotropic SAS <contact@neotropic.co>.
  *
  *  Licensed under the EPL License, Version 1.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.util.Objects;
 
 /**
  * A local, simplified representation of a user/group privilege
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class LocalPrivilege {
     public static final String PRIVILEGE_NAVIGATION_TREE = "navigation-tree";
@@ -51,6 +51,7 @@ public class LocalPrivilege {
     public static final String PRIVILEGE_SYNC = "sync";
     public static final String PRIVILEGE_CONTACTS = "contacts";
     public static final String PRIVILEGE_CONFIG_VARIABLES = "config-variables";
+    public static final String PRIVILEGE_VALIDATORS = "validators";
     public static final String PRIVILEGE_WAREHOUSES = "warehouses";
     
     /**

@@ -21,7 +21,7 @@ import org.inventory.navigation.navigationtree.nodes.ObjectNode;
 /**
  * A node representing a software asset (typically a software license)
  *
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 class SoftwareAssetNode extends ObjectNode {
 

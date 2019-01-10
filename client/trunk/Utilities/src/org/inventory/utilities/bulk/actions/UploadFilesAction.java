@@ -26,7 +26,7 @@ import org.openide.util.NbBundle;
 
 /**
  * Allow the load a csv file to bulk upload of objects and list types
- * @author adrian martinez molina <adrian.martinez@kuwaiba.org>
+ * @author adrian martinez molina {@literal <adrian.martinez@kuwaiba.org>}
  */
 
 @ActionID(category = "Tools", id = "org.inventory.utilities.actions.UploadFilesAction")

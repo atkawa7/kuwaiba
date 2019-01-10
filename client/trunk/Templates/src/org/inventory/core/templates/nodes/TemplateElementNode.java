@@ -55,7 +55,7 @@ import org.openide.util.lookup.Lookups;
 
 /**
  * A node representing a template element.
- * @author Charles Edward Bedon Cortazar <charles.bedon@kuwaiba.org>
+ * @author Charles Edward Bedon Cortazar {@literal <charles.bedon@kuwaiba.org>}
  */
 public class TemplateElementNode extends AbstractNode implements PropertyChangeListener {
 
